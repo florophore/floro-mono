@@ -1,0 +1,26 @@
+  {
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "composite": true,
+        "module": "CommonJS",
+        "moduleResolution": "Node",
+        "target": "ESNext",
+        "rootDir": "stories",
+        "outDir": "build",
+        "jsx": "react",
+        "typeRoots": [
+            "node_modules/@types"
+        ],
+        "types": [
+            "node",
+            "jest"
+        ]
+    },
+    "include": [
+        "stories"
+    ],
+    "exclude": [
+        "node_modules",
+        "build"
+    ]
+} 

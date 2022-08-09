@@ -1,0 +1,16 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+      "module": "commonjs",
+      "rootDir": "src",
+      "outDir": "build",
+      "isolatedModules": false
+    },
+    "references": [
+      { "path": "../isomorphic-common" }
+    ],
+    "include": [
+      "src"
+    ]
+  }
+  

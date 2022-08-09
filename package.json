@@ -1,0 +1,27 @@
+{
+    "name": "floro-backend",
+    "version": "1.0.0",
+    "main": "index.js",
+    "license": "MIT",
+    "private": true,
+    "workspaces": [
+        "packages/*"
+    ],
+    "devDependencies": {
+        "lerna": "^4.0.0"
+    },
+    "scripts": {
+        "graphql-schemas": "yarn workspace @floro/graphql-schemas",
+        "isomorphic-common": "yarn workspace @floro/isomorphic-common",
+        "main-backend": "yarn workspace @floro/main-backend",
+        "server": "yarn workspace @floro/server",
+        "database": "yarn workspace @floro/database",
+        "storybook": "yarn workspace @floro/storybook",
+        "dev": "yarn server dev --verbose",
+        "start": "yarn server start"
+    },
+    "dependencies": {
+        "ts-node": "^10.9.1",
+        "ts-node-dev": "^2.0.0"
+    }
+}

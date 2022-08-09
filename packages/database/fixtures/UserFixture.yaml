@@ -1,0 +1,6 @@
+entity: User
+items:
+  user_0:
+    username: doggylover0
+    firstName: foo
+    lastName: bar

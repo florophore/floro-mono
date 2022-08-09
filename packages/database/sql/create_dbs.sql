@@ -1,0 +1,3 @@
+CREATE DATABASE floro_dev;
+CREATE DATABASE floro_test;
+CREATE DATABASE floro;
