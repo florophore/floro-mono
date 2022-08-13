@@ -1,3 +1,13 @@
 type Query {
+    noop: Boolean
     users: [User]
+    sayHiToTom: String
+}
+
+type Mutation {
+    noop: Boolean
+}
+
+type Subscription {
+    noop: Boolean
 }

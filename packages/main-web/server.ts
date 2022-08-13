@@ -35,17 +35,12 @@ async function createServer() {
 
   app.use('*', async (req, res, next) => {
     try {
-
-      const t0 = (new Date()).getTime();
       const url = req.originalUrl
       const t = await vite.transformIndexHtml(url, template);
       const { render } = await vite.ssrLoadModule('/src/entry-server.tsx')
       const appHtml = render(url);
       const html = t.replace(`<!--ssr-outlet-->`, appHtml)
       res.status(200).set({ 'Content-Type': 'text/html' }).end(html)
-      const t1 = (new Date()).getTime();
-      console.log("timing", t1 - t0);
-    // serve index.html - we will tackle this next
     } catch(e) {
       vite.ssrFixStacktrace(e as Error)
       next(e)

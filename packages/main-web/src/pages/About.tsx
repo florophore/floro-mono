@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import reactLogo from './assets/react.svg'
 import styled from '@emotion/styled'
 import ReactSVG from '../assets/react.svg';
+import ButtonStory from '@floro/storybook/stories/Button'
+
 const Button = styled.button`
   padding: 32px;
   background-color: blue;
@@ -21,8 +23,10 @@ function About() {
   return (
     <div>
         <p>
-            {'About!!!!!!!!!'}
+            {'About'}
         </p>
+        <ButtonStory
+        label={'testing'} primary={true} backgroundColor={'red'} size={'large'}        />
         <img src={ReactSVG}/>
         <Link to={'/'}>Go to Home</Link>
     </div>

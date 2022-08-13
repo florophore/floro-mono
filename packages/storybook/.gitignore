@@ -4,6 +4,5 @@ node_modules
 yarn-error.log
 build/
 coverage/
-src/generated
 node_modules/
 tsconfig.tsbuildinfo

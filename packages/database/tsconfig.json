@@ -2,7 +2,9 @@
     "extends": "../../tsconfig.base.json",
     "compilerOptions": {
         "composite": true,
-        "module": "commonjs",
+        "module": "CommonJS",
+        "target": "ESNext",
+        "moduleResolution": "Node",
         "rootDir": "src",
         "outDir": "build",
         "typeRoots": [
@@ -10,14 +12,20 @@
         ],
         "types": [
             "node",
-            "jest"
+            "mocha"
         ]
     },
     "include": [
-        "src"
+        "src/**/*.ts"
     ],
     "exclude": [
         "node_modules",
         "build"
-    ]
+    ],
+    "ts-node": {
+        "esm": true,
+        "compilerOptions": {
+          "module": "ESNext"
+        }
+      }
 }

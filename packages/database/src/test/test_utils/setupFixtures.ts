@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { Builder, fixturesIterator, Loader, Parser, Resolver } from 'typeorm-fixtures-cli/dist';
 import container from './testContainer';
-import DatabaseConnection from '../connection/DatabaseConnection';
+import DatabaseConnection from '../../connection/DatabaseConnection';
 import { BaseEntity } from 'typeorm';
 
 export const loadFixtures = async <T extends BaseEntity> (fixtureNames: string[]): Promise<T[]> => {

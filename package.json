@@ -12,13 +12,11 @@
     },
     "scripts": {
         "graphql-schemas": "yarn workspace @floro/graphql-schemas",
-        "isomorphic-common": "yarn workspace @floro/isomorphic-common",
         "main-backend": "yarn workspace @floro/main-backend",
-        "server": "yarn workspace @floro/server",
+        "main-web": "yarn workspace @floro/main-web",
         "database": "yarn workspace @floro/database",
         "storybook": "yarn workspace @floro/storybook",
-        "dev": "yarn server dev --verbose",
-        "start": "yarn server start"
+        "dev": "yarn main-web dev"
     },
     "dependencies": {
         "ts-node": "^10.9.1",

@@ -1,2 +1,3 @@
-const a = 123;
-export default a;
+import BackendModule from './module';
+
+export default BackendModule;

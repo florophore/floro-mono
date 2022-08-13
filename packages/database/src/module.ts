@@ -1,5 +1,3 @@
-import "reflect-metadata"
-
 import { ContainerModule } from 'inversify';
 import ContextFactory from './contexts/ContextFactory';
 import DatabaseConnectionFactory from "./connection/DatabaseConnectionFactory";
