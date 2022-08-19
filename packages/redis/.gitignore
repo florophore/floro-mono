@@ -6,4 +6,3 @@ build/
 coverage/
 node_modules/
 tsconfig.tsbuildinfo
-storybook-static
