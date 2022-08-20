@@ -51,14 +51,14 @@ const Button = ({
     
     const hoverRadialGradient = useMemo(() => {
         const edgeColor = backgroundColor.substring(0, 7) + Opacity[50]; 
-        const centerColor = hoverRadialGradientMiddleBackgroundColor.substring(0, 7) + Opacity[50]; 
-        return `radial-gradient(circle farthest-side, ${centerColor}, ${edgeColor})`;
+        const centerColor = hoverRadialGradientMiddleBackgroundColor.substring(0, 7) + Opacity[80]; 
+        return `radial-gradient(circle farthest-side, ${edgeColor}, ${centerColor})`;
     }, [backgroundColor, hoverRadialGradientMiddleBackgroundColor]);
 
     const hoverRadialGradient0Opacity = useMemo(() => {
         const edgeColor = backgroundColor.substring(0, 7) + Opacity[0]; 
         const centerColor = hoverRadialGradientMiddleBackgroundColor.substring(0, 7) + Opacity[0]; 
-        return `radial-gradient(circle farthest-side, ${centerColor}, ${edgeColor})`;
+        return `radial-gradient(circle farthest-side, ${edgeColor}, ${centerColor})`;
     }, [backgroundColor, hoverRadialGradientMiddleBackgroundColor]);
 
     const hoverBackgroundColor = useMemo(() => {

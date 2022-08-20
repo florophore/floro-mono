@@ -9,6 +9,7 @@
     "isolatedModules": true,
     "allowSyntheticDefaultImports": true,
     "jsx": "react-jsx",
+    "jsxImportSource": "@emotion/react",
     "types": ["node"],
     "baseUrl": ".",
     "paths": {
@@ -18,10 +19,12 @@
     "lib": ["ESNext", "dom", "dom.iterable"]
   },
   "include": [
+    "./index.d.ts",
+    "emotion.d.ts",
     "src/**/*.ts",
     "src/**/*.tsx",
     "types/**/*.d.ts",
-    "../../types/**/*.d.ts"
+    "../../types/**/*.d.ts",
   ],
   "exclude": ["**/*.spec.ts", "**/*.test.ts", "**/*.spec.tsx", "**/*.test.tsx"]
 }

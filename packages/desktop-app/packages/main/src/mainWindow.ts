@@ -1,6 +1,10 @@
-import {app, BrowserWindow} from 'electron';
+import {app, BrowserWindow, ipcMain, nativeTheme} from 'electron';
 import {join} from 'path';
 import {URL} from 'url';
+
+const getSystemTheme = (): 'light' | 'dark' => {
+  return nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
+};
 
 async function createWindow() {
   const browserWindow = new BrowserWindow({
@@ -34,6 +38,8 @@ async function createWindow() {
     if (import.meta.env.DEV) {
       browserWindow?.webContents.openDevTools();
     }
+
+    ipcMain.handle('system:getSystemTheme', getSystemTheme);
   });
 
   /**
@@ -60,6 +66,9 @@ export async function restoreOrCreateWindow() {
   if (window === undefined) {
     window = await createWindow();
   }
+  nativeTheme.on('updated', () => {
+    window?.webContents.send('system:themeUpdated', getSystemTheme());
+  });
 
   if (window.isMinimized()) {
     window.restore();
