@@ -47,8 +47,8 @@ export default class AppServer {
             }
         });
 
-        await new Promise<void>(resolve => this.server.listen({ port: 3000 }, resolve));
-        console.log(`🚀 Server ready at http://localhost:3000`);
+        await new Promise<void>(resolve => this.server.listen({ port: 9000 }, resolve));
+        console.log(`🚀 Server ready at http://localhost:9000`);
     }
 
 }

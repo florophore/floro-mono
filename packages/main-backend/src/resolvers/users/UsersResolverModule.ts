@@ -1,5 +1,5 @@
 import BaseResolverModule from "../BaseResolverModule";
-import { main } from '@floro/graphql-schemas' 
+import { main } from '@floro/graphql-schemas'; 
 import { inject, injectable } from "inversify";
 import ContextFactory from '@floro/database/src/contexts/ContextFactory';
 import UsersContext from '@floro/database/src/contexts/UsersContext';
@@ -21,11 +21,11 @@ export default class UsersResolverModule extends BaseResolverModule {
         users: async () => {
             return [];
         },
-        noop: async () => {
-            return false;
-        },
-        sayHiToTom: async () => {
-            return "asdf";
+    };
+
+    public Mutation: main.MutationResolvers<any, {}> = {
+        submitOAuthForAction: async () => {
+            return null;
         }
     };
 }

@@ -25,8 +25,6 @@ function About() {
         <p>
             {'About'}
         </p>
-        <ButtonStory
-        label={'testing'} primary={true} backgroundColor={'red'} size={'large'}        />
         <img src={ReactSVG}/>
         <Link to={'/'}>Go to Home</Link>
     </div>

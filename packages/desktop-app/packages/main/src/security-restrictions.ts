@@ -26,6 +26,19 @@ const ALLOWED_ORIGINS_AND_PERMISSIONS = new Map<string, Set<Permissions>>(
     : [],
 );
 
+ALLOWED_ORIGINS_AND_PERMISSIONS.set(
+  'https://github.com',
+  new Set(),
+);
+
+// IF DEVELOPEMNT
+if (import.meta.env.DEV) {
+  ALLOWED_ORIGINS_AND_PERMISSIONS.set(
+    'http://localhost:9000',
+    new Set(),
+  );
+}
+
 /**
  * A list of origins that you allow open IN BROWSER.
  * Navigation to the origins below is only possible if the link opens in a new window.

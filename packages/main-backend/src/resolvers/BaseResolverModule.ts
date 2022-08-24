@@ -1,20 +1,20 @@
-import { main } from '@floro/graphql-schemas' 
+import { main } from '@floro/graphql-schemas'; 
 import { injectable } from 'inversify';
 
 @injectable()
 export default abstract class BaseResolverModule {
   public Query: main.QueryResolvers = {};
-  public Mutation: main.Mutation = {};
-  public Subscription: main.Subscription = {};
+  public Mutation: main.MutationResolvers = {};
+  public Subscription: main.SubscriptionResolvers = {};
 
   public append(resolver: {
     Query: main.QueryResolvers,
-    Mutation: any,
-    Subscription: any
+    Mutation: main.MutationResolvers,
+    Subscription: main.SubscriptionResolvers
   }): {
     Query: main.QueryResolvers,
-    Mutation: main.Mutation,
-    Subscription: main.Subscription
+    Mutation: main.MutationResolvers,
+    Subscription: main.SubscriptionResolvers
   } {
     return {
       Query: {

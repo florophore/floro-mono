@@ -1,5 +1,6 @@
 import Home from './pages/Home';
 import About from './pages/About';
+import OAuthCallback from './pages/OAuthCallback';
 
 const Routing = [
   {
@@ -9,6 +10,10 @@ const Routing = [
   {
     path: "/about",
     component: () => About,
+  },
+  {
+    path: "/oauth/:provider/callback",
+    component: () => OAuthCallback,
   },
 ];
 

@@ -1,13 +1,18 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import styled from '@emotion/styled';
 import { css } from '@emotion/css';
 import FloroLogoWithText from '../../assets/images/floro_logo_with_text.svg';
 import BackButtonDark from '../../assets/images/icons/back_arrow.dark.svg';
 import BackButtonLight from '../../assets/images/icons/back_arrow.light.svg';
+import GoogleIcon from '../../assets/images/icons/google_icon.svg';
+import GithubIcon from '../../assets/images/icons/github_white_bg.svg';
 import Button from '@floro/storybook/stories/Button/index';
+import GithubButton from '@floro/storybook/stories/GithubButton/index';
+import GoogleButton from '@floro/storybook/stories/GoogleButton/index';
 import { createSearchParams, useSearchParams } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
+import { useSystemAPI } from '../contexts/SystemAPIContext';
 
 const Background = styled.div`
     background-color: ${props => props.theme.background};
@@ -43,6 +48,10 @@ const AnimationWrapper = styled.div`
     position: relative;
     width: 100%;
     min-height: 240px;
+`;
+
+const ButtonSpacer = styled.div`
+  width: 64px;
 `;
 
 const ButtonWrapper = styled.div`
@@ -82,6 +91,7 @@ const LoggedOutPage = ({isOpen}: Props) => {
     const [searchParams, setSearchParams] = useSearchParams();
     const pageAction = searchParams.get('pageAction');
     const themeName = useTheme().name;
+    const systemAPI = useSystemAPI();
 
     const BackButtonIcon = useMemo(() => {
         if (themeName == 'light') {
@@ -106,6 +116,10 @@ const LoggedOutPage = ({isOpen}: Props) => {
 
         setSearchParams(createSearchParams({}));
     }, [setSearchParams]);
+
+    const onOpenGithub = useCallback(async () => {
+      systemAPI?.openOAuthWindow('github');
+    }, [systemAPI]);
 
     const actionLeftPosition = useMemo(() => {
         if (pageAction == 'sign_up') {
@@ -147,13 +161,70 @@ const LoggedOutPage = ({isOpen}: Props) => {
                   flex-direction: row;
                 `}
               >
-                <ButtonWrapper style={{background: 'blue'}}></ButtonWrapper>
-                <ButtonWrapper style={{}}>
-                  <Button bg={'orange'} label={'sign in'} onClick={onGoToSignInCB} />
-                  <div style={{width: 64}} />
-                  <Button bg={'teal'} label={'sign up'} onClick={onGoToSignUpCB} />
+                <ButtonWrapper>
+                  <div className={css`
+                    display: flex;
+                    flex-direction: column;
+                    flex: 1;
+                    justify-content: center;
+                    width: '100%;
+                  `}>
+                    <div className={css`
+                      display: flex;
+                      flex-direction: row;
+                      flex: 1;
+                      justify-content: center;
+                    `}>
+                      <GithubButton label={'Sign in with Github'} githubAsset={GithubIcon}/>
+                      <ButtonSpacer/>
+                      <GoogleButton label={'Sign in with Google'} googleAsset={GoogleIcon}/>
+                    </div>
+                    <div className={css`
+                      margin-top: 36px;
+                      display: flex;
+                      flex-direction: row;
+                      flex: 1;
+                      justify-content: center;
+                      align-items: center;
+                    `}>
+                      <Button label={'Sign in with email'} bg={'orange'}/>
+                    </div>
+                  </div>
                 </ButtonWrapper>
-                <ButtonWrapper style={{background: 'green'}}></ButtonWrapper>
+                <ButtonWrapper>
+                  <Button bg={'orange'} label={'Sign in'} onClick={onGoToSignInCB} />
+                  <ButtonSpacer/>
+                  <Button bg={'teal'} label={'Sign up'} onClick={onGoToSignUpCB} />
+                </ButtonWrapper>
+                <ButtonWrapper>
+                  <div className={css`
+                    display: flex;
+                    flex-direction: column;
+                    flex: 1;
+                    justify-content: center;
+                  `}>
+                    <div className={css`
+                      display: flex;
+                      flex-direction: row;
+                      flex: 1;
+                      justify-content: center;
+                    `}>
+                      <GithubButton onClick={onOpenGithub} label={'Sign up with Github'} githubAsset={GithubIcon}/>
+                      <ButtonSpacer/>
+                      <GoogleButton label={'Sign up with Google'} googleAsset={GoogleIcon}/>
+                    </div>
+                    <div className={css`
+                      margin-top: 36px;
+                      display: flex;
+                      flex-direction: row;
+                      flex: 1;
+                      justify-content: center;
+                      align-items: center;
+                    `}>
+                      <Button label={'Sign up with email'} bg={'teal'}/>
+                    </div>
+                  </div>
+                </ButtonWrapper>
               </motion.div>
             </AnimationWrapper>
             <BackButton

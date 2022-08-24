@@ -11,8 +11,11 @@ contextBridge.exposeInMainWorld('systemAPI', {
     getSystemTheme: () => ipcRenderer.invoke('system:getSystemTheme'),
     subscribeToSystemThemeChange: (cb: (t: 'dark'|'light') => void) => {
         ipcRenderer.on('system:themeUpdated', (_, theme: 'dark'|'light') => {
-            console.log("UMMM", theme);
             cb(theme);
         });
+    },
+    // OAuth API
+    openOAuthWindow: (provider: string) => {
+        ipcRenderer.send('system:openOAuthWindow', provider);
     },
 });

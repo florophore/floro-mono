@@ -1,6 +1,6 @@
 import { inject, injectable, multiInject } from "inversify";
 import BaseResolverModule from "./resolvers/BaseResolverModule";
-import { main } from '@floro/graphql-schemas' 
+import { main } from '@floro/graphql-schemas'; 
 import { Server } from 'http';
 import { mainSchema as typeDefs } from "@floro/graphql-schemas";
 import { ApolloServer } from "apollo-server-express";

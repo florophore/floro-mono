@@ -1,0 +1,53 @@
+"""
+Allows us to suggest account clustering if oauth-email matches email credential etc.
+
+"""
+type SimilarCredentials {
+    credentialId: String
+    credentialType: String
+    relatedProperty: String
+    hasTwoFactorAttached: Boolean
+}
+
+type UnsavedUser {
+    username: String
+    email: String
+    firstName: String
+    lastName: String
+}
+
+type PassedLoginAction {
+    oauthProvider: String
+    user: User 
+    authorizationToken: String
+    authorizationExpiration: String
+}
+
+type ContinueToTwoFactorAction {
+    twoFactorToken: String
+    twoFactorExpiration: String
+}
+
+type CompleteSignupAction {
+    OAuthId: String 
+    provider: String
+    unsavedUser: UnsavedUser
+    similarCredentials: [SimilarCredentials]
+}
+
+type ContinueToCaptchaAction {
+    captchaToken: String
+    captchaTokenExpiration: String
+}
+
+type AccountBlockedAction {
+    blockId: ID!
+    message: String
+}
+
+union OAuthAction = PassedLoginAction | CompleteSignupAction | ContinueToTwoFactorAction | ContinueToCaptchaAction | AccountBlockedAction 
+
+type OAuthAuthentication {
+    type: String
+    action: OAuthAction
+}
