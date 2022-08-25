@@ -1,8 +1,0 @@
-node_modules
-# Keep environment variables out of version control
-.env
-yarn-error.log
-build/
-coverage/
-node_modules/
-tsconfig.tsbuildinfo

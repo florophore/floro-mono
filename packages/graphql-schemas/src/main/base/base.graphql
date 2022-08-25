@@ -1,0 +1,15 @@
+scalar DateTime
+scalar EmailAddress
+scalar UUID
+
+type Query {
+    noop: Boolean
+}
+
+type Mutation {
+    noop: Boolean
+}
+
+type Subscription {
+    noop: Boolean
+}

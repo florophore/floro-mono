@@ -3,7 +3,7 @@ Allows us to suggest account clustering if oauth-email matches email credential 
 
 """
 type SimilarCredentials {
-    credentialId: String
+    credentialId: UUID
     credentialType: String
     relatedProperty: String
     hasTwoFactorAttached: Boolean
@@ -11,7 +11,7 @@ type SimilarCredentials {
 
 type UnsavedUser {
     username: String
-    email: String
+    email: EmailAddress
     firstName: String
     lastName: String
 }
@@ -20,12 +20,12 @@ type PassedLoginAction {
     oauthProvider: String
     user: User 
     authorizationToken: String
-    authorizationExpiration: String
+    authorizationExpiration: DateTime
 }
 
 type ContinueToTwoFactorAction {
     twoFactorToken: String
-    twoFactorExpiration: String
+    twoFactorExpiration: DateTime
 }
 
 type CompleteSignupAction {
@@ -37,7 +37,7 @@ type CompleteSignupAction {
 
 type ContinueToCaptchaAction {
     captchaToken: String
-    captchaTokenExpiration: String
+    captchaTokenExpiration: DateTime
 }
 
 type AccountBlockedAction {
