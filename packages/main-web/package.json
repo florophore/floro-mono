@@ -21,11 +21,14 @@
     "apollo-server": "^3.10.1",
     "apollo-server-express": "^3.10.1",
     "inversify": "^6.0.1",
+    "isomorphic-fetch": "^3.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.3.0",
     "reflect-metadata": "^0.1.13",
-    "ts-node": "^10.9.1"
+    "sinon": "^14.0.0",
+    "ts-node": "^10.9.1",
+    "whatwg-fetch": "^3.6.2"
   },
   "devDependencies": {
     "@types/react": "^18.0.15",

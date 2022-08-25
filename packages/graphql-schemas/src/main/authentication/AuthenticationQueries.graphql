@@ -1,0 +1,3 @@
+extend type Mutation {
+    submitOAuthForAction(code: String): OAuthAuthentication
+}

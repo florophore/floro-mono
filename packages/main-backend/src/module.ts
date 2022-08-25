@@ -1,9 +1,10 @@
 import { ContainerModule  } from 'inversify';
-import BaseResolverModule from "./resolvers/BaseResolverModule";
 import UsersResolverModule from "./resolvers/users/UsersResolverModule";
 import Backend from "./Backend";
+import GithubLoginClient from './thirdpartyclients/github/GithubLoginClient';
 
 export default new ContainerModule((bind): void => {
-    bind(BaseResolverModule).to(UsersResolverModule);
+    bind("ResolverModule").to(UsersResolverModule);
     bind(Backend).toSelf();
+    bind(GithubLoginClient).toSelf();
 });

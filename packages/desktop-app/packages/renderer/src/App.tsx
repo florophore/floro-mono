@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { ThemeProvider } from "@emotion/react";
-import { BrowserRouter } from "react-router-dom";
+import { ThemeProvider } from '@emotion/react';
+import { BrowserRouter } from 'react-router-dom';
 import { DarkTheme, LightTheme } from '@floro/styles/ColorThemes';
 import Router from './Router';
+import { SystemAPIProvider } from './contexts/SystemAPIContext';
 
 
-const App = (): React.ReactElement => {
+interface Props {
+  systemAPI: SystemAPI;
+}
+
+const App = (props: Props): React.ReactElement => {
   const [colorTheme, setColorTheme] = useState(DarkTheme);
   useEffect(() => {
     (async () => {
@@ -30,11 +35,13 @@ const App = (): React.ReactElement => {
   }, []);
 
   return (
-    <ThemeProvider theme={colorTheme}>
-      <BrowserRouter>
-        <Router />
-      </BrowserRouter>
-    </ThemeProvider>
+    <SystemAPIProvider systemAPI={props.systemAPI}>
+      <ThemeProvider theme={colorTheme}>
+        <BrowserRouter>
+          <Router />
+        </BrowserRouter>
+      </ThemeProvider>
+    </SystemAPIProvider>
   );
 };
 export default App;

@@ -15,7 +15,8 @@
         ]
     },
     "include": [
-        "src"
+        "src",
+        "json.d.ts"
     ],
     "exclude": [
         "node_modules",

@@ -7,8 +7,11 @@ const root = createRoot(
   (document.getElementById('app') as Element),
 );
 
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-);
+(async () => {
+  const systemAPI = await window.systemAPI;
+  root.render(
+    <React.StrictMode>
+      <App systemAPI={systemAPI} />
+    </React.StrictMode>,
+  );
+})();

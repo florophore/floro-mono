@@ -1,10 +1,11 @@
-import {app, BrowserWindow, ipcMain, nativeTheme} from 'electron';
+import {app, BrowserWindow, ipcMain, ipcRenderer, MessageChannelMain, nativeTheme} from 'electron';
 import {join} from 'path';
 import {URL} from 'url';
 
 const getSystemTheme = (): 'light' | 'dark' => {
   return nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
 };
+
 
 async function createWindow() {
   const browserWindow = new BrowserWindow({
@@ -40,6 +41,40 @@ async function createWindow() {
     }
 
     ipcMain.handle('system:getSystemTheme', getSystemTheme);
+    ipcMain.on('system:openOAuthWindow', async () => {
+      const oauthWindow = new BrowserWindow({
+        show: true, // Use the 'ready-to-show' event to show the instantiated BrowserWindow.
+        titleBarStyle: 'hidden',
+        titleBarOverlay: true,
+        parent: browserWindow,
+        modal: true,
+        height: 800,
+        width: 600,
+        resizable: false,
+        roundedCorners: true,
+        webPreferences: {
+          nodeIntegration: false,
+          contextIsolation: true,
+          sandbox: false,
+          webviewTag: false,
+          preload: join(app.getAppPath(), 'packages/oauth/dist/index.cjs'),
+        },
+      });
+
+      oauthWindow.loadURL('https://github.com/login/oauth/authorize?client_id=12fae6e8606646fc8d7f&scope=user');
+      oauthWindow.once('ready-to-show', () => {
+        oauthWindow?.show();
+        //if (import.meta.env.DEV) {
+        //  oauthWindow?.webContents.openDevTools();
+        //}
+      });
+      ipcMain.once('oauth:sendOAuthResult', (event, ...args) => {
+        console.log(event.sender.getURL(), args);
+        oauthWindow.close();
+        oauthWindow.destroy();
+
+      });
+    });
   });
 
   /**
