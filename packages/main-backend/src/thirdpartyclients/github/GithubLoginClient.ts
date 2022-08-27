@@ -4,7 +4,7 @@ import { deserialize } from "@dhkatz/json-ts";
 import FormData from 'form-data';
 import GithubAccessToken from "./schemas/GithubAccessToken";
 import GithubAccessTokenError from "./schemas/GithubAccessTokenError";
-import GithubApiError from "./schemas/GithubApiError";
+import GithubAPIError from "./schemas/GithubAPIError";
 import GithubUser from "./schemas/GithubUser";
 import GithubEmail from "./schemas/GithubEmail";
 
@@ -54,7 +54,7 @@ export default class GithubLoginClient {
         }
     }
 
-    public async getGithubUser(accessToken?: string): Promise<GithubUser|GithubApiError|Error> {
+    public async getGithubUser(accessToken?: string): Promise<GithubUser|GithubAPIError|Error> {
         if (!accessToken) {
             throw new Error('missing access token');
         }
@@ -73,7 +73,7 @@ export default class GithubLoginClient {
             }
             const json = await response.json();
             if (!!json['message']) {
-                return deserialize(GithubApiError, json);
+                return deserialize(GithubAPIError, json);
             }
             return deserialize(GithubUser, json);
 
@@ -82,7 +82,7 @@ export default class GithubLoginClient {
         }
     }
 
-    public async getGithubUserEmails(accessToken?: string): Promise<Array<GithubEmail>|GithubApiError|Error> {
+    public async getGithubUserEmails(accessToken?: string): Promise<Array<GithubEmail>|GithubAPIError|Error> {
         if (!accessToken) {
             throw new Error('missing access token');
         }
@@ -101,7 +101,7 @@ export default class GithubLoginClient {
             }
             const json = await response.json();
             if (!!json['message']) {
-                return deserialize(GithubApiError, json);
+                return deserialize(GithubAPIError, json);
             }
             return json.map(email => deserialize(GithubEmail, email));
 

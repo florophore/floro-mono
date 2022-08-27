@@ -6,7 +6,7 @@ import GithubAccessToken from '../../../thirdpartyclients/github/schemas/GithubA
 import GithubAccessTokenError from '../../../thirdpartyclients/github/schemas/GithubAccessTokenError';
 import GithubUser from '../../../thirdpartyclients/github/schemas/GithubUser';
 import GithubPlan from '../../../thirdpartyclients/github/schemas/GithubPlan';
-import GithubApiError from '../../../thirdpartyclients/github/schemas/GithubApiError';
+import GithubAPIError from '../../../thirdpartyclients/github/schemas/GithubAPIError';
 import GithubEmail from '../../../thirdpartyclients/github/schemas/GithubEmail';
 import { createRequire } from "module";
 
@@ -78,8 +78,8 @@ describe('GithubLoginClient', () => {
               .matchHeader("Authorization", "token bad")
               .get("/user")
               .reply(401, JSON.stringify(GithubApiErrorMock));
-            const response = await githubLoginClient.getGithubUser("bad") as GithubApiError;
-            expect(response).to.be.instanceOf(GithubApiError);
+            const response = await githubLoginClient.getGithubUser("bad") as GithubAPIError;
+            expect(response).to.be.instanceOf(GithubAPIError);
             scope.done();
         });
 
@@ -110,15 +110,15 @@ describe('GithubLoginClient', () => {
             scope.done();
         });
 
-        it('returns a GithubApiError if access token is bad', async () => {
+        it('returns a GithubAPIError if access token is bad', async () => {
             const scope = nock("https://api.github.com")
               .matchHeader("Authorization", "token bad")
               .get("/user/emails")
               .reply(401, JSON.stringify(GithubApiErrorMock));
             const response = (await githubLoginClient.getGithubUserEmails(
               "bad"
-            )) as GithubApiError;
-            expect(response).to.be.instanceOf(GithubApiError);
+            )) as GithubAPIError;
+            expect(response).to.be.instanceOf(GithubAPIError);
             scope.done();
         });
 

@@ -2632,6 +2632,13 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
+"@layered/dns-records@^1.5.0":
+  "integrity" "sha512-Y6MVMzWpO4R2ZxdXwH59hLcIhxk83SKJFIm7Nad4jqBjR7HyEB0AmKl5RszrhsnapVX8L7JXxOEqNmcEdTRhPA=="
+  "resolved" "https://registry.npmjs.org/@layered/dns-records/-/dns-records-1.5.0.tgz"
+  "version" "1.5.0"
+  dependencies:
+    "punycode" "^2.1.1"
+
 "@lerna/add@4.0.0":
   "integrity" "sha512-cpmAH1iS3k8JBxNvnMqrGTTjbY/ZAiKa1ChJzFevMYY3eeqbvhsBKnBcxjRXtdrJ6bd3dCQM+ZtK+0i682Fhng=="
   "resolved" "https://registry.npmjs.org/@lerna/add/-/add-4.0.0.tgz"

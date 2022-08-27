@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import styled from '@emotion/styled';
 import { css } from '@emotion/css';
@@ -121,6 +121,10 @@ const LoggedOutPage = ({isOpen}: Props) => {
       systemAPI?.openOAuthWindow('github');
     }, [systemAPI]);
 
+    const onOpenGoogle = useCallback(async () => {
+      systemAPI?.openOAuthWindow('google');
+    }, [systemAPI]);
+
     const actionLeftPosition = useMemo(() => {
         if (pageAction == 'sign_up') {
             return '-200%';
@@ -211,7 +215,7 @@ const LoggedOutPage = ({isOpen}: Props) => {
                     `}>
                       <GithubButton onClick={onOpenGithub} label={'Sign up with Github'} githubAsset={GithubIcon}/>
                       <ButtonSpacer/>
-                      <GoogleButton label={'Sign up with Google'} googleAsset={GoogleIcon}/>
+                      <GoogleButton onClick={onOpenGoogle} label={'Sign up with Google'} googleAsset={GoogleIcon}/>
                     </div>
                     <div className={css`
                       margin-top: 36px;

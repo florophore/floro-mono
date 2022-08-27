@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useSearchParams } from 'react-router-dom';
+import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useTheme } from '@emotion/react';
 import FloroIcon from '../assets/images/floro_logo.svg';
@@ -26,6 +26,7 @@ const  FloroImage = styled.img`
 
 function OAuthCallback() {
 
+    const params = useParams();
     const [searchParams] = useSearchParams();
     const error = searchParams.get('error');
     const code = searchParams.get('code');
@@ -34,16 +35,16 @@ function OAuthCallback() {
       const timeout = setTimeout(() => {
         if (window?.OAuthAPI?.isDesktopApp) {
           if (error) {
-            window.OAuthAPI.sendResult(false, 'github');
+            window.OAuthAPI.sendResult(false, params?.provider);
           } else {
-            window.OAuthAPI.sendResult(true, 'github', code);
+            window.OAuthAPI.sendResult(true, params?.provider, code);
           }
         }
       }, 1000);
       return () => {
         clearTimeout(timeout);
       }
-    }, [error, code]);
+    }, [error, code, params.provider]);
 
     return (
       <BackgroundWrapper>

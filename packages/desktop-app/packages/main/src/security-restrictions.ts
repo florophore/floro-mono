@@ -29,6 +29,9 @@ const ALLOWED_ORIGINS_AND_PERMISSIONS = new Map<string, Set<Permissions>>(
 ALLOWED_ORIGINS_AND_PERMISSIONS.set(
   'https://github.com',
   new Set(),
+).set(
+  'https://accounts.google.com',
+  new Set(),
 );
 
 // IF DEVELOPEMNT

@@ -1,6 +1,6 @@
 import { JsonProperty } from '@dhkatz/json-ts';
 
-export default class GithubApiError {
+export default class GithubAPIError {
 
     @JsonProperty("message")
     public message?: string;

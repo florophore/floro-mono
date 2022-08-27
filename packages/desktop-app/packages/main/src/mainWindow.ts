@@ -1,4 +1,4 @@
-import {app, BrowserWindow, ipcMain, ipcRenderer, MessageChannelMain, nativeTheme} from 'electron';
+import {app, BrowserWindow, ipcMain, nativeTheme} from 'electron';
 import {join} from 'path';
 import {URL} from 'url';
 
@@ -41,7 +41,7 @@ async function createWindow() {
     }
 
     ipcMain.handle('system:getSystemTheme', getSystemTheme);
-    ipcMain.on('system:openOAuthWindow', async () => {
+    ipcMain.on('system:openOAuthWindow', async (_, provider) => {
       const oauthWindow = new BrowserWindow({
         show: true, // Use the 'ready-to-show' event to show the instantiated BrowserWindow.
         titleBarStyle: 'hidden',
@@ -61,12 +61,17 @@ async function createWindow() {
         },
       });
 
-      oauthWindow.loadURL('https://github.com/login/oauth/authorize?client_id=12fae6e8606646fc8d7f&scope=user');
+      if (provider == 'github') {
+        oauthWindow.loadURL('https://github.com/login/oauth/authorize?client_id=12fae6e8606646fc8d7f&scope=user');
+      }
+      if (provider == 'google') {
+        oauthWindow.loadURL('https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A//www.googleapis.com/auth/userinfo.email%20https://www.googleapis.com/auth/userinfo.profile&include_granted_scopes=true&response_type=code&redirect_uri=http%3A//localhost:9000/oauth/google/callback&client_id=417722275204-e8n6h2vqcgnbnj7uuj3p561ij5sqn3tg.apps.googleusercontent.com');
+      }
       oauthWindow.once('ready-to-show', () => {
         oauthWindow?.show();
-        //if (import.meta.env.DEV) {
-        //  oauthWindow?.webContents.openDevTools();
-        //}
+        if (import.meta.env.DEV) {
+          oauthWindow?.webContents.openDevTools();
+        }
       });
       ipcMain.once('oauth:sendOAuthResult', (event, ...args) => {
         console.log(event.sender.getURL(), args);
@@ -76,6 +81,10 @@ async function createWindow() {
       });
     });
   });
+  /***
+   * 
+   * https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A//www.googleapis.com/auth/userinfo.email%20https://www.googleapis.com/auth/userinfo.profile&include_granted_scopes=true&response_type=code&redirect_uri=http%3A//localhost:9000/oauth/google/callback&client_id=417722275204-e8n6h2vqcgnbnj7uuj3p561ij5sqn3tg.apps.googleusercontent.com
+   */
 
   /**
    * URL for main window.
