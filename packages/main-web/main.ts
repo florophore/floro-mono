@@ -7,6 +7,8 @@ import { Container } from "inversify";
 
 import BackendModule from '@floro/main-backend/src/module';
 import DBModule from "@floro/database/src/module";
+import RedisModule from "@floro/redis/src/module";
+import MailerModule from "@floro/mailer/src/module";
 import WebModule from './server/module';
 import AppServer from './server/AppServer'
 
@@ -24,6 +26,8 @@ const container: Container = new Container({
 
 container.load(
   DBModule,
+  RedisModule,
+  MailerModule,
   BackendModule,
   WebModule
 );

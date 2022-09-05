@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation } from 'react-router-dom';
 import LoadingPage from './loader/LoadingPage';
 import LoggedOutPage from './loggedout/LoggedOutPage';
 import {AnimatePresence} from 'framer-motion';

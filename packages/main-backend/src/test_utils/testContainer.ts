@@ -6,6 +6,7 @@ import http, { Server } from 'http';
 
 import BackendModule from '../module';
 import DBModule from "@floro/database/src/module";
+import RedisModule from "@floro/redis/src/module";
 
 const container: Container = new Container({
     autoBindInjectable: true,
@@ -19,6 +20,6 @@ const downstreamDependencies =  new ContainerModule((bind): void => {
     bind(Server).toConstantValue(httpServer);
 });
 
-container.load(DBModule, downstreamDependencies, BackendModule);
+container.load(DBModule, RedisModule, downstreamDependencies, BackendModule);
 
 export default container;

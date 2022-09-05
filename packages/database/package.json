@@ -12,7 +12,7 @@
     "lint": "eslint --ext .ts,.tsx .",
     "test": "NODE_ENV=test node node_modules/.bin/mocha src/**/*.spec.ts",
     "test:inspect": "NODE_ENV=test node node_modules/.bin/mocha inspect src/**/*.spec.ts",
-    "typeorm": "npx typeorm-ts-node-commonjs --dataSource src/datasource.ts",
+    "typeorm": "npx typeorm-ts-node-esm --dataSource src/datasource.ts",
     "typeorm:migrate": "yarn typeorm migration:run",
     "typeorm:generate": "yarn typeorm migration:generate src/migrations/$NAME --timestamp",
     "typeorm:revert": "yarn typeorm migration:revert"

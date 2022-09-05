@@ -6,7 +6,7 @@ export default class GoogleUser {
     public id?: string;
 
     @JsonProperty("email")
-    public email?: number;
+    public email?: string;
 
     @JsonProperty("verified_email")
     public verifiedEmail?: boolean;

@@ -1,19 +1,18 @@
-import DatabaseConnectionFactory from '../../connection/DatabaseConnectionFactory';
+import RedisClient from '../../RedisClient';
 import container from './testContainer'
 
-global.dbFactory = container.get(DatabaseConnectionFactory);
+const redisClient = container.get(RedisClient);
 
-export const dbBeforeEach = async (): Promise<void> => {
-    const dbConn = await global.dbFactory.create();
-    await dbConn.open();
-    await dbConn.migrate();
+export const redisBeforeEach = async (): Promise<void> => {
+    if (!redisClient.connectionExists()) {
+        await redisClient.startRedis();
+    }
 } ;
 
-export const dbAfterEach = async (): Promise<void> => {
-    const dbConn = await global.dbFactory.create();
-    await dbConn.close();
-} ;
+export const redisAfterEach = async (): Promise<void> => {
+    await redisClient.redis?.flushdb();
+};
 
-global.beforeEach(dbBeforeEach);
+global.beforeEach(redisBeforeEach);
 
-global.afterEach(dbAfterEach);
+global.afterEach(redisAfterEach);

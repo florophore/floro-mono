@@ -9,25 +9,55 @@ import {
     ApolloServerPluginDrainHttpServer,
     ApolloServerPluginLandingPageLocalDefault,
   } from 'apollo-server-core';
+import DatabaseConnection from "@floro/database/src/connection/DatabaseConnection";
+import ContextFactory from "@floro/database/src/contexts/ContextFactory";
+import RedisClient from "@floro/redis/src/RedisClient";
+import MailerClient from "@floro/mailer/src/MailerClient";
 
 @injectable()
 export default class Backend {
 
     private resolverModules: BaseResolverModule[];
     private httpServer: Server;
+    private databaseConnection!: DatabaseConnection;
+    private redisClient!: RedisClient;
+    private mailerClient!: MailerClient;
+    private contextFactory!: ContextFactory;
 
     constructor(
         @multiInject("ResolverModule") resolverModules: BaseResolverModule[],
+        @inject(DatabaseConnection) databaseConnection: DatabaseConnection,
+        @inject(RedisClient) redisClient: RedisClient,
+        @inject(MailerClient) mailerClient: MailerClient,
+        @inject(ContextFactory) contextFactory: ContextFactory,
         @inject(Server) httpServer: Server
     ) {
         this.resolverModules = resolverModules;
         this.httpServer = httpServer;
+        this.databaseConnection = databaseConnection;
+        this.redisClient = redisClient;
+        this.mailerClient = mailerClient;
+        this.contextFactory = contextFactory;
     }
 
     public mergeResolvers(): Partial<main.ResolversTypes> {
         return this.resolverModules.reduce((resolvers, resolverModule) => {
             return resolverModule.append(resolvers);
         }, {});
+    }
+
+    public async startDatabase(): Promise<void> {
+        await this.databaseConnection.open();
+        await this.databaseConnection.migrate();
+        await this.contextFactory.warmQueryRunnerConnection();
+    }
+
+    public startRedis(): void {
+        this.redisClient.startRedis();
+    }
+
+    public async startMailer(): Promise<void> {
+        await this.mailerClient.startMailTransporter();
     }
 
     public buildApolloServer(): ApolloServer {

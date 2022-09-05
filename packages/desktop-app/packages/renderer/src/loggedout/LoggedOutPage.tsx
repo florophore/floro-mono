@@ -15,53 +15,54 @@ import { useTheme } from '@emotion/react';
 import { useSystemAPI } from '../contexts/SystemAPIContext';
 
 const Background = styled.div`
-    background-color: ${props => props.theme.background};
-    flex: 1;
-    height: 100%;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    user-select: none;
+  background-color: ${props => props.theme.background};
+  flex: 1;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
 `;
+
 const MainWrapper = styled.div`
-    display: flex;
-    height: 100%;
-    min-height: 675px;
-    max-height: 900px;
-    width: 100%;
-    max-width: 1600px;
-    min-width: 900px;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    position: relative;
+  display: flex;
+  height: 100%;
+  min-height: 675px;
+  max-height: 900px;
+  width: 100%;
+  max-width: 1600px;
+  min-width: 900px;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  position: relative;
 `;
 
 const LogoImage = styled.img`
-    width: 300px;
+  width: 300px;
 `;
 
 const AnimationWrapper = styled.div`
-    max-width: 100vw;
-    overflow-x: hidden;
-    position: relative;
-    width: 100%;
-    min-height: 240px;
+  max-width: 100vw;
+  overflow-x: hidden;
+  position: relative;
+  width: 100%;
+  min-height: 240px;
 `;
 
 const ButtonSpacer = styled.div`
   width: 64px;
 `;
 
-const ButtonWrapper = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 240px;
-    width: 100vw;
-    max-width: 1600px;
-    padding: 36px 0;
+const PaneWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 240px;
+  width: 100vw;
+  max-width: 1600px;
+  padding: 36px 0;
 `;
 
 const BackButton = styled.img`
@@ -71,6 +72,30 @@ const BackButton = styled.img`
   position: absolute;
   height: 36px;
   width: 36px;
+`;
+
+const Pane = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: center;
+  width: '100%;
+`;
+
+const PaneRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  justify-content: center;
+`;
+
+const PaneBottomButtonWrapper = styled.div`
+  margin-top: 36px;
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
 `;
 
 
@@ -165,70 +190,35 @@ const LoggedOutPage = ({isOpen}: Props) => {
                   flex-direction: row;
                 `}
               >
-                <ButtonWrapper>
-                  <div className={css`
-                    display: flex;
-                    flex-direction: column;
-                    flex: 1;
-                    justify-content: center;
-                    width: '100%;
-                  `}>
-                    <div className={css`
-                      display: flex;
-                      flex-direction: row;
-                      flex: 1;
-                      justify-content: center;
-                    `}>
-                      <GithubButton label={'Sign in with Github'} githubAsset={GithubIcon}/>
+                <PaneWrapper>
+                  <Pane>
+                    <PaneRow>
+                      <GithubButton onClick={onOpenGithub} label={'Sign in with Github'} githubAsset={GithubIcon}/>
                       <ButtonSpacer/>
-                      <GoogleButton label={'Sign in with Google'} googleAsset={GoogleIcon}/>
-                    </div>
-                    <div className={css`
-                      margin-top: 36px;
-                      display: flex;
-                      flex-direction: row;
-                      flex: 1;
-                      justify-content: center;
-                      align-items: center;
-                    `}>
+                      <GoogleButton onClick={onOpenGoogle} label={'Sign in with Google'} googleAsset={GoogleIcon}/>
+                    </PaneRow>
+                    <PaneBottomButtonWrapper>
                       <Button label={'Sign in with email'} bg={'orange'}/>
-                    </div>
-                  </div>
-                </ButtonWrapper>
-                <ButtonWrapper>
+                    </PaneBottomButtonWrapper>
+                  </Pane>
+                </PaneWrapper>
+                <PaneWrapper>
                   <Button bg={'orange'} label={'Sign in'} onClick={onGoToSignInCB} />
                   <ButtonSpacer/>
                   <Button bg={'teal'} label={'Sign up'} onClick={onGoToSignUpCB} />
-                </ButtonWrapper>
-                <ButtonWrapper>
-                  <div className={css`
-                    display: flex;
-                    flex-direction: column;
-                    flex: 1;
-                    justify-content: center;
-                  `}>
-                    <div className={css`
-                      display: flex;
-                      flex-direction: row;
-                      flex: 1;
-                      justify-content: center;
-                    `}>
+                </PaneWrapper>
+                <PaneWrapper>
+                  <Pane>
+                    <PaneRow>
                       <GithubButton onClick={onOpenGithub} label={'Sign up with Github'} githubAsset={GithubIcon}/>
                       <ButtonSpacer/>
                       <GoogleButton onClick={onOpenGoogle} label={'Sign up with Google'} googleAsset={GoogleIcon}/>
-                    </div>
-                    <div className={css`
-                      margin-top: 36px;
-                      display: flex;
-                      flex-direction: row;
-                      flex: 1;
-                      justify-content: center;
-                      align-items: center;
-                    `}>
+                    </PaneRow>
+                    <PaneBottomButtonWrapper>
                       <Button label={'Sign up with email'} bg={'teal'}/>
-                    </div>
-                  </div>
-                </ButtonWrapper>
+                    </PaneBottomButtonWrapper>
+                  </Pane>
+                </PaneWrapper>
               </motion.div>
             </AnimationWrapper>
             <BackButton
