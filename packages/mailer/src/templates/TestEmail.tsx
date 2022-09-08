@@ -8,14 +8,16 @@ import {
     MjmlSection,
     MjmlColumn,
     MjmlButton,
-    MjmlImage
+    MjmlImage,
+    MjmlText
   } from 'mjml-react';
 
 interface Props {
   title: string;
+  anotherThing: number;
 }
 
-const TestEmail = (props: Props) => {
+const TestEmail = (props: Props): React.ReactElement => {
   return (
     <Mjml>
       <MjmlHead>
@@ -37,6 +39,9 @@ const TestEmail = (props: Props) => {
             >
               {props?.title}
             </MjmlButton>
+            <MjmlText>
+              {"here is the number " + props?.anotherThing}
+            </MjmlText>
           </MjmlColumn>
         </MjmlSection>
       </MjmlBody>
@@ -45,11 +50,13 @@ const TestEmail = (props: Props) => {
 };
 
 export const mock: Props = {
-  title: "mocks working!",
+  title: "Mock Title!",
+  anotherThing: 789
 }
 
 export const altTitleMock: Props = {
-  title: "alt mocks work too!",
+  title: "Alt Mock Title",
+  anotherThing: 456
 }
 
 export default TestEmail;

@@ -1,0 +1,6 @@
+entity: UserServiceAgreement
+items:
+  user_service_agreement_0:
+    user: '@user_0'
+    agreedToTos: true
+    agreedToPrivacyPolicy: true

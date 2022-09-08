@@ -6,7 +6,7 @@
         "isolatedModules": false,
         "esModuleInterop": true,
         "composite": true,
-        "module": "CommonJS",
+        "module": "ESNext",
         "target": "ESNext",
         "moduleResolution": "Node",
         "rootDir": "src",

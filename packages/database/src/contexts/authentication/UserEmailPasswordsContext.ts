@@ -27,10 +27,10 @@ export default class UserEmailPasswordsContext extends BaseContext {
     const userEmailPassword = this.userEmailPasswordRepo.create({
       userId: user?.id,
       userAuthCredentialId: userAuthCredential?.id,
-      password,
       lastHash: currentEmailPassword?.hash,
       isCurrent: true,
     });
+    userEmailPassword.password = password;
     return await this.queryRunner.manager.save(
       UserEmailPassword,
       userEmailPassword

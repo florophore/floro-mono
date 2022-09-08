@@ -9,7 +9,7 @@ export default class PasswordHelper {
         const hash = createHash('sha256');
         // userId acts as our unique salt, preventing rainbow table attacks
         // PW STATIC SALT prevents dictionary testing without having the env var value 
-        // e.g. in case of db dump, data is useless without the PW_STATIC_SALT
+        // e.g. in case of db dump, data is useless for dt without the PW_STATIC_SALT
         hash.update(userId + ":" + password + ":" + PW_STATIC_SALT);
         return hash.digest('base64');
     }

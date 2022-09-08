@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-      "jsx": "react",
+      "jsx": "react-jsx",
       "composite": true,
       "module": "ESNext",
       "moduleResolution": "Node",

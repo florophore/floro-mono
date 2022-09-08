@@ -52,6 +52,7 @@ export default class UserAuthCredentialsContext extends BaseContext {
       isSignupCredential,
       isVerified: hasVerifiedCredential || githubEmail.verified,
       isThirdPartyVerified: githubEmail.verified,
+      hasThirdPartyTwoFactorEnabled: githubUser.twoFactorAuthentication,
       userId: user?.id,
       githubId: githubUser.id,
       githubLogin: githubUser.login,
@@ -84,6 +85,7 @@ export default class UserAuthCredentialsContext extends BaseContext {
       isSignupCredential,
       isVerified: hasVerifiedCredential || googleUser.verifiedEmail,
       isThirdPartyVerified: googleUser.verifiedEmail,
+      hasThirdPartyTwoFactorEnabled: false,
       userId: user?.id,
       googleId: googleUser.id,
       googleGivenName: googleUser.givenName,
@@ -128,6 +130,16 @@ export default class UserAuthCredentialsContext extends BaseContext {
     return await this.queryRunner.manager.findOneBy(UserAuthCredential, { id });
   }
 
+  public async getCredentialsByEmail(
+    email: string
+  ): Promise<UserAuthCredential[]> {
+    const isGoogleEmail = await EmailHelper.isGoogleEmail(email);
+    const emailHash = await EmailHelper.getEmailHash(email, isGoogleEmail);
+    return await this.queryRunner.manager.find(UserAuthCredential, {
+      where: { emailHash },
+    });
+  }
+
   public async updateUserAuthCredential(
     userAuthCredential: UserAuthCredential,
     userAuthCredentialArgs: DeepPartial<UserAuthCredential>
@@ -157,13 +169,26 @@ export default class UserAuthCredentialsContext extends BaseContext {
     );
   }
 
-  public async getCredentialsByEmail(
-    email: string
-  ): Promise<UserAuthCredential[]> {
-    const isGoogleEmail = await EmailHelper.isGoogleEmail(email);
-    const emailHash = await EmailHelper.getEmailHash(email, isGoogleEmail);
+  public async getUserForEmail(email: string): Promise<User | null> {
+    const credentials = await this.getCredentialsByEmail(email);
+    const userId = this.getUserIdFromCredentials(credentials) as string;
+    if (userId !== null) {
+      return await this.userContext.getById(userId);
+    }
+    return null;
+  }
+
+  public async attachUserToCredentials(
+    credentials: UserAuthCredential[],
+    user: User
+  ) {
+    await this.queryBuilder<UserAuthCredential>()
+      .update(UserAuthCredential)
+      .set({ userId: user.id })
+      .whereInIds(credentials?.map((credential) => credential.id))
+      .execute();
     return await this.queryRunner.manager.find(UserAuthCredential, {
-      where: { emailHash },
+      where: { id: In(credentials?.map((credential) => credential.id)) },
     });
   }
 
@@ -334,28 +359,5 @@ export default class UserAuthCredentialsContext extends BaseContext {
       }
     }
     return null;
-  }
-
-  public async getUserForEmail(email: string): Promise<User | null> {
-    const credentials = await this.getCredentialsByEmail(email);
-    const userId = this.getUserIdFromCredentials(credentials) as string;
-    if (userId !== null) {
-      return await this.userContext.getById(userId);
-    }
-    return null;
-  }
-
-  public async attachUserToCredentials(
-    credentials: UserAuthCredential[],
-    user: User
-  ) {
-    await this.queryBuilder<UserAuthCredential>()
-      .update(UserAuthCredential)
-      .set({ userId: user.id })
-      .whereInIds(credentials?.map((credential) => credential.id))
-      .execute();
-    return await this.queryRunner.manager.find(UserAuthCredential, {
-      where: { id: In(credentials?.map((credential) => credential.id)) },
-    });
   }
 }

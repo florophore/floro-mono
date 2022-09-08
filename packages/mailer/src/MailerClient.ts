@@ -19,19 +19,16 @@ export default class MailerClient {
 
 
     public async startMailTransporter(): Promise<void> {
-        let testAccount = await nodemailer.createTestAccount();
-        // create reusable transporter object using the default SMTP transport
+        // update for prod to point at SES
         if (env.NODE_ENV == 'development' || env.NODE_ENV == 'test') {
             this.transporter = nodemailer.createTransport({
-              host: "smtp.ethereal.email",
+              host: "localhost",
               port: 1025,
               secure: false, // true for 465, false for other ports
-              auth: {
-                user: testAccount.user, // generated ethereal user
-                pass: testAccount.pass, // generated ethereal password
+              tls: {
+                rejectUnauthorized: false,
               },
             });
         }
-
     }
 }

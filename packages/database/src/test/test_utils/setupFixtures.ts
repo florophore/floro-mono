@@ -4,8 +4,8 @@ import container from './testContainer';
 import DatabaseConnection from '../../connection/DatabaseConnection';
 import { BaseEntity } from 'typeorm';
 
-export const loadFixtures = async <T extends BaseEntity> (fixtureNames: string[]): Promise<T[]> => {
-  const out: T[] = [];
+export const loadFixtures = async <T extends BaseEntity[]> (fixtureNames: string[]): Promise<T> => {
+  const out: Array<unknown|BaseEntity> = [];
   const dbConn = container.get(DatabaseConnection);
   const loader = new Loader();
   loader.load(path.resolve('./fixtures'));
@@ -19,11 +19,11 @@ export const loadFixtures = async <T extends BaseEntity> (fixtureNames: string[]
       const entity = await builder.build(fixture);
       const repo = dbConn.datasource.getRepository(fixture.entity);
       const outEntity = await repo.save(entity);
-      out.push(outEntity as T);
+      out.push(outEntity);
     }
   }
   if (fixtureNames.length != out.length) {
     throw new Error("Invalid fixures loaded in: " + JSON.stringify(fixtureNames));
   }
-  return out;
+  return out as T;
 };

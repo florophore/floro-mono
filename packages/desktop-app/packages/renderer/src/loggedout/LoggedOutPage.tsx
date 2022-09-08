@@ -13,6 +13,7 @@ import GoogleButton from '@floro/storybook/stories/GoogleButton/index';
 import { createSearchParams, useSearchParams } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import { useSystemAPI } from '../contexts/SystemAPIContext';
+import mixpanel from 'mixpanel-browser';
 
 const Background = styled.div`
   background-color: ${props => props.theme.background};
@@ -130,17 +131,21 @@ const LoggedOutPage = ({isOpen}: Props) => {
     const backButtonCursor = useMemo(() => showBackButton ? 'pointer' : 'default', [showBackButton]);
 
     const onGoToSignUpCB = useCallback(() => {
+        mixpanel.track('Go to Sign up page');
         setSearchParams(createSearchParams({pageAction: 'sign_up'}));
     }, [setSearchParams]);
 
     const onGoToSignInCB = useCallback(() => {
+        mixpanel.track('Go to Sign in page');
         setSearchParams(createSearchParams({pageAction: 'sign_in'}));
     }, [setSearchParams]);
 
     const onBackCallback = useCallback(() => {
-
+        mixpanel.track('Go to back to logged out page page', {
+          pageAction,
+        });
         setSearchParams(createSearchParams({}));
-    }, [setSearchParams]);
+    }, [setSearchParams, pageAction]);
 
     const onOpenGithub = useCallback(async () => {
       systemAPI?.openOAuthWindow('github');

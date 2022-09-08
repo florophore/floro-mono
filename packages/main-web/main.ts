@@ -35,4 +35,5 @@ container.load(
 (async () => {
   const appServer = container.get(AppServer);
   appServer.startServer(template);
+  console.log("started app...")
 })();

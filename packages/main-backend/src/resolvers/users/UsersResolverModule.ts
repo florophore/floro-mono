@@ -18,7 +18,7 @@ export default class UsersResolverModule extends BaseResolverModule {
   constructor(
     @inject(ContextFactory) contextFactory: ContextFactory,
     @inject(DatabaseConnection) databaseConnection: DatabaseConnection,
-    @inject(GithubLoginClient) githubLoginClient: GithubLoginClient
+    @inject(GithubLoginClient) githubLoginClient: GithubLoginClient,
   ) {
     super();
     this.githubLoginClient = githubLoginClient;

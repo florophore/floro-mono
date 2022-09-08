@@ -24,7 +24,6 @@ export default class DatabaseConnection {
         await this.datasource.runMigrations();
     }
 
-
     public async makeQueryRunner(): Promise<QueryRunner> {
         const queryRunner = this.datasource.createQueryRunner();
         await queryRunner.connect();
