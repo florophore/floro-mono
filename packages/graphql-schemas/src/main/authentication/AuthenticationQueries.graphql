@@ -1,3 +1,7 @@
+extend type Query {
+    fetchEmailAuth(authId: ID): AuthenticationResult
+}
 extend type Mutation {
-    submitOAuthForAction(code: String, provider: String, intent: String): OAuthAuthentication
+    submitOAuthForAction(code: String!, provider: String!): AuthenticationResult
+    submitEmailForAuth(email: String): EmailAuthAck
 }

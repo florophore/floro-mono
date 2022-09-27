@@ -26,8 +26,8 @@ describe('GoogleLoginClient', () => {
 
         it('returns access token when api succeeds', async () => {
             const scope = nock("https://oauth2.googleapis.com")
-              .filteringRequestBody(/code=[^&]*/g, 'code=good')
               .post("/token")
+              .query(true)
               .reply(200, JSON.stringify(GoogleAccessTokenSuccessMock));
             const response = await googleLoginClient.getAccessToken("good") as GoogleAccessToken;
             expect(response).to.be.instanceOf(GoogleAccessToken);
@@ -36,8 +36,8 @@ describe('GoogleLoginClient', () => {
 
         it('returns access token error when api returns error', async () => {
             const scope = nock("https://oauth2.googleapis.com")
-              .filteringRequestBody(/code=[^&]*/g, 'code=bad')
               .post("/token")
+              .query(true)
               .reply(400, JSON.stringify(GoogleAccessTokenErrorMock));
             const response = await googleLoginClient.getAccessToken("bad") as GoogleAccessTokenError;
             expect(response).to.be.instanceOf(GoogleAccessTokenError);
@@ -46,8 +46,8 @@ describe('GoogleLoginClient', () => {
 
         it('throws if none 200 response', async () => {
             const scope = nock("https://oauth2.googleapis.com")
-              .filteringRequestBody(/code=[^&]*/g, 'code=foobar')
               .post("/token")
+              .query(true)
               .reply(500);
             const response = await googleLoginClient.getAccessToken("foobar");
             expect(response).to.be.instanceOf(Error);

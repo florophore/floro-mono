@@ -10,7 +10,7 @@
     "clean": "rimraf build tsconfig.tsbuildinfo",
     "build": "yarn clean && yarn tsc",
     "lint": "eslint --ext .ts,.tsx .",
-    "test": "NODE_ENV=test node node_modules/.bin/mocha src/**/**/*.spec.ts",
+    "test": "NODE_ENV=test node node_modules/.bin/mocha src/**/**/*.spec.ts --exit",
     "test:inspect": "NODE_ENV=test node node_modules/.bin/mocha inspect src/**/*.spec.ts"
   },
   "dependencies": {
@@ -23,6 +23,7 @@
     "class-validator": "^0.13.2",
     "express": "^4.18.1",
     "form-data": "^4.0.0",
+    "graphql-tools": "^8.3.6",
     "inversify": "^6.0.1",
     "isomorphic-fetch": "^3.0.0",
     "reflect-metadata": "^0.1.13",

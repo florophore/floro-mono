@@ -1,0 +1,8 @@
+fragment PassedLoginAction on PassedLoginAction {
+  user {
+    ...User
+  }
+  session {
+    ...Session
+  }
+}

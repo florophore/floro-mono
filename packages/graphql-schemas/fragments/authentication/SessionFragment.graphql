@@ -1,0 +1,14 @@
+fragment Session on Session {
+  id
+  clientKey
+  user {
+    ...User
+  }
+  authenticationCredentials {
+    ...UserAuthCredential
+  }
+  expiresAt
+  expiresAt
+  createdAt
+  exchangeHistory
+}

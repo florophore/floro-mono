@@ -13,6 +13,8 @@ import DatabaseConnection from "@floro/database/src/connection/DatabaseConnectio
 import ContextFactory from "@floro/database/src/contexts/ContextFactory";
 import RedisClient from "@floro/redis/src/RedisClient";
 import MailerClient from "@floro/mailer/src/MailerClient";
+import { Schema } from "inspector";
+import { makeExecutableSchema } from "graphql-tools";
 
 @injectable()
 export default class Backend {
@@ -60,11 +62,22 @@ export default class Backend {
         await this.mailerClient.startMailTransporter();
     }
 
+    public buildExecutableSchema() {
+        const resolvers = {
+            ...scalarResolvers,
+            ...this.mergeResolvers()
+        } as main.Resolvers;
+        return makeExecutableSchema({
+            typeDefs,
+            resolvers,
+        })
+    }
+
     public buildApolloServer(): ApolloServer {
         const resolvers = {
             ...scalarResolvers,
             ...this.mergeResolvers()
-        } as any;
+        } as main.Resolvers;
         return new ApolloServer({
             typeDefs,
             resolvers,

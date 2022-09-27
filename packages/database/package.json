@@ -24,7 +24,6 @@
     "inversify": "^6.0.1",
     "pg": "^8.7.3",
     "reflect-metadata": "^0.1.13",
-    "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.1.0",
     "typeorm": "^0.3.7",
     "typeorm-naming-strategies": "^4.1.0",

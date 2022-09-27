@@ -1,4 +1,4 @@
-import { QueryBuilder, QueryRunner } from "typeorm";
+import { ObjectLiteral, QueryBuilder, QueryRunner } from "typeorm";
 import DatabaseConnection from "../connection/DatabaseConnection";
 import ContextFactory from "./ContextFactory";
 
@@ -19,7 +19,7 @@ export default abstract class BaseContext {
     this.contextFactory = contextFactory;
   }
 
-  protected queryBuilder<T>(
+  protected queryBuilder<T extends ObjectLiteral>(
     queryRunner?: QueryRunner | undefined
   ): QueryBuilder<T> {
     return this.queryRunner.manager.createQueryBuilder(queryRunner);

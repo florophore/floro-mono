@@ -7,6 +7,10 @@ import { createProxyMiddleware } from 'http-proxy-middleware';
 import MailDev from 'maildev';
 
 import { createServer as createViteServer } from 'vite'
+import ApolloClientPkg from "@apollo/client";
+import { SchemaLink } from '@apollo/client/link/schema';
+
+const { ApolloClient, InMemoryCache } = ApolloClientPkg;
 
 const NODE_ENV = env.NODE_ENV;
 const isDevelopment = NODE_ENV == 'development';
@@ -29,6 +33,7 @@ export default class AppServer {
   }
 
   public async startServer(indexHTMLTemplate: string): Promise<void> {
+    const schema = this.backend.buildExecutableSchema();
     await this.backend.startDatabase();
     this.backend.startRedis();
     await this.backend.startMailer();
@@ -52,8 +57,22 @@ export default class AppServer {
         const url = req.originalUrl;
         const template = await vite.transformIndexHtml(url, indexHTMLTemplate);
         const { render } = await vite.ssrLoadModule("/src/entry-server.tsx");
-        const appHtml = render(url);
-        const html = template.replace(`<!--ssr-outlet-->`, appHtml);
+        const authorizationToken: string|undefined = req.header('authorization-token');
+        const context = {
+            authorizationToken
+        };
+        const client = new ApolloClient({
+          ssrMode: true,
+          link: new SchemaLink({
+            schema,
+            context
+          }),
+          cache: new InMemoryCache(),
+        });
+        const { appHtml, appState } = await render(url, { client });
+        const html = template
+        .replace(`<!--ssr-outlet-->`, appHtml)
+        .replace('__APP_STATE__', JSON.stringify(appState).replace(/</g, '\\u003c'));
         res.status(200).set({ "Content-Type": "text/html" }).end(html);
       } catch (e) {
         vite.ssrFixStacktrace(e as Error);
@@ -73,7 +92,7 @@ export default class AppServer {
     });
 
     maildev.listen(function (err) {
-      console.log("We can now sent emails to port 1025!");
+      console.log("send emails to port 1025!");
     });
 
     const proxy = createProxyMiddleware("/maildev", {

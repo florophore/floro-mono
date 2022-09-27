@@ -7,11 +7,12 @@
   "scripts": {
     "tsc": "tsc --build",
     "clean": "rimraf build tsconfig.tsbuildinfo",
-    "build": "yarn gen:main; yarn clean && yarn tsc",
+    "build": "yarn gen:main; yarn gen:main:client; yarn clean && yarn tsc",
     "postbuild": "copyfiles -u 1 src/**/*.graphql build/",
     "lint": "eslint --ext .ts,.tsx .",
     "gen:main": "graphql-codegen --config main-codegen.yml",
-    "gen:admin": "graphql-codegen --config admin-codegen.yml"
+    "gen:admin": "graphql-codegen --config admin-codegen.yml",
+    "gen:main:client": "graphql-codegen --config main-client-codegen.yml"
   },
   "dependencies": {
     "@graphql-tools/load-files": "^6.6.0",
@@ -29,6 +30,8 @@
     "@graphql-codegen/introspection": "2.2.1",
     "@graphql-codegen/typescript": "2.7.3",
     "@graphql-codegen/typescript-resolvers": "^2.7.3",
+    "@graphql-codegen/typescript-operations": "^2.5.3",
+    "@graphql-codegen/typescript-react-apollo": "^3.3.3",
     "@types/node": "^18.6.4",
     "copyfiles": "^2.4.1",
     "eslint": "^8.0.1",

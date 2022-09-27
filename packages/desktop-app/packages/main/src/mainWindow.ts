@@ -1,6 +1,7 @@
 import {app, BrowserWindow, ipcMain, nativeTheme} from 'electron';
 import {join} from 'path';
 import {URL} from 'url';
+import startServer from '../../server/index';
 
 const getSystemTheme = (): 'light' | 'dark' => {
   return nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
@@ -23,6 +24,14 @@ async function createWindow() {
       webviewTag: false, // The webview tag is not recommended. Consider alternatives like an iframe or Electron's BrowserView. @see https://www.electronjs.org/docs/latest/api/webview-tag#warning
       preload: join(app.getAppPath(), 'packages/preload/dist/index.cjs'),
     },
+  });
+
+  browserWindow.on('show', () => {
+    const serverTerminator = startServer(browserWindow);
+
+    browserWindow.on('close', async () => {
+      await serverTerminator.terminate();
+    });
   });
 
   /**
@@ -110,9 +119,9 @@ export async function restoreOrCreateWindow() {
   if (window === undefined) {
     window = await createWindow();
   }
-  nativeTheme.on('updated', () => {
-    window?.webContents.send('system:themeUpdated', getSystemTheme());
-  });
+    nativeTheme?.on('updated', () => {
+      window?.webContents.send('system:themeUpdated', getSystemTheme());
+    });
 
   if (window.isMinimized()) {
     window.restore();

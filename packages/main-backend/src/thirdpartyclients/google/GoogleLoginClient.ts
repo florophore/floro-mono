@@ -21,17 +21,18 @@ export default class GoogleLoginClient {
 
     public async getAccessToken(code: string): Promise<GoogleAccessToken|GoogleAccessTokenError|Error> {
         try {
-            const data = new FormData();
-            data.append("client_id", this.clientId);
-            data.append("client_secret", this.clientSecret);
-            data.append("redirect_uri", this.redirectUri);
-            data.append("code", code);
-            data.append("grant_type", "authorization_code");
+            const params = {
+                client_id: this.clientId,
+                client_secret: this.clientSecret,
+                redirect_uri: this.redirectUri,
+                code,
+                grant_type: "authorization_code",
+            };
+            let url = "https://oauth2.googleapis.com/token?client_id=" + this.clientId + "&client_secret=" + this.clientSecret + "&redirect_uri=" + this.redirectUri + "&code=" + code + "&grant_type=authorization_code"; 
             const response = await fetch(
-              "https://oauth2.googleapis.com/token",
+              url,
               {
-                method: "POST",
-                body: data,
+                method: "POST"
               }
             );
             if (response.status >= 500) {

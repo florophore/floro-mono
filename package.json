@@ -19,6 +19,8 @@
         "dev": "yarn main-web dev"
     },
     "dependencies": {
+        "@apollo/client": "^3.6.9",
+        "@apollo/react-hooks": "^4.0.0",
         "ts-node": "^10.9.1",
         "ts-node-dev": "^2.0.0"
     }

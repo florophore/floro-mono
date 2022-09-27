@@ -114,6 +114,7 @@ const variants = {
 };
 
 const LoggedOutPage = ({isOpen}: Props) => {
+
     const [searchParams, setSearchParams] = useSearchParams();
     const pageAction = searchParams.get('pageAction');
     const themeName = useTheme().name;

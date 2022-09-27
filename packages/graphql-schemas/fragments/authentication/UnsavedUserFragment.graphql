@@ -1,0 +1,5 @@
+fragment UnsavedUser on UnsavedUser {
+    firstName
+    lastName
+    username
+}

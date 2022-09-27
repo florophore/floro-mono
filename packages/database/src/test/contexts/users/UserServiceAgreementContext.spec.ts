@@ -2,7 +2,7 @@ import { QueryRunner } from "typeorm";
 import { expect } from "chai";
 import { test } from "mocha";
 
-import "../../test_utils/setupTests";
+import "../../test_utils/setGlobals";
 import container from "../../test_utils/testContainer";
 import { loadFixtures } from "../../test_utils/setupFixtures";
 

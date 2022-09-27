@@ -1,0 +1,13 @@
+mutation SubmitOAuthCode($code: String!, $provider: String!) {
+  submitOAuthForAction(code: $code, provider: $provider) {
+    type,
+    action {
+      ...on CompleteSignupAction {
+        ...CompleteSignupAction
+      }
+      ...on PassedLoginAction {
+        ...PassedLoginAction
+      }
+    }
+  }
+}

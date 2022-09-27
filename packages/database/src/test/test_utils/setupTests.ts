@@ -1,19 +1,16 @@
+import { Container } from 'inversify';
 import DatabaseConnectionFactory from '../../connection/DatabaseConnectionFactory';
-import container from './testContainer'
 
-global.dbFactory = container.get(DatabaseConnectionFactory);
 
-export const dbBeforeEach = async (): Promise<void> => {
-    const dbConn = await global.dbFactory.create();
+export const dbBeforeEach = (container: Container) => async (): Promise<void> => {
+    const dbFactory = container.get(DatabaseConnectionFactory);
+    const dbConn = dbFactory.create();
     await dbConn.open();
     await dbConn.migrate();
 } ;
 
-export const dbAfterEach = async (): Promise<void> => {
-    const dbConn = await global.dbFactory.create();
+export const dbAfterEach = (container: Container) => async (): Promise<void> => {
+    const dbFactory = container.get(DatabaseConnectionFactory);
+    const dbConn = dbFactory.create();
     await dbConn.close();
 } ;
-
-global.beforeEach(dbBeforeEach);
-
-global.afterEach(dbAfterEach);

@@ -2,6 +2,14 @@ overwrite: true
 schema: "./src/main/**/*.graphql"
 documents: null
 generates:
+  src/generated/main-schema.json:
+    plugins:
+      - introspection
+    config:
+      scalars:
+        DateTime: string
+        EmailAddress: string
+        UUID: string
   src/generated/main-graphql.ts:
     plugins:
       - typescript

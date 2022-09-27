@@ -1,14 +1,20 @@
 import * as path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 import { Builder, fixturesIterator, Loader, Parser, Resolver } from 'typeorm-fixtures-cli/dist';
 import container from './testContainer';
 import DatabaseConnection from '../../connection/DatabaseConnection';
 import { BaseEntity } from 'typeorm';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+
 export const loadFixtures = async <T extends BaseEntity[]> (fixtureNames: string[]): Promise<T> => {
   const out: Array<unknown|BaseEntity> = [];
   const dbConn = container.get(DatabaseConnection);
   const loader = new Loader();
-  loader.load(path.resolve('./fixtures'));
+  loader.load(path.resolve(__dirname + '../../../../fixtures'));
 
   const resolver = new Resolver();
   const fixtures = resolver.resolve(loader.fixtureConfigs);

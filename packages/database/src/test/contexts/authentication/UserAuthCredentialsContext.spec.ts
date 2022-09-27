@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { test } from "mocha";
 import { deserialize } from "@dhkatz/json-ts";
 
-import "../../test_utils/setupTests";
+import "../../test_utils/setGlobals";
 import container from "../../test_utils/testContainer";
 import { loadFixtures } from "../../test_utils/setupFixtures";
 

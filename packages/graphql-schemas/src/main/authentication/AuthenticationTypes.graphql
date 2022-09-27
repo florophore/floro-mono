@@ -2,12 +2,6 @@
 Allows us to suggest account clustering if oauth-email matches email credential etc.
 
 """
-type SimilarCredentials {
-    credentialId: UUID
-    credentialType: String
-    relatedProperty: String
-    hasTwoFactorAttached: Boolean
-}
 
 type UnsavedUser {
     username: String
@@ -16,38 +10,42 @@ type UnsavedUser {
     lastName: String
 }
 
-type PassedLoginAction {
-    oauthProvider: String
-    user: User 
-    authorizationToken: String
-    authorizationExpiration: DateTime
+type UserAuthCredential {
+    id: ID
+    email: String
+    credentialType: String
 }
 
-type ContinueToTwoFactorAction {
-    twoFactorToken: String
-    twoFactorExpiration: DateTime
+type Session {
+    id: ID
+    clientKey: String
+    user: User
+    authenticationCredentials: [UserAuthCredential]
+    expiresAt: String
+    exchangedAt: String
+    createdAt: String
+    exchangeHistory: [String]
+}
+
+type PassedLoginAction {
+    user: User 
+    session: Session
 }
 
 type CompleteSignupAction {
     OAuthId: String 
     provider: String
     unsavedUser: UnsavedUser
-    similarCredentials: [SimilarCredentials]
 }
 
-type ContinueToCaptchaAction {
-    captchaToken: String
-    captchaTokenExpiration: DateTime
-}
+union AuthAction = PassedLoginAction | CompleteSignupAction
 
-type AccountBlockedAction {
-    blockId: ID!
-    message: String
-}
-
-union OAuthAction = PassedLoginAction | CompleteSignupAction | ContinueToTwoFactorAction | ContinueToCaptchaAction | AccountBlockedAction 
-
-type OAuthAuthentication {
+type AuthenticationResult {
     type: String
-    action: OAuthAction
+    action: AuthAction
+}
+
+type EmailAuthAck {
+    ackKey: ID
+    email: String
 }

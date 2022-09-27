@@ -1,5 +1,11 @@
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 import { DataSource , DataSourceOptions } from 'typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 
 const defaultOptions: DataSourceOptions = {
   type: 'postgres',
@@ -9,9 +15,9 @@ const defaultOptions: DataSourceOptions = {
   password: '',
   synchronize: false,
   logging: true,
-  entities: ["src/entities/**/*.ts"],
-  migrations: ["src/migrations/**/*.ts"],
-  subscribers: ["src/subscribers/**/*.ts"],
+  entities: [__dirname + "/entities/**/*.{ts,js}"],
+  migrations: [__dirname + "/migrations/**/*.{ts,js}"],
+  subscribers: [__dirname + "/subscribers/**/*.{ts,js}"],
   namingStrategy: new SnakeNamingStrategy(),
 }
 

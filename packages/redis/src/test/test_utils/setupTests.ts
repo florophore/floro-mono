@@ -1,18 +1,13 @@
 import RedisClient from '../../RedisClient';
-import container from './testContainer'
 
-const redisClient = container.get(RedisClient);
-
-export const redisBeforeEach = async (): Promise<void> => {
+export const redisBeforeEach = container => async (): Promise<void> => {
+    const redisClient = container.get(RedisClient);
     if (!redisClient.connectionExists()) {
-        await redisClient.startRedis();
+       redisClient.startRedis();
     }
 } ;
 
-export const redisAfterEach = async (): Promise<void> => {
+export const redisAfterEach = container => async (): Promise<void> => {
+    const redisClient = container.get(RedisClient);
     await redisClient.redis?.flushdb();
 };
-
-global.beforeEach(redisBeforeEach);
-
-global.afterEach(redisAfterEach);

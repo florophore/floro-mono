@@ -34,15 +34,15 @@ export default class UserAuthCredentialsContext extends BaseContext {
     githubEmail: GithubEmail,
     isSignupCredential = false,
     hasVerifiedCredential = false,
-    user?: User
+    user?: User|null
   ): Promise<UserAuthCredential> {
     const email = githubEmail.email as string;
     const isGoogleEmail = await EmailHelper.isGoogleEmail(email);
-    const normalizedEmail = await EmailHelper.getUniqueEmail(
+    const normalizedEmail = EmailHelper.getUniqueEmail(
       email,
       isGoogleEmail
     );
-    const emailHash = await EmailHelper.getEmailHash(email, isGoogleEmail);
+    const emailHash = EmailHelper.getEmailHash(email, isGoogleEmail);
     const userAuthCredentialEntity = this.userAuthCredentialRepo.create({
       credentialType: "github_oauth",
       accessToken: githubAccessToken.accessToken,
@@ -50,7 +50,7 @@ export default class UserAuthCredentialsContext extends BaseContext {
       normalizedEmail,
       emailHash,
       isSignupCredential,
-      isVerified: hasVerifiedCredential || githubEmail.verified,
+      isVerified: hasVerifiedCredential || !!githubEmail.verified,
       isThirdPartyVerified: githubEmail.verified,
       hasThirdPartyTwoFactorEnabled: githubUser.twoFactorAuthentication,
       userId: user?.id,
@@ -75,7 +75,7 @@ export default class UserAuthCredentialsContext extends BaseContext {
   ): Promise<UserAuthCredential> {
     const email = googleUser.email as string;
     const normalizedEmail = await EmailHelper.getUniqueEmail(email, true);
-    const emailHash = await EmailHelper.getEmailHash(email, true);
+    const emailHash = EmailHelper.getEmailHash(email, true);
     const userAuthCredentialEntity = this.userAuthCredentialRepo.create({
       credentialType: "google_oauth",
       accessToken: googleAccessToken.accessToken,
@@ -83,7 +83,7 @@ export default class UserAuthCredentialsContext extends BaseContext {
       normalizedEmail,
       emailHash,
       isSignupCredential,
-      isVerified: hasVerifiedCredential || googleUser.verifiedEmail,
+      isVerified: hasVerifiedCredential || !!googleUser.verifiedEmail,
       isThirdPartyVerified: googleUser.verifiedEmail,
       hasThirdPartyTwoFactorEnabled: false,
       userId: user?.id,
@@ -105,11 +105,11 @@ export default class UserAuthCredentialsContext extends BaseContext {
     hasVerifiedCredential = false
   ): Promise<UserAuthCredential> {
     const isGoogleEmail = await EmailHelper.isGoogleEmail(email);
-    const normalizedEmail = await EmailHelper.getUniqueEmail(
+    const normalizedEmail = EmailHelper.getUniqueEmail(
       email,
       isGoogleEmail
     );
-    const emailHash = await EmailHelper.getEmailHash(email, isGoogleEmail);
+    const emailHash = EmailHelper.getEmailHash(email, isGoogleEmail);
     const userAuthCredentialEntity = this.userAuthCredentialRepo.create({
       credentialType: "email_pass",
       email,
@@ -134,7 +134,7 @@ export default class UserAuthCredentialsContext extends BaseContext {
     email: string
   ): Promise<UserAuthCredential[]> {
     const isGoogleEmail = await EmailHelper.isGoogleEmail(email);
-    const emailHash = await EmailHelper.getEmailHash(email, isGoogleEmail);
+    const emailHash = EmailHelper.getEmailHash(email, isGoogleEmail);
     return await this.queryRunner.manager.find(UserAuthCredential, {
       where: { emailHash },
     });
