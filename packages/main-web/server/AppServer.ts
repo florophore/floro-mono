@@ -88,11 +88,12 @@ export default class AppServer {
       );
     }
 
+    const { render } = await vite.ssrLoadModule(!isProduction ? "./src/entry-server.tsx" : "./dist/server/entry-server.js");
+
     this.app.use("*", async (req, res, next) => {
       try {
         const url = req.originalUrl;
         const template = isProduction ? indexHTMLTemplate : await vite.transformIndexHtml(url, indexHTMLTemplate);
-        const { render } = await vite.ssrLoadModule(!isProduction ? "./src/entry-server.tsx" : "./dist/server/entry-server.js");
         const authorizationToken: string|undefined = req.header('authorization-token');
         const context = {
             authorizationToken,
