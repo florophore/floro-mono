@@ -34,7 +34,11 @@ function App() {
           {routing.map((route, key) => {
             const Page = route.component();
             return (
-              <Route key={key} path={route.path} element={<Page/>}/>
+              <Route key={key} path={route.path} element={
+                <React.Suspense>
+                  <Page/>
+                </React.Suspense>
+            }/>
             );
           })}
         </Routes>

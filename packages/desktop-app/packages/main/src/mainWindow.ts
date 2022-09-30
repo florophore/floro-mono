@@ -82,10 +82,10 @@ async function createWindow() {
           oauthWindow?.webContents.openDevTools();
         }
       });
-      ipcMain.once('oauth:sendOAuthResult', (event, ...args) => {
+      ipcMain.once('oauth:sendOAuthResult', (event: any, ...args: any[]) => {
         console.log(event.sender.getURL(), args);
-        //oauthWindow.close();
-        //oauthWindow.destroy();
+        oauthWindow.close();
+        oauthWindow.destroy();
 
       });
     });

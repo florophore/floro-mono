@@ -16,6 +16,8 @@ import RedisClient from "@floro/redis/src/RedisClient";
 import MailerClient from "@floro/mailer/src/MailerClient";
 import process from "process";
 import { makeExecutableSchema } from "graphql-tools";
+import { WebSocketServer } from 'ws';
+import { useServer } from 'graphql-ws/lib/use/ws';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -77,19 +79,38 @@ export default class Backend {
     }
 
     public buildApolloServer(): ApolloServer {
-        const resolvers = {
-            ...scalarResolvers,
-            ...this.mergeResolvers()
-        } as main.Resolvers;
-        return new ApolloServer({
-            typeDefs,
-            resolvers,
-            csrfPrevention: true,
-            cache: 'bounded',
-            plugins: [
-              ApolloServerPluginDrainHttpServer({ httpServer: this.httpServer }),
-              ...(isProduction ? [ApolloServerPluginLandingPageDisabled()] : [ApolloServerPluginLandingPageLocalDefault({ embed: true }),])
-            ],
-          })
+      const schema = this.buildExecutableSchema();
+      // Creating the WebSocket server
+      const wsServer = new WebSocketServer({
+        // This is the `httpServer` we created in a previous step.
+        server: this.httpServer,
+        // Pass a different path here if your ApolloServer serves at
+        // a different path.
+        path: "/graphql",
+      });
+
+      // Hand in the schema we just created and have the
+      // WebSocketServer start listening.
+      const serverCleanup = useServer({ schema }, wsServer);
+      return new ApolloServer({
+        schema,
+        csrfPrevention: true,
+        cache: "bounded",
+        plugins: [
+          ApolloServerPluginDrainHttpServer({ httpServer: this.httpServer }),
+          {
+            async serverWillStart() {
+              return {
+                async drainServer() {
+                  await serverCleanup.dispose();
+                },
+              };
+            },
+          },
+          ...(isProduction
+            ? [ApolloServerPluginLandingPageDisabled()]
+            : [ApolloServerPluginLandingPageLocalDefault({ embed: true })]),
+        ],
+      });
     }
 }

@@ -54,18 +54,21 @@ export default class AppServer {
       this.startMailDev();
     }
 
+    // DO NOT REMOVE!
     const NODE_ENV = process.env.NODE_ENV;
+    // DO NOT REMOVE!
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "custom",
     });
-    // HACK!!!
-    // someone at think thought it would be an awesome idea to set
-    // the NODE_ENV to development, whenever createViteServer is called.
+    // Explanation:
+    // Someone at vite thought it would be an awesome idea to set
+    // the NODE_ENV to development whenever createViteServer is called.
+    // ... this breaks everything in production builds...
     // Unfortunately directly importing the cjs or mjs, per the official
-    // documentation doesn't work with type: module node modules. For the
-    // time being we are going to play with fire and assume vite server is
-    // start-up production safe.
+    // documentation doesn't work with type: "module" (which we require)
+    // npm modules. For the time being we are going to play with fire
+    // and assume vite server is start-up production safe.
     // DO NOT REMOVE!
     process.env.NODE_ENV = NODE_ENV;
     // DO NOT REMOVE!
@@ -105,13 +108,19 @@ export default class AppServer {
           }),
           cache: new InMemoryCache(),
         });
-        const { appHtml, appState } = await render(url, { client }, context);
+        const { appHtml, appState, helmet } = await render(url, { client }, context);
         if (context.url && context.url != url) {
           return res.redirect(301, context.url)
         }
         const html = template
         .replace(`<!--ssr-outlet-->`, appHtml)
-        .replace('__APP_STATE__', JSON.stringify(appState).replace(/</g, '\\u003c'));
+        .replace('__APP_STATE__', JSON.stringify(appState).replace(/</g, '\\u003c'))
+        .replace('__HELMET_HTML__', helmet?.htmlAttributes?.toString?.() ?? '')
+        .replace('__HELMET_BODY__', helmet?.bodyAttributes?.toString?.() ?? '')
+        .replace('__HELMET_TITLE__', helmet?.title?.toString?.() ?? '')
+        .replace('__HELMET_META__', helmet?.meta?.toString?.() ?? '')
+        .replace('__HELMET_LINK__', helmet?.link?.toString?.() ?? '');
+
         if (context.should404) {
           return res.status(404).set({ "Content-Type": "text/html" }).end(html);
         }

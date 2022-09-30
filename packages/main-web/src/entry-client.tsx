@@ -6,7 +6,6 @@ import App from './App'
 import './index.css'
 
 const cache = new InMemoryCache().restore(window.__APOLLO_STATE__ ?? {});
-console.log("TEST", window.__APOLLO_STATE__)
 const client = new ApolloClient({
   link: createHttpLink({
     uri: "http://localhost:9000/graphql",

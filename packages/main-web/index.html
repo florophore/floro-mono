@@ -1,14 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" __HELMET_HTML__>
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    __HELMET_TITLE__
+    __HELMET_META__
+    __HELMET_LINK__
     <script>
       window.__APOLLO_STATE__ = __APP_STATE__;
     </script>
   </head>
-  <body>
+  <body __HELMET_BODY__>
     <div id="app"><!--ssr-outlet--></div>
     <script type="module" src="/src/entry-client.tsx"></script>
   </body>

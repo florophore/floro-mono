@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { useLocation, useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { useTheme } from '@emotion/react';
 import FloroIcon from '../assets/images/floro_logo.svg';
 import DotsLoader from '@floro/storybook/stories/DotsLoader';
-import colorPalette from '@floro/styles/ColorPalette';
 import { useSubmitOAuthCodeQuery } from '@floro/graphql-schemas/src/generated/main-client-graphql';
+import { Helmet } from 'react-helmet';
 
 
 const BackgroundWrapper = styled.div`
@@ -60,6 +59,9 @@ function OAuthCallback() {
 
   return (
     <BackgroundWrapper>
+      <Helmet>
+        <title>{'Authorizing...'}</title>
+      </Helmet>
       <FloroImage
         src={FloroIcon}
       />
