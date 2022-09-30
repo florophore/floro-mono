@@ -3,12 +3,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "start": "VITE_USER_NODE_ENV=production NODE_ENV=production node --experimental-specifier-resolution=node --loader ts-node/esm main.ts",
+    "start": "NODE_ENV=production node --experimental-specifier-resolution=node --loader ts-node/esm main.ts",
     "start:debug": "NODE_ENV=production node --inspect-brk .",
     "dev": "NODE_ENV=development nodemon -e ts --watch ../ --experimental-specifier-resolution=node main.ts",
     "dev:debug": "NODE_ENV=development node --inspect-brk --experimental-specifier-resolution=node --loader ts-node/esm main.ts",
     "build:client": "vite build --outDir dist/client --ssrManifest",
     "build:ssr": "vite build --outDir dist/server --ssr src/entry-server.tsx",
+    "build": "npm run build:ssr && npm run build:client",
     "preview": "vite preview",
     "typecheck": "tsc --incremental main.ts --tsBuildInfoFile tsconfig.tsbuildinfo --isolatedModules --experimentalDecorators"
   },

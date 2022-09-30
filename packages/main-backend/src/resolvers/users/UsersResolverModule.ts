@@ -9,7 +9,7 @@ import { AuthAction, UnsavedUser } from "@floro/graphql-schemas/build/generated/
 
 @injectable()
 export default class UsersResolverModule extends BaseResolverModule {
-  protected resolvers: Array<keyof this&keyof main.ResolversTypes> = ["Query", "Mutation", "User"];
+  protected resolvers: Array<keyof this&keyof main.ResolversTypes> = ["Query", "User"];
   protected authenticationService!: AuthenticationService;
   protected sessionStore!: SessionStore;
 
@@ -26,9 +26,7 @@ export default class UsersResolverModule extends BaseResolverModule {
     users: async () => {
       return [];
     },
-  };
 
-  public Mutation: main.MutationResolvers = {
     submitOAuthForAction: async (root, {code, provider}) => {
       if (provider == 'github' && code) {
         const authenticationResult = await this.authenticationService.authWithGithubOAuth(code);

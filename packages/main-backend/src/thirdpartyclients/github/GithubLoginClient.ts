@@ -14,8 +14,8 @@ export default class GithubLoginClient {
     private clientSecret!: string;
 
     constructor() {
-        this.clientId = '12fae6e8606646fc8d7f';
-        this.clientSecret = 'eef5bdc0c76d2f300177718e395e2c240bb551e9';
+        this.clientId = '75b180c6c897d28dbf66';
+        this.clientSecret = '0c9d05f83dc3445c1ebb3eaa4e858b1e38511ab9';
     }
 
     public async getAccessToken(code: string): Promise<GithubAccessToken|GithubAccessTokenError|Error> {

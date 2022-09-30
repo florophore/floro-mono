@@ -7,14 +7,17 @@ import { resolvers as scalarResolvers } from 'graphql-scalars';
 import { ApolloServer } from "apollo-server-express";
 import {
     ApolloServerPluginDrainHttpServer,
+    ApolloServerPluginLandingPageDisabled,
     ApolloServerPluginLandingPageLocalDefault,
   } from 'apollo-server-core';
 import DatabaseConnection from "@floro/database/src/connection/DatabaseConnection";
 import ContextFactory from "@floro/database/src/contexts/ContextFactory";
 import RedisClient from "@floro/redis/src/RedisClient";
 import MailerClient from "@floro/mailer/src/MailerClient";
-import { Schema } from "inspector";
+import process from "process";
 import { makeExecutableSchema } from "graphql-tools";
+
+const isProduction = process.env.NODE_ENV === 'production';
 
 @injectable()
 export default class Backend {
@@ -85,7 +88,7 @@ export default class Backend {
             cache: 'bounded',
             plugins: [
               ApolloServerPluginDrainHttpServer({ httpServer: this.httpServer }),
-              ApolloServerPluginLandingPageLocalDefault({ embed: true }),
+              ...(isProduction ? [ApolloServerPluginLandingPageDisabled()] : [ApolloServerPluginLandingPageLocalDefault({ embed: true }),])
             ],
           })
     }

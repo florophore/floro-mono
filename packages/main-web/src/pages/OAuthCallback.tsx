@@ -5,6 +5,7 @@ import { useTheme } from '@emotion/react';
 import FloroIcon from '../assets/images/floro_logo.svg';
 import DotsLoader from '@floro/storybook/stories/DotsLoader';
 import colorPalette from '@floro/styles/ColorPalette';
+import { useSubmitOAuthCodeQuery } from '@floro/graphql-schemas/src/generated/main-client-graphql';
 
 
 const BackgroundWrapper = styled.div`
@@ -25,35 +26,46 @@ const  FloroImage = styled.img`
 
 
 function OAuthCallback() {
-
-    const params = useParams();
+    const params = useParams<{provider: 'github'|'google'}>();
     const [searchParams] = useSearchParams();
     const error = searchParams.get('error');
     const code = searchParams.get('code');
 
-    useEffect(() => {
-      const timeout = setTimeout(() => {
-        if (window?.OAuthAPI?.isDesktopApp) {
-          if (error) {
-            window.OAuthAPI.sendResult(false, params?.provider);
-          } else {
-            window.OAuthAPI.sendResult(true, params?.provider, code);
-          }
-        }
-      }, 1000);
-      return () => {
-        clearTimeout(timeout);
-      }
-    }, [error, code, params.provider]);
+  const { data, error: graphqlError}  = useSubmitOAuthCodeQuery({
+    variables: {
+      provider: params.provider,
+      code
+    },
+    ssr: false
+  });
 
-    return (
-      <BackgroundWrapper>
-        <FloroImage
-          src={FloroIcon}
-        />
-        <DotsLoader size={"large"} color={"purple"}/>
-      </BackgroundWrapper>
-    );
+  useEffect(() => {
+    if (error) {
+      window.OAuthAPI.sendResult(false, params?.provider);
+      return;
+    }
+
+    if (data?.submitOAuthForAction) {
+        console.log(data?.submitOAuthForAction);
+       window.OAuthAPI.sendResult(true, params?.provider, code);
+       return;
+    }
+
+    if (graphqlError) {
+      // update this to include error
+      window.OAuthAPI.sendResult(false, params?.provider);
+      return;
+    }
+  }, [data, error, graphqlError]);
+
+  return (
+    <BackgroundWrapper>
+      <FloroImage
+        src={FloroIcon}
+      />
+      <DotsLoader size={"large"} color={"purple"}/>
+    </BackgroundWrapper>
+  );
 }
 
 export default OAuthCallback;
