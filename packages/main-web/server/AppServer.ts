@@ -1,8 +1,10 @@
 import { inject, injectable } from "inversify";
-import { Express } from 'express';
+import express, { Express } from 'express';
 import { Server } from 'http';
 import Backend from '@floro/main-backend/src/Backend';
 import { env } from 'process';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url'
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import MailDev from 'maildev';
 
@@ -14,7 +16,10 @@ const { ApolloClient, InMemoryCache } = ApolloClientPkg;
 
 const NODE_ENV = env.NODE_ENV;
 const isDevelopment = NODE_ENV == 'development';
+const isProduction = NODE_ENV == 'production';
 const isTest = NODE_ENV == 'test';
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const resolve = (p) => path.resolve(__dirname, p)
 
 @injectable()
 export default class AppServer {
@@ -45,18 +50,38 @@ export default class AppServer {
       this.startMailDev();
     }
 
+    const NODE_ENV = process.env.NODE_ENV;
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "custom",
-    });
+      mode: "production",
+    }); 
+    // STUPID VITE HACK: createViteServer resets NODE_ENV to development, because
+    // that's a really awesome thing to do.
+    // direct import suggested in official vite ssr docs doesn't work either for either mjs or cjs
+    //!! DO NOT REMOVE !!
+    process.env.NODE_ENV = NODE_ENV;
+    //!! DO NOT REMOVE !!
 
     this.app.use(vite.middlewares);
+    const requestHandler = express.static(resolve("../assets"));
+    this.app.use(requestHandler);
+    this.app.use("/assets", requestHandler);
+
+    if (isProduction) {
+      this.app.use((await import('compression')).default())
+      this.app.use(
+        (await import('serve-static')).default(resolve('../dist/client'), {
+          index: false
+        })
+      )
+    }
 
     this.app.use("*", async (req, res, next) => {
       try {
         const url = req.originalUrl;
-        const template = await vite.transformIndexHtml(url, indexHTMLTemplate);
-        const { render } = await vite.ssrLoadModule("/src/entry-server.tsx");
+        const template = isProduction ? indexHTMLTemplate : await vite.transformIndexHtml(url, indexHTMLTemplate);
+        const { render } = await vite.ssrLoadModule(!isProduction ? "/src/entry-server.tsx" : "/dist/server/entry-server.js");
         const authorizationToken: string|undefined = req.header('authorization-token');
         const context = {
             authorizationToken
@@ -75,7 +100,11 @@ export default class AppServer {
         .replace('__APP_STATE__', JSON.stringify(appState).replace(/</g, '\\u003c'));
         res.status(200).set({ "Content-Type": "text/html" }).end(html);
       } catch (e) {
-        vite.ssrFixStacktrace(e as Error);
+        if (isDevelopment) {
+          vite.ssrFixStacktrace(e as Error);
+        } else {
+          console.log(e);
+        }
         next(e);
       }
     });

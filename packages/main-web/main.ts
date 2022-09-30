@@ -1,5 +1,6 @@
 import "reflect-metadata";
 
+import process from 'process';
 import * as fs from 'fs'
 import * as path from 'path'
 import { fileURLToPath } from 'url'
@@ -13,9 +14,10 @@ import WebModule from './server/module';
 import AppServer from './server/AppServer'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const isDevelopment = process.env.NODE_ENV == 'development';
 
 let template = fs.readFileSync(
-  path.resolve(__dirname, 'index.html'),
+  path.resolve(__dirname, isDevelopment ? 'index.html' : './dist/client/index.html'),
   'utf-8'
 );
 
