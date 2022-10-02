@@ -38,7 +38,11 @@ type CompleteSignupAction {
     unsavedUser: UnsavedUser
 }
 
-union AuthAction = PassedLoginAction | CompleteSignupAction
+type VerificationRequiredAction {
+    email: String 
+}
+
+union AuthAction = PassedLoginAction | CompleteSignupAction | VerificationRequiredAction
 
 type AuthenticationResult {
     type: String

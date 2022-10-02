@@ -17,9 +17,10 @@ import {
 export interface Props {
   assetHost: string;
   link: string;
+  action: 'signup'|'login';
 }
 
-const AccountAlreadyExists = (props: Props): React.ReactElement => {
+const VerifyGithubOAuthEmail = (props: Props): React.ReactElement => {
   return (
     <Mjml>
       <MjmlHead>
@@ -44,9 +45,16 @@ const AccountAlreadyExists = (props: Props): React.ReactElement => {
             <MjmlText fontSize={20} color={colorPalette.darkGray}>
                 {"If this wasn't you please ignore (and sorry for spamming you)."}
             </MjmlText>
-            <MjmlText lineHeight={32} fontSize={24} color={colorPalette.darkGray}>
-                {"If it was you, you already have an account associated with this email. Click the button below while the floro app is running to login."}
-            </MjmlText>
+            {props.action == 'signup' &&
+                <MjmlText lineHeight={32} fontSize={24} color={colorPalette.darkGray}>
+                    {"If it was you, click the button below while the floro app is running to signup."}
+                </MjmlText>
+            }
+            {props.action == 'login' &&
+                <MjmlText lineHeight={32} fontSize={24} color={colorPalette.darkGray}>
+                    {"If it was you, click the button below while the floro app is running to login."}
+                </MjmlText>
+            }
           </MjmlColumn>
         </MjmlSection>
         <MjmlSection>
@@ -73,7 +81,14 @@ const AccountAlreadyExists = (props: Props): React.ReactElement => {
 
 export const mock: Props = {
   assetHost: "http://localhost:9000",
-  link: 'http://google.com'
+  link: 'http://google.com',
+  action: 'login'
 }
 
-export default AccountAlreadyExists;
+export const signupMock: Props = {
+  assetHost: "http://localhost:9000",
+  link: 'http://google.com',
+  action: 'signup'
+}
+
+export default VerifyGithubOAuthEmail;

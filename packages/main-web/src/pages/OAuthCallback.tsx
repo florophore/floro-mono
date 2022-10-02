@@ -46,7 +46,7 @@ function OAuthCallback() {
 
     if (data?.submitOAuthForAction) {
         console.log(data?.submitOAuthForAction);
-       window.OAuthAPI.sendResult(true, params?.provider, code);
+       window.OAuthAPI.sendResult(true, params?.provider, data?.submitOAuthForAction);
        return;
     }
 

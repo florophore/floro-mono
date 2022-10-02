@@ -1,8 +1,8 @@
 import { injectable } from 'inversify';
 import { env } from 'process';
 
-const isDev = env.NODE_PROCESS == 'development';
-const isTest = env.NODE_PROCESS == 'test';
+const isDev = env.NODE_ENV == 'development';
+const isTest = env.NODE_ENV == 'test';
 
 @injectable()
 export default class ClientConfig {
@@ -13,7 +13,7 @@ export default class ClientConfig {
 
     public port = parseInt(env.REDIS_PORT ?? '6379');
 
-    public hostname = env.REDIS_HOST ?? 'localhost';
+    public hostname = env.REDIS_HOST ?? '127.0.0.1';
 
     public database = isTest ? 3 : isDev ? 2 : 1;
 

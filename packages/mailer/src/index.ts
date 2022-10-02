@@ -1,3 +1,3 @@
-import RedisModule from './module';
+import MailerModule from './module';
 
-export default RedisModule;
+export default MailerModule;

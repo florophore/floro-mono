@@ -1,4 +1,4 @@
-import { dbBeforeEach, dbAfterEach } from "@floro/database/src/test/test_utils/setupTests";;
+import { dbBeforeEach, dbAfterEach } from "@floro/database/src/test/test_utils/setupTests";
 import { redisBeforeEach, redisAfterEach } from '@floro/redis/src/test/test_utils/setupTests';
 import container from './testContainer';
 

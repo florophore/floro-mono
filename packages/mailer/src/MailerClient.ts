@@ -1,9 +1,15 @@
 import { inject, injectable } from "inversify";
 import MailerClientConfig from "./MailerClientConfig";
 import nodemailer from 'nodemailer';
+import { render } from 'mjml-react';
 import { env} from 'process';
+import MockTransport from "./test/test_utils/MockTransport";
 
-if (env.NODE_ENV == 'development' || env.NODE_ENV == 'test') {
+const isDevelopment = env.NODE_ENV == 'development';
+const isProduction = env.NODE_ENV == 'production';
+const isTest = env.NODE_ENV == 'test';
+
+if (!isProduction) {
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 }
 
@@ -17,10 +23,20 @@ export default class MailerClient {
         this.clientConfig = clientConfig;
     }
 
+    public renderEmail(jsx: React.ReactElement) {
+        if (isDevelopment) {
+            return render(jsx, {validationLevel: 'strict'});
+        }
+        return render(jsx, {validationLevel: 'soft'});
+    }
 
     public async startMailTransporter(): Promise<void> {
+        if (isProduction) {
+            this.clientConfig;
+            /*TODO: Add SES transporter*/
+        }
         // update for prod to point at SES
-        if (env.NODE_ENV == 'development' || env.NODE_ENV == 'test') {
+        if (isDevelopment) {
             this.transporter = nodemailer.createTransport({
               host: "localhost",
               port: 1025,
@@ -29,6 +45,10 @@ export default class MailerClient {
                 rejectUnauthorized: false,
               },
             });
+        }
+
+        if (isTest) {
+            this.transporter = new MockTransport();
         }
     }
 }

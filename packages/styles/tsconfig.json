@@ -5,7 +5,7 @@
         "composite": true,
         "module": "ESNext",
         "target": "ESNext",
-        "rootDir": "src",
+        "rootDir": ".",
         "outDir": "build",
         "jsx": "react-jsx",
         "typeRoots": [
@@ -13,7 +13,6 @@
         ],
         "types": [
             "node",
-            "mocha"
         ]
     },
     "exclude": [

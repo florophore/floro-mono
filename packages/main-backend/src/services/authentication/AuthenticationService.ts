@@ -12,11 +12,14 @@ import { User } from "@floro/database/src/entities/User";
 import GoogleAccessToken from "../../thirdpartyclients/google/schemas/GoogleAccessToken";
 import { UserAuthCredential } from "@floro/database/src/entities/UserAuthCredential";
 import GoogleUser from "../../thirdpartyclients/google/schemas/GoogleUser";
+import EmailQueue from "@floro/redis/src/queues/EmailQueue";
+import EmailVerificationStore from "@floro/redis/src/stores/EmailVerificationStore";
 
 export interface AuthReponse {
-    action: 'COMPLETE_SIGNUP'|'LOG_ERROR'|'LOGIN';
+    action: 'COMPLETE_SIGNUP'|'LOG_ERROR'|'LOGIN'|'VERIFICATION_REQUIRED';
     user?: User;
     credential?: UserAuthCredential;
+    email?: string;
     error?: {
         type: string;
         message: string;
@@ -31,17 +34,23 @@ export default class AuthenticationService {
     private contextFactory!: ContextFactory;
     private githubLoginClient!: GithubLoginClient;
     private googleLoginClient!: GoogleLoginClient;
+    private emailVerificationStore!: EmailVerificationStore;
+    private emailQueue?: EmailQueue;
 
     constructor(
         @inject(DatabaseConnection) databaseConnection: DatabaseConnection,
         @inject(ContextFactory) contextFactory: ContextFactory,
         @inject(GithubLoginClient) githubLoginClient: GithubLoginClient,
         @inject(GoogleLoginClient) googleLoginClient: GoogleLoginClient,
+        @inject(EmailVerificationStore) emailVerificationStore: EmailVerificationStore,
+        @inject(EmailQueue) emailQueue: EmailQueue
         ) {
         this.databaseConnection = databaseConnection;
         this.contextFactory = contextFactory;
         this.githubLoginClient = githubLoginClient;
         this.googleLoginClient = googleLoginClient;
+        this.emailVerificationStore = emailVerificationStore;
+        this.emailQueue = emailQueue;
     }
 
     public async authWithGithubOAuth(code: string): Promise<AuthReponse> {
@@ -71,6 +80,7 @@ export default class AuthenticationService {
             const userAuthCredentialsContext = await this.contextFactory.createContext(UserAuthCredentialsContext, queryRunner);
             await queryRunner.startTransaction();
             const credentials = await userAuthCredentialsContext.getCredentialsByEmail(primaryEmail.email);
+            console.log("WHAT", credentials);
             const userId =  userAuthCredentialsContext.getUserIdFromCredentials(credentials);
             if (!userId) {
                 if (!userAuthCredentialsContext.hasGithubCredential(credentials)) {
@@ -79,9 +89,28 @@ export default class AuthenticationService {
                         githubUser,
                         primaryEmail,
                         credentials.length == 0, // isSignupCredential
-                        userAuthCredentialsContext.hasVerifiedCredential(credentials)
+                        userAuthCredentialsContext.getGithubCredential(credentials)?.isThirdPartyVerified
                     )
                     await queryRunner.commitTransaction();
+                    // ADD TRUE TO TEST LOGIC
+                    if (!credential?.isThirdPartyVerified) {
+                        const verification = await this.emailVerificationStore.createEmailVerification(credential);
+                        const link = this.emailVerificationStore.link(verification);
+                        console.log("BOOM", link);
+                        // SEND VERIFICATION EMAIL
+                        await this.emailQueue?.add({
+                            jobId: verification.id,
+                            template: "VerifyGithubOAuthEmail",
+                            props: {
+                                link,
+                                action: "signup"
+                            },
+                            to: credential.email as string,
+                            from: "accounts@floro.io",
+                            subject: "Verify Email"
+                        });
+                        return { action: 'VERIFICATION_REQUIRED', email: credential.email as string };
+                    }
                     return { action: 'COMPLETE_SIGNUP', credential };
                 }
                 const credential = userAuthCredentialsContext.getGithubCredential(credentials) as UserAuthCredential;
@@ -101,7 +130,7 @@ export default class AuthenticationService {
                     githubUser,
                     primaryEmail,
                     false,
-                    userAuthCredentialsContext.hasVerifiedCredential(credentials),
+                    userAuthCredentialsContext.getGithubCredential(credentials)?.isThirdPartyVerified,
                     user
                 );
             }
@@ -109,6 +138,23 @@ export default class AuthenticationService {
             const credential = userAuthCredentialsContext.getGithubCredential(
                 await userAuthCredentialsContext.getCredentialsByEmail(primaryEmail.email) 
             );
+            if (credential && !credential.isThirdPartyVerified) {
+                const verification = await this.emailVerificationStore.createEmailVerification(credential);
+                const link = this.emailVerificationStore.link(verification);
+                // SEND VERIFICATION EMAIL
+                await this.emailQueue?.add({
+                    jobId: verification.id,
+                    template: "VerifyGithubOAuthEmail",
+                    props: {
+                        link,
+                        action: "login"
+                    },
+                    to: primaryEmail.email as string,
+                    from: "accounts@floro.io",
+                    subject: "Verify Email"
+                });
+                return { action: 'VERIFICATION_REQUIRED', email: primaryEmail.email };
+            }
             if (credential) {
                 await queryRunner.commitTransaction();
                 return { action: 'LOGIN', user, credential };

@@ -12,7 +12,7 @@ import {
     MjmlText
   } from 'mjml-react';
 
-interface Props {
+export interface Props {
   title: string;
   anotherThing: number;
 }

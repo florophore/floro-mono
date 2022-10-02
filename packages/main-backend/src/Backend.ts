@@ -1,8 +1,7 @@
 import { inject, injectable, multiInject } from "inversify";
 import BaseResolverModule from "./resolvers/BaseResolverModule";
-import { main } from '@floro/graphql-schemas'; 
+import { main , mainSchema as typeDefs } from '@floro/graphql-schemas'; 
 import { Server } from 'http';
-import { mainSchema as typeDefs } from "@floro/graphql-schemas";
 import { resolvers as scalarResolvers } from 'graphql-scalars';
 import { ApolloServer } from "apollo-server-express";
 import {
@@ -18,6 +17,8 @@ import process from "process";
 import { makeExecutableSchema } from "graphql-tools";
 import { WebSocketServer } from 'ws';
 import { useServer } from 'graphql-ws/lib/use/ws';
+import RedisQueueWorkers from "@floro/redis/src/RedisQueueWorkers";
+import { GraphQLSchema } from 'graphql';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -28,6 +29,7 @@ export default class Backend {
     private httpServer: Server;
     private databaseConnection!: DatabaseConnection;
     private redisClient!: RedisClient;
+    private redisQueueWorkers!: RedisQueueWorkers;
     private mailerClient!: MailerClient;
     private contextFactory!: ContextFactory;
 
@@ -35,6 +37,7 @@ export default class Backend {
         @multiInject("ResolverModule") resolverModules: BaseResolverModule[],
         @inject(DatabaseConnection) databaseConnection: DatabaseConnection,
         @inject(RedisClient) redisClient: RedisClient,
+        @inject(RedisQueueWorkers) redisQueueWorkers: RedisQueueWorkers,
         @inject(MailerClient) mailerClient: MailerClient,
         @inject(ContextFactory) contextFactory: ContextFactory,
         @inject(Server) httpServer: Server
@@ -43,6 +46,7 @@ export default class Backend {
         this.httpServer = httpServer;
         this.databaseConnection = databaseConnection;
         this.redisClient = redisClient;
+        this.redisQueueWorkers = redisQueueWorkers;
         this.mailerClient = mailerClient;
         this.contextFactory = contextFactory;
     }
@@ -61,13 +65,14 @@ export default class Backend {
 
     public startRedis(): void {
         this.redisClient.startRedis();
+        this.redisQueueWorkers.start();
     }
 
     public async startMailer(): Promise<void> {
         await this.mailerClient.startMailTransporter();
     }
 
-    public buildExecutableSchema() {
+    public buildExecutableSchema(): GraphQLSchema {
         const resolvers = {
             ...scalarResolvers,
             ...this.mergeResolvers()
@@ -80,18 +85,14 @@ export default class Backend {
 
     public buildApolloServer(): ApolloServer {
       const schema = this.buildExecutableSchema();
-      // Creating the WebSocket server
+
       const wsServer = new WebSocketServer({
-        // This is the `httpServer` we created in a previous step.
         server: this.httpServer,
-        // Pass a different path here if your ApolloServer serves at
-        // a different path.
         path: "/graphql",
       });
 
-      // Hand in the schema we just created and have the
-      // WebSocketServer start listening.
       const serverCleanup = useServer({ schema }, wsServer);
+
       return new ApolloServer({
         schema,
         csrfPrevention: true,

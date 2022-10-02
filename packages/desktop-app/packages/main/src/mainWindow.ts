@@ -50,7 +50,7 @@ async function createWindow() {
     }
 
     ipcMain.handle('system:getSystemTheme', getSystemTheme);
-    ipcMain.on('system:openOAuthWindow', async (_, provider) => {
+    ipcMain.on('system:openOAuthWindow', async (_: any, provider: any) => {
       const oauthWindow = new BrowserWindow({
         show: true, // Use the 'ready-to-show' event to show the instantiated BrowserWindow.
         titleBarStyle: 'hidden',
@@ -82,8 +82,9 @@ async function createWindow() {
           oauthWindow?.webContents.openDevTools();
         }
       });
+
       ipcMain.once('oauth:sendOAuthResult', (event: any, ...args: any[]) => {
-        console.log(event.sender.getURL(), args);
+        console.log(event.sender.getURL(), JSON.stringify(args));
         oauthWindow.close();
         oauthWindow.destroy();
 

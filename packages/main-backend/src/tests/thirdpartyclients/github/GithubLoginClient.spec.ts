@@ -104,7 +104,7 @@ describe('GithubLoginClient', () => {
               .get("/user/emails")
               .reply(200, JSON.stringify(GithubEmailsSuccessMock));
             const response = await githubLoginClient.getGithubUserEmails("good") as GithubEmail[];
-            for (let email of response) {
+            for (const email of response) {
                 expect(email).to.be.instanceOf(GithubEmail);
             }
             scope.done();

@@ -4,6 +4,13 @@
   "description": "",
   "author": "",
   "license": "ISC",
+  "type": "module",
+  "scripts": {
+    "tsc": "tsc --build",
+    "clean": "rimraf build tsconfig.tsbuildinfo",
+    "build": "yarn clean && yarn tsc",
+    "lint": "eslint --ext .ts,.tsx ."
+  },
   "dependencies": {
     "@types/cors": "^2.8.12",
     "@types/node": "^16.9.4",

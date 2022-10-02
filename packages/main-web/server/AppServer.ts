@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import express, { Express } from 'express';
+import express, { Express, Response } from 'express';
 import { Server } from 'http';
 import Backend from '../../main-backend/src/Backend';
 import { env } from 'process';
@@ -90,7 +90,7 @@ export default class AppServer {
 
     const { render } = await vite.ssrLoadModule(!isProduction ? "./src/entry-server.tsx" : "./dist/server/entry-server.js");
 
-    this.app.use("*", async (req, res, next) => {
+    this.app.use("*", async (req, res, next): Promise<Response|undefined|void> => {
       try {
         const url = req.originalUrl;
         const template = isProduction ? indexHTMLTemplate : await vite.transformIndexHtml(url, indexHTMLTemplate);
@@ -143,8 +143,12 @@ export default class AppServer {
       basePathname: "/maildev",
     });
 
-    maildev.listen(function (err) {
-      console.log("send emails to port 1025!");
+    maildev.listen(function (error: Error) {
+      if (error) {
+        console.error("Mock mailer error", error);
+      } else {
+        console.log("send emails to port 1025!");
+      }
     });
 
     const proxy = createProxyMiddleware("/maildev", {

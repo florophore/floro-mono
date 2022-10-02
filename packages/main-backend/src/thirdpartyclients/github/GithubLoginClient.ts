@@ -45,7 +45,7 @@ export default class GithubLoginClient {
               },
               {}
             );
-            if (!!json['error']) {
+            if (json['error']) {
               return deserialize(GithubAccessTokenError, json);
             }
             return deserialize(GithubAccessToken, json);
@@ -72,7 +72,7 @@ export default class GithubLoginClient {
                 throw new Error('bad response code');
             }
             const json = await response.json();
-            if (!!json['message']) {
+            if (json['message']) {
                 return deserialize(GithubAPIError, json);
             }
             return deserialize(GithubUser, json);
@@ -100,7 +100,7 @@ export default class GithubLoginClient {
                 throw new Error('bad response code');
             }
             const json = await response.json();
-            if (!!json['message']) {
+            if (json['message']) {
                 return deserialize(GithubAPIError, json);
             }
             return json.map(email => deserialize(GithubEmail, email));

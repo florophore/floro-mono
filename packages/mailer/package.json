@@ -15,6 +15,7 @@
     "test:inspect": "NODE_ENV=test node node_modules/.bin/mocha inspect src/**/*.spec.ts --exit"
   },
   "dependencies": {
+    "@floro/styles": "1.0.0",
     "bullmq": "^1.90.1",
     "inversify": "^6.0.1",
     "mjml": "^4.13.0",
@@ -32,6 +33,7 @@
     "@types/expect": "^24.3.0",
     "@types/mocha": "^9.1.1",
     "@types/node": "^18.7.2",
+    "@types/nodemailer": "^6.4.6",
     "@vitejs/plugin-react": "^2.0.0",
     "chai": "^4.3.6",
     "eslint": "^8.0.1",

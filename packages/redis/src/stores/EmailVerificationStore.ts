@@ -2,15 +2,17 @@ import { injectable, inject } from "inversify";
 import RedisClient from "../RedisClient";
 import crypto from 'crypto';
 import EmailHelper from '@floro/database/src/contexts/utils/EmailHelper';
+import { UserAuthCredential } from "@floro/database/src/entities/UserAuthCredential";
 import MainConfig from "@floro/main-config/src/MainConfig";
 
-const EMAIL_SIGNUP_STORE_PREFIX = "email_signup_store";
-const  emailSignupStoreKey = (storeId: string) => `${EMAIL_SIGNUP_STORE_PREFIX}:${storeId}`;
+const EMAIL_VERIFICATION_STORE_PREFIX = "email_signup_store";
+const  emailVerificationStoreKey = (storeId: string) => `${EMAIL_VERIFICATION_STORE_PREFIX}:${storeId}`;
 
 const EXPIRATION_SECONDS = 60 * 60; // 1 hour
 
-export interface EmailSignup {
+export interface EmailVerification {
   id: string;
+  oauthId: string;
   email: string;
   normalizedEmail: string;
   emailHash: string;
@@ -19,7 +21,7 @@ export interface EmailSignup {
 }
 
 @injectable()
-export default class EmailAuthStore {
+export default class EmailVerificationStore {
     private redisClient!: RedisClient;
     private mainConfig!: MainConfig;
 
@@ -35,17 +37,18 @@ export default class EmailAuthStore {
         return crypto.randomBytes(32).toString('base64');
     }
 
-    public async createEmailAuth(email: string) {
+    public async createEmailVerification(oauthCredential: UserAuthCredential) {
         const createdAt = new Date();
         const expiresAt = new Date(createdAt.getTime() + EXPIRATION_SECONDS * 1000);
-        const isGoogleEmail = await EmailHelper.isGoogleEmail(email);
-        const normalizedEmail = EmailHelper.getUniqueEmail(email, isGoogleEmail);
-        const emailHash = EmailHelper.getEmailHash(email, isGoogleEmail);
+        const isGoogleEmail = await EmailHelper.isGoogleEmail(oauthCredential.email);
+        const normalizedEmail = EmailHelper.getUniqueEmail(oauthCredential.email, isGoogleEmail);
+        const emailHash = EmailHelper.getEmailHash(oauthCredential.email, isGoogleEmail);
         const storeId = this.generateStoreId();
-        const emailSignupKey = emailSignupStoreKey(storeId);
-        const emailSignup: EmailSignup = {
+        const emailSignupKey = emailVerificationStoreKey(storeId);
+        const emailSignup: EmailVerification = {
             id: storeId,
-            email,
+            email: oauthCredential.email,
+            oauthId: oauthCredential.id,
             normalizedEmail,
             createdAt: createdAt.toISOString(),
             expiresAt: expiresAt.toISOString(),
@@ -55,16 +58,16 @@ export default class EmailAuthStore {
         return emailSignup;
     }
 
-    public async fetchEmailAuth(storeId: string): Promise<EmailSignup|null> {
-        const emailSignupKey = emailSignupStoreKey(storeId);
+    public async fetchEmailVerification(storeId: string): Promise<EmailVerification|null> {
+        const emailSignupKey = emailVerificationStoreKey(storeId);
         const emailSignupSerialized = await this.redisClient?.redis?.get(emailSignupKey) as string|undefined;
         if (emailSignupSerialized) {
-            return JSON.parse(emailSignupSerialized) as EmailSignup;
+            return JSON.parse(emailSignupSerialized) as EmailVerification;
         }
         return null;
     }
 
-    public link(emailSignup: EmailSignup) {
-        return `${this.mainConfig.url()}/credential/auth?verification_code=${emailSignup.id}`;
+    public link(emailVerification: EmailVerification) {
+        return `${this.mainConfig.url()}/credential/verifiy?verification_code=${emailVerification.id}`;
     }
 }

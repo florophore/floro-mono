@@ -5,7 +5,7 @@ import AuthenticationService from "../../services/authentication/AuthenticationS
 import SessionStore from "@floro/redis/src/sessions/SessionStore";
 import { UserAuthCredential } from "@floro/database/src/entities/UserAuthCredential";
 import { User } from "@floro/database/src/entities/User";
-import { AuthAction, UnsavedUser } from "@floro/graphql-schemas/build/generated/main-graphql";
+import { AuthAction, UnsavedUser } from "@floro/graphql-schemas/src/generated/main-graphql";
 
 @injectable()
 export default class UsersResolverModule extends BaseResolverModule {
@@ -58,8 +58,19 @@ export default class UsersResolverModule extends BaseResolverModule {
             authenticationResult.credential as UserAuthCredential
           );
         }
-        if (authenticationResult.action == 'LOG_ERROR') {
+        if (authenticationResult.action == 'VERIFICATION_REQUIRED') {
+          const action: AuthAction = {
+            __typename: "VerificationRequiredAction",
+            email: authenticationResult.email as string
+          };
+          return {
+            type: 'VERIFICATION_REQUIRED',
+            action
+          }
 
+        }
+        if (authenticationResult.action == 'LOG_ERROR') {
+          console.error(authenticationResult?.error?.type, authenticationResult?.error?.message, authenticationResult?.error?.meta);
         }
 
         return null;
@@ -93,7 +104,7 @@ export default class UsersResolverModule extends BaseResolverModule {
           console.log("SESSION", session);
         }
         if (authenticationResult.action == 'LOG_ERROR') {
-
+          console.error(authenticationResult?.error?.type, authenticationResult?.error?.message, authenticationResult?.error?.meta);
         }
         return null;
       }

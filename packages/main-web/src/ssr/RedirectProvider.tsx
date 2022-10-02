@@ -19,7 +19,7 @@ interface Props {
     children: React.ReactElement;
 }
 
-const RedirectProvider = (props: Props) => {
+const RedirectProvider = (props: Props): React.ReactElement => {
     const location = useLocation();
     const initalUrl = useMemo(() => props.context.url, [])
     const should404 = useMemo(() => !matchRoute(location.pathname + location.search), [location.pathname, + location.search]);

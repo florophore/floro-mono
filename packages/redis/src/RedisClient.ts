@@ -1,15 +1,15 @@
 import { inject, injectable } from "inversify";
-import ClientConfig from "./ClientConfig";
+import RedisClientConfig from "./RedisClientConfig";
 import IORedis from 'ioredis';
 
 @injectable()
 export default class RedisClient {
 
-    private clientConfig!: ClientConfig;
+    private redisClientConfig!: RedisClientConfig;
     public redis?: IORedis;
 
-    constructor(@inject(ClientConfig) clientConfig: ClientConfig) {
-        this.clientConfig = clientConfig;
+    constructor(@inject(RedisClientConfig) clientConfig: RedisClientConfig) {
+        this.redisClientConfig = clientConfig;
     }
 
     public connectionExists(): boolean {
@@ -17,6 +17,7 @@ export default class RedisClient {
     }
 
     public startRedis(): void {
-        this.redis = new IORedis(this.clientConfig.url());
+        this.redis = new IORedis(this.redisClientConfig.url());
+        this.redis.options.maxRetriesPerRequest = null;
     }
 }

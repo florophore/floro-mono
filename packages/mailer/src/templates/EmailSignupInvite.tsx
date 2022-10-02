@@ -14,7 +14,7 @@ import {
   } from 'mjml-react';
   import colorPalette from '@floro/styles/ColorPalette';
 
-interface Props {
+export interface Props {
   assetHost: string;
   link: string;
 }

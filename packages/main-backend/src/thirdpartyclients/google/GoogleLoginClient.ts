@@ -28,7 +28,7 @@ export default class GoogleLoginClient {
                 code,
                 grant_type: "authorization_code",
             };
-            let url = "https://oauth2.googleapis.com/token?client_id=" + this.clientId + "&client_secret=" + this.clientSecret + "&redirect_uri=" + this.redirectUri + "&code=" + code + "&grant_type=authorization_code"; 
+            const url = "https://oauth2.googleapis.com/token?client_id=" + this.clientId + "&client_secret=" + this.clientSecret + "&redirect_uri=" + this.redirectUri + "&code=" + code + "&grant_type=authorization_code"; 
             const response = await fetch(
               url,
               {
@@ -39,7 +39,7 @@ export default class GoogleLoginClient {
                 return new Error('bad response code');
             }
             const json = await response.json();
-            if (!!json['error']) {
+            if (json['error']) {
               return deserialize(GoogleAccessTokenError, json);
             }
             return deserialize(GoogleAccessToken, json);
@@ -66,7 +66,7 @@ export default class GoogleLoginClient {
                 throw new Error('bad response code');
             }
             const json = await response.json();
-            if (!!json['error']) {
+            if (json['error']) {
                 return deserialize(GoogleAPIError, json);
             }
             return deserialize(GoogleUser, json);

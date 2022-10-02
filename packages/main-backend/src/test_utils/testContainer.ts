@@ -4,6 +4,9 @@ import { Container, ContainerModule } from "inversify";
 import express from 'express';
 import http, { Server } from 'http';
 
+import MainConfigModule from "@floro/main-config/src/module";
+import MailerClientModule from "@floro/mailer/src/module";
+import { mockMailerDeps } from '@floro/mailer/src/test/test_utils/testContainer';
 import BackendModule from '../module';
 import DBModule from "@floro/database/src/module";
 import RedisModule from "@floro/redis/src/module";
@@ -20,6 +23,14 @@ const downstreamDependencies =  new ContainerModule((bind): void => {
     bind(Server).toConstantValue(httpServer);
 });
 
-container.load(DBModule, RedisModule, downstreamDependencies, BackendModule);
+container.load(
+  MainConfigModule,
+  MailerClientModule,
+  DBModule,
+  RedisModule,
+  mockMailerDeps,
+  downstreamDependencies,
+  BackendModule
+);
 
 export default container;

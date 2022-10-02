@@ -1,14 +1,19 @@
 import "reflect-metadata"
 
-import { Container } from "inversify";
+import { Container, ContainerModule } from "inversify";
 
-import RedisModule from '../../module';
+import MailerModule from '../../module';
+import MockTransport from "./MockTransport";
 
 const container: Container = new Container({
     autoBindInjectable: true,
     defaultScope: 'Singleton',
-})
+});
 
-container.load(RedisModule);
+export const mockMailerDeps = new ContainerModule((bind): void => {
+    bind<MockTransport>(MockTransport).toSelf().inSingletonScope();
+});
+
+container.load(mockMailerDeps, MailerModule);
 
 export default container;
