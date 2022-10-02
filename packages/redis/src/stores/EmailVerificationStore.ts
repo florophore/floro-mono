@@ -3,7 +3,7 @@ import RedisClient from "../RedisClient";
 import crypto from 'crypto';
 import EmailHelper from '@floro/database/src/contexts/utils/EmailHelper';
 import { UserAuthCredential } from "@floro/database/src/entities/UserAuthCredential";
-import MainConfig from "@floro/main-config/src/MainConfig";
+import MainConfig from "@floro/config/src/MainConfig";
 
 const EMAIL_VERIFICATION_STORE_PREFIX = "email_signup_store";
 const  emailVerificationStoreKey = (storeId: string) => `${EMAIL_VERIFICATION_STORE_PREFIX}:${storeId}`;

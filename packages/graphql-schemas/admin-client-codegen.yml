@@ -1,0 +1,22 @@
+overwrite: true
+schema:
+  - "src/generated/admin-schema.json"
+documents:
+  - "fragments/**/*.{gql,graphql}"
+  - "queries/**/*.{gql,graphql}"
+generates:
+  src/generated/admin-client-graphql.ts:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-react-apollo"
+    config:
+      noNamespaces: true
+      withHooks: true
+      noHOC: true
+      hooksImportFrom: "@apollo/react-hooks"
+      useIndexSignature: true
+      scalars:
+        DateTime: string
+        EmailAddress: string
+        UUID: string

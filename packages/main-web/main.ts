@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url'
 import { Container } from "inversify";
 
 import MainConfigModule from '@floro/main-config/src/module';
-import BackendModule from '@floro/main-backend/src/module';
+import BackendModule from '@floro/backend/src/module';
 import DBModule from "@floro/database/src/module";
 import RedisModule from "@floro/redis/src/module";
 import MailerModule from "@floro/mailer/src/module";

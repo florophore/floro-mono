@@ -7,7 +7,7 @@ import VerifyGithubOAuthEmail from "@floro/mailer/src/templates/VerifyGithubOAut
 import AccountAlreadyExists from "@floro/mailer/src/templates/AccountAlreadyExists";
 
 import MailerClient from "@floro/mailer/src/MailerClient";
-import MainConfig from "@floro/main-config/src/MainConfig";
+import MainConfig from "@floro/config/src/MainConfig";
 
 export const EmailTemplates = {
   EmailSignupInvite,

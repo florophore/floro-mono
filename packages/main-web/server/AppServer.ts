@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import express, { Express, Response } from 'express';
 import { Server } from 'http';
-import Backend from '../../main-backend/src/Backend';
+import Backend from '../../backend/src/Backend';
 import { env } from 'process';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import MailDev from 'maildev';
@@ -45,7 +45,6 @@ export default class AppServer {
     const schema = this.backend.buildExecutableSchema();
     await this.backend.startDatabase();
     this.backend.startRedis();
-    await this.backend.startMailer();
     const apolloServer = this.backend.buildApolloServer();
     await apolloServer.start();
     apolloServer.applyMiddleware({ app: this.app });

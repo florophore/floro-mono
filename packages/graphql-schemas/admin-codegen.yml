@@ -1,8 +1,21 @@
 overwrite: true
-schema: "./src/admin/**/*.graphql"
+schema: "./src/**/**/*.graphql"
 documents: null
 generates:
+  src/generated/admin-schema.json:
+    plugins:
+      - introspection
+    config:
+      scalars:
+        DateTime: string
+        EmailAddress: string
+        UUID: string
   src/generated/admin-graphql.ts:
     plugins:
       - typescript
       - typescript-resolvers
+    config:
+      scalars:
+        DateTime: string
+        EmailAddress: string
+        UUID: string

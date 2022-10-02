@@ -1,11 +1,11 @@
 import { DeepPartial, In, QueryRunner, Repository } from "typeorm";
 import { UserAuthCredential } from "../../entities/UserAuthCredential";
 import BaseContext from "../BaseContext";
-import GoogleAccessToken from '@floro/main-backend/src/thirdpartyclients/google/schemas/GoogleAccessToken';
-import GoogleUser from '@floro/main-backend/src/thirdpartyclients/google/schemas/GoogleUser';
-import GithubAccessToken from '@floro/main-backend/src/thirdpartyclients/github/schemas/GithubAccessToken';
-import GithubUser from '@floro/main-backend/src/thirdpartyclients/github/schemas/GithubUser';
-import GithubEmail from '@floro/main-backend/src/thirdpartyclients/github/schemas/GithubEmail';
+import GoogleAccessToken from '@floro/backend/src/thirdpartyclients/google/schemas/GoogleAccessToken';
+import GoogleUser from '@floro/backend/src/thirdpartyclients/google/schemas/GoogleUser';
+import GithubAccessToken from '@floro/backend/src/thirdpartyclients/github/schemas/GithubAccessToken';
+import GithubUser from '@floro/backend/src/thirdpartyclients/github/schemas/GithubUser';
+import GithubEmail from '@floro/backend/src/thirdpartyclients/github/schemas/GithubEmail';
 import EmailHelper from "../utils/EmailHelper";
 import UsersContext from "../users/UsersContext";
 import ContextFactory from "../ContextFactory";

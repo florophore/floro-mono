@@ -2,7 +2,7 @@ import { injectable, inject } from "inversify";
 import RedisClient from "../RedisClient";
 import crypto from 'crypto';
 import EmailHelper from '@floro/database/src/contexts/utils/EmailHelper';
-import MainConfig from "@floro/main-config/src/MainConfig";
+import MainConfig from "@floro/config/src/MainConfig";
 
 const EMAIL_SIGNUP_STORE_PREFIX = "email_signup_store";
 const  emailSignupStoreKey = (storeId: string) => `${EMAIL_SIGNUP_STORE_PREFIX}:${storeId}`;

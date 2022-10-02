@@ -2,8 +2,8 @@ overwrite: true
 schema:
   - "src/generated/main-schema.json"
 documents:
-  - "fragments/**/*.{gql,graphql}"
-  - "queries/**/*.{gql,graphql}"
+  - "fragments/main/**/*.{gql,graphql}"
+  - "queries/main/**/*.{gql,graphql}"
 generates:
   src/generated/main-client-graphql.ts:
     plugins:
