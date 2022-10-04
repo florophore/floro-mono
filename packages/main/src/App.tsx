@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { MainRoutes } from '@floro/common-web/src/Routing';
 import NotFound from '@floro/common-web/src/pages/errors/NotFound';
 import './App.css'

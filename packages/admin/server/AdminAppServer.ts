@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import { Server } from 'http';
-import AdminBackend from '../../backend/src/AdminBackend';
-import AppServer from '@floro/main-web/server/AppServer';
+import AdminBackend from '@floro/backend/src/AdminBackend';
+import AppServer from '@floro/main/server/AppServer';
 
 import { fileURLToPath } from 'url';
 import serveStatic from 'serve-static';
