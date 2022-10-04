@@ -17,7 +17,7 @@
         ]
     },
     "include": [
-        "src", "json.d.ts", "../mailer/src/test/test_utils/MockTransport.ts"
+        "src", "json.d.ts"
     ],
     "exclude": [
         "node_modules",

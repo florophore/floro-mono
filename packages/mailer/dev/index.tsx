@@ -2,7 +2,7 @@ import { useEffect} from 'react';
 
 import { BrowserRouter, Routes, Route, Link, useParams } from 'react-router-dom';
 import { useMutation, QueryClient, QueryClientProvider, useQuery } from 'react-query';
-import DotsLoader from '@floro/storybook/stories/DotsLoader'
+import DotsLoader from '@floro/storybook/stories/design-system/DotsLoader';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
