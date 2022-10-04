@@ -16,9 +16,7 @@
             "mocha"
         ]
     },
-    "include": [
-        "src", "json.d.ts", "../mailer/src/test/test_utils/MockTransport.ts"
-    ],
+    "include": ["global.d.ts","src"],
     "exclude": [
         "node_modules",
         "build"

@@ -115,7 +115,6 @@ export default class AppServer {
         if (context.url && context.url != url) {
           return res.redirect(301, context.url)
         }
-        console.log(appHtml);
         const html = template
         .replace(`<!--ssr-outlet-->`, appHtml)
         .replace('__APP_STATE__', JSON.stringify(appState).replace(/</g, '\\u003c'))

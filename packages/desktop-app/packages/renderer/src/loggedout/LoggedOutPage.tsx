@@ -2,14 +2,12 @@ import React, { useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import styled from '@emotion/styled';
 import { css } from '@emotion/css';
-import FloroLogoWithText from '../../assets/images/floro_logo_with_text.svg';
-import BackButtonDark from '../../assets/images/icons/back_arrow.dark.svg';
-import BackButtonLight from '../../assets/images/icons/back_arrow.light.svg';
-import GoogleIcon from '../../assets/images/icons/google_icon.svg';
-import GithubIcon from '../../assets/images/icons/github_white_bg.svg';
-import Button from '@floro/storybook/stories/Button/index';
-import GithubButton from '@floro/storybook/stories/GithubButton/index';
-import GoogleButton from '@floro/storybook/stories/GoogleButton/index';
+import FloroLogoWithText from '@floro/common-assets/assets/images/floro_logo_with_text.svg';
+import BackButtonDark from '@floro/common-assets/assets/images/icons/back_arrow.dark.svg';
+import BackButtonLight from '@floro/common-assets/assets/images/icons/back_arrow.light.svg';
+import Button from '@floro/storybook/stories/design-system/Button/index';
+import GithubButton from '@floro/storybook/stories/design-system/GithubButton/index';
+import GoogleButton from '@floro/storybook/stories/design-system/GoogleButton/index';
 import { createSearchParams, useSearchParams } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import { useSystemAPI } from '../contexts/SystemAPIContext';
@@ -199,9 +197,9 @@ const LoggedOutPage = ({isOpen}: Props) => {
                 <PaneWrapper>
                   <Pane>
                     <PaneRow>
-                      <GithubButton onClick={onOpenGithub} label={'Sign in with Github'} githubAsset={GithubIcon}/>
+                      <GithubButton onClick={onOpenGithub} label={'Sign in with Github'}/>
                       <ButtonSpacer/>
-                      <GoogleButton onClick={onOpenGoogle} label={'Sign in with Google'} googleAsset={GoogleIcon}/>
+                      <GoogleButton onClick={onOpenGoogle} label={'Sign in with Google'}/>
                     </PaneRow>
                     <PaneBottomButtonWrapper>
                       <Button label={'Sign in with email'} bg={'orange'}/>
@@ -216,9 +214,9 @@ const LoggedOutPage = ({isOpen}: Props) => {
                 <PaneWrapper>
                   <Pane>
                     <PaneRow>
-                      <GithubButton onClick={onOpenGithub} label={'Sign up with Github'} githubAsset={GithubIcon}/>
+                      <GithubButton onClick={onOpenGithub} label={'Sign up with Github'}/>
                       <ButtonSpacer/>
-                      <GoogleButton onClick={onOpenGoogle} label={'Sign up with Google'} googleAsset={GoogleIcon}/>
+                      <GoogleButton onClick={onOpenGoogle} label={'Sign up with Google'}/>
                     </PaneRow>
                     <PaneBottomButtonWrapper>
                       <Button label={'Sign up with email'} bg={'teal'}/>
