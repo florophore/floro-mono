@@ -6,7 +6,7 @@ import * as path from 'path'
 import { fileURLToPath } from 'url'
 import { Container } from "inversify";
 
-import MainConfigModule from '@floro/main-config/src/module';
+import ConfigModule from '@floro/config/src/module';
 import BackendModule from '@floro/backend/src/module';
 import DBModule from "@floro/database/src/module";
 import RedisModule from "@floro/redis/src/module";
@@ -28,7 +28,7 @@ const container: Container = new Container({
 });
 
 container.load(
-  MainConfigModule,
+  ConfigModule,
   DBModule,
   RedisModule,
   MailerModule,

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
 import reactLogo from './assets/react.svg'
 import styled from '@emotion/styled'
-import ReactSVG from '../assets/react.svg';
+import ReactSVG from '@floro/common-assets/assets/react.svg';
 import {Helmet} from "react-helmet";
 
 function About() {

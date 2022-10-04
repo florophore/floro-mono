@@ -27,11 +27,6 @@ export default class MockTransport implements Transporter<SMTPTransport.SentMess
     use(step: string, plugin: PluginFunction<SMTPTransport.SentMessageInfo>): this {
         throw new Error("Method not implemented.");
     }
-    sendMail(mailOptions: Options, callback: (err: Error | null, info: SMTPTransport.SentMessageInfo) => void): void;
-    sendMail(mailOptions: Options): Promise<SMTPTransport.SentMessageInfo>;
-    sendMail(mailOptions: unknown, callback?: unknown): void | Promise<SMTPTransport.SentMessageInfo> {
-        throw new Error("Method not implemented.");
-    }
     getVersionString(): string {
         throw new Error("Method not implemented.");
     }
@@ -116,11 +111,18 @@ export default class MockTransport implements Transporter<SMTPTransport.SentMess
     eventNames(): (string | symbol)[] {
         throw new Error("Method not implemented.");
     }
+    
+    /**
+     * 
+     * MOCK METHODS 
+     */
 
     public queue: any[] = [];
 
-    public sendEmail(args: any) {
-        this.queue.push(args);
+    public sendMail(mailOptions: Options, callback: (err: Error | null, info: SMTPTransport.SentMessageInfo) => void): void;
+    public sendMail(mailOptions: Options): Promise<SMTPTransport.SentMessageInfo>;
+    public sendMail(mailOptions: unknown, callback?: unknown): void | Promise<SMTPTransport.SentMessageInfo> {
+        this.queue.push(mailOptions);
     }
 
     public peak() {
@@ -135,8 +137,8 @@ export default class MockTransport implements Transporter<SMTPTransport.SentMess
         this.queue = [];
     }
 
-    public pop() {
-        this.queue.pop();
+    public pop(): any {
+        return this.queue.pop();
     }
 
 }

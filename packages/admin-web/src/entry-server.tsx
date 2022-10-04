@@ -1,9 +1,7 @@
 import React from 'react';
 import App from './App';
 import { StaticRouter } from "react-router-dom/server";
-import  ApolloPackage from '@apollo/client';
-import { main } from '@floro/graphql-schemas'; 
-import RedirectProvider from './ssr/RedirectProvider';
+import AdminRedirectProvider from './ssr/AdminRedirectProvider';
 import { renderToStringWithData } from '@apollo/client/react/ssr';
 import { ApolloProvider, ApolloClient } from '@apollo/client';
 import { Helmet } from 'react-helmet';
@@ -13,9 +11,9 @@ export const render = async (url: string, deps: {client: ApolloClient<any>}, con
       const SSRApp = (
         <ApolloProvider client={deps.client}>
           <StaticRouter location={url}>
-            <RedirectProvider context={context}>
+            <AdminRedirectProvider context={context}>
               <App />
-            </RedirectProvider>
+            </AdminRedirectProvider>
           </StaticRouter>
         </ApolloProvider>
       );

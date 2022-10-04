@@ -12,6 +12,8 @@ import MailerClient from "@floro/mailer/src/MailerClient";
 import { makeExecutableSchema } from "graphql-tools";
 import RedisQueueWorkers from "@floro/redis/src/RedisQueueWorkers";
 import { GraphQLSchema } from "graphql";
+import { WebSocketServer } from 'ws';
+import killPort from 'kill-port';
 
 @injectable()
 export default class AdminBackend extends Backend {

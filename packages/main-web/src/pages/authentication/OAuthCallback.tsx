@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom';
 import styled from '@emotion/styled';
-import FloroIcon from '../../assets/images/floro_logo.svg';
+import FloroIcon from '@floro/common-assets/assets/images/floro_logo.svg';
 import DotsLoader from '@floro/storybook/stories/DotsLoader';
 import { useSubmitOAuthCodeQuery } from '@floro/graphql-schemas/src/generated/main-client-graphql';
 import { Helmet } from 'react-helmet';

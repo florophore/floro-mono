@@ -7,8 +7,17 @@ export default defineConfig(({ mode }): any => {
     mode: process.env.MODE,
     outDir: 'dist',
     plugins: [react()],
-    build: {
-      minify: mode === 'production',
+    assetsInclude: [
+      '../common-assets/assets/**/*.svg',
+      '../common-assets/assets/**/*.png',
+      '../common-assets/assets/**/*.txt',
+      '../common-assets/assets/**/*.ttf',
+    ],
+    server: {
+      hmr: {
+        clientPort: 7777,
+        port: 7777,
+      }
     }
   }
 });

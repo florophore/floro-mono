@@ -33,6 +33,7 @@ export default class EmailQueue {
   public worker!: Worker;
   private mailerClient!: MailerClient;
   private mainConfig!: MainConfig;
+  private redisClient!: RedisClient;
 
   constructor(
     @inject(RedisClient) redisClient: RedisClient,
@@ -41,7 +42,10 @@ export default class EmailQueue {
   ) {
     this.mailerClient = mailerClient;
     this.mainConfig = mainConfig;
-    this.queueScheduler = new QueueScheduler(EmailQueue.QUEUE_NAME);
+    this.redisClient = redisClient;
+    this.queueScheduler = new QueueScheduler(EmailQueue.QUEUE_NAME, {
+      connection: redisClient.redis,
+    });
     this.queue = new Queue(EmailQueue.QUEUE_NAME, {
       connection: redisClient.redis,
     });
@@ -104,7 +108,7 @@ export default class EmailQueue {
           );
         }
       },
-      { autorun: true }
+      { autorun: true, connection: this.redisClient.redis }
     );
 
     this.worker.on("error", (error: Error) => {

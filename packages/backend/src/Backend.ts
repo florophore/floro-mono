@@ -15,17 +15,18 @@ import RedisClient from "@floro/redis/src/RedisClient";
 import MailerClient from "@floro/mailer/src/MailerClient";
 import process from "process";
 import { makeExecutableSchema } from "graphql-tools";
-import { WebSocketServer } from 'ws';
+import { WebSocket, WebSocketServer } from 'ws';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import RedisQueueWorkers from "@floro/redis/src/RedisQueueWorkers";
 import { GraphQLSchema } from 'graphql';
+import killPort from 'kill-port';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
 @injectable()
 export default class Backend {
   public resolverModules: BaseResolverModule[];
-  private httpServer: Server;
+  protected httpServer: Server;
   private databaseConnection!: DatabaseConnection;
   private redisClient!: RedisClient;
   private redisQueueWorkers!: RedisQueueWorkers;
@@ -76,13 +77,17 @@ export default class Backend {
     });
   }
 
+  protected getWsServer(): WebSocketServer {
+    return new WebSocketServer({
+      server: this.httpServer,
+      path: "/graphql-subscriptions",
+    });
+  }
+
   public buildApolloServer(): ApolloServer {
     const schema = this.buildExecutableSchema();
 
-    const wsServer = new WebSocketServer({
-      server: this.httpServer,
-      path: "/graphql",
-    });
+    const wsServer = this.getWsServer();
 
     const serverCleanup = useServer({ schema }, wsServer);
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom';
 import styled from '@emotion/styled';
-import FloroIcon from '../../assets/images/floro_logo.svg';
+import FloroIcon from '@floro/common-assets/assets/images/floro_logo.svg';
 import DotsLoader from '@floro/storybook/stories/DotsLoader';
 import { useSubmitOAuthCodeQuery } from '@floro/graphql-schemas/src/generated/main-client-graphql';
 import { Helmet } from 'react-helmet';
@@ -44,17 +44,18 @@ function OAuthCallback() {
       return;
     }
 
+    if (graphqlError) {
+      // update this to include error
+      window.OAuthAPI.sendResult(false, params?.provider);
+      return;
+    }
+
     if (data?.submitOAuthForAction) {
         console.log(data?.submitOAuthForAction);
        window.OAuthAPI.sendResult(true, params?.provider, data?.submitOAuthForAction);
        return;
     }
 
-    if (graphqlError) {
-      // update this to include error
-      window.OAuthAPI.sendResult(false, params?.provider);
-      return;
-    }
   }, [data, error, graphqlError]);
 
   return (

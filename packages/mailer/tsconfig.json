@@ -21,8 +21,9 @@
         ]
     },
     "include": [
+        "global.d.ts",
+        "src/**/*.ts?x",
         "src/**/*.ts",
-        "src/**/*.tsx",
         "dev/**/*.ts",
         "dev/**/*.tsx",
     ],

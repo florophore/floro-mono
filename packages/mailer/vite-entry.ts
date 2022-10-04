@@ -3,19 +3,25 @@ import * as path from 'path'
 import { fileURLToPath } from 'url'
 import { createServer as createViteServer } from 'vite'
 import { render } from 'mjml-react';
-import express from 'express';
 import bodyParser from 'body-parser';
+import express, { Express, Response } from 'express';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const resolve = (p: string) => path.resolve(__dirname, p);
 
 let template = fs.readFileSync(
   path.resolve(__dirname, 'index.html'),
   'utf-8'
 );
 
-
 async function createServer() {
     const app = express()
+
+    console.log(resolve("../common-assets/assets"))
+    const requestHandler = express.static(resolve("../common-assets/assets"));
+    app.use(requestHandler);
+    app.use("/assets", requestHandler);
+
   
     // Create Vite server in middleware mode and configure the app type as
     // 'custom', disabling Vite's own HTML serving logic so parent server

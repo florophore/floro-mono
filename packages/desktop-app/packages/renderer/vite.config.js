@@ -24,6 +24,10 @@ const config = {
     fs: {
       strict: true,
     },
+    hmr: {
+      clientPort: 7779,
+      port: 7779,
+    }
   },
   build: {
     sourcemap: true,

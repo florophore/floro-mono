@@ -30,6 +30,7 @@ export default class AppServer {
   private app: Express;
   private server: Server;
   private backend: Backend;
+  protected port: number = 9000;
 
   constructor(
     @inject("ExpressApplication") app,
@@ -39,6 +40,12 @@ export default class AppServer {
     this.app = app;
     this.server = server;
     this.backend = backend;
+  }
+
+  protected distClient() {
+    return serveStatic(resolve("../dist/client"), {
+      index: false,
+    })
   }
 
   public async startServer(indexHTMLTemplate: string): Promise<void> {
@@ -74,17 +81,13 @@ export default class AppServer {
 
     this.app.use(vite.middlewares);
 
-    const requestHandler = express.static(resolve("../assets"));
+    const requestHandler = express.static(resolve("../../common-assets/assets"));
     this.app.use(requestHandler);
     this.app.use("/assets", requestHandler);
   
     if (isProduction) {
       this.app.use(compression());
-      this.app.use(
-        serveStatic(resolve("../dist/client"), {
-          index: false,
-        }),
-      );
+      this.app.use(this.distClient());
     }
 
     const { render } = await vite.ssrLoadModule(!isProduction ? "./src/entry-server.tsx" : "./dist/server/entry-server.js");
@@ -112,6 +115,7 @@ export default class AppServer {
         if (context.url && context.url != url) {
           return res.redirect(301, context.url)
         }
+        console.log(appHtml);
         const html = template
         .replace(`<!--ssr-outlet-->`, appHtml)
         .replace('__APP_STATE__', JSON.stringify(appState).replace(/</g, '\\u003c'))
@@ -132,12 +136,12 @@ export default class AppServer {
     });
 
     await new Promise<void>((resolve) =>
-      this.server.listen({ port: 9000 }, resolve)
+      this.server.listen({ port: this.port }, resolve)
     );
-    console.log(`🚀 Server ready at http://127.0.0.1:9000`);
+    console.log(`🚀 Server ready at http://127.0.0.1:${this.port}`);
   }
 
-  private startMailDev() {
+  protected startMailDev() {
     const maildev = new MailDev({
       basePathname: "/maildev",
     });
@@ -150,11 +154,15 @@ export default class AppServer {
       }
     });
 
-    const proxy = createProxyMiddleware("/maildev", {
-      target: `http://localhost:1080`,
-      ws: true,
-    });
+    try {
+      const proxy = createProxyMiddleware("/maildev", {
+        target: `http://localhost:1080`,
+        ws: true,
+      });
 
-    this.app.use(proxy);
+      this.app.use(proxy);
+    } catch (e) {
+      console.error(e);
+    }
   }
 }

@@ -27,6 +27,16 @@ export interface AuthReponse {
     };
 }
 
+export interface CredentialVerificationResponse {
+    action: 'NOT_FOUND'|'LOG_ERROR'|'VERIFIED_CREDENTIAL';
+    credential?: UserAuthCredential;
+    error?: {
+        type: string;
+        message: string;
+        meta?: any;
+    };
+}
+
 @injectable()
 export default class AuthenticationService {
 
@@ -238,6 +248,27 @@ export default class AuthenticationService {
             return { action: 'LOG_ERROR', error: { type: 'UNKNOWN_GOOGLE_LOGIN_ERROR', message: e?.message, meta: e} };
         } finally {
             queryRunner.release();
+        }
+    }
+
+    public async verifyCredential(verificationCode: string) {
+        try {
+            const emailVerification = await this.emailVerificationStore.fetchEmailVerification(verificationCode);
+            if (!emailVerification) {
+                return { action: 'NOT_FOUND'};
+            }
+            const userAuthCredentialsContext = await this.contextFactory.createContext(UserAuthCredentialsContext);
+            const userAuthCredential = await userAuthCredentialsContext.getById(emailVerification.oauthId) as UserAuthCredential;
+            const credential = userAuthCredentialsContext.updateUserAuthCredential(
+                userAuthCredential,
+                {
+                    isThirdPartyVerified: true,
+                    isVerified: true
+                }
+            );
+            return { action: 'VERIFIED_CREDENTIAL', credential};
+        } catch(e: any) {
+            return { action: 'LOG_ERROR', error: { type: 'UNKNOWN_GOOGLE_LOGIN_ERROR', message: e?.message, meta: e} };
         }
     }
 }

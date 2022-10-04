@@ -12,7 +12,7 @@ import DBModule from "@floro/database/src/module";
 import RedisModule from "@floro/redis/src/module";
 import MailerModule from "@floro/mailer/src/module";
 import WebModule from './server/module';
-import AppServer from './server/AppServer'
+import AdminAppServer from './server/AdminAppServer'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const isDevelopment = process.env.NODE_ENV == 'development';
@@ -37,7 +37,7 @@ container.load(
 );
 
 (async () => {
-  const appServer = container.get(AppServer);
+  const appServer = container.get(AdminAppServer);
   appServer.startServer(template);
   console.log("started app...")
 })();

@@ -3,6 +3,7 @@ import colorPalette, { Opacity } from '@floro/styles/ColorPalette';
 import { css } from '@emotion/css';
 import { useTheme } from '@emotion/react';
 import DotsLoader from '../DotsLoader';
+import X from '@floro/common-assets/assets/react.svg';
 
 export interface ButtonProps {
     label: string;
@@ -188,6 +189,7 @@ const Button = ({
             <DotsLoader color="white" size={"large"} />
           </div>
         )}
+        <img src={X}/>
       </button>
     );
 }

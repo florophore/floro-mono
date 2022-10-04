@@ -5,6 +5,12 @@
  * @see https://vitest.dev/config/
  */
 const config = {
+  assetsInclude: [
+    '@floro/common-assets/assets/**/*.svg',
+    '@floro/common-assets/assets/**/*.png',
+    '@floro/common-assets/assets/**/*.ttf',
+    '@floro/common-assets/assets/**/*.txt',
+  ],
   test: {
     /**
      * By default, vitest searches for the test files in all packages.

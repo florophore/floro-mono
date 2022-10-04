@@ -9,15 +9,15 @@ import RedisQueueWorkers from './RedisQueueWorkers';
 
 export default new ContainerModule((bind): void => {
     bind<RedisClientConfig>(RedisClientConfig).toSelf();
-    bind<RedisClient>(RedisClient).toSelf().inSingletonScope();
-    bind<SessionStore>(SessionStore).toSelf().inSingletonScope();
+    bind<RedisClient>(RedisClient).toSelf();
+    bind<SessionStore>(SessionStore).toSelf();
 
     // stores
-    bind<EmailAuthStore>(EmailAuthStore).toSelf().inSingletonScope();
-    bind<EmailVerificationStore>(EmailVerificationStore).toSelf().inSingletonScope();
+    bind<EmailAuthStore>(EmailAuthStore).toSelf();
+    bind<EmailVerificationStore>(EmailVerificationStore).toSelf();
 
     // queues
-    bind<EmailQueue>(EmailQueue).toSelf().inSingletonScope();
+    bind<EmailQueue>(EmailQueue).toSelf();
 
-    bind<RedisQueueWorkers>(RedisQueueWorkers).toSelf().inSingletonScope();
+    bind<RedisQueueWorkers>(RedisQueueWorkers).toSelf();
 });

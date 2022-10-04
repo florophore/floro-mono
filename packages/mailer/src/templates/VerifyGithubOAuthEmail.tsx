@@ -31,7 +31,7 @@ const VerifyGithubOAuthEmail = (props: Props): React.ReactElement => {
       <MjmlBody width={500}>
         <MjmlSection fullWidth backgroundColor={colorPalette.lightPurple}>
           <MjmlColumn width={500}>
-            <MjmlImage height={200} width={200} src={`${props.assetHost}/src/assets/images/floro_logo.png`} />
+            <MjmlImage height={200} width={200} src={`${props.assetHost}/images/floro_logo.png`} />
           </MjmlColumn>
         </MjmlSection>
         <MjmlSection>
@@ -80,13 +80,13 @@ const VerifyGithubOAuthEmail = (props: Props): React.ReactElement => {
 };
 
 export const mock: Props = {
-  assetHost: "http://localhost:9000",
+  assetHost: "http://localhost:5173",
   link: 'http://google.com',
   action: 'login'
 }
 
 export const signupMock: Props = {
-  assetHost: "http://localhost:9000",
+  assetHost: "http://localhost:5173",
   link: 'http://google.com',
   action: 'signup'
 }

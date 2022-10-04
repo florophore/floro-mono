@@ -23,6 +23,10 @@ import { UserAuthCredential } from "@floro/database/src/entities/UserAuthCredent
 import { User } from "@floro/database/src/entities/User";
 import GoogleAccessTokenError from "../../../thirdpartyclients/google/schemas/GoogleAccessTokenError";
 import GoogleAPIError from "../../../thirdpartyclients/google/schemas/GoogleAPIError";
+import MailerClient from "@floro/mailer/src/MailerClient";
+import MockTransport from "@floro/mailer/src/test/test_utils/MockTransport";
+import EmailQueue from "@floro/redis/src/queues/EmailQueue";
+import RedisClient from "@floro/redis/src/RedisClient";
 
 const GoogleUserSuccessMockJSON = require("../../thirdpartyclients/google/mocks/GoogleUserSuccessMock.json");
 const GoogleUserSuccessMock = deserialize(
@@ -67,9 +71,22 @@ const GithubEmailsSuccessMock = deserialize(
 
 describe("AuthenticationService", () => {
   let authenticationService: AuthenticationService;
+  let redisClient: RedisClient;
+  let mailerClient: MailerClient;
+  let emailQueue: EmailQueue;
+
+  before(async () => {
+      mailerClient = container.get(MailerClient);
+      emailQueue = container.get(EmailQueue);
+      emailQueue.startMailWorker();
+  });
 
   beforeEach(async () => {
     authenticationService = container.get(AuthenticationService);
+    redisClient = container.get(RedisClient);
+    if (!redisClient.connectionExists) {
+      redisClient.startRedis();
+    }
   });
 
   describe("authWithGoogleOAuth", () => {
@@ -224,6 +241,95 @@ describe("AuthenticationService", () => {
           scopeUser.done();
           scopeEmails.done();
         });
+      });
+      describe("github account email is not verified", () => {
+        test('returns a send signup verification if first time signup', (done) => {
+          const SUCCESS_STRING =
+            "access_token=good_token&scope=user&token_type=bearer";
+          const scope = nock("https://github.com")
+            .filteringRequestBody(/code=[^&]*/g, "code=good")
+            .post("/login/oauth/access_token")
+            .reply(200, SUCCESS_STRING);
+          const scopeUser = nock("https://api.github.com")
+            .matchHeader("Authorization", "token good_token")
+            .get("/user")
+            .reply(200, GithubUserSuccessMock);
+          const scopeEmails = nock("https://api.github.com")
+            .matchHeader("Authorization", "token good_token")
+            .get("/user/emails")
+            .reply(200, [{
+              ...GithubEmailsSuccessMock[0],
+              verified: false
+            }]);
+          const transporter = mailerClient.transporter as MockTransport;
+
+          const callback = async (event) => {
+            const mailData = transporter.pop();
+            expect(mailData.to).to.equal("jamesrainersunderland@gmail.com");
+            expect(event.data.props.action).to.equal("signup");
+            emailQueue.worker.off('completed', callback);
+            done();
+          };
+          emailQueue.worker.on('completed', callback);
+
+          authenticationService.authWithGithubOAuth(
+            "good"
+          ).then(result => {
+            expect(result.action).to.equal("VERIFICATION_REQUIRED");
+            expect(result?.email).to.equal("jamesrainersunderland@gmail.com");
+
+            scope.done();
+            scopeUser.done();
+            scopeEmails.done();
+          });
+        });
+
+        test('returns a send login verification if user already exists', (done) => {
+          loadFixtures<[User, UserAuthCredential]>([
+            "User:user_0",
+            "UserAuthCredential:email_pass_for_test@gmail",
+          ]).then(() => {
+            const SUCCESS_STRING =
+              "access_token=good_token&scope=user&token_type=bearer";
+            const scope = nock("https://github.com")
+              .filteringRequestBody(/code=[^&]*/g, "code=good")
+              .post("/login/oauth/access_token")
+              .reply(200, SUCCESS_STRING);
+            const scopeUser = nock("https://api.github.com")
+              .matchHeader("Authorization", "token good_token")
+              .get("/user")
+              .reply(200, GithubUserSuccessMock);
+            const scopeEmails = nock("https://api.github.com")
+              .matchHeader("Authorization", "token good_token")
+              .get("/user/emails")
+              .reply(200, [
+                {
+                  ...GithubEmailsSuccessMock[0],
+                  email: "test@gmail.com",
+                  verified: false,
+                },
+              ]);
+            const transporter = mailerClient.transporter as MockTransport;
+            const callback = async (event) => {
+              const mailData = transporter.pop();
+              expect(mailData.to).to.equal("test@gmail.com");
+              expect(event.data.props.action).to.equal("login");
+              emailQueue.worker.off('completed', callback);
+              done();
+            };
+
+            emailQueue.worker.on("completed", callback);
+
+            authenticationService.authWithGithubOAuth("good").then((result) => {
+              expect(result.action).to.equal("VERIFICATION_REQUIRED");
+              expect(result?.email).to.equal("test@gmail.com");
+
+              scope.done();
+              scopeUser.done();
+              scopeEmails.done();
+            });
+          });
+          })
       });
 
       describe("when no credentials exist", () => {

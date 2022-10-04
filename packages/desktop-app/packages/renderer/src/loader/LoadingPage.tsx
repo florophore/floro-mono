@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-import FloroLogo from '../../assets/images/floro_logo.svg';
+//import FloroLogo from '../../assets/images/floro_logo.svg';
+import FloroLogo from '@floro/common-assets/assets/images/floro_logo.svg';
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';

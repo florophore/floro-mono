@@ -1,6 +1,7 @@
 import {app} from 'electron';
 import './security-restrictions';
 import {restoreOrCreateWindow} from '/@/mainWindow';
+import startServer from '../../server/index';
 
 /**
  * Prevent electron from running multiple instances.
@@ -26,10 +27,14 @@ app.on('window-all-closed', () => {
   }
 });
 
+let serverTerminator: { terminate: any; } | null = null;
 /**
  * @see https://www.electronjs.org/docs/latest/api/app#event-activate-macos Event: 'activate'.
  */
-app.on('activate', restoreOrCreateWindow);
+app.on('activate', async () => {
+  const window = await restoreOrCreateWindow();
+  serverTerminator = startServer(window);
+});
 
 /**
  * Create the application window when the background process is ready.
@@ -38,6 +43,12 @@ app
   .whenReady()
   .then(restoreOrCreateWindow)
   .catch(e => console.error('Failed create window:', e));
+
+app.on('before-quit', () => {
+  if (serverTerminator) {
+    serverTerminator.terminate();
+  }
+});
 
 /**
  * Install Vue.js or any other extension in development mode only.
