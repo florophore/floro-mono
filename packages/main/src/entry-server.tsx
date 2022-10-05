@@ -1,5 +1,5 @@
 import React from 'react';
-import App from './App';
+import App from '@floro/common-web/src/App';
 import { StaticRouter } from "react-router-dom/server";
 import { MainRoutes } from '@floro/common-web/src/Routing';
 import RedirectProvider from '@floro/common-web/src/ssr/RedirectProvider';
@@ -13,7 +13,7 @@ export const render = async (url: string, deps: {client: ApolloClient<any>}, con
         <ApolloProvider client={deps.client}>
           <StaticRouter location={url}>
             <RedirectProvider routing={MainRoutes} context={context}>
-              <App />
+              <App routing={MainRoutes} />
             </RedirectProvider>
           </StaticRouter>
         </ApolloProvider>

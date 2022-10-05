@@ -1,36 +1,37 @@
 import { inject, injectable } from "inversify";
-import express, { Express, Response } from 'express';
-import { Server } from 'http';
-import Backend from '../../backend/src/Backend';
-import { env } from 'process';
-import { createProxyMiddleware } from 'http-proxy-middleware';
-import MailDev from 'maildev';
+import express, { Express, Response } from "express";
+import { Server } from "http";
+import Backend from "@floro/backend/src/Backend";
+import { env } from "process";
+import { createProxyMiddleware } from "http-proxy-middleware";
+import MailDev from "maildev";
 
 import path from "path";
-import compression from 'compression';
+import compression from "compression";
 import serveStatic from "serve-static";
-import { fileURLToPath } from 'url'
+import { fileURLToPath } from "url";
 
-import { createServer as createViteServer } from 'vite'
-import ApolloClientPackage from "@apollo/client";
+import { createServer as createViteServer } from "vite";
 
-import { SchemaLink } from '@apollo/client/link/schema';
-const { ApolloClient, InMemoryCache } = ApolloClientPackage;
+import { SchemaLink } from "@apollo/client/link/schema";
+// eslint-disable-next-line 
+import ApolloPkg from '@apollo/client';
+const { ApolloClient, InMemoryCache } = ApolloPkg;
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const resolve = (p: string) => path.resolve(__dirname, p);
 
 const NODE_ENV = env.NODE_ENV;
-const isProduction = NODE_ENV == 'production';
-const isDevelopment = NODE_ENV == 'development';
-const isTest = NODE_ENV == 'test';
+const isProduction = NODE_ENV == "production";
+const isDevelopment = NODE_ENV == "development";
+const isTest = NODE_ENV == "test";
 
 @injectable()
 export default class AppServer {
   private app: Express;
   private server: Server;
   private backend: Backend;
-  protected port: number = 9000;
+  protected port = 9000;
 
   constructor(
     @inject("ExpressApplication") app,
@@ -43,9 +44,9 @@ export default class AppServer {
   }
 
   protected distClient() {
-    return serveStatic(resolve("../dist/client"), {
+    return serveStatic(resolve("../../main/dist/client"), {
       index: false,
-    })
+    });
   }
 
   public async startServer(indexHTMLTemplate: string): Promise<void> {
@@ -81,48 +82,71 @@ export default class AppServer {
 
     this.app.use(vite.middlewares);
 
-    const requestHandler = express.static(resolve("../../common-assets/assets"));
+    const requestHandler = express.static(
+      resolve("../../common-assets/assets")
+    );
     this.app.use(requestHandler);
     this.app.use("/assets", requestHandler);
-  
+
     if (isProduction) {
       this.app.use(compression());
       this.app.use(this.distClient());
     }
 
-    const { render } = await vite.ssrLoadModule(!isProduction ? "./src/entry-server.tsx" : "./dist/server/entry-server.js");
+    const { render } = await vite.ssrLoadModule(
+      !isProduction ? "./src/entry-server.tsx" : "./dist/server/entry-server.js"
+    );
 
-    this.app.use("*", async (req, res, next): Promise<Response|undefined|void> => {
+    this.app.use("*", async (req, res, next): Promise<
+      Response | undefined | void
+    > => {
       try {
         const url = req.originalUrl;
-        const template = isProduction ? indexHTMLTemplate : await vite.transformIndexHtml(url, indexHTMLTemplate);
-        const authorizationToken: string|undefined = req.header('authorization-token');
+        const template = isProduction
+          ? indexHTMLTemplate
+          : await vite.transformIndexHtml(url, indexHTMLTemplate);
+        const authorizationToken: string | undefined = req.header(
+          "authorization-token"
+        );
         const context = {
-            authorizationToken,
-            url,
-            should404: false,
-            isSSR: true
+          authorizationToken,
+          url,
+          should404: false,
+          isSSR: true,
         };
         const client = new ApolloClient({
           ssrMode: true,
           link: new SchemaLink({
             schema,
-            context
+            context,
           }),
           cache: new InMemoryCache(),
         });
-        const { appHtml, appState, helmet } = await render(url, { client }, context);
+        const { appHtml, appState, helmet } = await render(
+          url,
+          { client },
+          context
+        );
         if (context.url && context.url != url) {
-          return res.redirect(301, context.url)
+          return res.redirect(301, context.url);
         }
         const html = template
-        .replace(`<!--ssr-outlet-->`, appHtml)
-        .replace('__APP_STATE__', JSON.stringify(appState).replace(/</g, '\\u003c'))
-        .replace('__HELMET_HTML__', helmet?.htmlAttributes?.toString?.() ?? '')
-        .replace('__HELMET_BODY__', helmet?.bodyAttributes?.toString?.() ?? '')
-        .replace('__HELMET_TITLE__', helmet?.title?.toString?.() ?? '')
-        .replace('__HELMET_META__', helmet?.meta?.toString?.() ?? '')
-        .replace('__HELMET_LINK__', helmet?.link?.toString?.() ?? '');
+          .replace(`<!--ssr-outlet-->`, appHtml)
+          .replace(
+            "__APP_STATE__",
+            JSON.stringify(appState).replace(/</g, "\\u003c")
+          )
+          .replace(
+            "__HELMET_HTML__",
+            helmet?.htmlAttributes?.toString?.() ?? ""
+          )
+          .replace(
+            "__HELMET_BODY__",
+            helmet?.bodyAttributes?.toString?.() ?? ""
+          )
+          .replace("__HELMET_TITLE__", helmet?.title?.toString?.() ?? "")
+          .replace("__HELMET_META__", helmet?.meta?.toString?.() ?? "")
+          .replace("__HELMET_LINK__", helmet?.link?.toString?.() ?? "");
 
         if (context.should404) {
           return res.status(404).set({ "Content-Type": "text/html" }).end(html);

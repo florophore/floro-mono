@@ -20,7 +20,7 @@ const CommonRouting: IsomorphicRoute[] = [
 ];
 
 /**
- *  put main-web specific page routes here
+ *  put main specific page routes here
  */
 export const MainRoutes: IsomorphicRoute[] = sortRoutes([
   ...CommonRouting,
@@ -31,7 +31,7 @@ export const MainRoutes: IsomorphicRoute[] = sortRoutes([
 ]);
 
 /**
- *  put admin-web specific page routes here
+ *  put admin specific page routes here
  */
 export const AdminRoutes: IsomorphicRoute[] = sortRoutes([
   ...CommonRouting,
