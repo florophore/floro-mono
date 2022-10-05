@@ -4,10 +4,10 @@ export interface IsomorphicRoute {
 }
 
 export const routeOrdinal = (path: string, maxSize: number): number => {
-    const parts = path.split('/');
+    const [,...parts] = path.split('/');
     let value = 0;
     for(let n = 0; n < maxSize; ++n) {
-      if (!parts?.[n]?.startsWith?.(':')) {
+      if (!parts?.[maxSize - n - 1]?.startsWith?.(':')) {
         value += Math.pow(2, n);
       }
     }
@@ -15,16 +15,11 @@ export const routeOrdinal = (path: string, maxSize: number): number => {
   }
   
   export const sortRoutes = (routing: IsomorphicRoute[]): IsomorphicRoute[]=> {
-    const maxRouteSize = Math.max(...(routing.map(({path}) => path.split('/').length)));
+    const maxRouteSize = Math.max(...(routing.map(({path}) => path.split('/').length - 1)));
     return routing.sort((routeA: IsomorphicRoute, routeB: IsomorphicRoute) => {
-      const aLength = routeA.path.split('/').length;
-      const bLength = routeB.path.split('/').length;
-      if (aLength == bLength) {
-        const aOrdinal = routeOrdinal(routeA.path, maxRouteSize);
-        const bOrdinal = routeOrdinal(routeB.path, maxRouteSize);
-        return aOrdinal - bOrdinal;
-      }
-      return bLength - aLength;
+      const aOrdinal = routeOrdinal(routeA.path, maxRouteSize);
+      const bOrdinal = routeOrdinal(routeB.path, maxRouteSize);
+      return bOrdinal - aOrdinal;
     });
   }
   

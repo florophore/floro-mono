@@ -16,7 +16,7 @@
             "mocha"
         ]
     },
-    "include": ["global.d.ts","src"],
+    "include": ["global.d.ts","src", "svgTransform.js"],
     "exclude": [
         "node_modules",
         "build"
