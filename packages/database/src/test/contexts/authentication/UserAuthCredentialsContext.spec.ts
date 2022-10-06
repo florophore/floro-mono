@@ -12,22 +12,22 @@ import UserAuthCredentialsContext from "../../../contexts/authentication/UserAut
 import { UserAuthCredential } from "../../../entities/UserAuthCredential";
 import DatabaseConnection from "../../../connection/DatabaseConnection";
 
-import GoogleAccessToken from "@floro/backend/src/thirdpartyclients/google/schemas/GoogleAccessToken";
-import GoogleUser from "@floro/backend/src/thirdpartyclients/google/schemas/GoogleUser";
-import GithubAccessToken from "@floro/backend/src/thirdpartyclients/github/schemas/GithubAccessToken";
-import GithubUser from "@floro/backend/src/thirdpartyclients/github/schemas/GithubUser";
-import GithubEmail from "@floro/backend/src/thirdpartyclients/github/schemas/GithubEmail";
+import GoogleAccessToken from "@floro/third-party-services/src/google/schemas/GoogleAccessToken";
+import GoogleUser from "@floro/third-party-services/src/google/schemas/GoogleUser";
+import GithubAccessToken from "@floro/third-party-services/src/github/schemas/GithubAccessToken";
+import GithubUser from "@floro/third-party-services/src/github/schemas/GithubUser";
+import GithubEmail from "@floro/third-party-services/src/github/schemas/GithubEmail";
 
 import { createRequire } from "module";
 import { User } from "../../../entities/User";
 const require = createRequire(import.meta.url);
 
-const GoogleUserSuccessMockJSON = require("../../../../../backend/src/tests/thirdpartyclients/google/mocks/GoogleUserSuccessMock.json");
+const GoogleUserSuccessMockJSON = require("../../../../../third-party-services/src/tests/google/mocks/GoogleUserSuccessMock.json");
 const GoogleUserSuccessMock = deserialize(
   GoogleUser,
   GoogleUserSuccessMockJSON
 );
-const GoogleAccessTokenSuccessMockJSON = require("../../../../../backend/src/tests/thirdpartyclients/google/mocks/GoogleAccessTokenSuccessMock.json");
+const GoogleAccessTokenSuccessMockJSON = require("../../../../../third-party-services/src/tests/google/mocks/GoogleAccessTokenSuccessMock.json");
 const GoogleAccessTokenMock = deserialize(
   GoogleAccessToken,
   GoogleAccessTokenSuccessMockJSON
@@ -39,12 +39,12 @@ const GithubAccessTokenMock = deserialize(GithubAccessToken, {
   token_type: "bearer",
 });
 
-const GithubUserSuccessMockJSON = require("../../../../../backend/src/tests/thirdpartyclients/github/mocks/GithubUserSuccessMock.json");
+const GithubUserSuccessMockJSON = require("../../../../../third-party-services/src/tests/github/mocks/GithubUserSuccessMock.json");
 const GithubUserSuccessMock = deserialize(
   GithubUser,
   GithubUserSuccessMockJSON
 );
-const GithubEmailsSuccessMockJSON = require("../../../../../backend/src/tests/thirdpartyclients/github/mocks/GithubEmailsSuccessMock.json");
+const GithubEmailsSuccessMockJSON = require("../../../../../third-party-services/src/tests/github/mocks/GithubEmailsSuccessMock.json");
 const GithubEmailsSuccessMock = deserialize(
   GithubEmail,
   GithubEmailsSuccessMockJSON

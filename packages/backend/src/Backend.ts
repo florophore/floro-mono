@@ -15,11 +15,11 @@ import RedisClient from "@floro/redis/src/RedisClient";
 import MailerClient from "@floro/mailer/src/MailerClient";
 import process from "process";
 import { makeExecutableSchema } from "graphql-tools";
-import { WebSocket, WebSocketServer } from 'ws';
+import { WebSocketServer } from 'ws';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import RedisQueueWorkers from "@floro/redis/src/RedisQueueWorkers";
 import { GraphQLSchema } from 'graphql';
-import killPort from 'kill-port';
+import RedisPubsubFactory from "@floro/redis/src/RedisPubsubFactory";
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -30,7 +30,7 @@ export default class Backend {
   private databaseConnection!: DatabaseConnection;
   private redisClient!: RedisClient;
   private redisQueueWorkers!: RedisQueueWorkers;
-  private mailerClient!: MailerClient;
+  private redisPubSubFactory!: RedisPubsubFactory;
   private contextFactory!: ContextFactory;
 
   constructor(
@@ -38,7 +38,7 @@ export default class Backend {
     @inject(DatabaseConnection) databaseConnection: DatabaseConnection,
     @inject(RedisClient) redisClient: RedisClient,
     @inject(RedisQueueWorkers) redisQueueWorkers: RedisQueueWorkers,
-    @inject(MailerClient) mailerClient: MailerClient,
+    @inject(RedisPubsubFactory) redisPubSubFactory: RedisPubsubFactory,
     @inject(ContextFactory) contextFactory: ContextFactory,
     @inject(Server) httpServer: Server
   ) {
@@ -47,7 +47,7 @@ export default class Backend {
     this.databaseConnection = databaseConnection;
     this.redisClient = redisClient;
     this.redisQueueWorkers = redisQueueWorkers;
-    this.mailerClient = mailerClient;
+    this.redisPubSubFactory = redisPubSubFactory;
     this.contextFactory = contextFactory;
   }
 
@@ -60,6 +60,10 @@ export default class Backend {
   public startRedis(): void {
     this.redisClient.startRedis();
     this.redisQueueWorkers.start();
+    const pubsub = this.redisPubSubFactory.create();
+    this.resolverModules.forEach(resolverModule => {
+      resolverModule.setRedisPubsub(pubsub);
+    });
   }
 
   public mergeResolvers(): Partial<main.ResolversTypes> {
@@ -89,7 +93,23 @@ export default class Backend {
 
     const wsServer = this.getWsServer();
 
-    const serverCleanup = useServer({ schema }, wsServer);
+    const getDynamicContext = async (_ctx, _msg, _args) => {
+      // runs every time
+      // ctx is the graphql-ws Context where connectionParams live
+     //if (ctx.connectionParams.authentication) {
+     //   const currentUser = await findUser(connectionParams.authentication);
+     //   return { currentUser };
+     // }
+      // Otherwise let our resolvers know we don't have a current user
+      return { currentUser: null };
+    };
+
+    const serverCleanup = useServer({ 
+      schema,
+      context: (ctx, msg, args) => {
+       return getDynamicContext(ctx, msg, args);
+     },
+     }, wsServer);
 
     return new ApolloServer({
       schema,

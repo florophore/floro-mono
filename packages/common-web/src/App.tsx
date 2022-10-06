@@ -4,6 +4,7 @@ import { ThemeProvider } from "@emotion/react";
 import { useColorTheme } from "@floro/common-web/src/hooks/color-theme";
 import { Routes, Route } from "react-router-dom";
 import { IsomorphicRoute } from "./ssr/routing-helpers";
+
 import "./index.css";
 
 export interface Props {

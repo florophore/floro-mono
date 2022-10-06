@@ -10,6 +10,7 @@ import { mockMailerDeps } from '@floro/mailer/src/test/test_utils/testContainer'
 import BackendModule from '../module';
 import DBModule from "@floro/database/src/module";
 import RedisModule from "@floro/redis/src/module";
+import ThirdPartyServicesModule from '@floro/third-party-services/src/module'; 
 
 const container: Container = new Container({
     autoBindInjectable: true,
@@ -26,6 +27,7 @@ const downstreamDependencies =  new ContainerModule((bind): void => {
 container.load(
   MainConfigModule,
   MailerClientModule,
+  ThirdPartyServicesModule,
   DBModule,
   RedisModule,
   mockMailerDeps,

@@ -1,4 +1,4 @@
-import BaseResolverModule, { IResolverModule } from "../BaseResolverModule";
+import BaseResolverModule from "../BaseResolverModule";
 import { main } from '@floro/graphql-schemas'; 
 import { inject, injectable } from "inversify";
 import AuthenticationService from "../../services/authentication/AuthenticationService";

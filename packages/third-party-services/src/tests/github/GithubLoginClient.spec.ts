@@ -1,13 +1,13 @@
-import container from '../../../test_utils/testContainer';
-import GithubLoginClient from '../../../thirdpartyclients/github/GithubLoginClient';
+import container from '../../test_utils/testContainer';
+import GithubLoginClient from '../../github/GithubLoginClient';
 import nock from 'nock';
 import { expect } from 'chai'
-import GithubAccessToken from '../../../thirdpartyclients/github/schemas/GithubAccessToken';
-import GithubAccessTokenError from '../../../thirdpartyclients/github/schemas/GithubAccessTokenError';
-import GithubUser from '../../../thirdpartyclients/github/schemas/GithubUser';
-import GithubPlan from '../../../thirdpartyclients/github/schemas/GithubPlan';
-import GithubAPIError from '../../../thirdpartyclients/github/schemas/GithubAPIError';
-import GithubEmail from '../../../thirdpartyclients/github/schemas/GithubEmail';
+import GithubAccessToken from '../../github/schemas/GithubAccessToken';
+import GithubAccessTokenError from '../../github/schemas/GithubAccessTokenError';
+import GithubUser from '../../github/schemas/GithubUser';
+import GithubPlan from '../../github/schemas/GithubPlan';
+import GithubAPIError from '../../github/schemas/GithubAPIError';
+import GithubEmail from '../../github/schemas/GithubEmail';
 import { createRequire } from "module";
 
 const require = createRequire(import.meta.url);

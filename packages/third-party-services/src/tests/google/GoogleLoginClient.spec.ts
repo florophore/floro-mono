@@ -1,12 +1,12 @@
-import container from '../../../test_utils/testContainer';
+import container from '../../test_utils/testContainer';
 import nock from 'nock';
 import { expect } from 'chai'
 import { createRequire } from "module";
-import GoogleLoginClient from '../../../thirdpartyclients/google/GoogleLoginClient';
-import GoogleAccessToken from '../../../thirdpartyclients/google/schemas/GoogleAccessToken';
-import GoogleAccessTokenError from '../../../thirdpartyclients/google/schemas/GoogleAccessTokenError';
-import GoogleUser from '../../../thirdpartyclients/google/schemas/GoogleUser';
-import GoogleAPIError, { GoogleError } from '../../../thirdpartyclients/google/schemas/GoogleAPIError';
+import GoogleLoginClient from '../../google/GoogleLoginClient';
+import GoogleAccessToken from '../../google/schemas/GoogleAccessToken';
+import GoogleAccessTokenError from '../../google/schemas/GoogleAccessTokenError';
+import GoogleUser from '../../google/schemas/GoogleUser';
+import GoogleAPIError, { GoogleError } from '../../google/schemas/GoogleAPIError';
 
 const require = createRequire(import.meta.url);
 

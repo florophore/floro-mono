@@ -3,15 +3,15 @@ import ContextFactory from "@floro/database/src/contexts/ContextFactory";
 import UsersContext from "@floro/database/src/contexts/users/UsersContext";
 import UserAuthCredentialsContext from "@floro/database/src/contexts/authentication/UserAuthCredentialsContext";
 import { injectable, inject } from "inversify";
-import GithubLoginClient from "../../thirdpartyclients/github/GithubLoginClient";
-import GithubAccessToken from "../../thirdpartyclients/github/schemas/GithubAccessToken";
-import GithubEmail from "../../thirdpartyclients/github/schemas/GithubEmail";
-import GithubUser from "../../thirdpartyclients/github/schemas/GithubUser";
-import GoogleLoginClient from "../../thirdpartyclients/google/GoogleLoginClient";
+import GithubLoginClient from "@floro/third-party-services/src/github/GithubLoginClient";
+import GithubAccessToken from "@floro/third-party-services/src/github/schemas/GithubAccessToken";
+import GithubEmail from "@floro/third-party-services/src/github/schemas/GithubEmail";
+import GithubUser from "@floro/third-party-services/src/github/schemas/GithubUser";
+import GoogleLoginClient from "@floro/third-party-services/src/google/GoogleLoginClient";
+import GoogleAccessToken from "@floro/third-party-services/src/google/schemas/GoogleAccessToken";
+import GoogleUser from "@floro/third-party-services/src/google/schemas/GoogleUser";
 import { User } from "@floro/database/src/entities/User";
-import GoogleAccessToken from "../../thirdpartyclients/google/schemas/GoogleAccessToken";
 import { UserAuthCredential } from "@floro/database/src/entities/UserAuthCredential";
-import GoogleUser from "../../thirdpartyclients/google/schemas/GoogleUser";
 import EmailQueue from "@floro/redis/src/queues/EmailQueue";
 import EmailVerificationStore from "@floro/redis/src/stores/EmailVerificationStore";
 
@@ -90,42 +90,48 @@ export default class AuthenticationService {
             const userAuthCredentialsContext = await this.contextFactory.createContext(UserAuthCredentialsContext, queryRunner);
             await queryRunner.startTransaction();
             const credentials = await userAuthCredentialsContext.getCredentialsByEmail(primaryEmail.email);
-            const userId =  userAuthCredentialsContext.getUserIdFromCredentials(credentials);
-            if (!userId) {
-                if (!userAuthCredentialsContext.hasGithubCredential(credentials)) {
-                    const credential = await userAuthCredentialsContext.createGithubCredential(
-                        githubAccessToken,
-                        githubUser,
-                        primaryEmail,
-                        credentials.length == 0, // isSignupCredential
-                        userAuthCredentialsContext.getGithubCredential(credentials)?.isThirdPartyVerified
-                    )
-                    await queryRunner.commitTransaction();
-                    // ADD TRUE TO TEST LOGIC
-                    if (!credential?.isThirdPartyVerified) {
-                        const verification = await this.emailVerificationStore.createEmailVerification(credential);
-                        const link = this.emailVerificationStore.link(verification);
-                        // SEND VERIFICATION EMAIL
-                        await this.emailQueue?.add({
-                            jobId: verification.id,
-                            template: "VerifyGithubOAuthEmail",
-                            props: {
-                                link,
-                                action: "signup"
-                            },
-                            to: credential.email as string,
-                            from: "accounts@floro.io",
-                            subject: "Verify Email"
-                        });
-                        return { action: 'VERIFICATION_REQUIRED', email: credential.email as string };
-                    }
-                    return { action: 'COMPLETE_SIGNUP', credential };
+            const userId = userAuthCredentialsContext.getUserIdFromCredentials(credentials);
+
+            // USER DOES NOT HAVE GITHUB CREDENTIAL AND HAS NOT SIGNED UP
+            if (!userId && !userAuthCredentialsContext.hasGithubCredential(credentials)) {
+
+                const credential = await userAuthCredentialsContext.createGithubCredential(
+                    githubAccessToken,
+                    githubUser,
+                    primaryEmail,
+                    credentials.length == 0, // isSignupCredential
+                    userAuthCredentialsContext.getGithubCredential(credentials)?.isThirdPartyVerified
+                )
+                await queryRunner.commitTransaction();
+                // ADD TRUE TO TEST LOGIC
+                if (!credential?.isThirdPartyVerified) {
+                    const verification = await this.emailVerificationStore.createEmailVerification(credential);
+                    const link = this.emailVerificationStore.link(verification);
+                    // SEND VERIFICATION EMAIL
+                    await this.emailQueue?.add({
+                        jobId: verification.id,
+                        template: "VerifyGithubOAuthEmail",
+                        props: {
+                            link,
+                            action: "signup"
+                        },
+                        to: credential.email as string,
+                        from: "accounts@floro.io",
+                        subject: "Verify Email"
+                    });
+                    return { action: 'VERIFICATION_REQUIRED', email: credential.email as string };
                 }
+                return { action: 'COMPLETE_SIGNUP', credential };
+            }
+
+            // USER HAS GITHUB CREDENTIAL BUT HAS NOT SIGNED UP
+            if (!userId) {
                 const credential = userAuthCredentialsContext.getGithubCredential(credentials) as UserAuthCredential;
                 await queryRunner.commitTransaction();
                 // construct partial user
                 return { action: 'COMPLETE_SIGNUP', credential };
             }
+
             const user = await usersContext.getById(userId);
             if (!user) {
                 await queryRunner.rollbackTransaction();
@@ -166,10 +172,9 @@ export default class AuthenticationService {
             if (credential) {
                 await queryRunner.commitTransaction();
                 return { action: 'LOGIN', user, credential };
-            } else {
-                await queryRunner.rollbackTransaction();
-                return { action: 'LOG_ERROR', error: { type: 'MALFORMED_CREDENTIAL', message: 'Github credential not created'} };
             }
+            await queryRunner.rollbackTransaction();
+            return { action: 'LOG_ERROR', error: { type: 'MALFORMED_CREDENTIAL', message: 'Github credential not created'} };
         } catch (e: any) {
             if (!queryRunner.isReleased) {
                 await queryRunner.rollbackTransaction();
@@ -199,17 +204,19 @@ export default class AuthenticationService {
             await queryRunner.startTransaction();
             const credentials = await userAuthCredentialsContext.getCredentialsByEmail(googleUser.email);
             const userId =  userAuthCredentialsContext.getUserIdFromCredentials(credentials);
+
+            if (!userId && !userAuthCredentialsContext.hasGoogleCredential(credentials)) {
+                const credential = await userAuthCredentialsContext.createGoogleCredential(
+                    googleAccessToken,
+                    googleUser,
+                    credentials.length == 0, // isSignupCredential
+                    userAuthCredentialsContext.hasVerifiedCredential(credentials)
+                )
+                await queryRunner.commitTransaction();
+                return { action: 'COMPLETE_SIGNUP', credential };
+            }
+            // HAS NOT SIGNED UP BUT HAS EXISTING GOOGLE CREDENTIAL
             if (!userId) {
-                if (!userAuthCredentialsContext.hasGoogleCredential(credentials)) {
-                    const credential = await userAuthCredentialsContext.createGoogleCredential(
-                        googleAccessToken,
-                        googleUser,
-                        credentials.length == 0, // isSignupCredential
-                        userAuthCredentialsContext.hasVerifiedCredential(credentials)
-                    )
-                    await queryRunner.commitTransaction();
-                    return { action: 'COMPLETE_SIGNUP', credential };
-                }
                 const credential = userAuthCredentialsContext.getGoogleCredential(credentials) as UserAuthCredential;
                 await queryRunner.commitTransaction();
                 return { action: 'COMPLETE_SIGNUP', credential };
@@ -236,10 +243,9 @@ export default class AuthenticationService {
             if (credential) {
                 await queryRunner.commitTransaction();
                 return { action: 'LOGIN', user, credential };
-            } else {
-                await queryRunner.rollbackTransaction();
-                return { action: 'LOG_ERROR', error: { type: 'MALFORMED_CREDENTIAL', message: 'Google credential not created'} };
             }
+            await queryRunner.rollbackTransaction();
+            return { action: 'LOG_ERROR', error: { type: 'MALFORMED_CREDENTIAL', message: 'Google credential not created'} };
 
         } catch (e: any) {
             if (!queryRunner.isReleased) {

@@ -1,7 +1,6 @@
 import { injectable } from "inversify";
 import fetch from 'node-fetch';
 import { deserialize } from "@dhkatz/json-ts";
-import FormData from 'form-data';
 import GoogleAccessToken from "./schemas/GoogleAccessToken";
 import GoogleAccessTokenError from "./schemas/GoogleAccessTokenError";
 import GoogleAPIError from "./schemas/GoogleAPIError";
@@ -21,13 +20,6 @@ export default class GoogleLoginClient {
 
     public async getAccessToken(code: string): Promise<GoogleAccessToken|GoogleAccessTokenError|Error> {
         try {
-            const params = {
-                client_id: this.clientId,
-                client_secret: this.clientSecret,
-                redirect_uri: this.redirectUri,
-                code,
-                grant_type: "authorization_code",
-            };
             const url = "https://oauth2.googleapis.com/token?client_id=" + this.clientId + "&client_secret=" + this.clientSecret + "&redirect_uri=" + this.redirectUri + "&code=" + code + "&grant_type=authorization_code"; 
             const response = await fetch(
               url,

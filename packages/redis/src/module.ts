@@ -6,6 +6,7 @@ import SessionStore from './sessions/SessionStore';
 import EmailAuthStore from './stores/EmailAuthStore';
 import EmailVerificationStore from './stores/EmailVerificationStore';
 import RedisQueueWorkers from './RedisQueueWorkers';
+import RedisPubsubFactory from './RedisPubsubFactory';
 
 export default new ContainerModule((bind): void => {
     bind<RedisClientConfig>(RedisClientConfig).toSelf();
@@ -20,4 +21,7 @@ export default new ContainerModule((bind): void => {
     bind<EmailQueue>(EmailQueue).toSelf();
 
     bind<RedisQueueWorkers>(RedisQueueWorkers).toSelf();
+
+    // pubsub
+    bind<RedisPubsubFactory>(RedisPubsubFactory).toSelf().inSingletonScope();
 });

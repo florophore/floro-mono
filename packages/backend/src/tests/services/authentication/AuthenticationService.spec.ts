@@ -5,11 +5,15 @@ import { test } from "mocha";
 
 import "../../../test_utils/setupTests";
 
-import GoogleAccessToken from "@floro/backend/src/thirdpartyclients/google/schemas/GoogleAccessToken";
-import GoogleUser from "@floro/backend/src/thirdpartyclients/google/schemas/GoogleUser";
-import GithubAccessToken from "@floro/backend/src/thirdpartyclients/github/schemas/GithubAccessToken";
-import GithubUser from "@floro/backend/src/thirdpartyclients/github/schemas/GithubUser";
-import GithubEmail from "@floro/backend/src/thirdpartyclients/github/schemas/GithubEmail";
+import GoogleAccessToken from "@floro/third-party-services/src/google/schemas/GoogleAccessToken";
+import GoogleUser from "@floro/third-party-services/src/google/schemas/GoogleUser";
+import GithubAccessToken from "@floro/third-party-services/src/github/schemas/GithubAccessToken";
+import GithubUser from "@floro/third-party-services/src/github/schemas/GithubUser";
+import GithubEmail from "@floro/third-party-services/src/github/schemas/GithubEmail";
+
+import GoogleAccessTokenError from "@floro/third-party-services/src/google/schemas/GoogleAccessTokenError";
+import GoogleAPIError from "@floro/third-party-services/src/google/schemas/GoogleAPIError";
+import GithubAPIError from "@floro/third-party-services/src/github/schemas/GithubAPIError";
 
 import { loadFixtures } from "@floro/database/src/test/test_utils/setupFixtures";
 
@@ -18,34 +22,31 @@ const require = createRequire(import.meta.url);
 
 import AuthenticationService from "../../../services/authentication/AuthenticationService";
 import { expect } from "chai";
-import GithubAPIError from "../../../thirdpartyclients/github/schemas/GithubAPIError";
 import { UserAuthCredential } from "@floro/database/src/entities/UserAuthCredential";
 import { User } from "@floro/database/src/entities/User";
-import GoogleAccessTokenError from "../../../thirdpartyclients/google/schemas/GoogleAccessTokenError";
-import GoogleAPIError from "../../../thirdpartyclients/google/schemas/GoogleAPIError";
 import MailerClient from "@floro/mailer/src/MailerClient";
 import MockTransport from "@floro/mailer/src/test/test_utils/MockTransport";
 import EmailQueue from "@floro/redis/src/queues/EmailQueue";
 import RedisClient from "@floro/redis/src/RedisClient";
 
-const GoogleUserSuccessMockJSON = require("../../thirdpartyclients/google/mocks/GoogleUserSuccessMock.json");
+const GoogleUserSuccessMockJSON = require("../../../../../third-party-services/src/tests/google/mocks/GoogleUserSuccessMock.json");
 const GoogleUserSuccessMock = deserialize(
   GoogleUser,
   GoogleUserSuccessMockJSON
 );
-const GoogleAccessTokenSuccessMockJSON = require("../../thirdpartyclients/google/mocks/GoogleAccessTokenSuccessMock.json");
+const GoogleAccessTokenSuccessMockJSON = require("../../../../../third-party-services/src/tests/google/mocks/GoogleAccessTokenSuccessMock.json");
 const GoogleAccessTokenMock = deserialize(
   GoogleAccessToken,
   GoogleAccessTokenSuccessMockJSON
 );
 
-const GoogleAccessTokenErrorMockJSON = require("../../thirdpartyclients/google/mocks/GoogleAccessTokenErrorMock.json");
+const GoogleAccessTokenErrorMockJSON = require("../../../../../third-party-services/src/tests/google/mocks/GoogleAccessTokenErrorMock.json");
 const GoogleAccessTokenErrorMock = deserialize(
   GoogleAccessTokenError,
   GoogleAccessTokenErrorMockJSON
 );
 
-const GoogleApiErrorMockJSON = require("../../thirdpartyclients/google/mocks/GoogleAPIErrorMock.json");
+const GoogleApiErrorMockJSON = require("../../../../../third-party-services/src/tests/google/mocks/GoogleAPIErrorMock.json");
 const GoogleApiErrorMock = deserialize(GoogleAPIError, GoogleApiErrorMockJSON);
 
 const GithubAccessTokenMock = deserialize(GithubAccessToken, {
@@ -54,16 +55,16 @@ const GithubAccessTokenMock = deserialize(GithubAccessToken, {
   token_type: "bearer",
 });
 
-const GithubUserSuccessMockJSON = require("../../thirdpartyclients/github/mocks/GithubUserSuccessMock.json");
+const GithubUserSuccessMockJSON = require("../../../../../third-party-services/src/tests/github/mocks/GithubUserSuccessMock.json");
 const GithubUserSuccessMock = deserialize(
   GithubUser,
   GithubUserSuccessMockJSON
 );
 
-const GithubApiErrorMockJSON = require("../../thirdpartyclients/github/mocks/GithubAPIErrorMock.json");
+const GithubApiErrorMockJSON = require("../../../../../third-party-services/src/tests/github/mocks/GithubAPIErrorMock.json");
 const GithubApiErrorMock = deserialize(GithubAPIError, GithubApiErrorMockJSON);
 
-const GithubEmailsSuccessMockJSON = require("../../thirdpartyclients/github/mocks/GithubEmailsSuccessMock.json");
+const GithubEmailsSuccessMockJSON = require("../../../../../third-party-services/src/tests/github/mocks/GithubEmailsSuccessMock.json");
 const GithubEmailsSuccessMock = deserialize(
   GithubEmail,
   GithubEmailsSuccessMockJSON

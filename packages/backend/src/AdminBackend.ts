@@ -12,8 +12,7 @@ import MailerClient from "@floro/mailer/src/MailerClient";
 import { makeExecutableSchema } from "graphql-tools";
 import RedisQueueWorkers from "@floro/redis/src/RedisQueueWorkers";
 import { GraphQLSchema } from "graphql";
-import { WebSocketServer } from 'ws';
-import killPort from 'kill-port';
+import RedisPubsubFactory from "@floro/redis/src/RedisPubsubFactory";
 
 @injectable()
 export default class AdminBackend extends Backend {
@@ -25,7 +24,7 @@ export default class AdminBackend extends Backend {
     @inject(DatabaseConnection) databaseConnection: DatabaseConnection,
     @inject(RedisClient) redisClient: RedisClient,
     @inject(RedisQueueWorkers) redisQueueWorkers: RedisQueueWorkers,
-    @inject(MailerClient) mailerClient: MailerClient,
+    @inject(RedisPubsubFactory) redisPubSubFactory: RedisPubsubFactory,
     @inject(ContextFactory) contextFactory: ContextFactory,
     @inject(Server) httpServer: Server
   ) {
@@ -34,7 +33,7 @@ export default class AdminBackend extends Backend {
       databaseConnection,
       redisClient,
       redisQueueWorkers,
-      mailerClient,
+      redisPubSubFactory,
       contextFactory,
       httpServer
     );

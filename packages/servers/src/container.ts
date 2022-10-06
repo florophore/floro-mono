@@ -8,6 +8,7 @@ import BackendModule from '@floro/backend/src/module';
 import DBModule from "@floro/database/src/module";
 import RedisModule from "@floro/redis/src/module";
 import MailerModule from "@floro/mailer/src/module";
+import ThirdPartyServicesModule from '@floro/third-party-services/src/module'; 
 
 const container: Container = new Container({
   autoBindInjectable: true,
@@ -16,6 +17,7 @@ const container: Container = new Container({
 
 container.load(
   ConfigModule,
+  ThirdPartyServicesModule,
   DBModule,
   RedisModule,
   MailerModule,
