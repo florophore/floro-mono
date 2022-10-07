@@ -13,7 +13,7 @@ function Home() {
             {'Home'}
         </p>
         <Link to={'/about'}>Go to About</Link>
-
+        <p>Testing the waters</p>
     </div>
   )
 }
