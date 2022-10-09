@@ -1,0 +1,31 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+      "useDefineForClassFields": true,
+      "lib": ["DOM", "DOM.Iterable", "ESNext", "ES2020"],
+      "allowJs": false,
+      "skipLibCheck": true,
+      "esModuleInterop": true,
+      "allowSyntheticDefaultImports": true,
+      "strict": true,
+      "forceConsistentCasingInFileNames": true,
+      "module": "ES2020",
+      "target": "ESNext",
+      "moduleResolution": "Node",
+      "resolveJsonModule": true,
+      "isolatedModules": false,
+      "emitDecoratorMetadata": true,
+      "noEmit": false,
+      "jsx": "react-jsx",
+      "jsxImportSource": "@emotion/react",
+    },
+    "exclude": ["node_modules"],
+    "references": [{ "path": "./tsconfig.node.json" }],
+    "ts-node": {
+      "esm": true,
+      "compilerOptions": {
+        "module": "ESNext"
+      }
+    }
+  }
+  
