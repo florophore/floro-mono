@@ -5,11 +5,15 @@ import RedisClient from "../RedisClient";
 import EmailSignupInvite from "@floro/mailer/src/templates/EmailSignupInvite";
 import VerifyGithubOAuthEmail from "@floro/mailer/src/templates/VerifyGithubOAuthEmail";
 import AccountAlreadyExists from "@floro/mailer/src/templates/AccountAlreadyExists";
+import LoginEmail from "@floro/mailer/src/templates/LoginEmail";
+import SignupEmail from "@floro/mailer/src/templates/SignupEmail";
 
 import MailerClient from "@floro/mailer/src/MailerClient";
 import MainConfig from "@floro/config/src/MainConfig";
 
 export const EmailTemplates = {
+  SignupEmail,
+  LoginEmail,
   EmailSignupInvite,
   VerifyGithubOAuthEmail,
   AccountAlreadyExists,

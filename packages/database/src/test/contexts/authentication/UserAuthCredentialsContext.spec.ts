@@ -131,6 +131,8 @@ describe("UserAuthCredentialsContext", () => {
       const [user] = await loadFixtures<[User]>(["User:user_0"]);
       const result = await userAuthCredentialsContext.createEmailCredential(
         "foo.bar@gmail.com",
+        false,
+        false,
         user
       );
       expect(result.credentialType).to.equal("email_pass");

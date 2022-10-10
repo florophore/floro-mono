@@ -9,6 +9,7 @@ import {
     MjmlColumn,
     MjmlButton,
     MjmlImage,
+    MjmlDivider,
     MjmlFont,
     MjmlText,
   } from 'mjml-react';
@@ -24,43 +25,67 @@ const VerifyGithubOAuthEmail = (props: Props): React.ReactElement => {
   return (
     <Mjml>
       <MjmlHead>
-          <MjmlTitle>Floro Sigup</MjmlTitle>
-          <MjmlPreview>Sign up for floro</MjmlPreview>
+        {props.action == "login" &&
+          <>
+            <MjmlTitle>Floro Github Sign In</MjmlTitle>
+            <MjmlPreview>Floro Github Sign In</MjmlPreview>
+          </>
+        }
+        {props.action == "signup" &&
+          <>
+            <MjmlTitle>Floro Github Sign Up</MjmlTitle>
+            <MjmlPreview>Floro Github Sign Up</MjmlPreview>
+          </>
+        }
           <MjmlFont name="Maven-Pro" href="https://fonts.googleapis.com/css?family=Maven%20Pro"/>
       </MjmlHead>
       <MjmlBody width={500}>
-        <MjmlSection fullWidth backgroundColor={colorPalette.lightPurple}>
+        <MjmlSection fullWidth backgroundColor={colorPalette.white}>
           <MjmlColumn width={500}>
-            <MjmlImage height={200} width={200} src={`${props.assetHost}/images/floro_logo.png`} />
+            <MjmlImage width={200} src={`${props.assetHost}/assets/images/floro_with_text_email.png`} />
           </MjmlColumn>
         </MjmlSection>
-        <MjmlSection>
+        <MjmlSection paddingTop={0}>
           <MjmlColumn>
-            <MjmlText lineHeight={32} fontSize={24} color={colorPalette.darkGray}>
-                {"Hello,"}
-            </MjmlText>
-            <MjmlText lineHeight={32} fontSize={24} color={colorPalette.darkGray}>
-                {"We recently received a request to create a floro account associated with this email."}
-            </MjmlText>
-            <MjmlText fontSize={20} color={colorPalette.darkGray}>
-                {"If this wasn't you please ignore (and sorry for spamming you)."}
-            </MjmlText>
-            {props.action == 'signup' &&
-                <MjmlText lineHeight={32} fontSize={24} color={colorPalette.darkGray}>
-                    {"If it was you, click the button below while the floro app is running to signup."}
-                </MjmlText>
+            {props.action == "signup" &&
+              <MjmlText align={'center'} lineHeight={32} fontSize={32} color={colorPalette.mediumGray}>
+                  {"Welcome to floro!"}
+              </MjmlText>
             }
-            {props.action == 'login' &&
-                <MjmlText lineHeight={32} fontSize={24} color={colorPalette.darkGray}>
-                    {"If it was you, click the button below while the floro app is running to login."}
-                </MjmlText>
+            {props.action == "login" &&
+              <MjmlText align={'center'} lineHeight={32} fontSize={32} color={colorPalette.mediumGray}>
+                  {"Welcome back to floro!"}
+              </MjmlText>
             }
+            <MjmlDivider width={'50%'} borderColor={colorPalette.mediumGray}/>
+            {props.action == "signup" &&
+              <MjmlText align={'center'} lineHeight={32} fontSize={20} color={colorPalette.mediumGray}>
+                  {"please click the button below to sign up for floro."}
+              </MjmlText>
+            }
+            {props.action == "login" &&
+              <MjmlText align={'center'} lineHeight={32} fontSize={20} color={colorPalette.mediumGray}>
+                  {"please click the button below to sign in to floro."}
+              </MjmlText>
+            }
+            {props.action == "signup" &&
+              <MjmlText align={'center'} lineHeight={32} fontSize={18} fontWeight={700} color={colorPalette.mediumGray}>
+                  {"After signing up with think link below, you will be able to sign in directly with Github."}
+              </MjmlText>
+            }
+            {props.action == "login" &&
+              <MjmlText align={'center'} lineHeight={32} fontSize={18} fontWeight={700} color={colorPalette.mediumGray}>
+                  {"After signing in with think link below, you will be able to sign in directly with Github."}
+              </MjmlText>
+            }
+            <MjmlText fontStyle={'italic'} align={'center'} lineHeight={32} fontSize={18} color={colorPalette.mediumGray}>
+                {"this link will expire in an hour"}
+            </MjmlText>
           </MjmlColumn>
         </MjmlSection>
-        <MjmlSection>
+        <MjmlSection paddingTop={0}>
           <MjmlColumn>
             <MjmlButton
-              padding={24}
               href={props.link}
               backgroundColor={colorPalette.purple}
               borderRadius={8}
@@ -68,9 +93,16 @@ const VerifyGithubOAuthEmail = (props: Props): React.ReactElement => {
               height={60}
               fontSize={30}
             >
-                <MjmlText fontFamily={"Maven-Pro"} fontWeight={600}>
-                    {"Login"}
-                </MjmlText>
+            {props.action == "signup" &&
+              <MjmlText fontFamily={"Maven-Pro"} fontWeight={600}>
+                  {"complete sign up"}
+              </MjmlText>
+            }
+            {props.action == "login" &&
+              <MjmlText fontFamily={"Maven-Pro"} fontWeight={600}>
+                  {"sign in to floro"}
+              </MjmlText>
+            }
             </MjmlButton>
           </MjmlColumn>
         </MjmlSection>

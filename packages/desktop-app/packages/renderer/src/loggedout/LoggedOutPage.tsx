@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import styled from '@emotion/styled';
 import { css } from '@emotion/css';
@@ -12,6 +12,8 @@ import { createSearchParams, useSearchParams } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import { useSystemAPI } from '../contexts/SystemAPIContext';
 import mixpanel from 'mixpanel-browser';
+import { Manager } from 'socket.io-client';
+import RootModal from '@floro/common-react/src/components/RootModal';
 
 const Background = styled.div`
   background-color: ${props => props.theme.background};
@@ -97,6 +99,21 @@ const PaneBottomButtonWrapper = styled.div`
   align-items: center;
 `;
 
+const useWatchLogin = () => {
+    useEffect(() => {
+      const manager = new Manager('ws://localhost:63403', {
+        reconnectionDelayMax: 10000
+      });
+      const socket = manager.socket("/"); // main namespace
+      socket.on("connect", () => {
+        console.log("connected");
+      });
+      socket.on("hello", (event) => {
+        console.log("GOT A MESSAGE", event);
+      });
+    }, []);
+};
+
 
 interface Props {
     isOpen: boolean;
@@ -112,11 +129,13 @@ const variants = {
 };
 
 const LoggedOutPage = ({isOpen}: Props) => {
-
     const [searchParams, setSearchParams] = useSearchParams();
     const pageAction = searchParams.get('pageAction');
     const themeName = useTheme().name;
     const systemAPI = useSystemAPI();
+    const [showEmailModal, setShowEmailModal] = useState(false);
+
+    useWatchLogin();
 
     const BackButtonIcon = useMemo(() => {
         if (themeName == 'light') {
@@ -147,12 +166,29 @@ const LoggedOutPage = ({isOpen}: Props) => {
     }, [setSearchParams, pageAction]);
 
     const onOpenGithub = useCallback(async () => {
+        mixpanel.track('OAuth with Github');
       systemAPI?.openOAuthWindow('github');
     }, [systemAPI]);
 
     const onOpenGoogle = useCallback(async () => {
+      mixpanel.track('OAuth with Google');
       systemAPI?.openOAuthWindow('google');
     }, [systemAPI]);
+
+    const onOpenEmailSignup = useCallback(async () => {
+      mixpanel.track('Sign up with email');
+      setShowEmailModal(true);
+    }, []);
+
+    const onOpenEmailLogin = useCallback(async () => {
+      mixpanel.track('Login with email');
+      setShowEmailModal(true);
+    }, []);
+
+    const onDismissModal = useCallback(async () => {
+      mixpanel.track('Close signup/login modal');
+      setShowEmailModal(false);
+    }, []);
 
     const actionLeftPosition = useMemo(() => {
         if (pageAction == 'sign_up') {
@@ -163,7 +199,9 @@ const LoggedOutPage = ({isOpen}: Props) => {
             return '0%';
         }
         return '-100%';
-    }, [pageAction]); 
+    }, [pageAction]);
+
+
 
     return (
       <motion.div
@@ -178,6 +216,7 @@ const LoggedOutPage = ({isOpen}: Props) => {
         transition={{duration: 0.5}}
         variants={variants}
       >
+        <RootModal show={showEmailModal} onDismiss={onDismissModal} disableBackgroundDismiss />
         <Background>
           <MainWrapper>
             <LogoImage src={FloroLogoWithText} draggable={false} />
@@ -197,29 +236,37 @@ const LoggedOutPage = ({isOpen}: Props) => {
                 <PaneWrapper>
                   <Pane>
                     <PaneRow>
-                      <GithubButton onClick={onOpenGithub} label={'Sign in with Github'}/>
-                      <ButtonSpacer/>
-                      <GoogleButton onClick={onOpenGoogle} label={'Sign in with Google'}/>
+                      <GithubButton onClick={onOpenGithub} label={'Sign in with Github'} />
+                      <ButtonSpacer />
+                      <GoogleButton onClick={onOpenGoogle} label={'Sign in with Google'} />
                     </PaneRow>
                     <PaneBottomButtonWrapper>
-                      <Button label={'Sign in with email'} bg={'orange'}/>
+                      <Button
+                        onClick={onOpenEmailLogin}
+                        label={'Sign in with email'}
+                        bg={'orange'}
+                      />
                     </PaneBottomButtonWrapper>
                   </Pane>
                 </PaneWrapper>
                 <PaneWrapper>
                   <Button bg={'orange'} label={'Sign in'} onClick={onGoToSignInCB} />
-                  <ButtonSpacer/>
+                  <ButtonSpacer />
                   <Button bg={'teal'} label={'Sign up'} onClick={onGoToSignUpCB} />
                 </PaneWrapper>
                 <PaneWrapper>
                   <Pane>
                     <PaneRow>
-                      <GithubButton onClick={onOpenGithub} label={'Sign up with Github'}/>
-                      <ButtonSpacer/>
-                      <GoogleButton onClick={onOpenGoogle} label={'Sign up with Google'}/>
+                      <GithubButton onClick={onOpenGithub} label={'Sign up with Github'} />
+                      <ButtonSpacer />
+                      <GoogleButton onClick={onOpenGoogle} label={'Sign up with Google'} />
                     </PaneRow>
                     <PaneBottomButtonWrapper>
-                      <Button label={'Sign up with email'} bg={'teal'}/>
+                      <Button
+                        onClick={onOpenEmailSignup}
+                        label={'Sign up with email'}
+                        bg={'teal'}
+                      />
                     </PaneBottomButtonWrapper>
                   </Pane>
                 </PaneWrapper>

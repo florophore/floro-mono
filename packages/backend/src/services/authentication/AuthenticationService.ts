@@ -16,7 +16,7 @@ import EmailQueue from "@floro/redis/src/queues/EmailQueue";
 import EmailVerificationStore from "@floro/redis/src/stores/EmailVerificationStore";
 
 export interface AuthReponse {
-    action: 'COMPLETE_SIGNUP'|'LOG_ERROR'|'LOGIN'|'VERIFICATION_REQUIRED';
+    action: 'COMPLETE_SIGNUP'|'LOG_ERROR'|'LOGIN'|'VERIFICATION_REQUIRED'|'VERIFICATION_SENT';
     user?: User;
     credential?: UserAuthCredential;
     email?: string;
@@ -257,7 +257,92 @@ export default class AuthenticationService {
         }
     }
 
-    public async verifyCredential(verificationCode: string) {
+    public async signupOrLoginByEmail(email: string) {
+        const queryRunner = await this.databaseConnection.makeQueryRunner();
+        const userAuthCredentialsContext = await this.contextFactory.createContext(UserAuthCredentialsContext, queryRunner);
+        try {
+            const credentials = await userAuthCredentialsContext.getCredentialsByEmail(email);
+            const userId = userAuthCredentialsContext.getUserIdFromCredentials(credentials);
+            if (!userId && !userAuthCredentialsContext.hasEmailCredential(credentials)) {
+                const credential = await userAuthCredentialsContext.createEmailCredential(
+                    email,
+                    credentials.length == 0,
+                    userAuthCredentialsContext.hasVerifiedCredential(credentials)
+                )
+                await queryRunner.commitTransaction();
+
+                const verification = await this.emailVerificationStore.createEmailVerification(credential);
+                const link = this.emailVerificationStore.link(verification);
+                // update this
+                await this.emailQueue?.add({
+                    jobId: verification.id,
+                    template: "SignupEmail",
+                    props: {
+                        link
+                    },
+                    to: email,
+                    from: "accounts@floro.io",
+                    subject: "Complete Floro Sign Up"
+                });
+                return { action: 'VERIFICATION_SENT', credential };
+            }
+            if (!userId) {
+                const credential = userAuthCredentialsContext.getEmailCredential(credentials) as UserAuthCredential;
+                await queryRunner.commitTransaction();
+                const verification = await this.emailVerificationStore.createEmailVerification(credential);
+                const link = this.emailVerificationStore.link(verification);
+                await this.emailQueue?.add({
+                    jobId: verification.id,
+                    template: "SignupEmail",
+                    props: {
+                        link
+                    },
+                    to: email,
+                    from: "accounts@floro.io",
+                    subject: "Complete Floro Sign Up"
+                });
+                return { action: 'VERIFICATION_SENT', credential };
+            }
+            const usersContext = await this.contextFactory.createContext(UsersContext, queryRunner);
+            const user = await usersContext.getById(userId);
+
+            if (!user) {
+                return { action: 'LOG_ERROR', error: { type: 'POSTGRES_ERROR', message: 'No user', meta: { userId }} };
+            }
+            if (!userAuthCredentialsContext.hasEmailCredential(credentials)) {
+                // CREATE CREDENTIAL;
+                const credential = await userAuthCredentialsContext.createEmailCredential(
+                    email,
+                    credentials.length == 0,
+                    false,
+                    user
+                );
+                await queryRunner.commitTransaction();
+                const verification = await this.emailVerificationStore.createEmailVerification(credential);
+                const link = this.emailVerificationStore.link(verification);
+                await this.emailQueue?.add({
+                    jobId: verification.id,
+                    template: "LoginEmail",
+                    props: {
+                        link
+                    },
+                    to: email,
+                    from: "accounts@floro.io",
+                    subject: "Complete Floro Sign Up"
+                });
+                return { action: 'VERIFICATION_SENT', credential };
+            }
+        } catch (e: any) {
+            if (!queryRunner.isReleased) {
+                await queryRunner?.rollbackTransaction?.();
+            }
+            return { action: 'LOG_ERROR', error: { type: 'UNKNOWN_EMAIL_LOGIN_ERROR', message: e?.message, meta: e} };
+        } finally {
+            queryRunner.release();
+        }
+    }
+
+    public async verifyGithubCredential(verificationCode: string) {
         try {
             const emailVerification = await this.emailVerificationStore.fetchEmailVerification(verificationCode);
             if (!emailVerification) {

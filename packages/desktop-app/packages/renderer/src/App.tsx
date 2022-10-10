@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ThemeProvider } from '@emotion/react';
 import { BrowserRouter } from 'react-router-dom';
 import { DarkTheme, LightTheme } from '@floro/styles/ColorThemes';
@@ -9,6 +9,7 @@ import { ApolloClient, ApolloProvider, InMemoryCache, HttpLink, split } from '@a
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { createClient } from 'graphql-ws';
 import { getMainDefinition } from '@apollo/client/utilities';
+import DOMMount from '@floro/common-react/src/components/mounts/DOMMount';
 
 const httpLink = new HttpLink({
   uri: 'http://localhost:9000/graphql',
@@ -74,7 +75,9 @@ const App = (props: Props): React.ReactElement => {
       <SystemAPIProvider systemAPI={props.systemAPI}>
         <ThemeProvider theme={colorTheme}>
           <BrowserRouter>
-            <Router />
+            <DOMMount>
+              <Router />
+            </DOMMount>
           </BrowserRouter>
         </ThemeProvider>
       </SystemAPIProvider>

@@ -32,6 +32,9 @@ ALLOWED_ORIGINS_AND_PERMISSIONS.set(
 ).set(
   'https://accounts.google.com',
   new Set(),
+).set(
+  'http://localhost:63403',
+  new Set(),
 );
 
 // IF DEVELOPEMNT
@@ -41,6 +44,8 @@ if (import.meta.env.DEV) {
     new Set(),
   );
 }
+
+console.log(ALLOWED_ORIGINS_AND_PERMISSIONS);
 
 /**
  * A list of origins that you allow open IN BROWSER.
@@ -52,7 +57,9 @@ if (import.meta.env.DEV) {
  *   href="https://github.com/"
  * >
  */
-const ALLOWED_EXTERNAL_ORIGINS = new Set<`https://${string}`>(['https://github.com']);
+const ALLOWED_EXTERNAL_ORIGINS = new Set<`https://${string}`>([
+  'https://github.com',
+]);
 
 app.on('web-contents-created', (_, contents) => {
   /**
@@ -87,6 +94,7 @@ app.on('web-contents-created', (_, contents) => {
     const {origin} = new URL(webContents.getURL());
 
     const permissionGranted = !!ALLOWED_ORIGINS_AND_PERMISSIONS.get(origin)?.has(permission);
+    console.log("YO", origin, permissionGranted);
     callback(permissionGranted);
 
     if (!permissionGranted && import.meta.env.DEV) {

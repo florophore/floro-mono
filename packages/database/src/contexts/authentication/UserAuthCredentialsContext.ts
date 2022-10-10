@@ -100,9 +100,9 @@ export default class UserAuthCredentialsContext extends BaseContext {
 
   public async createEmailCredential(
     email: string,
-    user: User,
     isSignupCredential = false,
-    hasVerifiedCredential = false
+    hasVerifiedCredential = false,
+    user?: User,
   ): Promise<UserAuthCredential> {
     const isGoogleEmail = await EmailHelper.isGoogleEmail(email);
     const normalizedEmail = EmailHelper.getUniqueEmail(
