@@ -74,8 +74,11 @@ export default class UserAuthCredentialsContext extends BaseContext {
     user?: User
   ): Promise<UserAuthCredential> {
     const email = googleUser.email as string;
-    const normalizedEmail = await EmailHelper.getUniqueEmail(email, true);
-    const emailHash = EmailHelper.getEmailHash(email, true);
+    const isGoogleEmail = await EmailHelper.isGoogleEmail(email);
+    // because not all MX records are linked to google, we still have to check this
+    // even if we know it is a google login or we end up with different email hashses
+    const normalizedEmail = await EmailHelper.getUniqueEmail(email, isGoogleEmail);
+    const emailHash = EmailHelper.getEmailHash(email, isGoogleEmail);
     const userAuthCredentialEntity = this.userAuthCredentialRepo.create({
       credentialType: "google_oauth",
       accessToken: googleAccessToken.accessToken,
@@ -131,13 +134,15 @@ export default class UserAuthCredentialsContext extends BaseContext {
   }
 
   public async getCredentialsByEmail(
-    email: string
+    email: string,
+    isGmailLogin = false
   ): Promise<UserAuthCredential[]> {
-    const isGoogleEmail = await EmailHelper.isGoogleEmail(email);
+    const isGoogleEmail = isGmailLogin ? true : await EmailHelper.isGoogleEmail(email);
     const emailHash = EmailHelper.getEmailHash(email, isGoogleEmail);
-    return await this.queryRunner.manager.find(UserAuthCredential, {
+    const result = await this.queryRunner.manager.find(UserAuthCredential, {
       where: { emailHash },
     });
+    return result;
   }
 
   public async updateUserAuthCredential(

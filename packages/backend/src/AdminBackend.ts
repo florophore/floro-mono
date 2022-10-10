@@ -8,7 +8,6 @@ import { resolvers as scalarResolvers } from "graphql-scalars";
 import DatabaseConnection from "@floro/database/src/connection/DatabaseConnection";
 import ContextFactory from "@floro/database/src/contexts/ContextFactory";
 import RedisClient from "@floro/redis/src/RedisClient";
-import MailerClient from "@floro/mailer/src/MailerClient";
 import { makeExecutableSchema } from "graphql-tools";
 import RedisQueueWorkers from "@floro/redis/src/RedisQueueWorkers";
 import { GraphQLSchema } from "graphql";
