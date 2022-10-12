@@ -19,12 +19,15 @@ import { useServer } from 'graphql-ws/lib/use/ws';
 import RedisQueueWorkers from "@floro/redis/src/RedisQueueWorkers";
 import { GraphQLSchema } from 'graphql';
 import RedisPubsubFactory from "@floro/redis/src/RedisPubsubFactory";
+import BaseController from "./controllers/BaseController";
+import { Express } from "express";
 
 const isProduction = process.env.NODE_ENV === 'production';
 
 @injectable()
 export default class Backend {
   public resolverModules: BaseResolverModule[];
+  public controllers: BaseController[];
   protected httpServer: Server;
   private databaseConnection!: DatabaseConnection;
   private redisClient!: RedisClient;
@@ -34,6 +37,7 @@ export default class Backend {
 
   constructor(
     @multiInject("ResolverModule") resolverModules: BaseResolverModule[],
+    @multiInject("Controllers") controllers: BaseController[],
     @inject(DatabaseConnection) databaseConnection: DatabaseConnection,
     @inject(RedisClient) redisClient: RedisClient,
     @inject(RedisQueueWorkers) redisQueueWorkers: RedisQueueWorkers,
@@ -42,6 +46,7 @@ export default class Backend {
     @inject(Server) httpServer: Server
   ) {
     this.resolverModules = resolverModules;
+    this.controllers = controllers;
     this.httpServer = httpServer;
     this.databaseConnection = databaseConnection;
     this.redisClient = redisClient;
@@ -130,5 +135,34 @@ export default class Backend {
           : [ApolloServerPluginLandingPageLocalDefault({ embed: true })]),
       ],
     });
+  }
+
+  public setupRestRoutes(app: Express): void {
+    for (const HttpMethod in BaseController.routingTable) {
+      const routes = BaseController.routingTable[HttpMethod];
+      for (const route in routes) {
+        const controller = this.controllers.find(controller => {
+          return controller?.[routes[route]['name']] === routes[route]['method'];
+        });
+        if (HttpMethod == "POST") {
+          app.post(route, (request, response) => controller?.[routes[route]['name']](request, response));
+        }
+        if (HttpMethod == "GET") {
+          app.get(route, (request, response) => controller?.[routes[route]['name']](request, response));
+        }
+        if (HttpMethod == "PUT") {
+          app.put(route, (request, response) => controller?.[routes[route]['name']](request, response));
+        }
+        if (HttpMethod == "PATCH") {
+          app.patch(route, (request, response) => controller?.[routes[route]['name']](request, response));
+        }
+        if (HttpMethod == "DELETE") {
+          app.delete(route, (request, response) => controller?.[routes[route]['name']](request, response));
+        }
+        if (HttpMethod == "OPTIONS") {
+          app.options(route, (request, response) => controller?.[routes[route]['name']](request, response));
+        }
+      }
+    }
   }
 }

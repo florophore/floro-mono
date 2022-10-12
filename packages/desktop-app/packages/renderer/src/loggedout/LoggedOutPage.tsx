@@ -13,7 +13,7 @@ import { useTheme } from '@emotion/react';
 import { useSystemAPI } from '../contexts/SystemAPIContext';
 import mixpanel from 'mixpanel-browser';
 import { Manager } from 'socket.io-client';
-import RootModal from '@floro/common-react/src/components/RootModal';
+import SignupLoginModal from './SignupLoginModal';
 
 const Background = styled.div`
   background-color: ${props => props.theme.background};
@@ -49,27 +49,27 @@ const AnimationWrapper = styled.div`
   overflow-x: hidden;
   position: relative;
   width: 100%;
-  min-height: 240px;
+  min-height: 272px;
 `;
 
 const ButtonSpacer = styled.div`
-  width: 64px;
+  width: 128px;
 `;
 
 const PaneWrapper = styled.div`
   display: flex;
   justify-content: center;
-  align-items: center;
-  min-height: 240px;
+  align-items: space-between;
+  min-height: 272px;
   width: 100vw;
   max-width: 1600px;
-  padding: 36px 0;
+  padding: 64px 0 24px 0;
 `;
 
 const BackButton = styled.img`
   transition: opacity 400ms;
-  left: 20%;
-  top: 10%;
+  left: 0px;
+  top: 0px;
   position: absolute;
   height: 36px;
   width: 36px;
@@ -216,10 +216,30 @@ const LoggedOutPage = ({isOpen}: Props) => {
         transition={{duration: 0.5}}
         variants={variants}
       >
-        <RootModal show={showEmailModal} onDismiss={onDismissModal} disableBackgroundDismiss />
+        <SignupLoginModal
+          showEmailModal={showEmailModal}
+          onDismissModal={onDismissModal}
+          isSignIn={pageAction === 'sign_in'}
+        />
         <Background>
           <MainWrapper>
-            <LogoImage src={FloroLogoWithText} draggable={false} />
+            <div
+              className={css`
+                position: relative;
+                width: 100%;
+                max-width: 760px;
+                display: flex;
+                justify-content: center;
+              `}
+            >
+              <LogoImage src={FloroLogoWithText} draggable={false} />
+              <BackButton
+                onClick={onBackCallback}
+                src={BackButtonIcon}
+                draggable={false}
+                style={{opacity: backButtonOpacity, cursor: backButtonCursor}}
+              />
+            </div>
             <AnimationWrapper>
               <motion.div
                 animate={{left: actionLeftPosition}}
@@ -228,7 +248,7 @@ const LoggedOutPage = ({isOpen}: Props) => {
                   position: relative;
                   width: 300vw;
                   max-width: 4800px;
-                  min-height: 240px;
+                  min-height: 272px;
                   display: flex;
                   flex-direction: row;
                 `}
@@ -242,6 +262,7 @@ const LoggedOutPage = ({isOpen}: Props) => {
                     </PaneRow>
                     <PaneBottomButtonWrapper>
                       <Button
+                        size={'big'}
                         onClick={onOpenEmailLogin}
                         label={'Sign in with email'}
                         bg={'orange'}
@@ -250,9 +271,9 @@ const LoggedOutPage = ({isOpen}: Props) => {
                   </Pane>
                 </PaneWrapper>
                 <PaneWrapper>
-                  <Button bg={'orange'} label={'Sign in'} onClick={onGoToSignInCB} />
+                  <Button size={'big'} bg={'orange'} label={'Sign in'} onClick={onGoToSignInCB} />
                   <ButtonSpacer />
-                  <Button bg={'teal'} label={'Sign up'} onClick={onGoToSignUpCB} />
+                  <Button size={'big'} bg={'teal'} label={'Sign up'} onClick={onGoToSignUpCB} />
                 </PaneWrapper>
                 <PaneWrapper>
                   <Pane>
@@ -263,6 +284,7 @@ const LoggedOutPage = ({isOpen}: Props) => {
                     </PaneRow>
                     <PaneBottomButtonWrapper>
                       <Button
+                        size={'big'}
                         onClick={onOpenEmailSignup}
                         label={'Sign up with email'}
                         bg={'teal'}
@@ -272,12 +294,6 @@ const LoggedOutPage = ({isOpen}: Props) => {
                 </PaneWrapper>
               </motion.div>
             </AnimationWrapper>
-            <BackButton
-              onClick={onBackCallback}
-              src={BackButtonIcon}
-              draggable={false}
-              style={{opacity: backButtonOpacity, cursor: backButtonCursor}}
-            />
           </MainWrapper>
         </Background>
       </motion.div>

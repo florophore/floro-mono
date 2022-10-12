@@ -12,6 +12,7 @@ import { makeExecutableSchema } from "graphql-tools";
 import RedisQueueWorkers from "@floro/redis/src/RedisQueueWorkers";
 import { GraphQLSchema } from "graphql";
 import RedisPubsubFactory from "@floro/redis/src/RedisPubsubFactory";
+import BaseController from "./controllers/BaseController";
 
 @injectable()
 export default class AdminBackend extends Backend {
@@ -20,6 +21,7 @@ export default class AdminBackend extends Backend {
   constructor(
     @multiInject("AdminResolverModule") adminResolverModules: BaseResolverModule[],
     @multiInject("ResolverModule") resolverModules: BaseResolverModule[],
+    @multiInject("Controllers") controllers: BaseController[],
     @inject(DatabaseConnection) databaseConnection: DatabaseConnection,
     @inject(RedisClient) redisClient: RedisClient,
     @inject(RedisQueueWorkers) redisQueueWorkers: RedisQueueWorkers,
@@ -29,6 +31,7 @@ export default class AdminBackend extends Backend {
   ) {
     super(
       resolverModules,
+      controllers,
       databaseConnection,
       redisClient,
       redisQueueWorkers,

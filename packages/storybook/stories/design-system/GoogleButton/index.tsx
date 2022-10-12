@@ -60,9 +60,9 @@ const GoogleButton = ({
           color: ${theme.colors.googleButtonText};
           font-family: "MavenPro";
           font-weight: 600;
-          font-size: 2rem;
-          max-width: 360px;
-          height: 72px;
+          font-size: 1.7rem;
+          max-width: 312px;
+          height: 64px;
           width: 100%;
           border-radius: 8px;
           outline: 0;

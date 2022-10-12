@@ -7,6 +7,7 @@ import DotsLoader from '../DotsLoader';
 export interface ButtonProps {
     label: string;
     bg: "purple"|"orange"|"teal"|"gray";
+    size: "big"|"medium"|"small";
     isDisabled?: boolean;
     isLoading?: boolean;
     onClick?: React.MouseEventHandler<HTMLButtonElement>;
@@ -20,6 +21,7 @@ const Button = ({
     onClick,
     isDisabled,
     isLoading,
+    size,
     ...rest
 }: ButtonProps): React.ReactElement => {
 
@@ -92,6 +94,31 @@ const Button = ({
         }
     }, [isDisabled, isLoading, onClick])
 
+    const fontSize = useMemo(() => {
+      if (size == 'big') return '1.7rem';
+      if (size == 'medium') return '1.4rem';
+      if (size == 'small') return '1.2rem';
+    }, [size]);
+
+    const width = useMemo(() => {
+      if (size == 'big') return 312;
+      if (size == 'medium') return 192;
+      if (size == 'small') return 120;
+    }, [size]);
+
+    const height = useMemo(() => {
+      if (size == 'big') return 64;
+      if (size == 'medium') return 48;
+      if (size == 'small') return 40;
+    }, [size]);
+
+    const dotSize = useMemo(() => {
+      if (size == 'small') {
+        return 'medium';
+      }
+      return 'large';
+    }, [size])
+
     return (
       <button
         className={css`
@@ -104,9 +131,9 @@ const Button = ({
           color: ${colorPalette.white};
           font-family: "MavenPro";
           font-weight: 600;
-          font-size: 2.25rem;
-          max-width: 360px;
-          height: 72px;
+          font-size: ${fontSize};
+          max-width: ${width}px;
+          height: ${height}px;
           width: 100%;
           border-radius: 8px;
           border: none;
@@ -185,7 +212,7 @@ const Button = ({
               align-items: center;
             `}
           >
-            <DotsLoader color="white" size={"large"} />
+            <DotsLoader color="white" size={dotSize} />
           </div>
         )}
       </button>

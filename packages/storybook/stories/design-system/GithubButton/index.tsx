@@ -57,9 +57,9 @@ const GithubButton = ({
           color: ${colorPalette.white};
           font-family: "MavenPro";
           font-weight: 600;
-          font-size: 2rem;
-          max-width: 360px;
-          height: 72px;
+          font-size: 1.7rem;
+          max-width: 312px;
+          height: 64px;
           width: 100%;
           border-radius: 8px;
           border: none;

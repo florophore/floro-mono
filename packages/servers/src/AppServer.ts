@@ -53,6 +53,11 @@ export default class AppServer {
     const schema = this.backend.buildExecutableSchema();
     await this.backend.startDatabase();
     this.backend.startRedis();
+
+    this.app.use(express.json());
+    this.app.use(express.urlencoded({ extended: true }));
+
+    this.backend.setupRestRoutes(this.app);
     const apolloServer = this.backend.buildApolloServer();
     await apolloServer.start();
     apolloServer.applyMiddleware({ app: this.app });
@@ -97,7 +102,7 @@ export default class AppServer {
       !isProduction ? "./src/entry-server.tsx" : "./dist/server/entry-server.js"
     );
 
-    this.app.use("*", async (req, res, next): Promise<
+    this.app.get("*", async (req, res, next): Promise<
       Response | undefined | void
     > => {
       try {

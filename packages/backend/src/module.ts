@@ -5,6 +5,7 @@ import Backend from "./Backend";
 import AuthenticationService from './services/authentication/AuthenticationService';
 import AuthenticationResolverModule from './resolvers/authentication/AuthenticationResolverModule';
 import AdminUsersResolverModule from './resolvers/users/AdminUsersResolverModule';
+import AuthenticationController from './controllers/AuthenticationController';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -14,6 +15,9 @@ export default new ContainerModule((bind): void => {
 
     // SERVICES
     bind(AuthenticationService).toSelf();
+
+    // Controllers
+    bind<AuthenticationController>("Controllers").to(AuthenticationController);
 
     // RESOLVER MODULES
     bind<UsersResolverModule>("ResolverModule").to(UsersResolverModule);

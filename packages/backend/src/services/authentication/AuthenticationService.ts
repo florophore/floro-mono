@@ -328,7 +328,7 @@ export default class AuthenticationService {
                     },
                     to: email,
                     from: "accounts@floro.io",
-                    subject: "Complete Floro Sign Up"
+                    subject: "Floro Sign In"
                 });
                 return { action: 'VERIFICATION_SENT', credential };
             }

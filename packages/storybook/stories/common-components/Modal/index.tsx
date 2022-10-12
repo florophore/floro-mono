@@ -31,6 +31,7 @@ const ExitIconImage = styled.img`
   top: 16px;
   right: 16px;
   cursor: pointer;
+  z-index: 0;
 `;
 
 const HeaderContentWrapper = styled.div`
