@@ -24,11 +24,7 @@ function App(props: Props) {
             <Route
               key={key}
               path={route.path}
-              element={
-                <React.Suspense>
-                  <Page />
-                </React.Suspense>
-              }
+              element={<Page />}
             />
           );
         })}

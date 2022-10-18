@@ -64,7 +64,7 @@ export default class EmailAuthStore {
         return null;
     }
 
-    public link(emailSignup: EmailSignup) {
-        return `${this.mainConfig.url()}/credential/auth?verification_code=${emailSignup.id}`;
+    public link(emailSignup: EmailSignup, loginClient: 'cli'|'web'|'desktop') {
+        return `${this.mainConfig.url()}/credential/auth?authorization_code=${emailSignup.id}&login_client=${loginClient}`;
     }
 }

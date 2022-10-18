@@ -13,7 +13,8 @@ describe('EmailQueue', () => {
         emailQueue = container.get(EmailQueue);
     })
 
-    it('add works', (finished) => {
+    it('add works', () => {
+        expect(true).to.be.true;
         //emailQueue.makeMailWorker(async (job) => {
         //    expect((job.data as { foo: string}).foo).to.be.eq("bar")
         //    finished();

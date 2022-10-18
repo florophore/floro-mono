@@ -1,0 +1,3 @@
+fragment AuthNotFound on AuthNotFound {
+  message
+}

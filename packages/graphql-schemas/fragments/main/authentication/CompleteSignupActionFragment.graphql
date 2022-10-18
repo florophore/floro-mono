@@ -2,6 +2,6 @@ fragment CompleteSignupAction on CompleteSignupAction {
     unsavedUser {
       ...UnsavedUser
     }
-    OAuthId
+    authId
     provider
 }

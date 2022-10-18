@@ -1,35 +1,27 @@
+import { injectable, inject } from "inversify";
+
 import DatabaseConnection from "@floro/database/src/connection/DatabaseConnection";
 import ContextFactory from "@floro/database/src/contexts/ContextFactory";
 import UsersContext from "@floro/database/src/contexts/users/UsersContext";
 import UserAuthCredentialsContext from "@floro/database/src/contexts/authentication/UserAuthCredentialsContext";
-import { injectable, inject } from "inversify";
+import { User } from "@floro/database/src/entities/User";
+import { UserAuthCredential } from "@floro/database/src/entities/UserAuthCredential";
 import GithubLoginClient from "@floro/third-party-services/src/github/GithubLoginClient";
 import GithubAccessToken from "@floro/third-party-services/src/github/schemas/GithubAccessToken";
 import GithubEmail from "@floro/third-party-services/src/github/schemas/GithubEmail";
 import GithubUser from "@floro/third-party-services/src/github/schemas/GithubUser";
+import GoogleUser from "@floro/third-party-services/src/google/schemas/GoogleUser";
 import GoogleLoginClient from "@floro/third-party-services/src/google/GoogleLoginClient";
 import GoogleAccessToken from "@floro/third-party-services/src/google/schemas/GoogleAccessToken";
-import GoogleUser from "@floro/third-party-services/src/google/schemas/GoogleUser";
-import { User } from "@floro/database/src/entities/User";
-import { UserAuthCredential } from "@floro/database/src/entities/UserAuthCredential";
 import EmailQueue from "@floro/redis/src/queues/EmailQueue";
 import EmailVerificationStore from "@floro/redis/src/stores/EmailVerificationStore";
+import EmailAuthStore from "@floro/redis/src/stores/EmailAuthStore";
 
 export interface AuthReponse {
-    action: 'COMPLETE_SIGNUP'|'LOG_ERROR'|'LOGIN'|'VERIFICATION_REQUIRED'|'VERIFICATION_SENT';
+    action: 'COMPLETE_SIGNUP'|'LOG_ERROR'|'LOGIN'|'VERIFICATION_REQUIRED'|'VERIFICATION_SENT'|'NOT_FOUND';
     user?: User;
     credential?: UserAuthCredential;
     email?: string;
-    error?: {
-        type: string;
-        message: string;
-        meta?: any;
-    };
-}
-
-export interface CredentialVerificationResponse {
-    action: 'NOT_FOUND'|'LOG_ERROR'|'VERIFIED_CREDENTIAL';
-    credential?: UserAuthCredential;
     error?: {
         type: string;
         message: string;
@@ -45,6 +37,7 @@ export default class AuthenticationService {
     private githubLoginClient!: GithubLoginClient;
     private googleLoginClient!: GoogleLoginClient;
     private emailVerificationStore!: EmailVerificationStore;
+    private emailAuthStore!: EmailAuthStore;
     private emailQueue?: EmailQueue;
 
     constructor(
@@ -53,6 +46,7 @@ export default class AuthenticationService {
         @inject(GithubLoginClient) githubLoginClient: GithubLoginClient,
         @inject(GoogleLoginClient) googleLoginClient: GoogleLoginClient,
         @inject(EmailVerificationStore) emailVerificationStore: EmailVerificationStore,
+        @inject(EmailAuthStore) emailAuthStore: EmailAuthStore,
         @inject(EmailQueue) emailQueue: EmailQueue
         ) {
         this.databaseConnection = databaseConnection;
@@ -60,10 +54,11 @@ export default class AuthenticationService {
         this.githubLoginClient = githubLoginClient;
         this.googleLoginClient = googleLoginClient;
         this.emailVerificationStore = emailVerificationStore;
+        this.emailAuthStore = emailAuthStore;
         this.emailQueue = emailQueue;
     }
 
-    public async authWithGithubOAuth(code: string): Promise<AuthReponse> {
+    public async authWithGithubOAuth(code: string, loginClient: 'web'|'desktop'): Promise<AuthReponse> {
         const queryRunner = await this.databaseConnection.makeQueryRunner();
         try {
             const githubAccessToken = await this.githubLoginClient.getAccessToken(code); 
@@ -106,7 +101,7 @@ export default class AuthenticationService {
                 // ADD TRUE TO TEST LOGIC
                 if (!credential?.isThirdPartyVerified) {
                     const verification = await this.emailVerificationStore.createEmailVerification(credential);
-                    const link = this.emailVerificationStore.link(verification);
+                    const link = this.emailVerificationStore.link(verification, loginClient);
                     // SEND VERIFICATION EMAIL
                     await this.emailQueue?.add({
                         jobId: verification.id,
@@ -154,7 +149,7 @@ export default class AuthenticationService {
             );
             if (credential && !credential.isThirdPartyVerified) {
                 const verification = await this.emailVerificationStore.createEmailVerification(credential);
-                const link = this.emailVerificationStore.link(verification);
+                const link = this.emailVerificationStore.link(verification, loginClient);
                 // SEND VERIFICATION EMAIL
                 await this.emailQueue?.add({
                     jobId: verification.id,
@@ -257,10 +252,11 @@ export default class AuthenticationService {
         }
     }
 
-    public async signupOrLoginByEmail(email: string) {
+    public async signupOrLoginByEmail(email: string, loginClient: 'cli'|'web'|'desktop') {
         const queryRunner = await this.databaseConnection.makeQueryRunner();
         const userAuthCredentialsContext = await this.contextFactory.createContext(UserAuthCredentialsContext, queryRunner);
         try {
+            await queryRunner.startTransaction();
             const credentials = await userAuthCredentialsContext.getCredentialsByEmail(email);
             const userId = userAuthCredentialsContext.getUserIdFromCredentials(credentials);
             if (!userId && !userAuthCredentialsContext.hasEmailCredential(credentials)) {
@@ -271,11 +267,11 @@ export default class AuthenticationService {
                 )
                 await queryRunner.commitTransaction();
 
-                const verification = await this.emailVerificationStore.createEmailVerification(credential);
-                const link = this.emailVerificationStore.link(verification);
+                const authorization = await this.emailAuthStore.createEmailAuth(credential.email);
+                const link = this.emailAuthStore.link(authorization, loginClient);
                 // update this
                 await this.emailQueue?.add({
-                    jobId: verification.id,
+                    jobId: authorization.id,
                     template: "SignupEmail",
                     props: {
                         link
@@ -289,10 +285,10 @@ export default class AuthenticationService {
             if (!userId) {
                 const credential = userAuthCredentialsContext.getEmailCredential(credentials) as UserAuthCredential;
                 await queryRunner.commitTransaction();
-                const verification = await this.emailVerificationStore.createEmailVerification(credential);
-                const link = this.emailVerificationStore.link(verification);
+                const authorization = await this.emailAuthStore.createEmailAuth(credential.email);
+                const link = this.emailAuthStore.link(authorization, loginClient);
                 await this.emailQueue?.add({
-                    jobId: verification.id,
+                    jobId: authorization.id,
                     template: "SignupEmail",
                     props: {
                         link
@@ -307,6 +303,7 @@ export default class AuthenticationService {
             const user = await usersContext.getById(userId);
 
             if (!user) {
+                await queryRunner.rollbackTransaction();
                 return { action: 'LOG_ERROR', error: { type: 'POSTGRES_ERROR', message: 'No user', meta: { userId }} };
             }
             if (!userAuthCredentialsContext.hasEmailCredential(credentials)) {
@@ -318,17 +315,17 @@ export default class AuthenticationService {
                     user
                 );
                 await queryRunner.commitTransaction();
-                const verification = await this.emailVerificationStore.createEmailVerification(credential);
-                const link = this.emailVerificationStore.link(verification);
+                const authorization = await this.emailAuthStore.createEmailAuth(credential.email);
+                const link = this.emailAuthStore.link(authorization, loginClient);
                 await this.emailQueue?.add({
-                    jobId: verification.id,
+                    jobId: authorization.id,
                     template: "LoginEmail",
                     props: {
                         link
                     },
                     to: email,
                     from: "accounts@floro.io",
-                    subject: "Floro Sign In"
+                    subject: "Floro Sign Up"
                 });
                 return { action: 'VERIFICATION_SENT', credential };
             }
@@ -342,7 +339,7 @@ export default class AuthenticationService {
         }
     }
 
-    public async verifyGithubCredential(verificationCode: string) {
+    public async verifyGithubCredential(verificationCode: string): Promise<AuthReponse> {
         try {
             const emailVerification = await this.emailVerificationStore.fetchEmailVerification(verificationCode);
             if (!emailVerification) {
@@ -350,16 +347,52 @@ export default class AuthenticationService {
             }
             const userAuthCredentialsContext = await this.contextFactory.createContext(UserAuthCredentialsContext);
             const userAuthCredential = await userAuthCredentialsContext.getById(emailVerification.oauthId) as UserAuthCredential;
-            const credential = userAuthCredentialsContext.updateUserAuthCredential(
+            const credential = await userAuthCredentialsContext.updateUserAuthCredential(
                 userAuthCredential,
                 {
                     isThirdPartyVerified: true,
                     isVerified: true
                 }
             );
-            return { action: 'VERIFIED_CREDENTIAL', credential};
+            const credentials = await userAuthCredentialsContext.getCredentialsByEmail(userAuthCredential.email);
+            const userId = userAuthCredentialsContext.getUserIdFromCredentials(credentials);
+            if (!userId) {
+                return { action: 'COMPLETE_SIGNUP', credential };
+            }
+            const usersContext = await this.contextFactory.createContext(UsersContext);
+            const user = await usersContext.getById(userId);
+            if (!user) {
+                return { action: 'LOG_ERROR', error: { type: 'POSTGRES_ERROR', message: 'No user', meta: { userId }} };
+            }
+            return { action: 'LOGIN', user, credential };
         } catch(e: any) {
-            return { action: 'LOG_ERROR', error: { type: 'UNKNOWN_GOOGLE_LOGIN_ERROR', message: e?.message, meta: e} };
+            return { action: 'LOG_ERROR', error: { type: 'UNKNOWN_GITHUB_VERIFICATION_ERROR', message: e?.message, meta: e} };
+        }
+    }
+
+    public async authorizeEmailLink(authorizationCode: string): Promise<AuthReponse> {
+        const userAuthCredentialsContext = await this.contextFactory.createContext(UserAuthCredentialsContext);
+        try {
+            const authorization = await this.emailAuthStore.fetchEmailAuth(authorizationCode);
+            if (!authorization) {
+                return { action: 'NOT_FOUND'};
+            }
+            const credentials = await userAuthCredentialsContext.getCredentialsByEmail(authorization.email);
+            const userId = userAuthCredentialsContext.getUserIdFromCredentials(credentials);
+            const userAuthCredential = userAuthCredentialsContext.getEmailCredential(credentials) as UserAuthCredential;
+            const credential = await userAuthCredentialsContext.updateUserAuthCredential(userAuthCredential, { isVerified: true });
+            if (!userId) {
+                return { action: 'COMPLETE_SIGNUP', credential };
+            }
+            const usersContext = await this.contextFactory.createContext(UsersContext);
+            const user = await usersContext.getById(userId);
+
+            if (!user) {
+                return { action: 'LOG_ERROR', error: { type: 'POSTGRES_ERROR', message: 'No user', meta: { userId }} };
+            }
+            return { action: 'LOGIN', user, credential };
+        } catch (e: any) {
+            return { action: 'LOG_ERROR', error: { type: 'UNKNOWN_EMAIL_AUTHORIZATION_ERROR', message: e?.message, meta: e} };
         }
     }
 }

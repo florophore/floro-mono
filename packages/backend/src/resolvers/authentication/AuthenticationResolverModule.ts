@@ -23,10 +23,12 @@ export default class AuthenticationResolverModule extends BaseResolverModule {
   }
 
   public Query: main.QueryResolvers = {
-
-    submitOAuthForAction: async (root, {code, provider}) => {
+    submitOAuthForAction: async (root, {code, provider, loginClient}) => {
+      if (loginClient != "web" && loginClient != "desktop") {
+        return null;
+      }
       if (provider == 'github' && code) {
-        const authenticationResult = await this.authenticationService.authWithGithubOAuth(code);
+        const authenticationResult = await this.authenticationService.authWithGithubOAuth(code, loginClient as "web"|"desktop");
         if (authenticationResult.action == 'COMPLETE_SIGNUP') {
           const githubNameParts: string[] = authenticationResult?.credential?.githubName?.split(' ') ?? [];
           const firstName = githubNameParts?.slice(0, githubNameParts.length - 1)?.join(' ') ?? '';
@@ -40,7 +42,7 @@ export default class AuthenticationResolverModule extends BaseResolverModule {
           };
           const action: AuthAction = {
             __typename: "CompleteSignupAction",
-            OAuthId: authenticationResult?.credential?.id,
+            authId: authenticationResult?.credential?.id,
             provider,
             unsavedUser
           };
@@ -54,6 +56,15 @@ export default class AuthenticationResolverModule extends BaseResolverModule {
             authenticationResult.user as User,
             authenticationResult.credential as UserAuthCredential
           );
+          const action: AuthAction = {
+            __typename: "PassedLoginAction",
+            user: authenticationResult.user,
+            session
+          }
+          return {
+            type: "LOGIN",
+            action
+          };
         }
         if (authenticationResult.action == 'VERIFICATION_REQUIRED') {
           const action: AuthAction = {
@@ -64,12 +75,10 @@ export default class AuthenticationResolverModule extends BaseResolverModule {
             type: 'VERIFICATION_REQUIRED',
             action
           }
-
         }
         if (authenticationResult.action == 'LOG_ERROR') {
           console.error(authenticationResult?.error?.type, authenticationResult?.error?.message, authenticationResult?.error?.meta);
         }
-
         return null;
       }
       if (provider == 'google' && code) {
@@ -81,10 +90,10 @@ export default class AuthenticationResolverModule extends BaseResolverModule {
             firstName: authenticationResult?.credential?.googleGivenName,
             lastName: authenticationResult?.credential?.googleFamilyName,
             email: authenticationResult?.credential?.email
-          }
+          };
           const action: AuthAction = {
             __typename: "CompleteSignupAction",
-            OAuthId: authenticationResult?.credential?.id,
+            authId: authenticationResult?.credential?.id,
             provider,
             unsavedUser
           };
@@ -98,7 +107,15 @@ export default class AuthenticationResolverModule extends BaseResolverModule {
             authenticationResult.user as User,
             authenticationResult.credential as UserAuthCredential
           );
-          console.log("SESSION", session);
+          const action: AuthAction = {
+            __typename: "PassedLoginAction",
+            user: authenticationResult.user,
+            session
+          }
+          return {
+            type: "LOGIN",
+            action
+          };
         }
         if (authenticationResult.action == 'LOG_ERROR') {
           console.error(authenticationResult?.error?.type, authenticationResult?.error?.message, authenticationResult?.error?.meta);
@@ -107,5 +124,124 @@ export default class AuthenticationResolverModule extends BaseResolverModule {
       }
       return null;
     },
+
+    fetchEmailAuth: async (root, { authId }) => {
+      if (!authId) {
+        return null;
+      }
+      const authenticationResult = await this.authenticationService.authorizeEmailLink(authId);
+      if (authenticationResult.action == "COMPLETE_SIGNUP") {
+        const unsavedUser: UnsavedUser = {
+          __typename: "UnsavedUser",
+          username: authenticationResult?.credential?.email?.split?.("@")?.[0],
+          email: authenticationResult?.credential?.email,
+        };
+        const action: AuthAction = {
+          __typename: "CompleteSignupAction",
+          authId: authenticationResult?.credential?.id,
+          provider: "floro",
+          unsavedUser,
+        };
+        return {
+          type: "COMPLETE_SIGNUP",
+          action,
+        };
+      }
+      if (authenticationResult.action == "LOGIN") {
+        const session = await this.sessionStore.setNewSession(
+          authenticationResult.user as User,
+          authenticationResult.credential as UserAuthCredential
+        );
+        const action: AuthAction = {
+          __typename: "PassedLoginAction",
+          user: authenticationResult.user,
+          session,
+        };
+        return {
+          type: "LOGIN",
+          action,
+        };
+      }
+      if (authenticationResult.action == "LOG_ERROR") {
+        console.error(
+          authenticationResult?.error?.type,
+          authenticationResult?.error?.message,
+          authenticationResult?.error?.meta
+        );
+      }
+
+      if (authenticationResult.action == "NOT_FOUND") {
+        const action: AuthAction = {
+          __typename: "AuthNotFound",
+          message: "Not found"
+        };
+
+        return {
+          type: "NOT_FOUND",
+          action,
+        };
+      }
+
+      return null;
+    },
+
+    fetchGithubVerification:async (root, { verificationId }) => {
+      if (!verificationId) {
+        return null;
+      }
+      const authenticationResult = await this.authenticationService.verifyGithubCredential(verificationId);
+      if (authenticationResult.action == "COMPLETE_SIGNUP") {
+        const unsavedUser: UnsavedUser = {
+          __typename: "UnsavedUser",
+          username: authenticationResult?.credential?.email?.split?.("@")?.[0],
+          email: authenticationResult?.credential?.email,
+        };
+        const action: AuthAction = {
+          __typename: "CompleteSignupAction",
+          authId: authenticationResult?.credential?.id,
+          provider: "floro",
+          unsavedUser,
+        };
+        return {
+          type: "COMPLETE_SIGNUP",
+          action,
+        };
+      }
+      if (authenticationResult.action == "LOGIN") {
+        const session = await this.sessionStore.setNewSession(
+          authenticationResult.user as User,
+          authenticationResult.credential as UserAuthCredential
+        );
+        const action: AuthAction = {
+          __typename: "PassedLoginAction",
+          user: authenticationResult.user,
+          session,
+        };
+        return {
+          type: "LOGIN",
+          action,
+        };
+      }
+      if (authenticationResult.action == "LOG_ERROR") {
+        console.error(
+          authenticationResult?.error?.type,
+          authenticationResult?.error?.message,
+          authenticationResult?.error?.meta
+        );
+      }
+
+      if (authenticationResult.action == "NOT_FOUND") {
+        const action: AuthAction = {
+          __typename: "AuthNotFound",
+          message: "Not found"
+        };
+
+        return {
+          type: "NOT_FOUND",
+          action,
+        };
+      }
+      return null;
+    }
   };
 }

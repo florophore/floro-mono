@@ -20,14 +20,23 @@ const  FloroImage = styled.img`
   margin-bottom: 48px;
 `
 
-const SubPageLoader = (): React.ReactElement => {
+export interface Props {
+  children?: React.ReactElement;
+  hideLoad?: boolean;
+}
+
+
+const SubPageLoader = (props?: Props): React.ReactElement => {
 
   return (
     <BackgroundWrapper>
       <FloroImage
         src={FloroIcon}
       />
-      <DotsLoader size={"large"} color={"purple"}/>
+      {!props?.hideLoad && <DotsLoader size={"large"} color={"purple"}/>}
+      {!!props?.children &&
+        <>{props?.children}</>
+      }
     </BackgroundWrapper>
   );
 }

@@ -67,7 +67,7 @@ export default class EmailVerificationStore {
         return null;
     }
 
-    public link(emailVerification: EmailVerification) {
-        return `${this.mainConfig.url()}/credential/verifiy?verification_code=${emailVerification.id}`;
+    public link(emailVerification: EmailVerification, loginClient: 'cli'|'web'|'desktop') {
+        return `${this.mainConfig.url()}/credential/verifiy?verification_code=${emailVerification.id}&login_client=${loginClient}`;
     }
 }

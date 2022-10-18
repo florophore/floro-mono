@@ -1,7 +1,8 @@
 extend type Query {
     fetchEmailAuth(authId: ID): AuthenticationResult
-    submitOAuthForAction(code: String!, provider: String!): AuthenticationResult
+    fetchGithubVerification(verificationId: ID): AuthenticationResult
+    submitOAuthForAction(code: String!, provider: String!, loginClient: String): AuthenticationResult
 }
 extend type Mutation {
-    submitEmailForAuth(email: String): EmailAuthAck
+    submitEmailForAuth(email: String, loginClient: String!): EmailAuthAck
 }

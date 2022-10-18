@@ -33,7 +33,7 @@ type PassedLoginAction {
 }
 
 type CompleteSignupAction {
-    OAuthId: String 
+    authId: String 
     provider: String
     unsavedUser: UnsavedUser
 }
@@ -42,7 +42,11 @@ type VerificationRequiredAction {
     email: String 
 }
 
-union AuthAction = PassedLoginAction | CompleteSignupAction | VerificationRequiredAction
+type AuthNotFound {
+    message: String 
+}
+
+union AuthAction = PassedLoginAction | CompleteSignupAction | VerificationRequiredAction | AuthNotFound
 
 type AuthenticationResult {
     type: String

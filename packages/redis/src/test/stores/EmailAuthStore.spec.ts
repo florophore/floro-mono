@@ -13,13 +13,12 @@ describe('EmailAuthStore', () => {
         emailAuthStore = container.get(EmailAuthStore);
     })
 
-    describe.only('e2e', () => {
+    describe('e2e', () => {
 
         test('it manages email signup store', async () => {
             const email = "test@gmail.com";
             const emailSignup = await emailAuthStore.createEmailAuth(email);
             const returnedSignup = await emailAuthStore.fetchEmailAuth(emailSignup.id);
-            console.log("TEST", emailAuthStore.link(emailSignup));
             expect(emailSignup.email).to.eql(returnedSignup?.email);
             expect(emailSignup.normalizedEmail).to.eql(returnedSignup?.normalizedEmail);
             expect(emailSignup.createdAt).to.eql(returnedSignup?.createdAt);

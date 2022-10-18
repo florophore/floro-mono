@@ -33,7 +33,6 @@ export default class EmailQueue {
   public static QUEUE_NAME = "email-queue";
 
   public queue!: Queue;
-  public queueScheduler!: QueueScheduler;
   public worker!: Worker;
   private mailerClient!: MailerClient;
   private mainConfig!: MainConfig;
@@ -47,9 +46,6 @@ export default class EmailQueue {
     this.mailerClient = mailerClient;
     this.mainConfig = mainConfig;
     this.redisClient = redisClient;
-    this.queueScheduler = new QueueScheduler(EmailQueue.QUEUE_NAME, {
-      connection: redisClient.redis,
-    });
     this.queue = new Queue(EmailQueue.QUEUE_NAME, {
       connection: redisClient.redis,
     });
@@ -112,9 +108,8 @@ export default class EmailQueue {
           );
         }
       },
-      { autorun: true, connection: this.redisClient.redis }
+      { autorun: true }
     );
-
     this.worker.on("error", (error: Error) => {
       console.error("Mail Queue Error", error);
     });

@@ -5,18 +5,21 @@ import { Manager } from "socket.io-client";
 
 function Home() {
 
-  //useEffect(() => {
-  //  const manager = new Manager('ws://localhost:63403', {
-  //    reconnectionDelayMax: 10000
-  //  });
-  //  const socket = manager.socket("/"); // main namespace
-  //  socket.on("connect", () => {
-  //    console.log("connected");
-  //  })
-  //  socket.on("hello", (event) => {
-  //    console.log("GOT A MESSAGE", event)
-  //  });
-  //}, []);
+  useEffect(() => {
+    const manager = new Manager('ws://localhost:63403', {
+      reconnectionDelayMax: 10000,
+      query: {
+        client: 'web'
+      }
+    });
+    const socket = manager.socket("/"); // main namespace
+    socket.on("connect", () => {
+      console.log("connected");
+    })
+    socket.on("hello", (event) => {
+      console.log("GOT A MESSAGE", event)
+    });
+  }, []);
 
   return (
     <div>

@@ -1,5 +1,5 @@
-query SubmitOAuthCode($code: String!, $provider: String!) {
-  submitOAuthForAction(code: $code, provider: $provider) {
+query SubmitOAuthCode($code: String!, $provider: String!, $loginClient: String) {
+  submitOAuthForAction(code: $code, provider: $provider, loginClient: $loginClient) {
     type,
     action {
       ...on CompleteSignupAction {
@@ -7,6 +7,9 @@ query SubmitOAuthCode($code: String!, $provider: String!) {
       }
       ...on PassedLoginAction {
         ...PassedLoginAction
+      }
+      ...on AuthNotFound {
+        ...AuthNotFound
       }
     }
   }

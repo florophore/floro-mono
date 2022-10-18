@@ -5,7 +5,7 @@ import AuthenticationService from "../services/authentication/AuthenticationServ
 
 
 export interface CreateLoginOrSignupRequest {
-    email: string;
+    email?: string;
 }
 
 @injectable()
@@ -22,11 +22,19 @@ export default class AuthenticationController extends BaseController {
 
     @Post('/api/authenticate')
     public async loginOrSignup(request, response): Promise<void> {
-        console.log(request.body)
-        // const email = {request.body.email}
-        console.log("wtf")
-        console.log(this);
-        response.send({});
+        const body: CreateLoginOrSignupRequest = request.body;
+        if (!body?.email) {
+            response.status(400).send({
+                error: "Invalid request format" 
+            });
+            return;
+        }
+        const email: string = body.email;
+        // LOG RESULT IN FUTURE
+        await this.authenticationService.signupOrLoginByEmail(email, 'cli');
+        response.status(200).send({
+            message: "ok" 
+        });
     }
 
 }

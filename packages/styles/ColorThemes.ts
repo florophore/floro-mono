@@ -21,6 +21,7 @@ export interface ColorTheme {
     inputInvalidBorderColor: string;
     inputInvalidLabelTextColor: string;
     instructionTextColor: string;
+    warningTextColor: string;
   };
   shadows: {
     modalContainer: string
@@ -51,6 +52,7 @@ export const LightTheme: ColorTheme = {
         inputInvalidBorderColor: palette.red,
         inputInvalidLabelTextColor: palette.red,
         instructionTextColor: palette.gray,
+        warningTextColor: palette.red,
     },
     shadows: {
         modalContainer: palette.mediumGray.substring(0, 7) + Opacity[70],
@@ -81,6 +83,7 @@ export const DarkTheme: ColorTheme = {
         inputInvalidBorderColor: palette.lightRed,
         inputInvalidLabelTextColor: palette.lightRed,
         instructionTextColor: palette.white,
+        warningTextColor: palette.lightRed,
     },
     shadows: {
         modalContainer: palette.black.substring(0, 7) + Opacity[70],
