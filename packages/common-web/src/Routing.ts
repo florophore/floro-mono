@@ -3,6 +3,7 @@ import AdminHome from './pages/admin/Home';
 import About from './pages/common/About';
 import OAuthCallback from './pages/common/authentication/OAuthCallback';
 import CredentialVerifyCallback from './pages/common/authentication/CredentialVerifyCallback';
+import CredentialAuthCallback from './pages/common/authentication/CredentialAuthCallback';
 
 import { IsomorphicRoute, sortRoutes } from './ssr/routing-helpers';
 
@@ -33,6 +34,10 @@ export const MainRoutes: IsomorphicRoute[] = sortRoutes([
     path: "/credential/verifiy",
     component: () => CredentialVerifyCallback,
   },
+  {
+    path: "/credential/auth",
+    component: () => CredentialAuthCallback
+  }
 ]);
 
 /**

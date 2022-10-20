@@ -5,7 +5,10 @@ export interface ColorTheme {
   background: ColorPalette[keyof ColorPalette];
   colors: {
     standardText: string;
+    contrastText: string;
     disableOverlay: string;
+    checkboxBorder: string;
+    checkboxFill: string;
     googleButtonBackground: string;
     googleButtonText: string;
     googleButtonBorder: string;
@@ -22,6 +25,13 @@ export interface ColorTheme {
     inputInvalidLabelTextColor: string;
     instructionTextColor: string;
     warningTextColor: string;
+    tooltipInnerShadowColor: string;
+    tooltipOuterShadowColor: string;
+    signupTooltipUsernameTitle: string;
+    signupTooltipUsernameInstruction: string;
+    signupTooltipUsernameEmphasizedSymbols: string;
+    signupTooltipUsernameErrorText: string;
+    signupTooltipUsernameValidText: string;
   };
   shadows: {
     modalContainer: string
@@ -32,42 +42,55 @@ export interface ColorTheme {
 }
 
 export const LightTheme: ColorTheme = {
-    name: 'light',
-    background: palette.lightModeBG,
-    colors: {
-        standardText: palette.mediumGray,
-        disableOverlay: palette.white,
-        googleButtonBackground: palette.white,
-        googleButtonText: palette.darkGray,
-        googleButtonBorder: palette.white,
-        modalBackdropHidden: palette.gray.substring(0, 7) + Opacity[0],
-        modalBackdropShown: palette.gray.substring(0, 7) + Opacity[50],
-        modalHeaderTitleColor: palette.purple,
-        modalHeaderSubtitleColor: palette.white,
-        modalHeaderBackground: palette.lightPurple,
-        inputBorderColor: palette.gray,
-        inputLabelTextColor: palette.gray,
-        inputPlaceholderTextColor: palette.lightGray,
-        inputEntryTextColor: palette.mediumGray,
-        inputInvalidBorderColor: palette.red,
-        inputInvalidLabelTextColor: palette.red,
-        instructionTextColor: palette.gray,
-        warningTextColor: palette.red,
-    },
-    shadows: {
-        modalContainer: palette.mediumGray.substring(0, 7) + Opacity[70],
-    },
-    loaders: {
-        googleButtonLoader: 'gray',
-    }
-} 
+  name: "light",
+  background: palette.lightModeBG,
+  colors: {
+    standardText: palette.mediumGray,
+    contrastText: palette.mediumGray,
+    disableOverlay: palette.white,
+    checkboxBorder: palette.gray,
+    checkboxFill: palette.white,
+    googleButtonBackground: palette.white,
+    googleButtonText: palette.darkGray,
+    googleButtonBorder: palette.white,
+    modalBackdropHidden: palette.gray.substring(0, 7) + Opacity[0],
+    modalBackdropShown: palette.gray.substring(0, 7) + Opacity[50],
+    modalHeaderTitleColor: palette.purple,
+    modalHeaderSubtitleColor: palette.white,
+    modalHeaderBackground: palette.lightPurple,
+    inputBorderColor: palette.gray,
+    inputLabelTextColor: palette.gray,
+    inputPlaceholderTextColor: palette.lightGray,
+    inputEntryTextColor: palette.mediumGray,
+    inputInvalidBorderColor: palette.red,
+    inputInvalidLabelTextColor: palette.red,
+    instructionTextColor: palette.gray,
+    warningTextColor: palette.red,
+    tooltipInnerShadowColor: palette.gray,
+    tooltipOuterShadowColor: palette.mediumGray.substring(0, 7) + Opacity[30],
+    signupTooltipUsernameTitle: palette.gray,
+    signupTooltipUsernameInstruction: palette.gray,
+    signupTooltipUsernameEmphasizedSymbols: palette.purple,
+    signupTooltipUsernameErrorText: palette.red,
+    signupTooltipUsernameValidText: palette.purple
+  },
+  shadows: {
+    modalContainer: palette.mediumGray.substring(0, 7) + Opacity[70],
+  },
+  loaders: {
+    googleButtonLoader: "gray",
+  },
+}; 
 
 export const DarkTheme: ColorTheme = {
     name: 'dark',
     background: palette.darkModeBG,
     colors: {
         standardText: palette.gray,
+        contrastText: palette.white,
         disableOverlay: palette.gray,
+        checkboxBorder: palette.mediumGray,
+        checkboxFill: palette.gray,
         googleButtonBackground: palette.darkGray,
         googleButtonText: palette.white,
         googleButtonBorder: palette.black,
@@ -84,6 +107,13 @@ export const DarkTheme: ColorTheme = {
         inputInvalidLabelTextColor: palette.lightRed,
         instructionTextColor: palette.white,
         warningTextColor: palette.lightRed,
+        tooltipInnerShadowColor: palette.black,
+        tooltipOuterShadowColor: palette.black,
+        signupTooltipUsernameTitle: palette.white,
+        signupTooltipUsernameInstruction: palette.white,
+        signupTooltipUsernameEmphasizedSymbols: palette.purple,
+        signupTooltipUsernameErrorText: palette.lightRed,
+        signupTooltipUsernameValidText: palette.purple
     },
     shadows: {
         modalContainer: palette.black.substring(0, 7) + Opacity[70],

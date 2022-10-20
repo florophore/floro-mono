@@ -1,5 +1,5 @@
-query SubmitOAuthCode($code: String!, $provider: String!, $loginClient: String) {
-  submitOAuthForAction(code: $code, provider: $provider, loginClient: $loginClient) {
+query FetchEmailAuth($authCode: String) {
+  fetchEmailAuth(authCode: $authCode) {
     type,
     action {
       ...on CompleteSignupAction {

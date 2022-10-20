@@ -7,6 +7,7 @@ import EmailAuthStore from './stores/EmailAuthStore';
 import EmailVerificationStore from './stores/EmailVerificationStore';
 import RedisQueueWorkers from './RedisQueueWorkers';
 import RedisPubsubFactory from './RedisPubsubFactory';
+import SignupExchangStore from './stores/SignUpExchangeStore';
 
 export default new ContainerModule((bind): void => {
     bind<RedisClientConfig>(RedisClientConfig).toSelf();
@@ -16,6 +17,7 @@ export default new ContainerModule((bind): void => {
     // stores
     bind<EmailAuthStore>(EmailAuthStore).toSelf();
     bind<EmailVerificationStore>(EmailVerificationStore).toSelf();
+    bind<SignupExchangStore>(SignupExchangStore).toSelf();
 
     // queues
     bind<EmailQueue>(EmailQueue).toSelf();

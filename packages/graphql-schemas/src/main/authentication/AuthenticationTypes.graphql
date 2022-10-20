@@ -35,6 +35,7 @@ type PassedLoginAction {
 type CompleteSignupAction {
     authId: String 
     provider: String
+    exchangeKey: String
     unsavedUser: UnsavedUser
 }
 
@@ -54,6 +55,6 @@ type AuthenticationResult {
 }
 
 type EmailAuthAck {
-    ackKey: ID
+    id: ID
     email: String
 }

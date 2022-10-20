@@ -4,8 +4,8 @@ import crypto from 'crypto';
 import EmailHelper from '@floro/database/src/contexts/utils/EmailHelper';
 import MainConfig from "@floro/config/src/MainConfig";
 
-const EMAIL_SIGNUP_STORE_PREFIX = "email_signup_store";
-const  emailSignupStoreKey = (storeId: string) => `${EMAIL_SIGNUP_STORE_PREFIX}:${storeId}`;
+const EMAIL_AUTH_STORE_PREFIX = "email_auth_store";
+const  emailAuthStoreKey = (storeId: string) => `${EMAIL_AUTH_STORE_PREFIX}:${storeId}`;
 
 const EXPIRATION_SECONDS = 60 * 60; // 1 hour
 
@@ -32,7 +32,7 @@ export default class EmailAuthStore {
     }
 
     private generateStoreId(): string {
-        return crypto.randomBytes(32).toString('base64');
+        return crypto.randomBytes(32).toString('hex');
     }
 
     public async createEmailAuth(email: string) {
@@ -42,7 +42,7 @@ export default class EmailAuthStore {
         const normalizedEmail = EmailHelper.getUniqueEmail(email, isGoogleEmail);
         const emailHash = EmailHelper.getEmailHash(email, isGoogleEmail);
         const storeId = this.generateStoreId();
-        const emailSignupKey = emailSignupStoreKey(storeId);
+        const emailSignupKey = emailAuthStoreKey(storeId);
         const emailSignup: EmailSignup = {
             id: storeId,
             email,
@@ -56,7 +56,7 @@ export default class EmailAuthStore {
     }
 
     public async fetchEmailAuth(storeId: string): Promise<EmailSignup|null> {
-        const emailSignupKey = emailSignupStoreKey(storeId);
+        const emailSignupKey = emailAuthStoreKey(storeId);
         const emailSignupSerialized = await this.redisClient?.redis?.get(emailSignupKey) as string|undefined;
         if (emailSignupSerialized) {
             return JSON.parse(emailSignupSerialized) as EmailSignup;
@@ -65,6 +65,8 @@ export default class EmailAuthStore {
     }
 
     public link(emailSignup: EmailSignup, loginClient: 'cli'|'web'|'desktop') {
-        return `${this.mainConfig.url()}/credential/auth?authorization_code=${emailSignup.id}&login_client=${loginClient}`;
+        return encodeURI(
+        `${this.mainConfig.url()}/credential/auth?authorization_code=${emailSignup.id}&login_client=${loginClient}`
+        );
     }
 }

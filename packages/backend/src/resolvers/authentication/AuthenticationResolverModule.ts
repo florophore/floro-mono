@@ -6,20 +6,24 @@ import SessionStore from "@floro/redis/src/sessions/SessionStore";
 import { UserAuthCredential } from "@floro/database/src/entities/UserAuthCredential";
 import { User } from "@floro/database/src/entities/User";
 import { AuthAction, UnsavedUser } from "@floro/graphql-schemas/src/generated/main-graphql";
+import SignupExchangStore from "@floro/redis/src/stores/SignUpExchangeStore";
 
 @injectable()
 export default class AuthenticationResolverModule extends BaseResolverModule {
   public resolvers: Array<keyof this&keyof main.ResolversTypes> = ["Query"];
   protected authenticationService!: AuthenticationService;
   protected sessionStore!: SessionStore;
+  protected signupExchangeStore!: SignupExchangStore;
 
   constructor(
     @inject(AuthenticationService) authenticationService: AuthenticationService,
-    @inject(SessionStore) sessionStore: SessionStore
+    @inject(SessionStore) sessionStore: SessionStore,
+    @inject(SignupExchangStore) signupExchangeStore: SignupExchangStore
   ) {
     super();
     this.authenticationService = authenticationService;
     this.sessionStore = sessionStore;
+    this.signupExchangeStore = signupExchangeStore;
   }
 
   public Query: main.QueryResolvers = {
@@ -35,16 +39,21 @@ export default class AuthenticationResolverModule extends BaseResolverModule {
           const lastName = githubNameParts?.[githubNameParts?.length - 1]; 
           const unsavedUser: UnsavedUser = {
             __typename: "UnsavedUser",
-            username: authenticationResult?.credential?.email?.split?.('@')?.[0],
+            username: authenticationResult?.credential?.email?.split?.('@')?.[0].substring(0, 20),
             firstName,
             lastName,
             email: authenticationResult?.credential?.email
           };
+          const signupExchange =
+            await this.signupExchangeStore.createSignupExchange(
+              authenticationResult?.credential as UserAuthCredential
+            );
           const action: AuthAction = {
             __typename: "CompleteSignupAction",
             authId: authenticationResult?.credential?.id,
             provider,
-            unsavedUser
+            unsavedUser,
+            exchangeKey: signupExchange.id
           };
           return {
             type: "COMPLETE_SIGNUP",
@@ -86,16 +95,21 @@ export default class AuthenticationResolverModule extends BaseResolverModule {
         if (authenticationResult.action == 'COMPLETE_SIGNUP') {
           const unsavedUser: UnsavedUser = {
             __typename: "UnsavedUser",
-            username: authenticationResult?.credential?.email?.split?.('@')?.[0],
+            username: authenticationResult?.credential?.email?.split?.('@')?.[0].substring(0, 20),
             firstName: authenticationResult?.credential?.googleGivenName,
             lastName: authenticationResult?.credential?.googleFamilyName,
             email: authenticationResult?.credential?.email
           };
+          const signupExchange =
+            await this.signupExchangeStore.createSignupExchange(
+              authenticationResult?.credential as UserAuthCredential
+            );
           const action: AuthAction = {
             __typename: "CompleteSignupAction",
             authId: authenticationResult?.credential?.id,
             provider,
-            unsavedUser
+            unsavedUser,
+            exchangeKey: signupExchange.id
           };
           return {
             type: "COMPLETE_SIGNUP",
@@ -125,22 +139,29 @@ export default class AuthenticationResolverModule extends BaseResolverModule {
       return null;
     },
 
-    fetchEmailAuth: async (root, { authId }) => {
-      if (!authId) {
+    fetchEmailAuth: async (root, { authCode }) => {
+      if (!authCode) {
         return null;
       }
-      const authenticationResult = await this.authenticationService.authorizeEmailLink(authId);
+      const authenticationResult = await this.authenticationService.authorizeEmailLink(authCode);
       if (authenticationResult.action == "COMPLETE_SIGNUP") {
         const unsavedUser: UnsavedUser = {
           __typename: "UnsavedUser",
-          username: authenticationResult?.credential?.email?.split?.("@")?.[0],
-          email: authenticationResult?.credential?.email,
+          username: authenticationResult?.credential?.email?.split?.('@')?.[0].substring(0, 20),
+          firstName: "",
+          lastName: "",
+          email: authenticationResult?.credential?.email
         };
+        const signupExchange =
+          await this.signupExchangeStore.createSignupExchange(
+            authenticationResult?.credential as UserAuthCredential
+          );
         const action: AuthAction = {
           __typename: "CompleteSignupAction",
           authId: authenticationResult?.credential?.id,
           provider: "floro",
           unsavedUser,
+          exchangeKey: signupExchange.id
         };
         return {
           type: "COMPLETE_SIGNUP",
@@ -185,22 +206,29 @@ export default class AuthenticationResolverModule extends BaseResolverModule {
       return null;
     },
 
-    fetchGithubVerification:async (root, { verificationId }) => {
-      if (!verificationId) {
+    fetchGithubVerification:async (root, { verificationCode }) => {
+      if (!verificationCode) {
         return null;
       }
-      const authenticationResult = await this.authenticationService.verifyGithubCredential(verificationId);
+      const authenticationResult = await this.authenticationService.verifyGithubCredential(verificationCode);
       if (authenticationResult.action == "COMPLETE_SIGNUP") {
         const unsavedUser: UnsavedUser = {
           __typename: "UnsavedUser",
-          username: authenticationResult?.credential?.email?.split?.("@")?.[0],
+          username: authenticationResult?.credential?.email?.split?.("@")?.[0].substring(0, 20),
           email: authenticationResult?.credential?.email,
+          firstName: "",
+          lastName: ""
         };
+        const signupExchange =
+          await this.signupExchangeStore.createSignupExchange(
+            authenticationResult?.credential as UserAuthCredential
+          );
         const action: AuthAction = {
           __typename: "CompleteSignupAction",
           authId: authenticationResult?.credential?.id,
           provider: "floro",
           unsavedUser,
+          exchangeKey: signupExchange.id
         };
         return {
           type: "COMPLETE_SIGNUP",

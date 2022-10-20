@@ -15,6 +15,9 @@
   "dependencies": {
     "@apollo/client": "^3.7.0",
     "@floro/common-assets": "1.0.0",
+    "@trpc/client": "^9.27.4",
+    "@trpc/react": "^9.27.4",
+    "fetch": "^1.1.0",
     "http-proxy-middleware": "^2.0.6",
     "inversify": "^6.0.1",
     "jest-transformer-svg": "^2.0.0",

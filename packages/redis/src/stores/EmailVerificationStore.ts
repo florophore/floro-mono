@@ -5,7 +5,7 @@ import EmailHelper from '@floro/database/src/contexts/utils/EmailHelper';
 import { UserAuthCredential } from "@floro/database/src/entities/UserAuthCredential";
 import MainConfig from "@floro/config/src/MainConfig";
 
-const EMAIL_VERIFICATION_STORE_PREFIX = "email_signup_store";
+const EMAIL_VERIFICATION_STORE_PREFIX = "email_verification_store";
 const  emailVerificationStoreKey = (storeId: string) => `${EMAIL_VERIFICATION_STORE_PREFIX}:${storeId}`;
 
 const EXPIRATION_SECONDS = 60 * 60; // 1 hour
@@ -34,7 +34,7 @@ export default class EmailVerificationStore {
     }
 
     private generateStoreId(): string {
-        return crypto.randomBytes(32).toString('base64');
+        return crypto.randomBytes(32).toString('hex');
     }
 
     public async createEmailVerification(oauthCredential: UserAuthCredential) {
@@ -68,6 +68,10 @@ export default class EmailVerificationStore {
     }
 
     public link(emailVerification: EmailVerification, loginClient: 'cli'|'web'|'desktop') {
-        return `${this.mainConfig.url()}/credential/verifiy?verification_code=${emailVerification.id}&login_client=${loginClient}`;
+        return encodeURI(
+          `${this.mainConfig.url()}/credential/verifiy?verification_code=${
+            emailVerification.id
+          }&login_client=${loginClient}`
+        );
     }
 }

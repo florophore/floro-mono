@@ -20,7 +20,7 @@ export interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 
 const Container = styled.div`
-  margin-top: 12px;
+  margin-top: 14px;
   position: relative;
   height: 64px;
   width: 432px;
@@ -48,6 +48,7 @@ const LabelText = styled.span`
   font-weight: 400;
   font-size: 1rem;
   transition: 500ms color;
+  user-select: none;
 `;
 
 const LabelBorderEnd = styled.div`
@@ -157,6 +158,7 @@ const Input = React.forwardRef(
           onFocus={onInputFocus}
           onBlur={onInputBlur}
           placeholder={placeholder}
+          spellCheck={'false'}
           {...rest}
         />
       </Container>

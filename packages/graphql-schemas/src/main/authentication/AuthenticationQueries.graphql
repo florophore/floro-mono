@@ -1,6 +1,6 @@
 extend type Query {
-    fetchEmailAuth(authId: ID): AuthenticationResult
-    fetchGithubVerification(verificationId: ID): AuthenticationResult
+    fetchEmailAuth(authCode: String): AuthenticationResult
+    fetchGithubVerification(verificationCode: String): AuthenticationResult
     submitOAuthForAction(code: String!, provider: String!, loginClient: String): AuthenticationResult
 }
 extend type Mutation {

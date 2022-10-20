@@ -1,5 +1,6 @@
-query SubmitOAuthCode($code: String!, $provider: String!, $loginClient: String) {
-  submitOAuthForAction(code: $code, provider: $provider, loginClient: $loginClient) {
+
+query FetchGithubVerification($verificationCode: String) {
+  fetchGithubVerification(verificationCode: $verificationCode) {
     type,
     action {
       ...on CompleteSignupAction {
