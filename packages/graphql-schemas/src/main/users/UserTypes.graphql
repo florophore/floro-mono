@@ -5,3 +5,8 @@ type User {
     username: String
     user: User 
 }
+
+type UsernameCheckResult {
+    exists: Boolean
+    username: String
+}

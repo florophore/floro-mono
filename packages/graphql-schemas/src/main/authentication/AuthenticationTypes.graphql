@@ -54,7 +54,35 @@ type AuthenticationResult {
     action: AuthAction
 }
 
-type EmailAuthAck {
-    id: ID
-    email: String
+type VerificationSentAction {
+    message: String 
+}
+
+type EmailAuthErrorAction {
+    type: String 
+    message: String 
+}
+
+union EmailAuthAction = VerificationSentAction|EmailAuthErrorAction
+
+type CreateEmailAuthResult {
+    type: String
+    action: EmailAuthAction
+}
+
+type AccountCreationSuccessAction {
+    user: User 
+    session: Session
+}
+
+type AccountCreationErrorAction {
+    type: String 
+    message: String 
+}
+
+union AccountCreationAction = AccountCreationSuccessAction | AccountCreationErrorAction
+
+type AccountCreationResult {
+    type: String
+    action: AccountCreationAction
 }

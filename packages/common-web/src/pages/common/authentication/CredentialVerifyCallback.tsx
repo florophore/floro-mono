@@ -1,32 +1,43 @@
 import React, { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useFetchGithubVerificationQuery, useSubmitOAuthCodeQuery } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import { CompleteSignupAction, useFetchGithubVerificationQuery, useSubmitOAuthCodeQuery } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import SubPageLoader from "@floro/storybook/stories/common-components/SubPageLoader";
 import WarningLabel from "@floro/storybook/stories/design-system/WarningLabel";
 import { protectedTrpc } from "../../../trpc";
+import SignupContainer from "@floro/common-react/src/components/signup/SignupContainer";
 
 const CredentialVerifyCallback = (): React.ReactElement => {
   const [searchParams] = useSearchParams();
   const verificationCode: string | null = searchParams.get("verification_code");
 
-  const { data, error, loading } = useFetchGithubVerificationQuery({
+  const { data, error } = useFetchGithubVerificationQuery({
     variables: {
       verificationCode
     }
   });
-  console.log(data, error, loading)
-  //const login = protectedTrpc.useMutation('login');
-  //console.log("LOGIN", login);
 
-
-  if (!verificationCode) {
+  if (error) {
     return (
       <SubPageLoader hideLoad>
         <div style={{marginTop: 24}}>
-            <WarningLabel label="Invalid verification code" size={"large"} />
+            <WarningLabel label="Server error" size={"large"} />
         </div>
       </SubPageLoader>
     );
+  }
+
+  if (!verificationCode || data?.fetchGithubVerification?.type == "NOT_FOUND") {
+    return (
+      <SubPageLoader hideLoad>
+        <div style={{marginTop: 24}}>
+            <WarningLabel label="Invalid authorization code" size={"large"} />
+        </div>
+      </SubPageLoader>
+    );
+  }
+
+  if (data?.fetchGithubVerification?.type == "COMPLETE_SIGNUP") {
+    return <SignupContainer completeSignupAction={data.fetchGithubVerification.action as CompleteSignupAction}/>
   }
   return <SubPageLoader/>;
 };

@@ -4,8 +4,9 @@ import DatabaseConnection from "@floro/database/src/connection/DatabaseConnectio
 import ContextFactory from "@floro/database/src/contexts/ContextFactory";
 import UsersContext from "@floro/database/src/contexts/users/UsersContext";
 import UserAuthCredentialsContext from "@floro/database/src/contexts/authentication/UserAuthCredentialsContext";
-import { User } from "@floro/database/src/entities/User";
+import UserServiceAgreementsContext from "@floro/database/src/contexts/users/UserServiceAgreementsContext"; 
 import { UserAuthCredential } from "@floro/database/src/entities/UserAuthCredential";
+import { User } from "@floro/database/src/entities/User";
 import GithubLoginClient from "@floro/third-party-services/src/github/GithubLoginClient";
 import GithubAccessToken from "@floro/third-party-services/src/github/schemas/GithubAccessToken";
 import GithubEmail from "@floro/third-party-services/src/github/schemas/GithubEmail";
@@ -16,12 +17,29 @@ import GoogleAccessToken from "@floro/third-party-services/src/google/schemas/Go
 import EmailQueue from "@floro/redis/src/queues/EmailQueue";
 import EmailVerificationStore from "@floro/redis/src/stores/EmailVerificationStore";
 import EmailAuthStore from "@floro/redis/src/stores/EmailAuthStore";
+import { SignUpExchange } from "@floro/redis/src/stores/SignUpExchangeStore";
+import ProfanityFilter from 'bad-words';
+import { NAME_REGEX, USERNAME_REGEX } from '@floro/common-web/src/utils/validators';
+
+const profanityFilter = new ProfanityFilter();
 
 export interface AuthReponse {
     action: 'COMPLETE_SIGNUP'|'LOG_ERROR'|'LOGIN'|'VERIFICATION_REQUIRED'|'VERIFICATION_SENT'|'NOT_FOUND';
     user?: User;
     credential?: UserAuthCredential;
     email?: string;
+    error?: {
+        type: string;
+        message: string;
+        meta?: any;
+    };
+}
+
+export interface AccountCreationResponse {
+    action: 'BAD_CREDENTIAL_ID'|'BAD_EXCHANGE_KEY'|'INVALID_CREDENTIALS'|'CREDENTIAL_ALREADY_IN_USE'|'USERNAME_ALREADY_IN_USE'|'USER_CREATED'|'LOG_ERROR';
+    user?: User;
+    credential?: UserAuthCredential;
+    message?: string;
     error?: {
         type: string;
         message: string;
@@ -393,6 +411,78 @@ export default class AuthenticationService {
             return { action: 'LOGIN', user, credential };
         } catch (e: any) {
             return { action: 'LOG_ERROR', error: { type: 'UNKNOWN_EMAIL_AUTHORIZATION_ERROR', message: e?.message, meta: e} };
+        }
+    }
+
+    public async createAccount(signupExchange: SignUpExchange, credentialId: string, firstName: string, lastName: string, username: string, agreeToTOS: boolean): Promise<AccountCreationResponse> {
+        const queryRunner = await this.databaseConnection.makeQueryRunner();
+        const userAuthCredentialsContext = await this.contextFactory.createContext(UserAuthCredentialsContext, queryRunner);
+        const usersContext = await this.contextFactory.createContext(UsersContext, queryRunner);
+        const userServiceAgreementsContext = await this.contextFactory.createContext(
+            UserServiceAgreementsContext,
+            queryRunner
+        );
+        try {
+            await queryRunner.startTransaction();
+            if (signupExchange.credentialId != credentialId) {
+                return {action: 'BAD_EXCHANGE_KEY', message: "Bad Exchange Token"};
+            }
+            if (signupExchange.credentialId != credentialId) {
+                return {action: 'BAD_CREDENTIAL_ID', message: "Bad credential ID"};
+            }
+            const isValid = (
+                agreeToTOS &&
+                USERNAME_REGEX.test(username) &&
+                NAME_REGEX.test(firstName) &&
+                NAME_REGEX.test(lastName) &&
+                !profanityFilter.isProfane(username) &&
+                !profanityFilter.isProfane(firstName) &&
+                !profanityFilter.isProfane(lastName)
+            );
+            if (!isValid) {
+                await queryRunner.rollbackTransaction();
+                return { action: 'INVALID_CREDENTIALS', message: "Invalid credentials"};
+            }
+            const credential = await userAuthCredentialsContext.getById(credentialId);
+            if (!credential) {
+                await queryRunner.rollbackTransaction();
+                return { action: 'BAD_CREDENTIAL_ID', message: "Bad credential ID"};
+            }
+            const credentials = await userAuthCredentialsContext.getCredentialsByEmail(credential.email);
+            const existingUserId = userAuthCredentialsContext.getUserIdFromCredentials(credentials);
+            if (existingUserId) {
+                await queryRunner.rollbackTransaction();
+                return { action: 'CREDENTIAL_ALREADY_IN_USE', message: "Credential already in use"};
+            }
+            const usernameExists = await usersContext.usernameExists(username);
+            if (usernameExists) {
+                await queryRunner.rollbackTransaction();
+                return { action: 'USERNAME_ALREADY_IN_USE', message: "Username already in use"};
+            }
+
+            const user = await usersContext.createUser({
+                firstName,
+                lastName,
+                username
+            });
+
+            await userServiceAgreementsContext.createUserServiceAgreement({
+                userId: user.id,
+                agreedToPrivacyPolicy: agreeToTOS,
+                agreedToTos: agreeToTOS,
+            });
+
+            await userAuthCredentialsContext.attachUserToCredentials(credentials, user)
+            const refreshedCredential = await userAuthCredentialsContext.getById(credentialId);
+            await queryRunner.commitTransaction();
+            return { action: 'USER_CREATED', credential: refreshedCredential as UserAuthCredential, user};
+        } catch (e: any) {
+            if (!queryRunner.isReleased) {
+                await queryRunner?.rollbackTransaction?.();
+            }
+            return { action: 'LOG_ERROR', error: { type: 'UNKNOWN_ACCOUNT_CREATION_ERROR', message: e?.message, meta: e} };
+        } finally {
+            queryRunner.release();
         }
     }
 }

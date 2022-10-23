@@ -1,4 +1,4 @@
-import { DeepPartial, QueryRunner, Repository } from "typeorm";
+import { DeepPartial, QueryRunner, Raw, Repository } from "typeorm";
 import { User } from "../../entities/User";
 import BaseContext from "../BaseContext";
 import ContextFactory from "../ContextFactory";
@@ -22,9 +22,8 @@ export default class UsersContext extends BaseContext {
     }
 
     public async usernameExists(username: string): Promise<boolean> {
-        const [, count = 0] = await this.queryRunner.manager.findAndCount(User, {
-            where: {username}
-        });
+        const qb = await this.userRepo.createQueryBuilder('user', this.queryRunner);
+        const count = await qb.where('LOWER(user.username) = :username').setParameter('username', username.toLowerCase()).getCount();
         return count > 0;
     }
 

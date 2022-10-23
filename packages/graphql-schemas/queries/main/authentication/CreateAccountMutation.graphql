@@ -1,0 +1,13 @@
+mutation CreateAccount($credentialId: String!, $exchangeKey: String!, $firstName: String!, $lastName: String!, $username: String!,  $agreeToTOS: Boolean) {
+  createAccount(credentialId: $credentialId, exchangeKey: $exchangeKey, firstName: $firstName, lastName: $lastName, username: $username, agreeToTOS: $agreeToTOS) {
+    type,
+    action {
+      ...on AccountCreationSuccessAction {
+        ...AccountCreationSuccessAction
+      }
+      ...on AccountCreationErrorAction {
+        ...AccountCreationErrorAction
+      }
+    }
+  }
+}

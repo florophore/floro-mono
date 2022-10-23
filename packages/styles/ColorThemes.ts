@@ -32,6 +32,8 @@ export interface ColorTheme {
     signupTooltipUsernameEmphasizedSymbols: string;
     signupTooltipUsernameErrorText: string;
     signupTooltipUsernameValidText: string;
+    heroHeaderBackgroundColor: string;
+    heroHeaderTextColor: string;
   };
   shadows: {
     modalContainer: string
@@ -72,7 +74,9 @@ export const LightTheme: ColorTheme = {
     signupTooltipUsernameInstruction: palette.gray,
     signupTooltipUsernameEmphasizedSymbols: palette.purple,
     signupTooltipUsernameErrorText: palette.red,
-    signupTooltipUsernameValidText: palette.purple
+    signupTooltipUsernameValidText: palette.purple,
+    heroHeaderBackgroundColor: palette.lightPurple,
+    heroHeaderTextColor: palette.white
   },
   shadows: {
     modalContainer: palette.mediumGray.substring(0, 7) + Opacity[70],
@@ -113,7 +117,9 @@ export const DarkTheme: ColorTheme = {
         signupTooltipUsernameInstruction: palette.white,
         signupTooltipUsernameEmphasizedSymbols: palette.purple,
         signupTooltipUsernameErrorText: palette.lightRed,
-        signupTooltipUsernameValidText: palette.purple
+        signupTooltipUsernameValidText: palette.purple,
+        heroHeaderBackgroundColor: palette.darkPurple,
+        heroHeaderTextColor: palette.purple
     },
     shadows: {
         modalContainer: palette.black.substring(0, 7) + Opacity[70],

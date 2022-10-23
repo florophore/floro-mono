@@ -12,7 +12,7 @@ import InfoDarkIcon from "@floro/common-assets/assets/images/icons/info.dark.svg
 import RedXCircleLightIcon from "@floro/common-assets/assets/images/icons/red_x_circle.light.svg";
 import RedXCircleDarkIcon from "@floro/common-assets/assets/images/icons/red_x_circle.dark.svg";
 import CheckMarkCircleIcon from "@floro/common-assets/assets/images/icons/check_mark_circle.svg";
-import * as ProfanityFilter from "bad-words";
+import ProfanityFilter from "bad-words";
 
 import Input from "@floro/storybook/stories/design-system/Input";
 import DotsLoader from "@floro/storybook/stories/design-system/DotsLoader";
@@ -110,12 +110,10 @@ export interface Props {
   lastName: string;
   username: string;
   agreedToTOS: boolean;
-  onUpdateFirstName: (string) => void;
-  onUpdateLastName: (string) => void;
-  onUpdateUsername: (string) => void;
-  onUpdateAgreedToTOS: (boolean) => void;
-  completeSignupAction: CompleteSignupAction;
-  onCheckUsername: (username: string) => void;
+  onUpdateFirstName: (firstName: string) => void;
+  onUpdateLastName: (lastName: string) => void;
+  onUpdateUsername: (username: string) => void;
+  onUpdateAgreedToTOS: (agreed: boolean) => void;
   usernameIsTaken: boolean;
   usernameCheckLoading: boolean;
   onOpenTOS: () => void;
@@ -208,8 +206,8 @@ const SignupInputs = (props: Props): React.ReactElement => {
   }, [theme.name, props.agreedToTOS]);
 
   return (
-    <div style={{ marginLeft: -40 }}>
-      <div style={{ height: 64 }}>
+    <div style={{ paddingLeft: 40 }}>
+      <div style={{ height: 32 }}>
         {(!firstNameIsValid || !lastNameIsValid) && (
           <WarningLabel
             size="small"

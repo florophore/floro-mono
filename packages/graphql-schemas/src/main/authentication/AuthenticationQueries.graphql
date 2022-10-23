@@ -4,5 +4,6 @@ extend type Query {
     submitOAuthForAction(code: String!, provider: String!, loginClient: String): AuthenticationResult
 }
 extend type Mutation {
-    submitEmailForAuth(email: String, loginClient: String!): EmailAuthAck
+    submitEmailForAuth(email: String, loginClient: String!): CreateEmailAuthResult
+    createAccount(credentialId: String!, exchangeKey: String!, firstName: String!, lastName: String!, username: String!, agreeToTOS: Boolean): AccountCreationResult
 }

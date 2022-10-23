@@ -1,0 +1,4 @@
+fragment AccountCreationErrorAction on AccountCreationErrorAction {
+  type
+  message
+}

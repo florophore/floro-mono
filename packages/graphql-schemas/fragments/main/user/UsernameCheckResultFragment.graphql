@@ -1,0 +1,4 @@
+fragment UsernameCheckResult on UsernameCheckResult {
+    exists
+    username
+}

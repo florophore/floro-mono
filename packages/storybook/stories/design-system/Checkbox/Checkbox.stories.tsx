@@ -13,7 +13,11 @@ export default {
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template = (args) => {
     const [isChecked, setIsChecked] = useState(false);
-    return <Checkbox {...args} isChecked={isChecked} onChange={setIsChecked} />
+    return (
+      <div style={{display: 'flex', flexDirection: 'column', boxSizing: 'border-box'}}>
+        <Checkbox {...args} isChecked={isChecked} onChange={setIsChecked} />
+      </div>
+    );
 };
 
 export const Primary: any = Template.bind({});

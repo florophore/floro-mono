@@ -12,17 +12,20 @@ const CheckBoxContainer = styled.div`
   height: 28px;
   width: 28px;
   border-radius: 8px;
-  background-color: 2px solid ${(props) => props.theme.colors.checkboxFill};
+  border-color: 2px solid ${(props) => props.theme.colors.checkboxFill};
   cursor: pointer;
 `;
 
 const HiddenCheckbox = styled.input`
   position: absolute;
-  top: -5px;
-  left: -6px;
-  height: 32px;
-  width: 32px;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
   opacity: 0;
+  padding: 0;
+  margin: 0;
+  outline: 0;
 `;
 
 const CheckContainer = styled.div`
@@ -30,8 +33,8 @@ const CheckContainer = styled.div`
   left: 0;
   position: absolute;
   display: flex;
-  height: 28px;
-  width: 28px;
+  height: 100%;
+  width: 100%;
   justify-content: center;
   align-items: center;
 `;

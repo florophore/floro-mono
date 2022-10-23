@@ -2,6 +2,7 @@ import { inject, injectable } from "inversify";
 import BaseController from "./BaseController";
 import { Post } from './annotations/HttpDecorators'
 import AuthenticationService from "../services/authentication/AuthenticationService";
+import EmailValidator from "email-validator";
 
 
 export interface CreateLoginOrSignupRequest {
@@ -26,6 +27,12 @@ export default class AuthenticationController extends BaseController {
         if (!body?.email) {
             response.status(400).send({
                 error: "Invalid request format" 
+            });
+            return;
+        }
+        if (!EmailValidator.validate(body.email ?? "")) {
+            response.status(400).send({
+                error: "Invalid email format" 
             });
             return;
         }

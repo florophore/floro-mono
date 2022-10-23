@@ -1,25 +1,32 @@
 import React, { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useFetchEmailAuthQuery } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import { CompleteSignupAction, useFetchEmailAuthQuery } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import SubPageLoader from "@floro/storybook/stories/common-components/SubPageLoader";
 import WarningLabel from "@floro/storybook/stories/design-system/WarningLabel";
+import SignupContainer from '@floro/common-react/src/components/signup/SignupContainer';
 import { protectedTrpc } from "../../../trpc";
 
 const CredentialAuthCallback = (): React.ReactElement => {
   const [searchParams] = useSearchParams();
   const authCode: string | null = searchParams.get("authorization_code");
 
-  const { data, error, loading } = useFetchEmailAuthQuery({
+  const { data, error } = useFetchEmailAuthQuery({
     variables: {
       authCode
     }
   });
-  console.log(data?.fetchEmailAuth, error, loading)
-  //const login = protectedTrpc.useMutation('login');
-  //console.log("LOGIN", login);
 
+  if (error) {
+    return (
+      <SubPageLoader hideLoad>
+        <div style={{marginTop: 24}}>
+            <WarningLabel label="Server error" size={"large"} />
+        </div>
+      </SubPageLoader>
+    );
+  }
 
-  if (!authCode) {
+  if (!authCode || data?.fetchEmailAuth?.type == "NOT_FOUND") {
     return (
       <SubPageLoader hideLoad>
         <div style={{marginTop: 24}}>
@@ -27,6 +34,10 @@ const CredentialAuthCallback = (): React.ReactElement => {
         </div>
       </SubPageLoader>
     );
+  }
+
+  if (data?.fetchEmailAuth?.type == "COMPLETE_SIGNUP") {
+    return <SignupContainer completeSignupAction={data.fetchEmailAuth.action as CompleteSignupAction}/>
   }
   return <SubPageLoader/>;
 };

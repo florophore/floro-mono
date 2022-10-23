@@ -1,0 +1,13 @@
+mutation SubmitEmailForAuth($email: String!, $loginClient: String!) {
+  submitEmailForAuth(email: $email, loginClient: $loginClient) {
+    type,
+    action {
+      ...on VerificationSentAction {
+        ...VerificationSentAction
+      }
+      ...on EmailAuthErrorAction {
+        ...EmailAuthErrorAction
+      }
+    }
+  }
+}

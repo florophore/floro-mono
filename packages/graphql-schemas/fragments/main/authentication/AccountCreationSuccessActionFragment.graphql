@@ -1,0 +1,8 @@
+fragment AccountCreationSuccessAction on AccountCreationSuccessAction {
+  user {
+    ...User
+  }
+  session {
+    ...Session
+  }
+}

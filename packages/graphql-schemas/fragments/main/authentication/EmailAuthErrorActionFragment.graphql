@@ -1,0 +1,4 @@
+fragment EmailAuthErrorAction on EmailAuthErrorAction {
+  type
+  message
+}

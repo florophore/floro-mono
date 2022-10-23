@@ -21,6 +21,7 @@
     "apollo-server": "^3.10.1",
     "apollo-server-express": "^3.10.1",
     "class-validator": "^0.13.2",
+    "email-validator": "^2.0.4",
     "express": "^4.18.1",
     "form-data": "^4.0.0",
     "graphql-redis-subscriptions": "^2.5.0",
