@@ -15,6 +15,7 @@ import {trpc, trpcClient, protectedTrpc, protectedTrpcClient} from '@floro/commo
 import { FloroSocketProvider } from '@floro/common-react/src/pubsub/socket';
 import { setContext } from '@apollo/client/link/context';
 import Cookies from 'js-cookie';
+import { SessionProvider } from '@floro/common-react/src/session/session-context';
 
 const authMiddleware = setContext((_, { headers }) => {
   // add the authorization to the headers
@@ -96,11 +97,13 @@ const App = (props: Props): React.ReactElement => {
             <QueryClientProvider client={queryClient}>
               <ThemeProvider theme={colorTheme}>
                 <FloroSocketProvider client={'desktop'}>
-                  <DOMMount>
-                    <BrowserRouter>
-                      <Router />
-                    </BrowserRouter>
-                  </DOMMount>
+                  <SessionProvider>
+                    <DOMMount>
+                      <BrowserRouter>
+                        <Router />
+                      </BrowserRouter>
+                    </DOMMount>
+                  </SessionProvider>
                 </FloroSocketProvider>
               </ThemeProvider>
             </QueryClientProvider>

@@ -7,6 +7,7 @@ import { IsomorphicRoute } from "./ssr/routing-helpers";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { trpc, trpcClient, protectedTrpc, protectedTrpcClient } from "./trpc";
 import { FloroSocketProvider } from '@floro/common-react/src/pubsub/socket';
+import { SessionProvider } from '@floro/common-react/src/session/session-context';
 
 import "./index.css";
 
@@ -28,13 +29,15 @@ function App(props: Props) {
         >
           <QueryClientProvider client={queryClient}>
             <FloroSocketProvider client={'web'}>
-              <Routes>
-                {props.routing.map((route, key) => {
-                  const Page = route.component();
-                  return <Route key={key} path={route.path} element={<Page />} />;
-                })}
-                <Route path="*" element={notFound} />
-              </Routes>
+              <SessionProvider>
+                <Routes>
+                  {props.routing.map((route, key) => {
+                    const Page = route.component();
+                    return <Route key={key} path={route.path} element={<Page />} />;
+                  })}
+                  <Route path="*" element={notFound} />
+                </Routes>
+              </SessionProvider>
             </FloroSocketProvider>
           </QueryClientProvider>
         </protectedTrpc.Provider>

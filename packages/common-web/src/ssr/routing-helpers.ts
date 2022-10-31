@@ -1,6 +1,6 @@
 export interface IsomorphicRoute {
   path: string;
-  component: () => (props: unknown) => JSX.Element;
+  component: (() => (props: unknown) => JSX.Element)|any;
 }
 
 export const routeOrdinal = (path: string, maxSize: number): number => {

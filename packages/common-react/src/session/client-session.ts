@@ -13,3 +13,8 @@ export const setClientSession = (
     expires: 14,
   });
 };
+export const removeClientSession = () => {
+  localStorage.removeItem("user");
+  localStorage.removeItem("session");
+  Cookies.remove("user-session");
+};
