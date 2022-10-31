@@ -17,6 +17,7 @@
     "@floro/common-assets": "1.0.0",
     "@trpc/client": "^9.27.4",
     "@trpc/react": "^9.27.4",
+    "axios": "^1.1.3",
     "fetch": "^1.1.0",
     "http-proxy-middleware": "^2.0.6",
     "inversify": "^6.0.1",

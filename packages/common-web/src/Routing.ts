@@ -1,4 +1,5 @@
 import MainHome from './pages/main/Home';
+import MainUserHome from './pages/main/UserHome';
 import AdminHome from './pages/admin/Home';
 import About from './pages/common/About';
 import OAuthCallback from './pages/common/authentication/OAuthCallback';
@@ -29,6 +30,10 @@ export const MainRoutes: IsomorphicRoute[] = sortRoutes([
   {
     path: "/",
     component: () => MainHome,
+  },
+  {
+    path: "/home",
+    component: () => MainUserHome
   },
   {
     path: "/credential/verifiy",

@@ -1,11 +1,13 @@
 import {app, BrowserWindow, ipcMain, nativeTheme} from 'electron';
 import {join} from 'path';
 import {URL} from 'url';
+import { createSocket } from '@floro/common-react/src/pubsub/socket';
 
 const getSystemTheme = (): 'light' | 'dark' => {
   return nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
 };
 
+const socket = createSocket('desktop');
 
 async function createWindow() {
   const browserWindow = new BrowserWindow({
@@ -14,9 +16,10 @@ async function createWindow() {
     titleBarOverlay: true,
     height: 900,
     width: 1200,
-    minHeight: 760,
+    minHeight: 800,
     minWidth: 900,
     webPreferences: {
+      webSecurity: false,
       nodeIntegration: false,
       contextIsolation: true,
       sandbox: false, // Sandbox disabled because the demo of preload script depend on the Node.js api
@@ -53,6 +56,7 @@ async function createWindow() {
         resizable: false,
         roundedCorners: true,
         webPreferences: {
+          webSecurity: false,
           nodeIntegration: false,
           contextIsolation: true,
           sandbox: false,
@@ -74,11 +78,23 @@ async function createWindow() {
         }
       });
 
-      ipcMain.once('oauth:sendOAuthResult', (event: any, ...args: any[]) => {
-        console.log(event.sender.getURL(), JSON.stringify(args));
+      socket.on('login', () => {
         oauthWindow.close();
         oauthWindow.destroy();
+        socket.off('login');
+        socket.off('complete_signup');
+      });
 
+      socket.on('complete_signup', () => {
+        oauthWindow.close();
+        oauthWindow.destroy();
+        socket.off('login');
+        socket.off('complete_signup');
+      });
+
+      ipcMain.once('oauth:sendOAuthResult', () => {
+        oauthWindow.close();
+        oauthWindow.destroy();
       });
     });
   });
@@ -107,6 +123,7 @@ async function createWindow() {
  */
 export async function restoreOrCreateWindow() {
   let window = BrowserWindow.getAllWindows().find(w => !w.isDestroyed());
+  socket.off('bring-to-front');
 
   if (window === undefined) {
     window = await createWindow();
@@ -120,5 +137,9 @@ export async function restoreOrCreateWindow() {
   }
 
   window.focus();
+  socket.on('bring-to-front', () => {
+    window?.focus?.();
+    window?.show?.();
+  });
   return window;
 }

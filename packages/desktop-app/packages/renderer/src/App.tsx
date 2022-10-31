@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useMemo} from 'react';
 import {ThemeProvider} from '@emotion/react';
 import {BrowserRouter} from 'react-router-dom';
 import {DarkTheme, LightTheme} from '@floro/styles/ColorThemes';
@@ -10,7 +10,22 @@ import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
 import {createClient} from 'graphql-ws';
 import {getMainDefinition} from '@apollo/client/utilities';
 import DOMMount from '@floro/common-react/src/components/mounts/DOMMount';
+import {QueryClient, QueryClientProvider} from 'react-query';
+import {trpc, trpcClient, protectedTrpc, protectedTrpcClient} from '@floro/common-web/src/trpc';
+import { FloroSocketProvider } from '@floro/common-react/src/pubsub/socket';
+import { setContext } from '@apollo/client/link/context';
+import Cookies from 'js-cookie';
 
+const authMiddleware = setContext((_, { headers }) => {
+  // add the authorization to the headers
+  const token = Cookies.get('user-session');
+  return {
+    headers: {
+      ...headers,
+      authorizationToken: token ? token : "",
+    },
+  };
+});
 const httpLink = new HttpLink({
   uri: 'http://localhost:9000/graphql',
 });
@@ -34,7 +49,7 @@ const splitLink = split(
 );
 
 const client = new ApolloClient({
-  link: splitLink,
+  link: authMiddleware.concat(splitLink),
   cache: new InMemoryCache(),
 });
 
@@ -71,17 +86,26 @@ const useSystemColorTheme = () => {
 
 const App = (props: Props): React.ReactElement => {
   const colorTheme = useSystemColorTheme();
+  const queryClient = useMemo(() => new QueryClient(), []);
 
   return (
     <ApolloProvider client={client}>
       <SystemAPIProvider systemAPI={props.systemAPI}>
-        <ThemeProvider theme={colorTheme}>
-          <BrowserRouter>
-            <DOMMount>
-              <Router />
-            </DOMMount>
-          </BrowserRouter>
-        </ThemeProvider>
+        <trpc.Provider client={trpcClient} queryClient={queryClient}>
+          <protectedTrpc.Provider client={protectedTrpcClient} queryClient={queryClient}>
+            <QueryClientProvider client={queryClient}>
+              <ThemeProvider theme={colorTheme}>
+                <FloroSocketProvider client={'desktop'}>
+                  <DOMMount>
+                    <BrowserRouter>
+                      <Router />
+                    </BrowserRouter>
+                  </DOMMount>
+                </FloroSocketProvider>
+              </ThemeProvider>
+            </QueryClientProvider>
+          </protectedTrpc.Provider>
+        </trpc.Provider>
       </SystemAPIProvider>
     </ApolloProvider>
   );

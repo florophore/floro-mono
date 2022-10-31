@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useEffect, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import styled from '@emotion/styled';
 import { css } from '@emotion/css';
@@ -8,12 +8,14 @@ import BackButtonLight from '@floro/common-assets/assets/images/icons/back_arrow
 import Button from '@floro/storybook/stories/design-system/Button/index';
 import GithubButton from '@floro/storybook/stories/design-system/GithubButton/index';
 import GoogleButton from '@floro/storybook/stories/design-system/GoogleButton/index';
-import { createSearchParams, useSearchParams } from 'react-router-dom';
+import { createSearchParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import { useSystemAPI } from '../contexts/SystemAPIContext';
 import mixpanel from 'mixpanel-browser';
-import { Manager } from 'socket.io-client';
 import SignupLoginModal from './SignupLoginModal';
+import { useSocketEvent } from '@floro/common-react/src/pubsub/socket';
+import type { CompleteSignupAction, PassedLoginAction } from '@floro/graphql-schemas/src/generated/main-client-graphql';
+import { setClientSession } from '@floro/common-react/src/session/client-session';
 
 const Background = styled.div`
   background-color: ${props => props.theme.background};
@@ -99,22 +101,6 @@ const PaneBottomButtonWrapper = styled.div`
   align-items: center;
 `;
 
-const useWatchLogin = () => {
-    useEffect(() => {
-      const manager = new Manager('ws://localhost:63403', {
-        reconnectionDelayMax: 10000
-      });
-      const socket = manager.socket("/"); // main namespace
-      socket.on("connect", () => {
-        console.log("connected");
-      });
-      socket.on("hello", (event) => {
-        console.log("GOT A MESSAGE", event);
-      });
-    }, []);
-};
-
-
 interface Props {
     isOpen: boolean;
 }
@@ -133,9 +119,17 @@ const LoggedOutPage = ({isOpen}: Props) => {
     const pageAction = searchParams.get('pageAction');
     const themeName = useTheme().name;
     const systemAPI = useSystemAPI();
+    const navigate = useNavigate();
     const [showEmailModal, setShowEmailModal] = useState(false);
 
-    useWatchLogin();
+    useSocketEvent<CompleteSignupAction>('complete_signup', (payload) => {
+      navigate('/complete_signup', { state: payload});
+    }, [navigate]);
+
+    useSocketEvent<PassedLoginAction>('login', (payload) => {
+      setClientSession(payload);
+      navigate('/home');
+    }, [navigate]);
 
     const BackButtonIcon = useMemo(() => {
         if (themeName == 'light') {
@@ -201,8 +195,6 @@ const LoggedOutPage = ({isOpen}: Props) => {
         return '-100%';
     }, [pageAction]);
 
-
-
     return (
       <motion.div
         style={{
@@ -211,6 +203,9 @@ const LoggedOutPage = ({isOpen}: Props) => {
         }}
         initial={{
           right: '-100%',
+        }} 
+        exit={{
+          right: '100%',
         }}
         animate={isOpen ? 'open' : 'closed'}
         transition={{duration: 0.5}}

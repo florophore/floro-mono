@@ -6,6 +6,7 @@ import { Routes, Route } from "react-router-dom";
 import { IsomorphicRoute } from "./ssr/routing-helpers";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { trpc, trpcClient, protectedTrpc, protectedTrpcClient } from "./trpc";
+import { FloroSocketProvider } from '@floro/common-react/src/pubsub/socket';
 
 import "./index.css";
 
@@ -26,13 +27,15 @@ function App(props: Props) {
           queryClient={queryClient}
         >
           <QueryClientProvider client={queryClient}>
-            <Routes>
-              {props.routing.map((route, key) => {
-                const Page = route.component();
-                return <Route key={key} path={route.path} element={<Page />} />;
-              })}
-              <Route path="*" element={notFound} />
-            </Routes>
+            <FloroSocketProvider client={'web'}>
+              <Routes>
+                {props.routing.map((route, key) => {
+                  const Page = route.component();
+                  return <Route key={key} path={route.path} element={<Page />} />;
+                })}
+                <Route path="*" element={notFound} />
+              </Routes>
+            </FloroSocketProvider>
           </QueryClientProvider>
         </protectedTrpc.Provider>
       </trpc.Provider>

@@ -2,6 +2,8 @@ import React from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import LoadingPage from './loader/LoadingPage';
 import LoggedOutPage from './loggedout/LoggedOutPage';
+import CompleteSignupPage from './complete_signup/CompleteSignupPage';
+import HomePage from './home/HomePage';
 import {AnimatePresence} from 'framer-motion';
 
 const Router = (): React.ReactElement => {
@@ -11,6 +13,8 @@ const Router = (): React.ReactElement => {
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={<LoadingPage isOpen={location.pathname == '/'}/>} />
           <Route path="/loggedout" element={<LoggedOutPage isOpen={location.pathname == '/loggedout'} />} />
+          <Route path="/complete_signup" element={<CompleteSignupPage isOpen={location.pathname == '/complete_signup'} />} />
+          <Route path="/home" element={<HomePage isOpen={location.pathname == '/home'} />} />
         </Routes>
       </AnimatePresence>
     );

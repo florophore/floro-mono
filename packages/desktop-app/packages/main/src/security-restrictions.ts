@@ -45,8 +45,6 @@ if (import.meta.env.DEV) {
   );
 }
 
-console.log(ALLOWED_ORIGINS_AND_PERMISSIONS);
-
 /**
  * A list of origins that you allow open IN BROWSER.
  * Navigation to the origins below is only possible if the link opens in a new window.
@@ -60,6 +58,7 @@ console.log(ALLOWED_ORIGINS_AND_PERMISSIONS);
 const ALLOWED_EXTERNAL_ORIGINS = new Set<`https://${string}`>([
   'https://github.com',
 ]);
+
 
 app.on('web-contents-created', (_, contents) => {
   /**
@@ -94,7 +93,6 @@ app.on('web-contents-created', (_, contents) => {
     const {origin} = new URL(webContents.getURL());
 
     const permissionGranted = !!ALLOWED_ORIGINS_AND_PERMISSIONS.get(origin)?.has(permission);
-    console.log("YO", origin, permissionGranted);
     callback(permissionGranted);
 
     if (!permissionGranted && import.meta.env.DEV) {

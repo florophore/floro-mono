@@ -1,0 +1,5 @@
+query FetchSession {
+  session {
+    ...Session
+  }
+}

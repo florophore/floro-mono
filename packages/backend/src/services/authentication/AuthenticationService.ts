@@ -343,10 +343,25 @@ export default class AuthenticationService {
                     },
                     to: email,
                     from: "accounts@floro.io",
-                    subject: "Floro Sign Up"
+                    subject: "Floro Login"
                 });
                 return { action: 'VERIFICATION_SENT', credential };
             }
+            const credential = userAuthCredentialsContext.getEmailCredential(credentials) as UserAuthCredential;
+            await queryRunner.commitTransaction();
+            const authorization = await this.emailAuthStore.createEmailAuth(credential.email);
+            const link = this.emailAuthStore.link(authorization, loginClient);
+            await this.emailQueue?.add({
+                jobId: authorization.id,
+                template: "LoginEmail",
+                props: {
+                    link
+                },
+                to: email,
+                from: "accounts@floro.io",
+                subject: "Floro Login"
+            });
+            return { action: 'VERIFICATION_SENT', credential };
         } catch (e: any) {
             if (!queryRunner.isReleased) {
                 await queryRunner?.rollbackTransaction?.();

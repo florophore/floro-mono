@@ -1,18 +1,22 @@
-import {
-  ApolloClient,
-  HttpLink,
-  InMemoryCache,
-  split,
-} from "@apollo/client";
+import { ApolloClient, HttpLink, InMemoryCache, split } from "@apollo/client";
 
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
 import { getMainDefinition } from "@apollo/client/utilities";
+import { setContext } from "@apollo/client/link/context";
+import Cookies from "js-cookie";
 
-export const createApolloClient = (
-  hostname: string,
-  isSecure = false
-) => {
+export const createApolloClient = (hostname: string, isSecure = false) => {
+  const authMiddleware = setContext((_, { headers }) => {
+    // add the authorization to the headers
+    const token = Cookies.get("user-session");
+    return {
+      headers: {
+        ...headers,
+        authorizationToken: token ? token : "",
+      },
+    };
+  });
   const httpLink = new HttpLink({
     uri: `${isSecure ? "https" : "http"}://${hostname}/graphql`,
   });
@@ -40,7 +44,7 @@ export const createApolloClient = (
 
   const cache = new InMemoryCache().restore(window.__APOLLO_STATE__ ?? {});
   return new ApolloClient({
-    link: splitLink,
+    link: authMiddleware.concat(splitLink),
     cache,
   });
 };

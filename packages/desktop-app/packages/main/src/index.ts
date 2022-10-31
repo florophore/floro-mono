@@ -3,7 +3,6 @@ import { startDaemon } from 'floro/src/daemon';
 import { buildFloroFilestructure } from 'floro/src/filestructure';
 import './security-restrictions';
 import {restoreOrCreateWindow} from '/@/mainWindow';
-import startServer from '../../server/index';
 
 buildFloroFilestructure();
 startDaemon();
@@ -32,13 +31,14 @@ app.on('window-all-closed', () => {
   }
 });
 
-let serverTerminator: { terminate: any; } | null = null;
 /**
  * @see https://www.electronjs.org/docs/latest/api/app#event-activate-macos Event: 'activate'.
  */
 app.on('activate', async () => {
-  const window = await restoreOrCreateWindow();
-  serverTerminator = startServer(window);
+  await restoreOrCreateWindow();
+  //delete this
+  // const window = await restoreOrCreateWindow();
+  //serverTerminator = startServer(window);
 });
 
 /**
@@ -49,11 +49,11 @@ app
   .then(restoreOrCreateWindow)
   .catch(e => console.error('Failed create window:', e));
 
-app.on('before-quit', () => {
-  if (serverTerminator) {
-    serverTerminator.terminate();
-  }
-});
+//app.on('before-quit', () => {
+//  if (serverTerminator) {
+//    serverTerminator.terminate();
+//  }
+//});
 
 /**
  * Install Vue.js or any other extension in development mode only.

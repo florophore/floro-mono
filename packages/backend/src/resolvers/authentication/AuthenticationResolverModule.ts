@@ -40,6 +40,10 @@ export default class AuthenticationResolverModule extends BaseResolverModule {
   }
 
   public Query: main.QueryResolvers = {
+    session: (_root, _args, { session }) => {
+      return session;
+    },
+
     submitOAuthForAction: async (_root, { code, provider, loginClient }) => {
       if (loginClient != "web" && loginClient != "desktop") {
         return null;
@@ -59,9 +63,7 @@ export default class AuthenticationResolverModule extends BaseResolverModule {
           const lastName = githubNameParts?.[githubNameParts?.length - 1];
           const unsavedUser: UnsavedUser = {
             __typename: "UnsavedUser",
-            username: authenticationResult?.credential?.email
-              ?.split?.("@")?.[0]
-              .substring(0, 20),
+            username: authenticationResult?.credential?.githubLogin,
             firstName,
             lastName,
             email: authenticationResult?.credential?.email,
@@ -251,14 +253,18 @@ export default class AuthenticationResolverModule extends BaseResolverModule {
           verificationCode
         );
       if (authenticationResult.action == "COMPLETE_SIGNUP") {
+        const githubNameParts: string[] =
+          authenticationResult?.credential?.githubName?.split(" ") ?? [];
+        const firstName =
+          githubNameParts?.slice(0, githubNameParts.length - 1)?.join(" ") ??
+          "";
+        const lastName = githubNameParts?.[githubNameParts?.length - 1];
         const unsavedUser: UnsavedUser = {
           __typename: "UnsavedUser",
-          username: authenticationResult?.credential?.email
-            ?.split?.("@")?.[0]
-            .substring(0, 20),
+          username: authenticationResult?.credential?.githubLogin,
           email: authenticationResult?.credential?.email,
-          firstName: "",
-          lastName: "",
+          firstName,
+          lastName,
         };
         const signupExchange =
           await this.signupExchangeStore.createSignupExchange(
@@ -316,6 +322,16 @@ export default class AuthenticationResolverModule extends BaseResolverModule {
   };
 
   public Mutation: main.MutationResolvers = {
+    exchangeSession: async (_root, _args, { session, currentUser }) => {
+      if (session) {
+        const exchangeSession = await this.sessionStore.exchangeSession(session);
+        if (currentUser) {
+          return await this.sessionStore.updateSessionUser(exchangeSession, currentUser);
+        }
+        return exchangeSession;
+      }
+      return null;
+    },
     submitEmailForAuth: async (_root, { email, loginClient }) => {
       if (loginClient != "web" && loginClient != "desktop") {
         return null;

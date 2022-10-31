@@ -5,6 +5,8 @@ import Backend from "@floro/backend/src/Backend";
 import { env } from "process";
 import { createProxyMiddleware } from "http-proxy-middleware";
 import MailDev from "maildev";
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 import path from "path";
 import compression from "compression";
@@ -54,6 +56,7 @@ export default class AppServer {
     await this.backend.startDatabase();
     this.backend.startRedis();
 
+    this.app.use(cookieParser());
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
 
@@ -65,6 +68,25 @@ export default class AppServer {
     if (isDevelopment || isTest) {
       this.startMailDev();
     }
+
+    // CORS POLICY
+    this.app.use(
+      cors({
+        origin: [
+          "http://localhost:63403",
+          "http://localhost:9000",
+          "https://floro.io",
+        ],
+      })
+    );
+
+    this.app.use((req, res, next) => {
+      res.header("Access-Control-Allow-Origin", "http://localhost:63403,http://localhost:9000,https://floro.io");
+      res.header("Access-Control-Allow-Methods", "GET,POST,PUT");
+      res.header("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type");
+      res.header("Referrer-Policy", "no-referrer");
+      next();
+    });
 
     // DO NOT REMOVE!
     const NODE_ENV = process.env.NODE_ENV;
@@ -87,6 +109,7 @@ export default class AppServer {
 
     this.app.use(vite.middlewares);
 
+
     const requestHandler = express.static(
       resolve("../../common-assets/assets")
     );
@@ -106,15 +129,15 @@ export default class AppServer {
       Response | undefined | void
     > => {
       try {
+        const sessionContext = await this.backend.fetchSessionUserContext(req.cookies?.["user-session"]);
         const url = req.originalUrl;
         const template = isProduction
           ? indexHTMLTemplate
           : await vite.transformIndexHtml(url, indexHTMLTemplate);
-        const authorizationToken: string | undefined = req.header(
-          "authorization-token"
-        );
         const context = {
-          authorizationToken,
+          authorizationToken: sessionContext?.authorizationToken,
+          currentUser: sessionContext?.currentUser,
+          session: sessionContext?.session,
           url,
           should404: false,
           isSSR: true,

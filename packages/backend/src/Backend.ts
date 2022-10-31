@@ -21,6 +21,8 @@ import { GraphQLSchema } from 'graphql';
 import RedisPubsubFactory from "@floro/redis/src/RedisPubsubFactory";
 import BaseController from "./controllers/BaseController";
 import { Express } from "express";
+import SessionStore from "@floro/redis/src/sessions/SessionStore";
+import UsersContext from "@floro/database/src/contexts/users/UsersContext";
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -34,6 +36,7 @@ export default class Backend {
   private redisQueueWorkers!: RedisQueueWorkers;
   private redisPubSubFactory!: RedisPubsubFactory;
   private contextFactory!: ContextFactory;
+  private sessionStore!: SessionStore;
 
   constructor(
     @multiInject("ResolverModule") resolverModules: BaseResolverModule[],
@@ -43,7 +46,8 @@ export default class Backend {
     @inject(RedisQueueWorkers) redisQueueWorkers: RedisQueueWorkers,
     @inject(RedisPubsubFactory) redisPubSubFactory: RedisPubsubFactory,
     @inject(ContextFactory) contextFactory: ContextFactory,
-    @inject(Server) httpServer: Server
+    @inject(Server) httpServer: Server,
+    @inject(SessionStore) sessionStore: SessionStore
   ) {
     this.resolverModules = resolverModules;
     this.controllers = controllers;
@@ -53,6 +57,7 @@ export default class Backend {
     this.redisQueueWorkers = redisQueueWorkers;
     this.redisPubSubFactory = redisPubSubFactory;
     this.contextFactory = contextFactory;
+    this.sessionStore = sessionStore;
   }
 
   public async startDatabase(): Promise<void> {
@@ -65,7 +70,7 @@ export default class Backend {
     this.redisClient.startRedis();
     this.redisQueueWorkers.start();
     const pubsub = this.redisPubSubFactory.create();
-    this.resolverModules.forEach(resolverModule => {
+    this.resolverModules.forEach((resolverModule) => {
       resolverModule.setRedisPubsub(pubsub);
     });
   }
@@ -92,33 +97,75 @@ export default class Backend {
     });
   }
 
+  public async fetchSessionUserContext(authorizationToken) {
+    try {
+      if ((authorizationToken?.length ?? 0) > 0) {
+        const session = await this.sessionStore.fetchSession(
+          authorizationToken
+        );
+        const usersContext = await this.contextFactory.createContext(
+          UsersContext
+        );
+        if (!session?.userId) {
+          return {
+            session: null,
+            currentUser: null,
+            authorizationToken,
+          };
+        }
+        const currentUser = await usersContext.getById(session?.userId);
+        if (!currentUser) {
+          return {
+            session: null,
+            currentUser: null,
+            authorizationToken,
+          };
+        }
+        return {
+          session,
+          currentUser,
+          authorizationToken,
+        };
+      }
+      return {
+        session: null,
+        currentUser: null,
+        authorizationToken,
+      };
+    } catch (e) {
+      return {
+        session: null,
+        currentUser: null,
+        authorizationToken
+      };
+    }
+  }
+
   public buildApolloServer(): ApolloServer {
     const schema = this.buildExecutableSchema();
 
     const wsServer = this.getWsServer();
 
-    const getDynamicContext = async (_ctx, _msg, _args) => {
-      // runs every time
-      // ctx is the graphql-ws Context where connectionParams live
-     //if (ctx.connectionParams.authentication) {
-     //   const currentUser = await findUser(connectionParams.authentication);
-     //   return { currentUser };
-     // }
-      // Otherwise let our resolvers know we don't have a current user
-      return { currentUser: null };
+    const getDynamicContext = async (ctx, _msg, _args) => {
+      console.log("DYNAMIC CONTEXT", ctx);
+      return await this.fetchSessionUserContext(ctx.authorizationToken);
     };
 
-    const serverCleanup = useServer({ 
-      schema,
-      context: (ctx, msg, args) => {
-       return getDynamicContext(ctx, msg, args);
-     },
-     }, wsServer);
+    const serverCleanup = useServer(
+      {
+        schema,
+        context: (ctx, msg, args) => {
+          return getDynamicContext(ctx, msg, args);
+        },
+      },
+      wsServer
+    );
 
     return new ApolloServer({
       schema,
       csrfPrevention: true,
       cache: "bounded",
+      context: async ({ req }) => await this.fetchSessionUserContext(req?.cookies?.["user-session"]),
       plugins: [
         ApolloServerPluginDrainHttpServer({ httpServer: this.httpServer }),
         {
@@ -141,26 +188,40 @@ export default class Backend {
     for (const HttpMethod in BaseController.routingTable) {
       const routes = BaseController.routingTable[HttpMethod];
       for (const route in routes) {
-        const controller = this.controllers.find(controller => {
-          return controller?.[routes[route]['name']] === routes[route]['method'];
+        const controller = this.controllers.find((controller) => {
+          return (
+            controller?.[routes[route]["name"]] === routes[route]["method"]
+          );
         });
         if (HttpMethod == "POST") {
-          app.post(route, (request, response) => controller?.[routes[route]['name']](request, response));
+          app.post(route, (request, response) =>
+            controller?.[routes[route]["name"]](request, response)
+          );
         }
         if (HttpMethod == "GET") {
-          app.get(route, (request, response) => controller?.[routes[route]['name']](request, response));
+          app.get(route, (request, response) =>
+            controller?.[routes[route]["name"]](request, response)
+          );
         }
         if (HttpMethod == "PUT") {
-          app.put(route, (request, response) => controller?.[routes[route]['name']](request, response));
+          app.put(route, (request, response) =>
+            controller?.[routes[route]["name"]](request, response)
+          );
         }
         if (HttpMethod == "PATCH") {
-          app.patch(route, (request, response) => controller?.[routes[route]['name']](request, response));
+          app.patch(route, (request, response) =>
+            controller?.[routes[route]["name"]](request, response)
+          );
         }
         if (HttpMethod == "DELETE") {
-          app.delete(route, (request, response) => controller?.[routes[route]['name']](request, response));
+          app.delete(route, (request, response) =>
+            controller?.[routes[route]["name"]](request, response)
+          );
         }
         if (HttpMethod == "OPTIONS") {
-          app.options(route, (request, response) => controller?.[routes[route]['name']](request, response));
+          app.options(route, (request, response) =>
+            controller?.[routes[route]["name"]](request, response)
+          );
         }
       }
     }

@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import { CompleteSignupAction, useCreateAccountMutation, useUsernameCheckQuery } from '@floro/graphql-schemas/src/generated/main-client-graphql';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import { AccountCreationSuccessAction, CompleteSignupAction, PassedLoginAction, useCreateAccountMutation, useUsernameCheckQuery } from '@floro/graphql-schemas/src/generated/main-client-graphql';
 import SignupInputs from '@floro/storybook/stories/common-components/SignupInputs';
 import HeroView from '@floro/storybook/stories/common-components/HeroView';
 import Button from '@floro/storybook/stories/design-system/Button';
@@ -35,9 +35,22 @@ const ButtonContainer = styled.div`
   justify-content: flex-end;
   align-items: center;
 `;
+const BottomButtonContainer = styled.div`
+  margin-top: 32px;
+  padding: 0 40px;
+  max-width: 960px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+`;
 
 export interface Props {
     completeSignupAction: CompleteSignupAction;
+    showCancel?: boolean;
+    onCancel?: () => void;
+    onPassedLogin?: (loginInfo: AccountCreationSuccessAction) => void;
 }
 
 const SignupContainer = (props: Props) => {
@@ -107,6 +120,13 @@ const SignupContainer = (props: Props) => {
     alert("go to TOS");
   }, []);
 
+  useEffect(() => {
+    console.log("OH", createAccountRequest?.data);
+    if (createAccountRequest?.data?.createAccount?.type == "ACCOUNT_CREATION_SUCCESS") {
+      props?.onPassedLogin?.(createAccountRequest?.data?.createAccount.action as AccountCreationSuccessAction);
+    }
+  }, [createAccountRequest?.data, props?.onPassedLogin])
+
   return (
     <HeroView title={"create an account"}>
       <BackgroundWrapper>
@@ -124,7 +144,28 @@ const SignupContainer = (props: Props) => {
             usernameCheckLoading={loading}
             usernameIsTaken={data?.usernameCheck?.exists ?? false}
           />
-          <ButtonContainer>
+          {!props?.showCancel && (
+            <ButtonContainer>
+              <Button
+                size={"medium"}
+                label="confirm"
+                isDisabled={!isValid}
+                bg={"purple"}
+                isLoading={createAccountRequest.loading}
+                onClick={onSubmit}
+              />
+            </ButtonContainer>
+          )}
+        </Container>
+        {props?.showCancel && (
+          <BottomButtonContainer>
+            <Button
+              size={"medium"}
+              label="cancel"
+              isDisabled={createAccountRequest.loading}
+              bg={"gray"}
+              onClick={props?.onCancel}
+            />
             <Button
               size={"medium"}
               label="confirm"
@@ -133,8 +174,8 @@ const SignupContainer = (props: Props) => {
               isLoading={createAccountRequest.loading}
               onClick={onSubmit}
             />
-          </ButtonContainer>
-        </Container>
+          </BottomButtonContainer>
+        )}
       </BackgroundWrapper>
     </HeroView>
   );
