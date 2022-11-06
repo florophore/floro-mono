@@ -7,6 +7,7 @@ import { keyframes } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import colorPalette, { Opacity } from '@floro/styles/ColorPalette';
+import { useSession } from '@floro/common-react/src/session/session-context';
 
 const colorTransition = keyframes`
   from, 0% {
@@ -76,6 +77,15 @@ const Ring = styled.div`
     border-radius: 50%;
 `;
 
+const DragBar = styled.div`
+  height: 60px;
+  width: 100%;
+  top: 0;
+  position: absolute;
+  -webkit-app-region: drag;
+  cursor: drag;
+`;
+
 const quack = () => {
     const audio = new Audio('./assets/sounds/quack.mp3');
     audio.play();
@@ -89,6 +99,8 @@ interface Props {
 }
 
 const LoadingPage = ({isTransitionIn = false}: Props) => {
+
+    const { session } = useSession();
 
     useEffect(() => {
       const onKeyPress = (e: KeyboardEvent) => {
@@ -109,13 +121,17 @@ const LoadingPage = ({isTransitionIn = false}: Props) => {
 
     useEffect(() => {
       const timeout = setTimeout(() => {
-        navigate('./loggedout');
+        if (!session?.id) {
+          navigate('/loggedout');
+        } else {
+          navigate('/home');
+        }
       }, TRANSITION_TIME);
 
       return () => {
         clearTimeout(timeout);
       };
-    }, [navigate]);
+    }, [navigate, session?.id]);
 
     const initialPageAnim = useMemo(() => {
       if (isTransitionIn) {
@@ -153,6 +169,7 @@ const LoadingPage = ({isTransitionIn = false}: Props) => {
           </RingContainer>
           <Image draggable={false} src={FloroLogo} onClick={onQuackCB} />
         </Background>
+        <DragBar/>
       </motion.div>
     );
 };

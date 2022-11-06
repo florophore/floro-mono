@@ -43,6 +43,12 @@ export const SessionProvider = (props: Props) => {
         navigate("/");
     }, [apolloClient, queryClient, navigate]);
 
+    useSocketEvent("login", (payload: PassedLoginAction) => {
+        setClientSession(payload);
+        setCurrentUser(payload.user as User);
+        setSession(payload.session as Session);
+    }, [], false);
+
     useSocketEvent("session_updated", (payload: PassedLoginAction) => {
         setClientSession(payload);
         setCurrentUser(payload.user as User);
@@ -80,12 +86,13 @@ export const SessionProvider = (props: Props) => {
                 }
             }
         } catch (e) {
-            //dont log
+            //dont log just fail
         }
     }, []);
 
     useEffect(() => {
         if (data?.exchangeSession?.user) {
+            console.log("data", data?.exchangeSession?.user);
             setClientSession({session: data.exchangeSession, user: data.exchangeSession.user});
             setSession(data.exchangeSession);
             setCurrentUser(data.exchangeSession.user);

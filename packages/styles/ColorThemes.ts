@@ -34,6 +34,11 @@ export interface ColorTheme {
     signupTooltipUsernameValidText: string;
     heroHeaderBackgroundColor: string;
     heroHeaderTextColor: string;
+    profileInfoNameTextColor: string;
+    profileInfoUsernameTextColor: string;
+    followerTextColor: string;
+    connectionTextColor: string;
+    commonBorder: string;
   };
   shadows: {
     modalContainer: string
@@ -76,7 +81,12 @@ export const LightTheme: ColorTheme = {
     signupTooltipUsernameErrorText: palette.red,
     signupTooltipUsernameValidText: palette.purple,
     heroHeaderBackgroundColor: palette.lightPurple,
-    heroHeaderTextColor: palette.white
+    heroHeaderTextColor: palette.white,
+    profileInfoNameTextColor: palette.purple,
+    profileInfoUsernameTextColor: palette.mediumGray,
+    followerTextColor: palette.mediumGray,
+    connectionTextColor: palette.mediumGray,
+    commonBorder: palette.mediumGray,
   },
   shadows: {
     modalContainer: palette.mediumGray.substring(0, 7) + Opacity[70],
@@ -119,7 +129,12 @@ export const DarkTheme: ColorTheme = {
         signupTooltipUsernameErrorText: palette.lightRed,
         signupTooltipUsernameValidText: palette.purple,
         heroHeaderBackgroundColor: palette.darkPurple,
-        heroHeaderTextColor: palette.purple
+        heroHeaderTextColor: palette.purple,
+        profileInfoNameTextColor: palette.lightPurple,
+        profileInfoUsernameTextColor: palette.white,
+        followerTextColor: palette.white,
+        connectionTextColor: palette.white,
+        commonBorder: palette.white,
     },
     shadows: {
         modalContainer: palette.black.substring(0, 7) + Opacity[70],

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="97px" height="98px" viewBox="0 0 97 98" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>followers.dark</title>
+    <g id="scrap" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="followers.dark" transform="translate(3.172047, 0.000000)" stroke="#FFFFFF" stroke-width="6">
+            <path d="M1.42108547e-14,94.3695618 C5.04806353,67.0521075 16.5480635,53.3933804 34.5,53.3933804 C52.4519365,53.3933804 63.9519365,67.0521075 69,94.3695618" id="Path" stroke-linecap="round"></path>
+            <path d="M57.0035582,45.9762532 C57.9913582,35.6563789 63.7368074,30.4964418 74.2399057,30.4964418 C84.743004,30.4964418 90.4884532,35.6563789 91.4762532,45.9762532" id="Path" stroke-linecap="round" transform="translate(74.239906, 38.236347) rotate(90.000000) translate(-74.239906, -38.236347) "></path>
+            <path d="M66.3674269,55.3933804 C78.8557305,55.3933804 86.8557305,66.0600471 90.3674269,87.3933804" id="Path" stroke-linecap="round"></path>
+            <circle id="Oval" cx="34.8279527" cy="28" r="25"></circle>
+        </g>
+    </g>
+</svg>

@@ -40,7 +40,7 @@ async function createWindow() {
     browserWindow?.show();
 
     if (import.meta.env.DEV) {
-      browserWindow?.webContents.openDevTools();
+      //browserWindow?.webContents.openDevTools();
     }
 
     ipcMain.handle('system:getSystemTheme', getSystemTheme);
@@ -74,7 +74,7 @@ async function createWindow() {
       oauthWindow.once('ready-to-show', () => {
         oauthWindow?.show();
         if (import.meta.env.DEV) {
-          oauthWindow?.webContents.openDevTools();
+          //oauthWindow?.webContents.openDevTools();
         }
       });
 

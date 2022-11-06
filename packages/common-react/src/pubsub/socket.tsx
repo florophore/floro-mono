@@ -1,4 +1,4 @@
-import React, { useMemo, useContext, useEffect, useCallback } from 'react';
+import React, { useMemo, useContext, useEffect, useCallback, useState } from 'react';
 import { Manager, Socket } from "socket.io-client";
 
 export const createSocket = (client: 'web'|'desktop'|'cli') => {
@@ -35,6 +35,24 @@ export const FloroSocketProvider = (props: Props) => {
 
 export const useFloroSocket = () => {
   return useContext(FloroSocketContext);
+}
+
+export const useDaemonIsConnected = () => {
+  const { socket } = useFloroSocket();
+  const [isConnected, setIsConnected] = useState(socket?.connected)
+  useEffect(() => {
+    const onConnected = () => setIsConnected(true);
+    const onDisconnected = () => setIsConnected(false);
+    socket?.on?.("connect", onConnected);
+    socket?.on?.("disconnect", onDisconnected);
+    return () => {
+      socket?.off?.("connect", onConnected);
+      socket?.off?.("disconnect", onDisconnected);
+    }
+  }, [socket]);
+  console.log("SOCKET", socket)
+
+  return isConnected;
 }
 
 export const useSocketEvent = <T,> (eventName: string, callback: (args: T) => void, deps: unknown[], isOnce = true) => {

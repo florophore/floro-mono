@@ -101,6 +101,15 @@ const PaneBottomButtonWrapper = styled.div`
   align-items: center;
 `;
 
+const DragBar = styled.div`
+  height: 60px;
+  width: 100%;
+  top: 0;
+  position: absolute;
+  -webkit-app-region: drag;
+  cursor: drag;
+`;
+
 interface Props {
     isOpen: boolean;
 }
@@ -291,6 +300,7 @@ const LoggedOutPage = ({isOpen}: Props) => {
             </AnimationWrapper>
           </MainWrapper>
         </Background>
+        <DragBar/>
       </motion.div>
     );
 };

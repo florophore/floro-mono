@@ -1,52 +1,19 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import styled from '@emotion/styled';
-
-const Background = styled.div`
-  background-color: ${props => props.theme.background};
-  flex: 1;
-  height: 100%;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  user-select: none;
-`;
-
-const variants = {
-    open: {
-        right: 0,
-    },
-    closed: {
-        right: '-100%',
-    },
-};
+import React, { useMemo } from 'react';
+import OuterNavigator from '@floro/common-react/src/components/outer-navigator/OuterNavigator';
+import UserHome from '@floro/common-react/src/components/userhome/UserHome';
+import { useSession } from '@floro/common-react/src/session/session-context';
 
 export interface Props {
     isOpen: boolean;
 }
 
 const Home = (props: Props) => {
+    const {currentUser} = useSession();
+    const title = useMemo(() => '@' + currentUser?.username, [currentUser?.username]);
     return (
-      <motion.div
-        style={{
-          position: 'absolute',
-          width: '100%',
-        }}
-        initial={{
-          right: '-100%',
-        }}
-        exit={{
-          right: '100%',
-        }}
-        animate={props.isOpen ? 'open' : 'closed'}
-        transition={{duration: 0.5}}
-        variants={variants}
-      >
-        <Background>
-          {'User Home Page'}
-        </Background>
-      </motion.div>
+      <OuterNavigator isOpen={props?.isOpen} title={title}>
+        <UserHome/>
+      </OuterNavigator>
     );
 };
 

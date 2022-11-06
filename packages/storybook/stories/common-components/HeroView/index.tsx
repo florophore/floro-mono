@@ -51,7 +51,7 @@ export interface Props {
 }
 
 
-const SubPageLoader = (props?: Props): React.ReactElement => {
+const HeroView = (props?: Props): React.ReactElement => {
 
   return (
     <BackgroundWrapper>
@@ -65,4 +65,4 @@ const SubPageLoader = (props?: Props): React.ReactElement => {
   );
 }
 
-export default React.memo(SubPageLoader);
+export default React.memo(HeroView);

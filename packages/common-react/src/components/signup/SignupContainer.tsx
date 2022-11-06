@@ -1,11 +1,12 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
-import { AccountCreationSuccessAction, CompleteSignupAction, PassedLoginAction, useCreateAccountMutation, useUsernameCheckQuery } from '@floro/graphql-schemas/src/generated/main-client-graphql';
+import { AccountCreationSuccessAction, CompleteSignupAction, useCreateAccountMutation, useUsernameCheckLazyQuery } from '@floro/graphql-schemas/src/generated/main-client-graphql';
 import SignupInputs from '@floro/storybook/stories/common-components/SignupInputs';
 import HeroView from '@floro/storybook/stories/common-components/HeroView';
 import Button from '@floro/storybook/stories/design-system/Button';
 import styled from '@emotion/styled';
 import { NAME_REGEX, USERNAME_REGEX } from '@floro/common-web/src/utils/validators';
 import Filter from 'bad-words';
+import debouncer from 'lodash.debounce';
 
 const BackgroundWrapper = styled.div`
   display: flex;
@@ -68,11 +69,17 @@ const SignupContainer = (props: Props) => {
 
   const [createAccount, createAccountRequest]= useCreateAccountMutation();
 
-  const { data, loading } = useUsernameCheckQuery({
-    variables: {
-      username,
-    },
-  });
+  const [checkUserName, { data, loading }] = useUsernameCheckLazyQuery();
+
+  const checkUsernameDebounced = useCallback(debouncer(checkUserName, 300), [checkUserName]);
+
+  useEffect(() => {
+    checkUsernameDebounced({
+      variables: {
+        username
+      }
+    })
+  }, [username]);
 
   const isValid = useMemo(() => {
     return (
@@ -121,7 +128,6 @@ const SignupContainer = (props: Props) => {
   }, []);
 
   useEffect(() => {
-    console.log("OH", createAccountRequest?.data);
     if (createAccountRequest?.data?.createAccount?.type == "ACCOUNT_CREATION_SUCCESS") {
       props?.onPassedLogin?.(createAccountRequest?.data?.createAccount.action as AccountCreationSuccessAction);
     }
@@ -171,7 +177,7 @@ const SignupContainer = (props: Props) => {
               label="confirm"
               isDisabled={!isValid}
               bg={"purple"}
-              isLoading={createAccountRequest.loading}
+              isLoading={createAccountRequest.loading || loading}
               onClick={onSubmit}
             />
           </BottomButtonContainer>

@@ -90,27 +90,27 @@ const App = (props: Props): React.ReactElement => {
   const queryClient = useMemo(() => new QueryClient(), []);
 
   return (
-    <ApolloProvider client={client}>
-      <SystemAPIProvider systemAPI={props.systemAPI}>
-        <trpc.Provider client={trpcClient} queryClient={queryClient}>
-          <protectedTrpc.Provider client={protectedTrpcClient} queryClient={queryClient}>
-            <QueryClientProvider client={queryClient}>
-              <ThemeProvider theme={colorTheme}>
-                <FloroSocketProvider client={'desktop'}>
-                  <SessionProvider>
-                    <DOMMount>
-                      <BrowserRouter>
+    <BrowserRouter>
+      <ApolloProvider client={client}>
+        <SystemAPIProvider systemAPI={props.systemAPI}>
+          <trpc.Provider client={trpcClient} queryClient={queryClient}>
+            <protectedTrpc.Provider client={protectedTrpcClient} queryClient={queryClient}>
+              <QueryClientProvider client={queryClient}>
+                <ThemeProvider theme={colorTheme}>
+                  <FloroSocketProvider client={'desktop'}>
+                    <SessionProvider>
+                      <DOMMount>
                         <Router />
-                      </BrowserRouter>
-                    </DOMMount>
-                  </SessionProvider>
-                </FloroSocketProvider>
-              </ThemeProvider>
-            </QueryClientProvider>
-          </protectedTrpc.Provider>
-        </trpc.Provider>
-      </SystemAPIProvider>
-    </ApolloProvider>
+                      </DOMMount>
+                    </SessionProvider>
+                  </FloroSocketProvider>
+                </ThemeProvider>
+              </QueryClientProvider>
+            </protectedTrpc.Provider>
+          </trpc.Provider>
+        </SystemAPIProvider>
+      </ApolloProvider>
+    </BrowserRouter>
   );
 };
 export default App;

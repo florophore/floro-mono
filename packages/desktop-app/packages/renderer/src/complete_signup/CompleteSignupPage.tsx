@@ -19,6 +19,14 @@ const Background = styled.div`
   align-items: center;
   user-select: none;
 `;
+const DragBar = styled.div`
+  height: 60px;
+  width: 100%;
+  top: 0;
+  position: absolute;
+  -webkit-app-region: drag;
+  cursor: drag;
+`;
 
 const variants = {
     open: {
@@ -76,6 +84,7 @@ const CompleteSignupPage = (props: Props) => {
         <Background>
             <SignupContainer completeSignupAction={completeSignupAction} showCancel onCancel={onGoBack} onPassedLogin={loginMutation.mutate}/>
         </Background>
+        <DragBar/>
       </motion.div>
     );
 };

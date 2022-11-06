@@ -93,3 +93,8 @@ body {
     -webkit-app-region: drag;
     cursor: drag;
 }
+
+.drag-region {
+    -webkit-app-region: drag;
+    cursor: drag;
+}
