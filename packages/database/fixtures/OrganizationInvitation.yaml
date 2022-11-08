@@ -1,14 +1,11 @@
 entity: OrganizationInvitation
 items:
   org_0_invitation_sent_0:
-    handle: florophore
     firstName: foo
     lastName: bar
     email: test@gmail.com
     normalizedEmail: test@gmail.com
     emailHash: Gu242dxHUeIpozXjcduAWA==
-    contactEmail: test@gmail.com
-    normalizedContactEmail: test@gmail.com
     invitationState: sent
     organization: '@org_0'
     invitedByUser: '@user_0'

@@ -50,6 +50,11 @@ export class OrganizationRole extends BinaryPKBaseEntity {
   @Column("boolean", { default: false })
   @IsDefined()
   @IsBoolean()
+  canModifyOrganizationMembers?: boolean;
+
+  @Column("boolean", { default: false })
+  @IsDefined()
+  @IsBoolean()
   canInviteMembers?: boolean;
 
   @Column("boolean", { default: false })

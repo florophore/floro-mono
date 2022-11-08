@@ -7,6 +7,7 @@ items:
     canCreateRepos: true
     canModifyOrganizationSettings: true
     canModifyOrganizationDeveloperSettings: true
+    canModifyOrganizationMembers: true
     canInviteMembers: true
     canModifyInvites: true
     canModifyOwnInternalHandle: true
@@ -16,12 +17,13 @@ items:
     createdByUser: '@user_0'
     createdByOrganizationMember: '@org_member_0'
   org_0_contributor_role:
-    name: admin
+    name: contributor
     isMutable: true
     isDefault: true
     canCreateRepos: true
     canModifyOrganizationSettings: false
     canModifyOrganizationDeveloperSettings: false
+    canModifyOrganizationMembers: false
     canInviteMembers: true
     canModifyInvites: false
     canModifyOwnInternalHandle: true

@@ -2,11 +2,9 @@ entity: OrganizationInvitationRole
 items:
   org_invitation_admin_role:
     organization: '@org_0'
-    user: '@user_0'
     organizationInvitation: '@org_0_invitation_sent_0'
     organizationRole: '@org_0_admin_role'
   org_invitation_contributor_role:
     organization: '@org_0'
-    user: '@user_0'
     organizationInvitation: '@org_0_invitation_sent_0'
     organizationRole: '@org_0_contributor_role'

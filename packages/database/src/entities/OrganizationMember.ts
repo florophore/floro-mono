@@ -54,7 +54,7 @@ export class OrganizationMember extends BinaryPKBaseEntity {
   createdOrganizationRoles?: Relation<OrganizationRole>[];
 
   @OneToMany("OrganizationRole", "invitedByOrganizationMember")
-  organizationInvitations?: Relation<OrganizationInvitation>[];
+  sentOrganizationInvitations?: Relation<OrganizationInvitation>[];
 
   @OneToMany("OrganizationMemberRole", "organizationMember")
   organizationMemberRoles?: Relation<OrganizationMemberRole>[];

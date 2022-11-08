@@ -4,8 +4,6 @@ import { BinaryPKBaseEntity } from "./BinaryPKBaseEntity";
 import { Organization } from "./Organization";
 import { OrganizationDailyActivatedMember } from "./OrganizationDailyActivatedMember";
 import { OrganizationInvitation } from "./OrganizationInvitation";
-import { OrganizationInvitationRole } from "./OrganizationInvitationRole";
-import { OrganizationMemberRole } from "./OrganizationMemberRole";
 import { OrganizationRole } from "./OrganizationRole";
 import { UserAuthCredential } from "./UserAuthCredential";
 import { UserServiceAgreement } from "./UserServiceAgreement";
@@ -39,15 +37,9 @@ export class User extends BinaryPKBaseEntity {
   @OneToMany("OrganizationRole", "createdByUser")
   createdOrganizationRoles?: Relation<OrganizationRole>[];
 
-  @OneToMany("OrganizationInvitation", "invitedByUser")
+  @OneToMany("OrganizationInvitation", "user")
   organizationInvitations?: Relation<OrganizationInvitation>[];
 
-  @OneToMany("OrganizationMemberRole", "user")
-  organizationMemberRoles?: Relation<OrganizationMemberRole>[];
-
-  @OneToMany("OrganizationInvitationRole", "user")
-  organizationInvitationRoles?: Relation<OrganizationInvitationRole>[];
-
-  @OneToMany("OrganizationInvitationRole", "user")
-  organizationDailyActivatedMembers?: Relation<OrganizationDailyActivatedMember>[];
+  @OneToMany("OrganizationInvitation", "invitedByUser")
+  sentOrganizationInvitations?: Relation<OrganizationInvitation>[];
 }

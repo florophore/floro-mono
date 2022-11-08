@@ -4,5 +4,4 @@ items:
   org_daily_activated_member_0:
     date: '2022-08-01'
     organization: '@org_0'
-    user: '@user_0'
     organizationMember: '@org_member_0'

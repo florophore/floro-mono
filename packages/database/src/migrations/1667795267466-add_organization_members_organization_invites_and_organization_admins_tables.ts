@@ -325,6 +325,16 @@ export class addOrganizationMembersOrganizationInvitesAndOrganizationAdminsTable
     await queryRunner.createForeignKey(
       "organization_invitations",
       new TableForeignKey({
+        columnNames: ["user_id"],
+        referencedColumnNames: ["id"],
+        referencedTableName: "users",
+        onDelete: "CASCADE",
+      })
+    );
+
+    await queryRunner.createForeignKey(
+      "organization_invitations",
+      new TableForeignKey({
         columnNames: ["invited_by_user_id"],
         referencedColumnNames: ["id"],
         referencedTableName: "users",
@@ -374,11 +384,6 @@ export class addOrganizationMembersOrganizationInvitesAndOrganizationAdminsTable
             isNullable: false,
           },
           {
-            name: "user_id",
-            type: "uuid",
-            isNullable: false,
-          },
-          {
             name: "organization_member_id",
             type: "uuid",
             isNullable: false,
@@ -411,16 +416,6 @@ export class addOrganizationMembersOrganizationInvitesAndOrganizationAdminsTable
         columnNames: ["organization_id"],
         referencedColumnNames: ["id"],
         referencedTableName: "organizations",
-        onDelete: "CASCADE",
-      })
-    );
-
-    await queryRunner.createForeignKey(
-      "organization_member_roles",
-      new TableForeignKey({
-        columnNames: ["user_id"],
-        referencedColumnNames: ["id"],
-        referencedTableName: "users",
         onDelete: "CASCADE",
       })
     );
@@ -461,11 +456,6 @@ export class addOrganizationMembersOrganizationInvitesAndOrganizationAdminsTable
             isNullable: false,
           },
           {
-            name: "user_id",
-            type: "uuid",
-            isNullable: true,
-          },
-          {
             name: "organization_invitation_id",
             type: "uuid",
             isNullable: false,
@@ -498,16 +488,6 @@ export class addOrganizationMembersOrganizationInvitesAndOrganizationAdminsTable
         columnNames: ["organization_id"],
         referencedColumnNames: ["id"],
         referencedTableName: "organizations",
-        onDelete: "CASCADE",
-      })
-    );
-
-    await queryRunner.createForeignKey(
-      "organization_invitation_roles",
-      new TableForeignKey({
-        columnNames: ["user_id"],
-        referencedColumnNames: ["id"],
-        referencedTableName: "users",
         onDelete: "CASCADE",
       })
     );
@@ -553,11 +533,6 @@ export class addOrganizationMembersOrganizationInvitesAndOrganizationAdminsTable
             isNullable: false,
           },
           {
-            name: "user_id",
-            type: "uuid",
-            isNullable: false,
-          },
-          {
             name: "organization_member_id",
             type: "uuid",
             isNullable: false,
@@ -585,16 +560,6 @@ export class addOrganizationMembersOrganizationInvitesAndOrganizationAdminsTable
         columnNames: ["organization_id"],
         referencedColumnNames: ["id"],
         referencedTableName: "organizations",
-        onDelete: "CASCADE",
-      })
-    );
-
-    await queryRunner.createForeignKey(
-      "organization_daily_activated_members",
-      new TableForeignKey({
-        columnNames: ["user_id"],
-        referencedColumnNames: ["id"],
-        referencedTableName: "users",
         onDelete: "CASCADE",
       })
     );

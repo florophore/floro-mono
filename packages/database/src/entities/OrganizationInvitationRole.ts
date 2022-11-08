@@ -7,7 +7,6 @@ import { BinaryPKBaseEntity } from "./BinaryPKBaseEntity";
 import { Organization } from "./Organization";
 import { OrganizationInvitation } from "./OrganizationInvitation";
 import { OrganizationRole } from "./OrganizationRole";
-import { User } from "./User";
 
 @Entity("organization_invitation_roles")
 export class OrganizationInvitationRole extends BinaryPKBaseEntity {
@@ -18,14 +17,6 @@ export class OrganizationInvitationRole extends BinaryPKBaseEntity {
   @ManyToOne("Organization", "organizationInvitationRoles")
   @JoinColumn()
   organization?: Relation<Organization>;
-
-  @Column("uuid")
-  @IsDefined()
-  userId!: string;
-
-  @ManyToOne("User", "organizationInvitationRoles")
-  @JoinColumn()
-  user?: Relation<User>;
 
   @Column("uuid")
   @IsDefined()

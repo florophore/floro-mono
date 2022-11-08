@@ -1,12 +1,9 @@
-import {
-  IsDefined,
-} from "class-validator";
+import { IsDefined } from "class-validator";
 import { Entity, Column, ManyToOne, JoinColumn, Relation } from "typeorm";
 import { BinaryPKBaseEntity } from "./BinaryPKBaseEntity";
 import { Organization } from "./Organization";
 import { OrganizationMember } from "./OrganizationMember";
 import { OrganizationRole } from "./OrganizationRole";
-import { User } from "./User";
 
 @Entity("organization_member_roles")
 export class OrganizationMemberRole extends BinaryPKBaseEntity {
@@ -17,14 +14,6 @@ export class OrganizationMemberRole extends BinaryPKBaseEntity {
   @ManyToOne("Organization", "organizationMemberRoles")
   @JoinColumn()
   organization?: Relation<Organization>;
-
-  @Column("uuid")
-  @IsDefined()
-  userId!: string;
-
-  @ManyToOne("User", "organizationMemberRoles")
-  @JoinColumn()
-  user?: Relation<User>;
 
   @Column("uuid")
   @IsDefined()

@@ -25,14 +25,6 @@ export class OrganizationDailyActivatedMember extends BinaryPKBaseEntity {
 
   @Column("uuid")
   @IsDefined()
-  userId!: string;
-
-  @ManyToOne("User", "organizationDailyActivatedMembers")
-  @JoinColumn()
-  user?: Relation<User>;
-
-  @Column("uuid")
-  @IsDefined()
   organizationMemberId!: string;
 
   @ManyToOne("OrganizationMember", "organizationDailyActivatedMembers")

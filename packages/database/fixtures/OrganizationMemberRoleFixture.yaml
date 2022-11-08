@@ -2,11 +2,9 @@ entity: OrganizationMemberRole
 items:
   org_member_admin_role:
     organization: '@org_0'
-    user: '@user_0'
     organizationMember: '@org_member_0'
     organizationRole: '@org_0_admin_role'
   org_member_contributor_role:
     organization: '@org_0'
-    user: '@user_0'
     organizationMember: '@org_member_0'
     organizationRole: '@org_0_contributor_role'
