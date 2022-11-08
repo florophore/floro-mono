@@ -1,0 +1,11 @@
+entity: Organization
+items:
+  org_0:
+    handle: florophore
+    name: floro
+    legalName: Floro Inc.
+    contactEmail: test@gmail.com
+    normalizedContactEmail: test@gmail.com
+    contactEmailHash: Gu242dxHUeIpozXjcduAWA==
+    agreedToCustomerServiceAgreement: true
+    createdByUser: '@user_0'

@@ -1,15 +1,7 @@
 import { IsIn, IsBoolean, IsEmail, IsDefined } from "class-validator";
-import {
-  Entity,
-  Column,
-  ManyToOne,
-  OneToMany,
-  Relation,
-  JoinColumn,
-} from "typeorm";
+import { Entity, Column, ManyToOne, JoinColumn } from "typeorm";
 import { BinaryPKBaseEntity } from "./BinaryPKBaseEntity";
 import { User } from "./User";
-import { UserEmailPassword } from "./UserEmailPassword";
 
 @Entity("user_auth_credentials")
 export class UserAuthCredential extends BinaryPKBaseEntity {
@@ -128,10 +120,7 @@ export class UserAuthCredential extends BinaryPKBaseEntity {
   @Column("uuid")
   userId?: string;
 
-  @ManyToOne("User", "userAuthCrentials")
+  @ManyToOne("User", "userAuthCredentials")
   @JoinColumn()
   user?: User;
-
-  @OneToMany("UserEmailPassword", "userAuthCredential")
-  userEmailPasswords?: Relation<UserEmailPassword>[];
 }

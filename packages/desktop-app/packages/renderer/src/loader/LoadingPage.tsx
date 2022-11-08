@@ -1,13 +1,13 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
-//import FloroLogo from '../../assets/images/floro_logo.svg';
-import FloroLogo from '@floro/common-assets/assets/images/floro_logo.svg';
+import FloroLogo from '@floro/common-assets/assets/images/floro_v3_logo.svg';
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import colorPalette, { Opacity } from '@floro/styles/ColorPalette';
 import { useSession } from '@floro/common-react/src/session/session-context';
+import { useNavigationAnimator } from '@floro/common-react/src/navigation/navigation-animator';
 
 const colorTransition = keyframes`
   from, 0% {
@@ -101,21 +101,9 @@ interface Props {
 const LoadingPage = ({isTransitionIn = false}: Props) => {
 
     const { session } = useSession();
-
-    useEffect(() => {
-      const onKeyPress = (e: KeyboardEvent) => {
-        if (e.code == 'Space') {
-          quack();
-        }
-      };
-      window.addEventListener('keypress', onKeyPress);
-
-      return () => {
-        window.removeEventListener('keypress', onKeyPress);
-      };
-    }, []);
-
-    const onQuackCB = useCallback(quack, []);
+    useNavigationAnimator({
+      dashboardView: false,
+    });
 
     const navigate = useNavigate();
 
@@ -167,7 +155,7 @@ const LoadingPage = ({isTransitionIn = false}: Props) => {
             <Ring style={{animationDelay: '0.75s'}} />
             <Ring style={{animationDelay: '1s'}} />
           </RingContainer>
-          <Image draggable={false} src={FloroLogo} onClick={onQuackCB} />
+          <Image draggable={false} src={FloroLogo} />
         </Background>
         <DragBar/>
       </motion.div>

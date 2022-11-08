@@ -1,24 +1,24 @@
 import React, { useMemo } from 'react';
 import OuterNavigator from '@floro/common-react/src/components/outer-navigator/OuterNavigator';
-import UserHome from '@floro/common-react/src/components/userhome/UserHome';
 import { useSession } from '@floro/common-react/src/session/session-context';
 import { useNavigationAnimator } from '@floro/common-react/src/navigation/navigation-animator';
+import CreateOrg from '@floro/common-react/src/components/create_org/CreateOrg';
 
-const HomePage = () => {
+const CreateOrgPage = () => {
     const {currentUser} = useSession();
-    const title = useMemo(() => '@' + currentUser?.username, [currentUser?.username]);
+    const title = useMemo(() => '@' + currentUser?.username + ' > ' + 'Create Organization', [currentUser?.username]);
 
     useNavigationAnimator({
       dashboardView: true,
       outerNavTab: 'home',
-      innerNavTab: 'home',
+      innerNavTab: 'create-org',
     });
 
     return (
-      <OuterNavigator page={'home'} title={title}>
-        <UserHome/>
+      <OuterNavigator page={'create-org'} title={title}>
+        <CreateOrg/>
       </OuterNavigator>
     );
 };
 
-export default React.memo(HomePage);
+export default React.memo(CreateOrgPage);

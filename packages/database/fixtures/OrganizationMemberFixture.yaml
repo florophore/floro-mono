@@ -1,0 +1,7 @@
+entity: OrganizationMember
+items:
+  org_member_0:
+    internalHandle: internaluser
+    membershipState: active
+    organization: '@org_0'
+    user: '@user_0'

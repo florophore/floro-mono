@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useCallback } from "react";
+import { useNavigate } from 'react-router-dom';
 import styled from "@emotion/styled";
 import ProfileInfo from "@floro/storybook/stories/common-components/ProfileInfo";
 import FollowerInfo from "@floro/storybook/stories/common-components/FollowerInfo";
 import UserSettingsTab from "@floro/storybook/stories/common-components/UserSettingsTab";
+import DevSettingsTab from "@floro/storybook/stories/common-components/DevSettingsTab";
 import ConnectionStatusTab from "@floro/storybook/stories/common-components/ConnectionStatusTab";
 import Button from "@floro/storybook/stories/design-system/Button";
 import { useSession } from "../../session/session-context";
@@ -67,6 +69,11 @@ export interface Props {
 const UserHome = (props: Props) => {
   const { currentUser } = useSession();
   const isDaemonConnected = useDaemonIsConnected();
+  const navigate = useNavigate();
+
+  const onGoToCreateOrg = useCallback(() => {
+    navigate('/home/create-org');
+  }, [navigate]);
 
   return (
     <Background>
@@ -81,12 +88,15 @@ const UserHome = (props: Props) => {
         <BottomNavContainer>
           <TopInfo>
             <FollowerInfo
-              followerCount={0}
+              followerCount={190}
               followingCount={0}
               username={currentUser?.username ?? ""}
             />
             <div style={{ marginTop: 16, display: "flex" }}>
               <UserSettingsTab />
+            </div>
+            <div style={{ marginTop: 16, display: "flex" }}>
+              <DevSettingsTab />
             </div>
             <div style={{ marginTop: 16, display: "flex" }}>
               <ConnectionStatusTab isConnected={isDaemonConnected ?? false} />
@@ -99,7 +109,7 @@ const UserHome = (props: Props) => {
               size={"medium"}
               bg={"purple"}
             />
-            <Button label={"create org"} size={"medium"} bg={"teal"} />
+            <Button onClick={onGoToCreateOrg} label={"create org"} size={"medium"} bg={"teal"} />
           </ButtonActionWrapper>
         </BottomNavContainer>
       </UserNav>

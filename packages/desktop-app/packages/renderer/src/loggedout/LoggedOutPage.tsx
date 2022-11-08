@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import styled from '@emotion/styled';
 import { css } from '@emotion/css';
-import FloroLogoWithText from '@floro/common-assets/assets/images/floro_logo_with_text.svg';
+import FloroLogoWithText from '@floro/common-assets/assets/images/floro_v3_with_text.svg';
 import BackButtonDark from '@floro/common-assets/assets/images/icons/back_arrow.dark.svg';
 import BackButtonLight from '@floro/common-assets/assets/images/icons/back_arrow.light.svg';
 import Button from '@floro/storybook/stories/design-system/Button/index';

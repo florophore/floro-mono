@@ -1,0 +1,32 @@
+entity: OrganizationRole
+items:
+  org_0_admin_role:
+    name: admin
+    isMutable: false
+    isDefault: false
+    canCreateRepos: true
+    canModifyOrganizationSettings: true
+    canModifyOrganizationDeveloperSettings: true
+    canInviteMembers: true
+    canModifyInvites: true
+    canModifyOwnInternalHandle: true
+    canModifyBilling: true
+    canModifyOrganizationRoles: true
+    organization: '@org_0'
+    createdByUser: '@user_0'
+    createdByOrganizationMember: '@org_member_0'
+  org_0_contributor_role:
+    name: admin
+    isMutable: true
+    isDefault: true
+    canCreateRepos: true
+    canModifyOrganizationSettings: false
+    canModifyOrganizationDeveloperSettings: false
+    canInviteMembers: true
+    canModifyInvites: false
+    canModifyOwnInternalHandle: true
+    canModifyBilling: false
+    canModifyOrganizationRoles: false
+    organization: '@org_0'
+    createdByUser: '@user_0'
+    createdByOrganizationMember: '@org_member_0'

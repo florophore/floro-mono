@@ -147,7 +147,6 @@ export default class Backend {
     const wsServer = this.getWsServer();
 
     const getDynamicContext = async (ctx, _msg, _args) => {
-      console.log("DYNAMIC CONTEXT", ctx);
       return await this.fetchSessionUserContext(ctx.authorizationToken);
     };
 

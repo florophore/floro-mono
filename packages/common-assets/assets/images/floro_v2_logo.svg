@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="367px" height="367px" viewBox="0 0 367 367" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>1 Logo/Jellyfish 1</title>
+    <defs>
+        <filter x="-3.3%" y="-2.3%" width="106.6%" height="104.6%" filterUnits="objectBoundingBox" id="filter-1">
+            <feGaussianBlur stdDeviation="1" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+        <filter x="-5.1%" y="-40.1%" width="110.2%" height="180.3%" filterUnits="objectBoundingBox" id="filter-2">
+            <feGaussianBlur stdDeviation="1" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+        <filter x="-5.1%" y="-40.1%" width="110.2%" height="180.3%" filterUnits="objectBoundingBox" id="filter-3">
+            <feGaussianBlur stdDeviation="1" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+        <filter x="-5.9%" y="-16.7%" width="111.8%" height="133.4%" filterUnits="objectBoundingBox" id="filter-4">
+            <feGaussianBlur stdDeviation="1" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+        <filter x="-5.9%" y="-16.7%" width="111.8%" height="133.4%" filterUnits="objectBoundingBox" id="filter-5">
+            <feGaussianBlur stdDeviation="1" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+    </defs>
+    <g id="Logo" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="1-Logo/Jellyfish-1" transform="translate(-0.000000, 0.000000)">
+            <circle id="Background" fill="#5445C4" cx="183.501359" cy="183.501359" r="183.501359"></circle>
+            <g id="JellyFish" transform="translate(75.000278, 118.000437)">
+                <g id="Head" transform="translate(141.265820, 0.000000)">
+                    <path d="M37.5605441,135.0005 C70.2417277,135.0005 96.7350616,105.675042 96.7350616,69.5002573 C96.7350616,33.3254723 70.2417277,4.00001481 37.5605441,4.00001481 C4.87936048,4.00001481 6.00469376,30.8015668 6.00469376,69.5002573 C6.00469376,108.198948 4.87936048,135.0005 37.5605441,135.0005 Z" id="Oval" fill="#251F51" opacity="0.698533" filter="url(#filter-1)"></path>
+                    <path d="M32.5605256,131.000485 C65.2417091,131.000485 91.735043,101.675028 91.735043,65.5002425 C91.735043,29.3254575 65.2417091,0 32.5605256,0 C-0.120658032,0 1.00467524,26.801552 1.00467524,65.5002425 C1.00467524,104.198933 -0.120658032,131.000485 32.5605256,131.000485 Z" id="Oval" fill="#FFFFFF"></path>
+                    <path d="M6.77407695,112.931453 C13.7886901,112.931453 19.4751577,91.6957765 19.4751577,65.5002425 C19.4751577,39.3047085 13.7886901,18.0690324 6.77407695,18.0690324 C-0.240536226,18.0690324 0.001002689,37.4770528 0.001002689,65.5002425 C0.001002689,93.5234322 -0.240536226,112.931453 6.77407695,112.931453 Z" id="Oval" fill="#5445C4"></path>
+                </g>
+                <g id="Tentacles" transform="translate(0.000000, 16.073127)" stroke-linecap="round">
+                    <path d="M149.085531,19.7901123 C125.526798,32.2468831 100.97508,38.4752686 75.4303785,38.4752686 C42.8052243,38.4752686 32.8895801,25.4738799 2.0000074,25.4738799" id="Line" stroke="#251F51" stroke-width="9" opacity="0.704167684" filter="url(#filter-2)"></path>
+                    <path d="M147.085524,15.7900974 C123.52679,28.2468683 98.9750728,34.4752538 73.4303711,34.4752538 C40.8052169,34.4752538 30.8895727,21.4738651 0,21.4738651" id="Line" stroke="#FFFFFF" stroke-width="9"></path>
+                    <path d="M149.085531,69.4799514 C125.526798,81.9367223 100.97508,88.1651077 75.4303785,88.1651077 C42.8052243,88.1651077 32.8895801,75.1637191 2.0000074,75.1637191" id="Line" stroke="#251F51" stroke-width="9" opacity="0.7" filter="url(#filter-3)" transform="translate(75.542769, 78.822530) scale(1, -1) translate(-75.542769, -78.822530) "></path>
+                    <path d="M147.085524,65.4799366 C123.52679,77.9367075 98.9750728,84.1650929 73.4303711,84.1650929 C40.8052169,84.1650929 30.8895727,71.1637043 0,71.1637043" id="Line" stroke="#FFFFFF" stroke-width="9" transform="translate(73.542762, 74.822515) scale(1, -1) translate(-73.542762, -74.822515) "></path>
+                    <path d="M148.86075,105.128471 C128.650518,105.128471 109.348376,96.8064463 90.9543241,80.1623966 C72.5602724,63.518347 53.8025157,60.3425473 34.6810541,70.6349975" id="Line-2" stroke="#251F51" stroke-width="7.5" opacity="0.7" filter="url(#filter-4)" transform="translate(91.770902, 84.932171) scale(1, -1) translate(-91.770902, -84.932171) "></path>
+                    <path d="M146.860742,102.12846 C126.65051,102.12846 107.348368,93.8064352 88.9543167,77.1623855 C70.560265,60.5183359 51.8025083,57.3425362 32.6810467,67.6349864" id="Line-2" stroke="#FFFFFF" stroke-width="7.5" transform="translate(89.770894, 81.932160) scale(1, -1) translate(-89.770894, -81.932160) "></path>
+                    <path d="M148.86075,44.3926141 C128.650518,44.3926141 109.348376,36.0705893 90.9543241,19.4265396 C72.5602724,2.78248994 53.8025157,-0.393309767 34.6810541,9.89914049" id="Line-2" stroke="#251F51" stroke-width="7.5" opacity="0.7" filter="url(#filter-5)"></path>
+                    <path d="M146.860742,40.3925993 C126.65051,40.3925993 107.348368,32.0705745 88.9543167,15.4265248 C70.560265,-1.21752487 51.8025083,-4.39332458 32.6810467,5.89912568" id="Line-2" stroke="#FFFFFF" stroke-width="7.5"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

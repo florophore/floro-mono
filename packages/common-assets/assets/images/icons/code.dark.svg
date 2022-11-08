@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="98px" height="77px" viewBox="0 0 98 77" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>code.dark</title>
+    <g id="scrap" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round">
+        <g id="Code-(Dark)" transform="translate(-51.000000, -62.000000)" stroke="#FFFFFF" stroke-width="7">
+            <g id="code.dark" transform="translate(54.576313, 65.000000)">
+                <path d="M27.9236871,60.3551806 C9.30789569,45.9955941 -1.42108547e-14,37.5197307 -1.42108547e-14,34.9275903 C-1.42108547e-14,32.3354499 9.30789569,23.8595865 27.9236871,9.5" id="Line"></path>
+                <path d="M90.9236871,60.3551806 C72.3078957,45.9955941 63,37.5197307 63,34.9275903 C63,32.3354499 72.3078957,23.8595865 90.9236871,9.5" id="Line" transform="translate(76.961844, 34.927590) scale(-1, 1) translate(-76.961844, -34.927590) "></path>
+                <line x1="51.9236871" y1="0.5" x2="39.4236871" y2="70" id="Line-2"></line>
+            </g>
+        </g>
+    </g>
+</svg>

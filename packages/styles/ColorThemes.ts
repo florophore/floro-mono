@@ -39,6 +39,7 @@ export interface ColorTheme {
     followerTextColor: string;
     connectionTextColor: string;
     commonBorder: string;
+    titleTextColor: string;
   };
   shadows: {
     modalContainer: string
@@ -87,6 +88,7 @@ export const LightTheme: ColorTheme = {
     followerTextColor: palette.mediumGray,
     connectionTextColor: palette.mediumGray,
     commonBorder: palette.mediumGray,
+    titleTextColor: palette.purple
   },
   shadows: {
     modalContainer: palette.mediumGray.substring(0, 7) + Opacity[70],
@@ -135,6 +137,7 @@ export const DarkTheme: ColorTheme = {
         followerTextColor: palette.white,
         connectionTextColor: palette.white,
         commonBorder: palette.white,
+        titleTextColor: palette.purple
     },
     shadows: {
         modalContainer: palette.black.substring(0, 7) + Opacity[70],

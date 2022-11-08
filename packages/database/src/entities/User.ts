@@ -1,8 +1,13 @@
 import { MaxLength, MinLength } from "class-validator";
 import { Entity, Column, OneToMany, OneToOne, Relation } from "typeorm";
 import { BinaryPKBaseEntity } from "./BinaryPKBaseEntity";
+import { Organization } from "./Organization";
+import { OrganizationDailyActivatedMember } from "./OrganizationDailyActivatedMember";
+import { OrganizationInvitation } from "./OrganizationInvitation";
+import { OrganizationInvitationRole } from "./OrganizationInvitationRole";
+import { OrganizationMemberRole } from "./OrganizationMemberRole";
+import { OrganizationRole } from "./OrganizationRole";
 import { UserAuthCredential } from "./UserAuthCredential";
-import { UserEmailPassword } from "./UserEmailPassword";
 import { UserServiceAgreement } from "./UserServiceAgreement";
 
 @Entity("users")
@@ -21,13 +26,28 @@ export class User extends BinaryPKBaseEntity {
   @MinLength(1)
   @MaxLength(30)
   username?: string;
+ 
+  @OneToOne("UserServiceAgreement", "user")
+  userServiceAgreement?: Relation<UserServiceAgreement>;
 
   @OneToMany("UserAuthCredential", "user")
   userAuthCrentials?: Relation<UserAuthCredential>[];
 
-  @OneToMany("UserEmailPassword", "user")
-  userEmailPasswords?: Relation<UserEmailPassword>[];
+  @OneToMany("Organization", "createdByUser")
+  createdOrganizations?: Relation<Organization>[];
 
-  @OneToOne("UserServiceAgreement", "user")
-  userServiceAgreement?: Relation<UserServiceAgreement>;
+  @OneToMany("OrganizationRole", "createdByUser")
+  createdOrganizationRoles?: Relation<OrganizationRole>[];
+
+  @OneToMany("OrganizationInvitation", "invitedByUser")
+  organizationInvitations?: Relation<OrganizationInvitation>[];
+
+  @OneToMany("OrganizationMemberRole", "user")
+  organizationMemberRoles?: Relation<OrganizationMemberRole>[];
+
+  @OneToMany("OrganizationInvitationRole", "user")
+  organizationInvitationRoles?: Relation<OrganizationInvitationRole>[];
+
+  @OneToMany("OrganizationInvitationRole", "user")
+  organizationDailyActivatedMembers?: Relation<OrganizationDailyActivatedMember>[];
 }

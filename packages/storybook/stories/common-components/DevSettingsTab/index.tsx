@@ -2,8 +2,8 @@ import React, { useMemo } from 'react'
 import styled from '@emotion/styled';
 import ColorPalette from '@floro/styles/ColorPalette';
 import { useTheme } from '@emotion/react';
-import SettingsIconLight from '@floro/common-assets/assets/images/icons/settings.light.svg';
-import SettingsIconDark from '@floro/common-assets/assets/images/icons/settings.dark.svg';
+import CodeIconLight from '@floro/common-assets/assets/images/icons/code.light.svg';
+import CodeIconDark from '@floro/common-assets/assets/images/icons/code.dark.svg';
 
 const Container = styled.div`
     display: flex;
@@ -38,23 +38,23 @@ const TextSpan = styled.span`
 export interface Props {
 }
 
-const UserSettingsTab = (props: Props): React.ReactElement => {
+const DevSettingsTab = (props: Props): React.ReactElement => {
   const theme = useTheme();
   const settingsIcon = useMemo(() => {
     if (theme.name == "light") {
-      return SettingsIconLight;
+      return CodeIconLight;
     }
-    return SettingsIconDark;
+    return CodeIconDark;
   }, [theme.name]);
 
   return (
     <Container>
       <Icon src={settingsIcon} />
       <TextContainer>
-        <TextSpan>{"User Settings"}</TextSpan>
+        <TextSpan>{"Developer Settings"}</TextSpan>
       </TextContainer>
     </Container>
   );
 };
 
-export default React.memo(UserSettingsTab);
+export default React.memo(DevSettingsTab);

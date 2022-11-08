@@ -1,0 +1,64 @@
+import {
+  IsDefined,
+  IsIn,
+  IsString,
+  MaxLength,
+  MinLength,
+} from "class-validator";
+import {
+  Entity,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  Relation,
+  OneToMany,
+} from "typeorm";
+import { BinaryPKBaseEntity } from "./BinaryPKBaseEntity";
+import { Organization } from "./Organization";
+import { OrganizationDailyActivatedMember } from "./OrganizationDailyActivatedMember";
+import { OrganizationInvitation } from "./OrganizationInvitation";
+import { OrganizationMemberRole } from "./OrganizationMemberRole";
+import { OrganizationRole } from "./OrganizationRole";
+import { User } from "./User";
+
+@Entity("organization_members")
+export class OrganizationMember extends BinaryPKBaseEntity {
+  @Column("varchar", { length: 255 })
+  @MinLength(1)
+  @MaxLength(30)
+  internalHandle?: string;
+
+  @Column("varchar")
+  @IsDefined()
+  @IsIn(["active", "inactive"])
+  @IsString()
+  membershipState?: boolean;
+
+  @Column("uuid")
+  @IsDefined()
+  userId!: string;
+
+  @ManyToOne("User", "user")
+  @JoinColumn()
+  user?: Relation<User>;
+
+  @Column("uuid")
+  @IsDefined()
+  organizationId!: string;
+
+  @ManyToOne("Organization", "organizationMembers")
+  @JoinColumn()
+  organization?: Relation<Organization>;
+
+  @OneToMany("OrganizationRole", "createdByOrganizationMember")
+  createdOrganizationRoles?: Relation<OrganizationRole>[];
+
+  @OneToMany("OrganizationRole", "invitedByOrganizationMember")
+  organizationInvitations?: Relation<OrganizationInvitation>[];
+
+  @OneToMany("OrganizationMemberRole", "organizationMember")
+  organizationMemberRoles?: Relation<OrganizationMemberRole>[];
+
+  @OneToMany("OrganizationInvitationRole", "organizationMember")
+  organizationDailyActivatedMembers?: Relation<OrganizationDailyActivatedMember>[];
+}

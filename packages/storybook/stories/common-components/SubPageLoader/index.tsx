@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from '@emotion/styled';
-import FloroIcon from '@floro/common-assets/assets/images/floro_logo.svg';
+import FloroIcon from '@floro/common-assets/assets/images/floro_v3_logo.svg';
 import DotsLoader from '@floro/storybook/stories/design-system/DotsLoader';
 
 

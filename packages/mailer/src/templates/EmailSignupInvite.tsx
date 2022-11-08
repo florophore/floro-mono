@@ -30,7 +30,7 @@ const EmailSignupAccountAlreadyExists = (props: Props): React.ReactElement => {
       <MjmlBody width={500}>
         <MjmlSection fullWidth backgroundColor={colorPalette.lightPurple}>
           <MjmlColumn width={500}>
-            <MjmlImage height={200} width={200} src={`${props.assetHost}/assets/images/floro_logo.png`} />
+            <MjmlImage height={200} width={200} src={`${props.assetHost}/assets/images/floro_v3_logo.png`} />
           </MjmlColumn>
         </MjmlSection>
         <MjmlSection>
