@@ -23,6 +23,7 @@ import BaseController from "./controllers/BaseController";
 import { Express } from "express";
 import SessionStore from "@floro/redis/src/sessions/SessionStore";
 import UsersContext from "@floro/database/src/contexts/users/UsersContext";
+import RequestCache from "./request/RequestCache";
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -37,6 +38,7 @@ export default class Backend {
   private redisPubSubFactory!: RedisPubsubFactory;
   private contextFactory!: ContextFactory;
   private sessionStore!: SessionStore;
+  private requestCache!: RequestCache;
 
   constructor(
     @multiInject("ResolverModule") resolverModules: BaseResolverModule[],
@@ -47,7 +49,8 @@ export default class Backend {
     @inject(RedisPubsubFactory) redisPubSubFactory: RedisPubsubFactory,
     @inject(ContextFactory) contextFactory: ContextFactory,
     @inject(Server) httpServer: Server,
-    @inject(SessionStore) sessionStore: SessionStore
+    @inject(SessionStore) sessionStore: SessionStore,
+    @inject(RequestCache) requestCache: RequestCache
   ) {
     this.resolverModules = resolverModules;
     this.controllers = controllers;
@@ -58,6 +61,7 @@ export default class Backend {
     this.redisPubSubFactory = redisPubSubFactory;
     this.contextFactory = contextFactory;
     this.sessionStore = sessionStore;
+    this.requestCache = requestCache;
   }
 
   public async startDatabase(): Promise<void> {
@@ -160,12 +164,40 @@ export default class Backend {
       wsServer
     );
 
+    const requestCache = this.requestCache;
+
     return new ApolloServer({
       schema,
       csrfPrevention: true,
       cache: "bounded",
-      context: async ({ req }) => await this.fetchSessionUserContext(req?.cookies?.["user-session"]),
+      context: async ({ req }) => {
+        if (req?.cookies?.["user-session"]) {
+          return await this.fetchSessionUserContext(req?.cookies?.["user-session"]);
+        }
+        if (req?.headers?.authorization?.startsWith("Bearer")) {
+          const [, token] = req?.headers?.authorization?.split("Bearer ") ?? ["", ""];
+          return await this.fetchSessionUserContext(token);
+        }
+        return {
+          session: null,
+          currentUser: null,
+          authorizationToken: ""
+        };
+      },
       plugins: [
+        {
+          async requestDidStart(requestContext) {
+            const requestCacheId = requestCache.init();
+            requestContext.context.requestCacheId = requestCacheId;
+            return {
+              async willSendResponse(requestContext) {
+                requestCache.release(requestContext.context.requestCacheId);
+                return;
+              }
+            }
+          }
+
+        },
         ApolloServerPluginDrainHttpServer({ httpServer: this.httpServer }),
         {
           async serverWillStart() {

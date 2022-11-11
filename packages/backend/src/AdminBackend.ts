@@ -14,6 +14,7 @@ import { GraphQLSchema } from "graphql";
 import RedisPubsubFactory from "@floro/redis/src/RedisPubsubFactory";
 import BaseController from "./controllers/BaseController";
 import SessionStore from "@floro/redis/src/sessions/SessionStore";
+import RequestCache from "./request/RequestCache";
 
 @injectable()
 export default class AdminBackend extends Backend {
@@ -29,7 +30,8 @@ export default class AdminBackend extends Backend {
     @inject(RedisPubsubFactory) redisPubSubFactory: RedisPubsubFactory,
     @inject(ContextFactory) contextFactory: ContextFactory,
     @inject(Server) httpServer: Server,
-    @inject(SessionStore) sessionStore: SessionStore
+    @inject(SessionStore) sessionStore: SessionStore,
+    @inject(RequestCache) requestCache: RequestCache
   ) {
     super(
       resolverModules,
@@ -40,7 +42,8 @@ export default class AdminBackend extends Backend {
       redisPubSubFactory,
       contextFactory,
       httpServer,
-      sessionStore
+      sessionStore,
+      requestCache
     );
     this.resolverModules = [...resolverModules, ...adminResolverModules];
   }

@@ -6,6 +6,8 @@ import UsersContext from "@floro/database/src/contexts/users/UsersContext";
 import UserAuthCredentialsContext from "@floro/database/src/contexts/authentication/UserAuthCredentialsContext";
 import { User } from "@floro/database/src/entities/User";
 import { UserAuthCredential } from "@floro/database/src/entities/UserAuthCredential";
+import OrganizationsContext from "@floro/database/src/contexts/organizations/OrganizationsContext";
+import HandleChecker from "../utils/HandleChecker";
 
 
 @injectable()
@@ -24,6 +26,8 @@ export default class UsersService {
 
     public async checkUsernameIsTaken(username: string): Promise<boolean> { 
         const usersContext = await this.contextFactory.createContext(UsersContext);
-        return await usersContext.usernameExists(username);
+        const organizationsContext = await this.contextFactory.createContext(OrganizationsContext);
+        const handleChecker = new HandleChecker(usersContext, organizationsContext);
+        return await handleChecker.usernameOrHandleTaken(username);
     }
 }

@@ -185,7 +185,7 @@ describe("AuthenticationService", () => {
             .filteringRequestBody(/code=[^&]*/g, "code=bad")
             .post("/login/oauth/access_token")
             .reply(200, ERROR_STRING);
-          const result = await authenticationService.authWithGithubOAuth("bad");
+          const result = await authenticationService.authWithGithubOAuth("bad", "web");
           expect(result.action).to.equal("LOG_ERROR");
           expect(result?.error?.type).to.equal("GITHUB_OAUTH_ERROR");
           expect(result?.error?.message).to.equal("Bad auth code");
@@ -206,7 +206,8 @@ describe("AuthenticationService", () => {
             .get("/user")
             .reply(401, JSON.stringify(GithubApiErrorMock));
           const result = await authenticationService.authWithGithubOAuth(
-            "good"
+            "good",
+            "web"
           );
           expect(result.action).to.equal("LOG_ERROR");
           expect(result?.error?.type).to.equal("GITHUB_OAUTH_ERROR");
@@ -233,7 +234,8 @@ describe("AuthenticationService", () => {
             .get("/user/emails")
             .reply(200, []);
           const result = await authenticationService.authWithGithubOAuth(
-            "good"
+            "good",
+            "web"
           );
           expect(result.action).to.equal("LOG_ERROR");
           expect(result?.error?.type).to.equal("GITHUB_OAUTH_ERROR");
@@ -274,7 +276,8 @@ describe("AuthenticationService", () => {
           emailQueue.worker.on('completed', callback);
 
           authenticationService.authWithGithubOAuth(
-            "good"
+            "good",
+            "web"
           ).then(result => {
             expect(result.action).to.equal("VERIFICATION_REQUIRED");
             expect(result?.email).to.equal("jamesrainersunderland@gmail.com");
@@ -321,7 +324,7 @@ describe("AuthenticationService", () => {
 
             emailQueue.worker.on("completed", callback);
 
-            authenticationService.authWithGithubOAuth("good").then((result) => {
+            authenticationService.authWithGithubOAuth("good", "web").then((result) => {
               expect(result.action).to.equal("VERIFICATION_REQUIRED");
               expect(result?.email).to.equal("test@gmail.com");
 
@@ -350,7 +353,8 @@ describe("AuthenticationService", () => {
             .get("/user/emails")
             .reply(200, GithubEmailsSuccessMock);
           const result = await authenticationService.authWithGithubOAuth(
-            "good"
+            "good",
+            "web"
           );
           expect(result.action).to.equal("COMPLETE_SIGNUP");
           scope.done();
@@ -386,7 +390,7 @@ describe("AuthenticationService", () => {
           .matchHeader("Authorization", "token good_token")
           .get("/user/emails")
           .reply(200, GithubEmailsTestAtGmailSuccessMock);
-        const result = await authenticationService.authWithGithubOAuth("good");
+        const result = await authenticationService.authWithGithubOAuth("good", "web");
         expect(result.action).to.equal("LOGIN");
         scope.done();
         scopeUser.done();

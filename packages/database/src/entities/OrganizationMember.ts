@@ -4,6 +4,7 @@ import {
   IsString,
   MaxLength,
   MinLength,
+  ValidateIf,
 } from "class-validator";
 import {
   Entity,
@@ -26,16 +27,16 @@ export class OrganizationMember extends BinaryPKBaseEntity {
   @Column("varchar", { length: 255 })
   @MinLength(1)
   @MaxLength(30)
+  @ValidateIf((_object, value) => !!value)
   internalHandle?: string;
 
   @Column("varchar")
   @IsDefined()
   @IsIn(["active", "inactive"])
   @IsString()
-  membershipState?: boolean;
+  membershipState?: string;
 
   @Column("uuid")
-  @IsDefined()
   userId!: string;
 
   @ManyToOne("User", "user")
@@ -43,7 +44,6 @@ export class OrganizationMember extends BinaryPKBaseEntity {
   user?: Relation<User>;
 
   @Column("uuid")
-  @IsDefined()
   organizationId!: string;
 
   @ManyToOne("Organization", "organizationMembers")

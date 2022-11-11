@@ -23,7 +23,7 @@ const authMiddleware = setContext((_, {headers}) => {
   return {
     headers: {
       ...headers,
-      authorizationToken: token ? token : '',
+      authorization: token ? `Bearer ${token}` : '',
     },
   };
 });

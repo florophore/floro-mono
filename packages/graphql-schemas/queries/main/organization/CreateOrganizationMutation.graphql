@@ -1,0 +1,33 @@
+mutation CreateOrganization(
+  $name: String!
+  $handle: String!
+  $legalName: String!
+  $contactEmail: String!
+  $agreedToCustomerServiceAgreement: Boolean!
+) {
+  createOrganization(
+    name: $name
+    handle: $handle
+    legalName: $legalName
+    contactEmail: $contactEmail
+    agreedToCustomerServiceAgreement: $agreedToCustomerServiceAgreement
+  ) {
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+    ... on CreateOrganizationSuccess {
+      organization {
+        id
+        name
+        legalName
+        handle
+        contactEmail
+      }
+    }
+    ... on CreateOrganizationError {
+      message
+      type
+    }
+  }
+}

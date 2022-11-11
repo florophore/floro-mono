@@ -86,3 +86,8 @@ type AccountCreationResult {
     type: String
     action: AccountCreationAction
 }
+
+type UnAuthenticatedError {
+    type: String
+    message: String
+}

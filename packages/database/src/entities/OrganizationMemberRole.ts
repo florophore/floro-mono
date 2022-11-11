@@ -8,7 +8,6 @@ import { OrganizationRole } from "./OrganizationRole";
 @Entity("organization_member_roles")
 export class OrganizationMemberRole extends BinaryPKBaseEntity {
   @Column("uuid")
-  @IsDefined()
   organizationId!: string;
 
   @ManyToOne("Organization", "organizationMemberRoles")
@@ -16,7 +15,6 @@ export class OrganizationMemberRole extends BinaryPKBaseEntity {
   organization?: Relation<Organization>;
 
   @Column("uuid")
-  @IsDefined()
   organizationMemberId!: string;
 
   @ManyToOne("OrganizationMember", "organizationMemberRoles")
@@ -24,7 +22,6 @@ export class OrganizationMemberRole extends BinaryPKBaseEntity {
   organizationMember?: Relation<OrganizationMember>;
 
   @Column("uuid")
-  @IsDefined()
   organizationRoleId!: string;
 
   @ManyToOne("OrganizationRole", "organizationMemberRoles")

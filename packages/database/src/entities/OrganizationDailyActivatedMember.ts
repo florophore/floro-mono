@@ -16,7 +16,6 @@ export class OrganizationDailyActivatedMember extends BinaryPKBaseEntity {
   date?: string;
 
   @Column("uuid")
-  @IsDefined()
   organizationId!: string;
 
   @ManyToOne("Organization", "organizationDailyActivatedMembers")
@@ -24,7 +23,6 @@ export class OrganizationDailyActivatedMember extends BinaryPKBaseEntity {
   organization?: Relation<Organization>;
 
   @Column("uuid")
-  @IsDefined()
   organizationMemberId!: string;
 
   @ManyToOne("OrganizationMember", "organizationDailyActivatedMembers")

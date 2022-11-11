@@ -1,0 +1,86 @@
+type Organization {
+    id: ID
+    name: String
+    legalName: String
+    handle: String
+    contactEmail: String 
+}
+
+type OrganizationMember {
+    id: ID
+    internalHandle: String
+    user: User
+    organization: Organization
+    membershipState: String
+}
+
+type OrganizationInvitation {
+    id: ID
+    firstName: String
+    lastName: String
+    email: String
+    invitationState: String
+
+    user: User
+    invitedByUser: User
+    invitedByOrganizationMember: User
+    organization: Organization
+}
+
+type OrganizationRole {
+    id: ID
+    name: String
+    isMutable: Boolean
+    isDefault: Boolean
+    canCreateRepos: Boolean
+    canModifyOrganizationSettings: Boolean
+    canModifyOrganizationDeveloperSettings: Boolean
+    canModifyOrganizationMembers: Boolean
+    canInviteMembers: Boolean
+    canModifyInvites: Boolean
+    canModifyOwnInternalHandle: Boolean
+    canModifyBilling: Boolean
+    canModifyOrganizationRoles: Boolean
+
+    organization: Organization
+    createdByUser: User
+    createdByOrganizationMember: OrganizationMember
+}
+
+type OrganizationPermissions {
+    name: String
+    canCreateRepos: Boolean
+    canModifyOrganizationSettings: Boolean
+    canModifyOrganizationDeveloperSettings: Boolean
+    canModifyOrganizationMembers: Boolean
+    canInviteMembers: Boolean
+    canModifyInvites: Boolean
+    canModifyOwnInternalHandle: Boolean
+    canModifyBilling: Boolean
+    canModifyOrganizationRoles: Boolean
+}
+
+type OrganizationMemberRole {
+    id: ID
+    organization: Organization
+    organizationMember: OrganizationMember
+    organizationRole: OrganizationRole
+}
+
+type OrganizationInvitationRole {
+    id: ID
+    organization: Organization
+    organizationInvitation: OrganizationInvitation
+    organizationRole: OrganizationRole
+}
+
+type CreateOrganizationSuccess {
+    organization: Organization
+}
+
+type CreateOrganizationError {
+    message: String
+    type: String
+}
+
+union CreateOrganizationResponse = CreateOrganizationError | CreateOrganizationSuccess | UnAuthenticatedError

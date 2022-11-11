@@ -1,0 +1,4 @@
+extend type Mutation {
+    createOrganization(name: String!, handle: String!, legalName: String!, contactEmail: String!, agreedToCustomerServiceAgreement: Boolean!): CreateOrganizationResponse
+    
+}

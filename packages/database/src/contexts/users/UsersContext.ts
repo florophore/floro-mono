@@ -22,8 +22,8 @@ export default class UsersContext extends BaseContext {
     }
 
     public async usernameExists(username: string): Promise<boolean> {
-        const qb = await this.userRepo.createQueryBuilder('user', this.queryRunner);
-        const count = await qb.where('LOWER(user.username) = :username').setParameter('username', username.toLowerCase()).getCount();
+        const qb = this.userRepo.createQueryBuilder('user', this.queryRunner);
+        const count = await qb.where('LOWER(user.username) = :username').setParameter('username', username.trim().toLowerCase()).getCount();
         return count > 0;
     }
 

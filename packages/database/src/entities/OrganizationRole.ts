@@ -85,19 +85,18 @@ export class OrganizationRole extends BinaryPKBaseEntity {
   createdByOrganizationMember?: Relation<OrganizationMember>;
 
   @Column("uuid")
-  createdByUserId!: string;
-
-  @ManyToOne("User", "createdOrganizationRoles")
-  @JoinColumn({ name: "created_by_user_id" })
-  createdByUser?: Relation<User>;
-
-  @Column("uuid")
-  @IsDefined()
   organizationId!: string;
 
   @ManyToOne("Organization", "organizationRoles")
   @JoinColumn()
   organization?: Relation<Organization>;
+
+  @Column("uuid")
+  createdByUserId!: string;
+
+  @ManyToOne("User", "createdOrganizationRoles")
+  @JoinColumn({ name: "created_by_user_id" })
+  createdByUser?: Relation<User>;
 
   @OneToMany("OrganizationMemberRole", "organizationRole")
   organizationMemberRoles?: Relation<OrganizationMemberRole>[];

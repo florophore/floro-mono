@@ -19,7 +19,6 @@ export class OrganizationInvitationRole extends BinaryPKBaseEntity {
   organization?: Relation<Organization>;
 
   @Column("uuid")
-  @IsDefined()
   organizationInvitationId!: string;
 
   @ManyToOne("OrganizationInvitation", "organizationInvitationRoles")
@@ -27,7 +26,6 @@ export class OrganizationInvitationRole extends BinaryPKBaseEntity {
   organizationInvitation?: Relation<OrganizationInvitation>;
 
   @Column("uuid")
-  @IsDefined()
   organizationRoleId!: string;
 
   @ManyToOne("OrganizationRole", "organizationInvitationRoles")

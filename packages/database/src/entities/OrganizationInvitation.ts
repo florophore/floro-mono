@@ -48,12 +48,11 @@ export class OrganizationInvitation extends BinaryPKBaseEntity {
 
   @Column("varchar")
   @IsDefined()
-  @IsIn(["sent", "accepted", "rejected", "cancelled"])
+  @IsIn(["sent", "accepted", "rejected", "canceled"])
   @IsString()
-  invitationState?: boolean;
+  invitationState?: string;
 
   @Column("uuid")
-  @IsDefined()
   organizationId!: string;
 
   @ManyToOne("Organization", "organizationInvitations")
@@ -61,7 +60,6 @@ export class OrganizationInvitation extends BinaryPKBaseEntity {
   organization?: Relation<Organization>;
 
   @Column("uuid")
-  @IsDefined()
   userId!: string;
 
   @ManyToOne("User", "organizationInvitations")
@@ -69,7 +67,6 @@ export class OrganizationInvitation extends BinaryPKBaseEntity {
   user?: Relation<User>;
 
   @Column("uuid")
-  @IsDefined()
   invitedByUserId!: string;
 
   @ManyToOne("User", "sentOrganizationInvitations")
@@ -77,7 +74,6 @@ export class OrganizationInvitation extends BinaryPKBaseEntity {
   invitedByUser?: Relation<User>;
 
   @Column("uuid")
-  @IsDefined()
   invitedByOrganizationMemberId!: string;
 
   @ManyToOne("OrganizationMember", "sentOrganizationInvitations")

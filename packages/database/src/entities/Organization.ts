@@ -63,7 +63,6 @@ export class Organization extends BinaryPKBaseEntity {
   agreedToCustomerServiceAgreement?: boolean;
 
   @Column("uuid")
-  @IsDefined()
   createdByUserId!: string;
 
   @ManyToOne("User", "createdOrganizations")

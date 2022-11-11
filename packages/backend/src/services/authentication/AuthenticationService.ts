@@ -20,6 +20,8 @@ import EmailAuthStore from "@floro/redis/src/stores/EmailAuthStore";
 import { SignUpExchange } from "@floro/redis/src/stores/SignUpExchangeStore";
 import ProfanityFilter from 'bad-words';
 import { NAME_REGEX, USERNAME_REGEX } from '@floro/common-web/src/utils/validators';
+import OrganizationsContext from "@floro/database/src/contexts/organizations/OrganizationsContext";
+import HandleChecker from "../utils/HandleChecker";
 
 const profanityFilter = new ProfanityFilter();
 
@@ -79,6 +81,7 @@ export default class AuthenticationService {
     public async authWithGithubOAuth(code: string, loginClient: 'web'|'desktop'): Promise<AuthReponse> {
         const queryRunner = await this.databaseConnection.makeQueryRunner();
         try {
+            await queryRunner.startTransaction();
             const githubAccessToken = await this.githubLoginClient.getAccessToken(code); 
             if (!(githubAccessToken instanceof GithubAccessToken)) {
                 return { action: 'LOG_ERROR', error: { type: 'GITHUB_OAUTH_ERROR', message: 'Bad auth code', meta: { code }} };
@@ -101,7 +104,6 @@ export default class AuthenticationService {
 
             const usersContext = await this.contextFactory.createContext(UsersContext, queryRunner);
             const userAuthCredentialsContext = await this.contextFactory.createContext(UserAuthCredentialsContext, queryRunner);
-            await queryRunner.startTransaction();
             const credentials = await userAuthCredentialsContext.getCredentialsByEmail(primaryEmail.email);
             const userId = userAuthCredentialsContext.getUserIdFromCredentials(credentials);
 
@@ -201,6 +203,7 @@ export default class AuthenticationService {
     public async authWithGoogleOAuth(code: string): Promise<AuthReponse> {
         const queryRunner = await this.databaseConnection.makeQueryRunner();
         try {
+            await queryRunner.startTransaction();
             const googleAccessToken = await this.googleLoginClient.getAccessToken(code); 
             if (!(googleAccessToken instanceof GoogleAccessToken)) {
                 return { action: 'LOG_ERROR', error: { type: 'GOOGLE_OAUTH_ERROR', message: 'Bad auth code', meta: { code }} };
@@ -214,7 +217,6 @@ export default class AuthenticationService {
             }
             const usersContext = await this.contextFactory.createContext(UsersContext, queryRunner);
             const userAuthCredentialsContext = await this.contextFactory.createContext(UserAuthCredentialsContext, queryRunner);
-            await queryRunner.startTransaction();
             const credentials = await userAuthCredentialsContext.getCredentialsByEmail(googleUser.email);
             const userId =  userAuthCredentialsContext.getUserIdFromCredentials(credentials);
 
@@ -431,14 +433,15 @@ export default class AuthenticationService {
 
     public async createAccount(signupExchange: SignUpExchange, credentialId: string, firstName: string, lastName: string, username: string, agreeToTOS: boolean): Promise<AccountCreationResponse> {
         const queryRunner = await this.databaseConnection.makeQueryRunner();
-        const userAuthCredentialsContext = await this.contextFactory.createContext(UserAuthCredentialsContext, queryRunner);
-        const usersContext = await this.contextFactory.createContext(UsersContext, queryRunner);
-        const userServiceAgreementsContext = await this.contextFactory.createContext(
-            UserServiceAgreementsContext,
-            queryRunner
-        );
         try {
             await queryRunner.startTransaction();
+            const userAuthCredentialsContext = await this.contextFactory.createContext(UserAuthCredentialsContext, queryRunner);
+            const usersContext = await this.contextFactory.createContext(UsersContext, queryRunner);
+            const organizationsContext = await this.contextFactory.createContext(OrganizationsContext, queryRunner);
+            const userServiceAgreementsContext = await this.contextFactory.createContext(
+                UserServiceAgreementsContext,
+                queryRunner
+            );
             if (signupExchange.credentialId != credentialId) {
                 return {action: 'BAD_EXCHANGE_KEY', message: "Bad Exchange Token"};
             }
@@ -469,7 +472,9 @@ export default class AuthenticationService {
                 await queryRunner.rollbackTransaction();
                 return { action: 'CREDENTIAL_ALREADY_IN_USE', message: "Credential already in use"};
             }
-            const usernameExists = await usersContext.usernameExists(username);
+
+            const handleChecker = new HandleChecker(usersContext, organizationsContext);
+            const usernameExists = await handleChecker.usernameOrHandleTaken(username);
             if (usernameExists) {
                 await queryRunner.rollbackTransaction();
                 return { action: 'USERNAME_ALREADY_IN_USE', message: "Username already in use"};

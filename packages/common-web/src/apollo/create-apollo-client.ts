@@ -13,7 +13,7 @@ export const createApolloClient = (hostname: string, isSecure = false) => {
     return {
       headers: {
         ...headers,
-        authorizationToken: token ? token : "",
+        authorization: token ? `Bearer ${token}` : "",
       },
     };
   });

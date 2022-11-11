@@ -7,6 +7,10 @@ import UsersService from './services/users/UsersService';
 import AuthenticationResolverModule from './resolvers/authentication/AuthenticationResolverModule';
 import AdminUsersResolverModule from './resolvers/users/AdminUsersResolverModule';
 import AuthenticationController from './controllers/AuthenticationController';
+import OrganizationService from './services/organizations/OrganizationService';
+import OrganizationResolverModule from './resolvers/organization/OrganizationResolverModule';
+import RequestCache from './request/RequestCache';
+import LoggedInUserGuard from './resolvers/hooks/guards/LoggedInUserGuard';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -14,9 +18,16 @@ export default new ContainerModule((bind): void => {
     //admin
     bind(AdminBackend).toSelf();
 
+    //Other
+    bind(RequestCache).toSelf().inSingletonScope();
+
+    //Guards
+    bind(LoggedInUserGuard).toSelf()
+
     // SERVICES
     bind(AuthenticationService).toSelf();
     bind(UsersService).toSelf();
+    bind(OrganizationService).toSelf();
 
     // Controllers
     bind<AuthenticationController>("Controllers").to(AuthenticationController);
@@ -24,6 +35,7 @@ export default new ContainerModule((bind): void => {
     // RESOLVER MODULES
     bind<UsersResolverModule>("ResolverModule").to(UsersResolverModule);
     bind<AuthenticationResolverModule>("ResolverModule").to(AuthenticationResolverModule);
+    bind<OrganizationResolverModule>("ResolverModule").to(OrganizationResolverModule);
 
     // ADMIN MODULES OVERRIDE WITH AdminResolverModule
     bind<AdminUsersResolverModule>("AdminResolverModule").to(AdminUsersResolverModule);
