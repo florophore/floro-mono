@@ -24,6 +24,7 @@ const defaultOptions: DataSourceOptions = {
 const devDataSource = new DataSource({
   ...defaultOptions,
   database: "floro_dev",
+  logging: false
 });
 
 const testDataSource = new DataSource({

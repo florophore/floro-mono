@@ -13,6 +13,7 @@ import {
   JoinColumn,
   Relation,
   OneToMany,
+  ManyToMany,
 } from "typeorm";
 import { BinaryPKBaseEntity } from "./BinaryPKBaseEntity";
 import { Organization } from "./Organization";

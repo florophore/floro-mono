@@ -4,6 +4,10 @@ type Organization {
     legalName: String
     handle: String
     contactEmail: String 
+    membership: OrganizationMember
+    roles: [OrganizationRole]
+    members: [OrganizationMember]
+    invitations: [OrganizationInvitation]
 }
 
 type OrganizationMember {
@@ -12,6 +16,8 @@ type OrganizationMember {
     user: User
     organization: Organization
     membershipState: String
+    permissions: OrganizationPermissions
+    roles: [OrganizationRole]
 }
 
 type OrganizationInvitation {
@@ -25,6 +31,7 @@ type OrganizationInvitation {
     invitedByUser: User
     invitedByOrganizationMember: User
     organization: Organization
+    roles: [OrganizationRole]
 }
 
 type OrganizationRole {
@@ -48,7 +55,6 @@ type OrganizationRole {
 }
 
 type OrganizationPermissions {
-    name: String
     canCreateRepos: Boolean
     canModifyOrganizationSettings: Boolean
     canModifyOrganizationDeveloperSettings: Boolean
@@ -58,20 +64,6 @@ type OrganizationPermissions {
     canModifyOwnInternalHandle: Boolean
     canModifyBilling: Boolean
     canModifyOrganizationRoles: Boolean
-}
-
-type OrganizationMemberRole {
-    id: ID
-    organization: Organization
-    organizationMember: OrganizationMember
-    organizationRole: OrganizationRole
-}
-
-type OrganizationInvitationRole {
-    id: ID
-    organization: Organization
-    organizationInvitation: OrganizationInvitation
-    organizationRole: OrganizationRole
 }
 
 type CreateOrganizationSuccess {

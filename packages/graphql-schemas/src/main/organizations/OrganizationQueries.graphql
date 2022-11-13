@@ -1,4 +1,7 @@
+extend type Query {
+    organization(id: ID!): Organization
+}
+
 extend type Mutation {
     createOrganization(name: String!, handle: String!, legalName: String!, contactEmail: String!, agreedToCustomerServiceAgreement: Boolean!): CreateOrganizationResponse
-    
 }

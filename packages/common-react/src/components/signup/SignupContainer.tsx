@@ -69,7 +69,9 @@ const SignupContainer = (props: Props) => {
 
   const [createAccount, createAccountRequest]= useCreateAccountMutation();
 
-  const [checkUserName, { data, loading }] = useUsernameCheckLazyQuery();
+  const [checkUserName, { data, loading }] = useUsernameCheckLazyQuery({
+    nextFetchPolicy: "network-only"
+  });
 
   const checkUsernameDebounced = useCallback(debouncer(checkUserName, 300), [checkUserName]);
 

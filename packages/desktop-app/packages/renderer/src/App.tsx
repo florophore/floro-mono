@@ -16,6 +16,7 @@ import {setContext} from '@apollo/client/link/context';
 import Cookies from 'js-cookie';
 import {SessionProvider} from '@floro/common-react/src/session/session-context';
 import ColorPalette from '@floro/styles/ColorPalette';
+import { persistCache, LocalStorageWrapper } from 'apollo3-cache-persist';
 
 const authMiddleware = setContext((_, {headers}) => {
   // add the authorization to the headers
@@ -49,9 +50,16 @@ const splitLink = split(
   httpLink,
 );
 
+const cache = new InMemoryCache();
+
+await persistCache({
+  cache,
+  storage: new LocalStorageWrapper(window.localStorage),
+});
+
 const client = new ApolloClient({
   link: authMiddleware.concat(splitLink),
-  cache: new InMemoryCache(),
+  cache,
 });
 
 interface Props {

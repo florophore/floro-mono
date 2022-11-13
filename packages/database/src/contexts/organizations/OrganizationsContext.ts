@@ -57,4 +57,44 @@ export default class OrganizationsContext extends BaseContext {
     }
     return await this.queryRunner.manager.save(Organization, org);
   }
+
+  public async getAllOrganizationsForUser(userId: string): Promise<Organization[]> {
+    return await this.queryRunner.manager.find(Organization, {
+      where: {
+        organizationMembers: {
+          userId,
+          membershipState: "active",
+        }
+      },
+      relations: {
+        organizationMembers: {
+          user: true
+        },
+        organizationRoles: true,
+        organizationMemberRoles: {
+          organizationRole: true,
+          organizationMember: {
+            user: true
+          }
+        }
+      },
+      order: {
+        name: "ASC",
+        organizationMembers: {
+          user: {
+            firstName: "ASC",
+            lastName: "DESC"
+          }
+        },
+        organizationRoles: {
+          name: "ASC"
+        },
+        organizationMemberRoles: {
+          organizationRole: {
+            name: "ASC"
+          }
+        }
+      }
+    }); 
+  }
 }

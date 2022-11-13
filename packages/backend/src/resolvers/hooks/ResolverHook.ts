@@ -45,13 +45,13 @@ export function runWithHooks<P, A, C, R>(
     const hooks = getResolveHooks();
     for (const hook of hooks) {
       if (hook instanceof GuardResolverHook) {
-        const result = await hook.run(p, a, c);
+        const result = await (hook as GuardResolverHook<P, A, C, R>).run(p, a, c);
         if (result) {
           return result;
         }
       }
       if (hook instanceof LoaderResolverHook) {
-        await hook.run(p, a, c);
+        await (hook as LoaderResolverHook<P, A, C>).run(p, a, c);
       }
     }
     return await callback(p, a, c);

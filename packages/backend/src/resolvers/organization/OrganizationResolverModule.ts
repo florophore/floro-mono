@@ -1,7 +1,6 @@
 import BaseResolverModule from "../BaseResolverModule";
 import { main } from "@floro/graphql-schemas";
 import { inject, injectable } from "inversify";
-import SessionStore from "@floro/redis/src/sessions/SessionStore";
 import OrganizationService from "../../services/organizations/OrganizationService";
 import LoggedInUserGuard from "../hooks/guards/LoggedInUserGuard";
 import { runWithHooks } from "../hooks/ResolverHook";
@@ -10,28 +9,196 @@ import {
   MutationCreateOrganizationArgs,
 } from "@floro/graphql-schemas/src/generated/main-graphql";
 import { User } from "@floro/database/src/entities/User";
+import RequestCache from "../../request/RequestCache";
+import OrganizationMemberLoader from "../hooks/loaders/Organization/OrganizationMemberLoader";
+import { Organization } from "@floro/database/src/entities/Organization";
+import ContextFactory from "@floro/database/src/contexts/ContextFactory";
+import OrganizationMemberPermissionsLoader from "../hooks/loaders/Organization/OrganizationMemberPermissionsLoader";
+import OrganizationMemberRolesLoader from "../hooks/loaders/Organization/OrganizationMemberRolesLoader";
+import OrganizationRolesLoader from "../hooks/loaders/Organization/OrganizationRolesLoader";
+import OrganizationMembersContext from "@floro/database/src/contexts/organizations/OrganizationMembersContext";
+import { OrganizationMember } from "@floro/database/src/entities/OrganizationMember";
+import { OrganizationRole } from "@floro/database/src/entities/OrganizationRole";
 
 @injectable()
 export default class OrganizationResolverModule extends BaseResolverModule {
   public resolvers: Array<keyof this & keyof main.ResolversTypes> = [
     "Mutation",
     "Query",
+    "Organization",
   ];
-  protected sessionStore!: SessionStore;
+  protected contextFactory!: ContextFactory;
   protected organizaionService!: OrganizationService;
+  protected requestCache!: RequestCache;
 
   protected loggedInUserGuard!: LoggedInUserGuard;
 
+  protected organizationMemberLoader!: OrganizationMemberLoader;
+  protected organizationMemberRolesLoader!: OrganizationMemberRolesLoader;
+  protected organizationMemberPermissionsLoader!: OrganizationMemberPermissionsLoader;
+  protected organizationRolesLoader!: OrganizationRolesLoader;
+
   constructor(
-    @inject(SessionStore) sessionStore: SessionStore,
+    @inject(ContextFactory) contextFactory: ContextFactory,
+    @inject(RequestCache) requestCache: RequestCache,
     @inject(OrganizationService) organizaionService: OrganizationService,
-    @inject(LoggedInUserGuard) loggedInUserGuard: LoggedInUserGuard
+    @inject(LoggedInUserGuard) loggedInUserGuard: LoggedInUserGuard,
+    @inject(OrganizationMemberLoader)
+    organizationMemberLoader: OrganizationMemberLoader,
+    @inject(OrganizationMemberRolesLoader)
+    organizationMemberRolesLoader: OrganizationMemberRolesLoader,
+    @inject(OrganizationRolesLoader)
+    organizationRolesLoader: OrganizationRolesLoader,
+    @inject(OrganizationMemberPermissionsLoader)
+    organizationMemberPermissionsLoader: OrganizationMemberPermissionsLoader
   ) {
     super();
-    this.sessionStore = sessionStore;
+    this.contextFactory = contextFactory;
     this.organizaionService = organizaionService;
+    this.requestCache = requestCache;
+
+    // guards
     this.loggedInUserGuard = loggedInUserGuard;
+    // loaders
+    this.organizationMemberLoader = organizationMemberLoader;
+    this.organizationMemberRolesLoader = organizationMemberRolesLoader;
+    this.organizationMemberPermissionsLoader =
+      organizationMemberPermissionsLoader;
+    this.organizationRolesLoader = organizationRolesLoader;
   }
+
+  public Organization: main.OrganizationResolvers = {
+    legalName: runWithHooks(
+      () => [this.organizationMemberLoader],
+      async (organization, _, { currentUser, cacheKey }) => {
+        if (!currentUser) {
+          return null;
+        }
+        const organizationMembership =
+          this.requestCache.getOrganizationMembership(
+            cacheKey,
+            organization.id,
+            currentUser.id
+          );
+        return organizationMembership?.membershipState == "active"
+          ? organization.legalName
+          : null;
+      }
+    ),
+    contactEmail: runWithHooks(
+      () => [this.organizationMemberLoader],
+      async (organization, _, { currentUser, cacheKey }) => {
+        if (!currentUser) {
+          return null;
+        }
+        const organizationMembership =
+          this.requestCache.getOrganizationMembership(
+            cacheKey,
+            organization.id,
+            currentUser.id
+          );
+        return organizationMembership?.membershipState == "active"
+          ? organization.contactEmail
+          : null;
+      }
+    ),
+    membership: runWithHooks(
+      () => [this.organizationMemberLoader],
+      async (organization, _, { currentUser, cacheKey }) => {
+        if (!currentUser) {
+          return null;
+        }
+        const organizationMembership =
+          this.requestCache.getOrganizationMembership(
+            cacheKey,
+            organization.id,
+            currentUser.id
+          );
+        return organizationMembership?.membershipState == "active"
+          ? organizationMembership
+          : null;
+      }
+    ),
+    roles: runWithHooks(
+      () => [this.organizationRolesLoader],
+      async (organization, _, { cacheKey }) => {
+        return (
+          this.requestCache.getOrganizationRoles(
+            cacheKey,
+            organization.id as string
+          ) ?? null
+        );
+      }
+    ),
+    members: runWithHooks(
+      () => [this.organizationMemberLoader],
+      async (organization, _, { cacheKey, currentUser }) => {
+        const organizationMembership =
+          this.requestCache.getOrganizationMembership(
+            cacheKey,
+            organization.id,
+            currentUser.id
+          );
+        if (organizationMembership.membershipState == "inactive") {
+          return null;
+        }
+        const cachedMembers = this.requestCache.getOrganizationMembers(cacheKey, organization.id as string);
+        if (cachedMembers) {
+          return cachedMembers;
+        }
+        const organanizationMembersContext =
+          await this.contextFactory.createContext(OrganizationMembersContext);
+        const members =
+          await organanizationMembersContext.getAllMembersForOrganization(
+            organization.id as string
+          );
+        members.forEach((member: OrganizationMember) => {
+          const roles = member.organizationMemberRoles?.map((memberRole) => {
+            return memberRole?.organizationRole;
+          });
+          this.requestCache.setOrganizationMembership(
+            cacheKey,
+            organization as Organization,
+            member.user as User,
+            member
+          );
+          this.requestCache.setMembershipRoles(
+            cacheKey,
+            member,
+            roles as OrganizationRole[]
+          );
+        });
+        this.requestCache.setOrganizationMembers(cacheKey, organization, members);
+        return members;
+      }
+    ),
+    invitations: runWithHooks(
+      () => [this.organizationMemberPermissionsLoader],
+      async (organization, _, { currentUser, cacheKey }) => {
+        if (!currentUser) {
+          return null;
+        }
+        const organizationMembership =
+          this.requestCache.getOrganizationMembership(
+            cacheKey,
+            organization.id as string,
+            currentUser.id
+          );
+        if (organizationMembership.membershipState == "inactive") {
+          return null;
+        }
+        const permissions = this.requestCache.getMembershipPermissions(
+          cacheKey,
+          organizationMembership.id
+        );
+        if (!permissions.canModifyInvites) {
+          return null;
+        }
+        return [];
+      }
+    ),
+    // invitations
+  };
 
   public Mutation: main.MutationResolvers = {
     createOrganization: runWithHooks(
@@ -45,7 +212,7 @@ export default class OrganizationResolverModule extends BaseResolverModule {
           contactEmail,
           agreedToCustomerServiceAgreement,
         }: MutationCreateOrganizationArgs,
-        { currentUser }: { currentUser: User }
+        { currentUser, cacheKey }: { currentUser: User; cacheKey: string }
       ): Promise<CreateOrganizationResponse> => {
         try {
           const result = await this.organizaionService.createOrg(
@@ -57,6 +224,10 @@ export default class OrganizationResolverModule extends BaseResolverModule {
             currentUser
           );
           if (result.action == "ORGANIZATION_CREATED") {
+            this.requestCache.setOrganization(
+              cacheKey,
+              result.organization as Organization
+            );
             return {
               __typename: "CreateOrganizationSuccess",
               organization: result.organization,
@@ -86,5 +257,17 @@ export default class OrganizationResolverModule extends BaseResolverModule {
     ),
   };
 
-  public Query: main.QueryResolvers = {};
+  public Query: main.QueryResolvers = {
+    organization: async (_, { id }, { cacheKey }) => {
+      const cachedOrg = this.requestCache.getOrganization(cacheKey, id);
+      if (cachedOrg) {
+        return cachedOrg;
+      }
+      const organization = await this.organizaionService.fetchOrganization(id);
+      if (organization) {
+        this.requestCache.setOrganization(cacheKey, organization);
+      }
+      return organization;
+    },
+  };
 }

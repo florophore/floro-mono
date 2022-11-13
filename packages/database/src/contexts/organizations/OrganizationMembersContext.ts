@@ -34,9 +34,14 @@ export default class OrganizationMembersContext extends BaseContext {
     organizationId: string,
     userId: string
   ): Promise<OrganizationMember | null> {
-    return await this.queryRunner.manager.findOneBy(OrganizationMember, {
-      organizationId,
-      userId,
+    return await this.queryRunner.manager.findOne(OrganizationMember, {
+      where: {
+        organizationId,
+        userId,
+      },
+      relations: {
+        user: true
+      }
     });
   }
 
@@ -45,6 +50,31 @@ export default class OrganizationMembersContext extends BaseContext {
     user: User
   ): Promise<OrganizationMember | null> {
     return this.getByOrgIdAndUserId(org.id, user.id);
+  }
+
+  public async getAllMembersForOrganization(organizationId: string): Promise<OrganizationMember[]> {
+    return await this.queryRunner.manager.find(OrganizationMember, {
+      where: {
+        organizationId
+      },
+      relations: {
+        user: true,
+        organizationMemberRoles: {
+          organizationRole: true
+        }
+      },
+      order: {
+        user: {
+          firstName: 'ASC',
+          lastName: 'ASC'
+        },
+        organizationMemberRoles: {
+          organizationRole: {
+            name: 'ASC'
+          }
+        }
+      }
+    }); 
   }
 
   public async userExistsInOrgMembers(

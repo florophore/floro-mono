@@ -24,6 +24,7 @@ import { Express } from "express";
 import SessionStore from "@floro/redis/src/sessions/SessionStore";
 import UsersContext from "@floro/database/src/contexts/users/UsersContext";
 import RequestCache from "./request/RequestCache";
+import sizeof from 'object-sizeof';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -188,10 +189,16 @@ export default class Backend {
         {
           async requestDidStart(requestContext) {
             const requestCacheId = requestCache.init();
-            requestContext.context.requestCacheId = requestCacheId;
+            requestContext.context.cacheKey = requestCacheId;
+            const requestStartTime = new Date().getTime();
             return {
               async willSendResponse(requestContext) {
-                requestCache.release(requestContext.context.requestCacheId);
+                console.log("CACHE SIZE", requestCache.getSize(requestContext.context.cacheKey));
+                console.log("CUMULATIVE CACHE SIZE", requestCache.getSize());
+                requestCache.release(requestContext.context.cacheKey);
+                const requestEndTime = new Date().getTime();
+                const latency = requestEndTime -  requestStartTime;
+                console.log("REQUEST LATENCY", latency);
                 return;
               }
             }

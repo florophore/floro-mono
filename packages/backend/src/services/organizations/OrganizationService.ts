@@ -209,4 +209,9 @@ export default class OrganizationService {
       await queryRunner.release();
     }
   }
+
+  public async fetchOrganization(id: string): Promise<Organization|null> {
+      const organizationsContext = await this.contextFactory.createContext(OrganizationsContext);
+      return await organizationsContext.getById(id);
+  }
 }

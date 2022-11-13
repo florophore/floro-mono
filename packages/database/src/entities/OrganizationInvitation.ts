@@ -42,6 +42,10 @@ export class OrganizationInvitation extends BinaryPKBaseEntity {
   @IsEmail()
   normalizedEmail!: string;
 
+  @Column("boolean")
+  @IsDefined()
+  userExistedAlready!: boolean;
+
   @Column("varchar", { length: 255 })
   @IsDefined()
   emailHash!: string;

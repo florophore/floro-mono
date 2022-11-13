@@ -276,6 +276,11 @@ export class addOrganizationMembersOrganizationInvitesAndOrganizationAdminsTable
             isNullable: true,
           },
           {
+            name: "user_existed_already",
+            type: "boolean",
+            isNullable: false,
+          },
+          {
             name: "email",
             type: "varchar",
             isNullable: false,

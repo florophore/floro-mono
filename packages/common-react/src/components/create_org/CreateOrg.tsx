@@ -74,7 +74,9 @@ const CreateOrg = () => {
     return false;
   }, [handle, profanityFilter]);
 
-  const [checkUserName, { data, loading }] = useUsernameCheckLazyQuery();
+  const [checkUserName, { data, loading }] = useUsernameCheckLazyQuery({
+    nextFetchPolicy: "network-only"
+  });
 
   const checkUsernameDebounced = useCallback(debouncer(checkUserName, 300), [
     checkUserName,
@@ -135,7 +137,6 @@ const CreateOrg = () => {
   }, [currentUser, navigate]);
 
   useEffect(() => {
-    console.log("YO", createOrgRequest?.data)
     if (createOrgRequest?.data?.createOrganization?.__typename == "CreateOrganizationSuccess") {
       console.log(createOrgRequest?.data?.createOrganization?.organization);
       alert("change pages")
