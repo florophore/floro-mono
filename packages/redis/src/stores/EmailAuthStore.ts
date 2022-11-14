@@ -7,12 +7,14 @@ import MainConfig from "@floro/config/src/MainConfig";
 const EMAIL_AUTH_STORE_PREFIX = "email_auth_store";
 const  emailAuthStoreKey = (storeId: string) => `${EMAIL_AUTH_STORE_PREFIX}:${storeId}`;
 
-const EXPIRATION_SECONDS = 60 * 60; // 1 hour
+const EXPIRATION_SECONDS = 60 * 60 * 24 * 7; // 1 week
 
 export interface EmailSignup {
   id: string;
   email: string;
   normalizedEmail: string;
+  firstName?: string;
+  lastName?: string;
   emailHash: string;
   expiresAt: string;
   createdAt: string;
@@ -35,7 +37,7 @@ export default class EmailAuthStore {
         return crypto.randomBytes(32).toString('hex');
     }
 
-    public async createEmailAuth(email: string) {
+    public async createEmailAuth(email: string, firstName?: string, lastName?: string) {
         const createdAt = new Date();
         const expiresAt = new Date(createdAt.getTime() + EXPIRATION_SECONDS * 1000);
         const isGoogleEmail = await EmailHelper.isGoogleEmail(email);
@@ -47,6 +49,8 @@ export default class EmailAuthStore {
             id: storeId,
             email,
             normalizedEmail,
+            firstName: firstName ?? "",
+            lastName: lastName ?? "",
             createdAt: createdAt.toISOString(),
             expiresAt: expiresAt.toISOString(),
             emailHash

@@ -30,6 +30,8 @@ export interface AuthReponse {
     user?: User;
     credential?: UserAuthCredential;
     email?: string;
+    firstName?: string;
+    lastName?: string;
     error?: {
         type: string;
         message: string;
@@ -417,7 +419,7 @@ export default class AuthenticationService {
             const userAuthCredential = userAuthCredentialsContext.getEmailCredential(credentials) as UserAuthCredential;
             const credential = await userAuthCredentialsContext.updateUserAuthCredential(userAuthCredential, { isVerified: true });
             if (!userId) {
-                return { action: 'COMPLETE_SIGNUP', credential };
+                return { action: 'COMPLETE_SIGNUP', credential, firstName: authorization?.firstName ?? "", lastName: authorization?.lastName ?? "" };
             }
             const usersContext = await this.contextFactory.createContext(UsersContext);
             const user = await usersContext.getById(userId);

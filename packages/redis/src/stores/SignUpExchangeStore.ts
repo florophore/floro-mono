@@ -8,7 +8,7 @@ import MainConfig from "@floro/config/src/MainConfig";
 const SIGNUP_EXCHANGE_STORE_PREFIX = "signup_exchange_store";
 const  signupExchangeStoreKey = (storeId: string) => `${SIGNUP_EXCHANGE_STORE_PREFIX}:${storeId}`;
 
-const EXPIRATION_SECONDS = 60 * 60; // 1 hour
+const EXPIRATION_SECONDS = 60 * 60 * 24 * 7; // 1 week
 
 export interface SignUpExchange {
   id: string;

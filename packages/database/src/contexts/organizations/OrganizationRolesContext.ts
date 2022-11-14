@@ -4,7 +4,7 @@ import { OrganizationRole } from "../../entities/OrganizationRole";
 import BaseContext from "../BaseContext";
 import ContextFactory from "../ContextFactory";
 
-export default class OrganizationInvitationsContext extends BaseContext {
+export default class OrganizationRolesContext extends BaseContext {
   private organizationRoleRepo!: Repository<OrganizationRole>;
 
   public async init(

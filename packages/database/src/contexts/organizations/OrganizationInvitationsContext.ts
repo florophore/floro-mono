@@ -66,20 +66,6 @@ export default class OrganizationInvitationsContext extends BaseContext {
     return count > 0;
   }
 
-  public async inviteExistsForUserWithOrg(
-    organizationId: string,
-    userId: string
-  ): Promise<boolean> {
-    const [, count] = await this.queryRunner.manager.findAndCountBy(
-      OrganizationInvitation,
-      {
-        organizationId,
-        userId,
-      }
-    );
-    return count > 0;
-  }
-
   public async acceptInvite(
     orgMember: OrganizationMember
   ): Promise<OrganizationMember | null> {

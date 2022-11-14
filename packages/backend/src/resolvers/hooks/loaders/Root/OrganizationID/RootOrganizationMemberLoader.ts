@@ -1,30 +1,39 @@
 import { User } from "@floro/database/src/entities/User";
-import { Organization } from "@floro/graphql-schemas/src/generated/main-graphql";
 import { inject, injectable } from "inversify";
-import { LoaderResolverHook } from "../../ResolverHook";
-import RequestCache from "../../../../request/RequestCache";
+import { LoaderResolverHook, runWithHooks } from "../../../ResolverHook";
+import RequestCache from "../../../../../request/RequestCache";
 import ContextFactory from "@floro/database/src/contexts/ContextFactory";
 import OrganizationMembersContext from "@floro/database/src/contexts/organizations/OrganizationMembersContext";
+import RootOrganizationLoader from './RootOrganizationLoader';
 
 @injectable()
-export default class OrganizationMemberLoader extends LoaderResolverHook<Organization, unknown, {currentUser: User| null, cacheKey: string}> {
+export default class RootOrganizationMemberLoader extends LoaderResolverHook<unknown, { organizationId: string}, {currentUser: User| null, cacheKey: string}> {
     protected requestCache!: RequestCache;
     private contextFactory!: ContextFactory;
+    private rootOrganizationLoader!: RootOrganizationLoader;
   
     constructor(
       @inject(ContextFactory) contextFactory: ContextFactory,
-      @inject(RequestCache) requestCache: RequestCache
+      @inject(RequestCache) requestCache: RequestCache,
+      @inject(RootOrganizationLoader) rootOrganizationLoader: RootOrganizationLoader
     ) {
         super();
         this.contextFactory = contextFactory;
         this.requestCache = requestCache;
+        this.rootOrganizationLoader = rootOrganizationLoader;
     }
 
-    public async run(organization, _args, context: {currentUser: User, cacheKey: string}) {
+    public run = runWithHooks(() => [
+        this.rootOrganizationLoader,
+    ], async (_root, { organizationId }, context: {currentUser: User, cacheKey: string}) => {
         if (!context.currentUser) {
             return;
         }
-        const cachedMembership = this.requestCache.getOrganizationMembership(context.cacheKey, organization.id, context.currentUser.id)
+        const organization = this.requestCache.getOrganization(context.cacheKey, organizationId);
+        if (!organization) {
+            return;
+        }
+        const cachedMembership = this.requestCache.getOrganizationMembership(context.cacheKey, organizationId, context.currentUser.id)
         if(cachedMembership) {
             return;
         }  
@@ -34,5 +43,5 @@ export default class OrganizationMemberLoader extends LoaderResolverHook<Organiz
             return;
         }
         this.requestCache.setOrganizationMembership(context.cacheKey, organization, context.currentUser, organizationMember);
-    }
+    })
 }

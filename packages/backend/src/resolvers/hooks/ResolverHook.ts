@@ -12,7 +12,7 @@ export default abstract class ResolverHook<
     parent: TParent,
     args: TArgs,
     context: TContext
-  ): Promise<TRunReturn> | TRunReturn;
+  ): Promise<TRunReturn>
 }
 
 @injectable()
@@ -25,7 +25,7 @@ export abstract class GuardResolverHook<
   TParent,
   TArgs,
   TContext,
-  null | K | Promise<null | K>
+  K
 > {}
 
 @injectable()
@@ -33,14 +33,14 @@ export abstract class LoaderResolverHook<
   TParent,
   TArgs,
   TContext
-> extends ResolverHook<TParent, TArgs, TContext, void | Promise<void>> {
+> extends ResolverHook<TParent, TArgs, TContext, void> {
   protected abstract requestCache: RequestCache;
 }
 
 export function runWithHooks<P, A, C, R>(
-  getResolveHooks: () => ResolverHook<P, A, C, R>[],
-  callback: (p: P, a: A, c: C) => R | Promise<R>
-): (p: P, a: A, c: C) => Promise<R> | R {
+  getResolveHooks: () => ResolverHook<P, A, C, unknown>[],
+  callback: (p: P, a: A, c: C) => Promise<R>
+): (p: P, a: A, c: C) => Promise<R> {
   return async (p: P, a: A, c: C): Promise<R> => {
     const hooks = getResolveHooks();
     for (const hook of hooks) {
@@ -51,9 +51,10 @@ export function runWithHooks<P, A, C, R>(
         }
       }
       if (hook instanceof LoaderResolverHook) {
-        await (hook as LoaderResolverHook<P, A, C>).run(p, a, c);
+        await (hook as LoaderResolverHook<P, A, C>).run(p, a, c) as R;
       }
     }
-    return await callback(p, a, c);
+    const out: R = await callback(p, a, c);
+    return out;
   };
 }

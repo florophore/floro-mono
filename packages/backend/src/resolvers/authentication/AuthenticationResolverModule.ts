@@ -186,8 +186,8 @@ export default class AuthenticationResolverModule extends BaseResolverModule {
           username: authenticationResult?.credential?.email
             ?.split?.("@")?.[0]
             .substring(0, 20),
-          firstName: "",
-          lastName: "",
+          firstName: authenticationResult?.firstName ?? "",
+          lastName: authenticationResult?.lastName ?? "",
           email: authenticationResult?.credential?.email,
         };
         const signupExchange =

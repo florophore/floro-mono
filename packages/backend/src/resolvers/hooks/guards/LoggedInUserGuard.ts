@@ -4,17 +4,20 @@ import { GuardResolverHook } from "../ResolverHook";
 import { UnAuthenticatedError } from "@floro/graphql-schemas/src/generated/main-graphql";
 
 @injectable()
-export default class LoggedInUserGuard extends GuardResolverHook<unknown, unknown, {currentUser: User| null}, UnAuthenticatedError> {
-
-    public async run(_parent, _args, context: {currentUser: User}): Promise<null|UnAuthenticatedError> {
-        if (!context.currentUser) {
-            return {
-                __typename: "UnAuthenticatedError",
-                type: "UNAUTHENTICATED_ERROR",
-                message: "Unauthenticated request"
-            }
-
-        }
-        return null;
+export default class LoggedInUserGuard extends GuardResolverHook<
+  unknown,
+  unknown,
+  { currentUser: User | null, cacheKey: string },
+  unknown | UnAuthenticatedError
+> {
+  public async run(_parent, _args, context) {
+    if (!context.currentUser) {
+      return {
+        __typename: "UnAuthenticatedError",
+        type: "UNAUTHENTICATED_ERROR",
+        message: "Unauthenticated request",
+      };
     }
+    return null;
+  }
 }

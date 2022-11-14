@@ -8,7 +8,7 @@ import MainConfig from "@floro/config/src/MainConfig";
 const EMAIL_VERIFICATION_STORE_PREFIX = "email_verification_store";
 const  emailVerificationStoreKey = (storeId: string) => `${EMAIL_VERIFICATION_STORE_PREFIX}:${storeId}`;
 
-const EXPIRATION_SECONDS = 60 * 60; // 1 hour
+const EXPIRATION_SECONDS = 60 * 60 * 24 * 7; // 1 week
 
 export interface EmailVerification {
   id: string;

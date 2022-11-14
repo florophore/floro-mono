@@ -41,4 +41,29 @@ export default class UsersContext extends BaseContext {
         }
         return await this.queryRunner.manager.save(User, user);
     }
+
+    public async searchUsers(query: string, limit = 5): Promise<User[]> {
+        try {
+
+        const qb = this.userRepo.createQueryBuilder("user", this.queryRunner);
+        if (query.startsWith("@")) {
+          const usernameQuery = query.substring(1);
+          return await qb
+            .where("user.username ILIKE :query || '%'")
+            .setParameter("query", usernameQuery.trim().toLowerCase())
+            .limit(limit)
+            .orderBy("LENGTH(user.username)", "ASC")
+            .getMany();
+        }
+        return await qb
+          .where(`user.first_name || ' '  || user.last_name ILIKE :query || '%'`)
+          .setParameter("query", query.trim().toLowerCase())
+          .limit(limit)
+          .orderBy(`LENGTH(user.first_name || ' ' || user.last_name)`, "ASC")
+          .getMany();
+        } catch(e) {
+            console.log("E", e);
+            return [];
+        }
+    }
 }

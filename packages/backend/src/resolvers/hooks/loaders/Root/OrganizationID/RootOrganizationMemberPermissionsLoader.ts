@@ -1,41 +1,41 @@
+
 import { User } from "@floro/database/src/entities/User";
-import { Organization } from "@floro/graphql-schemas/src/generated/main-graphql";
 import { inject, injectable } from "inversify";
-import RequestCache from "../../../../request/RequestCache";
-import { LoaderResolverHook, runWithHooks } from "../../ResolverHook";
-import OrganizationMemberRolesLoader from "./OrganizationMemberRolesLoader";
-import OrganizationPermissionService from "../../../../services/organizations/OrganizationPermissionService";
+import RequestCache from "../../../../../request/RequestCache";
+import { LoaderResolverHook, runWithHooks } from "../../../ResolverHook";
+import RootOrganizationMemberRolesLoader from "./RootOrganizationMemberRolesLoader";
+import OrganizationPermissionService from "../../../../../services/organizations/OrganizationPermissionService";
 
 @injectable()
 export default class OrganizationMemberPermissionsLoader extends LoaderResolverHook<
-  Organization,
   unknown,
+  { organizationId: string},
   { currentUser: User | null; cacheKey: string }
 > {
   protected requestCache!: RequestCache;
   private organizationPermissionsService!: OrganizationPermissionService;
-  private organizationMemberRolesLoader!: OrganizationMemberRolesLoader;
+  private rootOrganizationMemberRolesLoader!: RootOrganizationMemberRolesLoader;
 
   constructor(
     @inject(RequestCache) requestCache: RequestCache,
     @inject(OrganizationPermissionService)
     organizationPermissionsService: OrganizationPermissionService,
-    @inject(OrganizationMemberRolesLoader)
-    organizationMemberRolesLoader: OrganizationMemberRolesLoader
+    @inject(RootOrganizationMemberRolesLoader)
+    rootOrganizationMemberRolesLoader: RootOrganizationMemberRolesLoader
   ) {
     super();
     this.requestCache = requestCache;
     this.organizationPermissionsService = organizationPermissionsService;
-    this.organizationMemberRolesLoader = organizationMemberRolesLoader;
+    this.rootOrganizationMemberRolesLoader = rootOrganizationMemberRolesLoader;
   }
 
   public run = runWithHooks(
     () => [
-        this.organizationMemberRolesLoader
+        this.rootOrganizationMemberRolesLoader
     ],
     async (
-      organization: Organization,
-      _args,
+      _root,
+      { organizationId },
       context: { currentUser: User; cacheKey: string }
     ) => {
       if (!context.currentUser) {
@@ -43,7 +43,7 @@ export default class OrganizationMemberPermissionsLoader extends LoaderResolverH
       }
       const membership = this.requestCache.getOrganizationMembership(
         context.cacheKey,
-        organization.id as string,
+        organizationId,
         context.currentUser.id
       );
       // allows only self to be viewed

@@ -25,7 +25,7 @@ export default class MembershipPermissionsLoader extends LoaderResolverHook<Orga
 
     public run = runWithHooks(() => [
         this.membershipRolesLoader
-    ], (membership, _, { cacheKey }) => {
+    ], async (membership, _, { cacheKey }) => {
         if (membership.membershipState == "inactive") {
             return;
         }

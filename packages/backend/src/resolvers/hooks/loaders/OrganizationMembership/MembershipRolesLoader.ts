@@ -21,7 +21,7 @@ export default class MembershipRolesLoader extends LoaderResolverHook<Organizati
         this.requestCache = requestCache;
     }
 
-    public async run(membership, _, { cacheKey }): Promise<any|void> {
+    public async run(membership, _, { cacheKey }) {
         if (!membership?.id) {
             return;
         }

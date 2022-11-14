@@ -19,6 +19,12 @@ import MembershipPermissionsLoader from './resolvers/hooks/loaders/OrganizationM
 import MembershipRolesLoader from './resolvers/hooks/loaders/OrganizationMembership/MembershipRolesLoader';
 import OrganizationMemberPermissionsLoader from './resolvers/hooks/loaders/Organization/OrganizationMemberPermissionsLoader';
 import OrganizationRolesLoader from './resolvers/hooks/loaders/Organization/OrganizationRolesLoader';
+import OrganizationInvitationResolverModule from './resolvers/organization/OrganizationInvitationResolverModule';
+import RootOrganizationLoader from './resolvers/hooks/loaders/Root/OrganizationID/RootOrganizationLoader';
+import RootOrganizationMemberLoader from './resolvers/hooks/loaders/Root/OrganizationID/RootOrganizationMemberLoader';
+import RootOrganizationMemberRolesLoader from './resolvers/hooks/loaders/Root/OrganizationID/RootOrganizationMemberRolesLoader';
+import RootOrganizationMemberPermissionsLoader from './resolvers/hooks/loaders/Root/OrganizationID/RootOrganizationMemberPermissionsLoader';
+import OrganizationInvitationService from './services/organizations/OrganizationInvitationService';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -33,13 +39,19 @@ export default new ContainerModule((bind): void => {
     bind(LoggedInUserGuard).toSelf()
 
     // LOADERS
-    //ORG
+    //ROOT LOADERS
+    bind(RootOrganizationLoader).toSelf();
+    bind(RootOrganizationMemberLoader).toSelf();
+    bind(RootOrganizationMemberRolesLoader).toSelf();
+    bind(RootOrganizationMemberPermissionsLoader).toSelf();
+
+    //ORGANIZATION LOADERS
     bind(OrganizationMemberLoader).toSelf();
     bind(OrganizationMemberRolesLoader).toSelf();
     bind(OrganizationMemberPermissionsLoader).toSelf();
     bind(OrganizationRolesLoader).toSelf();
 
-    //MEMBERSHIP
+    //MEMBERSHIP LOADERS
     bind(MembershipPermissionsLoader).toSelf();
     bind(MembershipRolesLoader).toSelf();
 
@@ -48,6 +60,7 @@ export default new ContainerModule((bind): void => {
     bind(UsersService).toSelf();
     bind(OrganizationService).toSelf();
     bind(OrganizationPermissionService).toSelf();
+    bind(OrganizationInvitationService).toSelf();
 
     // Controllers
     bind<AuthenticationController>("Controllers").to(AuthenticationController);
@@ -57,6 +70,7 @@ export default new ContainerModule((bind): void => {
     bind<AuthenticationResolverModule>("ResolverModule").to(AuthenticationResolverModule);
     bind<OrganizationResolverModule>("ResolverModule").to(OrganizationResolverModule);
     bind<OrganizationMemberResolverModule>("ResolverModule").to(OrganizationMemberResolverModule);
+    bind<OrganizationInvitationResolverModule>("ResolverModule").to(OrganizationInvitationResolverModule);
 
     // ADMIN MODULES OVERRIDE WITH AdminResolverModule
     bind<AdminUsersResolverModule>("AdminResolverModule").to(AdminUsersResolverModule);

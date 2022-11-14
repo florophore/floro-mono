@@ -145,6 +145,18 @@ export default class UserAuthCredentialsContext extends BaseContext {
     return result;
   }
 
+  public async getCredentialsByEmailHash(emailHash: string): Promise<UserAuthCredential[]> {
+    return await this.queryRunner.manager.find(UserAuthCredential, {
+      where: { emailHash },
+    });
+  }
+
+  public async getCredentialsByUserId(userId: string): Promise<UserAuthCredential[]> {
+    return await this.queryRunner.manager.find(UserAuthCredential, {
+      where: { userId },
+    });
+  }
+
   public async updateUserAuthCredential(
     userAuthCredential: UserAuthCredential,
     userAuthCredentialArgs: DeepPartial<UserAuthCredential>

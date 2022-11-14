@@ -1,78 +1,104 @@
 type Organization {
-    id: ID
-    name: String
-    legalName: String
-    handle: String
-    contactEmail: String 
-    membership: OrganizationMember
-    roles: [OrganizationRole]
-    members: [OrganizationMember]
-    invitations: [OrganizationInvitation]
+  id: ID
+  name: String
+  legalName: String
+  handle: String
+  contactEmail: String
+  membership: OrganizationMember
+  roles: [OrganizationRole]
+  members: [OrganizationMember]
+  invitations: [OrganizationInvitation]
 }
 
 type OrganizationMember {
-    id: ID
-    internalHandle: String
-    user: User
-    organization: Organization
-    membershipState: String
-    permissions: OrganizationPermissions
-    roles: [OrganizationRole]
+  id: ID
+  internalHandle: String
+  user: User
+  organization: Organization
+  membershipState: String
+  permissions: OrganizationPermissions
+  roles: [OrganizationRole]
 }
 
 type OrganizationInvitation {
-    id: ID
-    firstName: String
-    lastName: String
-    email: String
-    invitationState: String
+  id: ID
+  firstName: String
+  lastName: String
+  email: String
+  invitationState: String
 
-    user: User
-    invitedByUser: User
-    invitedByOrganizationMember: User
-    organization: Organization
-    roles: [OrganizationRole]
+  user: User
+  invitedByUser: User
+  invitedByOrganizationMember: User
+  organization: Organization
+  roles: [OrganizationRole]
 }
 
 type OrganizationRole {
-    id: ID
-    name: String
-    isMutable: Boolean
-    isDefault: Boolean
-    canCreateRepos: Boolean
-    canModifyOrganizationSettings: Boolean
-    canModifyOrganizationDeveloperSettings: Boolean
-    canModifyOrganizationMembers: Boolean
-    canInviteMembers: Boolean
-    canModifyInvites: Boolean
-    canModifyOwnInternalHandle: Boolean
-    canModifyBilling: Boolean
-    canModifyOrganizationRoles: Boolean
+  id: ID
+  name: String
+  isMutable: Boolean
+  isDefault: Boolean
+  canCreateRepos: Boolean
+  canModifyOrganizationSettings: Boolean
+  canModifyOrganizationDeveloperSettings: Boolean
+  canModifyOrganizationMembers: Boolean
+  canInviteMembers: Boolean
+  canModifyInvites: Boolean
+  canModifyOwnInternalHandle: Boolean
+  canModifyBilling: Boolean
+  canModifyOrganizationRoles: Boolean
 
-    organization: Organization
-    createdByUser: User
-    createdByOrganizationMember: OrganizationMember
+  organization: Organization
+  createdByUser: User
+  createdByOrganizationMember: OrganizationMember
 }
 
 type OrganizationPermissions {
-    canCreateRepos: Boolean
-    canModifyOrganizationSettings: Boolean
-    canModifyOrganizationDeveloperSettings: Boolean
-    canModifyOrganizationMembers: Boolean
-    canInviteMembers: Boolean
-    canModifyInvites: Boolean
-    canModifyOwnInternalHandle: Boolean
-    canModifyBilling: Boolean
-    canModifyOrganizationRoles: Boolean
+  canCreateRepos: Boolean
+  canModifyOrganizationSettings: Boolean
+  canModifyOrganizationDeveloperSettings: Boolean
+  canModifyOrganizationMembers: Boolean
+  canInviteMembers: Boolean
+  canModifyInvites: Boolean
+  canModifyOwnInternalHandle: Boolean
+  canModifyBilling: Boolean
+  canModifyOrganizationRoles: Boolean
 }
 
 type CreateOrganizationSuccess {
-    organization: Organization
+  organization: Organization
 }
 
 type CreateOrganizationError {
-    message: String
-    type: String
+  message: String
+  type: String
 }
 
-union CreateOrganizationResponse = CreateOrganizationError | CreateOrganizationSuccess | UnAuthenticatedError
+union CreateOrganizationResponse =
+    CreateOrganizationError
+  | CreateOrganizationSuccess
+  | UnAuthenticatedError
+
+type CreateOrganizationInvitationSuccess {
+  organizationInvitation: OrganizationInvitation
+}
+
+type CreateOrganizationInvitationError {
+  message: String
+  type: String
+}
+
+type CreateOrganizationInvitationSuccess {
+  organizationInvitation: OrganizationInvitation
+}
+
+type CreateOrganizationInvitationError {
+  message: String
+  type: String
+}
+
+union CreateInvitationOrganizationResponse =
+    CreateOrganizationInvitationError
+  | CreateOrganizationInvitationSuccess
+  | UnAuthenticatedError

@@ -50,6 +50,13 @@ export default class UsersResolverModule extends BaseResolverModule {
           exists,
           username: username
         };
+    },
+    searchUsers: async (_, { query }) => {
+      if (((query ?? "")?.length < 2 && query?.[0] != "@") || (query?.[0] == "@" && (query ?? "")?.length < 3)) {
+        return [];
+      }
+      const usersContext = await this.contextFactory.createContext(UsersContext);
+      return await usersContext.searchUsers(query ?? "");
     }
   };
 

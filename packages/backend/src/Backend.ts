@@ -24,7 +24,6 @@ import { Express } from "express";
 import SessionStore from "@floro/redis/src/sessions/SessionStore";
 import UsersContext from "@floro/database/src/contexts/users/UsersContext";
 import RequestCache from "./request/RequestCache";
-import sizeof from 'object-sizeof';
 
 const isProduction = process.env.NODE_ENV === 'production';
 

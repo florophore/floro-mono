@@ -37,7 +37,7 @@ export default class OrganizationRolesLoader extends LoaderResolverHook<
       organization: Organization,
       _args,
       context: { currentUser: User; cacheKey: string }
-    ): Promise<void | any> => {
+    ) => {
       if (!context.currentUser) {
         return;
       }
@@ -50,21 +50,21 @@ export default class OrganizationRolesLoader extends LoaderResolverHook<
         return;
       }
       if (membership.membershipState == "inactive") {
-        return null;
+        return;
       }
       const permissions = this.requestCache.getMembershipPermissions(
         context.cacheKey,
         membership.id
       );
       if (!permissions.canModifyOrganizationRoles) {
-        return null;
+        return;
       }
       const cachedRoles = this.requestCache.getOrganizationRoles(
         context.cacheKey,
         organization.id as string
       );
       if (cachedRoles) {
-        return cachedRoles;
+        return;
       }
       const organizationRolesContext = await this.contextFactory.createContext(
         OrganizationRolesContext
