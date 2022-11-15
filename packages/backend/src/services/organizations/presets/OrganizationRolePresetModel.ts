@@ -15,6 +15,7 @@ export interface OrganizationRoleModel {
   canModifyOwnInternalHandle: boolean;
   canModifyBilling: boolean;
   canModifyOrganizationRoles: boolean;
+  canAssignRoles: boolean;
 
   organizationId: string;
   createdByUserId: string;
@@ -34,6 +35,7 @@ export default class OrganizationRolePresetModel implements OrganizationRoleMode
   public canModifyOwnInternalHandle!: boolean;
   public canModifyBilling!: boolean;
   public canModifyOrganizationRoles!: boolean;
+  public canAssignRoles!: boolean;
 
   public organizationId!: string;
   public createdByUserId!: string;
@@ -52,6 +54,7 @@ export default class OrganizationRolePresetModel implements OrganizationRoleMode
     canModifyOwnInternalHandle: boolean,
     canModifyBilling: boolean,
     canModifyOrganizationRoles: boolean,
+    canAssignRoles: boolean,
     organizationId: string,
     createdByUserId: string,
     createdByOrganizationMemberId: string,
@@ -69,6 +72,9 @@ export default class OrganizationRolePresetModel implements OrganizationRoleMode
     this.canModifyOwnInternalHandle = canModifyOwnInternalHandle;
     this.canModifyBilling = canModifyBilling;
     this.canModifyOrganizationRoles = canModifyOrganizationRoles;
+    this.canAssignRoles = canAssignRoles;
+
+
     this.organizationId = organizationId;
     this.createdByUserId = createdByUserId;
     this.createdByOrganizationMemberId = createdByOrganizationMemberId;
@@ -89,6 +95,7 @@ export default class OrganizationRolePresetModel implements OrganizationRoleMode
       canModifyOwnInternalHandle: this.canModifyOwnInternalHandle,
       canModifyBilling: this.canModifyBilling,
       canModifyOrganizationRoles: this.canModifyOrganizationRoles,
+      canAssignRoles: this.canAssignRoles,
       organizationId: this.organizationId,
       createdByUserId: this.createdByUserId,
       createdByOrganizationMemberId: this.createdByOrganizationMemberId,
@@ -113,6 +120,7 @@ export default class OrganizationRolePresetModel implements OrganizationRoleMode
       true,    //  canModifyOwnInternalHandle
       true,    //  canModifyBilling
       true,    //  canModifyOrganizationRoles
+      true,    //  canAssignRoles
       organization.id,
       createdByUser.id,
       createdByOrganizationMember.id,
@@ -137,6 +145,7 @@ export default class OrganizationRolePresetModel implements OrganizationRoleMode
       true,          //  canModifyOwnInternalHandle
       false,         //  canModifyBilling
       false,         //  canModifyOrganizationRoles
+      false,         //  canAssignRoles
       organization.id,
       createdByUser.id,
       createdByOrganizationMember.id,
@@ -161,6 +170,7 @@ export default class OrganizationRolePresetModel implements OrganizationRoleMode
       true,            //  canModifyOwnInternalHandle
       true,            //  canModifyBilling
       false,           //  canModifyOrganizationRoles
+      false,           //  canAssignRoles
       organization.id,
       createdByUser.id,
       createdByOrganizationMember.id,
@@ -185,6 +195,7 @@ export default class OrganizationRolePresetModel implements OrganizationRoleMode
       true,              //  canModifyOwnInternalHandle
       false,             //  canModifyBilling
       true,              //  canModifyOrganizationRoles
+      true,              //  canAssignRoles
       organization.id,
       createdByUser.id,
       createdByOrganizationMember.id,

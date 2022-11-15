@@ -83,7 +83,6 @@ export default class AuthenticationService {
     public async authWithGithubOAuth(code: string, loginClient: 'web'|'desktop'): Promise<AuthReponse> {
         const queryRunner = await this.databaseConnection.makeQueryRunner();
         try {
-            await queryRunner.startTransaction();
             const githubAccessToken = await this.githubLoginClient.getAccessToken(code); 
             if (!(githubAccessToken instanceof GithubAccessToken)) {
                 return { action: 'LOG_ERROR', error: { type: 'GITHUB_OAUTH_ERROR', message: 'Bad auth code', meta: { code }} };
@@ -104,6 +103,7 @@ export default class AuthenticationService {
                 return { action: 'LOG_ERROR', error: { type: 'GITHUB_OAUTH_ERROR', message: 'No primary email', meta: { githubUserEmails }} };
             }
 
+            await queryRunner.startTransaction();
             const usersContext = await this.contextFactory.createContext(UsersContext, queryRunner);
             const userAuthCredentialsContext = await this.contextFactory.createContext(UserAuthCredentialsContext, queryRunner);
             const credentials = await userAuthCredentialsContext.getCredentialsByEmail(primaryEmail.email);
@@ -205,7 +205,6 @@ export default class AuthenticationService {
     public async authWithGoogleOAuth(code: string): Promise<AuthReponse> {
         const queryRunner = await this.databaseConnection.makeQueryRunner();
         try {
-            await queryRunner.startTransaction();
             const googleAccessToken = await this.googleLoginClient.getAccessToken(code); 
             if (!(googleAccessToken instanceof GoogleAccessToken)) {
                 return { action: 'LOG_ERROR', error: { type: 'GOOGLE_OAUTH_ERROR', message: 'Bad auth code', meta: { code }} };
@@ -217,6 +216,7 @@ export default class AuthenticationService {
             if (!googleUser?.email) {
                 return { action: 'LOG_ERROR', error: { type: 'GOOGLE_OAUTH_ERROR', message: 'No google account email', meta: { googleUser }} };
             }
+            await queryRunner.startTransaction();
             const usersContext = await this.contextFactory.createContext(UsersContext, queryRunner);
             const userAuthCredentialsContext = await this.contextFactory.createContext(UserAuthCredentialsContext, queryRunner);
             const credentials = await userAuthCredentialsContext.getCredentialsByEmail(googleUser.email);

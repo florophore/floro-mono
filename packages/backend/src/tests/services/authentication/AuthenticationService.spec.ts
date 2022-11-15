@@ -77,9 +77,9 @@ describe("AuthenticationService", () => {
   let emailQueue: EmailQueue;
 
   before(async () => {
-      mailerClient = container.get(MailerClient);
-      emailQueue = container.get(EmailQueue);
-      emailQueue.startMailWorker();
+    mailerClient = container.get(MailerClient);
+    emailQueue = container.get(EmailQueue);
+    emailQueue.startMailWorker();
   });
 
   beforeEach(async () => {
@@ -185,7 +185,10 @@ describe("AuthenticationService", () => {
             .filteringRequestBody(/code=[^&]*/g, "code=bad")
             .post("/login/oauth/access_token")
             .reply(200, ERROR_STRING);
-          const result = await authenticationService.authWithGithubOAuth("bad", "web");
+          const result = await authenticationService.authWithGithubOAuth(
+            "bad",
+            "web"
+          );
           expect(result.action).to.equal("LOG_ERROR");
           expect(result?.error?.type).to.equal("GITHUB_OAUTH_ERROR");
           expect(result?.error?.message).to.equal("Bad auth code");
@@ -246,7 +249,7 @@ describe("AuthenticationService", () => {
         });
       });
       describe("github account email is not verified", () => {
-        test('returns a send signup verification if first time signup', (done) => {
+        test("returns a send signup verification if first time signup", (done) => {
           const SUCCESS_STRING =
             "access_token=good_token&scope=user&token_type=bearer";
           const scope = nock("https://github.com")
@@ -260,35 +263,36 @@ describe("AuthenticationService", () => {
           const scopeEmails = nock("https://api.github.com")
             .matchHeader("Authorization", "token good_token")
             .get("/user/emails")
-            .reply(200, [{
-              ...GithubEmailsSuccessMock[0],
-              verified: false
-            }]);
+            .reply(200, [
+              {
+                ...GithubEmailsSuccessMock[0],
+                verified: false,
+              },
+            ]);
           const transporter = mailerClient.transporter as MockTransport;
 
           const callback = async (event) => {
             const mailData = transporter.pop();
             expect(mailData.to).to.equal("jamesrainersunderland@gmail.com");
             expect(event.data.props.action).to.equal("signup");
-            emailQueue.worker.off('completed', callback);
+            emailQueue.worker.off("completed", callback);
             done();
           };
-          emailQueue.worker.on('completed', callback);
+          emailQueue.worker.on("completed", callback);
 
-          authenticationService.authWithGithubOAuth(
-            "good",
-            "web"
-          ).then(result => {
-            expect(result.action).to.equal("VERIFICATION_REQUIRED");
-            expect(result?.email).to.equal("jamesrainersunderland@gmail.com");
+          authenticationService
+            .authWithGithubOAuth("good", "web")
+            .then((result) => {
+              expect(result.action).to.equal("VERIFICATION_REQUIRED");
+              expect(result?.email).to.equal("jamesrainersunderland@gmail.com");
 
-            scope.done();
-            scopeUser.done();
-            scopeEmails.done();
-          });
+              scope.done();
+              scopeUser.done();
+              scopeEmails.done();
+            });
         });
 
-        test('returns a send login verification if user already exists', (done) => {
+        test("returns a send login verification if user already exists", (done) => {
           loadFixtures<[User, UserAuthCredential]>([
             "User:user_0",
             "UserAuthCredential:email_pass_for_test@gmail",
@@ -318,22 +322,24 @@ describe("AuthenticationService", () => {
               const mailData = transporter.pop();
               expect(mailData.to).to.equal("test@gmail.com");
               expect(event.data.props.action).to.equal("login");
-              emailQueue.worker.off('completed', callback);
+              emailQueue.worker.off("completed", callback);
               done();
             };
 
             emailQueue.worker.on("completed", callback);
 
-            authenticationService.authWithGithubOAuth("good", "web").then((result) => {
-              expect(result.action).to.equal("VERIFICATION_REQUIRED");
-              expect(result?.email).to.equal("test@gmail.com");
+            authenticationService
+              .authWithGithubOAuth("good", "web")
+              .then((result) => {
+                expect(result.action).to.equal("VERIFICATION_REQUIRED");
+                expect(result?.email).to.equal("test@gmail.com");
 
-              scope.done();
-              scopeUser.done();
-              scopeEmails.done();
-            });
+                scope.done();
+                scopeUser.done();
+                scopeEmails.done();
+              });
           });
-          })
+        });
       });
 
       describe("when no credentials exist", () => {
@@ -390,7 +396,10 @@ describe("AuthenticationService", () => {
           .matchHeader("Authorization", "token good_token")
           .get("/user/emails")
           .reply(200, GithubEmailsTestAtGmailSuccessMock);
-        const result = await authenticationService.authWithGithubOAuth("good", "web");
+        const result = await authenticationService.authWithGithubOAuth(
+          "good",
+          "web"
+        );
         expect(result.action).to.equal("LOGIN");
         scope.done();
         scopeUser.done();

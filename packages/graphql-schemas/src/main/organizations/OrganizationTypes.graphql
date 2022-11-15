@@ -48,6 +48,7 @@ type OrganizationRole {
   canModifyOwnInternalHandle: Boolean
   canModifyBilling: Boolean
   canModifyOrganizationRoles: Boolean
+  canAssignRoles: Boolean
 
   organization: Organization
   createdByUser: User
@@ -64,6 +65,7 @@ type OrganizationPermissions {
   canModifyOwnInternalHandle: Boolean
   canModifyBilling: Boolean
   canModifyOrganizationRoles: Boolean
+  canAssignRoles: Boolean
 }
 
 type CreateOrganizationSuccess {

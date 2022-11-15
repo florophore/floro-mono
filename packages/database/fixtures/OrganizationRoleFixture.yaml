@@ -1,7 +1,7 @@
 entity: OrganizationRole
 items:
   org_0_admin_role:
-    name: admin
+    name: Admin
     isMutable: false
     isDefault: false
     canCreateRepos: true
@@ -13,11 +13,12 @@ items:
     canModifyOwnInternalHandle: true
     canModifyBilling: true
     canModifyOrganizationRoles: true
+    canAssignRoles: true
     organization: '@org_0'
     createdByUser: '@user_0'
     createdByOrganizationMember: '@org_member_0'
   org_0_contributor_role:
-    name: contributor
+    name: Contributor
     isMutable: true
     isDefault: true
     canCreateRepos: true
@@ -29,6 +30,41 @@ items:
     canModifyOwnInternalHandle: true
     canModifyBilling: false
     canModifyOrganizationRoles: false
+    canAssignRoles: false
+    organization: '@org_0'
+    createdByUser: '@user_0'
+    createdByOrganizationMember: '@org_member_0'
+  org_0_billing_admin_role:
+    name: "Billing Admin"
+    isMutable: true
+    isDefault: false
+    canCreateRepos: false
+    canModifyOrganizationSettings: false
+    canModifyOrganizationDeveloperSettings: false
+    canModifyOrganizationMembers: false
+    canInviteMembers: false
+    canModifyInvites: false
+    canModifyOwnInternalHandle: true
+    canModifyBilling: true
+    canModifyOrganizationRoles: false
+    canAssignRoles: false
+    organization: '@org_0'
+    createdByUser: '@user_0'
+    createdByOrganizationMember: '@org_member_0'
+  org_0_technical_admin_role:
+    name: "Technical Admin"
+    isMutable: true
+    isDefault: false
+    canCreateRepos: true
+    canModifyOrganizationSettings: true
+    canModifyOrganizationDeveloperSettings: true
+    canModifyOrganizationMembers: false
+    canInviteMembers: true
+    canModifyInvites: true
+    canModifyOwnInternalHandle: true
+    canModifyBilling: false
+    canModifyOrganizationRoles: true
+    canAssignRoles: true
     organization: '@org_0'
     createdByUser: '@user_0'
     createdByOrganizationMember: '@org_member_0'

@@ -77,6 +77,11 @@ export class OrganizationRole extends BinaryPKBaseEntity {
   @IsBoolean()
   canModifyOrganizationRoles?: boolean;
 
+  @Column("boolean", { default: false })
+  @IsDefined()
+  @IsBoolean()
+  canAssignRoles?: boolean;
+
   @Column("uuid")
   createdByOrganizationMemberId!: string;
 

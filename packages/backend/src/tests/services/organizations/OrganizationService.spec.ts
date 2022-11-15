@@ -54,7 +54,7 @@ describe("OrganizationService", () => {
     });
 
     test("fails with INVALID_PARAMS error when agreedToCustomerSeriviceAgreement is false", async () => {
-      const [currentUser] = await loadFixtures<[User]>(['User:user_0']); 
+      [currentUser] = await loadFixtures<[User]>(['User:user_0']); 
       const result = await organizationService.createOrg(
         "floro",
         "Floro Inc.",
@@ -67,6 +67,7 @@ describe("OrganizationService", () => {
     });
 
     test("fails with INVALID_PARAMS error when profanity in a public name", async () => {
+      [currentUser] = await loadFixtures<[User]>(['User:user_0']); 
       const result = await organizationService.createOrg(
         "floro",
         "Fuck Inc.",
@@ -79,6 +80,7 @@ describe("OrganizationService", () => {
     });
 
     test("fails with INVALID_PARAMS error when name does not conform to pattern", async () => {
+      [currentUser] = await loadFixtures<[User]>(['User:user_0']); 
       const result = await organizationService.createOrg(
         "f$oro",
         "Floro Inc.",

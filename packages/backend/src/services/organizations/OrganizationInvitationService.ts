@@ -37,7 +37,7 @@ export interface CreateOrganizationInvitationReponse {
   error?: {
     type: string;
     message: string;
-    meta?: any;
+    meta?: unknown;
   };
 }
 
@@ -111,7 +111,7 @@ export default class OrganizationInvitationService {
       }
       isGoogleEmail = await EmailHelper.isGoogleEmail(submittedEmail);
     }
-    if (!userId || !submittedEmail) {
+    if (!userId && !submittedEmail) {
       return {
         action: "INVALID_PARAMS_ERROR",
         error: {
@@ -171,7 +171,7 @@ export default class OrganizationInvitationService {
         emailHash = credentials[0].emailHash;
         normalizedEmail = credentials[0].normalizedEmail;
       } else {
-        email = submittedEmail;
+        email = submittedEmail as string;
         emailHash = EmailHelper.getEmailHash(email, isGoogleEmail);
         normalizedEmail = EmailHelper.getUniqueEmail(email, isGoogleEmail);
         const credentials =
@@ -236,7 +236,7 @@ export default class OrganizationInvitationService {
         }
 
         if (
-          NAME_REGEX.test(submittedFirstName ?? "") ||
+          !NAME_REGEX.test(submittedFirstName ?? "") ||
           profanityFilter.isProfane(submittedFirstName)
         ) {
           await queryRunner.rollbackTransaction();
@@ -244,14 +244,14 @@ export default class OrganizationInvitationService {
             action: "INVALID_PARAMS_ERROR",
             error: {
               type: "INVALID_PARAMS_ERROR",
-              message: "Missing first name",
+              message: "Invalid first name",
             },
           };
         }
 
         if (
           submittedLastName &&
-          (NAME_REGEX.test(submittedLastName ?? "") ||
+          (!NAME_REGEX.test(submittedLastName ?? "") ||
             profanityFilter.isProfane(submittedLastName))
         ) {
           await queryRunner.rollbackTransaction();
@@ -259,7 +259,7 @@ export default class OrganizationInvitationService {
             action: "INVALID_PARAMS_ERROR",
             error: {
               type: "INVALID_PARAMS_ERROR",
-              message: "Missing first name",
+              message: "Invalid last name",
             },
           };
         }
@@ -282,7 +282,7 @@ export default class OrganizationInvitationService {
         organization
       );
       const assignedRoles: OrganizationRole[] = [];
-      if (inivitingMemberPermissions.canModifyOrganizationRoles) {
+      if (inivitingMemberPermissions.canAssignRoles) {
         organizationRoles.forEach((role) => {
           if (roleIds.includes(role.id)) {
             assignedRoles.push(role);

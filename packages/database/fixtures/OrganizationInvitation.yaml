@@ -7,6 +7,19 @@ items:
     normalizedEmail: test@gmail.com
     emailHash: Gu242dxHUeIpozXjcduAWA==
     invitationState: sent
+    userExistedAlready: true
+    organization: '@org_0'
+    invitedByUser: '@user_0'
+    invitedByOrganizationMember: '@org_member_0'
+  org_0_invitation_sent_1:
+    user: '@user_1'
+    firstName: foo
+    lastName: bar
+    email: test@gmail.com
+    normalizedEmail: test@gmail.com
+    emailHash: Gu242dxHUeIpozXjcduAWA==
+    userExistedAlready: true
+    invitationState: sent
     organization: '@org_0'
     invitedByUser: '@user_0'
     invitedByOrganizationMember: '@org_member_0'

@@ -5,3 +5,9 @@ items:
     membershipState: active
     organization: '@org_0'
     user: '@user_0'
+  org_member_1:
+    membershipState: active
+    user: '@user_1'
+    organization: '@org_0'
+    invitedByUser: '@user_0'
+    invitedByOrganizationMember: '@org_member_0'

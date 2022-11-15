@@ -22,6 +22,7 @@ export interface OrganizationPermissions {
   canModifyOwnInternalHandle: boolean;
   canModifyBilling: boolean;
   canModifyOrganizationRoles: boolean;
+  canAssignRoles: boolean;
 }
 
 export const PERMISSION_KEYS: (keyof OrganizationPermissions)[] = [
@@ -33,7 +34,8 @@ export const PERMISSION_KEYS: (keyof OrganizationPermissions)[] = [
     "canModifyInvites",
     "canModifyOwnInternalHandle",
     "canModifyBilling",
-    "canModifyOrganizationRoles"
+    "canModifyOrganizationRoles",
+    "canAssignRoles"
 ];
 
 @injectable()
@@ -68,6 +70,7 @@ export default class OrganizationPermissionService {
       canModifyOwnInternalHandle: false,
       canModifyBilling: false,
       canModifyOrganizationRoles: false,
+      canAssignRoles: false
     };
     return roles.reduce((permissions, role) => {
         return PERMISSION_KEYS.reduce((perms, key) => {

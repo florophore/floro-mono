@@ -18,7 +18,7 @@ import UsersContext from "@floro/database/src/contexts/users/UsersContext";
 import HandleChecker from "../utils/HandleChecker";
 import { Organization } from "@floro/database/src/entities/Organization";
 import OrganizationRolePresetModel from "./presets/OrganizationRolePresetModel";
-import EmailValidator from 'email-validator';
+import EmailValidator from "email-validator";
 
 const profanityFilter = new ProfanityFilter();
 
@@ -62,7 +62,6 @@ export default class OrganizationService {
   ) {
     const queryRunner = await this.databaseConnection.makeQueryRunner();
     try {
-      await queryRunner.startTransaction();
       const organizationsContext = await this.contextFactory.createContext(
         OrganizationsContext,
         queryRunner
@@ -71,6 +70,21 @@ export default class OrganizationService {
         UsersContext,
         queryRunner
       );
+      const organizationRolesContext = await this.contextFactory.createContext(
+        OrganizationRolesContext,
+        queryRunner
+      );
+      const organizationMembersContext =
+        await this.contextFactory.createContext(
+          OrganizationMembersContext,
+          queryRunner
+        );
+      const organizationMemberRolesContext =
+        await this.contextFactory.createContext(
+          OrganizationMemberRolesContext,
+          queryRunner
+        );
+      await queryRunner.startTransaction();
       const isValid =
         agreedToCustomerServiceAgreement &&
         USERNAME_REGEX.test(handle) &&
@@ -91,13 +105,13 @@ export default class OrganizationService {
           },
         };
       }
+
       const handleChecker = new HandleChecker(
         usersContext,
         organizationsContext
       );
       const handleIsTaken = await handleChecker.usernameOrHandleTaken(handle);
       if (handleIsTaken) {
-        await queryRunner.rollbackTransaction();
         return {
           action: "HANDLE_TAKEN",
           error: {
@@ -126,21 +140,14 @@ export default class OrganizationService {
         agreedToCustomerServiceAgreement,
         createdByUserId: currentUser.id,
       });
-      const organizationMembersContext =
-        await this.contextFactory.createContext(
-          OrganizationMembersContext,
-          queryRunner
-        );
+
       const organizationMember =
         await organizationMembersContext.createOrganizationMember({
           organizationId: organization.id,
           membershipState: "active",
           userId: currentUser.id,
         });
-      const organizationRolesContext = await this.contextFactory.createContext(
-        OrganizationRolesContext,
-        queryRunner
-      );
+
       // CREATE PRESETS
       const adminRoleArgs = OrganizationRolePresetModel.createAdminPreset(
         organization,
@@ -177,17 +184,14 @@ export default class OrganizationService {
       await organizationRolesContext.createOrganizationRole(
         billingAdminRoleArgs
       );
-      const organizationMemberRolesContext =
-        await this.contextFactory.createContext(
-          OrganizationMemberRolesContext,
-          queryRunner
-        );
+
       // ASSOCIATE ADMIN ROLE WITH CREATING MEMBER/CURRENT_USER
       await organizationMemberRolesContext.createOrganizationRole({
         organizationId: organization.id,
         organizationMemberId: organizationMember.id,
         organizationRoleId: adminRole.id,
       });
+
       await queryRunner.commitTransaction();
       return {
         action: "ORGANIZATION_CREATED",
@@ -206,12 +210,16 @@ export default class OrganizationService {
         },
       };
     } finally {
-      await queryRunner.release();
+      if (!queryRunner.isReleased) {
+        await queryRunner.release();
+      }
     }
   }
 
-  public async fetchOrganization(id: string): Promise<Organization|null> {
-      const organizationsContext = await this.contextFactory.createContext(OrganizationsContext);
-      return await organizationsContext.getById(id);
+  public async fetchOrganization(id: string): Promise<Organization | null> {
+    const organizationsContext = await this.contextFactory.createContext(
+      OrganizationsContext
+    );
+    return await organizationsContext.getById(id);
   }
 }
