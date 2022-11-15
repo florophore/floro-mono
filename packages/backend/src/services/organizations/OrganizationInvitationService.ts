@@ -357,7 +357,9 @@ export default class OrganizationInvitationService {
         },
       };
     } finally {
-      queryRunner.release();
+      if (!queryRunner.isReleased) {
+        queryRunner.release();
+      }
     }
   }
 }

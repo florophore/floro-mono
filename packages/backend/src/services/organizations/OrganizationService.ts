@@ -126,7 +126,7 @@ export default class OrganizationService {
         contactEmail,
         isGoogleEmail
       );
-      const contactEmailHash = EmailHelper.getUniqueEmail(
+      const contactEmailHash = EmailHelper.getEmailHash(
         contactEmail,
         isGoogleEmail
       );

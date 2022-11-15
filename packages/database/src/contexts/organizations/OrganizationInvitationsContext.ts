@@ -108,4 +108,30 @@ export default class OrganizationInvitationsContext extends BaseContext {
       orgInvitationArgs
     );
   }
+  public async getAllInvitationsForOrganization(
+    organizationId: string
+  ): Promise<OrganizationInvitation[]> {
+    return await this.queryRunner.manager.find(OrganizationInvitation, {
+      where: {
+        organizationId,
+        invitationState: "sent",
+      },
+      relations: {
+        user: true,
+        invitedByUser: true,
+        invitedByOrganizationMember: true,
+        organizationInvitationRoles: {
+          organizationRole: true,
+        },
+      },
+      order: {
+        createdAt: "DESC",
+        organizationInvitationRoles: {
+          organizationRole: {
+            name: "ASC",
+          },
+        },
+      },
+    });
+  }
 }

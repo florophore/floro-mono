@@ -25,6 +25,10 @@ import RootOrganizationMemberLoader from './resolvers/hooks/loaders/Root/Organiz
 import RootOrganizationMemberRolesLoader from './resolvers/hooks/loaders/Root/OrganizationID/RootOrganizationMemberRolesLoader';
 import RootOrganizationMemberPermissionsLoader from './resolvers/hooks/loaders/Root/OrganizationID/RootOrganizationMemberPermissionsLoader';
 import OrganizationInvitationService from './services/organizations/OrganizationInvitationService';
+import OrganizationInvitationOrganizationLoader from './resolvers/hooks/loaders/OrganizationInvitation/OrganizationInvitationOrganizationLoader';
+import OrganizationInvitationOrganizationMemberLoader from './resolvers/hooks/loaders/OrganizationInvitation/OrganizationInvitationMemberLoader';
+import OrganizationInvitationOrganizationMemberRolesLoader from './resolvers/hooks/loaders/OrganizationInvitation/OrganizationInvitationOrganizationMemberRoles';
+import OrganizationInvitationMemberPermissionsLoader from './resolvers/hooks/loaders/OrganizationInvitation/OrganizationInvitationMemberPermissionLoader';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -50,6 +54,12 @@ export default new ContainerModule((bind): void => {
     bind(OrganizationMemberRolesLoader).toSelf();
     bind(OrganizationMemberPermissionsLoader).toSelf();
     bind(OrganizationRolesLoader).toSelf();
+
+    // ORGANIZATION INVITATION LOADERS
+    bind(OrganizationInvitationOrganizationLoader).toSelf();
+    bind(OrganizationInvitationOrganizationMemberLoader).toSelf();
+    bind(OrganizationInvitationOrganizationMemberRolesLoader).toSelf();
+    bind(OrganizationInvitationMemberPermissionsLoader).toSelf();
 
     //MEMBERSHIP LOADERS
     bind(MembershipPermissionsLoader).toSelf();

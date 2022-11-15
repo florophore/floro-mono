@@ -11,6 +11,7 @@ import OrganizationsContext from "@floro/database/src/contexts/organizations/Org
 import RequestCache from "../../request/RequestCache";
 import { OrganizationMember } from "@floro/database/src/entities/OrganizationMember";
 import { OrganizationRole } from "@floro/database/src/entities/OrganizationRole";
+import { OrganizationInvitation } from "@floro/database/src/entities/OrganizationInvitation";
 
 @injectable()
 export default class UsersResolverModule extends BaseResolverModule {
@@ -81,6 +82,12 @@ export default class UsersResolverModule extends BaseResolverModule {
         });
         const membership = this.requestCache.getOrganizationMembership(cacheKey, organization.id, user.id as string);
         this.requestCache.setMembershipRoles(cacheKey, membership, roles as OrganizationRole[]);
+        const invitations = organization?.organizationInvitations;
+        this.requestCache.setOrganizationInvitations(cacheKey, organization, invitations as OrganizationInvitation[]);
+        invitations?.forEach?.(invitation => {
+          const roles = invitation?.organizationInvitationRoles?.map?.(invitationRole => invitationRole?.organizationRole)?.filter(v => v != undefined) ?? [];
+          this.requestCache.setOrganizationInvitationRoles(cacheKey, invitation, roles as OrganizationRole[]);
+        });
       });
       this.requestCache.setUserOrganizations(cacheKey, user as User, organizations);
       return organizations;

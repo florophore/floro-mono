@@ -1,40 +1,41 @@
 import { User } from "@floro/database/src/entities/User";
 import { inject, injectable } from "inversify";
-import RequestCache from "../../../../../request/RequestCache";
-import { LoaderResolverHook, runWithHooks } from "../../../ResolverHook";
-import RootOrganizationMemberRolesLoader from "./RootOrganizationMemberRolesLoader";
-import OrganizationPermissionService from "../../../../../services/organizations/OrganizationPermissionService";
+import RequestCache from "../../../../request/RequestCache";
+import { LoaderResolverHook, runWithHooks } from "../../ResolverHook";
+import OrganizationInvitationOrganizationMemberRoles from "./OrganizationInvitationOrganizationMemberRoles";
+import OrganizationPermissionService from "../../../../services/organizations/OrganizationPermissionService";
+import { OrganizationInvitation } from "@floro/graphql-schemas/src/generated/main-graphql";
 
 @injectable()
-export default class RootOrganizationMemberPermissionsLoader extends LoaderResolverHook<
+export default class OrganizationInvitationMemberPermissionsLoader extends LoaderResolverHook<
+  OrganizationInvitation,
   unknown,
-  { organizationId: string},
   { currentUser: User | null; cacheKey: string }
 > {
   protected requestCache!: RequestCache;
   private organizationPermissionsService!: OrganizationPermissionService;
-  private rootOrganizationMemberRolesLoader!: RootOrganizationMemberRolesLoader;
+  private organizationInvitationOrganizationMemberRoles!: OrganizationInvitationOrganizationMemberRoles;
 
   constructor(
     @inject(RequestCache) requestCache: RequestCache,
     @inject(OrganizationPermissionService)
     organizationPermissionsService: OrganizationPermissionService,
-    @inject(RootOrganizationMemberRolesLoader)
-    rootOrganizationMemberRolesLoader: RootOrganizationMemberRolesLoader
+    @inject(OrganizationInvitationOrganizationMemberRoles)
+    organizationInvitationOrganizationMemberRoles: OrganizationInvitationOrganizationMemberRoles
   ) {
     super();
     this.requestCache = requestCache;
     this.organizationPermissionsService = organizationPermissionsService;
-    this.rootOrganizationMemberRolesLoader = rootOrganizationMemberRolesLoader;
+    this.organizationInvitationOrganizationMemberRoles = organizationInvitationOrganizationMemberRoles;
   }
 
   public run = runWithHooks(
     () => [
-        this.rootOrganizationMemberRolesLoader
+        this.organizationInvitationOrganizationMemberRoles
     ],
     async (
-      _root,
-      { organizationId },
+      organizationInvitation,
+      _,
       context: { currentUser: User; cacheKey: string }
     ) => {
       if (!context.currentUser) {
@@ -42,7 +43,7 @@ export default class RootOrganizationMemberPermissionsLoader extends LoaderResol
       }
       const membership = this.requestCache.getOrganizationMembership(
         context.cacheKey,
-        organizationId,
+        organizationInvitation.organizationId,
         context.currentUser.id
       );
       // allows only self to be viewed

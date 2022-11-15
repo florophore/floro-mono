@@ -5,6 +5,7 @@ import {
   IsString,
   MaxLength,
   MinLength,
+  ValidateIf,
 } from "class-validator";
 import {
   Entity,
@@ -25,11 +26,13 @@ export class OrganizationInvitation extends BinaryPKBaseEntity {
   @Column("varchar", { length: 255 })
   @MinLength(2)
   @MaxLength(50)
+  @ValidateIf((_object, value) => !!value)
   firstName?: string;
 
   @Column("varchar", { length: 255 })
   @MinLength(2)
   @MaxLength(50)
+  @ValidateIf((_object, value) => !!value)
   lastName?: string;
 
   @Column("varchar", { length: 255 })

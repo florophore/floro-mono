@@ -1,35 +1,36 @@
 import { User } from "@floro/database/src/entities/User";
 import { inject, injectable } from "inversify";
-import RequestCache from "../../../../../request/RequestCache";
+import RequestCache from "../../../../request/RequestCache";
 import ContextFactory from "@floro/database/src/contexts/ContextFactory";
 import OrganizationMemberRolesContext from "@floro/database/src/contexts/organizations/OrganizationMemberRolesContext";
-import { LoaderResolverHook, runWithHooks } from "../../../ResolverHook";
-import RootOrganizationMemberLoader from "./RootOrganizationMemberLoader";
+import { LoaderResolverHook, runWithHooks } from "../../ResolverHook";
+import OrganizationInvitationMemberLoader from "./OrganizationInvitationMemberLoader";
+import { OrganizationInvitation } from "@floro/graphql-schemas/src/generated/main-graphql";
 
 @injectable()
-export default class RootOrganizationMemberRolesLoader extends LoaderResolverHook<unknown, { organizationId: string}, {currentUser: User| null, cacheKey: string}> {
+export default class OrganizationInvitationOrganizationMemberRolesLoader extends LoaderResolverHook<OrganizationInvitation, unknown, {currentUser: User| null, cacheKey: string}> {
     protected requestCache!: RequestCache;
     private contextFactory!: ContextFactory;
-    private rootOrganizationMemberLoader!: RootOrganizationMemberLoader;
+    private organizationInvitationMemberLoader!: OrganizationInvitationMemberLoader;
   
     constructor(
       @inject(ContextFactory) contextFactory: ContextFactory,
       @inject(RequestCache) requestCache: RequestCache,
-      @inject(RootOrganizationMemberLoader) rootOrganizationMemberLoader: RootOrganizationMemberLoader
+      @inject(OrganizationInvitationMemberLoader) organizationInvitationMemberLoader: OrganizationInvitationMemberLoader
     ) {
         super();
         this.contextFactory = contextFactory;
         this.requestCache = requestCache;
-        this.rootOrganizationMemberLoader = rootOrganizationMemberLoader;
+        this.organizationInvitationMemberLoader = organizationInvitationMemberLoader;
     }
 
     public run = runWithHooks(() => [
-        this.rootOrganizationMemberLoader
-    ], async (_root, { organizationId }, context: {currentUser: User, cacheKey: string})  => {
+        this.organizationInvitationMemberLoader
+    ], async (organizationInvitation, _, context: {currentUser: User, cacheKey: string})  => {
         if (!context.currentUser) {
             return;
         }
-        const membership = this.requestCache.getOrganizationMembership(context.cacheKey, organizationId as string, context.currentUser.id); 
+        const membership = this.requestCache.getOrganizationMembership(context.cacheKey, organizationInvitation.organizationId, context.currentUser.id); 
         if (!membership) {
             return;
         }

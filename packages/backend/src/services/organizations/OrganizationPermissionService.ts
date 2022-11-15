@@ -1,13 +1,9 @@
 import { injectable, inject } from "inversify";
 
-import DatabaseConnection from "@floro/database/src/connection/DatabaseConnection";
 import ContextFactory from "@floro/database/src/contexts/ContextFactory";
-import OrganizationsContext from "@floro/database/src/contexts/organizations/OrganizationsContext";
 import OrganizationMembersContext from "@floro/database/src/contexts/organizations/OrganizationMembersContext";
-import OrganizationRolesContext from "@floro/database/src/contexts/organizations/OrganizationRolesContext";
 import OrganizationMemberRolesContext from "@floro/database/src/contexts/organizations/OrganizationMemberRolesContext";
 import { User } from "@floro/database/src/entities/User";
-import EmailQueue from "@floro/redis/src/queues/EmailQueue";
 import { Organization } from "@floro/database/src/entities/Organization";
 import { OrganizationRole } from "@floro/database/src/entities/OrganizationRole";
 import { OrganizationMember } from "@floro/database/src/entities/OrganizationMember";

@@ -6,6 +6,7 @@ import { v4 as uuid } from 'uuid';
 import { OrganizationRole } from "@floro/database/src/entities/OrganizationRole";
 import { OrganizationPermissions } from "../services/organizations/OrganizationPermissionService";
 import sizeof from "object-sizeof";
+import { OrganizationInvitation } from "@floro/database/src/entities/OrganizationInvitation";
 
 @injectable()
 export default class RequestCache {
@@ -103,5 +104,25 @@ export default class RequestCache {
     public getOrganizationMembers(cacheKey: string, organizationId: string): OrganizationMember[] {
         const cache = this.getCache(cacheKey);
         return cache[`organization-members:${organizationId}`] as OrganizationMember[] ?? null;
+    }
+
+    public setOrganizationInvitations(cacheKey: string, organization: Organization, organizationInvitations: OrganizationInvitation[]) {
+        const cache = this.getCache(cacheKey);
+        cache[`organization-invitations:${organization.id}`] = organizationInvitations;
+    }
+
+    public getOrganizationInvitations(cacheKey: string, organizationId: string): OrganizationInvitation[] {
+        const cache = this.getCache(cacheKey);
+        return cache[`organization-invitations:${organizationId}`] as OrganizationInvitation[] ?? null;
+    }
+
+    public setOrganizationInvitationRoles(cacheKey: string, organizationInvitation: OrganizationInvitation, roles: OrganizationRole[]) {
+        const cache = this.getCache(cacheKey);
+        cache[`organization-invitation-roles:${organizationInvitation.id}`] = roles;
+    }
+
+    public getOrganizationInvitationRoles(cacheKey: string, organizationInvitationId: string): OrganizationRole[] {
+        const cache = this.getCache(cacheKey);
+        return cache[`organization-invitation-roles:${organizationInvitationId}`] as OrganizationRole[] ?? null;
     }
 }

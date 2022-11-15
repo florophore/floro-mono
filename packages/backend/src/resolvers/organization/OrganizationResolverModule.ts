@@ -19,6 +19,7 @@ import OrganizationRolesLoader from "../hooks/loaders/Organization/OrganizationR
 import OrganizationMembersContext from "@floro/database/src/contexts/organizations/OrganizationMembersContext";
 import { OrganizationMember } from "@floro/database/src/entities/OrganizationMember";
 import { OrganizationRole } from "@floro/database/src/entities/OrganizationRole";
+import OrganizationInvitationsContext from "@floro/database/src/contexts/organizations/OrganizationInvitationsContext";
 
 @injectable()
 export default class OrganizationResolverModule extends BaseResolverModule {
@@ -142,7 +143,10 @@ export default class OrganizationResolverModule extends BaseResolverModule {
         if (organizationMembership.membershipState == "inactive") {
           return null;
         }
-        const cachedMembers = this.requestCache.getOrganizationMembers(cacheKey, organization.id as string);
+        const cachedMembers = this.requestCache.getOrganizationMembers(
+          cacheKey,
+          organization.id as string
+        );
         if (cachedMembers) {
           return cachedMembers;
         }
@@ -168,7 +172,11 @@ export default class OrganizationResolverModule extends BaseResolverModule {
             roles as OrganizationRole[]
           );
         });
-        this.requestCache.setOrganizationMembers(cacheKey, organization, members);
+        this.requestCache.setOrganizationMembers(
+          cacheKey,
+          organization,
+          members
+        );
         return members;
       }
     ),
@@ -194,7 +202,38 @@ export default class OrganizationResolverModule extends BaseResolverModule {
         if (!permissions.canModifyInvites) {
           return null;
         }
-        return [];
+        const cachedInvitations = this.requestCache.getOrganizationInvitations(
+          cacheKey,
+          organization.id as string
+        );
+        if (cachedInvitations) {
+          return cachedInvitations;
+        }
+        const organanizationInvitationsContext =
+          await this.contextFactory.createContext(
+            OrganizationInvitationsContext
+          );
+        const invitations =
+          await organanizationInvitationsContext.getAllInvitationsForOrganization(
+            organization.id as string
+          );
+        this.requestCache.setOrganizationInvitations(
+          cacheKey,
+          organization as Organization,
+          invitations
+        );
+        invitations.forEach((invitation) => {
+          const roles =
+            invitation?.organizationInvitationRoles
+              ?.map?.((invitationRole) => invitationRole?.organizationRole)
+              ?.filter((v) => v != undefined) ?? [];
+          this.requestCache.setOrganizationInvitationRoles(
+            cacheKey,
+            invitation,
+            roles as OrganizationRole[]
+          );
+        });
+        return invitations;
       }
     ),
     // invitations

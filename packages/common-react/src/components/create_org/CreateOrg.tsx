@@ -75,14 +75,16 @@ const CreateOrg = () => {
   }, [handle, profanityFilter]);
 
   const [checkUserName, { data, loading }] = useUsernameCheckLazyQuery({
-    nextFetchPolicy: "network-only"
+    fetchPolicy: "network-only"
   });
 
   const checkUsernameDebounced = useCallback(debouncer(checkUserName, 300), [
     checkUserName,
   ]);
 
-  const [createOrg, createOrgRequest] = useCreateOrganizationMutation();
+  const [createOrg, createOrgRequest] = useCreateOrganizationMutation({
+    fetchPolicy: "network-only"
+  });
 
   const onSubmit = useCallback(() => {
     createOrg({
@@ -92,7 +94,7 @@ const CreateOrg = () => {
         contactEmail,
         handle,
         agreedToCustomerServiceAgreement
-      }
+      },
     });
   }, [
     name,

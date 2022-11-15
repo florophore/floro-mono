@@ -67,6 +67,14 @@ export default class OrganizationsContext extends BaseContext {
         }
       },
       relations: {
+        organizationInvitations: {
+          user: true,
+          invitedByUser: true,
+          invitedByOrganizationMember: true,
+          organizationInvitationRoles: {
+            organizationRole: true,
+          },
+        },
         organizationMembers: {
           user: true
         },
@@ -93,6 +101,14 @@ export default class OrganizationsContext extends BaseContext {
           organizationRole: {
             name: "ASC"
           }
+        },
+        organizationInvitations: {
+          createdAt: "DESC",
+          organizationInvitationRoles: {
+            organizationRole: {
+              name: "ASC",
+            },
+          },
         }
       }
     }); 
