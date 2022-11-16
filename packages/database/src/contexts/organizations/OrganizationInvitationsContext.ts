@@ -134,4 +134,14 @@ export default class OrganizationInvitationsContext extends BaseContext {
       },
     });
   }
+
+  public async getSentInvitationCountForOrganization(
+    organizationId: string
+  ): Promise<number> {
+    const [, count] = await this.queryRunner.manager.findAndCountBy(OrganizationInvitation, {
+      organizationId,
+      invitationState: "sent",
+    });
+    return count ?? 0;
+  }
 }

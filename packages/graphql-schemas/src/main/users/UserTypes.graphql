@@ -4,6 +4,9 @@ type User {
     lastName: String
     username: String
     organizations: [Organization] 
+    freeDiskSpaceBytes: Float
+    diskSpaceLimitBytes: Float
+    utilizedDiskSpaceBytes: Float
 }
 
 type UsernameCheckResult {

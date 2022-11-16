@@ -26,6 +26,7 @@ const profanityFilter = new ProfanityFilter();
 export interface CreateOrganizationInvitationReponse {
   action:
     | "INVITATION_CREATED"
+    | "NO_REMAINING_SEATS_ERROR"
     | "INVALID_PERMISSIONS_ERROR"
     | "INVALID_PARAMS_ERROR"
     | "FORBIDDEN_ACTION_ERROR"
@@ -153,6 +154,23 @@ export default class OrganizationInvitationService {
       );
       let user: User | null = null;
       queryRunner.startTransaction();
+
+      if (organization?.billingPlan == "free") {
+        const activeMemberCount = await organizationMembersContext.getMemberCountForOrganization(organization.id as string);
+        const sentInviteCount = await organizationInvitationsContext.getSentInvitationCountForOrganization(organization.id as string);
+        const remainingSeats = (organization?.freeSeats ?? 10) - (activeMemberCount + sentInviteCount);
+        if (remainingSeats <= 0) {
+          return {
+            action: "NO_REMAINING_SEATS_ERROR",
+            error: {
+              type: "NO_REMAINING_SEATS_ERROR",
+              message: "No remaining seats",
+            },
+          };
+
+        }
+      }
+
       if (userId) {
         user = await usersContext.getById(userId);
         if (!user) {

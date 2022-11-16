@@ -1,4 +1,4 @@
-import { MaxLength, MinLength } from "class-validator";
+import { IsDefined, IsInt, MaxLength, MinLength, ValidateIf } from "class-validator";
 import { Entity, Column, OneToMany, OneToOne, Relation } from "typeorm";
 import { BinaryPKBaseEntity } from "./BinaryPKBaseEntity";
 import { Organization } from "./Organization";
@@ -24,6 +24,21 @@ export class User extends BinaryPKBaseEntity {
   @MinLength(1)
   @MaxLength(30)
   username?: string;
+
+  @Column("bigint", { default: 10000000000 })
+  @IsDefined()
+  @ValidateIf((_, value) => value != undefined)
+  freeDiskSpaceBytes?: number;
+
+  @Column("bigint", { default: 10000000000 })
+  @IsDefined()
+  @ValidateIf((_, value) => value != undefined)
+  diskSpaceLimitBytes?: number;
+
+  @Column("bigint", { default: 0 })
+  @IsDefined()
+  @ValidateIf((_, value) => value != undefined)
+  utilizedDiskSpaceBytes?: number;
  
   @OneToOne("UserServiceAgreement", "user")
   userServiceAgreement?: Relation<UserServiceAgreement>;

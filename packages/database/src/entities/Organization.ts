@@ -3,8 +3,11 @@ import {
   IsDefined,
   IsEmail,
   IsIn,
+  IsInt,
+  IsString,
   MaxLength,
   MinLength,
+  ValidateIf,
 } from "class-validator";
 import {
   Entity,
@@ -61,6 +64,40 @@ export class Organization extends BinaryPKBaseEntity {
   @IsIn([true])
   @IsBoolean()
   agreedToCustomerServiceAgreement?: boolean;
+
+  @Column("varchar", { default: "free"})
+  @IsDefined()
+  @IsIn(["free"])
+  @IsString()
+  @ValidateIf((_options, value) => !!value)
+  billingPlan?: string;
+
+  @Column("varchar", { default: "free"})
+  @IsDefined()
+  @IsIn(["none"])
+  @IsString()
+  @ValidateIf((_options, value) => !!value)
+  billingStatus?: string;
+
+  @Column("bigint", { default: 10000000000 })
+  @IsDefined()
+  @ValidateIf((_, value) => value != undefined)
+  freeDiskSpaceBytes?: number;
+
+  @Column("bigint", { default: 10000000000 })
+  @IsDefined()
+  @ValidateIf((_, value) => value != undefined)
+  diskSpaceLimitBytes?: number;
+
+  @Column("bigint", { default: 0 })
+  @IsDefined()
+  @ValidateIf((_, value) => value != undefined)
+  utilizedDiskSpaceBytes?: number;
+
+  @Column("int", { default: 0 })
+  @IsDefined()
+  @ValidateIf((_, value) => value != undefined)
+  freeSeats?: number;
 
   @Column("uuid")
   createdByUserId!: string;

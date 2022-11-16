@@ -77,6 +77,25 @@ export default class OrganizationMembersContext extends BaseContext {
     }); 
   }
 
+  public async getMemberCountForOrganization(
+    organizationId: string
+  ): Promise<number> {
+    const [, count] = await this.queryRunner.manager.findAndCountBy(OrganizationMember, {
+      organizationId,
+    });
+    return count ?? 0;
+  }
+
+  public async getActiveMemeberCountForOrganization(
+    organizationId: string
+  ): Promise<number> {
+    const [, count] = await this.queryRunner.manager.findAndCountBy(OrganizationMember, {
+      organizationId,
+      membershipState: "active"
+    });
+    return count ?? 0;
+  }
+
   public async userExistsInOrgMembers(
     org: Organization,
     user: User

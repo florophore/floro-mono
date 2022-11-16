@@ -20,6 +20,8 @@ import OrganizationMembersContext from "@floro/database/src/contexts/organizatio
 import { OrganizationMember } from "@floro/database/src/entities/OrganizationMember";
 import { OrganizationRole } from "@floro/database/src/entities/OrganizationRole";
 import OrganizationInvitationsContext from "@floro/database/src/contexts/organizations/OrganizationInvitationsContext";
+import OrganizationSentInvitationsCountLoader from "../hooks/loaders/Organization/OrganizationSentInvitationsCountLoader";
+import OrganizationActiveMemberCountLoader from "../hooks/loaders/Organization/OrganizationActiveMemberCountLoader";
 
 @injectable()
 export default class OrganizationResolverModule extends BaseResolverModule {
@@ -39,6 +41,9 @@ export default class OrganizationResolverModule extends BaseResolverModule {
   protected organizationMemberPermissionsLoader!: OrganizationMemberPermissionsLoader;
   protected organizationRolesLoader!: OrganizationRolesLoader;
 
+  protected organizationSentInvitationsCountLoader!: OrganizationSentInvitationsCountLoader;
+  protected organizationActiveMemberCountLoader!: OrganizationActiveMemberCountLoader;
+
   constructor(
     @inject(ContextFactory) contextFactory: ContextFactory,
     @inject(RequestCache) requestCache: RequestCache,
@@ -51,7 +56,11 @@ export default class OrganizationResolverModule extends BaseResolverModule {
     @inject(OrganizationRolesLoader)
     organizationRolesLoader: OrganizationRolesLoader,
     @inject(OrganizationMemberPermissionsLoader)
-    organizationMemberPermissionsLoader: OrganizationMemberPermissionsLoader
+    organizationMemberPermissionsLoader: OrganizationMemberPermissionsLoader,
+    @inject(OrganizationSentInvitationsCountLoader)
+    organizationSentInvitationsCountLoader: OrganizationSentInvitationsCountLoader,
+    @inject(OrganizationActiveMemberCountLoader)
+    organizationActiveMemberCountLoader: OrganizationActiveMemberCountLoader
   ) {
     super();
     this.contextFactory = contextFactory;
@@ -66,9 +75,225 @@ export default class OrganizationResolverModule extends BaseResolverModule {
     this.organizationMemberPermissionsLoader =
       organizationMemberPermissionsLoader;
     this.organizationRolesLoader = organizationRolesLoader;
+    this.organizationSentInvitationsCountLoader =
+      organizationSentInvitationsCountLoader;
+    this.organizationActiveMemberCountLoader =
+      organizationActiveMemberCountLoader;
   }
 
   public Organization: main.OrganizationResolvers = {
+    billingPlan: runWithHooks(
+      () => [this.organizationMemberPermissionsLoader],
+      async (organization, _, { cacheKey, currentUser }) => {
+        if (!currentUser) {
+          return null;
+        }
+        const organizationMembership =
+          this.requestCache.getOrganizationMembership(
+            cacheKey,
+            organization.id as string,
+            currentUser.id
+          );
+        if (organizationMembership?.membershipState != "active") {
+          return null;
+        }
+        const permissions = this.requestCache.getMembershipPermissions(
+          cacheKey,
+          organizationMembership.id
+        );
+        if (permissions.canModifyBilling) {
+          return organization.billingPlan ?? null;
+        }
+        return null;
+      }
+    ),
+    billingStatus: runWithHooks(
+      () => [this.organizationMemberLoader],
+      async (organization, _, { cacheKey, currentUser }) => {
+        if (!currentUser) {
+          return null;
+        }
+        const organizationMembership =
+          this.requestCache.getOrganizationMembership(
+            cacheKey,
+            organization.id,
+            currentUser.id
+          );
+        return organizationMembership?.membershipState == "active"
+          ? organization.billingStatus
+          : null;
+      }
+    ),
+    freeDiskSpaceBytes: runWithHooks(
+      () => [this.organizationMemberLoader],
+      async (organization, _, { cacheKey, currentUser }) => {
+        if (!currentUser) {
+          return null;
+        }
+        const organizationMembership =
+          this.requestCache.getOrganizationMembership(
+            cacheKey,
+            organization.id,
+            currentUser.id
+          );
+        return organizationMembership?.membershipState == "active"
+          ? organization?.freeDiskSpaceBytes ?? null
+          : null;
+      }
+    ),
+    diskSpaceLimitBytes: runWithHooks(
+      () => [this.organizationMemberLoader],
+      async (organization, _, { cacheKey, currentUser }) => {
+        if (!currentUser) {
+          return null;
+        }
+        const organizationMembership =
+          this.requestCache.getOrganizationMembership(
+            cacheKey,
+            organization.id,
+            currentUser.id
+          );
+        return organizationMembership?.membershipState == "active"
+          ? organization?.diskSpaceLimitBytes ?? null
+          : null;
+      }
+    ),
+    utilizedDiskSpaceBytes: runWithHooks(
+      () => [this.organizationMemberLoader],
+      async (organization, _, { cacheKey, currentUser }) => {
+        if (!currentUser) {
+          return null;
+        }
+        const organizationMembership =
+          this.requestCache.getOrganizationMembership(
+            cacheKey,
+            organization.id,
+            currentUser.id
+          );
+        return organizationMembership?.membershipState == "active"
+          ? organization?.utilizedDiskSpaceBytes ?? null
+          : null;
+      }
+    ),
+    invitationsSentCount: runWithHooks(
+      () => [
+        this.organizationMemberPermissionsLoader,
+        this.organizationSentInvitationsCountLoader,
+      ],
+      async (organization, _, { currentUser, cacheKey }) => {
+        if (!currentUser) {
+          return null;
+        }
+        const organizationMembership =
+          this.requestCache.getOrganizationMembership(
+            cacheKey,
+            organization.id as string,
+            currentUser.id
+          );
+        if (organizationMembership?.membershipState != "active") {
+          return null;
+        }
+        const permissions = this.requestCache.getMembershipPermissions(
+          cacheKey,
+          organizationMembership.id
+        );
+        if (!permissions.canModifyInvites && !permissions.canInviteMembers) {
+          return null;
+        }
+        const invitationCount =
+          this.requestCache.getOrganizationSentInvitationsCount(
+            cacheKey,
+            organization.id as string
+          );
+        return invitationCount ?? null;
+      }
+    ),
+    membersActiveCount: runWithHooks(
+      () => [
+        this.organizationMemberPermissionsLoader,
+        this.organizationActiveMemberCountLoader,
+      ],
+      async (organization, _, { currentUser, cacheKey }) => {
+        if (!currentUser) {
+          return null;
+        }
+        const organizationMembership =
+          this.requestCache.getOrganizationMembership(
+            cacheKey,
+            organization.id as string,
+            currentUser.id
+          );
+        if (organizationMembership?.membershipState != "active") {
+          return null;
+        }
+        const permissions = this.requestCache.getMembershipPermissions(
+          cacheKey,
+          organizationMembership.id
+        );
+        if (!permissions.canModifyOrganizationMembers) {
+          return null;
+        }
+        const activeMemberCount =
+          this.requestCache.getOrganizationActiveMemberCount(
+            cacheKey,
+            organization.id as string
+          );
+        return activeMemberCount ?? null;
+      }
+    ),
+    remainingSeats: runWithHooks(
+      () => [
+        this.organizationMemberPermissionsLoader,
+        this.organizationActiveMemberCountLoader,
+        this.organizationSentInvitationsCountLoader,
+      ],
+      async (organization, _, { currentUser, cacheKey }) => {
+        if (!currentUser) {
+          return null;
+        }
+        const organizationMembership =
+          this.requestCache.getOrganizationMembership(
+            cacheKey,
+            organization.id as string,
+            currentUser.id
+          );
+        if (organizationMembership?.membershipState != "active") {
+          return null;
+        }
+        const permissions = this.requestCache.getMembershipPermissions(
+          cacheKey,
+          organizationMembership.id
+        );
+
+        if (!permissions.canModifyInvites && !permissions.canInviteMembers) {
+          return null;
+        }
+        const invitationCount =
+          this.requestCache.getOrganizationSentInvitationsCount(
+            cacheKey,
+            organization.id as string
+          );
+        if (invitationCount === null) {
+          return null;
+        }
+        if (!permissions.canModifyOrganizationMembers) {
+          return null;
+        }
+        const activeMemberCount =
+          this.requestCache.getOrganizationActiveMemberCount(
+            cacheKey,
+            organization.id as string
+          );
+        if (activeMemberCount === null) {
+          return null;
+        }
+        return Math.max(
+          ((organization as Organization).freeSeats ?? 0) -
+            (activeMemberCount + invitationCount),
+          0
+        );
+      }
+    ),
     legalName: runWithHooks(
       () => [this.organizationMemberLoader],
       async (organization, _, { currentUser, cacheKey }) => {
@@ -236,7 +461,6 @@ export default class OrganizationResolverModule extends BaseResolverModule {
         return invitations;
       }
     ),
-    // invitations
   };
 
   public Mutation: main.MutationResolvers = {

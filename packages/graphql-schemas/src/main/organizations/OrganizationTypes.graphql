@@ -4,6 +4,15 @@ type Organization {
   legalName: String
   handle: String
   contactEmail: String
+  invitationsSentCount: Int
+  membersActiveCount: Int
+  remainingSeats: Int
+  freeDiskSpaceBytes: Float
+  diskSpaceLimitBytes: Float
+  utilizedDiskSpaceBytes: Float
+  billingStatus: String
+  billingPlan: String
+
   membership: OrganizationMember
   roles: [OrganizationRole]
   members: [OrganizationMember]

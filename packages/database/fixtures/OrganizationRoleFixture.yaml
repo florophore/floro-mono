@@ -2,6 +2,7 @@ entity: OrganizationRole
 items:
   org_0_admin_role:
     name: Admin
+    presetCode: admin
     isMutable: false
     isDefault: false
     canCreateRepos: true
@@ -19,6 +20,7 @@ items:
     createdByOrganizationMember: '@org_member_0'
   org_0_contributor_role:
     name: Contributor
+    presetCode: contributor
     isMutable: true
     isDefault: true
     canCreateRepos: true
@@ -36,6 +38,7 @@ items:
     createdByOrganizationMember: '@org_member_0'
   org_0_billing_admin_role:
     name: "Billing Admin"
+    presetCode: billing_admin
     isMutable: true
     isDefault: false
     canCreateRepos: false
@@ -53,6 +56,7 @@ items:
     createdByOrganizationMember: '@org_member_0'
   org_0_technical_admin_role:
     name: "Technical Admin"
+    presetCode: technical_admin
     isMutable: true
     isDefault: false
     canCreateRepos: true

@@ -125,4 +125,24 @@ export default class RequestCache {
         const cache = this.getCache(cacheKey);
         return cache[`organization-invitation-roles:${organizationInvitationId}`] as OrganizationRole[] ?? null;
     }
+
+    public setOrganizationActiveMemberCount(cacheKey: string, organization: Organization, count: number) {
+        const cache = this.getCache(cacheKey);
+        cache[`organization-active-members-count:${organization.id}`] = count;
+    }
+
+    public getOrganizationActiveMemberCount(cacheKey: string, organizationId: string): number {
+        const cache = this.getCache(cacheKey);
+        return cache[`organization-active-members-count:${organizationId}`] as number ?? null;
+    }
+
+    public setOrganizationSentInvitationsCount(cacheKey: string, organization: Organization, count: number) {
+        const cache = this.getCache(cacheKey);
+        cache[`organization-sent-invitations-count:${organization.id}`] = count;
+    }
+
+    public getOrganizationSentInvitationsCount(cacheKey: string, organizationId: string): number {
+        const cache = this.getCache(cacheKey);
+        return cache[`organization-sent-invitations-count:${organizationId}`] as number ?? null;
+    }
 }

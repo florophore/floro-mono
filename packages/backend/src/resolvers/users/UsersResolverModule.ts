@@ -15,11 +15,13 @@ import { OrganizationInvitation } from "@floro/database/src/entities/Organizatio
 
 @injectable()
 export default class UsersResolverModule extends BaseResolverModule {
-  public resolvers: Array<keyof this&keyof main.ResolversTypes> = ["Query", "User"];
+  public resolvers: Array<keyof this & keyof main.ResolversTypes> = [
+    "Query",
+    "User",
+  ];
   protected usersService!: UsersService;
   protected contextFactory!: ContextFactory;
   protected requestCache!: RequestCache;
-
 
   constructor(
     @inject(ContextFactory) contextFactory: ContextFactory,
@@ -34,63 +36,152 @@ export default class UsersResolverModule extends BaseResolverModule {
 
   public Query: main.QueryResolvers = {
     user: async (_root, { id }) => {
-      const usersContext = await this.contextFactory.createContext(UsersContext);
+      const usersContext = await this.contextFactory.createContext(
+        UsersContext
+      );
       return await usersContext.getById(id);
     },
-    usernameCheck: async(_root, { username }): Promise<UsernameCheckResult> => {
+    usernameCheck: async (
+      _root,
+      { username }
+    ): Promise<UsernameCheckResult> => {
       if (!username || username == "" || !USERNAME_REGEX.test(username)) {
         return {
           __typename: "UsernameCheckResult",
           exists: false,
-          username: username ?? ""
+          username: username ?? "",
         };
       }
-      const exists = await this.usersService.checkUsernameIsTaken(username ?? "");
-        return {
-          __typename: "UsernameCheckResult",
-          exists,
-          username: username
-        };
+      const exists = await this.usersService.checkUsernameIsTaken(
+        username ?? ""
+      );
+      return {
+        __typename: "UsernameCheckResult",
+        exists,
+        username: username,
+      };
     },
     searchUsers: async (_, { query }) => {
-      if (((query ?? "")?.length < 2 && query?.[0] != "@") || (query?.[0] == "@" && (query ?? "")?.length < 3)) {
+      if (
+        ((query ?? "")?.length < 2 && query?.[0] != "@") ||
+        (query?.[0] == "@" && (query ?? "")?.length < 3)
+      ) {
         return [];
       }
-      const usersContext = await this.contextFactory.createContext(UsersContext);
+      const usersContext = await this.contextFactory.createContext(
+        UsersContext
+      );
       return await usersContext.searchUsers(query ?? "");
-    }
+    },
   };
 
   public User: main.UserResolvers = {
+    freeDiskSpaceBytes: (user, _, { currentUser }) => {
+      if (user.id == currentUser?.id) {
+        return user?.freeDiskSpaceBytes ?? null;
+      }
+      return null;
+    },
+    diskSpaceLimitBytes: (user, _, { currentUser }) => {
+      if (user.id == currentUser?.id) {
+        return user?.diskSpaceLimitBytes ?? null;
+      }
+      return null;
+    },
+    utilizedDiskSpaceBytes: (user, _, { currentUser }) => {
+      if (user.id == currentUser?.id) {
+        return user?.utilizedDiskSpaceBytes ?? null;
+      }
+      return null;
+    },
     organizations: async (user, _, { currentUser, cacheKey }) => {
       if (user.id != currentUser.id) {
         return null;
       }
-      const cachedOrganizations = this.requestCache.getUserOrganizations(cacheKey, user.id as string);
+      const cachedOrganizations = this.requestCache.getUserOrganizations(
+        cacheKey,
+        user.id as string
+      );
       if (cachedOrganizations) {
         return cachedOrganizations;
       }
-      const organizationsContext = await this.contextFactory.createContext(OrganizationsContext);
-      const organizations = await organizationsContext.getAllOrganizationsForUser(user.id as string);
+      const organizationsContext = await this.contextFactory.createContext(
+        OrganizationsContext
+      );
+      const organizations =
+        await organizationsContext.getAllOrganizationsForUser(
+          user.id as string
+        );
       organizations.forEach((organization) => {
         this.requestCache.setOrganization(cacheKey, organization);
-        this.requestCache.setOrganizationRoles(cacheKey, organization, organization.organizationRoles as OrganizationRole[]);
-        this.requestCache.setOrganizationMembers(cacheKey, organization, organization.organizationMembers as OrganizationMember[]);
-        const roles = organization.organizationMemberRoles?.map(memberRole => {
-          this.requestCache.setOrganizationMembership(cacheKey, organization, user as User, memberRole.organizationMember as OrganizationMember);
-          return memberRole.organizationRole;
-        });
-        const membership = this.requestCache.getOrganizationMembership(cacheKey, organization.id, user.id as string);
-        this.requestCache.setMembershipRoles(cacheKey, membership, roles as OrganizationRole[]);
+        this.requestCache.setOrganizationRoles(
+          cacheKey,
+          organization,
+          organization.organizationRoles as OrganizationRole[]
+        );
+        this.requestCache.setOrganizationMembers(
+          cacheKey,
+          organization,
+          organization.organizationMembers as OrganizationMember[]
+        );
+        this.requestCache.setOrganizationActiveMemberCount(
+          cacheKey,
+          organization,
+          organization?.organizationMembers?.filter(
+            (member) => member?.membershipState == "active"
+          )?.length ?? 0
+        );
+        const roles = organization.organizationMemberRoles?.map(
+          (memberRole) => {
+            this.requestCache.setOrganizationMembership(
+              cacheKey,
+              organization,
+              user as User,
+              memberRole.organizationMember as OrganizationMember
+            );
+            return memberRole.organizationRole;
+          }
+        );
+        const membership = this.requestCache.getOrganizationMembership(
+          cacheKey,
+          organization.id,
+          user.id as string
+        );
+        this.requestCache.setMembershipRoles(
+          cacheKey,
+          membership,
+          roles as OrganizationRole[]
+        );
         const invitations = organization?.organizationInvitations;
-        this.requestCache.setOrganizationInvitations(cacheKey, organization, invitations as OrganizationInvitation[]);
-        invitations?.forEach?.(invitation => {
-          const roles = invitation?.organizationInvitationRoles?.map?.(invitationRole => invitationRole?.organizationRole)?.filter(v => v != undefined) ?? [];
-          this.requestCache.setOrganizationInvitationRoles(cacheKey, invitation, roles as OrganizationRole[]);
+        this.requestCache.setOrganizationInvitations(
+          cacheKey,
+          organization,
+          invitations as OrganizationInvitation[]
+        );
+        invitations?.forEach?.((invitation) => {
+          const roles =
+            invitation?.organizationInvitationRoles
+              ?.map?.((invitationRole) => invitationRole?.organizationRole)
+              ?.filter((v) => v != undefined) ?? [];
+          this.requestCache.setOrganizationInvitationRoles(
+            cacheKey,
+            invitation,
+            roles as OrganizationRole[]
+          );
         });
+        this.requestCache.setOrganizationSentInvitationsCount(
+          cacheKey,
+          organization,
+          invitations?.filter?.((invite) => invite?.invitationState == "sent")
+            ?.length ?? 0
+        );
       });
-      this.requestCache.setUserOrganizations(cacheKey, user as User, organizations);
+      this.requestCache.setUserOrganizations(
+        cacheKey,
+        user as User,
+        organizations
+      );
       return organizations;
-    }
-  }
+    },
+  };
 }

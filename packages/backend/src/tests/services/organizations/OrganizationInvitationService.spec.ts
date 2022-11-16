@@ -21,7 +21,7 @@ import { UserAuthCredential } from "@floro/database/src/entities/UserAuthCredent
 import OrganizationInvitationRolesContext from "@floro/database/src/contexts/organizations/OrganizationInvitationRolesContext";
 import DatabaseConnection from "@floro/database/src/connection/DatabaseConnection";
 
-describe("OrganizationService", () => {
+describe("OrganizationInvitationService", () => {
   let databaseConnection: DatabaseConnection;
   let organizationInvitationService: OrganizationInvitationService;
   let redisClient: RedisClient;
@@ -245,6 +245,33 @@ describe("OrganizationService", () => {
         expect(result.organizationInvitation?.emailHash).to.eql(
           recipientAuthCred.emailHash
         );
+      });
+
+      test("throw NO_REMAINING_SEATS_ERROR if in excess of seat limit",  async () => {
+        for (let i = 0; i < (organization?.freeSeats ?? 10) - 1; ++i) {
+          const result = await organizationInvitationService.createInivitation(
+            organization,
+            currentUser,
+            invitingMember,
+            permissions,
+            undefined,
+            "test-" + i +"@gmail.com",
+            "foo",
+            "bar"
+          );
+          expect(result.action).to.eql("INVITATION_CREATED")
+        }
+          const result = await organizationInvitationService.createInivitation(
+            organization,
+            currentUser,
+            invitingMember,
+            permissions,
+            undefined,
+            "overflow@gmail.com",
+            "foo",
+            "bar"
+          );
+          expect(result.action).to.eql("NO_REMAINING_SEATS_ERROR")
       });
 
       test("creates invitation and respects roleIds if inviting member has canAssignRoles permission", async () => {

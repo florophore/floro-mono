@@ -4,6 +4,7 @@ import { User } from "@floro/database/src/entities/User";
 
 export interface OrganizationRoleModel {
   name: string;
+  presetCode?: 'admin'|'contributor'|'billing_admin'|'technical_admin';
   isMutable: boolean;
   isDefault: boolean;
   canCreateRepos: boolean;
@@ -24,6 +25,7 @@ export interface OrganizationRoleModel {
 
 export default class OrganizationRolePresetModel implements OrganizationRoleModel {
   public name!: string;
+  public presetCode!: 'admin'|'contributor'|'billing_admin'|'technical_admin';
   public isMutable!: boolean;
   public isDefault!: boolean;
   public canCreateRepos!: boolean;
@@ -43,6 +45,7 @@ export default class OrganizationRolePresetModel implements OrganizationRoleMode
 
   constructor(
     name: string,
+    presetCode: 'admin'|'contributor'|'billing_admin'|'technical_admin',
     isMutable: boolean,
     isDefault: boolean,
     canCreateRepos: boolean,
@@ -60,6 +63,7 @@ export default class OrganizationRolePresetModel implements OrganizationRoleMode
     createdByOrganizationMemberId: string,
   ) {
     this.name = name;
+    this.presetCode = presetCode;
     this.isMutable = isMutable;
     this.isDefault = isDefault;
     this.canCreateRepos = canCreateRepos;
@@ -83,6 +87,7 @@ export default class OrganizationRolePresetModel implements OrganizationRoleMode
   public toModelArgs(): OrganizationRoleModel {
     return {
       name: this.name,
+      presetCode: this.presetCode,
       isMutable: this.isMutable,
       isDefault: this.isDefault,
       canCreateRepos: this.canCreateRepos,
@@ -109,6 +114,7 @@ export default class OrganizationRolePresetModel implements OrganizationRoleMode
   ): OrganizationRolePresetModel {
     return new OrganizationRolePresetModel(
       "Admin", //  name
+      "admin", // presetCode
       false,   //  isMutable
       false,   //  isDefault
       true,    //  canCreateRepos
@@ -134,6 +140,7 @@ export default class OrganizationRolePresetModel implements OrganizationRoleMode
   ): OrganizationRolePresetModel {
     return new OrganizationRolePresetModel(
       "Contributor", //  name
+      "contributor", // presetCode
       true,          //  isMutable
       true,          //  isDefault
       true,          //  canCreateRepos
@@ -159,6 +166,7 @@ export default class OrganizationRolePresetModel implements OrganizationRoleMode
   ): OrganizationRolePresetModel {
     return new OrganizationRolePresetModel(
       "Billing Admin", //  name
+      "billing_admin", // presetCode
       true,            //  isMutable
       false,           //  isDefault
       false,           //  canCreateRepos
@@ -184,6 +192,7 @@ export default class OrganizationRolePresetModel implements OrganizationRoleMode
   ): OrganizationRolePresetModel {
     return new OrganizationRolePresetModel(
       "Technical Admin", //  name
+      "technical_admin", //  presetCode
       true,              //  isMutable
       false,             //  isDefault
       true,              //  canCreateRepos
