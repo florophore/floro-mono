@@ -1,4 +1,4 @@
-import { injectable, inject } from "inversify";
+import { injectable, inject, multiInject } from "inversify";
 
 import DatabaseConnection from "@floro/database/src/connection/DatabaseConnection";
 import ContextFactory from "@floro/database/src/contexts/ContextFactory";
@@ -22,6 +22,7 @@ import ProfanityFilter from 'bad-words';
 import { NAME_REGEX, USERNAME_REGEX } from '@floro/common-web/src/utils/validators';
 import OrganizationsContext from "@floro/database/src/contexts/organizations/OrganizationsContext";
 import HandleChecker from "../utils/HandleChecker";
+import CreateUserEventHandler from "../events/CreateUserEventHandler";
 
 const profanityFilter = new ProfanityFilter();
 
@@ -61,6 +62,7 @@ export default class AuthenticationService {
     private emailVerificationStore!: EmailVerificationStore;
     private emailAuthStore!: EmailAuthStore;
     private emailQueue?: EmailQueue;
+    private createUserHandlers!: CreateUserEventHandler[];
 
     constructor(
         @inject(DatabaseConnection) databaseConnection: DatabaseConnection,
@@ -69,7 +71,8 @@ export default class AuthenticationService {
         @inject(GoogleLoginClient) googleLoginClient: GoogleLoginClient,
         @inject(EmailVerificationStore) emailVerificationStore: EmailVerificationStore,
         @inject(EmailAuthStore) emailAuthStore: EmailAuthStore,
-        @inject(EmailQueue) emailQueue: EmailQueue
+        @inject(EmailQueue) emailQueue: EmailQueue,
+        @multiInject("CreateUserHandler") createUserHandlers: CreateUserEventHandler[]
         ) {
         this.databaseConnection = databaseConnection;
         this.contextFactory = contextFactory;
@@ -78,6 +81,7 @@ export default class AuthenticationService {
         this.emailVerificationStore = emailVerificationStore;
         this.emailAuthStore = emailAuthStore;
         this.emailQueue = emailQueue;
+        this.createUserHandlers = createUserHandlers;
     }
 
     public async authWithGithubOAuth(code: string, loginClient: 'web'|'desktop'): Promise<AuthReponse> {
@@ -496,6 +500,12 @@ export default class AuthenticationService {
 
             await userAuthCredentialsContext.attachUserToCredentials(credentials, user)
             const refreshedCredential = await userAuthCredentialsContext.getById(credentialId);
+            if (!refreshedCredential) {
+                throw new Error("credential missing")
+            }
+            for (const handler of this.createUserHandlers) {
+                handler.onUserCreated(queryRunner, user, refreshedCredential);
+            }
             await queryRunner.commitTransaction();
             return { action: 'USER_CREATED', credential: refreshedCredential as UserAuthCredential, user};
         } catch (e: any) {

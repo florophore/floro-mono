@@ -67,30 +67,30 @@ export default class OrganizationInvitationsContext extends BaseContext {
   }
 
   public async acceptInvite(
-    orgMember: OrganizationMember
-  ): Promise<OrganizationMember | null> {
-    return this.updateOrganizationInvitationById(orgMember.id, {
+    orgInvite: OrganizationInvitation
+  ): Promise<OrganizationInvitation | null> {
+    return this.updateOrganizationInvitationById(orgInvite.id, {
       invitationState: "accepted",
     });
   }
 
   public async rejectInvite(
-    orgMember: OrganizationMember
-  ): Promise<OrganizationMember | null> {
-    return this.updateOrganizationInvitationById(orgMember.id, {
+    orgInvite: OrganizationInvitation
+  ): Promise<OrganizationInvitation | null> {
+    return this.updateOrganizationInvitationById(orgInvite.id, {
       invitationState: "rejected",
     });
   }
 
   public async cancelInvite(
-    orgMember: OrganizationMember
-  ): Promise<OrganizationMember | null> {
-    return this.updateOrganizationInvitationById(orgMember.id, {
+    orgInvite: OrganizationInvitation
+  ): Promise<OrganizationInvitation | null> {
+    return this.updateOrganizationInvitationById(orgInvite.id, {
       invitationState: "canceled",
     });
   }
 
-  private async updateOrganizationInvitationById(
+  public async updateOrganizationInvitationById(
     id: string,
     orgInvitationArgs: DeepPartial<OrganizationInvitation>
   ): Promise<OrganizationInvitation | null> {
@@ -143,5 +143,16 @@ export default class OrganizationInvitationsContext extends BaseContext {
       invitationState: "sent",
     });
     return count ?? 0;
+  }
+
+  public async getInvitationsForEmailHash(
+    emailHash: string
+  ): Promise<OrganizationInvitation[]> {
+    return await this.queryRunner.manager.findBy(
+      OrganizationInvitation,
+      {
+        emailHash,
+      }
+    );
   }
 }

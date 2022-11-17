@@ -99,6 +99,25 @@ export default class OrganizationInvitationResolverModule extends BaseResolverMo
   };
 
   public Mutation: main.MutationResolvers = {
+    cancelOrganizationInvitation: runWithHooks(
+      () => [
+        this.loggedInUserGuard,
+        this.rootOrganizationMemberPermissionsLoader,
+      ],
+      async () => {
+        console.log()
+        return null;
+      }
+    ),
+    resendOrganizationInvitation: runWithHooks(
+      () => [
+        this.loggedInUserGuard,
+        this.rootOrganizationMemberPermissionsLoader,
+      ],
+      async () => {
+        return null;
+      }
+    ),
     createInvitation: runWithHooks(
       () => [
         this.loggedInUserGuard,
@@ -138,7 +157,7 @@ export default class OrganizationInvitationResolverModule extends BaseResolverMo
         }
 
         const result =
-          await this.organizationInvitationService.createInivitation(
+          await this.organizationInvitationService.createInvitation(
             organization,
             currentUser,
             membership,

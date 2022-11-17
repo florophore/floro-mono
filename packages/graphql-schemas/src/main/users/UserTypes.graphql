@@ -13,3 +13,31 @@ type UsernameCheckResult {
     exists: Boolean
     username: String
 }
+
+type RejectOrganizationInvitationSuccess {
+  organizationInvitation: OrganizationInvitation
+}
+
+type RejectOrganizationInvitationError {
+  message: String
+  type: String
+}
+
+union RejectInvitationOrganizationResponse =
+    RejectOrganizationInvitationError
+  | RejectOrganizationInvitationSuccess
+  | UnAuthenticatedError
+
+type AcceptOrganizationInvitationSuccess {
+  organizationInvitation: OrganizationInvitation
+}
+
+type AcceptOrganizationInvitationError {
+  message: String
+  type: String
+}
+
+union AcceptInvitationOrganizationResponse =
+    AcceptOrganizationInvitationError
+  | AcceptOrganizationInvitationSuccess
+  | UnAuthenticatedError

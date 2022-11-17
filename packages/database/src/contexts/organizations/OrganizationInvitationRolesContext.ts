@@ -1,5 +1,7 @@
 import { DeepPartial, QueryRunner, Raw, Repository } from "typeorm";
+import { OrganizationInvitation } from "../../entities/OrganizationInvitation";
 import { OrganizationInvitationRole } from "../../entities/OrganizationInvitationRole";
+import { OrganizationRole } from "../../entities/OrganizationRole";
 import BaseContext from "../BaseContext";
 import ContextFactory from "../ContextFactory";
 
@@ -29,6 +31,28 @@ export default class OrganizationInvitationRolesContext extends BaseContext {
   public async getByInvitationId(organizationInvitationId: string) {
     return await this.queryRunner.manager.findBy(OrganizationInvitationRole, {
         organizationInvitationId
+    });
+  }
+
+  public async getRolesByInvitation(organizationInvitation: OrganizationInvitation): Promise<OrganizationRole[]> {
+    const results = await this.queryRunner.manager.find(OrganizationInvitationRole, {
+      where: {
+        organizationInvitationId: organizationInvitation.id
+      },
+      relations: {
+        organizationRole: true
+      }
+    });
+    return results.map(organizationInvitationRole => {
+      return organizationInvitationRole.organizationRole as OrganizationRole;
+    });
+  }
+
+  public async deleteRolesForInvitation(organizationInvitation: OrganizationInvitation): Promise<void> {
+    await this.queryRunner.manager.delete(OrganizationInvitation, {
+      where: {
+        organizationInvitationId: organizationInvitation.id
+      }
     });
   }
 }

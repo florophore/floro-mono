@@ -2,4 +2,7 @@ extend type Query {
     user(id: ID!): User
     usernameCheck(username: String): UsernameCheckResult
     searchUsers(query: String!): [User]
+
+    acceptOrganizationInvitation(invitationId: ID!): AcceptInvitationOrganizationResponse
+    rejectOrganizationInvitation(invitationId: ID!): RejectInvitationOrganizationResponse
 }

@@ -113,3 +113,59 @@ union CreateInvitationOrganizationResponse =
     CreateOrganizationInvitationError
   | CreateOrganizationInvitationSuccess
   | UnAuthenticatedError
+
+type CancelOrganizationInvitationSuccess {
+  organizationInvitation: OrganizationInvitation
+}
+
+type CancelOrganizationInvitationError {
+  message: String
+  type: String
+}
+
+union CancelInvitationOrganizationResponse =
+    CancelOrganizationInvitationError
+  | CancelOrganizationInvitationSuccess
+  | UnAuthenticatedError
+
+type ResendOrganizationInvitationSuccess {
+  organizationInvitation: OrganizationInvitation
+}
+
+type ResendOrganizationInvitationError {
+  message: String
+  type: String
+}
+
+union ResendInvitationOrganizationResponse =
+    ResendOrganizationInvitationError
+  | ResendOrganizationInvitationSuccess
+  | UnAuthenticatedError
+
+type DeactivateOrganizationMemberSuccess {
+  organizationMember: OrganizationMember
+}
+
+type DeactivateOrganizationMemberError {
+  message: String
+  type: String
+}
+
+union DeactivateOrganizationMemberResponse =
+    DeactivateOrganizationMemberError
+  | DeactivateOrganizationMemberSuccess
+  | UnAuthenticatedError
+
+type ReactivateOrganizationMemberSuccess {
+  organizationMember: OrganizationMember
+}
+
+type ReactivateOrganizationMemberError {
+  message: String
+  type: String
+}
+
+union ReactivateOrganizationMemberResponse =
+    ReactivateOrganizationMemberError
+  | ReactivateOrganizationMemberSuccess
+  | UnAuthenticatedError

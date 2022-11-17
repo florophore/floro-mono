@@ -1,4 +1,3 @@
-
 import BaseResolverModule from "../BaseResolverModule";
 import { main } from "@floro/graphql-schemas";
 import { inject, injectable } from "inversify";
@@ -10,6 +9,7 @@ import ContextFactory from "@floro/database/src/contexts/ContextFactory";
 import OrganizationPermissionService from "../../services/organizations/OrganizationPermissionService";
 import MembershipRolesLoader from "../hooks/loaders/OrganizationMembership/MembershipRolesLoader";
 import MembershipPermissionsLoader from "../hooks/loaders/OrganizationMembership/MembershipPermissionsLoader";
+import OrganizationInvitationMemberPermissionsLoader from "../hooks/loaders/OrganizationInvitation/OrganizationInvitationMemberPermissionLoader";
 
 @injectable()
 export default class OrganizationMemberResolverModule extends BaseResolverModule {
@@ -28,12 +28,18 @@ export default class OrganizationMemberResolverModule extends BaseResolverModule
   protected membershipRolesLoader!: MembershipRolesLoader;
   protected membershipPermissionsLoader!: MembershipPermissionsLoader;
 
+  protected organizationInvitationMemberPermissionsLoader!: OrganizationInvitationMemberPermissionsLoader;
+
   constructor(
     @inject(ContextFactory) contextFactory: ContextFactory,
     @inject(RequestCache) requestCache: RequestCache,
     @inject(MembershipRolesLoader) membershipRolesLoader: MembershipRolesLoader,
-    @inject(MembershipPermissionsLoader) membershipPermissionsLoader: MembershipPermissionsLoader,
-    @inject(OrganizationPermissionService) organizationPermissionService: OrganizationPermissionService
+    @inject(MembershipPermissionsLoader)
+    membershipPermissionsLoader: MembershipPermissionsLoader,
+    @inject(OrganizationPermissionService)
+    organizationPermissionService: OrganizationPermissionService,
+    @inject(OrganizationInvitationMemberPermissionsLoader)
+    organizationInvitationMemberPermissionsLoader: OrganizationInvitationMemberPermissionsLoader
   ) {
     super();
     this.requestCache = requestCache;
@@ -42,25 +48,53 @@ export default class OrganizationMemberResolverModule extends BaseResolverModule
 
     // loaders
     this.membershipRolesLoader = membershipRolesLoader;
-    this.membershipPermissionsLoader = membershipPermissionsLoader; 
+    this.membershipPermissionsLoader = membershipPermissionsLoader;
+
+    this.organizationInvitationMemberPermissionsLoader =
+      organizationInvitationMemberPermissionsLoader;
   }
 
   public OrganizationMember: main.OrganizationMemberResolvers = {
-    permissions: runWithHooks(() => [
-      this.membershipPermissionsLoader
-    ], async (organizationMember, _, { cacheKey }) => {
-      return this.requestCache.getMembershipPermissions(cacheKey, organizationMember.id);
-    }),
-    roles: runWithHooks(() => [
-      this.membershipRolesLoader
-    ], async (organizationMember, _, { cacheKey }) => {
-      return this.requestCache.getMembershipRoles(cacheKey, organizationMember.id);
-    })
+    permissions: runWithHooks(
+      () => [this.membershipPermissionsLoader],
+      async (organizationMember, _, { cacheKey }) => {
+        return this.requestCache.getMembershipPermissions(
+          cacheKey,
+          organizationMember.id
+        );
+      }
+    ),
+    roles: runWithHooks(
+      () => [this.membershipRolesLoader],
+      async (organizationMember, _, { cacheKey }) => {
+        return this.requestCache.getMembershipRoles(
+          cacheKey,
+          organizationMember.id
+        );
+      }
+    ),
   };
 
   public Mutation: main.MutationResolvers = {
+    deactivateOrganizationMembership: runWithHooks(
+      () => [
+        this.loggedInUserGuard,
+        this.organizationInvitationMemberPermissionsLoader,
+      ],
+      async () => {
+        return null;
+      }
+    ),
+    reactivateOrganizationMembership: runWithHooks(
+      () => [
+        this.loggedInUserGuard,
+        this.organizationInvitationMemberPermissionsLoader,
+      ],
+      async () => {
+        return null;
+      }
+    ),
   };
 
-  public Query: main.QueryResolvers = {
-  };
+  public Query: main.QueryResolvers = {};
 }
