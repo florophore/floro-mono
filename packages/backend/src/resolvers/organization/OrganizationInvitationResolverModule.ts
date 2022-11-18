@@ -9,6 +9,7 @@ import RootOrganizationMemberPermissionsLoader from "../hooks/loaders/Root/Organ
 import OrganizationInvitationService from "../../services/organizations/OrganizationInvitationService";
 import { OrganizationInvitation } from "@floro/database/src/entities/OrganizationInvitation";
 import OrganizationInvitationMemberPermissionsLoader from "../hooks/loaders/OrganizationInvitation/OrganizationInvitationMemberPermissionLoader";
+import OrganizationInvitationsContext from "@floro/database/src/contexts/organizations/OrganizationInvitationsContext";
 
 @injectable()
 export default class OrganizationInvitationResolverModule extends BaseResolverModule {
@@ -104,9 +105,79 @@ export default class OrganizationInvitationResolverModule extends BaseResolverMo
         this.loggedInUserGuard,
         this.rootOrganizationMemberPermissionsLoader,
       ],
-      async () => {
-        console.log()
-        return null;
+      async (_, { organizationId, invitationId }: main.MutationCancelOrganizationInvitationArgs, { currentUser, cacheKey }) => {
+        const organization = this.requestCache.getOrganization(
+          cacheKey,
+          organizationId
+        );
+        if (!organization) {
+          return {
+            __typename: "CancelOrganizationInvitationError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        const currentMember = this.requestCache.getOrganizationMembership(
+          cacheKey,
+          organizationId,
+          currentUser.id
+        );
+        if (!currentMember?.id) {
+          return {
+            __typename: "CancelOrganizationInvitationError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        const permissions = this.requestCache.getMembershipPermissions(
+          cacheKey,
+          currentMember.id
+        );
+        if (!permissions) {
+          return {
+            __typename: "CancelOrganizationInvitationError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        const organizationInvitationsContext = await this.contextFactory.createContext(OrganizationInvitationsContext);
+        const organizationInvitation = await organizationInvitationsContext.getById(invitationId);
+        if (organizationInvitation?.organizationId != organizationId) {
+          return {
+            __typename: "CancelOrganizationInvitationError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        const result =
+          await this.organizationInvitationService.cancelInvitation(
+            organizationInvitation,
+            currentMember,
+            permissions
+          );
+        if (result.action == "INVITATION_CANCELLED") {
+          return {
+            __typename: "CancelOrganizationInvitationSuccess",
+            organizationInvitation: result.organizationInvitation,
+          };
+        }
+        if (result.action == "LOG_ERROR") {
+          console.error(
+            result.error?.type,
+            result?.error?.message,
+            result?.error?.meta
+          );
+          return {
+            __typename: "CancelOrganizationInvitationError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        return {
+          __typename: "CancelOrganizationInvitationError",
+          message: result.error?.message ?? "Unknown Error",
+          type: result.error?.type ?? "UNKNOWN_ERROR",
+        };
       }
     ),
     resendOrganizationInvitation: runWithHooks(
@@ -114,8 +185,81 @@ export default class OrganizationInvitationResolverModule extends BaseResolverMo
         this.loggedInUserGuard,
         this.rootOrganizationMemberPermissionsLoader,
       ],
-      async () => {
-        return null;
+      async (_, { organizationId, invitationId }: main.MutationResendOrganizationInvitationArgs, { currentUser, cacheKey }) => {
+        const organization = this.requestCache.getOrganization(
+          cacheKey,
+          organizationId
+        );
+        if (!organization) {
+          return {
+            __typename: "ResendOrganizationInvitationError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        const currentMember = this.requestCache.getOrganizationMembership(
+          cacheKey,
+          organizationId,
+          currentUser.id
+        );
+        if (!currentMember?.id) {
+          return {
+            __typename: "ResendOrganizationInvitationError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        const permissions = this.requestCache.getMembershipPermissions(
+          cacheKey,
+          currentMember.id
+        );
+        if (!permissions) {
+          return {
+            __typename: "ResendOrganizationInvitationError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        const organizationInvitationsContext = await this.contextFactory.createContext(OrganizationInvitationsContext);
+        const organizationInvitation = await organizationInvitationsContext.getById(invitationId);
+        if (organizationInvitation?.organizationId != organizationId) {
+          return {
+            __typename: "ResendOrganizationInvitationError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        const result =
+          await this.organizationInvitationService.resendInvitation(
+            organizationInvitation,
+            organization,
+            currentUser,
+            currentMember,
+            permissions
+          );
+        if (result.action == "INVITATION_RESENT") {
+          return {
+            __typename: "ResendOrganizationInvitationSuccess",
+            organizationInvitation: result.organizationInvitation,
+          };
+        }
+        if (result.action == "LOG_ERROR") {
+          console.error(
+            result.error?.type,
+            result?.error?.message,
+            result?.error?.meta
+          );
+          return {
+            __typename: "ResendOrganizationInvitationError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        return {
+          __typename: "ResendOrganizationInvitationError",
+          message: result.error?.message ?? "Unknown Error",
+          type: result.error?.type ?? "UNKNOWN_ERROR",
+        };
       }
     ),
     createInvitation: runWithHooks(

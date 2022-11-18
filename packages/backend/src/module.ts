@@ -31,6 +31,8 @@ import OrganizationInvitationOrganizationMemberRolesLoader from './resolvers/hoo
 import OrganizationInvitationMemberPermissionsLoader from './resolvers/hooks/loaders/OrganizationInvitation/OrganizationInvitationMemberPermissionLoader';
 import OrganizationActiveMemberCountLoader from './resolvers/hooks/loaders/Organization/OrganizationActiveMemberCountLoader';
 import OrganizationSentInvitationsCountLoader from './resolvers/hooks/loaders/Organization/OrganizationSentInvitationsCountLoader';
+import CreateUserEventHandler from './services/events/CreateUserEventHandler';
+import OrganizationMemberService from './services/organizations/OrganizationMemberService';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -75,6 +77,11 @@ export default new ContainerModule((bind): void => {
     bind(OrganizationService).toSelf();
     bind(OrganizationPermissionService).toSelf();
     bind(OrganizationInvitationService).toSelf();
+    bind(OrganizationMemberService).toSelf();
+
+    // EVENT HANDLERS
+    // CREATE USER HANLDER
+    bind<CreateUserEventHandler>("CreateUserHandler").to(OrganizationInvitationService);
 
     // Controllers
     bind<AuthenticationController>("Controllers").to(AuthenticationController);

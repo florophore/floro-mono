@@ -169,3 +169,17 @@ union ReactivateOrganizationMemberResponse =
     ReactivateOrganizationMemberError
   | ReactivateOrganizationMemberSuccess
   | UnAuthenticatedError
+
+type UpdateOrganizationMemberSuccess {
+  organizationMember: OrganizationMember
+}
+
+type UpdateOrganizationMemberError {
+  message: String
+  type: String
+}
+
+union UpdateOrganizationMemberResponse =
+    UpdateOrganizationMemberError
+  | UpdateOrganizationMemberSuccess
+  | UnAuthenticatedError

@@ -8,14 +8,14 @@ export class addDiskUtilizationColumnsAndPresetCodes1668541786455 implements Mig
           name: "free_disk_space_bytes",
           type: "bigint",
           isNullable: false,
-          default: 10000000000,
+          default: 10737418240,
         }));
 
         await queryRunner.addColumn("organizations", new TableColumn({
           name: "disk_space_limit_bytes",
           type: "bigint",
           isNullable: false,
-          default: 10000000000,
+          default: 10737418240,
         }));
 
         await queryRunner.addColumn("organizations", new TableColumn({
@@ -36,14 +36,14 @@ export class addDiskUtilizationColumnsAndPresetCodes1668541786455 implements Mig
           name: "free_disk_space_bytes",
           type: "bigint",
           isNullable: false,
-          default: 10000000000,
+          default: 10737418240,
         }));
 
         await queryRunner.addColumn("users", new TableColumn({
           name: "disk_space_limit_bytes",
           type: "bigint",
           isNullable: false,
-          default: 10000000000,
+          default: 10737418240,
         }));
 
         await queryRunner.addColumn("users", new TableColumn({

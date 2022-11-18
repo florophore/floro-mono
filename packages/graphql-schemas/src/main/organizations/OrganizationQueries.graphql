@@ -11,4 +11,5 @@ extend type Mutation {
 
     deactivateOrganizationMembership(organizationId: ID!, memberId: ID!): DeactivateOrganizationMemberResponse
     reactivateOrganizationMembership(organizationId: ID!, memberId: ID!): ReactivateOrganizationMemberResponse
+    updateOrganizationMembership(organizationId: ID!, memberId: ID!, internalHandle: String, roleIds: [ID]): UpdateOrganizationMemberResponse
 }

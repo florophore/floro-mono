@@ -25,7 +25,7 @@ import { User } from "./User";
 
 @Entity("organization_members")
 export class OrganizationMember extends BinaryPKBaseEntity {
-  @Column("varchar", { length: 255 })
+  @Column("varchar", { length: 255, nullable: true })
   @MinLength(1)
   @MaxLength(30)
   @ValidateIf((_object, value) => !!value)

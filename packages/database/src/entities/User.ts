@@ -25,12 +25,12 @@ export class User extends BinaryPKBaseEntity {
   @MaxLength(30)
   username?: string;
 
-  @Column("bigint", { default: 10000000000 })
+  @Column("bigint", { default: 10737418240 })
   @IsDefined()
   @ValidateIf((_, value) => value != undefined)
   freeDiskSpaceBytes?: number;
 
-  @Column("bigint", { default: 10000000000 })
+  @Column("bigint", { default: 10737418240 })
   @IsDefined()
   @ValidateIf((_, value) => value != undefined)
   diskSpaceLimitBytes?: number;

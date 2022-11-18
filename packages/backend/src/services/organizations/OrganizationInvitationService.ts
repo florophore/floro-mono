@@ -552,7 +552,14 @@ export default class OrganizationInvitationService
           },
         };
       }
-
+      // unassociate internal handle if new member username is in that internal handle list handle
+      const organizationMembers = await organizationMembersContext.getAllMembersForOrganization(organization.id);
+      const conflictingMember = organizationMembers?.find(member => {
+        return member.internalHandle?.trim?.().toLowerCase() == currentUser?.username?.trim()?.toLocaleLowerCase();
+      })
+      if (conflictingMember) {
+        await organizationMembersContext.unassignInternalHandle(conflictingMember);
+      }
       const organizationMember =
         await organizationMembersContext.createOrganizationMember({
           organizationId: organization.id,

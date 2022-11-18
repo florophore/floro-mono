@@ -166,6 +166,13 @@ export default class OrganizationMembersContext extends BaseContext {
       internalHandle: internalHandle.trim(),
     });
   }
+  public async unassignInternalHandle(
+    orgMember: OrganizationMember
+  ): Promise<OrganizationMember | null> {
+    return this.updateOrganizationMemberById(orgMember.id, {
+      internalHandle: undefined,
+    });
+  }
 
   public async deactivateMembership(
     orgMember: OrganizationMember

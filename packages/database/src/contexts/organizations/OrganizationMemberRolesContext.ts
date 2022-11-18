@@ -42,6 +42,13 @@ export default class OrganizationMemberRolesContext extends BaseContext {
       organizationRoleId: role.id,
     });
   }
+  public async getRolesForOrg(
+    org: Organization,
+  ): Promise<OrganizationMemberRole[]> {
+    return await this.queryRunner.manager.findBy(OrganizationMemberRole, {
+      organizationId: org.id
+    });
+  }
 
   public async getRolesByMember(
     organizationMember: OrganizationMember
@@ -73,5 +80,13 @@ export default class OrganizationMemberRolesContext extends BaseContext {
         (organizationMemberRole) => organizationMemberRole.organizationRole
       )
       ?.filter((result) => result != undefined) as OrganizationRole[];
+  }
+
+  public async deleteRolesForMember(organizationMember: OrganizationMember): Promise<void> {
+    await this.queryRunner.manager.delete(OrganizationMember, {
+      where: {
+        organizationMemberId: organizationMember.id
+      }
+    });
   }
 }
