@@ -1,10 +1,10 @@
 import BaseResolverModule from "../BaseResolverModule";
-import { main } from '@floro/graphql-schemas'; 
+import { main } from "@floro/graphql-schemas";
 import { inject, injectable } from "inversify";
 import { User } from "@floro/database/src/entities/User";
 import { UsernameCheckResult } from "@floro/graphql-schemas/src/generated/main-graphql";
 import UsersService from "../../services/users/UsersService";
-import { USERNAME_REGEX } from '@floro/common-web/src/utils/validators';
+import { USERNAME_REGEX } from "@floro/common-web/src/utils/validators";
 import ContextFactory from "@floro/database/src/contexts/ContextFactory";
 import UsersContext from "@floro/database/src/contexts/users/UsersContext";
 import OrganizationsContext from "@floro/database/src/contexts/organizations/OrganizationsContext";
@@ -12,26 +12,40 @@ import RequestCache from "../../request/RequestCache";
 import { OrganizationMember } from "@floro/database/src/entities/OrganizationMember";
 import { OrganizationRole } from "@floro/database/src/entities/OrganizationRole";
 import { OrganizationInvitation } from "@floro/database/src/entities/OrganizationInvitation";
+import LoggedInUserGuard from "../hooks/guards/LoggedInUserGuard";
+import { runWithHooks } from "../hooks/ResolverHook";
+import OrganizationInvitationsContext from "@floro/database/src/contexts/organizations/OrganizationInvitationsContext";
+import OrganizationInvitationService from "../../services/organizations/OrganizationInvitationService";
 
 @injectable()
 export default class UsersResolverModule extends BaseResolverModule {
   public resolvers: Array<keyof this & keyof main.ResolversTypes> = [
     "Query",
     "User",
+    "Mutation",
   ];
   protected usersService!: UsersService;
   protected contextFactory!: ContextFactory;
   protected requestCache!: RequestCache;
 
+  protected organizationInvitationService!: OrganizationInvitationService;
+  protected loggedInUserGuard!: LoggedInUserGuard;
+
   constructor(
     @inject(ContextFactory) contextFactory: ContextFactory,
     @inject(RequestCache) requestCache: RequestCache,
-    @inject(UsersService) usersService: UsersService
+    @inject(UsersService) usersService: UsersService,
+    @inject(OrganizationInvitationService)
+    organizationInvitationService: OrganizationInvitationService,
+    @inject(LoggedInUserGuard) loggedInUserGuard: LoggedInUserGuard
   ) {
     super();
     this.contextFactory = contextFactory;
     this.usersService = usersService;
     this.requestCache = requestCache;
+
+    this.organizationInvitationService = organizationInvitationService;
+    this.loggedInUserGuard = loggedInUserGuard;
   }
 
   public Query: main.QueryResolvers = {
@@ -73,6 +87,113 @@ export default class UsersResolverModule extends BaseResolverModule {
       );
       return await usersContext.searchUsers(query ?? "");
     },
+  };
+
+  public Mutation: main.MutationResolvers = {
+    acceptOrganizationInvitation: runWithHooks(
+      () => [this.loggedInUserGuard],
+      async (
+        _root,
+        { invitationId }: main.MutationRejectOrganizationInvitationArgs,
+        { currentUser }
+      ) => {
+        const organizationInvitationsContext =
+          await this.contextFactory.createContext(
+            OrganizationInvitationsContext
+          );
+        const organizationInvitation =
+          await organizationInvitationsContext.getById(invitationId);
+        if (!organizationInvitation) {
+          return {
+            __typename: "AcceptOrganizationInvitationError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        const result =
+          await this.organizationInvitationService.acceptInvitation(
+            organizationInvitation,
+            currentUser
+          );
+
+        if (result.action == "INVITATION_ACCEPTED") {
+          return {
+            __typename: "AcceptOrganizationInvitationSuccess",
+            organizationInvitation: result.organizationInvitation,
+          };
+        }
+
+        if (result.action == "LOG_ERROR") {
+          console.error(
+            result.error?.type,
+            result?.error?.message,
+            result?.error?.meta
+          );
+          return {
+            __typename: "AcceptOrganizationInvitationError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        return {
+          __typename: "AcceptOrganizationInvitationError",
+          message: result.error?.message ?? "Unknown Error",
+          type: result.error?.type ?? "UNKNOWN_ERROR",
+        };
+      }
+    ),
+    rejectOrganizationInvitation: runWithHooks(
+      () => [this.loggedInUserGuard],
+      async (
+        _root,
+        { invitationId }: main.MutationAcceptOrganizationInvitationArgs,
+        { currentUser }
+      ) => {
+        const organizationInvitationsContext =
+          await this.contextFactory.createContext(
+            OrganizationInvitationsContext
+          );
+        const organizationInvitation =
+          await organizationInvitationsContext.getById(invitationId);
+        if (!organizationInvitation) {
+          return {
+            __typename: "RejectOrganizationInvitationError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        const result =
+          await this.organizationInvitationService.rejectInvitation(
+            organizationInvitation,
+            currentUser
+          );
+
+        if (result.action == "INVITATION_REJECTED") {
+          return {
+            __typename: "RejectOrganizationInvitationSuccess",
+            organizationInvitation: result.organizationInvitation,
+          };
+        }
+
+        if (result.action == "LOG_ERROR") {
+          console.error(
+            result.error?.type,
+            result?.error?.message,
+            result?.error?.meta
+          );
+          return {
+            __typename: "RejectOrganizationInvitationError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        return {
+          __typename: "RejectOrganizationInvitationError",
+          message: result.error?.message ?? "Unknown Error",
+          type: result.error?.type ?? "UNKNOWN_ERROR",
+        };
+      }
+    ),
   };
 
   public User: main.UserResolvers = {

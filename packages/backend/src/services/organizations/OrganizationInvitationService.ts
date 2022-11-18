@@ -50,7 +50,7 @@ export interface CreateOrganizationInvitationReponse {
 export interface RejectOrganizationInvitationReponse {
   action:
     | "INVITATION_REJECTED"
-    | "NO_USER_FOUND_ERROR"
+    | "FORBIDDEN_ACTION_ERROR"
     | "INVALID_STATE_ERROR"
     | "LOG_ERROR";
   organizationInvitation?: OrganizationInvitation;
@@ -493,10 +493,10 @@ export default class OrganizationInvitationService
   ): Promise<AcceptOrganizationInvitationReponse> {
     if (currentUser?.id != organizationInvitation?.userId) {
       return {
-        action: "NO_USER_FOUND_ERROR",
+        action: "FORBIDDEN_ACTION_ERROR",
         error: {
-          type: "NO_USER_FOUND_ERROR",
-          message: "No user found",
+          type: "FORBIDDEN_ACTION_ERROR",
+          message: "Forbidden Action",
         },
       };
     }
@@ -622,10 +622,10 @@ export default class OrganizationInvitationService
   ): Promise<RejectOrganizationInvitationReponse> {
     if (currentUser?.id != organizationInvitation?.userId) {
       return {
-        action: "NO_USER_FOUND_ERROR",
+        action: "FORBIDDEN_ACTION_ERROR",
         error: {
-          type: "NO_USER_FOUND_ERROR",
-          message: "No user found",
+          type: "FORBIDDEN_ACTION_ERROR",
+          message: "Forbidden Action",
         },
       };
     }
