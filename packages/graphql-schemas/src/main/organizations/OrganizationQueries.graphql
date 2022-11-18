@@ -9,9 +9,6 @@ extend type Mutation {
     cancelOrganizationInvitation(organizationId: ID!, invitationId: ID!): CancelInvitationOrganizationResponse
     resendOrganizationInvitation(organizationId: ID!, invitationId: ID!): ResendInvitationOrganizationResponse
 
-    acceptOrganizationInvitation(invitationId: ID!): AcceptInvitationOrganizationResponse
-    rejectOrganizationInvitation(invitationId: ID!): RejectInvitationOrganizationResponse
-
     deactivateOrganizationMembership(organizationId: ID!, memberId: ID!): DeactivateOrganizationMemberResponse
     reactivateOrganizationMembership(organizationId: ID!, memberId: ID!): ReactivateOrganizationMemberResponse
     updateOrganizationMembership(organizationId: ID!, memberId: ID!, internalHandle: String, roleIds: [ID]): UpdateOrganizationMemberResponse
