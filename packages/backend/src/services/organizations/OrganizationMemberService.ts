@@ -231,6 +231,7 @@ export default class OrganizationMemberService {
           (organization?.freeSeats ?? 10) -
           (activeMemberCount + sentInviteCount);
         if (remainingSeats <= 0) {
+          await queryRunner.rollbackTransaction();
           return {
             action: "NO_REMAINING_SEATS_ERROR",
             error: {
@@ -246,6 +247,7 @@ export default class OrganizationMemberService {
           organizationMember
         );
       if (!reactivatedMember) {
+        await queryRunner.rollbackTransaction();
         return {
           action: "LOG_ERROR",
           error: {
@@ -254,6 +256,7 @@ export default class OrganizationMemberService {
           },
         };
       }
+      await queryRunner.commitTransaction();
       return {
         action: "MEMBER_REACTIVATED",
         organizationMember: reactivatedMember,
@@ -296,6 +299,7 @@ export default class OrganizationMemberService {
     }
     const queryRunner = await this.databaseConnection.makeQueryRunner();
     try {
+      await queryRunner.startTransaction();
       const organizationMembersContext =
         await this.contextFactory.createContext(
           OrganizationMembersContext,
@@ -324,7 +328,7 @@ export default class OrganizationMemberService {
           // valid username for profanity regex here
           if (
             !USERNAME_REGEX.test(submittedInternalHandle) ||
-            !profanityFilter.isProfane(submittedInternalHandle)
+            profanityFilter.isProfane(submittedInternalHandle)
           ) {
             await queryRunner.rollbackTransaction();
             return {
@@ -377,6 +381,7 @@ export default class OrganizationMemberService {
         );
         if (
           activeMemberRoles.length > 1 ||
+          activeMemberRoles[0]?.organizationMemberId != organizationMember.id ||
           submittedRoleIds?.includes(adminRole?.id as string)
         ) {
           await organizationMemberRolesContext.deleteRolesForMember(
@@ -388,8 +393,12 @@ export default class OrganizationMemberService {
               assignedRoles.push(role);
             }
           });
-          for (const role of roles) {
-            await organizationRolesContext.createOrganizationRole(role);
+          for (const role of assignedRoles) {
+            await organizationMemberRolesContext.createOrganizationRole({
+              organizationId: organization.id,
+              organizationMemberId: organizationMember.id,
+              organizationRoleId: role.id,
+            });
           }
         }
       }

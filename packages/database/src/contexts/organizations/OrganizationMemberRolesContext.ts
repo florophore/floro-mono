@@ -83,10 +83,8 @@ export default class OrganizationMemberRolesContext extends BaseContext {
   }
 
   public async deleteRolesForMember(organizationMember: OrganizationMember): Promise<void> {
-    await this.queryRunner.manager.delete(OrganizationMember, {
-      where: {
+    await this.queryRunner.manager.delete(OrganizationMemberRole, {
         organizationMemberId: organizationMember.id
-      }
     });
   }
 }

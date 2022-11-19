@@ -27,7 +27,7 @@ export default class OrganizationMembersContext extends BaseContext {
   }
 
   public async getById(id: string): Promise<OrganizationMember | null> {
-    return await this.queryRunner.manager.findOneBy(OrganizationMember, { id });
+    return await this.queryRunner.manager.findOne(OrganizationMember, { where: { id }, relations: { user: true} });
   }
 
   public async getByOrgIdAndUserId(
