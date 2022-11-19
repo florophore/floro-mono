@@ -215,7 +215,7 @@ export default class OrganizationMemberResolverModule extends BaseResolverModule
           return {
             __typename: "UpdateOrganizationMemberSuccess",
             organizationMember: result.organizationMember,
-            organization
+            organization,
           };
         }
         if (result.action == "LOG_ERROR") {
@@ -306,7 +306,7 @@ export default class OrganizationMemberResolverModule extends BaseResolverModule
           return {
             __typename: "DeactivateOrganizationMemberSuccess",
             organizationMember: result.organizationMember,
-            organization
+            organization,
           };
         }
         if (result.action == "LOG_ERROR") {
@@ -397,7 +397,7 @@ export default class OrganizationMemberResolverModule extends BaseResolverModule
           return {
             __typename: "ReactivateOrganizationMemberSuccess",
             organizationMember: result.organizationMember,
-            organization
+            organization,
           };
         }
         if (result.action == "LOG_ERROR") {

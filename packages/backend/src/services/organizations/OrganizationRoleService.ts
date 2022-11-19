@@ -88,7 +88,7 @@ export default class OrganizationRoleService {
         },
       };
     }
-    if (currentMemberPermissions.canModifyOrganizationRoles) {
+    if (!currentMemberPermissions.canModifyOrganizationRoles) {
       return {
         action: "FORBIDDEN_ACTION_ERROR",
         error: {
@@ -178,7 +178,7 @@ export default class OrganizationRoleService {
         },
       };
     }
-    if (currentMemberPermissions.canModifyOrganizationRoles) {
+    if (!currentMemberPermissions.canModifyOrganizationRoles) {
       return {
         action: "FORBIDDEN_ACTION_ERROR",
         error: {
@@ -265,7 +265,7 @@ export default class OrganizationRoleService {
       };
     }
 
-    if (currentMemberPermissions.canModifyOrganizationRoles) {
+    if (!currentMemberPermissions.canModifyOrganizationRoles) {
       return {
         action: "FORBIDDEN_ACTION_ERROR",
         error: {

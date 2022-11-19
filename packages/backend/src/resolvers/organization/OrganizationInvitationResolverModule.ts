@@ -33,6 +33,7 @@ export default class OrganizationInvitationResolverModule extends BaseResolverMo
     @inject(RequestCache) requestCache: RequestCache,
     @inject(OrganizationInvitationService)
     organizationInvitationService: OrganizationInvitationService,
+    @inject(LoggedInUserGuard) loggedInUserGuard: LoggedInUserGuard,
     @inject(RootOrganizationMemberPermissionsLoader)
     rootOrganizationMemberPermissionsLoader: RootOrganizationMemberPermissionsLoader,
     @inject(OrganizationInvitationMemberPermissionsLoader)
@@ -44,6 +45,9 @@ export default class OrganizationInvitationResolverModule extends BaseResolverMo
 
     this.organizationInvitationService = organizationInvitationService;
 
+    // guards
+    this.loggedInUserGuard = loggedInUserGuard;
+
     // loaders
     this.rootOrganizationMemberPermissionsLoader =
       rootOrganizationMemberPermissionsLoader;
@@ -53,7 +57,9 @@ export default class OrganizationInvitationResolverModule extends BaseResolverMo
 
   public OrganizationInvitation: main.OrganizationInvitationResolvers = {
     email: (organizationInvitation) => {
-      if (!(organizationInvitation as OrganizationInvitation)?.userExistedAlready) {
+      if (
+        !(organizationInvitation as OrganizationInvitation)?.userExistedAlready
+      ) {
         return organizationInvitation.email ?? null;
       }
       return null;
@@ -104,7 +110,14 @@ export default class OrganizationInvitationResolverModule extends BaseResolverMo
         this.loggedInUserGuard,
         this.rootOrganizationMemberPermissionsLoader,
       ],
-      async (_, { organizationId, invitationId }: main.MutationCancelOrganizationInvitationArgs, { currentUser, cacheKey }) => {
+      async (
+        _,
+        {
+          organizationId,
+          invitationId,
+        }: main.MutationCancelOrganizationInvitationArgs,
+        { currentUser, cacheKey }
+      ) => {
         const organization = this.requestCache.getOrganization(
           cacheKey,
           organizationId
@@ -139,8 +152,12 @@ export default class OrganizationInvitationResolverModule extends BaseResolverMo
             type: "FORBIDDEN_ACTION_ERROR",
           };
         }
-        const organizationInvitationsContext = await this.contextFactory.createContext(OrganizationInvitationsContext);
-        const organizationInvitation = await organizationInvitationsContext.getById(invitationId);
+        const organizationInvitationsContext =
+          await this.contextFactory.createContext(
+            OrganizationInvitationsContext
+          );
+        const organizationInvitation =
+          await organizationInvitationsContext.getById(invitationId);
         if (organizationInvitation?.organizationId != organizationId) {
           return {
             __typename: "CancelOrganizationInvitationError",
@@ -158,7 +175,7 @@ export default class OrganizationInvitationResolverModule extends BaseResolverMo
           return {
             __typename: "CancelOrganizationInvitationSuccess",
             organizationInvitation: result.organizationInvitation,
-            organization
+            organization,
           };
         }
         if (result.action == "LOG_ERROR") {
@@ -185,7 +202,14 @@ export default class OrganizationInvitationResolverModule extends BaseResolverMo
         this.loggedInUserGuard,
         this.rootOrganizationMemberPermissionsLoader,
       ],
-      async (_, { organizationId, invitationId }: main.MutationResendOrganizationInvitationArgs, { currentUser, cacheKey }) => {
+      async (
+        _,
+        {
+          organizationId,
+          invitationId,
+        }: main.MutationResendOrganizationInvitationArgs,
+        { currentUser, cacheKey }
+      ) => {
         const organization = this.requestCache.getOrganization(
           cacheKey,
           organizationId
@@ -220,8 +244,12 @@ export default class OrganizationInvitationResolverModule extends BaseResolverMo
             type: "FORBIDDEN_ACTION_ERROR",
           };
         }
-        const organizationInvitationsContext = await this.contextFactory.createContext(OrganizationInvitationsContext);
-        const organizationInvitation = await organizationInvitationsContext.getById(invitationId);
+        const organizationInvitationsContext =
+          await this.contextFactory.createContext(
+            OrganizationInvitationsContext
+          );
+        const organizationInvitation =
+          await organizationInvitationsContext.getById(invitationId);
         if (organizationInvitation?.organizationId != organizationId) {
           return {
             __typename: "ResendOrganizationInvitationError",
@@ -241,7 +269,7 @@ export default class OrganizationInvitationResolverModule extends BaseResolverMo
           return {
             __typename: "ResendOrganizationInvitationSuccess",
             organizationInvitation: result.organizationInvitation,
-            organization
+            organization,
           };
         }
         if (result.action == "LOG_ERROR") {
@@ -318,7 +346,7 @@ export default class OrganizationInvitationResolverModule extends BaseResolverMo
           return {
             __typename: "CreateOrganizationInvitationSuccess",
             organizationInvitation: result.organizationInvitation,
-            organization
+            organization,
           };
         }
         if (result.action == "LOG_ERROR") {

@@ -29,6 +29,7 @@ export default class OrganizationRoleResolverModule extends BaseResolverModule {
     @inject(RequestCache) requestCache: RequestCache,
     @inject(OrganizationRoleService)
     organizationRoleService: OrganizationRoleService,
+    @inject(LoggedInUserGuard) loggedInUserGuard: LoggedInUserGuard,
     @inject(RootOrganizationMemberPermissionsLoader)
     rootOrganizationMemberPermissionsLoader: RootOrganizationMemberPermissionsLoader
   ) {
@@ -37,6 +38,9 @@ export default class OrganizationRoleResolverModule extends BaseResolverModule {
     this.contextFactory = contextFactory;
 
     this.organizationRoleService = organizationRoleService;
+
+    // guards
+    this.loggedInUserGuard = loggedInUserGuard;
 
     // loaders
     this.rootOrganizationMemberPermissionsLoader =

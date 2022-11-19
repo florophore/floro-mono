@@ -1,4 +1,4 @@
-import { IsBoolean, IsDefined, IsString, MaxLength, MinLength } from "class-validator";
+import { IsBoolean, IsDefined, IsString, MaxLength, MinLength, ValidateIf } from "class-validator";
 import {
   Entity,
   Column,
@@ -24,6 +24,7 @@ export class OrganizationRole extends BinaryPKBaseEntity {
 
   @Column("varchar", { length: 255 })
   @IsString()
+  @ValidateIf((_option, value) => !!value)
   presetCode!: string;
 
   @Column("boolean", { default: false })
