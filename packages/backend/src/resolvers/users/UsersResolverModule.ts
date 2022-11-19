@@ -307,5 +307,12 @@ export default class UsersResolverModule extends BaseResolverModule {
       );
       return organizations;
     },
+    organizationInvitations: async (user, _, { currentUser }) => {
+      if (user?.id != currentUser?.id) {
+        return null;
+      }
+      const organizationInvitationsContext = await this.contextFactory.createContext(OrganizationInvitationsContext);
+      return await organizationInvitationsContext.getAllInvitationsForUser(user.id as string);
+    }
   };
 }

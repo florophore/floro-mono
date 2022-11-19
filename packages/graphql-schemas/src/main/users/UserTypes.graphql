@@ -4,6 +4,7 @@ type User {
     lastName: String
     username: String
     organizations: [Organization] 
+    organizationInvitations: [OrganizationInvitation]
     freeDiskSpaceBytes: Float
     diskSpaceLimitBytes: Float
     utilizedDiskSpaceBytes: Float

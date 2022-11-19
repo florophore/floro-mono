@@ -134,6 +134,23 @@ export default class OrganizationInvitationsContext extends BaseContext {
       },
     });
   }
+  public async getAllInvitationsForUser(
+    userId: string
+  ): Promise<OrganizationInvitation[]> {
+    return await this.queryRunner.manager.find(OrganizationInvitation, {
+      where: {
+        userId,
+        invitationState: "sent",
+      },
+      relations: {
+        user: true,
+        invitedByUser: true
+      },
+      order: {
+        createdAt: "DESC",
+      },
+    });
+  }
 
   public async getSentInvitationCountForOrganization(
     organizationId: string

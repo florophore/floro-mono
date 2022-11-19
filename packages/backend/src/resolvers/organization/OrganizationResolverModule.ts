@@ -265,7 +265,11 @@ export default class OrganizationResolverModule extends BaseResolverModule {
           organizationMembership.id
         );
 
-        if (!permissions.canModifyInvites && !permissions.canInviteMembers && !permissions.canModifyOrganizationMembers) {
+        if (
+          !permissions.canModifyInvites &&
+          !permissions.canInviteMembers &&
+          !permissions.canModifyOrganizationMembers
+        ) {
           return null;
         }
         const invitationCount =
@@ -379,11 +383,13 @@ export default class OrganizationResolverModule extends BaseResolverModule {
             organization.id as string
           );
         members.forEach((member: OrganizationMember) => {
-          const roles = member.organizationMemberRoles?.filter(memberRole => {
-            return memberRole.organizationMemberId == member.id;
-          })?.map((memberRole) => {
-            return memberRole?.organizationRole;
-          });
+          const roles = member.organizationMemberRoles
+            ?.filter((memberRole) => {
+              return memberRole.organizationMemberId == member.id;
+            })
+            ?.map((memberRole) => {
+              return memberRole?.organizationRole;
+            });
           this.requestCache.setOrganizationMembership(
             cacheKey,
             organization as Organization,
@@ -449,7 +455,10 @@ export default class OrganizationResolverModule extends BaseResolverModule {
         invitations.forEach((invitation) => {
           const roles =
             invitation?.organizationInvitationRoles
-              ?.filter((invitationRole) => invitationRole?.organizationInvitationId == invitation.id)
+              ?.filter(
+                (invitationRole) =>
+                  invitationRole?.organizationInvitationId == invitation.id
+              )
               ?.map?.((invitationRole) => invitationRole?.organizationRole)
               ?.filter((v) => v != undefined) ?? [];
           this.requestCache.setOrganizationInvitationRoles(
