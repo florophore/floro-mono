@@ -2,9 +2,9 @@ import { IsDefined, IsInt, MaxLength, MinLength, ValidateIf } from "class-valida
 import { Entity, Column, OneToMany, OneToOne, Relation } from "typeorm";
 import { BinaryPKBaseEntity } from "./BinaryPKBaseEntity";
 import { Organization } from "./Organization";
-import { OrganizationDailyActivatedMember } from "./OrganizationDailyActivatedMember";
 import { OrganizationInvitation } from "./OrganizationInvitation";
 import { OrganizationRole } from "./OrganizationRole";
+import { Referral } from "./Referral";
 import { UserAuthCredential } from "./UserAuthCredential";
 import { UserServiceAgreement } from "./UserServiceAgreement";
 
@@ -57,4 +57,10 @@ export class User extends BinaryPKBaseEntity {
 
   @OneToMany("OrganizationInvitation", "invitedByUser")
   sentOrganizationInvitations?: Relation<OrganizationInvitation>[];
+
+  @OneToMany("Referral", "referrerUser")
+  referralsSent?: Relation<Referral>[];
+
+  @OneToMany("Referral", "refereeUser")
+  referralsReceived?: Relation<Referral>[];
 }
