@@ -504,7 +504,7 @@ export default class AuthenticationService {
                 throw new Error("credential missing")
             }
             for (const handler of this.createUserHandlers) {
-                handler.onUserCreated(queryRunner, user, refreshedCredential);
+                await handler.onUserCreated(queryRunner, user, refreshedCredential);
             }
             await queryRunner.commitTransaction();
             return { action: 'USER_CREATED', credential: refreshedCredential as UserAuthCredential, user};

@@ -44,7 +44,7 @@ export default class OrganizationSentInvitationsCountLoader extends LoaderResolv
             return;
         }
         const cachedCount = this.requestCache.getOrganizationSentInvitationsCount(context.cacheKey, organization.id);
-        if (cachedCount === null) {
+        if (cachedCount) {
             return;
         }
         const organizationInvitationsContext = await this.contextFactory.createContext(OrganizationInvitationsContext); 

@@ -46,8 +46,7 @@ export default class OrganizationMemberPermissionsLoader extends LoaderResolverH
         organization.id as string,
         context.currentUser.id
       );
-      // allows only self to be viewed
-      if (!membership || membership.userId != context.currentUser.id) {
+      if (!membership) {
         return;
       }
       const cachedPermissions = this.requestCache.getMembershipPermissions(

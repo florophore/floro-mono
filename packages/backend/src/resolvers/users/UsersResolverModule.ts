@@ -245,6 +245,26 @@ export default class UsersResolverModule extends BaseResolverModule {
           organization,
           organization.organizationMembers as OrganizationMember[]
         );
+        organization.organizationMembers?.forEach(member => {
+          const roles = organization.organizationMemberRoles?.filter(memberRole => {
+            return memberRole.organizationMemberId == member.id;
+          }).map(
+            (memberRole) => {
+              this.requestCache.setOrganizationMembership(
+                cacheKey,
+                organization,
+                member.user as User,
+                memberRole.organizationMember as OrganizationMember
+              );
+              return memberRole.organizationRole;
+            }
+          );
+          this.requestCache.setMembershipRoles(
+            cacheKey,
+            member,
+            roles as OrganizationRole[]
+          );
+        });
         this.requestCache.setOrganizationActiveMemberCount(
           cacheKey,
           organization,
@@ -252,27 +272,7 @@ export default class UsersResolverModule extends BaseResolverModule {
             (member) => member?.membershipState == "active"
           )?.length ?? 0
         );
-        const roles = organization.organizationMemberRoles?.map(
-          (memberRole) => {
-            this.requestCache.setOrganizationMembership(
-              cacheKey,
-              organization,
-              user as User,
-              memberRole.organizationMember as OrganizationMember
-            );
-            return memberRole.organizationRole;
-          }
-        );
-        const membership = this.requestCache.getOrganizationMembership(
-          cacheKey,
-          organization.id,
-          user.id as string
-        );
-        this.requestCache.setMembershipRoles(
-          cacheKey,
-          membership,
-          roles as OrganizationRole[]
-        );
+
         const invitations = organization?.organizationInvitations;
         this.requestCache.setOrganizationInvitations(
           cacheKey,
@@ -282,8 +282,9 @@ export default class UsersResolverModule extends BaseResolverModule {
         invitations?.forEach?.((invitation) => {
           const roles =
             invitation?.organizationInvitationRoles
+              ?.filter?.((invitationRole) => invitationRole.organizationInvitationId == invitation.id)
               ?.map?.((invitationRole) => invitationRole?.organizationRole)
-              ?.filter((v) => v != undefined) ?? [];
+              ?.filter?.((v) => v != undefined) ?? [];
           this.requestCache.setOrganizationInvitationRoles(
             cacheKey,
             invitation,

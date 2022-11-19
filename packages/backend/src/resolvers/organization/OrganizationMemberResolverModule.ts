@@ -11,6 +11,7 @@ import MembershipPermissionsLoader from "../hooks/loaders/OrganizationMembership
 import RootOrganizationMemberPermissionsLoader from "../hooks/loaders/Root/OrganizationID/RootOrganizationMemberPermissionsLoader";
 import OrganizationMembersContext from "@floro/database/src/contexts/organizations/OrganizationMembersContext";
 import OrganizationMemberService from "../../services/organizations/OrganizationMemberService";
+import { User } from "@floro/database/src/entities/User";
 
 @injectable()
 export default class OrganizationMemberResolverModule extends BaseResolverModule {
@@ -37,6 +38,7 @@ export default class OrganizationMemberResolverModule extends BaseResolverModule
     @inject(RequestCache) requestCache: RequestCache,
     @inject(OrganizationMemberService)
     organizationMemberService: OrganizationMemberService,
+    @inject(LoggedInUserGuard) loggedInUserGuard: LoggedInUserGuard,
     @inject(MembershipRolesLoader) membershipRolesLoader: MembershipRolesLoader,
     @inject(MembershipPermissionsLoader)
     membershipPermissionsLoader: MembershipPermissionsLoader,
@@ -47,6 +49,8 @@ export default class OrganizationMemberResolverModule extends BaseResolverModule
     this.requestCache = requestCache;
     this.contextFactory = contextFactory;
     this.organizationMemberService = organizationMemberService;
+
+    this.loggedInUserGuard = loggedInUserGuard;
 
     // loaders
     this.membershipRolesLoader = membershipRolesLoader;
@@ -59,34 +63,97 @@ export default class OrganizationMemberResolverModule extends BaseResolverModule
   public OrganizationMember: main.OrganizationMemberResolvers = {
     permissions: runWithHooks(
       () => [this.membershipPermissionsLoader],
-      async (organizationMember, _, { cacheKey }) => {
-        return this.requestCache.getMembershipPermissions(
+      async (
+        organizationMember,
+        _,
+        {
           cacheKey,
-          organizationMember.id
+          currentUser,
+        }: { cacheKey: string; currentUser: User | null }
+      ) => {
+        if (!currentUser) {
+          return null;
+        }
+        const currentMember = this.requestCache.getOrganizationMembership(
+          cacheKey,
+          organizationMember.organizationId,
+          currentUser.id
         );
+        if (!currentMember) {
+          return null;
+        }
+        const currentMemberPermissions =
+          this.requestCache.getMembershipPermissions(
+            cacheKey,
+            currentMember.id
+          );
+        if (
+          currentUser?.id == organizationMember.userId ||
+          currentMemberPermissions?.canModifyOrganizationMembers ||
+          currentMemberPermissions?.canAssignRoles
+        ) {
+          return this.requestCache.getMembershipPermissions(
+            cacheKey,
+            organizationMember.id
+          );
+        }
+        return null;
       }
     ),
     roles: runWithHooks(
       () => [this.membershipRolesLoader],
-      async (organizationMember, _, { cacheKey }) => {
-        return this.requestCache.getMembershipRoles(
+      async (
+        organizationMember,
+        _,
+        {
           cacheKey,
-          organizationMember.id
+          currentUser,
+        }: { cacheKey: string; currentUser: User | null }
+      ) => {
+        if (!currentUser) {
+          return null;
+        }
+        const currentMember = this.requestCache.getOrganizationMembership(
+          cacheKey,
+          organizationMember.organizationId,
+          currentUser.id
         );
+        if (!currentMember) {
+          return null;
+        }
+        const currentMemberPermissions =
+          this.requestCache.getMembershipPermissions(
+            cacheKey,
+            currentMember.id
+          );
+        if (
+          currentUser?.id == organizationMember.userId ||
+          currentMemberPermissions?.canModifyOrganizationMembers ||
+          currentMemberPermissions?.canAssignRoles
+        ) {
+          return this.requestCache.getMembershipRoles(
+            cacheKey,
+            organizationMember.id
+          );
+        }
+        return null;
       }
     ),
   };
 
   public Mutation: main.MutationResolvers = {
     updateOrganizationMembership: runWithHooks(
-      () => [],
+      () => [
+        this.loggedInUserGuard,
+        this.rootOrganizationMemberPermissionsLoader,
+      ],
       async (
         _,
         {
           memberId,
           organizationId,
           internalHandle,
-          roleIds
+          roleIds,
         }: main.MutationUpdateOrganizationMembershipArgs,
         { cacheKey, currentUser }
       ) => {
@@ -96,7 +163,7 @@ export default class OrganizationMemberResolverModule extends BaseResolverModule
         );
         if (!organization) {
           return {
-            __typename: "DeactivateOrganizationMemberError",
+            __typename: "UpdateOrganizationMemberError",
             message: "Forbidden Action",
             type: "FORBIDDEN_ACTION_ERROR",
           };
@@ -108,7 +175,7 @@ export default class OrganizationMemberResolverModule extends BaseResolverModule
         );
         if (!currentMember?.id) {
           return {
-            __typename: "DeactivateOrganizationMemberError",
+            __typename: "UpdateOrganizationMemberError",
             message: "Forbidden Action",
             type: "FORBIDDEN_ACTION_ERROR",
           };
@@ -119,7 +186,7 @@ export default class OrganizationMemberResolverModule extends BaseResolverModule
         );
         if (!permissions) {
           return {
-            __typename: "DeactivateOrganizationMemberError",
+            __typename: "UpdateOrganizationMemberError",
             message: "Forbidden Action",
             type: "FORBIDDEN_ACTION_ERROR",
           };
@@ -131,22 +198,23 @@ export default class OrganizationMemberResolverModule extends BaseResolverModule
         );
         if (organizationMember?.organizationId != organizationId) {
           return {
-            __typename: "DeactivateOrganizationMemberError",
+            __typename: "UpdateOrganizationMemberError",
             message: "Forbidden Action",
             type: "FORBIDDEN_ACTION_ERROR",
           };
         }
-        const result = await this.organizationMemberService.updateOrganizationMember(
-          organizationMember,
-          organization,
-          currentMember,
-          permissions,
-          internalHandle as string|undefined,
-          roleIds as string[]|undefined
-        );
+        const result =
+          await this.organizationMemberService.updateOrganizationMember(
+            organizationMember,
+            organization,
+            currentMember,
+            permissions,
+            internalHandle as string | undefined,
+            roleIds as string[] | undefined
+          );
         if (result.action == "MEMBER_UPDATED") {
           return {
-            __typename: "DeactivateOrganizationMemberSuccess",
+            __typename: "UpdateOrganizationMemberSuccess",
             organizationMember: result.organizationMember,
           };
         }
@@ -157,13 +225,13 @@ export default class OrganizationMemberResolverModule extends BaseResolverModule
             result?.error?.meta
           );
           return {
-            __typename: "DeactivateOrganizationMemberError",
+            __typename: "UpdateOrganizationMemberError",
             message: "Unknown Error",
             type: "UNKNOWN_ERROR",
           };
         }
         return {
-          __typename: "DeactivateOrganizationMemberError",
+          __typename: "UpdateOrganizationMemberError",
           message: result.error?.message ?? "Unknown Error",
           type: result.error?.type ?? "UNKNOWN_ERROR",
         };

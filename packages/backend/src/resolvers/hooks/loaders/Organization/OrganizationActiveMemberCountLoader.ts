@@ -44,11 +44,11 @@ export default class OrganizationActiveMemberCountLoader extends LoaderResolverH
             return;
         }
         const cachedCount = this.requestCache.getOrganizationActiveMemberCount(context.cacheKey, organization.id);
-        if (cachedCount === null) {
+        if (cachedCount) {
             return;
         }
         const organizationMembersContext = await this.contextFactory.createContext(OrganizationMembersContext); 
         const count = await organizationMembersContext.getMemberCountForOrganization(organization.id as string);
-        this.requestCache.setOrganizationSentInvitationsCount(context.cacheKey, organization as Organization, count);
+        this.requestCache.setOrganizationActiveMemberCount(context.cacheKey, organization as Organization, count);
     });
 }

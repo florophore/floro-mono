@@ -22,7 +22,7 @@ export default class RequestCache {
         delete this.cache[cacheKey];
     }
 
-    private getCache(cacheKey: string) {
+    public getCache(cacheKey: string) {
         if (!this.cache[cacheKey]) {
             this.cache[cacheKey] = {};
         }

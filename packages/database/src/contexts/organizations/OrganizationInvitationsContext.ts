@@ -85,9 +85,14 @@ export default class OrganizationInvitationsContext extends BaseContext {
   public async cancelInvite(
     orgInvite: OrganizationInvitation
   ): Promise<OrganizationInvitation | null> {
-    return this.updateOrganizationInvitationById(orgInvite.id, {
-      invitationState: "canceled",
-    });
+    try {
+      return this.updateOrganizationInvitationById(orgInvite.id, {
+        invitationState: "canceled",
+      });
+    } catch(e) {
+      console.log("E", e);
+      return null;
+    }
   }
 
   public async updateOrganizationInvitationById(
@@ -105,7 +110,7 @@ export default class OrganizationInvitationsContext extends BaseContext {
     }
     return await this.queryRunner.manager.save(
       OrganizationInvitation,
-      orgInvitationArgs
+      orgInvitation
     );
   }
   public async getAllInvitationsForOrganization(

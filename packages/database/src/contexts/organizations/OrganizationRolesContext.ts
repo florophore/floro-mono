@@ -64,6 +64,6 @@ export default class OrganizationRolesContext extends BaseContext {
     for (const prop in orgRoleArgs) {
       orgRole[prop] = orgRoleArgs[prop];
     }
-    return await this.queryRunner.manager.save(OrganizationRole, orgRoleArgs);
+    return await this.queryRunner.manager.save(OrganizationRole, orgRole);
   }
 }

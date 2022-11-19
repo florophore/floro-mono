@@ -1,4 +1,4 @@
-import { DeepPartial, QueryRunner, Raw, Repository } from "typeorm";
+import { DeepPartial, In, QueryRunner, Raw, Repository } from "typeorm";
 import { Organization } from "../../entities/Organization";
 import BaseContext from "../BaseContext";
 import ContextFactory from "../ContextFactory";
@@ -59,12 +59,18 @@ export default class OrganizationsContext extends BaseContext {
   }
 
   public async getAllOrganizationsForUser(userId: string): Promise<Organization[]> {
-    return await this.queryRunner.manager.find(Organization, {
+    const userOrgs = await this.queryRunner.manager.find(Organization, {
       where: {
         organizationMembers: {
           userId,
           membershipState: "active",
         }
+      }
+    });
+    const ids = userOrgs?.map(org => org.id) ?? [];
+    return await this.queryRunner.manager.find(Organization, {
+      where: {
+        id: In(ids),
       },
       relations: {
         organizationInvitations: {
