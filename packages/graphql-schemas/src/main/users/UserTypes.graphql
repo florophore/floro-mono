@@ -16,6 +16,7 @@ type UsernameCheckResult {
 
 type RejectOrganizationInvitationSuccess {
   organizationInvitation: OrganizationInvitation
+  user: User
 }
 
 type RejectOrganizationInvitationError {
@@ -30,6 +31,7 @@ union RejectInvitationOrganizationResponse =
 
 type AcceptOrganizationInvitationSuccess {
   organizationInvitation: OrganizationInvitation
+  user: User
 }
 
 type AcceptOrganizationInvitationError {

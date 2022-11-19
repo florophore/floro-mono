@@ -159,6 +159,7 @@ export default class OrganizationInvitationResolverModule extends BaseResolverMo
           return {
             __typename: "CancelOrganizationInvitationSuccess",
             organizationInvitation: result.organizationInvitation,
+            organization
           };
         }
         if (result.action == "LOG_ERROR") {
@@ -241,6 +242,7 @@ export default class OrganizationInvitationResolverModule extends BaseResolverMo
           return {
             __typename: "ResendOrganizationInvitationSuccess",
             organizationInvitation: result.organizationInvitation,
+            organization
           };
         }
         if (result.action == "LOG_ERROR") {
@@ -317,6 +319,7 @@ export default class OrganizationInvitationResolverModule extends BaseResolverMo
           return {
             __typename: "CreateOrganizationInvitationSuccess",
             organizationInvitation: result.organizationInvitation,
+            organization
           };
         }
         if (result.action == "LOG_ERROR") {

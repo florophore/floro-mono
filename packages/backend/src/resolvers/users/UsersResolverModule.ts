@@ -120,6 +120,7 @@ export default class UsersResolverModule extends BaseResolverModule {
           return {
             __typename: "AcceptOrganizationInvitationSuccess",
             organizationInvitation: result.organizationInvitation,
+            user: currentUser
           };
         }
 
@@ -172,6 +173,7 @@ export default class UsersResolverModule extends BaseResolverModule {
           return {
             __typename: "RejectOrganizationInvitationSuccess",
             organizationInvitation: result.organizationInvitation,
+            user: currentUser
           };
         }
 

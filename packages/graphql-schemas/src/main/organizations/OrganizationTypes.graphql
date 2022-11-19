@@ -93,6 +93,7 @@ union CreateOrganizationResponse =
 
 type CreateOrganizationInvitationSuccess {
   organizationInvitation: OrganizationInvitation
+  organization: Organization
 }
 
 type CreateOrganizationInvitationError {
@@ -102,6 +103,7 @@ type CreateOrganizationInvitationError {
 
 type CreateOrganizationInvitationSuccess {
   organizationInvitation: OrganizationInvitation
+  organization: Organization
 }
 
 type CreateOrganizationInvitationError {
@@ -116,6 +118,7 @@ union CreateInvitationOrganizationResponse =
 
 type CancelOrganizationInvitationSuccess {
   organizationInvitation: OrganizationInvitation
+  organization: Organization
 }
 
 type CancelOrganizationInvitationError {
@@ -130,6 +133,7 @@ union CancelInvitationOrganizationResponse =
 
 type ResendOrganizationInvitationSuccess {
   organizationInvitation: OrganizationInvitation
+  organization: Organization
 }
 
 type ResendOrganizationInvitationError {
@@ -144,6 +148,7 @@ union ResendInvitationOrganizationResponse =
 
 type DeactivateOrganizationMemberSuccess {
   organizationMember: OrganizationMember
+  organization: Organization
 }
 
 type DeactivateOrganizationMemberError {
@@ -158,6 +163,7 @@ union DeactivateOrganizationMemberResponse =
 
 type ReactivateOrganizationMemberSuccess {
   organizationMember: OrganizationMember
+  organization: Organization
 }
 
 type ReactivateOrganizationMemberError {
@@ -172,6 +178,7 @@ union ReactivateOrganizationMemberResponse =
 
 type UpdateOrganizationMemberSuccess {
   organizationMember: OrganizationMember
+  organization: Organization
 }
 
 type UpdateOrganizationMemberError {

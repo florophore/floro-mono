@@ -642,7 +642,7 @@ export default class OrganizationInvitationService
     const organizationInvitationsContext =
       await this.contextFactory.createContext(OrganizationInvitationsContext);
     const rejectedInvitation =
-      await organizationInvitationsContext.cancelInvite(organizationInvitation);
+      await organizationInvitationsContext.rejectInvite(organizationInvitation);
     if (!rejectedInvitation) {
       return {
         action: "LOG_ERROR",
