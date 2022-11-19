@@ -71,6 +71,12 @@ export default class RequestCache {
         cache[`membership-roles:${organizationMember.id}`] = roles;
     }
 
+    public clearMembershipRoles(cacheKey: string, organizationMember: OrganizationMember) {
+        const cache = this.getCache(cacheKey);
+        delete cache[`membership-roles:${organizationMember.id}`];
+        this.cache[cacheKey] = cache;
+    }
+
     public getMembershipRoles(cacheKey: string, organizationMemberId: string): OrganizationRole[] {
         const cache = this.getCache(cacheKey);
         return cache[`membership-roles:${organizationMemberId}`] as OrganizationRole[] ?? null;
@@ -94,6 +100,12 @@ export default class RequestCache {
     public getOrganizationRoles(cacheKey: string, organizationId: string): OrganizationRole[] {
         const cache = this.getCache(cacheKey);
         return cache[`organization-roles:${organizationId}`] as OrganizationRole[] ?? null;
+    }
+
+    public clearOrganizationRoles(cacheKey: string, organization: Organization) {
+        const cache = this.getCache(cacheKey);
+        delete cache[`organization-roles:${organization.id}`];
+        this.cache[cacheKey] = cache;
     }
 
     public setOrganizationMembers(cacheKey: string, organization: Organization, members: OrganizationMember[]) {

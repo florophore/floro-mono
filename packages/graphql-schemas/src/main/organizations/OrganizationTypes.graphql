@@ -190,3 +190,48 @@ union UpdateOrganizationMemberResponse =
     UpdateOrganizationMemberError
   | UpdateOrganizationMemberSuccess
   | UnAuthenticatedError
+
+type CreateOrganizationRoleSuccess {
+  organizationRole: OrganizationRole
+  organization: Organization
+}
+
+type CreateOrganizationRoleError {
+  message: String
+  type: String
+}
+
+union CreateOrganizationRoleResponse =
+    CreateOrganizationRoleError
+  | CreateOrganizationRoleSuccess
+  | UnAuthenticatedError
+
+type UpdateOrganizationRoleSuccess {
+  organizationRole: OrganizationRole
+  organization: Organization
+}
+
+type UpdateOrganizationRoleError {
+  message: String
+  type: String
+}
+
+union UpdateOrganizationRoleResponse =
+    UpdateOrganizationRoleError
+  | UpdateOrganizationRoleSuccess
+  | UnAuthenticatedError
+
+type RemoveOrganizationRoleSuccess {
+  organizationRole: OrganizationRole
+  organization: Organization
+}
+
+type RemoveOrganizationRoleError {
+  message: String
+  type: String
+}
+
+union RemoveOrganizationRoleResponse =
+    RemoveOrganizationRoleError
+  | RemoveOrganizationRoleSuccess
+  | UnAuthenticatedError

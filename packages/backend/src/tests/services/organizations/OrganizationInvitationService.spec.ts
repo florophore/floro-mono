@@ -108,7 +108,7 @@ describe("OrganizationInvitationService", () => {
           ...permissions,
           canInviteMembers: false,
         };
-        const result = await organizationInvitationService.createInivitation(
+        const result = await organizationInvitationService.createInvitation(
           organization,
           currentUser,
           invitingMember,
@@ -119,7 +119,7 @@ describe("OrganizationInvitationService", () => {
 
       test("throws FORBIDDEN_ACTION_ERROR if inviting user has inactive membership", async () => {
         invitingMember.membershipState = "inactive";
-        const result = await organizationInvitationService.createInivitation(
+        const result = await organizationInvitationService.createInvitation(
           organization,
           currentUser,
           invitingMember,
@@ -129,7 +129,7 @@ describe("OrganizationInvitationService", () => {
       });
 
       test("throws INVALID_PARAMS_ERROR if input email is invalid and userId is undefined", async () => {
-        const result = await organizationInvitationService.createInivitation(
+        const result = await organizationInvitationService.createInvitation(
           organization,
           currentUser,
           invitingMember,
@@ -141,7 +141,7 @@ describe("OrganizationInvitationService", () => {
       });
 
       test("throws INVALID_PARAMS_ERROR if neither email nor userId are provided", async () => {
-        const result = await organizationInvitationService.createInivitation(
+        const result = await organizationInvitationService.createInvitation(
           organization,
           currentUser,
           invitingMember,
@@ -151,7 +151,7 @@ describe("OrganizationInvitationService", () => {
       });
 
       test("throws NO_USER_FOUND_ERROR if bad userId is passed", async () => {
-        const result = await organizationInvitationService.createInivitation(
+        const result = await organizationInvitationService.createInvitation(
           organization,
           currentUser,
           invitingMember,
@@ -162,7 +162,7 @@ describe("OrganizationInvitationService", () => {
       });
 
       test("throws INVALID_PARAMS_ERROR if bad first name supplied", async () => {
-        const result = await organizationInvitationService.createInivitation(
+        const result = await organizationInvitationService.createInvitation(
           organization,
           currentUser,
           invitingMember,
@@ -173,7 +173,7 @@ describe("OrganizationInvitationService", () => {
         expect(result.action).to.eql("INVALID_PARAMS_ERROR");
       });
       test("throws INVALID_PARAMS_ERROR if profane first name supplied", async () => {
-        const result = await organizationInvitationService.createInivitation(
+        const result = await organizationInvitationService.createInvitation(
           organization,
           currentUser,
           invitingMember,
@@ -185,7 +185,7 @@ describe("OrganizationInvitationService", () => {
       });
 
       test("throws INVALID_PARAMS_ERROR if bad last name supplied", async () => {
-        const result = await organizationInvitationService.createInivitation(
+        const result = await organizationInvitationService.createInvitation(
           organization,
           currentUser,
           invitingMember,
@@ -198,7 +198,7 @@ describe("OrganizationInvitationService", () => {
       });
 
       test("throws INVALID_PARAMS_ERROR if profane last name supplied", async () => {
-        const result = await organizationInvitationService.createInivitation(
+        const result = await organizationInvitationService.createInvitation(
           organization,
           currentUser,
           invitingMember,
@@ -212,7 +212,7 @@ describe("OrganizationInvitationService", () => {
       });
 
       test("creates invitation for un-registered user if email is supplied and does not exist yet", async () => {
-        const result = await organizationInvitationService.createInivitation(
+        const result = await organizationInvitationService.createInvitation(
           organization,
           currentUser,
           invitingMember,
@@ -227,7 +227,7 @@ describe("OrganizationInvitationService", () => {
       });
 
       test("creates invitation for registered user if userId is supplied", async () => {
-        const result = await organizationInvitationService.createInivitation(
+        const result = await organizationInvitationService.createInvitation(
           organization,
           currentUser,
           invitingMember,
@@ -249,7 +249,7 @@ describe("OrganizationInvitationService", () => {
 
       test("throw NO_REMAINING_SEATS_ERROR if in excess of seat limit",  async () => {
         for (let i = 0; i < (organization?.freeSeats ?? 10) - 1; ++i) {
-          const result = await organizationInvitationService.createInivitation(
+          const result = await organizationInvitationService.createInvitation(
             organization,
             currentUser,
             invitingMember,
@@ -261,7 +261,7 @@ describe("OrganizationInvitationService", () => {
           );
           expect(result.action).to.eql("INVITATION_CREATED")
         }
-          const result = await organizationInvitationService.createInivitation(
+          const result = await organizationInvitationService.createInvitation(
             organization,
             currentUser,
             invitingMember,
@@ -275,7 +275,7 @@ describe("OrganizationInvitationService", () => {
       });
 
       test("creates invitation and respects roleIds if inviting member has canAssignRoles permission", async () => {
-        const result = await organizationInvitationService.createInivitation(
+        const result = await organizationInvitationService.createInvitation(
           organization,
           currentUser,
           invitingMember,
@@ -306,7 +306,7 @@ describe("OrganizationInvitationService", () => {
           ...permissions,
           canAssignRoles: false,
         };
-        const result = await organizationInvitationService.createInivitation(
+        const result = await organizationInvitationService.createInvitation(
           organization,
           currentUser,
           invitingMember,
@@ -376,7 +376,7 @@ describe("OrganizationInvitationService", () => {
             "OrganizationRole:org_0_technical_admin_role",
             "OrganizationInvitation:org_0_invitation_sent_1",
           ]);
-        const result = await organizationInvitationService.createInivitation(
+        const result = await organizationInvitationService.createInvitation(
           organization,
           currentUser,
           invitingMember,
@@ -413,7 +413,7 @@ describe("OrganizationInvitationService", () => {
             "OrganizationRole:org_0_billing_admin_role",
             "OrganizationRole:org_0_technical_admin_role",
           ]);
-        const result = await organizationInvitationService.createInivitation(
+        const result = await organizationInvitationService.createInvitation(
           organization,
           currentUser,
           invitingMember,
@@ -453,7 +453,7 @@ describe("OrganizationInvitationService", () => {
           "OrganizationRole:org_0_billing_admin_role",
           "OrganizationRole:org_0_technical_admin_role",
         ]);
-        const result = await organizationInvitationService.createInivitation(
+        const result = await organizationInvitationService.createInvitation(
           organization,
           currentUser,
           invitingMember,

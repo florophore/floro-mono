@@ -87,4 +87,10 @@ export default class OrganizationMemberRolesContext extends BaseContext {
         organizationMemberId: organizationMember.id
     });
   }
+
+  public async deleteRolesByRole(organizationRole: OrganizationRole): Promise<void> {
+    await this.queryRunner.manager.delete(OrganizationMemberRole, {
+        organizationRoleId: organizationRole.id
+    });
+  }
 }

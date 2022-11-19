@@ -17,7 +17,6 @@ import { User } from "@floro/database/src/entities/User";
 export default class OrganizationMemberResolverModule extends BaseResolverModule {
   public resolvers: Array<keyof this & keyof main.ResolversTypes> = [
     "Mutation",
-    "Query",
     "OrganizationMember",
   ];
   protected contextFactory!: ContextFactory;
@@ -421,6 +420,4 @@ export default class OrganizationMemberResolverModule extends BaseResolverModule
       }
     ),
   };
-
-  public Query: main.QueryResolvers = {};
 }

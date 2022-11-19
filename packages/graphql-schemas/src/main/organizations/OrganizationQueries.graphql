@@ -12,4 +12,39 @@ extend type Mutation {
     deactivateOrganizationMembership(organizationId: ID!, memberId: ID!): DeactivateOrganizationMemberResponse
     reactivateOrganizationMembership(organizationId: ID!, memberId: ID!): ReactivateOrganizationMemberResponse
     updateOrganizationMembership(organizationId: ID!, memberId: ID!, internalHandle: String, roleIds: [ID]): UpdateOrganizationMemberResponse
+
+    createOrganizationRole(
+        organizationId: ID!,
+        name: String!,
+        isDefault: Boolean!,
+        canCreateRepos: Boolean!,
+        canModifyOrganizationSettings: Boolean!,
+        canModifyOrganizationDeveloperSettings: Boolean!,
+        canModifyOrganizationMembers: Boolean!,
+        canInviteMembers: Boolean!,
+        canModifyInvites: Boolean!,
+        canModifyOwnInternalHandle: Boolean!,
+        canModifyBilling: Boolean!,
+        canModifyOrganizationRoles: Boolean!,
+        canAssignRoles: Boolean!
+    ): CreateOrganizationRoleResponse
+
+    updateOrganizationRole(
+        organizationId: ID!,
+        roleId: ID!,
+        name: String!,
+        isDefault: Boolean!,
+        canCreateRepos: Boolean!,
+        canModifyOrganizationSettings: Boolean!,
+        canModifyOrganizationDeveloperSettings: Boolean!,
+        canModifyOrganizationMembers: Boolean!,
+        canInviteMembers: Boolean!,
+        canModifyInvites: Boolean!,
+        canModifyOwnInternalHandle: Boolean!,
+        canModifyBilling: Boolean!,
+        canModifyOrganizationRoles: Boolean!,
+        canAssignRoles: Boolean!
+    ): UpdateOrganizationRoleResponse
+
+    removeOrganizationRole(organizationId: ID!, roleId: ID!): RemoveOrganizationRoleResponse
 }

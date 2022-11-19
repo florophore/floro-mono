@@ -66,4 +66,10 @@ export default class OrganizationRolesContext extends BaseContext {
     }
     return await this.queryRunner.manager.save(OrganizationRole, orgRole);
   }
+
+  public async deleteRole(organizationRole: OrganizationRole): Promise<void> {
+    await this.queryRunner.manager.delete(OrganizationRole, {
+        id: organizationRole.id
+    });
+  }
 }

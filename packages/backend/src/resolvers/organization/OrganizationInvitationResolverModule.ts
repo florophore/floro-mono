@@ -15,7 +15,6 @@ import OrganizationInvitationsContext from "@floro/database/src/contexts/organiz
 export default class OrganizationInvitationResolverModule extends BaseResolverModule {
   public resolvers: Array<keyof this & keyof main.ResolversTypes> = [
     "Mutation",
-    "Query",
     "OrganizationInvitation",
   ];
   protected contextFactory!: ContextFactory;
@@ -342,6 +341,4 @@ export default class OrganizationInvitationResolverModule extends BaseResolverMo
       }
     ),
   };
-
-  public Query: main.QueryResolvers = {};
 }

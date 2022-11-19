@@ -33,6 +33,8 @@ import OrganizationActiveMemberCountLoader from './resolvers/hooks/loaders/Organ
 import OrganizationSentInvitationsCountLoader from './resolvers/hooks/loaders/Organization/OrganizationSentInvitationsCountLoader';
 import CreateUserEventHandler from './services/events/CreateUserEventHandler';
 import OrganizationMemberService from './services/organizations/OrganizationMemberService';
+import OrganizationRoleService from './services/organizations/OrganizationRoleService';
+import OrganizationRoleResolverModule from './resolvers/organization/OrganizationRoleResolverModule';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -78,6 +80,7 @@ export default new ContainerModule((bind): void => {
     bind(OrganizationPermissionService).toSelf();
     bind(OrganizationInvitationService).toSelf();
     bind(OrganizationMemberService).toSelf();
+    bind(OrganizationRoleService).toSelf();
 
     // EVENT HANDLERS
     // CREATE USER HANLDER
@@ -92,6 +95,7 @@ export default new ContainerModule((bind): void => {
     bind<OrganizationResolverModule>("ResolverModule").to(OrganizationResolverModule);
     bind<OrganizationMemberResolverModule>("ResolverModule").to(OrganizationMemberResolverModule);
     bind<OrganizationInvitationResolverModule>("ResolverModule").to(OrganizationInvitationResolverModule);
+    bind<OrganizationRoleResolverModule>("ResolverModule").to(OrganizationRoleResolverModule);
 
     // ADMIN MODULES OVERRIDE WITH AdminResolverModule
     bind<AdminUsersResolverModule>("AdminResolverModule").to(AdminUsersResolverModule);
