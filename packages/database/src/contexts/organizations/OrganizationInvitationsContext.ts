@@ -85,14 +85,9 @@ export default class OrganizationInvitationsContext extends BaseContext {
   public async cancelInvite(
     orgInvite: OrganizationInvitation
   ): Promise<OrganizationInvitation | null> {
-    try {
-      return this.updateOrganizationInvitationById(orgInvite.id, {
-        invitationState: "canceled",
-      });
-    } catch(e) {
-      console.log("E", e);
-      return null;
-    }
+    return this.updateOrganizationInvitationById(orgInvite.id, {
+      invitationState: "canceled",
+    });
   }
 
   public async updateOrganizationInvitationById(
