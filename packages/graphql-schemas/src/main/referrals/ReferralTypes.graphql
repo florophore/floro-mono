@@ -1,0 +1,58 @@
+type Referral {
+  id: ID
+  refereeFirstName: String
+  refereeLastName: String
+  refereeEmail: String
+  referralState: String
+  referrerUser: User
+  referrerUserId: String
+  refereeUser: User
+  organization: Organization
+  lastSentAt: String
+  expiresAt: String
+}
+
+type CreatePersonalReferralSuccess {
+  referral: Referral
+  referrer: User
+}
+
+type CreatePersonalReferralError {
+  message: String
+  type: String
+}
+
+union CreatePersonalReferralResponse =
+    CreatePersonalReferralSuccess
+  | CreatePersonalReferralError
+  | UnAuthenticatedError
+
+type ResendPersonalReferralSuccess {
+  referral: Referral
+  referrer: User
+}
+
+type ResendPersonalReferralError {
+  message: String
+  type: String
+}
+
+union ResendPersonalReferralResponse =
+    ResendPersonalReferralSuccess
+  | ResendPersonalReferralError
+  | UnAuthenticatedError
+
+type ClaimPersonalReferralSuccess {
+  referral: Referral
+  referee: User
+}
+
+type ClaimPersonalReferralError {
+  message: String
+  type: String
+}
+
+union ClaimPersonalReferralResponse =
+    ClaimPersonalReferralSuccess
+  | ClaimPersonalReferralError
+  | UnAuthenticatedError

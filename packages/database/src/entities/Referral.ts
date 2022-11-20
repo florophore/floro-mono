@@ -1,6 +1,7 @@
 import {
   IsDefined,
   IsEmail,
+  IsHash,
   IsIn,
   IsInt,
   IsString,
@@ -14,7 +15,6 @@ import {
   ManyToOne,
   JoinColumn,
   Relation,
-  OneToMany,
 } from "typeorm";
 import { BinaryPKBaseEntity } from "./BinaryPKBaseEntity";
 import { User } from "./User";
@@ -35,12 +35,12 @@ export class Referral extends BinaryPKBaseEntity {
 
   @Column("varchar")
   @IsDefined()
-  @IsString()
+  @IsHash('sha256')
   referrerDeviceId?: string;
 
   @Column("varchar")
   @ValidateIf((_object, value) => !!value)
-  @IsString()
+  @IsHash('sha256')
   refereeDeviceId?: string;
 
   @Column("varchar", { length: 255 })
@@ -79,10 +79,10 @@ export class Referral extends BinaryPKBaseEntity {
   refereeRewardBytes!: number;
 
   @Column({ name: "last_sent_at", type: "timestamp", default: () => "CURRENT_TIMESTAMP(6)" })
-  public lastSentAt!: Date;
+  lastSentAt!: Date;
 
   @Column({ name: "expires_at", type: "timestamp" })
-  public expiresAt!: Date;
+  expiresAt!: Date;
 
   @Column("uuid")
   referrerUserId!: string;
@@ -98,4 +98,3 @@ export class Referral extends BinaryPKBaseEntity {
   @JoinColumn()
   refereeUser?: Relation<User>;
 }
-

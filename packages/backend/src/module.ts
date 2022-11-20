@@ -35,6 +35,8 @@ import CreateUserEventHandler from './services/events/CreateUserEventHandler';
 import OrganizationMemberService from './services/organizations/OrganizationMemberService';
 import OrganizationRoleService from './services/organizations/OrganizationRoleService';
 import OrganizationRoleResolverModule from './resolvers/organization/OrganizationRoleResolverModule';
+import ReferralResolverModule from './resolvers/referrals/ReferralResolverModule';
+import ReferralService from './services/referrals/ReferralService';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -85,6 +87,7 @@ export default new ContainerModule((bind): void => {
     // EVENT HANDLERS
     // CREATE USER HANLDER
     bind<CreateUserEventHandler>("CreateUserHandler").to(OrganizationInvitationService);
+    bind<CreateUserEventHandler>("CreateUserHandler").to(ReferralService);
 
     // Controllers
     bind<AuthenticationController>("Controllers").to(AuthenticationController);
@@ -96,6 +99,7 @@ export default new ContainerModule((bind): void => {
     bind<OrganizationMemberResolverModule>("ResolverModule").to(OrganizationMemberResolverModule);
     bind<OrganizationInvitationResolverModule>("ResolverModule").to(OrganizationInvitationResolverModule);
     bind<OrganizationRoleResolverModule>("ResolverModule").to(OrganizationRoleResolverModule);
+    bind<ReferralResolverModule>("ResolverModule").to(ReferralResolverModule);
 
     // ADMIN MODULES OVERRIDE WITH AdminResolverModule
     bind<AdminUsersResolverModule>("AdminResolverModule").to(AdminUsersResolverModule);
