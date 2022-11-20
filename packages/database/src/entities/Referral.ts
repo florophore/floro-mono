@@ -64,18 +64,12 @@ export class Referral extends BinaryPKBaseEntity {
   referralState?: string;
 
   @Column("int", { default: 7 })
-  @IsInt()
-  @IsDefined()
   ttlDays!: number;
 
   @Column("bigint", { default: 5368709120 })
-  @IsInt()
-  @IsDefined()
   referrerRewardBytes!: number;
 
   @Column("bigint", { default: 5368709120 })
-  @IsInt()
-  @IsDefined()
   refereeRewardBytes!: number;
 
   @Column({ name: "last_sent_at", type: "timestamp", default: () => "CURRENT_TIMESTAMP(6)" })

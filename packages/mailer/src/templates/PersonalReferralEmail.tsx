@@ -61,7 +61,7 @@ const PersonalReferralEmail = (props: Props): React.ReactElement => {
                 {`${upcaseFirst(props.referrerUserFirstName)} ${upcaseFirst(props.referrerUserLastName)} is inviting you to join floro. If you sign up this week you and ${upcaseFirst(props.referrerUserFirstName)} will both `} <b>{'receive 5GB of free additional storage'}</b> {` to use on any of your projects.`}
             </MjmlText>
             <MjmlText align={'center'} lineHeight={32} fontSize={20} color={colorPalette.mediumGray}>
-                {`We're excited to see what cool things you and ${upcaseFirst(props.referrerUserFirstName)} build together!`}
+                {`We're excited to see what you and ${upcaseFirst(props.referrerUserFirstName)} build together!`}
             </MjmlText>
             <MjmlText fontStyle={'italic'} align={'center'} lineHeight={32} fontSize={18} color={colorPalette.mediumGray}>
                 {"this link will expire in a week"}

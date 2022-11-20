@@ -38,7 +38,7 @@ export class addReferralTables1668890300688 implements MigrationInterface {
           {
             name: "referee_device_id",
             type: "varchar",
-            isNullable: false
+            isNullable: true
           },
           {
             name: "referrer_reward_bytes",

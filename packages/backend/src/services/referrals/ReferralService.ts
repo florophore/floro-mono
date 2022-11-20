@@ -247,8 +247,8 @@ export default class ReferralService implements CreateUserEventHandler {
         props: {
           link,
           firstName: refereeFirstName,
-          invitingUserFirstName: currentUser.firstName,
-          invitingUserLastName: currentUser.lastName,
+          referrerUserFirstName: currentUser.firstName,
+          referrerUserLastName: currentUser.lastName,
           subsequentAttempt: false,
         },
         to: refereeEmail,
@@ -365,8 +365,8 @@ export default class ReferralService implements CreateUserEventHandler {
       props: {
         link,
         firstName: updatedReferral.refereeFirstName,
-        invitingUserFirstName: currentUser.firstName,
-        invitingUserLastName: currentUser.lastName,
+        referrerUserFirstName: currentUser.firstName,
+        referrerUserLastName: currentUser.lastName,
         subsequentAttempt: true,
       },
       to: updatedReferral.refereeEmail,
@@ -405,7 +405,7 @@ export default class ReferralService implements CreateUserEventHandler {
       };
     }
 
-    if (referral.refereeDeviceId != refereeDeviceId) {
+    if (referral.refereeDeviceId == refereeDeviceId) {
       return {
         action: "INVALID_STATE_ERROR",
         error: {
@@ -486,19 +486,41 @@ export default class ReferralService implements CreateUserEventHandler {
         };
       }
 
+      // stupid typeorm bigint handling
+      const refereeUserFreeDiskSpace = parseInt(
+        refereeUser?.freeDiskSpaceBytes as unknown as string
+      );
+      const refereeReferrerRewardBytes = parseInt(
+        referral?.refereeRewardBytes as unknown as string
+      );
+      const refereeUserDiskSpaceLimitBytes = parseInt(
+        refereeUser?.diskSpaceLimitBytes as unknown as string
+      );
       const updatedRefereeUser = await usersContext.updateUserById(
         refereeUser?.id as string,
         {
           freeDiskSpaceBytes:
-            (refereeUser?.freeDiskSpaceBytes ?? 0) +
-            referral.refereeRewardBytes,
+            refereeUserFreeDiskSpace + refereeReferrerRewardBytes,
+          diskSpaceLimitBytes:
+            refereeUserDiskSpaceLimitBytes + refereeReferrerRewardBytes,
         }
       );
 
+      // stupid typeorm bigint handling
+      const referralReferrerRewardBytes = parseInt(
+        referral?.referrerRewardBytes as unknown as string
+      );
+      const referrerUserFreeDiskSpace = parseInt(
+        referrerUser?.freeDiskSpaceBytes as unknown as string
+      );
+      const referrerUserDiskSpaceLimitBytes = parseInt(
+        referrerUser?.diskSpaceLimitBytes as unknown as string
+      );
       await usersContext.updateUserById(referrerUser?.id as string, {
         freeDiskSpaceBytes:
-          (referrerUser?.freeDiskSpaceBytes ?? 0) +
-          referral.referrerRewardBytes,
+          referrerUserFreeDiskSpace + referralReferrerRewardBytes,
+        diskSpaceLimitBytes:
+          referrerUserDiskSpaceLimitBytes + referralReferrerRewardBytes,
       });
 
       await queryRunner.commitTransaction();

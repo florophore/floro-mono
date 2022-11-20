@@ -6,6 +6,8 @@ import RequestCache from "../../request/RequestCache";
 import LoggedInUserGuard from "../hooks/guards/LoggedInUserGuard";
 import { runWithHooks } from "../hooks/ResolverHook";
 import ReferralService from "../../services/referrals/ReferralService";
+import ReferralsContext from "@floro/database/src/contexts/referrals/ReferralsContext";
+import { Referral } from "@floro/graphql-schemas/src/generated/main-graphql";
 
 @injectable()
 export default class ReferralResolverModule extends BaseResolverModule {
@@ -41,10 +43,48 @@ export default class ReferralResolverModule extends BaseResolverModule {
           refereeEmail,
           refereeFirstName,
           refereeLastName,
+          referrerDeviceId
         }: main.MutationCreatePersonalReferralArgs,
-        { currentUser, cacheKey }
+        { currentUser }
       ) => {
-        return null;
+        if (!currentUser) {
+          return {
+            __typename: "CreatePersonalReferralError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        const result = await this.referralService.createReferral(
+          refereeEmail,
+          refereeFirstName,
+          refereeLastName,
+          referrerDeviceId,
+          currentUser
+        );
+        if (result.action == "REFERRAL_CREATED") {
+          return {
+            __typename: "CreatePersonalReferralSuccess",
+            referral: ((result.referral as unknown) as Referral),
+            referrer: currentUser
+          };
+        }
+        if (result.action == "LOG_ERROR") {
+          console.error(
+            result.error?.type,
+            result?.error?.message,
+            result?.error?.meta
+          );
+          return {
+            __typename: "CreatePersonalReferralError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        return {
+          __typename: "CreatePersonalReferralError",
+          message: result.error?.message ?? "Unknown Error",
+          type: result.error?.type ?? "UNKNOWN_ERROR",
+        };
       }
     ),
     resendReferral: runWithHooks(
@@ -52,19 +92,110 @@ export default class ReferralResolverModule extends BaseResolverModule {
       async (
         _root,
         { referralId }: main.MutationResendReferralArgs,
-        { currentUser, cacheKey }
+        { currentUser }
       ) => {
-        return null;
+        if (!currentUser) {
+          return {
+            __typename: "ResendPersonalReferralError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        const referralsContext = await this.contextFactory.createContext(
+          ReferralsContext
+        );
+        const referral = await referralsContext.getById(referralId);
+        if (!referral) {
+          return {
+            __typename: "ResendPersonalReferralError",
+            message: "Invalid referral id",
+            type: "INVALID_REFERRAL_ID_ERROR",
+          };
+        }
+        const result = await this.referralService.resendReferral(
+          referral,
+          currentUser
+        );
+        if (result.action == "REFERRAL_RESENT") {
+          return {
+            __typename: "ResendPersonalReferralSuccess",
+            referral: ((result.referral as unknown) as Referral),
+            referrer: currentUser
+          };
+        }
+        if (result.action == "LOG_ERROR") {
+          console.error(
+            result.error?.type,
+            result?.error?.message,
+            result?.error?.meta
+          );
+          return {
+            __typename: "ResendPersonalReferralError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        return {
+          __typename: "ResendPersonalReferralError",
+          message: result.error?.message ?? "Unknown Error",
+          type: result.error?.type ?? "UNKNOWN_ERROR",
+        };
       }
     ),
     claimPersonalReferral: runWithHooks(
       () => [this.loggedInUserGuard],
       async (
         _root,
-        { referralId }: main.MutationClaimPersonalReferralArgs,
-        { currentUser, cacheKey }
+        { referralId, refereeDeviceId }: main.MutationClaimPersonalReferralArgs,
+        { currentUser }
       ) => {
-        return null;
+        if (!currentUser) {
+          return {
+            __typename: "ClaimPersonalReferralError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        const referralsContext = await this.contextFactory.createContext(
+          ReferralsContext
+        );
+        const referral = await referralsContext.getById(referralId);
+        if (!referral) {
+          return {
+            __typename: "ClaimPersonalReferralError",
+            message: "Invalid referral id",
+            type: "INVALID_REFERRAL_ID_ERROR",
+          };
+        }
+        const result = await this.referralService.claimReferral(
+          referral,
+          refereeDeviceId,
+          currentUser
+        );
+        if (result.action == "REFERRAL_CLAIMED") {
+          return {
+            __typename: "ClaimPersonalReferralSuccess",
+            referral: ((result.referral as unknown) as Referral),
+            referee: result.refereeUser
+          };
+        }
+        if (result.action == "LOG_ERROR") {
+          console.error(
+            result.error?.type,
+            result?.error?.message,
+            result?.error?.meta
+          );
+          return {
+            __typename: "ClaimPersonalReferralError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        return {
+          __typename: "ClaimPersonalReferralError",
+          message: result.error?.message ?? "Unknown Error",
+          type: result.error?.type ?? "UNKNOWN_ERROR",
+        };
       }
     ),
   };

@@ -8,8 +8,8 @@ type Referral {
   referrerUserId: String
   refereeUser: User
   organization: Organization
-  lastSentAt: String
-  expiresAt: String
+  lastSentAt: DateTime
+  expiresAt: DateTime
 }
 
 type CreatePersonalReferralSuccess {
