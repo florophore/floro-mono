@@ -2,8 +2,9 @@ extend type Mutation {
   createPersonalReferral(
     refereeFirstName: String!
     refereeLastName: String!
-    refereeEmail: String!
+    refereeEmail: String!,
+    referrerDeviceId: String!
   ): CreatePersonalReferralResponse
   resendReferral(referralId: ID!): ResendPersonalReferralResponse
-  claimReferral(referralId: ID!): ClaimPersonalReferralResponse
+  claimPersonalReferral(referralId: ID!, refereeDeviceId: String!): ClaimPersonalReferralResponse
 }

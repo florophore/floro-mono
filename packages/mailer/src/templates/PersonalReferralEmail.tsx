@@ -30,20 +30,19 @@ const upcaseFirst = (str: string) => {
 
 export interface Props {
   firstName: string;
-  organizationName: string;
-  invitingUserFirstName: string;
-  invitingUserLastName: string;
-  userExistedAlready: boolean;
+  referrerUserFirstName: string;
+  referrerUserLastName: string;
+  subsequentAttempt: boolean;
   assetHost: string;
   link: string;
 }
 
-const OrganizationInviationEmail = (props: Props): React.ReactElement => {
+const PersonalReferralEmail = (props: Props): React.ReactElement => {
   return (
     <Mjml>
       <MjmlHead>
-          <MjmlTitle>{`Invitation to ${upcaseFirst(props.organizationName)}'s floro`}</MjmlTitle>
-          <MjmlPreview>{`Hi ${upcaseFirst(props.firstName)}, ${upcaseFirst(props.invitingUserFirstName)} ${upcaseFirst(props.invitingUserLastName)} is inviting you to join ${upcaseFirst(props.organizationName)}'s floro organization`}</MjmlPreview>
+          <MjmlTitle>{`Invitation from ${upcaseFirst(props.referrerUserFirstName)} ${upcaseFirst(props.referrerUserLastName)} to floro`}</MjmlTitle>
+          <MjmlPreview>{`Hi ${upcaseFirst(props.firstName)}, ${upcaseFirst(props.referrerUserFirstName)} ${upcaseFirst(props.referrerUserLastName)} gave you 5GB of free storage on floro.`}</MjmlPreview>
           <MjmlFont name="Maven-Pro" href="https://fonts.googleapis.com/css?family=Maven%20Pro"/>
       </MjmlHead>
       <MjmlBody width={500}>
@@ -59,13 +58,11 @@ const OrganizationInviationEmail = (props: Props): React.ReactElement => {
             </MjmlText>
             <MjmlDivider width={'50%'} borderColor={colorPalette.mediumGray}/>
             <MjmlText align={'center'} lineHeight={32} fontSize={20} color={colorPalette.mediumGray}>
-                {`${upcaseFirst(props.invitingUserFirstName)} ${upcaseFirst(props.invitingUserLastName)} is inviting you to join ${upcaseFirst(props.organizationName)}'s floro organization.`}
+                {`${upcaseFirst(props.referrerUserFirstName)} ${upcaseFirst(props.referrerUserLastName)} is inviting you to join floro. If you sign up this week you and ${upcaseFirst(props.referrerUserFirstName)} will both `} <b>{'receive 5GB of free additional storage'}</b> {` to use on any of your projects.`}
             </MjmlText>
-            {!props.userExistedAlready && (
-                <MjmlText fontStyle={'italic'} align={'center'} lineHeight={32} fontSize={18} color={colorPalette.mediumGray}>
-                    {`You can click the link below to setup your floro account and get started with ${upcaseFirst(props.organizationName)}.`}
-                </MjmlText>
-            )}
+            <MjmlText align={'center'} lineHeight={32} fontSize={20} color={colorPalette.mediumGray}>
+                {`We're excited to see what cool things you and ${upcaseFirst(props.referrerUserFirstName)} build together!`}
+            </MjmlText>
             <MjmlText fontStyle={'italic'} align={'center'} lineHeight={32} fontSize={18} color={colorPalette.mediumGray}>
                 {"this link will expire in a week"}
             </MjmlText>
@@ -94,22 +91,20 @@ const OrganizationInviationEmail = (props: Props): React.ReactElement => {
 
 export const mock: Props = {
   firstName: "jacqueline",
-  invitingUserFirstName: "jamie",
-  invitingUserLastName: "sunderland",
-  organizationName: "airbnb",
-  userExistedAlready: false,
+  referrerUserFirstName: "jamie",
+  referrerUserLastName: "sunderland",
+  subsequentAttempt: false,
   assetHost: "http://localhost:5173",
   link: 'http://google.com'
 }
 
 export const existingUserMock: Props = {
   firstName: "jacqueline",
-  invitingUserFirstName: "jamie",
-  invitingUserLastName: "sunderland",
-  organizationName: "cheqout",
-  userExistedAlready: true,
+  referrerUserFirstName: "jamie",
+  referrerUserLastName: "sunderland",
+  subsequentAttempt: false,
   assetHost: "http://localhost:5173",
   link: 'http://google.com'
 }
 
-export default OrganizationInviationEmail;
+export default PersonalReferralEmail;

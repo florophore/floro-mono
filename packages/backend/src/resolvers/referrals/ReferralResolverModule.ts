@@ -10,7 +10,6 @@ import ReferralService from "../../services/referrals/ReferralService";
 @injectable()
 export default class ReferralResolverModule extends BaseResolverModule {
   public resolvers: Array<keyof this & keyof main.ResolversTypes> = [
-    "Referral",
     "Mutation",
   ];
   protected referralService!: ReferralService;
@@ -58,31 +57,15 @@ export default class ReferralResolverModule extends BaseResolverModule {
         return null;
       }
     ),
-    claimReferral: runWithHooks(
+    claimPersonalReferral: runWithHooks(
       () => [this.loggedInUserGuard],
       async (
         _root,
-        { referralId }: main.MutationClaimReferralArgs,
+        { referralId }: main.MutationClaimPersonalReferralArgs,
         { currentUser, cacheKey }
       ) => {
         return null;
       }
     ),
-  };
-
-  public Referral: main.ReferralResolvers = {
-    referralState: (referral, _, { currentUser }) => {
-      if (!currentUser) {
-        return null;
-      }
-      if (
-        currentUser.id == referral.referrerUserId &&
-        referral.referralState == "invalid"
-      ) {
-        return "sent";
-      }
-
-      return null;
-    },
   };
 }

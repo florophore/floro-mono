@@ -8,6 +8,7 @@ import AccountAlreadyExists from "@floro/mailer/src/templates/AccountAlreadyExis
 import LoginEmail from "@floro/mailer/src/templates/LoginEmail";
 import SignupEmail from "@floro/mailer/src/templates/SignupEmail";
 import OrganizationInvitationEmail from "@floro/mailer/src/templates/OrganizationInvitationEmail";
+import PersonalReferralEmail from "@floro/mailer/src/templates/PersonalReferralEmail"; 
 
 import MailerClient from "@floro/mailer/src/MailerClient";
 import MainConfig from "@floro/config/src/MainConfig";
@@ -18,7 +19,8 @@ export const EmailTemplates = {
   EmailSignupInvite,
   VerifyGithubOAuthEmail,
   AccountAlreadyExists,
-  OrganizationInvitationEmail
+  OrganizationInvitationEmail,
+  PersonalReferralEmail
 };
 
 interface EmailJobProps<T extends keyof typeof EmailTemplates & string, U> {
