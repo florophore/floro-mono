@@ -15,7 +15,10 @@ export default class ReferralsContext extends BaseContext {
   }
 
   public async getById(id: string): Promise<Referral | null> {
-    return await this.queryRunner.manager.findOneBy(Referral, { id });
+    return await this.queryRunner.manager.findOne(Referral, {
+      where: { id },
+      relations: { refereeUser: true, referrerUser: true },
+    });
   }
 
   public async createReferral(
@@ -34,8 +37,14 @@ export default class ReferralsContext extends BaseContext {
   public async getByReferrerId(
     referrerUserId: string
   ): Promise<Referral | null> {
-    return await this.queryRunner.manager.findOneBy(Referral, {
-      referrerUserId,
+    return await this.queryRunner.manager.findOne(Referral, {
+      where: {
+        referrerUserId
+      },
+      relations: {
+        referrerUser: true,
+        refereeUser: true
+      }
     });
   }
 
@@ -48,8 +57,13 @@ export default class ReferralsContext extends BaseContext {
         refereeEmailHash,
         expiresAt: MoreThan(new Date()),
       },
+      relations: {
+        refereeUser: true,
+        referrerUser: true,
+      }
     });
   }
+
   public async updateReferralById(
     id: string,
     referralArgs: DeepPartial<Referral>
@@ -62,5 +76,65 @@ export default class ReferralsContext extends BaseContext {
       user[prop] = referralArgs[prop];
     }
     return await this.queryRunner.manager.save(Referral, user);
+  }
+
+  public async getClaimedSentReferrals(referrerUserId: string): Promise<Referral[]> {
+    return await this.queryRunner.manager.find(Referral, {
+      where: {
+        referrerUserId,
+        referralState: "claimed"
+      },
+      relations: {
+        referrerUser: true,
+        refereeUser: true
+      },
+      order: {
+        updatedAt: "DESC"
+      }
+    });
+  }
+
+  public async getPendingSentReferrals(referrerUserId: string): Promise<Referral[]> {
+    return await this.queryRunner.manager.find(Referral, {
+      where: {
+        referrerUserId,
+        referralState: "sent",
+        expiresAt: MoreThan(new Date()),
+      },
+      relations: {
+        referrerUser: true,
+        refereeUser: true
+      },
+      order: {
+        updatedAt: "DESC"
+      }
+    });
+  }
+
+  public async getPendingReferral(refereeUserId: string): Promise<Referral|null> {
+    return await this.queryRunner.manager.findOne(Referral, {
+      where: {
+        refereeUserId,
+        referralState: "sent",
+        expiresAt: MoreThan(new Date()),
+      },
+      relations: {
+        referrerUser: true,
+        refereeUser: true
+      }
+    });
+  }
+
+  public async getClaimedReferral(refereeUserId: string): Promise<Referral|null> {
+    return await this.queryRunner.manager.findOne(Referral, {
+      where: {
+        refereeUserId,
+        referralState: "claimed",
+      },
+      relations: {
+        referrerUser: true,
+        refereeUser: true
+      }
+    });
   }
 }

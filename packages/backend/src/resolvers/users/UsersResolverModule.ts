@@ -2,7 +2,7 @@ import BaseResolverModule from "../BaseResolverModule";
 import { main } from "@floro/graphql-schemas";
 import { inject, injectable } from "inversify";
 import { User } from "@floro/database/src/entities/User";
-import { UsernameCheckResult } from "@floro/graphql-schemas/src/generated/main-graphql";
+import { Referral, UsernameCheckResult } from "@floro/graphql-schemas/src/generated/main-graphql";
 import UsersService from "../../services/users/UsersService";
 import { USERNAME_REGEX } from "@floro/common-web/src/utils/validators";
 import ContextFactory from "@floro/database/src/contexts/ContextFactory";
@@ -16,6 +16,7 @@ import LoggedInUserGuard from "../hooks/guards/LoggedInUserGuard";
 import { runWithHooks } from "../hooks/ResolverHook";
 import OrganizationInvitationsContext from "@floro/database/src/contexts/organizations/OrganizationInvitationsContext";
 import OrganizationInvitationService from "../../services/organizations/OrganizationInvitationService";
+import ReferralsContext from "@floro/database/src/contexts/referrals/ReferralsContext";
 
 @injectable()
 export default class UsersResolverModule extends BaseResolverModule {
@@ -313,6 +314,46 @@ export default class UsersResolverModule extends BaseResolverModule {
       }
       const organizationInvitationsContext = await this.contextFactory.createContext(OrganizationInvitationsContext);
       return await organizationInvitationsContext.getAllInvitationsForUser(user.id as string);
-    }
+    },
+    sentReferrals: async (user, _, { currentUser }) => {
+      if (currentUser?.id != user.id) {
+        return null;
+      }
+      if (!user.id) {
+        return null;
+      }
+      const referralsContext = await this.contextFactory.createContext(ReferralsContext);
+      return (await referralsContext.getPendingSentReferrals(user.id) as unknown) as Referral[];
+    },
+    sentClaimedReferrals: async (user, _, { currentUser }) => {
+      if (currentUser?.id != user.id) {
+        return null;
+      }
+      if (!user.id) {
+        return null;
+      }
+      const referralsContext = await this.contextFactory.createContext(ReferralsContext);
+      return (await referralsContext.getClaimedSentReferrals(user.id) as unknown) as Referral[];
+    },
+    claimedReferral: async (user, _, { currentUser }) => {
+      if (currentUser?.id != user.id) {
+        return null;
+      }
+      if (!user.id) {
+        return null;
+      }
+      const referralsContext = await this.contextFactory.createContext(ReferralsContext);
+      return (await referralsContext.getClaimedReferral(user.id) as unknown) as Referral;
+    },
+    receivedPendingReferral: async (user, _, { currentUser }) => {
+      if (currentUser?.id != user.id) {
+        return null;
+      }
+      if (!user.id) {
+        return null;
+      }
+      const referralsContext = await this.contextFactory.createContext(ReferralsContext);
+      return (await referralsContext.getPendingReferral(user.id) as unknown) as Referral;
+    },
   };
 }

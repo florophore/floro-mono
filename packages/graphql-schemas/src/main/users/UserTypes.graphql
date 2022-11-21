@@ -8,6 +8,10 @@ type User {
     freeDiskSpaceBytes: Float
     diskSpaceLimitBytes: Float
     utilizedDiskSpaceBytes: Float
+    sentReferrals: [Referral]
+    sentClaimedReferrals: [Referral]
+    claimedReferral: Referral
+    receivedPendingReferral: Referral
 }
 
 type UsernameCheckResult {
