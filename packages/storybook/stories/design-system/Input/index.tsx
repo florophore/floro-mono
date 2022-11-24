@@ -13,10 +13,11 @@ export interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   placeholder: string;
   isLoading?: boolean;
   isValid?: boolean;
-  onTextChanged: (text: string) => void;
+  onTextChanged: (text: string, event: React.ChangeEvent<HTMLInputElement>) => void;
   onFocus?: (event: React.FocusEvent<HTMLInputElement, Element>) => void;
   onBlur?: (event: React.FocusEvent<HTMLInputElement, Element>) => void;
   tabIndex?: number;
+  rightElement?: React.ReactElement|null;
 }
 
 const Container = styled.div`
@@ -60,9 +61,15 @@ const LabelBorderEnd = styled.div`
   transition: 500ms background-color;
 `;
 
+const InputRowWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+`;
+
 const InputElement = styled.input`
   position: relative;
-  width: 100%;
+  flex-grow: 1;
   box-sizing: border-box;
   height: 32px;
   top: -12px;
@@ -122,7 +129,7 @@ const Input = React.forwardRef(
 
     const onInputChange = useCallback(
       (event: React.ChangeEvent<HTMLInputElement>) => {
-        onTextChanged(event.target.value);
+        onTextChanged(event.target.value, event);
       },
       [onTextChanged]
     );
@@ -151,16 +158,23 @@ const Input = React.forwardRef(
           <LabelText style={{ color: labelTextColor }}>{label}</LabelText>
           <LabelBorderEnd style={{ right: -1 }} />
         </LabelContainer>
-        <InputElement
-          value={value}
-          ref={inputRef}
-          onChange={onInputChange}
-          onFocus={onInputFocus}
-          onBlur={onInputBlur}
-          placeholder={placeholder}
-          spellCheck={'false'}
-          {...rest}
-        />
+        <InputRowWrapper>
+          <InputElement
+            value={value}
+            ref={inputRef}
+            onChange={onInputChange}
+            onFocus={onInputFocus}
+            onBlur={onInputBlur}
+            placeholder={placeholder}
+            spellCheck={'false'}
+            {...rest}
+          />
+          {!!rest?.rightElement &&
+            <div style={{height: 64, position: 'relative', marginTop: -27}}>
+              {rest?.rightElement}
+            </div>
+          }
+        </InputRowWrapper>
       </Container>
     );
   }

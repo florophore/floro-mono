@@ -2,18 +2,17 @@ import React from 'react';
 import OuterNavigator from '@floro/common-react/src/components/outer-navigator/OuterNavigator';
 import { useSession } from '@floro/common-react/src/session/session-context';
 import { useNavigationAnimator } from '@floro/common-react/src/navigation/navigation-animator';
-import CreateOrg from '@floro/common-react/src/components/create_org/CreateOrg';
-import  { useLinkTitle } from '@floro/common-react/src/components/header_links/HeaderLink';
+import CreateRepo from '@floro/common-react/src/components/create_repo/CreateRepo';
+import { useLinkTitle } from '@floro/common-react/src/components/header_links/HeaderLink';
 
-const CreateOrgPage = () => {
+const CreateUserRepoPage = () => {
     const {currentUser} = useSession();
-    //const title = useMemo(() => '@' + currentUser?.username + ' > ' + 'Create Organization', [currentUser?.username]);
     const title = useLinkTitle({
       value: '/home',
       label: '@' + currentUser?.username,
       next: {
         prefix: '>',
-        label: 'Create Organization',
+        label: 'Create Repository',
       }
     }, [currentUser?.username]);
 
@@ -25,9 +24,9 @@ const CreateOrgPage = () => {
 
     return (
       <OuterNavigator page={'create-org'} title={title}>
-        <CreateOrg/>
+        <CreateRepo/>
       </OuterNavigator>
     );
 };
 
-export default React.memo(CreateOrgPage);
+export default React.memo(CreateUserRepoPage);

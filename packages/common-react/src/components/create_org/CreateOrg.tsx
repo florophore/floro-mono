@@ -157,7 +157,7 @@ const CreateOrg = () => {
         onUpdateLegalName={setLegalName}
         onUpdateContactEmail={setContactEmail}
         onUpdateHandle={setHandle}
-        agreedToToCustomerServiceAgreement={agreedToCustomerServiceAgreement}
+        agreedToCustomerServiceAgreement={agreedToCustomerServiceAgreement}
         onUpdateAgreedToCustomerServiceAgreement={
           setAgreedToCustomerServiceAgreement
         }

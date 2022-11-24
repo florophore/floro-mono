@@ -39,6 +39,8 @@ const Title = styled.p`
   color: ${ColorPalette.white};
   font-family: "MavenPro";
   font-weight: 600;
+  -webkit-app-region: no-drag;
+  cursor: arrow;
 `;
 
 const SearchWrapper = styled.div`
@@ -180,7 +182,10 @@ const OuterNavigator = (props: Props) => {
     >
       <Main>
         <header className={css([...dragClass, headerCss])}>
-          <Title>{props.title}</Title>
+          <Title
+            onMouseEnter={onMouseOverSearch}
+            onMouseLeave={onMouseLeaveSearch}
+          >{props.title}</Title>
           <DragFill />
           <SearchWrapper
             onMouseEnter={onMouseOverSearch}

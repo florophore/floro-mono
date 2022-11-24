@@ -9,6 +9,8 @@ export interface ColorTheme {
     disableOverlay: string;
     checkboxBorder: string;
     checkboxFill: string;
+    radioFill: string;
+    radioBorder: string;
     googleButtonBackground: string;
     googleButtonText: string;
     googleButtonBorder: string;
@@ -40,9 +42,18 @@ export interface ColorTheme {
     connectionTextColor: string;
     commonBorder: string;
     titleTextColor: string;
+    ownerDescriptorUsernameColor: string;
+    slashRepoCreateColor: string;
+    privateSelectTextColor: string;
+    optionTextColor: string;
+    highlightedOptionBackgroundColor: string;
+    dropdownDividerColor: string;
+    repoSelectSubtitleTextColor: string;
   };
   shadows: {
-    modalContainer: string
+    modalContainer: string;
+    innerDropdown: string;
+    outerDropdown: string;
   },
   loaders: {
     googleButtonLoader: keyof ColorPalette; 
@@ -58,6 +69,8 @@ export const LightTheme: ColorTheme = {
     disableOverlay: palette.white,
     checkboxBorder: palette.gray,
     checkboxFill: palette.white,
+    radioBorder: palette.gray,
+    radioFill: palette.white,
     googleButtonBackground: palette.white,
     googleButtonText: palette.darkGray,
     googleButtonBorder: palette.white,
@@ -88,10 +101,19 @@ export const LightTheme: ColorTheme = {
     followerTextColor: palette.mediumGray,
     connectionTextColor: palette.mediumGray,
     commonBorder: palette.mediumGray,
-    titleTextColor: palette.purple
+    titleTextColor: palette.purple,
+    ownerDescriptorUsernameColor: palette.purple,
+    slashRepoCreateColor: palette.purple,
+    privateSelectTextColor: palette.gray,
+    optionTextColor: palette.mediumGray,
+    highlightedOptionBackgroundColor: palette.lightGray,
+    dropdownDividerColor: palette.lightGray,
+    repoSelectSubtitleTextColor: palette.gray
   },
   shadows: {
     modalContainer: palette.mediumGray.substring(0, 7) + Opacity[70],
+    innerDropdown: palette.mediumGray.substring(0, 7) + Opacity[100],
+    outerDropdown: palette.black.substring(0, 7) + Opacity[50],
   },
   loaders: {
     googleButtonLoader: "gray",
@@ -107,6 +129,8 @@ export const DarkTheme: ColorTheme = {
         disableOverlay: palette.gray,
         checkboxBorder: palette.mediumGray,
         checkboxFill: palette.gray,
+        radioBorder: palette.white,
+        radioFill: palette.white,
         googleButtonBackground: palette.darkGray,
         googleButtonText: palette.white,
         googleButtonBorder: palette.black,
@@ -137,10 +161,19 @@ export const DarkTheme: ColorTheme = {
         followerTextColor: palette.white,
         connectionTextColor: palette.white,
         commonBorder: palette.white,
-        titleTextColor: palette.purple
+        titleTextColor: palette.purple,
+        ownerDescriptorUsernameColor: palette.purple,
+        slashRepoCreateColor: palette.purple,
+        privateSelectTextColor: palette.white,
+        optionTextColor: palette.white,
+        highlightedOptionBackgroundColor: palette.mediumGray,
+        dropdownDividerColor: palette.mediumGray,
+        repoSelectSubtitleTextColor: palette.gray
     },
     shadows: {
         modalContainer: palette.black.substring(0, 7) + Opacity[70],
+        innerDropdown: palette.black.substring(0, 7) + Opacity[70],
+        outerDropdown: palette.black.substring(0, 7) + Opacity[50],
     },
     loaders: {
         googleButtonLoader: 'white',

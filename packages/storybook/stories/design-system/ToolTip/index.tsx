@@ -11,13 +11,13 @@ import ToolTipArrowLight from "@floro/common-assets/assets/images/icons/tooltip_
 import ToolTipArrowDark from "@floro/common-assets/assets/images/icons/tooltip_arrow.dark.svg";
 
 export interface Props {
-  children: React.ReactElement;
+  children?: React.ReactElement|null;
   inner: React.ReactElement;
   show: boolean;
   onFocusChanged?: (isFocused: boolean) => void;
 }
 
-const ToolTip = ({ children, inner, show, ...props }: Props): React.ReactElement => {
+const ToolTip = ({ children = null, inner, show, ...props }: Props): React.ReactElement => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isHovering, setIsHovering] = useState(false);
   const [isFocused, setIsFocused] = useState(false);

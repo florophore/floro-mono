@@ -110,7 +110,7 @@ export interface Props {
   legalName: string;
   contactEmail: string;
   handle: string;
-  agreedToToCustomerServiceAgreement: boolean;
+  agreedToCustomerServiceAgreement: boolean;
   onUpdateName: (name: string) => void;
   onUpdateLegalName: (lastName: string) => void;
   onUpdateContactEmail: (contactEmail: string) => void;
@@ -382,7 +382,7 @@ const CreateOrgInputs = (props: Props): React.ReactElement => {
       >
         <div>
           <Checkbox
-            isChecked={props.agreedToToCustomerServiceAgreement}
+            isChecked={props.agreedToCustomerServiceAgreement}
             onChange={props.onUpdateAgreedToCustomerServiceAgreement}
           />
         </div>

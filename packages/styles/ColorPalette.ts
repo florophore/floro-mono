@@ -18,6 +18,7 @@ export interface ColorPalette {
   lightPurple: string;
   purple: string;
   darkPurple: string;
+  linkBlue: string;
 }
 export default {
     white: '#FFFFFFFF',
@@ -40,6 +41,7 @@ export default {
     lightPurple: '#9B8FF7FF',
     purple: '#5445C4FF',
     darkPurple: '#251F51FF',
+    linkBlue: '#56A4FAFF'
 } as ColorPalette;
 
 export const Opacity = {

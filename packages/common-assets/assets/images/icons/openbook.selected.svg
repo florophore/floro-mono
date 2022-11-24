@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="26px" viewBox="0 0 32 26" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>openbook.selected</title>
+    <g id="Creat-Repo" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="OpenBook-Selected" transform="translate(-46.000000, -50.000000)" stroke="#5445C4" stroke-width="2">
+            <g id="openbook.selected" transform="translate(46.000000, 50.000000)">
+                <path d="M15.3988766,2.50154657 C20.9933976,0.666943777 25.9587456,0.51545716 31,2.04470958 L31.0000003,23.823275 L30.5581731,23.6631988 C25.6982647,21.9597291 20.844604,22.1494863 15.9990582,24.22274 C11.0193572,22.0916118 6.04007744,21.9534425 1.06145828,23.7993381 L0.999999913,2.03340723 C5.7260224,0.514285526 10.5263397,0.674345254 15.3988766,2.50154657 Z" id="Rectangle"></path>
+                <line x1="16" y1="3.31521739" x2="16" y2="23.8152174" id="Line" stroke-linecap="round"></line>
+                <path d="M22,0.978789175 C22.3803922,0.985000678 23.0890273,1.06927302 23.9831824,1.06573389 C25.3844777,1.06541462 26.3668811,1.0857302 27,1.14582754 L27,10.8909968 L24.5,8.74813961 L22,10.8909968 Z" id="Rectangle"></path>
+                <line x1="3.5" y1="8.81521739" x2="12.5" y2="8.81521739" id="Line-2" stroke-linecap="round" stroke-linejoin="round"></line>
+                <line x1="3.5" y1="12.8152174" x2="12.5" y2="12.8152174" id="Line-2" stroke-linecap="round" stroke-linejoin="round"></line>
+                <line x1="3.5" y1="16.8152174" x2="12.5" y2="16.8152174" id="Line-2" stroke-linecap="round" stroke-linejoin="round"></line>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -14,7 +14,7 @@ const Template = (args) => {
   const [handle, setHandle] = useState('');
   const [agreedToCustomerServiceAgreement, setAgreedToCustomerServiceAgreement] = useState(false);
   return (
-    <div style={{ padding: 24, display: 'flex', flex: 1, height: 500, width: '100vw', justifyContent: 'flex-start', alignItems: 'center'}}>
+    <div style={{ padding: 24, display: 'flex', flex: 1, height: 500, width: '100vw', justifyContent: 'flex-start', alignItems: 'flex-start'}}>
       <CreateOrgInputs
       {...args}
       name={name}

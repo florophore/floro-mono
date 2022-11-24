@@ -75,6 +75,10 @@ const UserHome = (props: Props) => {
     navigate('/home/create-org');
   }, [navigate]);
 
+  const onGoToCreateUserRepo = useCallback(() => {
+    navigate('/home/create-repo');
+  }, [navigate]);
+
   return (
     <Background>
       <UserNav>
@@ -104,6 +108,7 @@ const UserHome = (props: Props) => {
           </TopInfo>
           <ButtonActionWrapper>
             <Button
+              onClick={onGoToCreateUserRepo}
               style={{ marginBottom: 16 }}
               label={"create repo"}
               size={"medium"}
