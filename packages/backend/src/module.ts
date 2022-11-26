@@ -1,11 +1,11 @@
 import { ContainerModule  } from 'inversify';
-import UsersResolverModule from "./resolvers/users/UsersResolverModule";
+import UsersResolverModule from "./resolvers/user/UsersResolverModule";
 import AdminBackend from "./AdminBackend";
 import Backend from "./Backend";
 import AuthenticationService from './services/authentication/AuthenticationService';
 import UsersService from './services/users/UsersService';
 import AuthenticationResolverModule from './resolvers/authentication/AuthenticationResolverModule';
-import AdminUsersResolverModule from './resolvers/users/AdminUsersResolverModule';
+import AdminUsersResolverModule from './resolvers/user/AdminUsersResolverModule';
 import AuthenticationController from './controllers/AuthenticationController';
 import OrganizationService from './services/organizations/OrganizationService';
 import OrganizationResolverModule from './resolvers/organization/OrganizationResolverModule';
@@ -35,8 +35,10 @@ import CreateUserEventHandler from './services/events/CreateUserEventHandler';
 import OrganizationMemberService from './services/organizations/OrganizationMemberService';
 import OrganizationRoleService from './services/organizations/OrganizationRoleService';
 import OrganizationRoleResolverModule from './resolvers/organization/OrganizationRoleResolverModule';
-import ReferralResolverModule from './resolvers/referrals/ReferralResolverModule';
+import ReferralResolverModule from './resolvers/referral/ReferralResolverModule';
 import ReferralService from './services/referrals/ReferralService';
+import RepositoryService from './services/repositories/RepositoryService';
+import RepositoryResolverModule from './resolvers/repository/RepositoryResolverModule';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -78,11 +80,17 @@ export default new ContainerModule((bind): void => {
     // SERVICES
     bind(AuthenticationService).toSelf();
     bind(UsersService).toSelf();
+    // ORGS
     bind(OrganizationService).toSelf();
     bind(OrganizationPermissionService).toSelf();
     bind(OrganizationInvitationService).toSelf();
     bind(OrganizationMemberService).toSelf();
     bind(OrganizationRoleService).toSelf();
+
+    // REPOS
+    bind(RepositoryService).toSelf();
+    // REFERRALS
+    bind(ReferralService).toSelf()
 
     // EVENT HANDLERS
     // CREATE USER HANLDER
@@ -100,6 +108,7 @@ export default new ContainerModule((bind): void => {
     bind<OrganizationInvitationResolverModule>("ResolverModule").to(OrganizationInvitationResolverModule);
     bind<OrganizationRoleResolverModule>("ResolverModule").to(OrganizationRoleResolverModule);
     bind<ReferralResolverModule>("ResolverModule").to(ReferralResolverModule);
+    bind<RepositoryResolverModule>("ResolverModule").to(RepositoryResolverModule);
 
     // ADMIN MODULES OVERRIDE WITH AdminResolverModule
     bind<AdminUsersResolverModule>("AdminResolverModule").to(AdminUsersResolverModule);

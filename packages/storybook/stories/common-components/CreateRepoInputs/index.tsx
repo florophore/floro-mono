@@ -19,6 +19,7 @@ import RepoPrivateSelect from "../RepoPrivateSelect";
 import InputSelector from "../../design-system/InputSelector";
 import ToolTip from "../../design-system/ToolTip";
 import WarningLabel from "../../design-system/WarningLabel";
+import { userInfo } from "os";
 
 const Container = styled.div`
   display: flex;
@@ -40,7 +41,7 @@ const options = [
     label: "Apache License 2.0",
   },
   {
-    value: "gnu_general_3",
+    value: "gnu_general_public_3",
     label: "GNU General Public License v3.0",
   },
   {
@@ -48,11 +49,11 @@ const options = [
     label: "MIT License",
   },
   {
-    value: "bsd2",
+    value: "bsd2_simplified",
     label: 'BSD 2-Clause "Simplified" License',
   },
   {
-    value: "bsd2",
+    value: "bsd3_new_or_revised",
     label: 'BSD 3-Clause "New" or "Revised" License',
   },
   {
@@ -60,7 +61,7 @@ const options = [
     label: "Boost Software License",
   },
   {
-    value: "creative_commons_1",
+    value: "creative_commons_zero_1_0",
     label: "Creative Commons Zero v1.0 Universal",
   },
   {
@@ -94,7 +95,7 @@ export interface Props {
   repoType: "org_repo" | "user_repo";
   onUpdateName: (name: string) => void;
   nameIsTaken: boolean;
-  user?: User;
+  user?: User|null;
   organization?: Organization;
 }
 
@@ -126,9 +127,9 @@ const CreateRepoInputs = (props: Props): React.ReactElement => {
         <div>
           <OwnerDescriptor
             label="owner"
-            firstName="jamie"
-            lastName="sunderland"
-            username="jamie.sunderland"
+            firstName={props.user?.firstName ?? ""}
+            lastName={props.user?.lastName ?? ""}
+            username={props.user?.username ?? ""}
           />
         </div>
         <div>

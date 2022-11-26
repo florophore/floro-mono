@@ -221,12 +221,12 @@ const CreateOrgInputs = (props: Props): React.ReactElement => {
   }, [theme.name]);
 
   const tosTextColor = useMemo(() => {
-    if (props.agreedToToCustomerServiceAgreement) {
+    if (props.agreedToCustomerServiceAgreement) {
       return theme.colors.contrastText;
     }
 
     return ColorPalette.gray;
-  }, [theme.name, props.agreedToToCustomerServiceAgreement]);
+  }, [theme.name, props.agreedToCustomerServiceAgreement]);
 
   return (
     <div>

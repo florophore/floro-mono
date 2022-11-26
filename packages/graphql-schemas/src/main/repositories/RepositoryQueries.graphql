@@ -1,0 +1,14 @@
+extend type Mutation {
+  createOrgRepository(
+    name: String!
+    organizationId: ID!
+    isPrivate: Boolean!
+    licenseCode: String
+  ): CreateOrganizationRepositoryResponse
+
+  createUserRepository(
+    name: String!
+    isPrivate: Boolean!
+    licenseCode: String
+  ): CreateUserRepositoryResponse
+}

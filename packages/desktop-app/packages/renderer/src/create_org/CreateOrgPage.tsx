@@ -7,7 +7,6 @@ import  { useLinkTitle } from '@floro/common-react/src/components/header_links/H
 
 const CreateOrgPage = () => {
     const {currentUser} = useSession();
-    //const title = useMemo(() => '@' + currentUser?.username + ' > ' + 'Create Organization', [currentUser?.username]);
     const title = useLinkTitle({
       value: '/home',
       label: '@' + currentUser?.username,

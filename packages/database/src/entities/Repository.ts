@@ -9,21 +9,35 @@ export class Repository extends BinaryPKBaseEntity {
   @Column("varchar")
   @IsString()
   @IsDefined()
-  name?: string;
+  name!: string;
 
   @Column("varchar")
   @IsIn(["user_repo", "org_repo"])
   @IsString()
   @IsDefined()
-  repoType?: string;
+  repoType!: string;
 
   @Column("boolean")
   @IsDefined()
   @IsBoolean()
-  isPrivate?: boolean;
+  isPrivate!: boolean;
 
   @Column("varchar")
-  @IsIn(["mit"])
+  @IsIn([
+    "apache_2",
+    "gnu_general_public_3",
+    "mit",
+    "bsd2_simplified",
+    "bsd3_new_or_revised",
+    "boost",
+    "creative_commons_zero_1_0",
+    "eclipse_2",
+    "gnu_affero_3",
+    "gnu_general_2",
+    "gnu_lesser_2_1",
+    "mozilla_2",
+    "unlicense",
+  ])
   @IsString()
   @ValidateIf((_, value) => !!value)
   licenseCode?: string;

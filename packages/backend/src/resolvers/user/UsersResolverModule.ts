@@ -17,6 +17,8 @@ import { runWithHooks } from "../hooks/ResolverHook";
 import OrganizationInvitationsContext from "@floro/database/src/contexts/organizations/OrganizationInvitationsContext";
 import OrganizationInvitationService from "../../services/organizations/OrganizationInvitationService";
 import ReferralsContext from "@floro/database/src/contexts/referrals/ReferralsContext";
+import RepositoriesContext from "@floro/database/src/contexts/repositories/RepositoriesContext";
+import { Repository } from "@floro/graphql-schemas/build/generated/main-graphql";
 
 @injectable()
 export default class UsersResolverModule extends BaseResolverModule {
@@ -354,6 +356,29 @@ export default class UsersResolverModule extends BaseResolverModule {
       }
       const referralsContext = await this.contextFactory.createContext(ReferralsContext);
       return (await referralsContext.getPendingReferral(user.id) as unknown) as Referral;
+    },
+    publicRepositories: async (user, _, { cacheKey, currentUser }) => {
+      const cachedPublicRepos = this.requestCache.getUserPublicRepos(cacheKey, currentUser.id);
+      if (cachedPublicRepos) {
+      return (cachedPublicRepos as unknown[]) as Repository[];
+      }
+      const repositoriesContext = await this.contextFactory.createContext(RepositoriesContext);
+      const publicRepos = await repositoriesContext.getUserReposByType(user.id as string, false);
+      this.requestCache.setUserPublicRepos(cacheKey, user as User, publicRepos);
+      return (publicRepos as unknown[]) as Repository[];
+    },
+    privateRepositories: async (user, _, { cacheKey, currentUser }) => {
+      if (user.id != currentUser.id) {
+        return null;
+      }
+      const cachedPrivateRepos = this.requestCache.getUserPrivateRepos(cacheKey, currentUser.id);
+      if (cachedPrivateRepos) {
+      return (cachedPrivateRepos as unknown[]) as Repository[];
+      }
+      const repositoriesContext = await this.contextFactory.createContext(RepositoriesContext);
+      const privateRepos = await repositoriesContext.getUserReposByType(user.id as string, true);
+      this.requestCache.setUserPrivateRepos(cacheKey, user as User, privateRepos);
+      return (privateRepos as unknown[]) as Repository[];
     },
   };
 }

@@ -1,0 +1,41 @@
+type Repository {
+  id: ID
+  name: String
+  repoType: String
+  isPrivate: Boolean
+  licenseCode: String
+  user: User
+  organization: Organization
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+type CreateUserRepositorySuccess {
+  repository: Repository
+  user: User
+}
+
+type CreateUserRepositoryError {
+  message: String
+  type: String
+}
+
+union CreateUserRepositoryResponse =
+    CreateUserRepositorySuccess
+  | CreateUserRepositoryError
+  | UnAuthenticatedError
+
+type CreateOrganizationRepositorySuccess {
+  repository: Repository
+  organization: Organization
+}
+
+type CreateOrganizationRepositoryError {
+  message: String
+  type: String
+}
+
+union CreateOrganizationRepositoryResponse =
+    CreateOrganizationRepositorySuccess
+  | CreateOrganizationRepositoryError
+  | UnAuthenticatedError

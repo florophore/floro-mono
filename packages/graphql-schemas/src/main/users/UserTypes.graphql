@@ -12,6 +12,8 @@ type User {
     sentClaimedReferrals: [Referral]
     claimedReferral: Referral
     receivedPendingReferral: Referral
+    publicRepositories: [Repository]
+    privateRepositories: [Repository]
 }
 
 type UsernameCheckResult {

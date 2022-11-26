@@ -54,6 +54,7 @@ const CreateRepo = () => {
         repoType={"user_repo"}
         onUpdateName={setName}
         nameIsTaken={false}
+        user={currentUser}
       />
       <div style={{marginTop: 200}}>
         <ButtonContainer>

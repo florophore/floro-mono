@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Radio from './index';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export

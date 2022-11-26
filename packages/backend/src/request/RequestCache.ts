@@ -7,6 +7,7 @@ import { OrganizationRole } from "@floro/database/src/entities/OrganizationRole"
 import { OrganizationPermissions } from "../services/organizations/OrganizationPermissionService";
 import sizeof from "object-sizeof";
 import { OrganizationInvitation } from "@floro/database/src/entities/OrganizationInvitation";
+import { Repository } from "@floro/database/src/entities/Repository";
 
 @injectable()
 export default class RequestCache {
@@ -156,5 +157,65 @@ export default class RequestCache {
     public getOrganizationSentInvitationsCount(cacheKey: string, organizationId: string): number {
         const cache = this.getCache(cacheKey);
         return cache[`organization-sent-invitations-count:${organizationId}`] as number ?? null;
+    }
+
+    public setUserRepos(cacheKey: string, user: User, repos: Repository[]) {
+        const cache = this.getCache(cacheKey);
+        cache[`user-repos:${user.id}`] = repos;
+    }
+
+    public getUserRepos(cacheKey: string, userId: string): Repository[] {
+        const cache = this.getCache(cacheKey);
+        return cache[`user-repos:${userId}`] as Repository[];
+    }
+
+    public setUserPrivateRepos(cacheKey: string, user: User, repos: Repository[]) {
+        const cache = this.getCache(cacheKey);
+        cache[`user-private-repos:${user.id}`] = repos;
+    }
+
+    public getUserPrivateRepos(cacheKey: string, userId: string): Repository[] {
+        const cache = this.getCache(cacheKey);
+        return cache[`user-private-repos:${userId}`] as Repository[];
+    }
+
+    public setUserPublicRepos(cacheKey: string, user: User, repos: Repository[]) {
+        const cache = this.getCache(cacheKey);
+        cache[`user-public-repos:${user.id}`] = repos;
+    }
+
+    public getUserPublicRepos(cacheKey: string, userId: string): Repository[] {
+        const cache = this.getCache(cacheKey);
+        return cache[`user-public-repos:${userId}`] as Repository[];
+    }
+
+    public setOrganizationRepos(cacheKey: string, organization: Organization, repos: Repository[]) {
+        const cache = this.getCache(cacheKey);
+        cache[`organization-repos:${organization.id}`] = repos;
+    }
+
+    public getOrganizationRepos(cacheKey: string, organizationId: string): Repository[] {
+        const cache = this.getCache(cacheKey);
+        return cache[`organization-repos:${organizationId}`] as Repository[];
+    }
+
+    public setOrganizationPrivateRepos(cacheKey: string, organization: Organization, repos: Repository[]) {
+        const cache = this.getCache(cacheKey);
+        cache[`organization-private-repos:${organization.id}`] = repos;
+    }
+
+    public getOrganizationPrivateRepos(cacheKey: string, organizationId: string): Repository[] {
+        const cache = this.getCache(cacheKey);
+        return cache[`organization-private-repos:${organizationId}`] as Repository[];
+    }
+
+    public setOrganizationPublicRepos(cacheKey: string, organization: Organization, repos: Repository[]) {
+        const cache = this.getCache(cacheKey);
+        cache[`organization-public-repos:${organization.id}`] = repos;
+    }
+
+    public getOrganizationPublicRepos(cacheKey: string, organizationId: string): Repository[] {
+        const cache = this.getCache(cacheKey);
+        return cache[`organization-public-repos:${organizationId}`] as Repository[];
     }
 }

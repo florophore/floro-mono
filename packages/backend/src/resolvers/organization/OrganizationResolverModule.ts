@@ -7,6 +7,7 @@ import { runWithHooks } from "../hooks/ResolverHook";
 import {
   CreateOrganizationResponse,
   MutationCreateOrganizationArgs,
+  Repository,
 } from "@floro/graphql-schemas/src/generated/main-graphql";
 import { User } from "@floro/database/src/entities/User";
 import RequestCache from "../../request/RequestCache";
@@ -22,6 +23,7 @@ import { OrganizationRole } from "@floro/database/src/entities/OrganizationRole"
 import OrganizationInvitationsContext from "@floro/database/src/contexts/organizations/OrganizationInvitationsContext";
 import OrganizationSentInvitationsCountLoader from "../hooks/loaders/Organization/OrganizationSentInvitationsCountLoader";
 import OrganizationActiveMemberCountLoader from "../hooks/loaders/Organization/OrganizationActiveMemberCountLoader";
+import RepositoriesContext from "@floro/database/src/contexts/repositories/RepositoriesContext";
 
 @injectable()
 export default class OrganizationResolverModule extends BaseResolverModule {
@@ -422,7 +424,7 @@ export default class OrganizationResolverModule extends BaseResolverModule {
             organization.id as string,
             currentUser.id
           );
-        if (organizationMembership.membershipState == "inactive") {
+        if (organizationMembership?.membershipState == "inactive") {
           return null;
         }
         const permissions = this.requestCache.getMembershipPermissions(
@@ -470,6 +472,61 @@ export default class OrganizationResolverModule extends BaseResolverModule {
         return invitations;
       }
     ),
+    publicRepositories: async (organization, _, { cacheKey }) => {
+      const cachedPublicRepos = this.requestCache.getOrganizationPublicRepos(
+        cacheKey,
+        organization.id as string
+      );
+      if (cachedPublicRepos) {
+        return cachedPublicRepos as unknown[] as Repository[];
+      }
+      const repositoriesContext = await this.contextFactory.createContext(
+        RepositoriesContext
+      );
+      const publicRepos = await repositoriesContext.getOrgReposByType(
+        organization.id as string,
+        false
+      );
+      this.requestCache.setOrganizationPublicRepos(
+        cacheKey,
+        organization as Organization,
+        publicRepos
+      );
+      return publicRepos as unknown[] as Repository[];
+    },
+    privateRepositories: runWithHooks(() => [
+      this.organizationMemberLoader
+    ], async (organization, _, { cacheKey, currentUser }) => {
+      const organizationMembership =
+        this.requestCache.getOrganizationMembership(
+          cacheKey,
+          organization.id,
+          currentUser.id
+        );
+      if (organizationMembership?.membershipState == "inactive") {
+        return null;
+      }
+      const cachedPublicRepos = this.requestCache.getOrganizationPrivateRepos(
+        cacheKey,
+        organization.id as string
+      );
+      if (cachedPublicRepos) {
+        return cachedPublicRepos as unknown[] as Repository[];
+      }
+      const repositoriesContext = await this.contextFactory.createContext(
+        RepositoriesContext
+      );
+      const privateRepos = await repositoriesContext.getOrgReposByType(
+        organization.id as string,
+        true
+      );
+      this.requestCache.setOrganizationPrivateRepos(
+        cacheKey,
+        organization as Organization,
+        privateRepos
+      );
+      return privateRepos as unknown[] as Repository[];
+    }),
   };
 
   public Mutation: main.MutationResolvers = {

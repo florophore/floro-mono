@@ -17,6 +17,9 @@ type Organization {
   roles: [OrganizationRole]
   members: [OrganizationMember]
   invitations: [OrganizationInvitation]
+
+  publicRepositories: [Repository]
+  privateRepositories: [Repository]
 }
 
 type OrganizationMember {
