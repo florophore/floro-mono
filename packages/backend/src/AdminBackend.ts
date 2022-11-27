@@ -15,6 +15,7 @@ import RedisPubsubFactory from "@floro/redis/src/RedisPubsubFactory";
 import BaseController from "./controllers/BaseController";
 import SessionStore from "@floro/redis/src/sessions/SessionStore";
 import RequestCache from "./request/RequestCache";
+import StorageClient from "@floro/storage/src/StorageClient";
 
 @injectable()
 export default class AdminBackend extends Backend {
@@ -28,6 +29,7 @@ export default class AdminBackend extends Backend {
     @inject(RedisClient) redisClient: RedisClient,
     @inject(RedisQueueWorkers) redisQueueWorkers: RedisQueueWorkers,
     @inject(RedisPubsubFactory) redisPubSubFactory: RedisPubsubFactory,
+    @inject(StorageClient) storageClient: StorageClient,
     @inject(ContextFactory) contextFactory: ContextFactory,
     @inject(Server) httpServer: Server,
     @inject(SessionStore) sessionStore: SessionStore,
@@ -40,6 +42,7 @@ export default class AdminBackend extends Backend {
       redisClient,
       redisQueueWorkers,
       redisPubSubFactory,
+      storageClient,
       contextFactory,
       httpServer,
       sessionStore,

@@ -1,4 +1,5 @@
-import { User, UserAuthCredential } from "@floro/graphql-schemas/build/generated/main-graphql";
+import { User } from '@floro/database/src/entities/User';
+import { UserAuthCredential } from '@floro/database/src/entities/UserAuthCredential';
 import { QueryRunner } from 'typeorm';
 
 export default interface CreateUserEventHandler {

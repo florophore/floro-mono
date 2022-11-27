@@ -9,6 +9,7 @@ import DBModule from "@floro/database/src/module";
 import RedisModule from "@floro/redis/src/module";
 import MailerModule from "@floro/mailer/src/module";
 import ThirdPartyServicesModule from '@floro/third-party-services/src/module'; 
+import StorageModule from "@floro/storage/src/module";
 
 const container: Container = new Container({
   autoBindInjectable: true,
@@ -22,7 +23,8 @@ container.load(
   RedisModule,
   MailerModule,
   BackendModule,
-  ServersModule
+  ServersModule,
+  StorageModule
 );
 
 export default container;

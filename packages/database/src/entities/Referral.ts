@@ -73,10 +73,10 @@ export class Referral extends BinaryPKBaseEntity {
   refereeRewardBytes!: number;
 
   @Column({ name: "last_sent_at", type: "timestamp", default: () => "CURRENT_TIMESTAMP(6)" })
-  lastSentAt!: Date;
+  lastSentAt!: any;
 
   @Column({ name: "expires_at", type: "timestamp" })
-  expiresAt!: Date;
+  expiresAt!: any;
 
   @Column("uuid")
   referrerUserId!: string;

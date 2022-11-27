@@ -52,6 +52,7 @@ export default class AppServer {
   }
 
   public async startServer(indexHTMLTemplate: string): Promise<void> {
+    const storageRoot = await this.backend.startStorageClient();
     const schema = this.backend.buildExecutableSchema();
     await this.backend.startDatabase();
     this.backend.startRedis();
@@ -115,6 +116,14 @@ export default class AppServer {
     );
     this.app.use(requestHandler);
     this.app.use("/assets", requestHandler);
+
+    if (storageRoot) {
+      const storageRequestHandler = express.static(
+        storageRoot
+      );
+      this.app.use(storageRequestHandler);
+      this.app.use("/cdn", storageRequestHandler);
+    }
 
     if (isProduction) {
       this.app.use(compression());

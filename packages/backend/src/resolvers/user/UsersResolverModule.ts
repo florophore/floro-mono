@@ -360,12 +360,12 @@ export default class UsersResolverModule extends BaseResolverModule {
     publicRepositories: async (user, _, { cacheKey, currentUser }) => {
       const cachedPublicRepos = this.requestCache.getUserPublicRepos(cacheKey, currentUser.id);
       if (cachedPublicRepos) {
-      return (cachedPublicRepos as unknown[]) as Repository[];
+        return cachedPublicRepos as Repository[];
       }
       const repositoriesContext = await this.contextFactory.createContext(RepositoriesContext);
       const publicRepos = await repositoriesContext.getUserReposByType(user.id as string, false);
       this.requestCache.setUserPublicRepos(cacheKey, user as User, publicRepos);
-      return (publicRepos as unknown[]) as Repository[];
+      return publicRepos;
     },
     privateRepositories: async (user, _, { cacheKey, currentUser }) => {
       if (user.id != currentUser.id) {
@@ -373,12 +373,12 @@ export default class UsersResolverModule extends BaseResolverModule {
       }
       const cachedPrivateRepos = this.requestCache.getUserPrivateRepos(cacheKey, currentUser.id);
       if (cachedPrivateRepos) {
-      return (cachedPrivateRepos as unknown[]) as Repository[];
+      return cachedPrivateRepos as Repository[];
       }
       const repositoriesContext = await this.contextFactory.createContext(RepositoriesContext);
       const privateRepos = await repositoriesContext.getUserReposByType(user.id as string, true);
       this.requestCache.setUserPrivateRepos(cacheKey, user as User, privateRepos);
-      return (privateRepos as unknown[]) as Repository[];
+      return privateRepos;
     },
   };
 }

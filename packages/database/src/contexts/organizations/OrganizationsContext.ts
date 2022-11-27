@@ -71,8 +71,16 @@ export default class OrganizationsContext extends BaseContext {
     return await this.queryRunner.manager.find(Organization, {
       where: {
         id: In(ids),
+        privateRepositories: {
+          isPrivate: true,
+        },
+        publicRepositories: {
+          isPrivate: false,
+        }
       },
       relations: {
+        publicRepositories: true,
+        privateRepositories: true,
         organizationInvitations: {
           user: true,
           invitedByUser: true,
@@ -94,6 +102,12 @@ export default class OrganizationsContext extends BaseContext {
       },
       order: {
         name: "ASC",
+        publicRepositories: {
+          createdAt: 'DESC'
+        },
+        privateRepositories: {
+          createdAt: 'DESC'
+        },
         organizationMembers: {
           user: {
             firstName: "ASC",

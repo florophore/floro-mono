@@ -23,6 +23,7 @@ import BaseController from "./controllers/BaseController";
 import { Express } from "express";
 import SessionStore from "@floro/redis/src/sessions/SessionStore";
 import UsersContext from "@floro/database/src/contexts/users/UsersContext";
+import StorageClient from "@floro/storage/src/StorageClient";
 import RequestCache from "./request/RequestCache";
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -31,6 +32,8 @@ const isProduction = process.env.NODE_ENV === 'production';
 export default class Backend {
   public resolverModules: BaseResolverModule[];
   public controllers: BaseController[];
+  public storageClient!: StorageClient;
+
   protected httpServer: Server;
   private databaseConnection!: DatabaseConnection;
   private redisClient!: RedisClient;
@@ -47,6 +50,7 @@ export default class Backend {
     @inject(RedisClient) redisClient: RedisClient,
     @inject(RedisQueueWorkers) redisQueueWorkers: RedisQueueWorkers,
     @inject(RedisPubsubFactory) redisPubSubFactory: RedisPubsubFactory,
+    @inject(StorageClient) storageClient: StorageClient,
     @inject(ContextFactory) contextFactory: ContextFactory,
     @inject(Server) httpServer: Server,
     @inject(SessionStore) sessionStore: SessionStore,
@@ -59,9 +63,15 @@ export default class Backend {
     this.redisClient = redisClient;
     this.redisQueueWorkers = redisQueueWorkers;
     this.redisPubSubFactory = redisPubSubFactory;
+    this.storageClient = storageClient;
     this.contextFactory = contextFactory;
     this.sessionStore = sessionStore;
     this.requestCache = requestCache;
+  }
+
+  public async startStorageClient(): Promise<null|string> {
+    await this.storageClient.start();
+    return this.storageClient?.getStaticRoot?.() ?? null;
   }
 
   public async startDatabase(): Promise<void> {

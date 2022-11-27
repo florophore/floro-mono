@@ -7,7 +7,6 @@ import LoggedInUserGuard from "../hooks/guards/LoggedInUserGuard";
 import { runWithHooks } from "../hooks/ResolverHook";
 import ReferralService from "../../services/referrals/ReferralService";
 import ReferralsContext from "@floro/database/src/contexts/referrals/ReferralsContext";
-import { Referral } from "@floro/graphql-schemas/src/generated/main-graphql";
 
 @injectable()
 export default class ReferralResolverModule extends BaseResolverModule {
@@ -64,7 +63,7 @@ export default class ReferralResolverModule extends BaseResolverModule {
         if (result.action == "REFERRAL_CREATED") {
           return {
             __typename: "CreatePersonalReferralSuccess",
-            referral: ((result.referral as unknown) as Referral),
+            referral: result.referral,
             referrer: currentUser
           };
         }
@@ -119,7 +118,7 @@ export default class ReferralResolverModule extends BaseResolverModule {
         if (result.action == "REFERRAL_RESENT") {
           return {
             __typename: "ResendPersonalReferralSuccess",
-            referral: ((result.referral as unknown) as Referral),
+            referral: result.referral,
             referrer: currentUser
           };
         }
@@ -175,7 +174,7 @@ export default class ReferralResolverModule extends BaseResolverModule {
         if (result.action == "REFERRAL_CLAIMED") {
           return {
             __typename: "ClaimPersonalReferralSuccess",
-            referral: ((result.referral as unknown) as Referral),
+            referral: result.referral,
             referee: result.refereeUser
           };
         }

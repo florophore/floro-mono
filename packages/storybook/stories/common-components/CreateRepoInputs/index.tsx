@@ -3,8 +3,7 @@ import styled from "@emotion/styled";
 import { css } from "@emotion/css";
 import { useTheme } from "@emotion/react";
 import {
-  NAME_REGEX,
-  USERNAME_REGEX,
+  REPO_REGEX,
 } from "@floro/common-web/src/utils/validators";
 import ProfanityFilter from "bad-words";
 
@@ -19,7 +18,6 @@ import RepoPrivateSelect from "../RepoPrivateSelect";
 import InputSelector from "../../design-system/InputSelector";
 import ToolTip from "../../design-system/ToolTip";
 import WarningLabel from "../../design-system/WarningLabel";
-import { userInfo } from "os";
 
 const Container = styled.div`
   display: flex;
@@ -108,7 +106,7 @@ const CreateRepoInputs = (props: Props): React.ReactElement => {
     if (props.nameIsTaken) {
       return false;
     }
-    if (USERNAME_REGEX.test(props.name) || props.name == "") {
+    if (REPO_REGEX.test(props.name) || props.name == "") {
       return !profanityFilter.isProfane(props.name);
     }
     return false;

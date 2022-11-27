@@ -478,7 +478,7 @@ export default class OrganizationResolverModule extends BaseResolverModule {
         organization.id as string
       );
       if (cachedPublicRepos) {
-        return cachedPublicRepos as unknown[] as Repository[];
+        return cachedPublicRepos as Repository[];
       }
       const repositoriesContext = await this.contextFactory.createContext(
         RepositoriesContext
@@ -492,7 +492,7 @@ export default class OrganizationResolverModule extends BaseResolverModule {
         organization as Organization,
         publicRepos
       );
-      return publicRepos as unknown[] as Repository[];
+      return publicRepos as Repository[];
     },
     privateRepositories: runWithHooks(() => [
       this.organizationMemberLoader
@@ -511,7 +511,7 @@ export default class OrganizationResolverModule extends BaseResolverModule {
         organization.id as string
       );
       if (cachedPublicRepos) {
-        return cachedPublicRepos as unknown[] as Repository[];
+        return cachedPublicRepos as Repository[];
       }
       const repositoriesContext = await this.contextFactory.createContext(
         RepositoriesContext
@@ -525,7 +525,7 @@ export default class OrganizationResolverModule extends BaseResolverModule {
         organization as Organization,
         privateRepos
       );
-      return privateRepos as unknown[] as Repository[];
+      return privateRepos as Repository[];
     }),
   };
 

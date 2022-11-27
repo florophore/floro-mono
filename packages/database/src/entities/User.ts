@@ -5,6 +5,7 @@ import { Organization } from "./Organization";
 import { OrganizationInvitation } from "./OrganizationInvitation";
 import { OrganizationRole } from "./OrganizationRole";
 import { Referral } from "./Referral";
+import { Repository } from "./Repository";
 import { UserAuthCredential } from "./UserAuthCredential";
 import { UserServiceAgreement } from "./UserServiceAgreement";
 
@@ -63,4 +64,13 @@ export class User extends BinaryPKBaseEntity {
 
   @OneToMany("Referral", "refereeUser")
   referralsReceived?: Relation<Referral>[];
+
+  @OneToMany("Repository", "user")
+  privateRepositories?: Relation<Repository>[];
+
+  @OneToMany("Repository", "user")
+  publicRepositories?: Relation<Repository>[];
+
+  @OneToMany("Repository", "user")
+  repositories?: Relation<Repository>[];
 }

@@ -15,7 +15,7 @@ import {
   ManyToOne,
   JoinColumn,
   Relation,
-  OneToMany,
+  OneToMany
 } from "typeorm";
 import { BinaryPKBaseEntity } from "./BinaryPKBaseEntity";
 import { OrganizationDailyActivatedMember } from "./OrganizationDailyActivatedMember";
@@ -25,6 +25,7 @@ import { OrganizationMember } from "./OrganizationMember";
 import { OrganizationMemberRole } from "./OrganizationMemberRole";
 import { OrganizationRole } from "./OrganizationRole";
 import { User } from "./User";
+import { Repository } from "./Repository";
 
 @Entity("organizations")
 export class Organization extends BinaryPKBaseEntity {
@@ -123,4 +124,13 @@ export class Organization extends BinaryPKBaseEntity {
 
   @OneToMany("OrganizationInvitationRole", "organization")
   organizationDailyActivatedMembers?: Relation<OrganizationDailyActivatedMember>[];
+  
+  @OneToMany("Repository", "organization")
+  privateRepositories?: Relation<Repository>[];
+
+  @OneToMany("Repository", "organization")
+  publicRepositories?: Relation<Repository>[];
+
+  @OneToMany("Repository", "organization")
+  repositories?: Relation<Repository>[];
 }
