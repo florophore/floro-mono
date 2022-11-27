@@ -19,7 +19,7 @@ export default class DiskStorageDriver implements StorageDriver {
 
   public async exists(path: string) {
     const exists = await fs.promises
-      .access(root, fs.constants.F_OK)
+      .access(path, fs.constants.F_OK)
       .then(() => true)
       .catch(() => false);
     return exists;
