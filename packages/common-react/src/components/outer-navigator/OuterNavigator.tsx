@@ -9,6 +9,7 @@ import { useSession } from "../../session/session-context";
 import InitialProfileDefault from "@floro/storybook/stories/common-components/InitialProfileDefault";
 import SearchInput from "@floro/storybook/stories/design-system/SearchInput";
 import { useNavigationAnimatorContext } from "../../navigation/navigation-animator";
+import UserProfilePhoto from "@floro/storybook/stories/common-components/UserProfilePhoto";
 
 const Main = styled.main`
   display: flex;
@@ -133,6 +134,7 @@ export interface Props {
 }
 const OuterNavigator = (props: Props) => {
   const { currentUser } = useSession();
+  console.log("CURRENT USER", currentUser);
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isDragEnabled, setIsDragEnabled] = useState(true);
@@ -185,7 +187,9 @@ const OuterNavigator = (props: Props) => {
           <Title
             onMouseEnter={onMouseOverSearch}
             onMouseLeave={onMouseLeaveSearch}
-          >{props.title}</Title>
+          >
+            {props.title}
+          </Title>
           <DragFill />
           <SearchWrapper
             onMouseEnter={onMouseOverSearch}
@@ -206,17 +210,13 @@ const OuterNavigator = (props: Props) => {
             <NavOptionHighlight />
             <NavOptionList>
               <NavOption>
-                <InitialProfileDefault
-                  firstName={currentUser?.firstName ?? ""}
-                  lastName={currentUser?.lastName ?? ""}
-                  size={56}
-                />
+                {currentUser && (
+                  <UserProfilePhoto user={currentUser} size={56} />
+                )}
               </NavOption>
             </NavOptionList>
           </Navigator>
-          <Content>
-            {props?.children}
-          </Content>
+          <Content>{props?.children}</Content>
         </BottomContainer>
       </Main>
     </motion.div>

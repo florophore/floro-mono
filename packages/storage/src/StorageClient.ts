@@ -2,6 +2,7 @@ import { injectable, inject } from 'inversify';
 import DiskStorageDriver from './drivers/DiskStorageDriver';
 import StorageDriver from './drivers/StrorageDriver';
 import { env } from 'process';
+import { createHash } from "crypto";
 
 const NODE_ENV = env.NODE_ENV;
 const isProduction = NODE_ENV == "production";
@@ -31,5 +32,11 @@ export default class StorageClient {
       return this.driver?.staticRoot?.();
     }
     return null;
+  }
+
+  public hashBuffer(buffer: Buffer): string {
+    const hash = createHash("sha256");
+    hash.update(buffer);
+    return hash.digest("hex");
   }
 }

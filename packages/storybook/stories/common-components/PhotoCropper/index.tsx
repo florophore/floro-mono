@@ -1,6 +1,5 @@
-import React, { useMemo, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import styled from "@emotion/styled";
-import { useTheme } from "@emotion/react";
 import Cropper from "react-easy-crop";
 import ModalBackdrop from "../ModalBackdrop";
 import ColorPalette from "@floro/styles/ColorPalette";
@@ -96,6 +95,12 @@ const PhotoCropper = ({ title, src, show, onCancel, onSave, isLoading }: Props):
   const onSaveCrop = useCallback(() => {
     onSave(croppedAreaPixels);
   }, [croppedAreaPixels]);
+
+  useEffect(() => {
+    setCropAreaPixels({height: 500, width: 500, x: 0, y: 0})
+    setZoom(1);
+    setCrop({ x: 0, y: 0});
+  }, [src]);
   return (
     <div>
       <ModalBackdrop show={show} disableBackgroundDismiss={true}>

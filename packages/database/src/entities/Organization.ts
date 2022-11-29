@@ -15,7 +15,8 @@ import {
   ManyToOne,
   JoinColumn,
   Relation,
-  OneToMany
+  OneToMany,
+  OneToOne
 } from "typeorm";
 import { BinaryPKBaseEntity } from "./BinaryPKBaseEntity";
 import { OrganizationDailyActivatedMember } from "./OrganizationDailyActivatedMember";
@@ -26,6 +27,7 @@ import { OrganizationMemberRole } from "./OrganizationMemberRole";
 import { OrganizationRole } from "./OrganizationRole";
 import { User } from "./User";
 import { Repository } from "./Repository";
+import { Photo } from "./Photo";
 
 @Entity("organizations")
 export class Organization extends BinaryPKBaseEntity {
@@ -133,4 +135,11 @@ export class Organization extends BinaryPKBaseEntity {
 
   @OneToMany("Repository", "organization")
   repositories?: Relation<Repository>[];
+
+  @Column("uuid")
+  profilePhotoId?: string;
+
+  @OneToOne("Photo", "organization")
+  @JoinColumn()
+  profilePhoto?: Relation<Photo>;
 }

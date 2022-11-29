@@ -39,6 +39,8 @@ import ReferralResolverModule from './resolvers/referral/ReferralResolverModule'
 import ReferralService from './services/referrals/ReferralService';
 import RepositoryService from './services/repositories/RepositoryService';
 import RepositoryResolverModule from './resolvers/repository/RepositoryResolverModule';
+import PhotoUploadService from './services/photos/PhotoUploadService';
+import PhotoResolverModule from './resolvers/photos/PhotoResolverModule';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -87,6 +89,9 @@ export default new ContainerModule((bind): void => {
     bind(OrganizationMemberService).toSelf();
     bind(OrganizationRoleService).toSelf();
 
+    // PHOTOS
+    bind(PhotoUploadService).toSelf();
+
     // REPOS
     bind(RepositoryService).toSelf();
     // REFERRALS
@@ -109,6 +114,7 @@ export default new ContainerModule((bind): void => {
     bind<OrganizationRoleResolverModule>("ResolverModule").to(OrganizationRoleResolverModule);
     bind<ReferralResolverModule>("ResolverModule").to(ReferralResolverModule);
     bind<RepositoryResolverModule>("ResolverModule").to(RepositoryResolverModule);
+    bind<PhotoResolverModule>("ResolverModule").to(PhotoResolverModule);
 
     // ADMIN MODULES OVERRIDE WITH AdminResolverModule
     bind<AdminUsersResolverModule>("AdminResolverModule").to(AdminUsersResolverModule);

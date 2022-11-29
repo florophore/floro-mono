@@ -12,6 +12,7 @@ import ContextFactory from "../../../contexts/ContextFactory";
 import UsersContext from "../../../contexts/users/UsersContext";
 import { User } from "../../../entities/User";
 import DatabaseConnection from "../../../connection/DatabaseConnection";
+import { read } from "fs";
 
 describe("UsersContext", () => {
   let usersContext: UsersContext;
@@ -42,7 +43,9 @@ describe("UsersContext", () => {
       const createdUser = await usersContext.createUser(defaultParams);
 
       const readUser = await usersContext.getById(createdUser.id);
-      expect(readUser).to.deep.equal(createdUser);
+      for (const prop in readUser) {
+        expect(readUser[prop] ?? null).to.deep.equal(createdUser[prop] ?? null);
+      }
     });
 
     test("throws when username is already taken", async () => {

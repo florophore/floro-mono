@@ -20,6 +20,8 @@ type Organization {
 
   publicRepositories: [Repository]
   privateRepositories: [Repository]
+
+  profilePhoto: Photo
 }
 
 type OrganizationMember {

@@ -23,4 +23,12 @@ export default class MainConfig {
         return 'https://cdn.floro.io';
     }
 
+    public uploadRoot():string {
+        if (isDev || isTest) {
+            return 'http://localhost:9000/cdn';
+
+        }
+        return 'https://uploads.floro.io';
+    }
+
 }

@@ -117,7 +117,9 @@ export default class OrganizationInvitationsContext extends BaseContext {
         invitationState: "sent",
       },
       relations: {
-        user: true,
+        user: {
+          profilePhoto: true
+        },
         invitedByUser: true,
         invitedByOrganizationMember: true,
         organizationInvitationRoles: {

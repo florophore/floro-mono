@@ -38,6 +38,7 @@ export interface ColorTheme {
     heroHeaderTextColor: string;
     profileInfoNameTextColor: string;
     profileInfoUsernameTextColor: string;
+    profileHoverOpacity: string;
     followerTextColor: string;
     connectionTextColor: string;
     commonBorder: string;
@@ -98,6 +99,7 @@ export const LightTheme: ColorTheme = {
     heroHeaderTextColor: palette.white,
     profileInfoNameTextColor: palette.purple,
     profileInfoUsernameTextColor: palette.mediumGray,
+    profileHoverOpacity: palette.gray.substring(0, 7) + Opacity[50],
     followerTextColor: palette.mediumGray,
     connectionTextColor: palette.mediumGray,
     commonBorder: palette.mediumGray,
@@ -158,6 +160,7 @@ export const DarkTheme: ColorTheme = {
         heroHeaderTextColor: palette.purple,
         profileInfoNameTextColor: palette.lightPurple,
         profileInfoUsernameTextColor: palette.white,
+        profileHoverOpacity: palette.black.substring(0, 7) + Opacity[50],
         followerTextColor: palette.white,
         connectionTextColor: palette.white,
         commonBorder: palette.white,

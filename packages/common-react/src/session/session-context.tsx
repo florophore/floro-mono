@@ -9,9 +9,10 @@ import axios from 'axios';
 
 const ONE_WEEK = 1000 * 60 * 60 * 24 * 7;
 
-const SessionContext = React.createContext<{session: Session|null, currentUser: User|null, logout: () => void}>({
+const SessionContext = React.createContext<{session: Session|null, currentUser: User|null, logout: () => void, setCurrentUser: (user: User) => void}>({
     session: null,
     currentUser: null,
+    setCurrentUser: () => null,
     logout: () => null
 });
 
@@ -90,9 +91,14 @@ export const SessionProvider = (props: Props) => {
         }
     }, []);
 
+    const setCurrentUserInStorage = useCallback((user: User) => {
+        // should query existing user and relations against cache here
+        localStorage.setItem('user', JSON.stringify(user));
+        setCurrentUser(user);
+    }, []);
+
     useEffect(() => {
         if (data?.exchangeSession?.user) {
-            console.log("data", data?.exchangeSession?.user);
             setClientSession({session: data.exchangeSession, user: data.exchangeSession.user});
             setSession(data.exchangeSession);
             setCurrentUser(data.exchangeSession.user);
@@ -100,7 +106,7 @@ export const SessionProvider = (props: Props) => {
     }, [data?.exchangeSession]);
 
     return (
-      <SessionContext.Provider value={{session, currentUser, logout}}>
+      <SessionContext.Provider value={{session, currentUser, logout, setCurrentUser: setCurrentUserInStorage}}>
         {props?.children}
       </SessionContext.Provider>
     ); 

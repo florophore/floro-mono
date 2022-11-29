@@ -1,0 +1,3 @@
+extend type Mutation {
+    uploadUserProfilePhoto(file: Upload!, x: Float!, y: Float!, width: Float!, height: Float!): UploadUserProfilePhotoResponse
+}

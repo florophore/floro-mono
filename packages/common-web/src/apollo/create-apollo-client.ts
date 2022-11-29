@@ -4,6 +4,7 @@ import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { setContext } from "@apollo/client/link/context";
+import { createUploadLink } from 'apollo-upload-client';
 import Cookies from "js-cookie";
 
 export const createApolloClient = (hostname: string, isSecure = false) => {
@@ -30,6 +31,7 @@ export const createApolloClient = (hostname: string, isSecure = false) => {
     })
   );
 
+  const uploadLink = createUploadLink();
   const splitLink = split(
     ({ query }) => {
       const definition = getMainDefinition(query);
@@ -39,7 +41,7 @@ export const createApolloClient = (hostname: string, isSecure = false) => {
       );
     },
     wsLink,
-    httpLink
+    httpLink.concat(uploadLink)
   );
 
   const cache = new InMemoryCache().restore(window.__APOLLO_STATE__ ?? {});

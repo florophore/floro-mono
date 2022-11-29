@@ -58,7 +58,9 @@ export default class OrganizationMembersContext extends BaseContext {
         organizationId
       },
       relations: {
-        user: true,
+        user: {
+          profilePhoto: true
+        },
         organizationMemberRoles: {
           organizationRole: true
         }

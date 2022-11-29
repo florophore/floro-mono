@@ -294,7 +294,7 @@ export default class OrganizationResolverModule extends BaseResolverModule {
           ((organization as Organization).freeSeats ?? 0) -
             (activeMemberCount + invitationCount),
           0
-        );
+        ) as number;
       }
     ),
     legalName: runWithHooks(

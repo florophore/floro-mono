@@ -4,7 +4,7 @@ import {BrowserRouter} from 'react-router-dom';
 import {DarkTheme, LightTheme} from '@floro/styles/ColorThemes';
 import Router from './Router';
 import {SystemAPIProvider} from './contexts/SystemAPIContext';
-import {ApolloClient, ApolloProvider, InMemoryCache, HttpLink, split} from '@apollo/client';
+import {ApolloClient, ApolloProvider, InMemoryCache, split} from '@apollo/client';
 
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
 import {createClient} from 'graphql-ws';
@@ -17,6 +17,7 @@ import Cookies from 'js-cookie';
 import {SessionProvider} from '@floro/common-react/src/session/session-context';
 import ColorPalette from '@floro/styles/ColorPalette';
 import { persistCache, LocalStorageWrapper } from 'apollo3-cache-persist';
+import { createUploadLink } from 'apollo-upload-client';
 
 const authMiddleware = setContext((_, {headers}) => {
   // add the authorization to the headers
@@ -25,11 +26,9 @@ const authMiddleware = setContext((_, {headers}) => {
     headers: {
       ...headers,
       authorization: token ? `Bearer ${token}` : '',
+      'apollo-require-preflight': true,
     },
   };
-});
-const httpLink = new HttpLink({
-  uri: 'http://localhost:9000/graphql',
 });
 
 const wsLink = new GraphQLWsLink(
@@ -41,13 +40,17 @@ const wsLink = new GraphQLWsLink(
   }),
 );
 
+const uploadLink = createUploadLink({
+  uri: 'http://localhost:9000/graphql',
+});
+
 const splitLink = split(
   ({query}) => {
     const definition = getMainDefinition(query);
     return definition.kind === 'OperationDefinition' && definition.operation === 'subscription';
   },
   wsLink,
-  httpLink,
+  uploadLink,
 );
 
 const cache = new InMemoryCache();

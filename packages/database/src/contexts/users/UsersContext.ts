@@ -18,7 +18,10 @@ export default class UsersContext extends BaseContext {
     }
 
     public async getById(id: string): Promise<User|null> {
-        return await this.queryRunner.manager.findOneBy(User, {id});
+        return await this.queryRunner.manager.findOne(User, {
+            where: { id},
+            relations: { profilePhoto: true }
+        });
     }
 
     public async usernameExists(username: string): Promise<boolean> {
@@ -49,6 +52,7 @@ export default class UsersContext extends BaseContext {
         if (query.startsWith("@")) {
           const usernameQuery = query.substring(1);
           return await qb
+            .leftJoinAndSelect("user.profilePhoto", "photo")
             .where("user.username ILIKE :query || '%'")
             .setParameter("query", usernameQuery.trim().toLowerCase())
             .limit(limit)
@@ -56,6 +60,7 @@ export default class UsersContext extends BaseContext {
             .getMany();
         }
         return await qb
+          .leftJoinAndSelect("user.profilePhoto", "photo")
           .where(`user.first_name || ' '  || user.last_name ILIKE :query || '%'`)
           .setParameter("query", query.trim().toLowerCase())
           .limit(limit)

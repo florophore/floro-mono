@@ -7,6 +7,7 @@ import { createProxyMiddleware } from "http-proxy-middleware";
 import MailDev from "maildev";
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.mjs";
 
 import path from "path";
 import compression from "compression";
@@ -60,6 +61,8 @@ export default class AppServer {
     this.app.use(cookieParser());
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
+
+    this.app.use(graphqlUploadExpress());
 
     this.backend.setupRestRoutes(this.app);
     const apolloServer = this.backend.buildApolloServer();

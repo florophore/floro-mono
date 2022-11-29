@@ -22,7 +22,10 @@ export default class OrganizationsContext extends BaseContext {
   }
 
   public async getById(id: string): Promise<Organization | null> {
-    return await this.queryRunner.manager.findOneBy(Organization, { id });
+    return await this.queryRunner.manager.findOne(Organization, {
+      where: { id },
+      relations: { profilePhoto: true },
+    });
   }
 
   public async handleExists(username: string): Promise<boolean> {
@@ -79,10 +82,13 @@ export default class OrganizationsContext extends BaseContext {
         }
       },
       relations: {
+        profilePhoto: true,
         publicRepositories: true,
         privateRepositories: true,
         organizationInvitations: {
-          user: true,
+          user: {
+            profilePhoto: true
+          },
           invitedByUser: true,
           invitedByOrganizationMember: true,
           organizationInvitationRoles: {
@@ -90,13 +96,17 @@ export default class OrganizationsContext extends BaseContext {
           },
         },
         organizationMembers: {
-          user: true
+          user: {
+            profilePhoto: true
+          }
         },
         organizationRoles: true,
         organizationMemberRoles: {
           organizationRole: true,
           organizationMember: {
-            user: true
+            user: {
+              profilePhoto: true
+            }
           }
         }
       },

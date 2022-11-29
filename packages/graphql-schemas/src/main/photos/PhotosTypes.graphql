@@ -1,0 +1,24 @@
+type Photo {
+  id: ID
+  hash: String
+  mimeType: String
+  path: String
+  url: String
+  thumbnailHash: String
+  thumbnailPath: String
+  thumbnailUrl: String
+}
+
+type UploadUserProfilePhotoSuccess {
+  user: User
+}
+
+type UploadUserProfilePhotoError {
+  message: String
+  type: String
+}
+
+union UploadUserProfilePhotoResponse =
+    UploadUserProfilePhotoSuccess
+  | UploadUserProfilePhotoError
+  | UnAuthenticatedError

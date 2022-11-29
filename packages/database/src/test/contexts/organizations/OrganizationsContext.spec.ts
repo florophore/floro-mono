@@ -62,7 +62,9 @@ describe("OrganizationsContext", () => {
         createdByUserId: user.id,
       });
       const readOrg = await organizationsContext.getById(createdOrg.id);
-      expect(readOrg).to.deep.equal(createdOrg);
+      for (const prop in readOrg) {
+        expect(readOrg[prop] ?? null).to.deep.equal(createdOrg[prop] ?? null);
+      }
     });
 
     test("throws when handle is already taken", async () => {

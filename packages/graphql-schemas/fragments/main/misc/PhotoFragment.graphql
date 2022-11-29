@@ -1,0 +1,10 @@
+fragment Photo on Photo {
+  id
+  hash
+  mimeType
+  path
+  url
+  thumbnailHash
+  thumbnailPath
+  thumbnailUrl
+}

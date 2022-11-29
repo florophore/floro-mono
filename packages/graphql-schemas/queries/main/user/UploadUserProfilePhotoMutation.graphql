@@ -1,0 +1,14 @@
+mutation UploadUserProfilePhoto($file: Upload!, $x: Float!, $y: Float!, $width: Float!, $height: Float!) {
+  uploadUserProfilePhoto(file: $file, x: $x, y: $y, width: $width, height: $height) {
+    ... on UploadUserProfilePhotoError {
+      type
+      message
+    }
+    ... on UploadUserProfilePhotoSuccess {
+      user {
+         ...User
+      }
+    }
+    
+  }
+}

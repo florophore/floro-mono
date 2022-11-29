@@ -1,6 +1,9 @@
 fragment User on User {
-    id
-    firstName
-    lastName
-    username
+  id
+  firstName
+  lastName
+  username
+  profilePhoto {
+    ...Photo
+  }
 }

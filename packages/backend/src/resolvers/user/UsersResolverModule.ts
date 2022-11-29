@@ -2,7 +2,10 @@ import BaseResolverModule from "../BaseResolverModule";
 import { main } from "@floro/graphql-schemas";
 import { inject, injectable } from "inversify";
 import { User } from "@floro/database/src/entities/User";
-import { Referral, UsernameCheckResult } from "@floro/graphql-schemas/src/generated/main-graphql";
+import {
+  Referral,
+  UsernameCheckResult,
+} from "@floro/graphql-schemas/src/generated/main-graphql";
 import UsersService from "../../services/users/UsersService";
 import { USERNAME_REGEX } from "@floro/common-web/src/utils/validators";
 import ContextFactory from "@floro/database/src/contexts/ContextFactory";
@@ -19,6 +22,11 @@ import OrganizationInvitationService from "../../services/organizations/Organiza
 import ReferralsContext from "@floro/database/src/contexts/referrals/ReferralsContext";
 import RepositoriesContext from "@floro/database/src/contexts/repositories/RepositoriesContext";
 import { Repository } from "@floro/graphql-schemas/build/generated/main-graphql";
+import sharp from "sharp";
+import PhotoUploadService from "../../services/photos/PhotoUploadService";
+import { ReadStream } from "fs";
+import PhotosContext from "@floro/database/src/contexts/photos/PhotosContext";
+import { Photo } from "@floro/database/src/entities/Photo";
 
 @injectable()
 export default class UsersResolverModule extends BaseResolverModule {
@@ -31,6 +39,7 @@ export default class UsersResolverModule extends BaseResolverModule {
   protected contextFactory!: ContextFactory;
   protected requestCache!: RequestCache;
 
+  protected photoUploadService!: PhotoUploadService;
   protected organizationInvitationService!: OrganizationInvitationService;
   protected loggedInUserGuard!: LoggedInUserGuard;
 
@@ -38,6 +47,7 @@ export default class UsersResolverModule extends BaseResolverModule {
     @inject(ContextFactory) contextFactory: ContextFactory,
     @inject(RequestCache) requestCache: RequestCache,
     @inject(UsersService) usersService: UsersService,
+    @inject(PhotoUploadService) photoUploadService: PhotoUploadService,
     @inject(OrganizationInvitationService)
     organizationInvitationService: OrganizationInvitationService,
     @inject(LoggedInUserGuard) loggedInUserGuard: LoggedInUserGuard
@@ -47,6 +57,7 @@ export default class UsersResolverModule extends BaseResolverModule {
     this.usersService = usersService;
     this.requestCache = requestCache;
 
+    this.photoUploadService = photoUploadService;
     this.organizationInvitationService = organizationInvitationService;
     this.loggedInUserGuard = loggedInUserGuard;
   }
@@ -123,7 +134,7 @@ export default class UsersResolverModule extends BaseResolverModule {
           return {
             __typename: "AcceptOrganizationInvitationSuccess",
             organizationInvitation: result.organizationInvitation,
-            user: currentUser
+            user: currentUser,
           };
         }
 
@@ -176,7 +187,7 @@ export default class UsersResolverModule extends BaseResolverModule {
           return {
             __typename: "RejectOrganizationInvitationSuccess",
             organizationInvitation: result.organizationInvitation,
-            user: currentUser
+            user: currentUser,
           };
         }
 
@@ -202,6 +213,13 @@ export default class UsersResolverModule extends BaseResolverModule {
   };
 
   public User: main.UserResolvers = {
+    profilePhoto: async (user) => {
+      if (user?.profilePhoto) return user?.profilePhoto;
+      if (!(user as User)?.profilePhotoId) return null;
+      const photosContext = await this.contextFactory.createContext(PhotosContext);
+      const photo = await photosContext.getById((user as User)?.profilePhotoId ?? "");
+      return (photo as Photo) ?? null;
+    },
     freeDiskSpaceBytes: (user, _, { currentUser }) => {
       if (user.id == currentUser?.id) {
         return user?.freeDiskSpaceBytes ?? null;
@@ -250,11 +268,12 @@ export default class UsersResolverModule extends BaseResolverModule {
           organization,
           organization.organizationMembers as OrganizationMember[]
         );
-        organization.organizationMembers?.forEach(member => {
-          const roles = organization.organizationMemberRoles?.filter(memberRole => {
-            return memberRole.organizationMemberId == member.id;
-          }).map(
-            (memberRole) => {
+        organization.organizationMembers?.forEach((member) => {
+          const roles = organization.organizationMemberRoles
+            ?.filter((memberRole) => {
+              return memberRole.organizationMemberId == member.id;
+            })
+            .map((memberRole) => {
               this.requestCache.setOrganizationMembership(
                 cacheKey,
                 organization,
@@ -262,8 +281,7 @@ export default class UsersResolverModule extends BaseResolverModule {
                 memberRole.organizationMember as OrganizationMember
               );
               return memberRole.organizationRole;
-            }
-          );
+            });
           this.requestCache.setMembershipRoles(
             cacheKey,
             member,
@@ -287,7 +305,10 @@ export default class UsersResolverModule extends BaseResolverModule {
         invitations?.forEach?.((invitation) => {
           const roles =
             invitation?.organizationInvitationRoles
-              ?.filter?.((invitationRole) => invitationRole.organizationInvitationId == invitation.id)
+              ?.filter?.(
+                (invitationRole) =>
+                  invitationRole.organizationInvitationId == invitation.id
+              )
               ?.map?.((invitationRole) => invitationRole?.organizationRole)
               ?.filter?.((v) => v != undefined) ?? [];
           this.requestCache.setOrganizationInvitationRoles(
@@ -314,8 +335,11 @@ export default class UsersResolverModule extends BaseResolverModule {
       if (user?.id != currentUser?.id) {
         return null;
       }
-      const organizationInvitationsContext = await this.contextFactory.createContext(OrganizationInvitationsContext);
-      return await organizationInvitationsContext.getAllInvitationsForUser(user.id as string);
+      const organizationInvitationsContext =
+        await this.contextFactory.createContext(OrganizationInvitationsContext);
+      return await organizationInvitationsContext.getAllInvitationsForUser(
+        user.id as string
+      );
     },
     sentReferrals: async (user, _, { currentUser }) => {
       if (currentUser?.id != user.id) {
@@ -324,8 +348,12 @@ export default class UsersResolverModule extends BaseResolverModule {
       if (!user.id) {
         return null;
       }
-      const referralsContext = await this.contextFactory.createContext(ReferralsContext);
-      return (await referralsContext.getPendingSentReferrals(user.id) as unknown) as Referral[];
+      const referralsContext = await this.contextFactory.createContext(
+        ReferralsContext
+      );
+      return (await referralsContext.getPendingSentReferrals(
+        user.id
+      )) as unknown as Referral[];
     },
     sentClaimedReferrals: async (user, _, { currentUser }) => {
       if (currentUser?.id != user.id) {
@@ -334,8 +362,12 @@ export default class UsersResolverModule extends BaseResolverModule {
       if (!user.id) {
         return null;
       }
-      const referralsContext = await this.contextFactory.createContext(ReferralsContext);
-      return (await referralsContext.getClaimedSentReferrals(user.id) as unknown) as Referral[];
+      const referralsContext = await this.contextFactory.createContext(
+        ReferralsContext
+      );
+      return (await referralsContext.getClaimedSentReferrals(
+        user.id
+      )) as unknown as Referral[];
     },
     claimedReferral: async (user, _, { currentUser }) => {
       if (currentUser?.id != user.id) {
@@ -344,8 +376,12 @@ export default class UsersResolverModule extends BaseResolverModule {
       if (!user.id) {
         return null;
       }
-      const referralsContext = await this.contextFactory.createContext(ReferralsContext);
-      return (await referralsContext.getClaimedReferral(user.id) as unknown) as Referral;
+      const referralsContext = await this.contextFactory.createContext(
+        ReferralsContext
+      );
+      return (await referralsContext.getClaimedReferral(
+        user.id
+      )) as unknown as Referral;
     },
     receivedPendingReferral: async (user, _, { currentUser }) => {
       if (currentUser?.id != user.id) {
@@ -354,16 +390,28 @@ export default class UsersResolverModule extends BaseResolverModule {
       if (!user.id) {
         return null;
       }
-      const referralsContext = await this.contextFactory.createContext(ReferralsContext);
-      return (await referralsContext.getPendingReferral(user.id) as unknown) as Referral;
+      const referralsContext = await this.contextFactory.createContext(
+        ReferralsContext
+      );
+      return (await referralsContext.getPendingReferral(
+        user.id
+      )) as unknown as Referral;
     },
     publicRepositories: async (user, _, { cacheKey, currentUser }) => {
-      const cachedPublicRepos = this.requestCache.getUserPublicRepos(cacheKey, currentUser.id);
+      const cachedPublicRepos = this.requestCache.getUserPublicRepos(
+        cacheKey,
+        currentUser.id
+      );
       if (cachedPublicRepos) {
         return cachedPublicRepos as Repository[];
       }
-      const repositoriesContext = await this.contextFactory.createContext(RepositoriesContext);
-      const publicRepos = await repositoriesContext.getUserReposByType(user.id as string, false);
+      const repositoriesContext = await this.contextFactory.createContext(
+        RepositoriesContext
+      );
+      const publicRepos = await repositoriesContext.getUserReposByType(
+        user.id as string,
+        false
+      );
       this.requestCache.setUserPublicRepos(cacheKey, user as User, publicRepos);
       return publicRepos;
     },
@@ -371,13 +419,25 @@ export default class UsersResolverModule extends BaseResolverModule {
       if (user.id != currentUser.id) {
         return null;
       }
-      const cachedPrivateRepos = this.requestCache.getUserPrivateRepos(cacheKey, currentUser.id);
+      const cachedPrivateRepos = this.requestCache.getUserPrivateRepos(
+        cacheKey,
+        currentUser.id
+      );
       if (cachedPrivateRepos) {
-      return cachedPrivateRepos as Repository[];
+        return cachedPrivateRepos as Repository[];
       }
-      const repositoriesContext = await this.contextFactory.createContext(RepositoriesContext);
-      const privateRepos = await repositoriesContext.getUserReposByType(user.id as string, true);
-      this.requestCache.setUserPrivateRepos(cacheKey, user as User, privateRepos);
+      const repositoriesContext = await this.contextFactory.createContext(
+        RepositoriesContext
+      );
+      const privateRepos = await repositoriesContext.getUserReposByType(
+        user.id as string,
+        true
+      );
+      this.requestCache.setUserPrivateRepos(
+        cacheKey,
+        user as User,
+        privateRepos
+      );
       return privateRepos;
     },
   };

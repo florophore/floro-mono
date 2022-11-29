@@ -6,7 +6,7 @@ import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const root = join(__dirname, "..", "..", ".locale_root");
+const root = join(__dirname, "..", "..", ".local_root");
 
 @injectable()
 export default class DiskStorageDriver implements StorageDriver {
@@ -26,11 +26,11 @@ export default class DiskStorageDriver implements StorageDriver {
   }
 
   public async read(path: string) {
-    return new BigInt64Array();
+    return await fs.promises.readFile(path);
   }
 
-  public async write(path: string, data: BinaryData) {
-    return;
+  public async write(path: string, data: Buffer) {
+    return await fs.promises.writeFile(path, data, );
   }
 
   public staticRoot() {

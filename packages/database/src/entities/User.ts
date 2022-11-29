@@ -1,9 +1,10 @@
 import { IsDefined, IsInt, MaxLength, MinLength, ValidateIf } from "class-validator";
-import { Entity, Column, OneToMany, OneToOne, Relation } from "typeorm";
+import { Entity, Column, OneToMany, OneToOne, Relation, JoinColumn } from "typeorm";
 import { BinaryPKBaseEntity } from "./BinaryPKBaseEntity";
 import { Organization } from "./Organization";
 import { OrganizationInvitation } from "./OrganizationInvitation";
 import { OrganizationRole } from "./OrganizationRole";
+import { Photo } from "./Photo";
 import { Referral } from "./Referral";
 import { Repository } from "./Repository";
 import { UserAuthCredential } from "./UserAuthCredential";
@@ -73,4 +74,11 @@ export class User extends BinaryPKBaseEntity {
 
   @OneToMany("Repository", "user")
   repositories?: Relation<Repository>[];
+
+  @Column("uuid")
+  profilePhotoId?: string;
+
+  @OneToOne("Photo", "organization")
+  @JoinColumn()
+  profilePhoto?: Relation<Photo>;
 }

@@ -9,6 +9,7 @@ import {
     ApolloServerPluginLandingPageDisabled,
     ApolloServerPluginLandingPageLocalDefault,
   } from 'apollo-server-core';
+import GraphQLUpload from "graphql-upload/GraphQLUpload.mjs";
 import DatabaseConnection from "@floro/database/src/connection/DatabaseConnection";
 import ContextFactory from "@floro/database/src/contexts/ContextFactory";
 import RedisClient from "@floro/redis/src/RedisClient";
@@ -90,7 +91,10 @@ export default class Backend {
   }
 
   public mergeResolvers(): Partial<main.ResolversTypes> {
-    return BaseResolverModule.mergeResolvers(this.resolverModules);
+    return {
+      Upload: GraphQLUpload,
+      ...BaseResolverModule.mergeResolvers(this.resolverModules),
+    };
   }
 
   public buildExecutableSchema(): GraphQLSchema {
