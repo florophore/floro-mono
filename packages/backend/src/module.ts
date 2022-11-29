@@ -40,7 +40,7 @@ import ReferralService from './services/referrals/ReferralService';
 import RepositoryService from './services/repositories/RepositoryService';
 import RepositoryResolverModule from './resolvers/repository/RepositoryResolverModule';
 import PhotoUploadService from './services/photos/PhotoUploadService';
-import PhotoResolverModule from './resolvers/photos/PhotoResolverModule';
+import PhotoResolverModule from './resolvers/photo/PhotoResolverModule';
 
 export default new ContainerModule((bind): void => {
     //main

@@ -17,7 +17,7 @@ const Container = styled.div`
 const PictureContainer = styled.div`
   height: 168px;
   width: 168px;
-  background: red;
+  background: ${ColorPalette.white};
   position: relative;
   border-radius: 50%;
   overflow: hidden;

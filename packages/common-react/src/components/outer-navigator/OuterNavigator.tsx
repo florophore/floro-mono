@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
 import styled from "@emotion/styled";
 import { css } from "@emotion/css";
 import { useTheme } from "@emotion/react";
@@ -211,7 +212,9 @@ const OuterNavigator = (props: Props) => {
             <NavOptionList>
               <NavOption>
                 {currentUser && (
-                  <UserProfilePhoto user={currentUser} size={56} />
+                  <Link to={"/home"} style={{textDecoration: "none", display: "contents"}}>
+                    <UserProfilePhoto user={currentUser} size={56} />
+                  </Link>
                 )}
               </NavOption>
             </NavOptionList>
