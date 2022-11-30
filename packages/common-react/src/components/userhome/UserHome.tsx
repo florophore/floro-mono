@@ -13,7 +13,7 @@ import Button from "@floro/storybook/stories/design-system/Button";
 import { useSession } from "../../session/session-context";
 import { useDaemonIsConnected } from "../../pubsub/socket";
 import RootPhotoCropper from "../RootPhotoCropper";
-import { User, useUploadUserProfilePhotoMutation } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import { User, useRemoveUserProfilePhotoMutation, useUploadUserProfilePhotoMutation } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 
 const Background = styled.div`
   background-color: ${(props) => props.theme.background};
@@ -76,6 +76,7 @@ const UserHome = (props: Props) => {
   const isDaemonConnected = useDaemonIsConnected();
   const navigate = useNavigate();
   const [uploadPhoto, uploadPhotoRequest] = useUploadUserProfilePhotoMutation();
+  const [removePhoto, removePhotoRequest] = useRemoveUserProfilePhotoMutation();
 
   const onGoToCreateOrg = useCallback(() => {
     navigate("/home/create-org");
@@ -123,8 +124,13 @@ const UserHome = (props: Props) => {
       setShowProfilePictureCroppper(false);
       setCurrentUser(uploadPhotoRequest.data?.uploadUserProfilePhoto?.user as User);
     }
-    console.log(uploadPhotoRequest.data);
   }, [uploadPhotoRequest.data])
+
+  useEffect(() => {
+    if (removePhotoRequest.data?.removeUserProfilePhoto?.__typename === "RemoveUserProfilePhotoSuccess") {
+      setCurrentUser(removePhotoRequest.data?.removeUserProfilePhoto?.user as User);
+    }
+  }, [removePhotoRequest.data])
 
   return (
     <>
@@ -143,12 +149,14 @@ const UserHome = (props: Props) => {
               user={currentUser}
               isEdittable={true}
               onSelectFile={onSelectUploadPhoto}
+              isLoading={removePhotoRequest.loading || uploadPhotoRequest.loading}
+              onRemoveProfilePhoto={removePhoto}
             />
           </ProfileInfoWrapper>
           <BottomNavContainer>
             <TopInfo>
               <FollowerInfo
-                followerCount={190}
+                followerCount={0}
                 followingCount={0}
                 username={currentUser?.username ?? ""}
               />

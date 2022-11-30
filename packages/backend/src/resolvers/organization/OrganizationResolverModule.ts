@@ -24,6 +24,8 @@ import OrganizationInvitationsContext from "@floro/database/src/contexts/organiz
 import OrganizationSentInvitationsCountLoader from "../hooks/loaders/Organization/OrganizationSentInvitationsCountLoader";
 import OrganizationActiveMemberCountLoader from "../hooks/loaders/Organization/OrganizationActiveMemberCountLoader";
 import RepositoriesContext from "@floro/database/src/contexts/repositories/RepositoriesContext";
+import PhotosContext from "@floro/database/src/contexts/photos/PhotosContext";
+import { Photo } from "@floro/database/src/entities/Photo";
 
 @injectable()
 export default class OrganizationResolverModule extends BaseResolverModule {
@@ -84,6 +86,13 @@ export default class OrganizationResolverModule extends BaseResolverModule {
   }
 
   public Organization: main.OrganizationResolvers = {
+    profilePhoto: async (organization) => {
+      if (organization?.profilePhoto) return organization?.profilePhoto;
+      if (!(organization as Organization)?.profilePhotoId) return null;
+      const photosContext = await this.contextFactory.createContext(PhotosContext);
+      const photo = await photosContext.getById((organization as Organization)?.profilePhotoId ?? "");
+      return (photo as Photo) ?? null;
+    },
     billingPlan: runWithHooks(
       () => [this.organizationMemberPermissionsLoader],
       async (organization, _, { cacheKey, currentUser }) => {

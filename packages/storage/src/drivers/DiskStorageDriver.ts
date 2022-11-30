@@ -11,6 +11,10 @@ const root = join(__dirname, "..", "..", ".local_root");
 @injectable()
 export default class DiskStorageDriver implements StorageDriver {
 
+  public async mkdir(path: string) {
+      await fs.promises.mkdir(path, { recursive: true})
+  }
+
   public async init() {
     if (!this.exists(root)) {
       await fs.promises.mkdir(root)

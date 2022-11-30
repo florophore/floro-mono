@@ -76,9 +76,9 @@ export class User extends BinaryPKBaseEntity {
   repositories?: Relation<Repository>[];
 
   @Column("uuid")
-  profilePhotoId?: string;
+  profilePhotoId?: string|null;
 
   @OneToOne("Photo", "organization")
   @JoinColumn()
-  profilePhoto?: Relation<Photo>;
+  profilePhoto?: Relation<Photo>|null;
 }

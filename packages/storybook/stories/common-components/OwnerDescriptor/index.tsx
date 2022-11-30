@@ -4,12 +4,12 @@ import React, {
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import InitialProfileDefault from "../InitialProfileDefault";
+import UserProfilePhoto from "../UserProfilePhoto";
+import { User } from "@floro/graphql-schemas/build/generated/main-graphql";
 
 export interface Props {
   label: string;
-  firstName: string;
-  lastName: string;
-  username: string;
+  user: User;
 }
 
 const Container = styled.div`
@@ -19,7 +19,6 @@ const Container = styled.div`
   background: ${(props) => props.theme.background};
   border-radius: 8px;
   transition: 500ms border-color;
-  display: inline-block;
   user-select: none;
 `;
 
@@ -69,7 +68,6 @@ const InfoContainer = styled.div`
 
 `;
 
-
 const UsernameText = styled.span`
   font-family: "MavenPro";
   font-weight: 500;
@@ -81,31 +79,32 @@ const UsernameText = styled.span`
 
 const OwnerDescriptor = ({
   label,
-  firstName,
-  lastName,
-  username
+  user,
 }: Props): React.ReactElement => {
   const theme = useTheme();
-  const usernameFormatted = useMemo(() => "@"+ username,[username]);
+  const usernameFormatted = useMemo(() => "@"+ user?.username,[user?.username]);
   return (
     <div>
-        <Container style={{ border: `2px solid ${theme.colors.inputBorderColor}` }}>
+      <Container
+        style={{ border: `2px solid ${theme.colors.inputBorderColor}` }}
+      >
         <LabelContainer>
-            <LabelBorderEnd style={{ left: -1, background: theme.colors.inputBorderColor }} />
-            <LabelText style={{ color: theme.colors.inputLabelTextColor }}>{label}</LabelText>
-            <LabelBorderEnd style={{ right: -1 }} />
+          <LabelBorderEnd
+            style={{ left: -1, background: theme.colors.inputBorderColor }}
+          />
+          <LabelText style={{ color: theme.colors.inputLabelTextColor }}>
+            {label}
+          </LabelText>
+          <LabelBorderEnd style={{ right: -1 }} />
         </LabelContainer>
         <InfoContainer>
-            <InitialProfileDefault
-                firstName={firstName}
-                lastName={lastName}
-                size={48}
-            />
-            <UsernameText>
-                {usernameFormatted}
-            </UsernameText>
+          <UserProfilePhoto
+            user={user}
+            size={48}
+          />
+          <UsernameText>{usernameFormatted}</UsernameText>
         </InfoContainer>
-        </Container>
+      </Container>
     </div>
   );
 };

@@ -1,0 +1,17 @@
+mutation RemoveUserProfilePhoto {
+  removeUserProfilePhoto {
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+    ... on RemoveUserProfilePhotoError {
+      type
+      message
+    }
+    ... on RemoveUserProfilePhotoSuccess {
+      user {
+         ...User
+      }
+    }
+  }
+}

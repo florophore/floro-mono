@@ -22,3 +22,45 @@ union UploadUserProfilePhotoResponse =
     UploadUserProfilePhotoSuccess
   | UploadUserProfilePhotoError
   | UnAuthenticatedError
+
+type UploadOrganizationProfilePhotoSuccess {
+  organization: Organization
+}
+
+type UploadOrganizationProfilePhotoError {
+  message: String
+  type: String
+}
+
+union UploadOrganizationProfilePhotoResponse =
+    UploadOrganizationProfilePhotoSuccess
+  | UploadOrganizationProfilePhotoError
+  | UnAuthenticatedError
+
+type RemoveUserProfilePhotoSuccess {
+  user: User
+}
+
+type RemoveUserProfilePhotoError {
+  message: String
+  type: String
+}
+
+union RemoveUserProfilePhotoResponse =
+    RemoveUserProfilePhotoSuccess
+  | RemoveUserProfilePhotoError
+  | UnAuthenticatedError
+
+type RemoveOrganizationProfilePhotoSuccess {
+  organization: Organization
+}
+
+type RemoveOrganizationProfilePhotoError {
+  message: String
+  type: String
+}
+
+union RemoveOrganizationProfilePhotoResponse =
+    RemoveOrganizationProfilePhotoSuccess
+  | RemoveOrganizationProfilePhotoError
+  | UnAuthenticatedError

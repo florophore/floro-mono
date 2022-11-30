@@ -1,13 +1,11 @@
 import React, { useState, useCallback, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import styled from "@emotion/styled";
 import { css } from "@emotion/css";
 import { useTheme } from "@emotion/react";
-import { DarkTheme } from "@floro/styles/ColorThemes";
 import ColorPalette from "@floro/styles/ColorPalette";
 import { useSession } from "../../session/session-context";
-import InitialProfileDefault from "@floro/storybook/stories/common-components/InitialProfileDefault";
 import SearchInput from "@floro/storybook/stories/design-system/SearchInput";
 import { useNavigationAnimatorContext } from "../../navigation/navigation-animator";
 import UserProfilePhoto from "@floro/storybook/stories/common-components/UserProfilePhoto";
@@ -135,7 +133,6 @@ export interface Props {
 }
 const OuterNavigator = (props: Props) => {
   const { currentUser } = useSession();
-  console.log("CURRENT USER", currentUser);
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isDragEnabled, setIsDragEnabled] = useState(true);

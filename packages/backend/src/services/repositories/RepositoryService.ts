@@ -7,6 +7,7 @@ import RepositoriesContext from "@floro/database/src/contexts/repositories/Repos
 import { REPO_REGEX } from "@floro/common-web/src/utils/validators";
 import { Organization } from "@floro/database/src/entities/Organization";
 import { Repository } from "@floro/database/src/entities/Repository";
+import RepoAccessor from "@floro/storage/src/accessors/RepoAccessor";
 
 export const LICENSE_CODE_LIST = new Set([
   "apache_2",
@@ -38,13 +39,16 @@ export interface CreateRepositoryReponse {
 export default class RepositoryService {
   private databaseConnection!: DatabaseConnection;
   private contextFactory!: ContextFactory;
+  private repoAccessor!: RepoAccessor;
 
   constructor(
     @inject(DatabaseConnection) databaseConnection: DatabaseConnection,
-    @inject(ContextFactory) contextFactory: ContextFactory
+    @inject(ContextFactory) contextFactory: ContextFactory,
+    @inject(RepoAccessor) repoAccessor: RepoAccessor 
   ) {
     this.databaseConnection = databaseConnection;
     this.contextFactory = contextFactory;
+    this.repoAccessor = repoAccessor;
   }
 
   public async createUserRepository(
@@ -102,6 +106,7 @@ export default class RepositoryService {
           isPrivate,
           name: name.trim(),
         });
+        await this.repoAccessor.initInitialRepoFoldersAndFiles(repository);
         await queryRunner.commitTransaction();
         return {
           action: "REPO_CREATED",

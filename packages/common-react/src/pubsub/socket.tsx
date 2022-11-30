@@ -50,7 +50,6 @@ export const useDaemonIsConnected = () => {
       socket?.off?.("disconnect", onDisconnected);
     }
   }, [socket]);
-  console.log("SOCKET", socket)
 
   return isConnected;
 }

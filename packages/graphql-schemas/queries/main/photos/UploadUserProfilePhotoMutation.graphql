@@ -1,5 +1,9 @@
 mutation UploadUserProfilePhoto($file: Upload!, $x: Float!, $y: Float!, $width: Float!, $height: Float!) {
   uploadUserProfilePhoto(file: $file, x: $x, y: $y, width: $width, height: $height) {
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
     ... on UploadUserProfilePhotoError {
       type
       message
@@ -9,6 +13,5 @@ mutation UploadUserProfilePhoto($file: Upload!, $x: Float!, $y: Float!, $width: 
          ...User
       }
     }
-    
   }
 }

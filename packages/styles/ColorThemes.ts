@@ -50,6 +50,7 @@ export interface ColorTheme {
     highlightedOptionBackgroundColor: string;
     dropdownDividerColor: string;
     repoSelectSubtitleTextColor: string;
+    photoDeleteIconColor: string;
   };
   shadows: {
     modalContainer: string;
@@ -110,7 +111,8 @@ export const LightTheme: ColorTheme = {
     optionTextColor: palette.mediumGray,
     highlightedOptionBackgroundColor: palette.lightGray,
     dropdownDividerColor: palette.lightGray,
-    repoSelectSubtitleTextColor: palette.gray
+    repoSelectSubtitleTextColor: palette.gray,
+    photoDeleteIconColor: palette.red
   },
   shadows: {
     modalContainer: palette.mediumGray.substring(0, 7) + Opacity[70],
@@ -165,13 +167,14 @@ export const DarkTheme: ColorTheme = {
         connectionTextColor: palette.white,
         commonBorder: palette.white,
         titleTextColor: palette.purple,
-        ownerDescriptorUsernameColor: palette.purple,
+        ownerDescriptorUsernameColor: palette.lightPurple,
         slashRepoCreateColor: palette.purple,
         privateSelectTextColor: palette.white,
         optionTextColor: palette.white,
         highlightedOptionBackgroundColor: palette.mediumGray,
         dropdownDividerColor: palette.mediumGray,
-        repoSelectSubtitleTextColor: palette.gray
+        repoSelectSubtitleTextColor: palette.gray,
+        photoDeleteIconColor: palette.lightRed
     },
     shadows: {
         modalContainer: palette.black.substring(0, 7) + Opacity[70],

@@ -1,3 +1,7 @@
 extend type Mutation {
     uploadUserProfilePhoto(file: Upload!, x: Float!, y: Float!, width: Float!, height: Float!): UploadUserProfilePhotoResponse
+    uploadOrganizationProfilePhoto(organizationId: ID!, file: Upload!, x: Float!, y: Float!, width: Float!, height: Float!): UploadOrganizationProfilePhotoResponse
+
+    removeUserProfilePhoto: RemoveUserProfilePhotoResponse
+    removeOrganizationProfilePhoto(organizationId: ID!): RemoveOrganizationProfilePhotoResponse
 }

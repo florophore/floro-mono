@@ -5,13 +5,13 @@ import { User } from "@floro/database/src/entities/User";
 import UserAccessor from "@floro/storage/src/accessors/UserAccessor";
 import OrganizationAccessor from "@floro/storage/src/accessors/OrganizationAccessor";
 import StorageClient from "@floro/storage/src/StorageClient";
-import DatabaseConnection from "@floro/database/src/connection/DatabaseConnection";
 import ContextFactory from "@floro/database/src/contexts/ContextFactory";
 import PhotosContext from "@floro/database/src/contexts/photos/PhotosContext";
 import UsersContext from "@floro/database/src/contexts/users/UsersContext";
 import sharp from "sharp";
 import { ReadStream } from "fs";
 import { Photo } from "@floro/database/src/entities/Photo";
+import OrganizationsContext from "@floro/database/src/contexts/organizations/OrganizationsContext";
 
 export interface UploadUserProfilePhotoResponse {
   action: "UPLOAD_PROFILE_PHOTO_SUCCEEDED" | "LOG_ERROR";
@@ -34,10 +34,28 @@ export interface UploadOrganizationProfilePhotoResponse {
     meta?: unknown;
   };
 }
+export interface RemoveUserProfilePhotoResponse {
+  action: "REMOVE_PROFILE_PHOTO_SUCCEEDED" | "LOG_ERROR";
+  user?: User;
+  error?: {
+    type: string;
+    message: string;
+    meta?: unknown;
+  };
+}
+
+export interface RemoveOrganizationProfilePhotoResponse {
+  action: "REMOVE_PROFILE_PHOTO_SUCCEEDED" | "LOG_ERROR";
+  organization?: Organization;
+  error?: {
+    type: string;
+    message: string;
+    meta?: unknown;
+  };
+}
 
 @injectable()
 export default class PhotoUploadService {
-  private databaseConnection!: DatabaseConnection;
   private contextFactory!: ContextFactory;
 
   private userAccessor!: UserAccessor;
@@ -45,13 +63,11 @@ export default class PhotoUploadService {
   private storageClient!: StorageClient;
 
   constructor(
-    @inject(DatabaseConnection) databaseConnection: DatabaseConnection,
     @inject(ContextFactory) contextFactory: ContextFactory,
     @inject(UserAccessor) userAccessor: UserAccessor,
     @inject(OrganizationAccessor) organizationAccessor: OrganizationAccessor,
     @inject(StorageClient) storageClient: StorageClient
   ) {
-    this.databaseConnection = databaseConnection;
     this.contextFactory = contextFactory;
     this.userAccessor = userAccessor;
     this.organizationAccessor = organizationAccessor;
@@ -113,7 +129,7 @@ export default class PhotoUploadService {
       });
       const refreshedUser = await usersContext.updateUserById(user.id, {
         profilePhotoId: photo.id,
-        profilePhoto: photo
+        profilePhoto: photo,
       });
       if (!refreshedUser) {
         return {
@@ -134,6 +150,172 @@ export default class PhotoUploadService {
         action: "LOG_ERROR",
         error: {
           type: "UNKNOWN_UPLOAD_PROFILE_PHOTO_ERROR",
+          message: e?.message,
+          meta: e,
+        },
+      };
+    }
+  }
+
+  public async uploadOrganizationProfilePhoto(
+    currentUser: User,
+    organization: Organization,
+    stream: ReadStream,
+    x: number,
+    y: number,
+    width: number,
+    height: number
+  ): Promise<UploadOrganizationProfilePhotoResponse> {
+    try {
+      const rawBuffer: Buffer = await new Promise((resolve) => {
+        const bytes: Uint8Array[] = [];
+        stream.on("data", (data: Uint8Array) => bytes.push(data));
+        stream.on("end", () => resolve(Buffer.concat(bytes)));
+      });
+      const image: Buffer = await sharp(rawBuffer)
+        .extract({
+          left: x,
+          top: y,
+          width,
+          height,
+        })
+        .resize(300, 300)
+        .png()
+        .toBuffer();
+
+      const thumbnail: Buffer = await sharp(image)
+        .resize(100, 100)
+        .png()
+        .toBuffer();
+      const hash = this.storageClient.hashBuffer(image);
+      const thumbnailHash = this.storageClient.hashBuffer(thumbnail);
+      const path = this.organizationAccessor.getPhotoPathFromRoot(
+        organization,
+        hash,
+        "png"
+      );
+      const thumbnailPath = this.organizationAccessor.getPhotoPathFromRoot(
+        organization,
+        thumbnailHash,
+        "png"
+      );
+      await this.organizationAccessor.writePhoto(organization, hash, image);
+      await this.organizationAccessor.writePhoto(
+        organization,
+        thumbnailHash,
+        thumbnail
+      );
+      const photosContext = await this.contextFactory.createContext(
+        PhotosContext
+      );
+      const organizationsContext = await this.contextFactory.createContext(
+        OrganizationsContext
+      );
+      const photo = await photosContext.createPhoto({
+        uploadedByUserId: currentUser.id,
+        hash,
+        path,
+        thumbnailHash,
+        thumbnailPath,
+        mimeType: "png",
+      });
+      const refreshedOrganization =
+        await organizationsContext.updateOrganizationById(organization.id, {
+          profilePhotoId: photo.id,
+          profilePhoto: photo,
+        });
+      if (!refreshedOrganization) {
+        return {
+          action: "LOG_ERROR",
+          error: {
+            type: "UNKNOWN_UPLOAD_PROFILE_PHOTO_ERROR",
+            message: "Organization not refreshed",
+          },
+        };
+      }
+      return {
+        action: "UPLOAD_PROFILE_PHOTO_SUCCEEDED",
+        organization: refreshedOrganization,
+        photo,
+      };
+    } catch (e: any) {
+      return {
+        action: "LOG_ERROR",
+        error: {
+          type: "UNKNOWN_UPLOAD_PROFILE_PHOTO_ERROR",
+          message: e?.message,
+          meta: e,
+        },
+      };
+    }
+  }
+
+  public async removeUserProfilePhoto(
+    user: User
+  ): Promise<RemoveUserProfilePhotoResponse> {
+    try {
+      const usersContext = await this.contextFactory.createContext(
+        UsersContext
+      );
+      const refreshedUser = await usersContext.updateUserById(user.id, {
+        profilePhotoId: null,
+        profilePhoto: null,
+      });
+      if (!refreshedUser) {
+        return {
+          action: "LOG_ERROR",
+          error: {
+            type: "UNKNOWN_REMOVE_PROFILE_PHOTO_ERROR",
+            message: "User not refreshed",
+          },
+        };
+      }
+      return {
+        action: "REMOVE_PROFILE_PHOTO_SUCCEEDED",
+        user: refreshedUser,
+      };
+    } catch (e: any) {
+      return {
+        action: "LOG_ERROR",
+        error: {
+          type: "UNKNOWN_REMOVE_PROFILE_PHOTO_ERROR",
+          message: e?.message,
+          meta: e,
+        },
+      };
+    }
+  }
+
+  public async removeOrganizationProfilePhoto(
+    organization: Organization
+  ): Promise<RemoveOrganizationProfilePhotoResponse> {
+    try {
+      const organizationsContext = await this.contextFactory.createContext(
+        OrganizationsContext
+      );
+      const refreshedOrganization =
+        await organizationsContext.updateOrganizationById(organization.id, {
+          profilePhotoId: null,
+          profilePhoto: null,
+        });
+      if (!refreshedOrganization) {
+        return {
+          action: "LOG_ERROR",
+          error: {
+            type: "UNKNOWN_REMOVE_PROFILE_PHOTO_ERROR",
+            message: "User not refreshed",
+          },
+        };
+      }
+      return {
+        action: "REMOVE_PROFILE_PHOTO_SUCCEEDED",
+        organization: refreshedOrganization,
+      };
+    } catch (e: any) {
+      return {
+        action: "LOG_ERROR",
+        error: {
+          type: "UNKNOWN_REMOVE_PROFILE_PHOTO_ERROR",
           message: e?.message,
           meta: e,
         },

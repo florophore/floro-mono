@@ -29,7 +29,8 @@ const SlashSpan = styled.span`
   font-weight: 700;
   font-family: "MavenPro";
   padding: 0;
-  margin: 0 16px;
+  margin: 12px 16px 0;
+  display: block;
   color: ${(props) => props.theme.colors.slashRepoCreateColor};
 `;
 
@@ -123,17 +124,17 @@ const CreateRepoInputs = (props: Props): React.ReactElement => {
         `}
       >
         <div>
-          <OwnerDescriptor
-            label="owner"
-            firstName={props.user?.firstName ?? ""}
-            lastName={props.user?.lastName ?? ""}
-            username={props.user?.username ?? ""}
-          />
+          {props?.user &&
+            <OwnerDescriptor
+              label="owner"
+              user={props.user}
+            />
+          }
         </div>
         <div>
           <SlashSpan>{"/"}</SlashSpan>
         </div>
-        <div style={{ marginTop: -4 }}>
+        <div>
           <Input
             label={"repo name"}
             placeholder={"repository name"}

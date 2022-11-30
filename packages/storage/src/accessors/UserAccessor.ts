@@ -16,19 +16,20 @@ export default class UserAccessor {
     }
 
     public userDirectory(user: User) {
-        return path.join(this.driver.staticRoot?.() ?? "", "users", user.id)
+        return path.join(this.driver.staticRoot?.() ?? "", "users", user.id);
     }
 
     public async makeUserDirectory(user: User) {
         const exists = await this.driver.exists(this.userDirectory(user));
         if (!exists) {
-            await fs.promises.mkdir(this.userDirectory(user), { recursive: true})
+            await this.driver.mkdir(this.userDirectory(user));
         }
     }
+
     public async makePhotoPath(user: User) {
         const exists = await this.driver.exists(path.join(this.userDirectory(user), "photos"));
         if (!exists) {
-            await fs.promises.mkdir(path.join(this.userDirectory(user), "photos"), { recursive: true})
+            await this.driver.mkdir(path.join(this.userDirectory(user), "photos"));
         }
     }
 
