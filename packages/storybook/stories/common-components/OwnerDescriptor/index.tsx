@@ -10,6 +10,7 @@ import { User } from "@floro/graphql-schemas/build/generated/main-graphql";
 export interface Props {
   label: string;
   user: User;
+  offlinePhoto?: string|null;
 }
 
 const Container = styled.div`
@@ -80,6 +81,7 @@ const UsernameText = styled.span`
 const OwnerDescriptor = ({
   label,
   user,
+  offlinePhoto = null
 }: Props): React.ReactElement => {
   const theme = useTheme();
   const usernameFormatted = useMemo(() => "@"+ user?.username,[user?.username]);
@@ -101,6 +103,7 @@ const OwnerDescriptor = ({
           <UserProfilePhoto
             user={user}
             size={48}
+            offlinePhoto={offlinePhoto}
           />
           <UsernameText>{usernameFormatted}</UsernameText>
         </InfoContainer>

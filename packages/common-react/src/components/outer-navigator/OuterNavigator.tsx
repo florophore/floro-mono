@@ -9,6 +9,7 @@ import { useSession } from "../../session/session-context";
 import SearchInput from "@floro/storybook/stories/design-system/SearchInput";
 import { useNavigationAnimatorContext } from "../../navigation/navigation-animator";
 import UserProfilePhoto from "@floro/storybook/stories/common-components/UserProfilePhoto";
+import { useOfflinePhoto } from "../../offline/OfflinePhotoContext";
 
 const Main = styled.main`
   display: flex;
@@ -32,7 +33,7 @@ const headerCss = css`
   position: relative;
 `;
 
-const Title = styled.p`
+const Title = styled.div`
   margin: 16px 0 0 0;
   padding: 0;
   font-size: 1.44rem;
@@ -162,6 +163,7 @@ const OuterNavigator = (props: Props) => {
 
   const theme = useTheme();
   const navigationAnimator = useNavigationAnimatorContext();
+  const offlinePhoto = useOfflinePhoto(currentUser?.profilePhoto ?? null);
 
   return (
     <motion.div
@@ -210,7 +212,7 @@ const OuterNavigator = (props: Props) => {
               <NavOption>
                 {currentUser && (
                   <Link to={"/home"} style={{textDecoration: "none", display: "contents"}}>
-                    <UserProfilePhoto user={currentUser} size={56} />
+                    <UserProfilePhoto user={currentUser} size={56} offlinePhoto={offlinePhoto} />
                   </Link>
                 )}
               </NavOption>

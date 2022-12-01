@@ -11,6 +11,7 @@ import EmailValidator from 'email-validator';
 import ProfanityFilter from "bad-words";
 import { NAME_REGEX, USERNAME_REGEX } from "@floro/common-web/src/utils/validators";
 import { useUsernameCheckLazyQuery, useCreateOrganizationMutation } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import { useOfflinePhoto } from "../../offline/OfflinePhotoContext";
 
 const Background = styled.div`
   background-color: ${(props) => props.theme.background};
@@ -45,6 +46,7 @@ const CreateRepo = () => {
   const [name, setName] = useState("");
   const [isPrivate, setIsPrivate] = useState("");
   const [license, setLicense] = useState(null);
+  const offlinePhoto = useOfflinePhoto(currentUser?.profilePhoto ?? null);
 
   return (
     <Background>
@@ -55,10 +57,11 @@ const CreateRepo = () => {
         onUpdateName={setName}
         nameIsTaken={false}
         user={currentUser}
+        offlinePhoto={offlinePhoto}
       />
       <div style={{marginTop: 200}}>
         <ButtonContainer>
-            <Button bg={"orange"} size={"big"} label={"Create Org"} />
+            <Button bg={"orange"} size={"big"} label={"Create Repo"} />
         </ButtonContainer>
       </div>
     </Background>

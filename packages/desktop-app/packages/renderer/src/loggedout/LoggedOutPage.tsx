@@ -12,7 +12,7 @@ import { createSearchParams, useNavigate, useSearchParams } from 'react-router-d
 import { useTheme } from '@emotion/react';
 import { useSystemAPI } from '../contexts/SystemAPIContext';
 import mixpanel from 'mixpanel-browser';
-import SignupLoginModal from './SignupLoginModal';
+import SignupLoginModal from '@floro/common-react/src/components/signup/SignupLoginModal';
 import { useSocketEvent } from '@floro/common-react/src/pubsub/socket';
 import type { CompleteSignupAction, PassedLoginAction } from '@floro/graphql-schemas/src/generated/main-client-graphql';
 import { setClientSession } from '@floro/common-react/src/session/client-session';

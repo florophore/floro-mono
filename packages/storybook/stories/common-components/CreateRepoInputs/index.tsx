@@ -96,6 +96,7 @@ export interface Props {
   nameIsTaken: boolean;
   user?: User|null;
   organization?: Organization;
+  offlinePhoto?: string|null;
 }
 
 const CreateRepoInputs = (props: Props): React.ReactElement => {
@@ -128,6 +129,7 @@ const CreateRepoInputs = (props: Props): React.ReactElement => {
             <OwnerDescriptor
               label="owner"
               user={props.user}
+              offlinePhoto={props.offlinePhoto}
             />
           }
         </div>

@@ -6,6 +6,9 @@ import EmailValidator from "email-validator";
 import SessionStore, { Session } from "@floro/redis/src/sessions/SessionStore";
 import ContextFactory from "@floro/database/src/contexts/ContextFactory";
 import UsersContext from "@floro/database/src/contexts/users/UsersContext";
+import PhotoResolverModule from "../resolvers/photo/PhotoResolverModule";
+import { Photo } from "@floro/database/src/entities/Photo";
+import MainConfig from "@floro/config/src/MainConfig";
 
 
 export interface CreateLoginOrSignupRequest {
@@ -18,16 +21,19 @@ export default class AuthenticationController extends BaseController {
     public authenticationService: AuthenticationService;
     public sessionStore: SessionStore;
     public contextFactory: ContextFactory;
+    public mainConfig: MainConfig;
 
     constructor(
         @inject(AuthenticationService) authenticationService: AuthenticationService,
         @inject(SessionStore) sessionStore: SessionStore,
-        @inject(ContextFactory) contextFactory: ContextFactory
+        @inject(ContextFactory) contextFactory: ContextFactory,
+        @inject(MainConfig) mainConfig: MainConfig
     ) {
         super();
         this.authenticationService = authenticationService;
         this.sessionStore = sessionStore;
         this.contextFactory = contextFactory;
+        this.mainConfig = mainConfig;
     }
 
     @Post('/api/authenticate')
@@ -76,6 +82,10 @@ export default class AuthenticationController extends BaseController {
                     error: "failed to exchange session"
                 });
                 return;
+            }
+            if (user?.profilePhoto) {
+                user.profilePhoto['url'] = `${this.mainConfig.uploadRoot()}/${user.profilePhoto.path}`;
+                user.profilePhoto['thumbnailUrl'] = `${this.mainConfig.uploadRoot()}/${user.profilePhoto.thumbnailPath}`;
             }
             const exchangeSession = await this.sessionStore.exchangeSession(currentSession as Session);
             const session = await this.sessionStore.updateSessionUser(exchangeSession, user);

@@ -5,6 +5,8 @@ import { User } from "@floro/graphql-schemas/build/generated/main-graphql";
 import UserProfilePhoto from "../UserProfilePhoto";
 import RedXCircleXLight from "@floro/common-assets/assets/images/icons/red_x_circle.light.svg";
 import RedXCircleXDark from "@floro/common-assets/assets/images/icons/red_x_circle.dark.svg";
+import EditLight from "@floro/common-assets/assets/images/icons/edit.light.svg";
+import EditDark from "@floro/common-assets/assets/images/icons/edit.dark.svg";
 import { useTheme } from "@emotion/react";
 import DotsLoader from "../../design-system/DotsLoader";
 
@@ -89,11 +91,31 @@ const RemoveUpload = styled.div`
     width: 36px;
     border-radius: 50%;
     cursor: pointer;
-    z-index: 1;
     transition: opacity 500ms;
 `;
 
 const RemoveIcon = styled.img`
+  height: 100%;
+  width: 100%;
+`;
+const FullnameContainer = styled.div`
+  text-align: center;
+  color: ${(props) => props.theme.colors.profileInfoNameTextColor};
+  margin-top: 12px;
+  position: relative;
+`;
+
+const EditNameIconContainer = styled.div`
+    top: 12px;
+    right: -9px;
+    position: absolute;
+    height: 24px;
+    width: 24px;
+    cursor: pointer;
+    transition: opacity 500ms;
+`;
+
+const EditNameIcon = styled.img`
   height: 100%;
   width: 100%;
 `;
@@ -103,9 +125,9 @@ const Fullname = styled.p`
   font-size: 1.44rem;
   font-weight: 600;
   text-align: center;
+  margin: 12px 18px;
   color: ${(props) => props.theme.colors.profileInfoNameTextColor};
   padding: 0;
-  margin: 24px 0 12px 0;
 `;
 
 const Username = styled.p`
@@ -128,7 +150,9 @@ export interface Props {
   isEdittable: boolean;
   onSelectFile?: (file: File, base64: string) => void;
   onRemoveProfilePhoto?: () => void;
+  onOpenNameChange?: () => void;
   isLoading?: boolean;
+  offlinePhoto?: string|null;
 }
 
 const ProfileInfo = (props: Props): React.ReactElement => {
@@ -138,6 +162,7 @@ const ProfileInfo = (props: Props): React.ReactElement => {
     [props.user?.firstName]
   );
   const [isHoveringPhoto, setIsHoveringPhoto] = useState(false);
+  const [isHoveringEditName, setIsHoveringEditName] = useState(false);
   const [file, setFile] = useState<null|File>(null);
   const lastName = useMemo(() => upcaseFirst(props?.user?.lastName ?? ""), [props?.user?.lastName]);
   const fullname = useMemo(
@@ -153,9 +178,21 @@ const ProfileInfo = (props: Props): React.ReactElement => {
     return RedXCircleXDark;
   }, [theme.name]);
 
+  const editIcon = useMemo(() => {
+    if (theme.name == "light") {
+      return EditLight;
+    }
+    return EditDark;
+  }, [theme.name]);
+
   const xCircleOpacity = useMemo(
     () => (isHoveringPhoto && !props.isLoading ? 1 : 0),
     [isHoveringPhoto, props.isLoading]
+  );
+
+  const editNameIconOpacity = useMemo(
+    () => (isHoveringEditName ? 1 : 0),
+    [isHoveringEditName]
   );
 
   const onMouseOverProfilePicture = useCallback(() => {
@@ -164,6 +201,14 @@ const ProfileInfo = (props: Props): React.ReactElement => {
 
   const onMouseExitProfilePicture = useCallback(() => {
     setIsHoveringPhoto(false);
+  }, []);
+
+  const onMouseOverEditName = useCallback(() => {
+    setIsHoveringEditName(true);
+  }, []);
+
+  const onMouseExitEditName = useCallback(() => {
+    setIsHoveringEditName(false);
   }, []);
 
   const reader = useMemo(() => new FileReader(), []);
@@ -194,6 +239,12 @@ const ProfileInfo = (props: Props): React.ReactElement => {
     }
   }, [props?.onRemoveProfilePhoto, props.isLoading]);
 
+  const onOpenNameChange = useCallback(() => {
+    if (props.isEdittable) {
+      props.onOpenNameChange?.();
+    }
+  }, [props.isEdittable, props.onOpenNameChange]); 
+
   useEffect(() => {
     reader.onload = onReaderLoad; 
   }, [reader, onReaderLoad]);
@@ -204,7 +255,7 @@ const ProfileInfo = (props: Props): React.ReactElement => {
         onMouseEnter={onMouseOverProfilePicture}
         onMouseLeave={onMouseExitProfilePicture}
       >
-        {props.user && <UserProfilePhoto user={props.user} size={168} />}
+        {props.user && <UserProfilePhoto user={props.user} size={168} offlinePhoto={props?.offlinePhoto ?? null} />}
         {isHoveringPhoto && props.isEdittable && !props.isLoading && (
           <OverlayContainer>
             <EditPhotoTextContainer>
@@ -221,9 +272,12 @@ const ProfileInfo = (props: Props): React.ReactElement => {
             onClick={onInputHackResetClick}
           />
         )}
-        {(props.isEdittable && !!props?.user?.profilePhoto?.id) && (
-          <RemoveUpload style={{opacity: xCircleOpacity}} onClick={onRemoveProfilePhoto}>
-            <RemoveIcon src={redXIcon}/>
+        {props.isEdittable && !!props?.user?.profilePhoto?.id && (
+          <RemoveUpload
+            style={{ opacity: xCircleOpacity }}
+            onClick={onRemoveProfilePhoto}
+          >
+            <RemoveIcon src={redXIcon} />
           </RemoveUpload>
         )}
         {props.isLoading && (
@@ -232,7 +286,19 @@ const ProfileInfo = (props: Props): React.ReactElement => {
           </LoaderOverlayContainer>
         )}
       </PictureContainer>
-      <Fullname>{fullname}</Fullname>
+      <FullnameContainer
+        onClick={onOpenNameChange}
+        onMouseEnter={onMouseOverEditName}
+        onMouseLeave={onMouseExitEditName}
+        style={{ cursor: props.isEdittable ? "pointer" : "default" }}
+      >
+        <Fullname>{fullname}</Fullname>
+        {props.isEdittable &&
+          <EditNameIconContainer style={{ opacity: editNameIconOpacity }}>
+            <EditNameIcon src={editIcon} />
+          </EditNameIconContainer>
+        }
+      </FullnameContainer>
       <Username>{username}</Username>
     </Container>
   );

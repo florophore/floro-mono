@@ -50,7 +50,6 @@ const CreateOrg = () => {
   ] = useState(false);
   const profanityFilter = useMemo(() => new ProfanityFilter(), []);
 
-
   const nameIsValid = useMemo(() => {
     if (NAME_REGEX.test(name)) {
       return !profanityFilter.isProfane(name);

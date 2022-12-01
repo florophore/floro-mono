@@ -1,13 +1,12 @@
-import { PassedLoginAction, Session, useExchangeSessionMutation, User } from '@floro/graphql-schemas/src/generated/main-client-graphql';
 import React, { useState, useMemo, useContext, useEffect, useCallback } from 'react';
+import { PassedLoginAction, Session, useExchangeSessionMutation, User } from '@floro/graphql-schemas/src/generated/main-client-graphql';
 import { useSocketEvent } from '../pubsub/socket';
 import { useQueryClient } from 'react-query';
 import { removeClientSession, setClientSession } from './client-session';
 import { useApolloClient } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-
-const ONE_WEEK = 1000 * 60 * 60 * 24 * 7;
+import { useSaveOfflinePhoto } from '../offline/OfflinePhotoContext';
 
 const SessionContext = React.createContext<{session: Session|null, currentUser: User|null, logout: () => void, setCurrentUser: (user: User) => void}>({
     session: null,
@@ -28,6 +27,7 @@ export const SessionProvider = (props: Props) => {
     const [exchangeSession, {data}] = useExchangeSessionMutation();
     const apolloClient = useApolloClient();
     const queryClient = useQueryClient();
+    const savePhoto = useSaveOfflinePhoto();
 
     const logout = useCallback(() => {
         setCurrentUser(null);
@@ -46,9 +46,9 @@ export const SessionProvider = (props: Props) => {
 
     useSocketEvent("login", (payload: PassedLoginAction) => {
         setClientSession(payload);
-        setCurrentUser(payload.user as User);
+        setCurrentUser({...payload.user} as User);
         setSession(payload.session as Session);
-    }, [], false);
+    }, [currentUser], false);
 
     useSocketEvent("session_updated", (payload: PassedLoginAction) => {
         setClientSession(payload);
@@ -76,16 +76,7 @@ export const SessionProvider = (props: Props) => {
             const session = JSON.parse(sessionString);
             setCurrentUser(user);
             setSession(session);
-
-            if (session?.expiresAt ) {
-                const expiresAt = new Date(session.expiresAt);
-                const expiresAtMS = expiresAt.getTime();
-                const nowMS = (new Date()).getTime();
-                const delta = (expiresAtMS - nowMS);
-                if (delta < ONE_WEEK) {
-                    exchangeSession();
-                }
-            }
+            exchangeSession();
         } catch (e) {
             //dont log just fail
         }
@@ -102,8 +93,11 @@ export const SessionProvider = (props: Props) => {
             setClientSession({session: data.exchangeSession, user: data.exchangeSession.user});
             setSession(data.exchangeSession);
             setCurrentUser(data.exchangeSession.user);
+            if (data?.exchangeSession?.user?.profilePhoto) {
+                savePhoto(data?.exchangeSession?.user?.profilePhoto);
+            }
         }
-    }, [data?.exchangeSession]);
+    }, [data?.exchangeSession, savePhoto]);
 
     return (
       <SessionContext.Provider value={{session, currentUser, logout, setCurrentUser: setCurrentUserInStorage}}>

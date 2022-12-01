@@ -14,6 +14,8 @@ import { useSession } from "../../session/session-context";
 import { useDaemonIsConnected } from "../../pubsub/socket";
 import RootPhotoCropper from "../RootPhotoCropper";
 import { User, useRemoveUserProfilePhotoMutation, useUploadUserProfilePhotoMutation } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import ChangeNameModal from "./ChangeNameModal";
+import { useOfflinePhoto, useSaveOfflinePhoto } from "../../offline/OfflinePhotoContext";
 
 const Background = styled.div`
   background-color: ${(props) => props.theme.background};
@@ -91,6 +93,10 @@ const UserHome = (props: Props) => {
     useState<null | string>(null);
   const [showProfilePictureCropper, setShowProfilePictureCroppper] =
     useState(false);
+  const [showChangeName, setShowChangeName] =
+    useState(false);
+
+  const savePhoto = useSaveOfflinePhoto();
 
   const onSelectUploadPhoto = useCallback((file: File, base64: string) => {
     setProfilePhotoFile(file);
@@ -102,6 +108,14 @@ const UserHome = (props: Props) => {
     setProfilePhotoFile(null);
     setProfilePhotoFileString(null);
     setShowProfilePictureCroppper(false);
+  }, []);
+
+  const onShowChangeName = useCallback(() => {
+    setShowChangeName(true);
+  }, []);
+
+  const onHideChangeName = useCallback(() => {
+    setShowChangeName(false);
   }, []);
 
   const onSaveProfilePhoto = useCallback(
@@ -123,14 +137,18 @@ const UserHome = (props: Props) => {
     if (uploadPhotoRequest.data?.uploadUserProfilePhoto?.__typename === "UploadUserProfilePhotoSuccess") {
       setShowProfilePictureCroppper(false);
       setCurrentUser(uploadPhotoRequest.data?.uploadUserProfilePhoto?.user as User);
+      if (uploadPhotoRequest.data?.uploadUserProfilePhoto?.user?.profilePhoto) {
+        savePhoto(uploadPhotoRequest.data?.uploadUserProfilePhoto?.user?.profilePhoto);
+      }
     }
-  }, [uploadPhotoRequest.data])
+  }, [uploadPhotoRequest.data, savePhoto])
 
   useEffect(() => {
     if (removePhotoRequest.data?.removeUserProfilePhoto?.__typename === "RemoveUserProfilePhotoSuccess") {
       setCurrentUser(removePhotoRequest.data?.removeUserProfilePhoto?.user as User);
     }
-  }, [removePhotoRequest.data])
+  }, [removePhotoRequest.data]);
+  const offlinePhoto = useOfflinePhoto(currentUser?.profilePhoto ?? null);
 
   return (
     <>
@@ -142,6 +160,10 @@ const UserHome = (props: Props) => {
         onCancel={onCancelPhotoUpload}
         onSave={onSaveProfilePhoto}
       />
+      <ChangeNameModal
+        show={showChangeName}
+        onDismissModal={onHideChangeName}
+      />
       <Background>
         <UserNav>
           <ProfileInfoWrapper>
@@ -151,6 +173,8 @@ const UserHome = (props: Props) => {
               onSelectFile={onSelectUploadPhoto}
               isLoading={removePhotoRequest.loading || uploadPhotoRequest.loading}
               onRemoveProfilePhoto={removePhoto}
+              onOpenNameChange={onShowChangeName}
+              offlinePhoto={offlinePhoto}
             />
           </ProfileInfoWrapper>
           <BottomNavContainer>
