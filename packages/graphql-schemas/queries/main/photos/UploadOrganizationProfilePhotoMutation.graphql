@@ -1,0 +1,31 @@
+mutation UploadOrganizationProfilePhoto(
+  $organizationId: ID!
+  $file: Upload!
+  $x: Float!
+  $y: Float!
+  $width: Float!
+  $height: Float!
+) {
+  uploadOrganizationProfilePhoto(
+    organizationId: $organizationId
+    file: $file
+    x: $x
+    y: $y
+    width: $width
+    height: $height
+  ) {
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+    ... on UploadOrganizationProfilePhotoError {
+      type
+      message
+    }
+    ... on UploadOrganizationProfilePhotoSuccess {
+      organization {
+        ...Organization
+      }
+    }
+  }
+}

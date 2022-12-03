@@ -1,12 +1,11 @@
 import React, { useState, useMemo, useEffect, useCallback } from "react";
 import styled from "@emotion/styled";
-import { css } from "@emotion/css";
 import RootModal from "@floro/common-react/src/components/RootModal";
 import Button from "@floro/storybook/stories/design-system/Button";
 import Input from "@floro/storybook/stories/design-system/Input";
 import { useSession } from "../../session/session-context";
-import Checkbox from "@floro/storybook/stories/design-system/Checkbox";
 import { NAME_REGEX } from "@floro/common-web/src/utils/validators";
+import { User, useUpdateUserNameMutation } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 
 const HeaderWrapper = styled.div`
   height: 100%;
@@ -31,29 +30,17 @@ const ContentWrapper = styled.div`
   align-items: center;
 `;
 
-const LastNameFirstCharParagraph = styled.p`
-  font-size: 1rem;
-  font-weight: 500;
-  font-family: "MavenPro";
-  padding: 0;
-  margin: 3px 0 0 12px;
-  transition: color 300ms;
-  color: ${(props) => props.theme.colors.standardText};
-`;
-
 export interface Props {
   show: boolean;
   onDismissModal: () => void;
 }
 
 const ChangeNameModal = (props: Props) => {
-  const { currentUser } = useSession();
+  const { currentUser, setCurrentUser } = useSession();
   const [firstName, setFirstName] = useState(currentUser?.firstName ?? "");
   const [lastName, setLastName] = useState(currentUser?.lastName ?? "");
-  const [
-    showOnlyFirstCharacterOfLastName,
-    setShowOnlyFirstCharacterOfLastName,
-  ] = useState(false);
+
+  const [updateName, { data, error, loading}] = useUpdateUserNameMutation();
 
   const firstNameIsValid = useMemo(() => {
     return NAME_REGEX.test(firstName);
@@ -66,6 +53,27 @@ const ChangeNameModal = (props: Props) => {
   const isValid = useMemo(() => {
     return firstNameIsValid && lastNameIsValid;
   }, [firstNameIsValid, lastNameIsValid]);
+
+  const onClickUpdateName = useCallback(() => {
+    if (isValid) {
+      updateName({
+        variables: {
+          firstName,
+          lastName
+        }
+      })
+    }
+
+  }, [updateName, isValid, firstName, lastName]); 
+
+  useEffect(() => {
+    if (data?.updateUserName?.__typename == "UpdateUserNameSuccess") {
+      setCurrentUser(data?.updateUserName?.user as User);
+      setFirstName(data?.updateUserName?.user?.firstName ?? firstName);
+      setLastName(data?.updateUserName?.user?.lastName ?? lastName);
+      props.onDismissModal();
+    }
+  }, [data, error, setCurrentUser, props.onDismissModal]);
 
   return (
     <RootModal
@@ -98,31 +106,14 @@ const ChangeNameModal = (props: Props) => {
               isValid={lastNameIsValid}
             />
           </div>
-          <div
-            className={css`
-              display: flex;
-              flex-direction: row;
-              align-items: flex-start;
-              max-width: 432px;
-            `}
-          >
-            <div>
-              <Checkbox
-                isChecked={showOnlyFirstCharacterOfLastName}
-                onChange={setShowOnlyFirstCharacterOfLastName}
-              />
-            </div>
-            <LastNameFirstCharParagraph>
-              {"Show only the first letter of last name publicly"}
-            </LastNameFirstCharParagraph>
-          </div>
         </div>
         <Button
           size={"big"}
           bg={"purple"}
           label={"change name"}
-          isLoading={false}
+          isLoading={loading}
           isDisabled={!isValid}
+          onClick={onClickUpdateName}
         />
       </ContentWrapper>
     </RootModal>

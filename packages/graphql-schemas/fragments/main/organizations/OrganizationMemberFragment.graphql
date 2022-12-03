@@ -1,0 +1,8 @@
+fragment OrganizationMember on OrganizationMember {
+  id
+  internalHandle
+  membershipState
+  user {
+    ...User
+  }
+}

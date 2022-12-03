@@ -1,0 +1,17 @@
+mutation UpdateUserName($firstName: String!, $lastName: String!) {
+  updateUserName(firstName: $firstName, lastName: $lastName) {
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+    ... on UpdateUserNameError {
+      type
+      message
+    }
+    ... on UpdateUserNameSuccess {
+      user {
+         ...User
+      }
+    }
+  }
+}

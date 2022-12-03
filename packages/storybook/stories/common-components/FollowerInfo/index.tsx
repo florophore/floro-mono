@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react'
 import styled from '@emotion/styled';
-import ColorPalette from '@floro/styles/ColorPalette';
 import { useTheme } from '@emotion/react';
 import FollowersIconsLight from '@floro/common-assets/assets/images/icons/followers.light.svg';
 import FollowersIconsDark from '@floro/common-assets/assets/images/icons/followers.dark.svg';
@@ -33,10 +32,10 @@ const FollowerText = styled.p`
     font-weight: 600;
     color: ${props => props.theme.colors.followerTextColor};
 `;
+
 const FollowerNumeral = styled.span`
     font-weight: 400;
 `;
-
 
 const accountRound = (count: number): string => {
     if (count >= 1000) {
@@ -52,7 +51,6 @@ const accountRound = (count: number): string => {
 export interface Props {
   followerCount: number;
   followingCount: number;
-  username: string;
 }
 
 const FollowerInfo = (props: Props): React.ReactElement => {

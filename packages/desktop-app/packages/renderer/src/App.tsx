@@ -17,7 +17,6 @@ import Cookies from 'js-cookie';
 import {SessionProvider} from '@floro/common-react/src/session/session-context';
 import {OfflinePhotoProvider} from "@floro/common-react/src/offline/OfflinePhotoContext";
 import ColorPalette from '@floro/styles/ColorPalette';
-import { persistCache, LocalStorageWrapper } from 'apollo3-cache-persist';
 import { createUploadLink } from 'apollo-upload-client';
 
 const authMiddleware = setContext((_, {headers}) => {
@@ -55,11 +54,6 @@ const splitLink = split(
 );
 
 const cache = new InMemoryCache();
-
-await persistCache({
-  cache,
-  storage: new LocalStorageWrapper(window.localStorage),
-});
 
 const client = new ApolloClient({
   link: authMiddleware.concat(splitLink),

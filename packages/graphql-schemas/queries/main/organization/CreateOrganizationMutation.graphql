@@ -18,11 +18,25 @@ mutation CreateOrganization(
     }
     ... on CreateOrganizationSuccess {
       organization {
-        id
-        name
-        legalName
-        handle
-        contactEmail
+        ...Organization
+        membership {
+          ...OrganizationMember
+          permissions {
+            ...OrganizationPermissions
+          }
+          roles {
+            ...OrganizationRole
+          }
+        }
+        members {
+          ...OrganizationMember
+          roles {
+            ...OrganizationRole
+          }
+        }
+        roles {
+          ...OrganizationRole
+        }
       }
     }
     ... on CreateOrganizationError {

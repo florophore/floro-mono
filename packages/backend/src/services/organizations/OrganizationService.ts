@@ -35,6 +35,18 @@ export interface CreateOrganizationReponse {
     meta?: any;
   };
 }
+export interface UpdateOrganizationNameReponse {
+  action:
+    | "UPDATE_ORGANIZATION_NAME_SUCCEEDED"
+    | "INVALID_PARAMS"
+    | "LOG_ERROR";
+  organization?: Organization;
+  error?: {
+    type: string;
+    message: string;
+    meta?: any;
+  };
+}
 
 @injectable()
 export default class OrganizationService {
@@ -221,5 +233,56 @@ export default class OrganizationService {
       OrganizationsContext
     );
     return await organizationsContext.getById(id);
+  }
+
+  public async fetchOrganizationByHandle(handle: string): Promise<Organization | null> {
+    const organizationsContext = await this.contextFactory.createContext(
+      OrganizationsContext
+    );
+    return await organizationsContext.getByHandle(handle);
+  }
+
+  public async updateOrgName(
+    organization: Organization,
+    name?: string|null,
+    legalName?: string|null
+  ): Promise<UpdateOrganizationNameReponse> {
+    if (!name || !legalName) {
+      return {
+        action: "INVALID_PARAMS",
+        error: {
+          type: "INVALID_PARAMS",
+          message: "Organization missing name or legal name",
+        },
+      };
+    }
+    if (!NAME_REGEX.test(name)) {
+      return {
+        action: "INVALID_PARAMS",
+        error: {
+          type: "INVALID_PARAMS",
+          message: "Invalid name",
+        },
+      };
+    }
+
+    if (!NAME_REGEX.test(legalName)) {
+      return {
+        action: "INVALID_PARAMS",
+        error: {
+          type: "INVALID_PARAMS",
+          message: "Invalid legal name",
+        },
+      };
+    }
+    const organizationsContext = await this.contextFactory.createContext(OrganizationsContext);
+    const updatedOrg = await organizationsContext.updateOrganization(organization, {
+      name,
+      legalName,
+    });
+    return {
+      action: "UPDATE_ORGANIZATION_NAME_SUCCEEDED",
+      organization: updatedOrg,
+    };
   }
 }

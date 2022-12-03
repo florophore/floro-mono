@@ -1,0 +1,13 @@
+fragment CurrentUser on User {
+  id
+  firstName
+  lastName
+  username
+  freeDiskSpaceBytes
+  diskSpaceLimitBytes
+  utilizedDiskSpaceBytes
+  profilePhoto {
+    ...Photo
+  }
+}
+

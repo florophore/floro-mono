@@ -26,6 +26,7 @@ import OrganizationActiveMemberCountLoader from "../hooks/loaders/Organization/O
 import RepositoriesContext from "@floro/database/src/contexts/repositories/RepositoriesContext";
 import PhotosContext from "@floro/database/src/contexts/photos/PhotosContext";
 import { Photo } from "@floro/database/src/entities/Photo";
+import RootOrganizationMemberPermissionsLoader from "../hooks/loaders/Root/OrganizationID/RootOrganizationMemberPermissionsLoader";
 
 @injectable()
 export default class OrganizationResolverModule extends BaseResolverModule {
@@ -47,6 +48,7 @@ export default class OrganizationResolverModule extends BaseResolverModule {
 
   protected organizationSentInvitationsCountLoader!: OrganizationSentInvitationsCountLoader;
   protected organizationActiveMemberCountLoader!: OrganizationActiveMemberCountLoader;
+  protected rootOrganizationMemberPermissionsLoader!: RootOrganizationMemberPermissionsLoader;
 
   constructor(
     @inject(ContextFactory) contextFactory: ContextFactory,
@@ -64,7 +66,9 @@ export default class OrganizationResolverModule extends BaseResolverModule {
     @inject(OrganizationSentInvitationsCountLoader)
     organizationSentInvitationsCountLoader: OrganizationSentInvitationsCountLoader,
     @inject(OrganizationActiveMemberCountLoader)
-    organizationActiveMemberCountLoader: OrganizationActiveMemberCountLoader
+    organizationActiveMemberCountLoader: OrganizationActiveMemberCountLoader,
+    @inject(RootOrganizationMemberPermissionsLoader)
+    rootOrganizationMemberPermissionsLoader: RootOrganizationMemberPermissionsLoader
   ) {
     super();
     this.contextFactory = contextFactory;
@@ -83,14 +87,20 @@ export default class OrganizationResolverModule extends BaseResolverModule {
       organizationSentInvitationsCountLoader;
     this.organizationActiveMemberCountLoader =
       organizationActiveMemberCountLoader;
+    this.rootOrganizationMemberPermissionsLoader =
+      rootOrganizationMemberPermissionsLoader;
   }
 
   public Organization: main.OrganizationResolvers = {
     profilePhoto: async (organization) => {
       if (organization?.profilePhoto) return organization?.profilePhoto;
       if (!(organization as Organization)?.profilePhotoId) return null;
-      const photosContext = await this.contextFactory.createContext(PhotosContext);
-      const photo = await photosContext.getById((organization as Organization)?.profilePhotoId ?? "");
+      const photosContext = await this.contextFactory.createContext(
+        PhotosContext
+      );
+      const photo = await photosContext.getById(
+        (organization as Organization)?.profilePhotoId ?? ""
+      );
       return (photo as Photo) ?? null;
     },
     billingPlan: runWithHooks(
@@ -503,39 +513,40 @@ export default class OrganizationResolverModule extends BaseResolverModule {
       );
       return publicRepos as Repository[];
     },
-    privateRepositories: runWithHooks(() => [
-      this.organizationMemberLoader
-    ], async (organization, _, { cacheKey, currentUser }) => {
-      const organizationMembership =
-        this.requestCache.getOrganizationMembership(
+    privateRepositories: runWithHooks(
+      () => [this.organizationMemberLoader],
+      async (organization, _, { cacheKey, currentUser }) => {
+        const organizationMembership =
+          this.requestCache.getOrganizationMembership(
+            cacheKey,
+            organization.id,
+            currentUser.id
+          );
+        if (organizationMembership?.membershipState == "inactive") {
+          return null;
+        }
+        const cachedPublicRepos = this.requestCache.getOrganizationPrivateRepos(
           cacheKey,
-          organization.id,
-          currentUser.id
+          organization.id as string
         );
-      if (organizationMembership?.membershipState == "inactive") {
-        return null;
+        if (cachedPublicRepos) {
+          return cachedPublicRepos as Repository[];
+        }
+        const repositoriesContext = await this.contextFactory.createContext(
+          RepositoriesContext
+        );
+        const privateRepos = await repositoriesContext.getOrgReposByType(
+          organization.id as string,
+          true
+        );
+        this.requestCache.setOrganizationPrivateRepos(
+          cacheKey,
+          organization as Organization,
+          privateRepos
+        );
+        return privateRepos as Repository[];
       }
-      const cachedPublicRepos = this.requestCache.getOrganizationPrivateRepos(
-        cacheKey,
-        organization.id as string
-      );
-      if (cachedPublicRepos) {
-        return cachedPublicRepos as Repository[];
-      }
-      const repositoriesContext = await this.contextFactory.createContext(
-        RepositoriesContext
-      );
-      const privateRepos = await repositoriesContext.getOrgReposByType(
-        organization.id as string,
-        true
-      );
-      this.requestCache.setOrganizationPrivateRepos(
-        cacheKey,
-        organization as Organization,
-        privateRepos
-      );
-      return privateRepos as Repository[];
-    }),
+    ),
   };
 
   public Mutation: main.MutationResolvers = {
@@ -593,15 +604,96 @@ export default class OrganizationResolverModule extends BaseResolverModule {
         }
       }
     ),
+    updateOrganizationName: runWithHooks(
+      () => [
+        this.loggedInUserGuard,
+        this.rootOrganizationMemberPermissionsLoader,
+      ],
+      async (
+        _,
+        {
+          organizationId,
+          name,
+          legalName,
+        }: main.MutationUpdateOrganizationNameArgs,
+        { cacheKey, currentUser }
+      ) => {
+        const organization = this.requestCache.getOrganization(
+          cacheKey,
+          organizationId
+        );
+        if (!organization) {
+          return {
+            __typename: "UpdateOrganizationNameError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        const currentMember = this.requestCache.getOrganizationMembership(
+          cacheKey,
+          organizationId,
+          currentUser.id
+        );
+        if (!currentMember?.id) {
+          return {
+            __typename: "UpdateOrganizationNameError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        const permissions = this.requestCache.getMembershipPermissions(
+          cacheKey,
+          currentMember.id
+        );
+        if (!permissions) {
+          return {
+            __typename: "UpdateOrganizationNameError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        const result = await this.organizaionService.updateOrgName(
+          organization,
+          name,
+          legalName
+        );
+        if (result.action == "UPDATE_ORGANIZATION_NAME_SUCCEEDED") {
+          this.requestCache.setOrganization(
+            cacheKey,
+            result.organization as Organization
+          );
+          return {
+            __typename: "UpdateOrganizationNameSuccess",
+            organization: result.organization,
+          };
+        }
+        if (result.action == "LOG_ERROR") {
+          console.error(
+            result.error?.type,
+            result?.error?.message,
+            result?.error?.meta
+          );
+        }
+        return {
+          __typename: "UpdateOrganizationNameError",
+          message: result.error?.message ?? "Unknown Error",
+          type: result.error?.type ?? "UNKNOWN_ERROR",
+        };
+      }
+    ),
   };
 
   public Query: main.QueryResolvers = {
     organization: async (_, { id }, { cacheKey }) => {
-      const cachedOrg = this.requestCache.getOrganization(cacheKey, id);
-      if (cachedOrg) {
-        return cachedOrg;
-      }
       const organization = await this.organizaionService.fetchOrganization(id);
+      if (organization) {
+        this.requestCache.setOrganization(cacheKey, organization);
+      }
+      return organization;
+    },
+    organizationByHandle: async (_, { handle }, { cacheKey }) => {
+      const organization =
+        await this.organizaionService.fetchOrganizationByHandle(handle);
       if (organization) {
         this.requestCache.setOrganization(cacheKey, organization);
       }

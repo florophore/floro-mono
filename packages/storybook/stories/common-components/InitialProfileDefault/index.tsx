@@ -9,6 +9,7 @@ const Container = styled.div`
     justify-content: center;
     align-items: center;
     user-select: none;
+    border: 2px solid ${ColorPalette.white};
 `;
 
 const LetterContainer = styled.div`

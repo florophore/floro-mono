@@ -3,11 +3,11 @@ type User {
     firstName: String
     lastName: String
     username: String
-    organizations: [Organization] 
-    organizationInvitations: [OrganizationInvitation]
     freeDiskSpaceBytes: Float
     diskSpaceLimitBytes: Float
     utilizedDiskSpaceBytes: Float
+    organizations: [Organization] 
+    organizationInvitations: [OrganizationInvitation]
     sentReferrals: [Referral]
     sentClaimedReferrals: [Referral]
     claimedReferral: Referral
@@ -16,6 +16,9 @@ type User {
     privateRepositories: [Repository]
     profilePhoto: Photo
 }
+union CurrentUserResponse =
+  | User
+  | UnAuthenticatedError
 
 type UsernameCheckResult {
     exists: Boolean
@@ -50,4 +53,18 @@ type AcceptOrganizationInvitationError {
 union AcceptInvitationOrganizationResponse =
     AcceptOrganizationInvitationError
   | AcceptOrganizationInvitationSuccess
+  | UnAuthenticatedError
+
+type UpdateUserNameSuccess {
+  user: User
+}
+
+type UpdateUserNameError {
+  message: String
+  type: String
+}
+
+union UpdateUserNameResponse =
+    UpdateUserNameError
+  | UpdateUserNameSuccess
   | UnAuthenticatedError

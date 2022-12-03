@@ -2,9 +2,11 @@ extend type Query {
     user(id: ID!): User
     usernameCheck(username: String): UsernameCheckResult
     searchUsers(query: String!): [User]
+    currentUser: CurrentUserResponse
 }
 
 extend type Mutation {
     acceptOrganizationInvitation(invitationId: ID!): AcceptInvitationOrganizationResponse
     rejectOrganizationInvitation(invitationId: ID!): RejectInvitationOrganizationResponse
+    updateUserName(firstName: String, lastName: String): UpdateUserNameResponse
 }

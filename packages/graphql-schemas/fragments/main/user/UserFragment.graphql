@@ -3,6 +3,9 @@ fragment User on User {
   firstName
   lastName
   username
+  freeDiskSpaceBytes
+  diskSpaceLimitBytes
+  utilizedDiskSpaceBytes
   profilePhoto {
     ...Photo
   }

@@ -16,11 +16,11 @@ import { useOfflinePhoto } from "../../offline/OfflinePhotoContext";
 const Background = styled.div`
   background-color: ${(props) => props.theme.background};
   flex: 1;
-  height: 100%;
+  height: 600px;
   width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: flex-start;
   padding: 24px;
 `;
@@ -50,18 +50,20 @@ const CreateRepo = () => {
 
   return (
     <Background>
-      <Title>{"New Repository"}</Title>
-      <CreateRepoInputs
-        name={name}
-        repoType={"user_repo"}
-        onUpdateName={setName}
-        nameIsTaken={false}
-        user={currentUser}
-        offlinePhoto={offlinePhoto}
-      />
-      <div style={{marginTop: 200}}>
+      <div>
+        <Title>{"New Repository"}</Title>
+        <CreateRepoInputs
+          name={name}
+          repoType={"user_repo"}
+          onUpdateName={setName}
+          nameIsTaken={false}
+          user={currentUser}
+          offlinePhoto={offlinePhoto}
+        />
+      </div>
+      <div>
         <ButtonContainer>
-            <Button bg={"orange"} size={"big"} label={"Create Repo"} />
+          <Button bg={"orange"} size={"big"} label={"Create Repo"} isDisabled/>
         </ButtonContainer>
       </div>
     </Background>

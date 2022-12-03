@@ -1,0 +1,17 @@
+mutation UpdateOrganizationName($organizationId: ID! $name: String!, $legalName: String!) {
+  updateOrganizationName(organizationId: $organizationId, name: $name, legalName: $legalName) {
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+    ... on UpdateOrganizationNameError {
+      type
+      message
+    }
+    ... on UpdateOrganizationNameSuccess {
+      organization {
+         ...Organization
+      }
+    }
+  }
+}

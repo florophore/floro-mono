@@ -1,0 +1,17 @@
+mutation RemoveOrganizationProfilePhoto($organizationId: ID!) {
+  removeOrganizationProfilePhoto(organizationId: $organizationId) {
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+    ... on RemoveOrganizationProfilePhotoError {
+      type
+      message
+    }
+    ... on RemoveOrganizationProfilePhotoSuccess {
+      organization {
+        ...Organization
+      }
+    }
+  }
+}

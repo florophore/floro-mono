@@ -27,15 +27,25 @@ export default class OrganizationsContext extends BaseContext {
       relations: { profilePhoto: true },
     });
   }
+  public async getByHandle(handle: string): Promise<Organization | null> {
+    const qb = this.organizationRepo.createQueryBuilder(
+      "org",
+      this.queryRunner
+    );
+    return await qb
+      .where("LOWER(org.handle) = :handle")
+      .setParameter("handle", handle.trim().toLowerCase())
+      .getOne();
+  }
 
-  public async handleExists(username: string): Promise<boolean> {
+  public async handleExists(handle: string): Promise<boolean> {
     const qb = this.organizationRepo.createQueryBuilder(
       "org",
       this.queryRunner
     );
     const count = await qb
       .where("LOWER(org.handle) = :handle")
-      .setParameter("handle", username.trim().toLowerCase())
+      .setParameter("handle", handle.trim().toLowerCase())
       .getCount();
     return count > 0;
   }
@@ -73,18 +83,10 @@ export default class OrganizationsContext extends BaseContext {
     const ids = userOrgs?.map(org => org.id) ?? [];
     return await this.queryRunner.manager.find(Organization, {
       where: {
-        id: In(ids),
-        privateRepositories: {
-          isPrivate: true,
-        },
-        publicRepositories: {
-          isPrivate: false,
-        }
+        id: In(ids)
       },
       relations: {
         profilePhoto: true,
-        publicRepositories: true,
-        privateRepositories: true,
         organizationInvitations: {
           user: {
             profilePhoto: true
@@ -112,12 +114,6 @@ export default class OrganizationsContext extends BaseContext {
       },
       order: {
         name: "ASC",
-        publicRepositories: {
-          createdAt: 'DESC'
-        },
-        privateRepositories: {
-          createdAt: 'DESC'
-        },
         organizationMembers: {
           user: {
             firstName: "ASC",

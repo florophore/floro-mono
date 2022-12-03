@@ -27,9 +27,9 @@ type Organization {
 type OrganizationMember {
   id: ID
   internalHandle: String
+  membershipState: String
   user: User
   organization: Organization
-  membershipState: String
   permissions: OrganizationPermissions
   roles: [OrganizationRole]
 }
@@ -94,6 +94,20 @@ type CreateOrganizationError {
 union CreateOrganizationResponse =
     CreateOrganizationError
   | CreateOrganizationSuccess
+  | UnAuthenticatedError
+
+type UpdateOrganizationNameSuccess {
+  organization: Organization
+}
+
+type UpdateOrganizationNameError {
+  message: String
+  type: String
+}
+
+union UpdateOrganizationNameResponse =
+    UpdateOrganizationNameError
+  | UpdateOrganizationNameSuccess
   | UnAuthenticatedError
 
 type CreateOrganizationInvitationSuccess {

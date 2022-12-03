@@ -13,9 +13,10 @@ import Button from "@floro/storybook/stories/design-system/Button";
 import { useSession } from "../../session/session-context";
 import { useDaemonIsConnected } from "../../pubsub/socket";
 import RootPhotoCropper from "../RootPhotoCropper";
-import { User, useRemoveUserProfilePhotoMutation, useUploadUserProfilePhotoMutation } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import { User, useRemoveUserProfilePhotoMutation, useUploadUserProfilePhotoMutation, useCurrentUserHomeQuery, Organization } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import ChangeNameModal from "./ChangeNameModal";
 import { useOfflinePhoto, useSaveOfflinePhoto } from "../../offline/OfflinePhotoContext";
+import StorageTab from "@floro/storybook/stories/common-components/StorageTab";
 
 const Background = styled.div`
   background-color: ${(props) => props.theme.background};
@@ -132,7 +133,6 @@ const UserHome = (props: Props) => {
     },
     [profilePhotoFile, uploadPhoto]
   );
-
   useEffect(() => {
     if (uploadPhotoRequest.data?.uploadUserProfilePhoto?.__typename === "UploadUserProfilePhotoSuccess") {
       setShowProfilePictureCroppper(false);
@@ -182,13 +182,22 @@ const UserHome = (props: Props) => {
               <FollowerInfo
                 followerCount={0}
                 followingCount={0}
-                username={currentUser?.username ?? ""}
               />
               <div style={{ marginTop: 16, display: "flex" }}>
                 <UserSettingsTab />
               </div>
               <div style={{ marginTop: 16, display: "flex" }}>
                 <DevSettingsTab />
+              </div>
+              <div style={{ marginTop: 16, display: "flex" }}>
+                <StorageTab
+                  utilizedDiskSpaceBytes={
+                    currentUser?.utilizedDiskSpaceBytes ?? 0
+                  }
+                  diskSpaceLimitBytes={
+                    currentUser?.diskSpaceLimitBytes ?? 0
+                  }
+                />
               </div>
               <div style={{ marginTop: 16, display: "flex" }}>
                 <ConnectionStatusTab isConnected={isDaemonConnected ?? false} />

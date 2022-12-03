@@ -1,0 +1,12 @@
+fragment OrganizationPermissions on OrganizationPermissions {
+  canCreateRepos
+  canModifyOrganizationSettings
+  canModifyOrganizationDeveloperSettings
+  canModifyOrganizationMembers
+  canInviteMembers
+  canModifyInvites
+  canModifyOwnInternalHandle
+  canModifyBilling
+  canModifyOrganizationRoles
+  canAssignRoles
+}

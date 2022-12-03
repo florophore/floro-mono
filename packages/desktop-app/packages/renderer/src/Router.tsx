@@ -7,6 +7,7 @@ import HomePage from './home/HomePage';
 import CreateOrgPage from './create_org/CreateOrgPage';
 import {AnimatePresence} from 'framer-motion';
 import CreateUserRepoPage from './create_user_repo/CreateUserRepoPage';
+import OrganizationPage from './organization/OrganizationPage';
 
 const Router = (): React.ReactElement => {
     const location = useLocation();
@@ -19,7 +20,7 @@ const Router = (): React.ReactElement => {
           <Route path="/home" element={<HomePage />} />
           <Route path="/home/create-org" element={<CreateOrgPage />} />
           <Route path="/home/create-repo" element={<CreateUserRepoPage />} />
-          <Route path="/org/:organizationId/create-repo" element={<CreateOrgPage />} />
+          <Route path="/org/@/:handle" element={<OrganizationPage />} />
         </Routes>
       </AnimatePresence>
     );

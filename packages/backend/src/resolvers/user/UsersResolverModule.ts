@@ -22,9 +22,7 @@ import OrganizationInvitationService from "../../services/organizations/Organiza
 import ReferralsContext from "@floro/database/src/contexts/referrals/ReferralsContext";
 import RepositoriesContext from "@floro/database/src/contexts/repositories/RepositoriesContext";
 import { Repository } from "@floro/graphql-schemas/build/generated/main-graphql";
-import sharp from "sharp";
 import PhotoUploadService from "../../services/photos/PhotoUploadService";
-import { ReadStream } from "fs";
 import PhotosContext from "@floro/database/src/contexts/photos/PhotosContext";
 import { Photo } from "@floro/database/src/entities/Photo";
 
@@ -69,6 +67,15 @@ export default class UsersResolverModule extends BaseResolverModule {
       );
       return await usersContext.getById(id);
     },
+    currentUser: runWithHooks(
+      () => [this.loggedInUserGuard],
+      async (_root, _, { currentUser }) => {
+        return {
+          __typename: "User",
+          ...currentUser
+        };
+      }
+    ),
     usernameCheck: async (
       _root,
       { username }
@@ -104,6 +111,43 @@ export default class UsersResolverModule extends BaseResolverModule {
   };
 
   public Mutation: main.MutationResolvers = {
+    updateUserName: runWithHooks(
+      () => [],
+      async (
+        _root,
+        { firstName, lastName }: main.MutationUpdateUserNameArgs,
+        { currentUser }
+      ) => {
+        const result = await this.usersService.updateUserName(
+          currentUser,
+          firstName,
+          lastName
+        );
+        if (result.action == "UPDATE_USER_NAME_SUCCEEDED") {
+          return {
+            __typename: "UpdateUserNameSuccess",
+            user: result.user,
+          };
+        }
+        if (result.action == "LOG_ERROR") {
+          console.error(
+            result.error?.type,
+            result?.error?.message,
+            result?.error?.meta
+          );
+          return {
+            __typename: "UpdateUserNameError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        return {
+          __typename: "UpdateUserNameError",
+          message: result.error?.message ?? "Unknown Error",
+          type: result.error?.type ?? "UNKNOWN_ERROR",
+        };
+      }
+    ),
     acceptOrganizationInvitation: runWithHooks(
       () => [this.loggedInUserGuard],
       async (
@@ -216,8 +260,12 @@ export default class UsersResolverModule extends BaseResolverModule {
     profilePhoto: async (user) => {
       if (user?.profilePhoto) return user?.profilePhoto;
       if (!(user as User)?.profilePhotoId) return null;
-      const photosContext = await this.contextFactory.createContext(PhotosContext);
-      const photo = await photosContext.getById((user as User)?.profilePhotoId ?? "");
+      const photosContext = await this.contextFactory.createContext(
+        PhotosContext
+      );
+      const photo = await photosContext.getById(
+        (user as User)?.profilePhotoId ?? ""
+      );
       return (photo as Photo) ?? null;
     },
     freeDiskSpaceBytes: (user, _, { currentUser }) => {

@@ -1,0 +1,23 @@
+query OrganizationByHandle($handle: String!) {
+    organizationByHandle(handle: $handle) {
+        ...Organization
+        membership {
+            ...OrganizationMember
+            permissions {
+            ...OrganizationPermissions
+            }
+            roles {
+            ...OrganizationRole
+            }
+        }
+        members {
+            ...OrganizationMember
+            roles {
+            ...OrganizationRole
+            }
+        }
+        roles {
+        ...OrganizationRole
+        }
+    }
+}

@@ -21,7 +21,7 @@ export const OfflinePhotoProvider = (props: Props) => {
   }, []);
 
   const savePhoto = useCallback((photo: Photo) => {
-    if (photo?.id && photo?.url && !photos[photo.id]) {
+    if (photo?.hash && photo?.url && !photos[photo.hash]) {
       const image = new Image();
       image.crossOrigin = "Anonymous";
       image.onload = function () {
@@ -33,16 +33,39 @@ export const OfflinePhotoProvider = (props: Props) => {
         const dataURL = canvas.toDataURL(
           photo.mimeType === "jpeg" ? "image/jpeg" : "image/png"
         );
+        const photos = JSON.parse(localStorage.getItem('offline-photos') ?? "{}")
         const nextPhotos = {
           ...photos,
-          [photo.id as string]: dataURL,
+          [photo.hash as string]: dataURL,
         };
         localStorage.setItem("offline-photos", JSON.stringify(nextPhotos));
         setPhotos(nextPhotos);
       };
       image.src = photo.url;
     }
-  }, [photos]);
+    if (photo?.thumbnailHash && photo?.thumbnailUrl && !photos[photo.thumbnailHash]) {
+      const thumbImage = new Image();
+      thumbImage.crossOrigin = "Anonymous";
+      thumbImage.onload = function () {
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+        canvas.height = thumbImage.naturalHeight;
+        canvas.width = thumbImage.naturalWidth;
+        context?.drawImage?.(thumbImage, 0, 0);
+        const dataURL = canvas.toDataURL(
+          photo.mimeType === "jpeg" ? "image/jpeg" : "image/png"
+        );
+        const photos = JSON.parse(localStorage.getItem('offline-photos') ?? "{}")
+        const nextPhotos = {
+          ...photos,
+          [photo.thumbnailHash as string]: dataURL,
+        };
+        localStorage.setItem("offline-photos", JSON.stringify(nextPhotos));
+        setPhotos(nextPhotos);
+      };
+      thumbImage.src = photo.thumbnailUrl;
+    }
+  }, []);
 
   return (
     <OfflinePhotoContext.Provider value={{ photos, savePhoto }}>
@@ -56,10 +79,15 @@ export const useOfflinePhoto = (photo?: Photo|null) => {
   if (!photo) {
     return null;
   }
-  if (!photo?.id) {
+  if (!photo?.hash) {
     return null;
   }
-  return (offlinePhotosContext?.photos ?? {})?.[photo?.id] ?? null;
+  return (offlinePhotosContext?.photos ?? {})?.[photo?.hash] ?? null;
+};
+
+export const useOfflinePhotoMap = (photos?: (Photo|null)[]) => {
+  const offlinePhotosContext = useContext(OfflinePhotoContext);
+  return offlinePhotosContext?.photos ?? {};
 };
 
 export const useSaveOfflinePhoto = () => {

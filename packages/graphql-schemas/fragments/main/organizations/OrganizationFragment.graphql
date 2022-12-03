@@ -1,0 +1,19 @@
+fragment Organization on Organization {
+  id
+  name
+  legalName
+  handle
+  contactEmail
+  invitationsSentCount
+  membersActiveCount
+  remainingSeats
+  freeDiskSpaceBytes
+  diskSpaceLimitBytes
+  utilizedDiskSpaceBytes
+  billingStatus
+  billingPlan
+  profilePhoto {
+    ...Photo
+  }
+}
+

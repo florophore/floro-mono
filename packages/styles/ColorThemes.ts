@@ -51,6 +51,7 @@ export interface ColorTheme {
     dropdownDividerColor: string;
     repoSelectSubtitleTextColor: string;
     photoDeleteIconColor: string;
+    offlineWarningTabColor: string;
   };
   shadows: {
     modalContainer: string;
@@ -112,7 +113,8 @@ export const LightTheme: ColorTheme = {
     highlightedOptionBackgroundColor: palette.lightGray,
     dropdownDividerColor: palette.lightGray,
     repoSelectSubtitleTextColor: palette.gray,
-    photoDeleteIconColor: palette.red
+    photoDeleteIconColor: palette.red,
+    offlineWarningTabColor: palette.lightRed
   },
   shadows: {
     modalContainer: palette.mediumGray.substring(0, 7) + Opacity[70],
@@ -174,7 +176,8 @@ export const DarkTheme: ColorTheme = {
         highlightedOptionBackgroundColor: palette.mediumGray,
         dropdownDividerColor: palette.mediumGray,
         repoSelectSubtitleTextColor: palette.gray,
-        photoDeleteIconColor: palette.lightRed
+        photoDeleteIconColor: palette.lightRed,
+        offlineWarningTabColor: palette.lightRed
     },
     shadows: {
         modalContainer: palette.black.substring(0, 7) + Opacity[70],

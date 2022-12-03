@@ -120,7 +120,9 @@ export default class OrganizationInvitationsContext extends BaseContext {
         user: {
           profilePhoto: true
         },
-        invitedByUser: true,
+        invitedByUser: {
+          profilePhoto: true
+        },
         invitedByOrganizationMember: true,
         organizationInvitationRoles: {
           organizationRole: true,
@@ -146,7 +148,9 @@ export default class OrganizationInvitationsContext extends BaseContext {
       },
       relations: {
         user: true,
-        invitedByUser: true
+        invitedByUser: {
+          profilePhoto: true
+        }
       },
       order: {
         createdAt: "DESC",

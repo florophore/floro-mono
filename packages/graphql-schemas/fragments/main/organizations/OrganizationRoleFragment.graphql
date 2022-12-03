@@ -1,0 +1,16 @@
+fragment OrganizationRole on OrganizationRole {
+  id
+  name
+  isMutable
+  isDefault
+  canCreateRepos
+  canModifyOrganizationSettings
+  canModifyOrganizationDeveloperSettings
+  canModifyOrganizationMembers
+  canInviteMembers
+  canModifyInvites
+  canModifyOwnInternalHandle
+  canModifyBilling
+  canModifyOrganizationRoles
+  canAssignRoles
+}

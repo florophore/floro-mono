@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import styled from "@emotion/styled";
@@ -9,7 +9,11 @@ import { useSession } from "../../session/session-context";
 import SearchInput from "@floro/storybook/stories/design-system/SearchInput";
 import { useNavigationAnimatorContext } from "../../navigation/navigation-animator";
 import UserProfilePhoto from "@floro/storybook/stories/common-components/UserProfilePhoto";
+import OrgProfilePhoto from "@floro/storybook/stories/common-components/OrgProfilePhoto";
 import { useOfflinePhoto } from "../../offline/OfflinePhotoContext";
+import { useIsOnline } from "../../hooks/offline";
+import { Organization, useCurrentUserHomeQuery } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import UserOrgNavigator from "./UserOrgNavigator";
 
 const Main = styled.main`
   display: flex;
@@ -109,16 +113,29 @@ const Drag = css`
   cursor: drag;
 `;
 
-const mainVariants = {
-  open: {
-    right: 0,
-  },
-  closed: {
-    right: "-100%",
-  },
-};
+const OfflineIndicatorWrapper = styled.div`
+  position: absolute;
+  left: calc(50% - 72px);
+  background-color: ${props => props.theme.colors.offlineWarningTabColor};
+  height: 36px;
+  width: 144px;
+  border-top-right-radius: 8px;
+  border-top-left-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: bottom 300ms;
+`;
 
-const contentVariants = {
+const OfflineText = styled.span`
+  color: ${ColorPalette.white};
+  font-weight: 600;
+  font-size: 1.2rem;
+  font-family: "MavenPro";
+  text-align: center;
+`;
+
+const mainVariants = {
   open: {
     right: 0,
   },
@@ -131,12 +148,21 @@ export interface Props {
   page: string;
   children: React.ReactElement;
   title?: React.ReactElement | string;
+  organizationId?: string|null;
 }
 const OuterNavigator = (props: Props) => {
   const { currentUser } = useSession();
+  const isOnline = useIsOnline();
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isDragEnabled, setIsDragEnabled] = useState(true);
+
+  const offlineBottom = useMemo(() => {
+    if (isOnline) {
+      return -36;
+    }
+    return 0;
+  }, [isOnline])
 
   const onFocusSearch = useCallback(() => {
     setIsSearchFocused(true);
@@ -163,7 +189,6 @@ const OuterNavigator = (props: Props) => {
 
   const theme = useTheme();
   const navigationAnimator = useNavigationAnimatorContext();
-  const offlinePhoto = useOfflinePhoto(currentUser?.profilePhoto ?? null);
 
   return (
     <motion.div
@@ -175,15 +200,15 @@ const OuterNavigator = (props: Props) => {
       initial={{
         right: navigationAnimator.dashboardView ? "0%" : "-100%",
       }}
-      exit={{
-        right: "100%",
-      }}
       animate={navigationAnimator.dashboardView ? "open" : "closed"}
       transition={{ duration: 0.5 }}
       variants={mainVariants}
     >
       <Main>
         <header className={css([...dragClass, headerCss])}>
+          <OfflineIndicatorWrapper style={{bottom: offlineBottom}}>
+            <OfflineText>{'offline!'}</OfflineText>
+          </OfflineIndicatorWrapper>
           <Title
             onMouseEnter={onMouseOverSearch}
             onMouseLeave={onMouseLeaveSearch}
@@ -206,18 +231,9 @@ const OuterNavigator = (props: Props) => {
         </header>
 
         <BottomContainer>
-          <Navigator>
-            <NavOptionHighlight />
-            <NavOptionList>
-              <NavOption>
-                {currentUser && (
-                  <Link to={"/home"} style={{textDecoration: "none", display: "contents"}}>
-                    <UserProfilePhoto user={currentUser} size={56} offlinePhoto={offlinePhoto} />
-                  </Link>
-                )}
-              </NavOption>
-            </NavOptionList>
-          </Navigator>
+          {currentUser &&
+            <UserOrgNavigator page={props.page} organizationId={props?.organizationId}/>
+          }
           <Content>{props?.children}</Content>
         </BottomContainer>
       </Main>
