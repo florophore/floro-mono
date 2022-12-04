@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, useEffect } from "react";
+import React, { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import styled from "@emotion/styled";
@@ -157,6 +157,7 @@ const OuterNavigator = (props: Props) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isDragEnabled, setIsDragEnabled] = useState(true);
+  const searchRef = useRef<HTMLInputElement>(null);
 
   const offlineBottom = useMemo(() => {
     if (isOnline) {
@@ -190,6 +191,24 @@ const OuterNavigator = (props: Props) => {
 
   const theme = useTheme();
   const navigationAnimator = useNavigationAnimatorContext();
+
+  useEffect(() => {
+    const listener = (e) => {
+      if (
+        e.keyCode === 114 ||
+        (e.ctrlKey && e.keyCode === 70) ||
+        e.keyCode === 114 ||
+        (e.ctrlKey && e.keyCode === 70) ||
+        (e.metaKey && e.keyCode === 70)
+      ) {
+        searchRef?.current?.focus?.();
+      }
+    };
+    window.addEventListener('keydown', listener);
+    return () => {
+      window.removeEventListener('keydown', listener);
+    }
+  }, []);
 
   return (
     <motion.div
@@ -227,6 +246,7 @@ const OuterNavigator = (props: Props) => {
               onTextChanged={setSearchTerm}
               onFocus={onFocusSearch}
               onBlur={onBlurSearch}
+              ref={searchRef}
             />
           </SearchWrapper>
         </header>

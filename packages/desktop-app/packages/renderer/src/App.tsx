@@ -1,10 +1,11 @@
-import React, {useEffect, useState, useMemo} from 'react';
+import React, {useEffect, useMemo} from 'react';
 import {ThemeProvider} from '@emotion/react';
 import {BrowserRouter} from 'react-router-dom';
-import {DarkTheme, LightTheme} from '@floro/styles/ColorThemes';
+import { LightTheme} from '@floro/styles/ColorThemes';
 import Router from './Router';
 import {SystemAPIProvider} from './contexts/SystemAPIContext';
 import {ApolloClient, ApolloProvider, InMemoryCache, split} from '@apollo/client';
+import { useColorTheme } from "@floro/common-web/src/hooks/color-theme";
 
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
 import {createClient} from 'graphql-ws';
@@ -64,36 +65,9 @@ interface Props {
   systemAPI: SystemAPI;
 }
 
-const useSystemColorTheme = () => {
-  const [colorTheme, setColorTheme] = useState(LightTheme);
-  useEffect(() => {
-    (async () => {
-      const systemAPI = await window.systemAPI;
-      const systemTheme = await systemAPI.getSystemTheme();
-      if (systemTheme == 'light') {
-        setColorTheme(LightTheme);
-      }
-      if (systemTheme == 'dark') {
-        setColorTheme(DarkTheme);
-      }
-      const subscribe = await systemAPI.subscribeToSystemThemeChange;
-      subscribe((systemTheme: 'dark' | 'light') => {
-        if (systemTheme == 'light') {
-          setColorTheme(LightTheme);
-        }
-        if (systemTheme == 'dark') {
-          setColorTheme(DarkTheme);
-        }
-      });
-    })();
-  }, []);
-
-  return colorTheme;
-};
-
 const App = (props: Props): React.ReactElement => {
-  const colorTheme = useSystemColorTheme();
   const queryClient = useMemo(() => new QueryClient(), []);
+  const colorTheme = useColorTheme();
 
   useEffect(() => {
     if (colorTheme == LightTheme) {
@@ -101,7 +75,6 @@ const App = (props: Props): React.ReactElement => {
     } else {
       document.body.style.backgroundColor = ColorPalette.darkModeBG;
     }
-
   }, [colorTheme]);
 
   return (

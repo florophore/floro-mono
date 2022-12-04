@@ -54,6 +54,8 @@ export interface ColorTheme {
     photoDeleteIconColor: string;
     offlineWarningTabColor: string;
     tosLinkTextColor: string;
+    sidebarTitleTextColor: string;
+    sidebarTitleBorderColor: string;
   };
   shadows: {
     modalContainer: string;
@@ -118,7 +120,9 @@ export const LightTheme: ColorTheme = {
     photoDeleteIconColor: palette.red,
     offlineWarningTabColor: palette.lightRed,
     radioSelectFill: palette.purple,
-    tosLinkTextColor: palette.purple
+    tosLinkTextColor: palette.purple,
+    sidebarTitleTextColor: palette.purple,
+    sidebarTitleBorderColor: palette.purple,
   },
   shadows: {
     modalContainer: palette.mediumGray.substring(0, 7) + Opacity[70],
@@ -183,7 +187,9 @@ export const DarkTheme: ColorTheme = {
         photoDeleteIconColor: palette.lightRed,
         offlineWarningTabColor: palette.lightRed,
         radioSelectFill: palette.lightPurple,
-        tosLinkTextColor: palette.lightPurple
+        tosLinkTextColor: palette.lightPurple,
+        sidebarTitleTextColor: palette.lightPurple,
+        sidebarTitleBorderColor: palette.lightPurple,
     },
     shadows: {
         modalContainer: palette.black.substring(0, 7) + Opacity[70],

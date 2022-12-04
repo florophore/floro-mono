@@ -33,7 +33,7 @@ export const SessionProvider = (props: Props) => {
         setCurrentUser(null);
         setSession(null);
         removeClientSession();
-        apolloClient.resetStore();
+        apolloClient.clearStore();
         queryClient.resetQueries();
         try {
             // fire and forget
@@ -46,21 +46,21 @@ export const SessionProvider = (props: Props) => {
 
     useSocketEvent("login", (payload: PassedLoginAction) => {
         setClientSession(payload);
-        setCurrentUser({...payload.user} as User);
         setSession(payload.session as Session);
+        setCurrentUser({...payload.user} as User);
     }, [currentUser], false);
 
     useSocketEvent("session_updated", (payload: PassedLoginAction) => {
         setClientSession(payload);
-        setCurrentUser(payload.user as User);
         setSession(payload.session as Session);
+        setCurrentUser(payload.user as User);
     }, [], false);
 
     useSocketEvent("logout", () => {
         setCurrentUser(null);
         setSession(null);
         removeClientSession();
-        apolloClient.resetStore();
+        apolloClient.clearStore();
         queryClient.resetQueries();
         navigate("/");
     }, [navigate], false);

@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, } from "react-router-dom";
 import styled from "@emotion/styled";
 import ProfileInfo from "@floro/storybook/stories/common-components/ProfileInfo";
 import FollowerInfo from "@floro/storybook/stories/common-components/FollowerInfo";
@@ -18,6 +18,7 @@ import { User, useRemoveUserProfilePhotoMutation, useUploadUserProfilePhotoMutat
 import ChangeNameModal from "./ChangeNameModal";
 import { useOfflinePhoto, useSaveOfflinePhoto } from "../../offline/OfflinePhotoContext";
 import StorageTab from "@floro/storybook/stories/common-components/StorageTab";
+import HomeDashboard from "./HomeDashboard";
 
 const Background = styled.div`
   background-color: ${(props) => props.theme.background};
@@ -71,11 +72,7 @@ const TopInfo = styled.div`
   flex-direction: column;
 `;
 
-export interface Props {
-  isOpen?: boolean;
-}
-
-const UserHome = (props: Props) => {
+const UserHome = () => {
   const { currentUser, setCurrentUser } = useSession();
   const isDaemonConnected = useDaemonIsConnected();
   const navigate = useNavigate();
@@ -224,7 +221,11 @@ const UserHome = (props: Props) => {
             </ButtonActionWrapper>
           </BottomNavContainer>
         </UserNav>
-        <MainContent></MainContent>
+        <MainContent>
+          {currentUser &&
+            <HomeDashboard/>
+          }
+        </MainContent>
       </Background>
     </>
   );
