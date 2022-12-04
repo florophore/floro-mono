@@ -84,6 +84,7 @@ type OrganizationPermissions {
 
 type CreateOrganizationSuccess {
   organization: Organization
+  user: User
 }
 
 type CreateOrganizationError {

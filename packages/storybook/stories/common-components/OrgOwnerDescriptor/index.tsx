@@ -5,11 +5,12 @@ import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import InitialProfileDefault from "../InitialProfileDefault";
 import UserProfilePhoto from "../UserProfilePhoto";
-import { User } from "@floro/graphql-schemas/build/generated/main-graphql";
+import { Organization, User } from "@floro/graphql-schemas/build/generated/main-graphql";
+import OrgProfilePhoto from "../OrgProfilePhoto";
 
 export interface Props {
   label: string;
-  user: User;
+  organization: Organization;
   offlinePhoto?: string|null;
 }
 
@@ -21,6 +22,7 @@ const Container = styled.div`
   border-radius: 8px;
   transition: 500ms border-color;
   user-select: none;
+  min-width: 150px;
 `;
 
 const LabelContainer = styled.div`
@@ -80,11 +82,11 @@ const UsernameText = styled.span`
 
 const OwnerDescriptor = ({
   label,
-  user,
+  organization,
   offlinePhoto = null
 }: Props): React.ReactElement => {
   const theme = useTheme();
-  const usernameFormatted = useMemo(() => "@"+ user?.username,[user?.username]);
+  const usernameFormatted = useMemo(() => "@"+ organization?.handle,[organization?.handle]);
   return (
     <div>
       <Container
@@ -100,8 +102,8 @@ const OwnerDescriptor = ({
           <LabelBorderEnd style={{ right: -1 }} />
         </LabelContainer>
         <InfoContainer>
-          <UserProfilePhoto
-            user={user}
+          <OrgProfilePhoto
+            organization={organization}
             size={40}
             offlinePhoto={offlinePhoto}
           />

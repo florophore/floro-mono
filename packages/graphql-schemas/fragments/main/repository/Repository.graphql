@@ -1,0 +1,15 @@
+fragment Repository on Repository {
+  id
+  name
+  repoType
+  isPrivate
+  licenseCode
+  user {
+    ...User
+  }
+  organization {
+    ...Organization
+  }
+  createdAt
+  updatedAt
+}

@@ -24,7 +24,7 @@ export const useIsOnline = () => {
 
 export const useUserOrganizations = () => {
   const savePhoto = useSaveOfflinePhoto();
-  const { currentUser } = useSession();
+  const { currentUser, setCurrentUser } = useSession();
   const [fetchOrganizations, { data, loading, error }] =
     useCurrentUserHomeLazyQuery();
   const [organizations, setOrganizations] = useState<Organization[]>([]);
@@ -43,6 +43,7 @@ export const useUserOrganizations = () => {
           savePhoto(organization?.profilePhoto);
         }
       });
+      setCurrentUser(data?.currentUser ?? currentUser);
       setOrganizations(
         (data?.currentUser?.organizations ?? []) as Organization[]
       );

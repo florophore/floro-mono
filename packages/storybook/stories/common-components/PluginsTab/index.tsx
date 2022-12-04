@@ -2,8 +2,8 @@ import React, { useMemo } from 'react'
 import styled from '@emotion/styled';
 import ColorPalette from '@floro/styles/ColorPalette';
 import { useTheme } from '@emotion/react';
-import MemberSettingsIconLight from '@floro/common-assets/assets/images/icons/member_settings.light.svg';
-import MemberSettingsIconDark from '@floro/common-assets/assets/images/icons/member_settings.dark.svg';
+import PluginsIconLight from '@floro/common-assets/assets/images/icons/plugin.light.svg';
+import PluginsIconDark from '@floro/common-assets/assets/images/icons/plugin.dark.svg';
 
 const Container = styled.div`
     display: flex;
@@ -38,23 +38,23 @@ const TextSpan = styled.span`
 export interface Props {
 }
 
-const MemberSettingsTab = (props: Props): React.ReactElement => {
+const PluginsTab = (props: Props): React.ReactElement => {
   const theme = useTheme();
-  const memberSettingsIcon = useMemo(() => {
+  const pluginsIcon = useMemo(() => {
     if (theme.name == "light") {
-      return MemberSettingsIconLight;
+      return PluginsIconLight;
     }
-    return MemberSettingsIconDark;
+    return PluginsIconDark;
   }, [theme.name]);
 
   return (
     <Container>
-      <Icon src={memberSettingsIcon} />
+      <Icon src={pluginsIcon} />
       <TextContainer>
-        <TextSpan>{"My Membership Settings"}</TextSpan>
+        <TextSpan>{"Plugins"}</TextSpan>
       </TextContainer>
     </Container>
   );
 };
 
-export default React.memo(MemberSettingsTab);
+export default React.memo(PluginsTab);

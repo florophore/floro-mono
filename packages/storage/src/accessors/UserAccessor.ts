@@ -3,7 +3,6 @@ import StorageDriver from '../drivers/StrorageDriver';
 import StorageClient from '../StorageClient';
 import { User } from "@floro/database/src/entities/User";
 import path from 'path';
-import fs from 'fs';
 
 @injectable()
 export default class UserAccessor {

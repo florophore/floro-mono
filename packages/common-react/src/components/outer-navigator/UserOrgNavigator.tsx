@@ -11,6 +11,7 @@ import {
 } from "../../offline/OfflinePhotoContext";
 import { useUserOrganizations } from "../../hooks/offline";
 import UserProfilePhoto from "@floro/storybook/stories/common-components/UserProfilePhoto";
+import { useNavigationAnimatorContext } from "../../navigation/navigation-animator";
 
 const Navigator = styled.main`
   width: 72px;
@@ -98,6 +99,7 @@ const mainVariants = {
 interface Props {
   organizationId?: string | null;
   page: string;
+  outerNavTab: string;
 }
 
 const UserOrgNavigator = (props: Props) => {
@@ -105,14 +107,16 @@ const UserOrgNavigator = (props: Props) => {
   const offlinePhoto = useOfflinePhoto(currentUser?.profilePhoto ?? null);
   const offlinePhotoMap = useOfflinePhotoMap();
   const organizations = useUserOrganizations();
+  const homeHighlightBackground = useMemo(() => {
+    return props.outerNavTab == "home" ? ColorPalette.lightPurple : "none";
+  }, [props.outerNavTab]);
 
   return (
     <Navigator>
       <NavOptionList>
         <NavOption
           style={{
-            backgroundColor:
-              props?.page == "home" ? ColorPalette.lightPurple : "none",
+            backgroundColor: homeHighlightBackground,
           }}
         >
           {currentUser && (
@@ -134,7 +138,7 @@ const UserOrgNavigator = (props: Props) => {
             : null;
           return (
             <NavOption
-              key={index}
+              key={organization.id}
               style={{
                 backgroundColor:
                   props?.organizationId == organization.id

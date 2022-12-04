@@ -5,7 +5,13 @@ query CurrentUserHome {
       message
     }
     ... on User {
-      ...CurrentUser
+      ...CurrentUser,
+      privateRepositories {
+        ...Repository
+      }
+      publicRepositories {
+        ...Repository
+      }
       organizations {
           ...Organization
           membership {

@@ -11,7 +11,8 @@ import InfoLightIcon from "@floro/common-assets/assets/images/icons/info.light.s
 import InfoDarkIcon from "@floro/common-assets/assets/images/icons/info.dark.svg";
 import RedXCircleLightIcon from "@floro/common-assets/assets/images/icons/red_x_circle.light.svg";
 import RedXCircleDarkIcon from "@floro/common-assets/assets/images/icons/red_x_circle.dark.svg";
-import CheckMarkCircleIcon from "@floro/common-assets/assets/images/icons/check_mark_circle.svg";
+import CheckMarkCircleLightIcon from "@floro/common-assets/assets/images/icons/check_mark_circle.light.svg";
+import CheckMarkCircleDarkIcon from "@floro/common-assets/assets/images/icons/check_mark_circle.dark.svg";
 import ProfanityFilter from "bad-words";
 
 import Input from "@floro/storybook/stories/design-system/Input";
@@ -101,7 +102,7 @@ const TOSLink = styled.span`
   padding: 0;
   margin: 0;
   text-decoration: underline;
-  color: ${ColorPalette.purple};
+  color: ${props => props.theme.colors.tosLinkTextColor};
   cursor: pointer;
 `;
 
@@ -165,6 +166,13 @@ const SignupInputs = (props: Props): React.ReactElement => {
     setIsFocusedOnTooltip(isFocused);
   }, []);
 
+  const CheckMarkCircleIcon = useMemo(() => {
+    if (theme.name == "light") {
+      return CheckMarkCircleLightIcon;
+    }
+    return CheckMarkCircleDarkIcon;
+  }, [theme.name]);
+
   const infoIcon = useMemo(() => {
     if (
       usernameIsValid &&
@@ -188,6 +196,7 @@ const SignupInputs = (props: Props): React.ReactElement => {
     usernameIsFocused,
     isHoveringTooltip,
     isFocusedOnTooltip,
+    CheckMarkCircleIcon
   ]);
 
   const redXCircle = useMemo(() => {

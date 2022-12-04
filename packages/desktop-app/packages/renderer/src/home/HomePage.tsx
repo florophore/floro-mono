@@ -19,7 +19,7 @@ const HomePage = () => {
     });
 
     return (
-      <OuterNavigator page={'home'} title={title}>
+      <OuterNavigator outerNavTab={'home'} page={'home'} title={title}>
         <UserHome/>
       </OuterNavigator>
     );

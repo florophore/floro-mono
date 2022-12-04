@@ -16,5 +16,6 @@ export const setClientSession = (
 export const removeClientSession = () => {
   localStorage.removeItem("user");
   localStorage.removeItem("session");
+  localStorage.removeItem("offline-organizations");
   Cookies.remove("user-session");
 };

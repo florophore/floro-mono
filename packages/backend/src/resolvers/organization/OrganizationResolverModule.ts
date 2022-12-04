@@ -580,6 +580,7 @@ export default class OrganizationResolverModule extends BaseResolverModule {
             return {
               __typename: "CreateOrganizationSuccess",
               organization: result.organization,
+              user: currentUser
             };
           }
           if (result.action == "LOG_ERROR") {

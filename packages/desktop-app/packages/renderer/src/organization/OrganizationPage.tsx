@@ -37,12 +37,12 @@ const OrganizationPage = () => {
 
   useNavigationAnimator({
     dashboardView: true,
-    outerNavTab: 'home',
-    innerNavTab: 'home',
+    outerNavTab: 'org',
+    innerNavTab: 'org',
   });
 
   return (
-    <OuterNavigator page={'organization'} title={title} organizationId={organization?.id ?? null}>
+    <OuterNavigator outerNavTab={'org'} page={'organization'} title={title} organizationId={organization?.id ?? null}>
       <OrgHome organization={organization}/>
     </OuterNavigator>
   );

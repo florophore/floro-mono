@@ -29,7 +29,7 @@ const DropdownContainer = styled.div`
   box-shadow: ${(props) => `0px 4px 8px ${props.theme.shadows.outerDropdown}`};
 `;
 const InnerContainer = styled.div`
-  max-height: 300px;
+  max-height: 250px;
   width: 100%;
   border-radius: 8px;
   padding: 24px;
@@ -127,7 +127,7 @@ export interface Option<T> {
 export interface Props<T> {
   options: Option<T>[];
   label: string;
-  value?: string;
+  value?: string|null;
   placeholder: string;
   isLoading?: boolean;
   isValid?: boolean;
@@ -154,7 +154,18 @@ const InputSelector = <T,>({
   placeholder,
   ...rest
 }: Props<T>) => {
-  const [text, setText] = useState(value ?? "");
+
+  const initTextValue = useMemo(() => {
+    if (!value) return "";
+    const option = rest.options.find?.(option => option.value == value);
+    if (!option) return "";
+    if (typeof option.label == "string") {
+      return option.label;
+    }
+    return option.textValue ?? "";
+  }, [value, rest.options])
+
+  const [text, setText] = useState(initTextValue);
   const [isFocused, setIsFocused] = useState(false);
   const [isHoveringList, setIsHoveringList] = useState(false);
   const [isTapping, setIsTapping] = useState(false);

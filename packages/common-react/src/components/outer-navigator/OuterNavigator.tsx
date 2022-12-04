@@ -149,6 +149,7 @@ export interface Props {
   children: React.ReactElement;
   title?: React.ReactElement | string;
   organizationId?: string|null;
+  outerNavTab: string;
 }
 const OuterNavigator = (props: Props) => {
   const { currentUser } = useSession();
@@ -232,7 +233,7 @@ const OuterNavigator = (props: Props) => {
 
         <BottomContainer>
           {currentUser &&
-            <UserOrgNavigator page={props.page} organizationId={props?.organizationId}/>
+            <UserOrgNavigator outerNavTab={props.outerNavTab} page={props.page} organizationId={props?.organizationId}/>
           }
           <Content>{props?.children}</Content>
         </BottomContainer>

@@ -41,7 +41,7 @@ const Circle = styled.div`
   height: 16px;
   width: 16px;
   border-radius: 50%;
-  background: ${ColorPalette.purple};
+  background: ${props => props.theme.colors.radioSelectFill};
 `;
 
 export interface Props {
@@ -84,9 +84,12 @@ const Checkbox = (props: Props) => {
 
   const border = useMemo(() => {
     if (isFocused || isHovering) {
+      if (theme.name == "light") {
         return `2px solid ${ColorPalette.purple}`;
+      }
+      return `2px solid ${ColorPalette.lightPurple}`;
     }
-    return `2px solid ${theme.colors.radioBorder}`
+    return `2px solid ${theme.colors.radioBorder}`;
   }, [theme.name, isFocused, isHovering]);
 
   return (

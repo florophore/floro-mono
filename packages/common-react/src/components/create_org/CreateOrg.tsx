@@ -139,8 +139,7 @@ const CreateOrg = () => {
 
   useEffect(() => {
     if (createOrgRequest?.data?.createOrganization?.__typename == "CreateOrganizationSuccess") {
-      console.log(createOrgRequest?.data?.createOrganization?.organization);
-      alert("change pages")
+      navigate(`/org/@/${createOrgRequest?.data?.createOrganization?.organization?.handle}`);
     } 
   }, [createOrgRequest?.data?.createOrganization, navigate])
 

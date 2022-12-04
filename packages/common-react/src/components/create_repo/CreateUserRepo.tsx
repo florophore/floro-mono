@@ -9,14 +9,14 @@ import { useSession } from "../../session/session-context";
 import debouncer from 'lodash.debounce';
 import EmailValidator from 'email-validator';
 import ProfanityFilter from "bad-words";
-import { NAME_REGEX, USERNAME_REGEX } from "@floro/common-web/src/utils/validators";
-import { useUsernameCheckLazyQuery, useCreateOrganizationMutation } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import { NAME_REGEX, REPO_REGEX, USERNAME_REGEX } from "@floro/common-web/src/utils/validators";
+import { useUsernameCheckLazyQuery, useCreateOrganizationMutation, Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { useOfflinePhoto } from "../../offline/OfflinePhotoContext";
 
 const Background = styled.div`
   background-color: ${(props) => props.theme.background};
   flex: 1;
-  height: 600px;
+  height: 770px;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -40,13 +40,36 @@ const ButtonContainer = styled.div`
   margin-top: 12px;
 `
 
-const CreateRepo = () => {
+interface Props {
+  repositories: Repository[];
+}
+
+const CreateUserRepo = (props: Props) => {
   const { currentUser, session } = useSession();
   const navigate = useNavigate();
+  const profanityFilter = useMemo(() => new ProfanityFilter(), []);
   const [name, setName] = useState("");
-  const [isPrivate, setIsPrivate] = useState("");
-  const [license, setLicense] = useState(null);
+  const [isPrivate, setIsPrivate] = useState(false);
+  const [license, setLicense] = useState<string|null>(null);
   const offlinePhoto = useOfflinePhoto(currentUser?.profilePhoto ?? null);
+  const nameIsTaken = useMemo(() => {
+    return !!props.repositories?.find(repo => {
+      return repo.name?.toLowerCase() == name.toLowerCase();
+    });
+  }, [props.repositories, name])
+
+  const isValid = useMemo(() => {
+    if (!REPO_REGEX.test(name)) {
+      return false;
+    }
+    if (profanityFilter.isProfane(name)) {
+      return false;
+    }
+    if (!isPrivate) {
+      return !!license;
+    }
+    return !nameIsTaken;
+  }, [nameIsTaken, name, isPrivate, license, profanityFilter]);
 
   return (
     <Background>
@@ -56,18 +79,27 @@ const CreateRepo = () => {
           name={name}
           repoType={"user_repo"}
           onUpdateName={setName}
-          nameIsTaken={false}
+          nameIsTaken={nameIsTaken}
           user={currentUser}
           offlinePhoto={offlinePhoto}
+          isPrivate={isPrivate}
+          onChangeIsPrivate={setIsPrivate}
+          license={license}
+          onChangeLicense={setLicense}
         />
       </div>
       <div>
         <ButtonContainer>
-          <Button bg={"orange"} size={"big"} label={"Create Repo"} isDisabled/>
+          <Button
+            bg={"orange"}
+            size={"big"}
+            label={"Create Repo"}
+            isDisabled={!isValid}
+          />
         </ButtonContainer>
       </div>
     </Background>
   );
 };
 
-export default React.memo(CreateRepo);
+export default React.memo(CreateUserRepo);

@@ -14,6 +14,7 @@ import {
   User,
 } from "@floro/graphql-schemas/build/generated/main-graphql";
 import OwnerDescriptor from "../OwnerDescriptor";
+import OrgOwnerDescriptor from "../OrgOwnerDescriptor";
 import RepoPrivateSelect from "../RepoPrivateSelect";
 import InputSelector from "../../design-system/InputSelector";
 import ToolTip from "../../design-system/ToolTip";
@@ -97,12 +98,15 @@ export interface Props {
   user?: User|null;
   organization?: Organization;
   offlinePhoto?: string|null;
+  isPrivate: boolean;
+  onChangeIsPrivate: (isPrivate: boolean) => void;
+  license: string|null;
+  onChangeLicense: (license: string|null) => void;
 }
 
 const CreateRepoInputs = (props: Props): React.ReactElement => {
   const theme = useTheme();
   const profanityFilter = useMemo(() => new ProfanityFilter(), []);
-  const [isPrivate, setIsPrivate] = useState(props?.repoType == "org_repo");
 
   const nameInputIsValid = useMemo(() => {
     if (props.nameIsTaken) {
@@ -113,6 +117,10 @@ const CreateRepoInputs = (props: Props): React.ReactElement => {
     }
     return false;
   }, [props.name, props.nameIsTaken]);
+
+  const onChangeLicense = useCallback((option) => {
+    props.onChangeLicense(option?.value ?? null)
+  }, [props.onChangeLicense]);
 
   return (
     <Container>
@@ -129,6 +137,13 @@ const CreateRepoInputs = (props: Props): React.ReactElement => {
             <OwnerDescriptor
               label="owner"
               user={props.user}
+              offlinePhoto={props.offlinePhoto}
+            />
+          }
+          {props?.organization &&
+            <OrgOwnerDescriptor
+              label="owner"
+              organization={props?.organization}
               offlinePhoto={props.offlinePhoto}
             />
           }
@@ -161,11 +176,11 @@ const CreateRepoInputs = (props: Props): React.ReactElement => {
           margin-bottom: 12px;
         `}
       >
-        <RepoPrivateSelect isPrivate={isPrivate} onChange={setIsPrivate} />
+        <RepoPrivateSelect isPrivate={props.isPrivate} onChange={props.onChangeIsPrivate} />
       </div>
-      {!isPrivate &&
+      {!props.isPrivate &&
         <div>
-          <InputSelector label={"license"} placeholder={"select a license"} options={options} />
+          <InputSelector value={props.license} onChange={onChangeLicense} label={"license"} placeholder={"select a license"} options={options} />
         </div>
       }
     </Container>

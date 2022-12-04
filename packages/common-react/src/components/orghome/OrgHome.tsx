@@ -9,7 +9,6 @@ import StorageTab from "@floro/storybook/stories/common-components/StorageTab";
 import BillingTab from "@floro/storybook/stories/common-components/BillingTab";
 import OrgFollowerTab from "@floro/storybook/stories/common-components/OrgFollowerTab";
 import MembersInfoTab from "@floro/storybook/stories/common-components/MembersInfoTab";
-import ConnectionStatusTab from "@floro/storybook/stories/common-components/ConnectionStatusTab";
 import { CropArea } from "@floro/storybook/stories/common-components/PhotoCropper";
 import Button from "@floro/storybook/stories/design-system/Button";
 import { useDaemonIsConnected } from "../../pubsub/socket";
@@ -24,6 +23,7 @@ import {
   useSaveOfflinePhoto,
 } from "../../offline/OfflinePhotoContext";
 import ChangeOrgNameModal from "./ChangeOrgNameModal";
+import PluginsTab from "@floro/storybook/stories/common-components/PluginsTab";
 
 const Background = styled.div`
   background-color: ${(props) => props.theme.background};
@@ -82,20 +82,17 @@ export interface Props {
 }
 
 const OrgHome = (props: Props) => {
-  const isDaemonConnected = useDaemonIsConnected();
   const navigate = useNavigate();
   const [uploadPhoto, uploadPhotoRequest] =
     useUploadOrganizationProfilePhotoMutation();
   const [removePhoto, removePhotoRequest] =
     useRemoveOrganizationProfilePhotoMutation();
 
-  const onGoToCreateOrg = useCallback(() => {
-    navigate("/home/create-org");
-  }, [navigate]);
-
-  const onGoToCreateUserRepo = useCallback(() => {
-    navigate("/home/create-repo");
-  }, [navigate]);
+  const onGoToCreateOrgRepo = useCallback(() => {
+    if (props.organization) {
+      navigate(`/org/@/${props.organization.handle}/create-repo`);
+    }
+  }, [navigate, props.organization]);
 
   const [profilePhotoFile, setProfilePhotoFile] = useState<null | File>(null);
   const [profilePhotoFileString, setProfilePhotoFileString] =
@@ -160,13 +157,22 @@ const OrgHome = (props: Props) => {
   );
 
   useEffect(() => {
-    if (uploadPhotoRequest.data?.uploadOrganizationProfilePhoto?.__typename === "UploadOrganizationProfilePhotoSuccess") {
+    if (
+      uploadPhotoRequest.data?.uploadOrganizationProfilePhoto?.__typename ===
+      "UploadOrganizationProfilePhotoSuccess"
+    ) {
       setShowProfilePictureCroppper(false);
-      if (uploadPhotoRequest.data?.uploadOrganizationProfilePhoto?.organization?.profilePhoto?.id) {
-        savePhoto(uploadPhotoRequest.data?.uploadOrganizationProfilePhoto?.organization?.profilePhoto);
+      if (
+        uploadPhotoRequest.data?.uploadOrganizationProfilePhoto?.organization
+          ?.profilePhoto?.id
+      ) {
+        savePhoto(
+          uploadPhotoRequest.data?.uploadOrganizationProfilePhoto?.organization
+            ?.profilePhoto
+        );
       }
     }
-  }, [uploadPhotoRequest.data, savePhoto])
+  }, [uploadPhotoRequest.data, savePhoto]);
 
   return (
     <>
@@ -191,7 +197,10 @@ const OrgHome = (props: Props) => {
             <ProfileInfoWrapper>
               <OrgProfileInfo
                 organization={props.organization}
-                isEdittable={true}
+                isEdittable={
+                  props?.organization?.membership?.permissions
+                    ?.canModifyOrganizationSettings ?? false
+                }
                 onSelectFile={onSelectUploadPhoto}
                 isLoading={
                   removePhotoRequest.loading || uploadPhotoRequest.loading
@@ -222,6 +231,9 @@ const OrgHome = (props: Props) => {
                   <DevSettingsTab />
                 </div>
                 <div style={{ marginTop: 16, display: "flex" }}>
+                  <PluginsTab />
+                </div>
+                <div style={{ marginTop: 16, display: "flex" }}>
                   <StorageTab
                     utilizedDiskSpaceBytes={
                       props?.organization?.utilizedDiskSpaceBytes ?? 0
@@ -236,13 +248,16 @@ const OrgHome = (props: Props) => {
                 </div>
               </TopInfo>
               <ButtonActionWrapper>
-                <Button
-                  onClick={onGoToCreateUserRepo}
-                  style={{ marginBottom: 16 }}
-                  label={"create repo"}
-                  size={"medium"}
-                  bg={"purple"}
-                />
+                {props?.organization?.membership?.permissions
+                  ?.canCreateRepos && (
+                  <Button
+                    onClick={onGoToCreateOrgRepo}
+                    style={{ marginBottom: 16 }}
+                    label={"create repo"}
+                    size={"medium"}
+                    bg={"purple"}
+                  />
+                )}
               </ButtonActionWrapper>
             </BottomNavContainer>
           </UserNav>

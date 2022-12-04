@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import OuterNavigator from '@floro/common-react/src/components/outer-navigator/OuterNavigator';
 import { useSession } from '@floro/common-react/src/session/session-context';
 import { useNavigationAnimator } from '@floro/common-react/src/navigation/navigation-animator';
-import CreateRepo from '@floro/common-react/src/components/create_repo/CreateRepo';
+import CreateUserRepo from '@floro/common-react/src/components/create_repo/CreateUserRepo';
 import { useLinkTitle } from '@floro/common-react/src/components/header_links/HeaderLink';
+import type { Repository } from '@floro/graphql-schemas/src/generated/main-client-graphql';
 
 const CreateUserRepoPage = () => {
     const {currentUser} = useSession();
@@ -13,7 +14,7 @@ const CreateUserRepoPage = () => {
       next: {
         prefix: '>',
         label: 'Create Repository',
-      }
+      },
     }, [currentUser?.username]);
 
     useNavigationAnimator({
@@ -22,9 +23,13 @@ const CreateUserRepoPage = () => {
       innerNavTab: 'create-org',
     });
 
+    const existingRepos: Repository[] = useMemo(() => {
+      return [...(currentUser?.publicRepositories as Repository[] ?? []), ...(currentUser?.privateRepositories as Repository[] ?? [])];
+    }, [currentUser?.publicRepositories, currentUser?.privateRepositories]);
+
     return (
-      <OuterNavigator page={'create-org'} title={title}>
-        <CreateRepo/>
+      <OuterNavigator outerNavTab={'home'} page={'create-org'} title={title}>
+        <CreateUserRepo repositories={existingRepos}/>
       </OuterNavigator>
     );
 };

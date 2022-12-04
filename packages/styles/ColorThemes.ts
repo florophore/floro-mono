@@ -10,6 +10,7 @@ export interface ColorTheme {
     checkboxBorder: string;
     checkboxFill: string;
     radioFill: string;
+    radioSelectFill: string;
     radioBorder: string;
     googleButtonBackground: string;
     googleButtonText: string;
@@ -52,6 +53,7 @@ export interface ColorTheme {
     repoSelectSubtitleTextColor: string;
     photoDeleteIconColor: string;
     offlineWarningTabColor: string;
+    tosLinkTextColor: string;
   };
   shadows: {
     modalContainer: string;
@@ -114,7 +116,9 @@ export const LightTheme: ColorTheme = {
     dropdownDividerColor: palette.lightGray,
     repoSelectSubtitleTextColor: palette.gray,
     photoDeleteIconColor: palette.red,
-    offlineWarningTabColor: palette.lightRed
+    offlineWarningTabColor: palette.lightRed,
+    radioSelectFill: palette.purple,
+    tosLinkTextColor: palette.purple
   },
   shadows: {
     modalContainer: palette.mediumGray.substring(0, 7) + Opacity[70],
@@ -157,9 +161,9 @@ export const DarkTheme: ColorTheme = {
         tooltipOuterShadowColor: palette.black,
         signupTooltipUsernameTitle: palette.white,
         signupTooltipUsernameInstruction: palette.white,
-        signupTooltipUsernameEmphasizedSymbols: palette.purple,
+        signupTooltipUsernameEmphasizedSymbols: palette.lightPurple,
         signupTooltipUsernameErrorText: palette.lightRed,
-        signupTooltipUsernameValidText: palette.purple,
+        signupTooltipUsernameValidText: palette.lightPurple,
         heroHeaderBackgroundColor: palette.darkPurple,
         heroHeaderTextColor: palette.purple,
         profileInfoNameTextColor: palette.lightPurple,
@@ -168,16 +172,18 @@ export const DarkTheme: ColorTheme = {
         followerTextColor: palette.white,
         connectionTextColor: palette.white,
         commonBorder: palette.white,
-        titleTextColor: palette.purple,
+        titleTextColor: palette.lightPurple,
         ownerDescriptorUsernameColor: palette.lightPurple,
-        slashRepoCreateColor: palette.purple,
+        slashRepoCreateColor: palette.lightPurple,
         privateSelectTextColor: palette.white,
         optionTextColor: palette.white,
         highlightedOptionBackgroundColor: palette.mediumGray,
         dropdownDividerColor: palette.mediumGray,
         repoSelectSubtitleTextColor: palette.gray,
         photoDeleteIconColor: palette.lightRed,
-        offlineWarningTabColor: palette.lightRed
+        offlineWarningTabColor: palette.lightRed,
+        radioSelectFill: palette.lightPurple,
+        tosLinkTextColor: palette.lightPurple
     },
     shadows: {
         modalContainer: palette.black.substring(0, 7) + Opacity[70],

@@ -38,6 +38,12 @@ mutation CreateOrganization(
           ...OrganizationRole
         }
       }
+      user {
+        id
+        organizations {
+          ...Organization
+        }
+      }
     }
     ... on CreateOrganizationError {
       message

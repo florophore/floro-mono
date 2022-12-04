@@ -5,6 +5,7 @@ import ProfileInfo from "@floro/storybook/stories/common-components/ProfileInfo"
 import FollowerInfo from "@floro/storybook/stories/common-components/FollowerInfo";
 import UserSettingsTab from "@floro/storybook/stories/common-components/UserSettingsTab";
 import DevSettingsTab from "@floro/storybook/stories/common-components/DevSettingsTab";
+import PluginsTab from "@floro/storybook/stories/common-components/PluginsTab";
 import ConnectionStatusTab from "@floro/storybook/stories/common-components/ConnectionStatusTab";
 import {
   CropArea,
@@ -188,6 +189,9 @@ const UserHome = (props: Props) => {
               </div>
               <div style={{ marginTop: 16, display: "flex" }}>
                 <DevSettingsTab />
+              </div>
+              <div style={{ marginTop: 16, display: "flex" }}>
+                <PluginsTab />
               </div>
               <div style={{ marginTop: 16, display: "flex" }}>
                 <StorageTab

@@ -86,7 +86,7 @@ const ChangeOrgNameModal = (props: Props) => {
       disableBackgroundDismiss
       headerChildren={
         <HeaderWrapper>
-          <HeaderSubtitle>{"update name"}</HeaderSubtitle>
+          <HeaderSubtitle>{"update org name"}</HeaderSubtitle>
         </HeaderWrapper>
       }
     >

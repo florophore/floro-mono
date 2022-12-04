@@ -11,9 +11,7 @@ const Template = (args) => <OwnerDescriptor {...args} />;
 export const Primary: any = Template.bind({});
 Primary.args = {
     label: "owner",
-    user: {
-      firstName: "jamie",
-      lastName: "sunderland",
-      username: "jamie.sunderland"
-    }
+    firstName: "jamie",
+    lastName: "sunderland",
+    username: "jamie.sunderland"
 };

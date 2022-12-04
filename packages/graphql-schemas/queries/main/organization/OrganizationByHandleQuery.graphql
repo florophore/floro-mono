@@ -1,6 +1,12 @@
 query OrganizationByHandle($handle: String!) {
     organizationByHandle(handle: $handle) {
         ...Organization
+        privateRepositories {
+            ...Repository
+        }
+        publicRepositories {
+            ...Repository
+        }
         membership {
             ...OrganizationMember
             permissions {

@@ -12,6 +12,7 @@ const ImageWrapper = styled.div`
   align-items: center;
   border: 2px solid ${ColorPalette.white};
   background-color: ${ColorPalette.white};
+  user-select: none;
 `;
 
 const Image = styled.img`

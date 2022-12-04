@@ -91,7 +91,10 @@ const Checkbox = (props: Props) => {
 
   const border = useMemo(() => {
     if (isFocused || isHovering) {
-        return `2px solid ${ColorPalette.purple}`;
+      if (theme.name == "light") {
+          return `2px solid ${ColorPalette.purple}`;
+      }
+      return `2px solid ${ColorPalette.lightPurple}`;
     }
     return `2px solid ${theme.colors.checkboxBorder}`
   }, [theme.name, isFocused, isHovering]);

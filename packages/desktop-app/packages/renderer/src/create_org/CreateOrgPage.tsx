@@ -23,7 +23,7 @@ const CreateOrgPage = () => {
     });
 
     return (
-      <OuterNavigator page={'create-org'} title={title}>
+      <OuterNavigator outerNavTab={'home'} page={'create-org'} title={title}>
         <CreateOrg/>
       </OuterNavigator>
     );
