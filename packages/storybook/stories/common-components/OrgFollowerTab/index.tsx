@@ -5,6 +5,16 @@ import HeartLight from '@floro/common-assets/assets/images/icons/heart.light.svg
 import HeartDark from '@floro/common-assets/assets/images/icons/heart.dark.svg';
 import HeartedLight from '@floro/common-assets/assets/images/icons/hearted.light.svg';
 import HeartedDark from '@floro/common-assets/assets/images/icons/hearted.dark.svg';
+import Button from '../../design-system/Button';
+
+const OuterContainer = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+    width: 100%;
+`
 
 const Container = styled.div`
     display: flex;
@@ -12,7 +22,6 @@ const Container = styled.div`
     justify-content: space-between;
     align-items: center;
     user-select: none;
-    width: 100%;
 `;
 
 const TextContainer = styled.div`
@@ -75,12 +84,15 @@ const OrgFollowerTab = (props: Props): React.ReactElement => {
     const followerCount = useMemo(() => accountRound(props.followerCount), [props.followerCount]);
 
   return (
-    <Container>
-        <FollowerIcon src={heartIcon}/>
-        <TextContainer>
-            <FollowerText style={{marginRight: 8}}>Followers <FollowerNumeral>{followerCount}</FollowerNumeral></FollowerText>
-        </TextContainer>
-    </Container>
+    <OuterContainer>
+        <Container>
+            <FollowerIcon src={heartIcon}/>
+            <TextContainer>
+                <FollowerText style={{marginRight: 8}}>Followers <FollowerNumeral>{followerCount}</FollowerNumeral></FollowerText>
+            </TextContainer>
+        </Container>
+        <Button size='extra-small' label={props.isFollowing ? 'unfollow' : 'follow'} bg={'orange'}/>
+    </OuterContainer>
   );
 };
 

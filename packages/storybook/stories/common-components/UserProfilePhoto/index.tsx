@@ -10,7 +10,7 @@ const ImageWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 2px solid ${ColorPalette.white};
+  border: 2px solid ${props => props.theme.colors.profilePictureBorderColor};
   background-color: ${ColorPalette.white};
   user-select: none;
 `;

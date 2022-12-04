@@ -7,7 +7,7 @@ import DotsLoader from '../DotsLoader';
 export interface ButtonProps {
     label: string;
     bg: "purple"|"orange"|"teal"|"gray";
-    size: "big"|"medium"|"small";
+    size: "big"|"medium"|"small"|"extra-small";
     isDisabled?: boolean;
     isLoading?: boolean;
     onClick?: React.MouseEventHandler<HTMLButtonElement>;
@@ -98,21 +98,25 @@ const Button = ({
       if (size == 'big') return '1.7rem';
       if (size == 'medium') return '1.4rem';
       if (size == 'small') return '1.2rem';
+      if (size == 'extra-small') return '0.9rem';
     }, [size]);
 
     const width = useMemo(() => {
       if (size == 'big') return 312;
       if (size == 'medium') return 192;
       if (size == 'small') return 120;
+      if (size == 'extra-small') return 80;
     }, [size]);
 
     const height = useMemo(() => {
       if (size == 'big') return 64;
       if (size == 'medium') return 48;
       if (size == 'small') return 40;
+      if (size == 'extra-small') return 24;
     }, [size]);
 
     const dotSize = useMemo(() => {
+      if (size == 'extra-small') return 'small';
       if (size == 'small') {
         return 'medium';
       }

@@ -61,7 +61,7 @@ const LoaderOverlayContainer = styled.div`
 const EditPhotoTextContainer = styled.div`
   height: 36px;
   width: 100%;
-  background-color: ${(props) => props.theme.colors.profileHoverOpacity};
+  background-color: ${(props) => props.theme.colors.profileHoverDeepOpacity};
   display: flex;
   justify-content: center;
   align-items: center;

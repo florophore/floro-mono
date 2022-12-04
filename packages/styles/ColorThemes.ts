@@ -40,6 +40,7 @@ export interface ColorTheme {
     profileInfoNameTextColor: string;
     profileInfoUsernameTextColor: string;
     profileHoverOpacity: string;
+    profileHoverDeepOpacity: string;
     followerTextColor: string;
     connectionTextColor: string;
     commonBorder: string;
@@ -56,6 +57,7 @@ export interface ColorTheme {
     tosLinkTextColor: string;
     sidebarTitleTextColor: string;
     sidebarTitleBorderColor: string;
+    profilePictureBorderColor: string;
   };
   shadows: {
     modalContainer: string;
@@ -105,7 +107,8 @@ export const LightTheme: ColorTheme = {
     heroHeaderTextColor: palette.white,
     profileInfoNameTextColor: palette.purple,
     profileInfoUsernameTextColor: palette.mediumGray,
-    profileHoverOpacity: palette.gray.substring(0, 7) + Opacity[50],
+    profileHoverOpacity: palette.darkGray.substring(0, 7) + Opacity[50],
+    profileHoverDeepOpacity: palette.black.substring(0, 7) + Opacity[50],
     followerTextColor: palette.mediumGray,
     connectionTextColor: palette.mediumGray,
     commonBorder: palette.mediumGray,
@@ -123,6 +126,7 @@ export const LightTheme: ColorTheme = {
     tosLinkTextColor: palette.purple,
     sidebarTitleTextColor: palette.purple,
     sidebarTitleBorderColor: palette.purple,
+    profilePictureBorderColor: palette.lightGray,
   },
   shadows: {
     modalContainer: palette.mediumGray.substring(0, 7) + Opacity[70],
@@ -173,6 +177,7 @@ export const DarkTheme: ColorTheme = {
         profileInfoNameTextColor: palette.lightPurple,
         profileInfoUsernameTextColor: palette.white,
         profileHoverOpacity: palette.black.substring(0, 7) + Opacity[50],
+        profileHoverDeepOpacity: palette.black.substring(0, 7) + Opacity[50],
         followerTextColor: palette.white,
         connectionTextColor: palette.white,
         commonBorder: palette.white,
@@ -190,6 +195,7 @@ export const DarkTheme: ColorTheme = {
         tosLinkTextColor: palette.lightPurple,
         sidebarTitleTextColor: palette.lightPurple,
         sidebarTitleBorderColor: palette.lightPurple,
+        profilePictureBorderColor: palette.white,
     },
     shadows: {
         modalContainer: palette.black.substring(0, 7) + Opacity[70],
