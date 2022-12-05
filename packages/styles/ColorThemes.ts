@@ -133,7 +133,7 @@ export const LightTheme: ColorTheme = {
     sidebarTitleTextColor: palette.purple,
     sidebarTitleBorderColor: palette.purple,
     profilePictureBorderColor: palette.lightGray,
-    repoBriefRowColor: palette.gray,
+    repoBriefRowColor: palette.mediumGray,
     repoBriefRowUpdateColor: palette.gray,
   },
   gradients: {

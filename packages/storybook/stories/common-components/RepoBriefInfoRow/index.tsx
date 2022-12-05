@@ -1,10 +1,10 @@
 import React, { useMemo, useState, useCallback } from "react";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
-import LockLight from "@floro/common-assets/assets/images/icons/lock.light.svg";
+import LockLight from "@floro/common-assets/assets/images/icons/lock.medium_gray.svg";
 import LockDark from "@floro/common-assets/assets/images/icons/lock.dark.svg";
 import LockHovered from "@floro/common-assets/assets/images/icons/lock.hovered.svg";
-import OpenbookLight from "@floro/common-assets/assets/images/icons/openbook.light.svg";
+import OpenbookLight from "@floro/common-assets/assets/images/icons/openbook.medium_gray.svg";
 import OpenbookDark from "@floro/common-assets/assets/images/icons/openbook.dark.svg";
 import OpenbookHovered from "@floro/common-assets/assets/images/icons/openbook.hovered.svg";
 import { Repository } from "@floro/graphql-schemas/build/generated/main-graphql";
