@@ -10,7 +10,10 @@ mutation RemoveUserProfilePhoto {
     }
     ... on RemoveUserProfilePhotoSuccess {
       user {
-         ...User
+         id
+         profilePhoto {
+          ...Photo
+         }
       }
     }
   }

@@ -54,7 +54,26 @@ const splitLink = split(
   uploadLink,
 );
 
-const cache = new InMemoryCache();
+const mergeFunction = (existing: object, incoming: object) => {
+  return {
+    ...existing,
+    ...incoming,
+  };
+};
+
+const cache = new InMemoryCache({
+  typePolicies: {
+    User: {
+      merge: mergeFunction,
+    },
+    Organization: {
+      merge: mergeFunction,
+    },
+    Repository: {
+      merge: mergeFunction,
+    },
+  },
+});
 
 const client = new ApolloClient({
   link: authMiddleware.concat(splitLink),

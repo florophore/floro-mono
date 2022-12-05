@@ -10,7 +10,10 @@ mutation RemoveOrganizationProfilePhoto($organizationId: ID!) {
     }
     ... on RemoveOrganizationProfilePhotoSuccess {
       organization {
-        ...Organization
+         id
+         profilePhoto {
+          ...Photo
+         }
       }
     }
   }

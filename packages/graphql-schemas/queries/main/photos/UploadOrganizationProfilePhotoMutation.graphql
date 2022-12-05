@@ -24,7 +24,10 @@ mutation UploadOrganizationProfilePhoto(
     }
     ... on UploadOrganizationProfilePhotoSuccess {
       organization {
-        ...Organization
+         id
+         profilePhoto {
+          ...Photo
+         }
       }
     }
   }

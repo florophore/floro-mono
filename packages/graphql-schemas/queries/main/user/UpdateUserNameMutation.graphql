@@ -10,7 +10,9 @@ mutation UpdateUserName($firstName: String!, $lastName: String!) {
     }
     ... on UpdateUserNameSuccess {
       user {
-         ...User
+         id
+         firstName
+         lastName
       }
     }
   }

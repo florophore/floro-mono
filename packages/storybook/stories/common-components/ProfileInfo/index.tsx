@@ -230,7 +230,7 @@ const ProfileInfo = (props: Props): React.ReactElement => {
   }, [reader, props.onSelectFile]);
 
   const onInputHackResetClick = useCallback((event: any) => {
-    event.target.value = null
+    event.target.value = null;
   }, []);
 
   const onRemoveProfilePhoto = useCallback(() => {

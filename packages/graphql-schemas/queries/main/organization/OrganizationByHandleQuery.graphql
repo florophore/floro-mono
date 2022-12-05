@@ -23,7 +23,7 @@ query OrganizationByHandle($handle: String!) {
             }
         }
         roles {
-        ...OrganizationRole
+            ...OrganizationRole
         }
     }
 }

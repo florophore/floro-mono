@@ -448,7 +448,7 @@ export default class UsersResolverModule extends BaseResolverModule {
     publicRepositories: async (user, _, { cacheKey, currentUser }) => {
       const cachedPublicRepos = this.requestCache.getUserPublicRepos(
         cacheKey,
-        currentUser.id
+        user?.id as string
       );
       if (cachedPublicRepos) {
         return cachedPublicRepos as Repository[];
@@ -469,7 +469,7 @@ export default class UsersResolverModule extends BaseResolverModule {
       }
       const cachedPrivateRepos = this.requestCache.getUserPrivateRepos(
         cacheKey,
-        currentUser.id
+        user.id as string
       );
       if (cachedPrivateRepos) {
         return cachedPrivateRepos as Repository[];

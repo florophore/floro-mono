@@ -10,7 +10,10 @@ mutation UploadUserProfilePhoto($file: Upload!, $x: Float!, $y: Float!, $width: 
     }
     ... on UploadUserProfilePhotoSuccess {
       user {
-         ...User
+         id
+         profilePhoto {
+          ...Photo
+         }
       }
     }
   }
