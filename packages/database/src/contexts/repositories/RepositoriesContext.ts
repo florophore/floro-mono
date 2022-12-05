@@ -24,18 +24,39 @@ export default class RepositoriesContext extends BaseContext {
   public async getById(id: string): Promise<Repository | null> {
     return await this.queryRunner.manager.findOne(Repository, {
       where: { id },
+      relations: {
+        user: true,
+        organization: true,
+      }
+    });
+  }
+
+  public async getByHashKey(hashKey: string): Promise<Repository | null> {
+    return await this.queryRunner.manager.findOne(Repository, {
+      where: { hashKey },
+      relations: {
+        user: true,
+        organization: true,
+      }
     });
   }
 
   public async getUserRepos(userId: string): Promise<Repository[]> {
     return await this.queryRunner.manager.find(Repository, {
       where: { userId },
+      relations: {
+        user: true,
+        organization: true,
+      }
     });
   }
 
   public async getUserReposByType(userId: string, isPrivate: boolean): Promise<Repository[]> {
     return await this.queryRunner.manager.find(Repository, {
       where: { userId, isPrivate },
+      relations: {
+        user: true,
+      },
       order: {
         createdAt: 'DESC'
       }
@@ -45,12 +66,18 @@ export default class RepositoriesContext extends BaseContext {
   public async getOrgRepos(organizationId: string): Promise<Repository[]> {
     return await this.queryRunner.manager.find(Repository, {
       where: { organizationId },
+      relations: {
+        organization: true,
+      }
     });
   }
 
   public async getOrgReposByType(organizationId: string, isPrivate: boolean): Promise<Repository[]> {
     return await this.queryRunner.manager.find(Repository, {
       where: { organizationId, isPrivate },
+      relations: {
+        organization: true,
+      },
       order: {
         createdAt: 'DESC'
       }

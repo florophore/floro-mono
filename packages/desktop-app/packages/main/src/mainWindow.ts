@@ -8,6 +8,7 @@ const getSystemTheme = (): 'light' | 'dark' => {
 };
 
 const socket = createSocket('desktop');
+let ipcRendererHasMounted = false;
 
 async function createWindow() {
   const browserWindow = new BrowserWindow({
@@ -43,7 +44,10 @@ async function createWindow() {
       //browserWindow?.webContents.openDevTools();
     }
 
-    ipcMain.handle('system:getSystemTheme', getSystemTheme);
+    if (!ipcRendererHasMounted) {
+      ipcMain.handle('system:getSystemTheme', getSystemTheme);
+      ipcRendererHasMounted = true;
+    }
     ipcMain.on('system:openOAuthWindow', async (_: any, provider: any) => {
       const oauthWindow = new BrowserWindow({
         show: true, // Use the 'ready-to-show' event to show the instantiated BrowserWindow.

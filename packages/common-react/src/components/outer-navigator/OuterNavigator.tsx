@@ -106,6 +106,7 @@ const Content = styled.div`
   flex: 1;
   height: 100%;
   position: relative;
+  background: ${props => props.theme.background};
 `;
 
 const Drag = css`

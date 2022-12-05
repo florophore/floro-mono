@@ -10,7 +10,7 @@ import debouncer from 'lodash.debounce';
 import EmailValidator from 'email-validator';
 import ProfanityFilter from "bad-words";
 import { NAME_REGEX, REPO_REGEX, USERNAME_REGEX } from "@floro/common-web/src/utils/validators";
-import { useUsernameCheckLazyQuery, useCreateOrganizationMutation, Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import { useCreateUserRepositoryMutation, Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { useOfflinePhoto } from "../../offline/OfflinePhotoContext";
 
 const Background = styled.div`
@@ -50,7 +50,7 @@ const CreateUserRepo = (props: Props) => {
   const profanityFilter = useMemo(() => new ProfanityFilter(), []);
   const [name, setName] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
-  const [license, setLicense] = useState<string|null>(null);
+  const [licenseCode, setLicenseCode] = useState<string|null>(null);
   const offlinePhoto = useOfflinePhoto(currentUser?.profilePhoto ?? null);
   const nameIsTaken = useMemo(() => {
     return !!props.repositories?.find(repo => {
@@ -66,10 +66,42 @@ const CreateUserRepo = (props: Props) => {
       return false;
     }
     if (!isPrivate) {
-      return !!license;
+      return !!licenseCode;
     }
     return !nameIsTaken;
-  }, [nameIsTaken, name, isPrivate, license, profanityFilter]);
+  }, [nameIsTaken, name, isPrivate, licenseCode, profanityFilter]);
+
+  const [createRepo, { loading, data }] = useCreateUserRepositoryMutation();
+
+  const onSubmit = useCallback(() => {
+    if (isValid) {
+      createRepo({
+        variables: {
+          name,
+          isPrivate,
+          licenseCode,
+        },
+      });
+    }
+  }, [
+    createRepo,
+    isValid,
+    name,
+    isPrivate,
+    licenseCode,
+  ]);
+
+  useEffect(() => {
+    if (
+      data?.createUserRepository?.__typename ==
+      "CreateUserRepositorySuccess"
+    ) {
+      const repositoryName = data?.createUserRepository?.repository?.name;
+      if (repositoryName && currentUser?.username) {
+        navigate(`/repo/@/${currentUser?.username}/${repositoryName}`);
+      }
+    }
+  }, [navigate, data, currentUser?.username]);
 
   return (
     <Background>
@@ -84,8 +116,8 @@ const CreateUserRepo = (props: Props) => {
           offlinePhoto={offlinePhoto}
           isPrivate={isPrivate}
           onChangeIsPrivate={setIsPrivate}
-          license={license}
-          onChangeLicense={setLicense}
+          license={licenseCode}
+          onChangeLicense={setLicenseCode}
         />
       </div>
       <div>
@@ -95,6 +127,8 @@ const CreateUserRepo = (props: Props) => {
             size={"big"}
             label={"Create Repo"}
             isDisabled={!isValid}
+            onClick={onSubmit}
+            isLoading={loading}
           />
         </ButtonContainer>
       </div>

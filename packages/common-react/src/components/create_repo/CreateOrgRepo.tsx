@@ -1,16 +1,15 @@
-
 import React, { useEffect, useCallback, useState, useMemo } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
-import CreateOrgInputs from "@floro/storybook/stories/common-components/CreateOrgInputs";
 import CreateRepoInputs from "@floro/storybook/stories/common-components/CreateRepoInputs";
 import Button from "@floro/storybook/stories/design-system/Button";
-import { useSession } from "../../session/session-context";
-import debouncer from 'lodash.debounce';
-import EmailValidator from 'email-validator';
 import ProfanityFilter from "bad-words";
-import { NAME_REGEX, REPO_REGEX, USERNAME_REGEX } from "@floro/common-web/src/utils/validators";
-import { useUsernameCheckLazyQuery, useCreateOrganizationMutation, Repository, Organization } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import { REPO_REGEX } from "@floro/common-web/src/utils/validators";
+import {
+  Repository,
+  Organization,
+  useCreateOrgRepositoryMutation,
+} from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { useOfflinePhoto } from "../../offline/OfflinePhotoContext";
 
 const Background = styled.div`
@@ -26,11 +25,11 @@ const Background = styled.div`
 `;
 
 const Title = styled.h1`
-    font-family: "MavenPro";
-    font-size: 2rem;
-    font-weight: 600;
-    margin-bottom: 24px;
-    color: ${(props) => props.theme.colors.titleTextColor};
+  font-family: "MavenPro";
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 24px;
+  color: ${(props) => props.theme.colors.titleTextColor};
 `;
 
 const ButtonContainer = styled.div`
@@ -38,7 +37,7 @@ const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
   margin-top: 12px;
-`
+`;
 
 interface Props {
   repositories: Repository[];
@@ -50,13 +49,15 @@ const CreateOrgRepo = (props: Props) => {
   const profanityFilter = useMemo(() => new ProfanityFilter(), []);
   const [name, setName] = useState("");
   const [isPrivate, setIsPrivate] = useState(true);
-  const [license, setLicense] = useState<string|null>(null);
-  const offlinePhoto = useOfflinePhoto(props.organization?.profilePhoto ?? null);
+  const [licenseCode, setLicenseCode] = useState<string | null>(null);
+  const offlinePhoto = useOfflinePhoto(
+    props.organization?.profilePhoto ?? null
+  );
   const nameIsTaken = useMemo(() => {
-    return !!props.repositories?.find(repo => {
+    return !!props.repositories?.find((repo) => {
       return repo.name?.toLowerCase() == name.toLowerCase();
     });
-  }, [props.repositories, name])
+  }, [props.repositories, name]);
 
   const isValid = useMemo(() => {
     if (!REPO_REGEX.test(name)) {
@@ -66,10 +67,45 @@ const CreateOrgRepo = (props: Props) => {
       return false;
     }
     if (!isPrivate) {
-      return !!license;
+      return !!licenseCode;
     }
     return !nameIsTaken;
-  }, [nameIsTaken, name, isPrivate, license, profanityFilter]);
+  }, [nameIsTaken, name, isPrivate, licenseCode, profanityFilter]);
+
+  const [createRepo, { data, loading }] =
+    useCreateOrgRepositoryMutation();
+
+  const onSubmit = useCallback(() => {
+    if (isValid && props?.organization?.id) {
+      createRepo({
+        variables: {
+          organizationId: props.organization.id,
+          name,
+          isPrivate,
+          licenseCode,
+        },
+      });
+    }
+  }, [
+    createRepo,
+    props?.organization?.id,
+    isValid,
+    name,
+    isPrivate,
+    licenseCode,
+  ]);
+
+  useEffect(() => {
+    if (
+      data?.createOrgRepository?.__typename ==
+      "CreateOrganizationRepositorySuccess"
+    ) {
+      const repositoryName = data?.createOrgRepository?.repository?.name;
+      if (repositoryName && props.organization?.handle) {
+        navigate(`/repo/@/${props.organization?.handle}/${repositoryName}`);
+      }
+    }
+  }, [navigate, data, props.organization?.handle]);
 
   return (
     <Background>
@@ -84,8 +120,8 @@ const CreateOrgRepo = (props: Props) => {
           offlinePhoto={offlinePhoto}
           isPrivate={isPrivate}
           onChangeIsPrivate={setIsPrivate}
-          license={license}
-          onChangeLicense={setLicense}
+          license={licenseCode}
+          onChangeLicense={setLicenseCode}
         />
       </div>
       <div>
@@ -95,6 +131,8 @@ const CreateOrgRepo = (props: Props) => {
             size={"big"}
             label={"Create Repo"}
             isDisabled={!isValid}
+            isLoading={loading}
+            onClick={onSubmit}
           />
         </ButtonContainer>
       </div>

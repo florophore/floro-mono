@@ -2,6 +2,7 @@ fragment Repository on Repository {
   id
   name
   repoType
+  hashKey
   isPrivate
   licenseCode
   user {
@@ -10,6 +11,7 @@ fragment Repository on Repository {
   organization {
     ...Organization
   }
+  lastRepoUpdateAt
   createdAt
   updatedAt
 }

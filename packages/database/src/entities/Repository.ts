@@ -1,4 +1,4 @@
-import { IsBoolean, IsDefined, IsIn, IsString, ValidateIf } from "class-validator";
+import { IsBoolean, IsDefined, IsIn, IsString, IsUUID, ValidateIf } from "class-validator";
 import { Entity, Column, OneToOne, Relation, JoinColumn } from "typeorm";
 import { BinaryPKBaseEntity } from "./BinaryPKBaseEntity";
 import { Organization } from "./Organization";
@@ -6,6 +6,12 @@ import { User } from "./User";
 
 @Entity("repositories")
 export class Repository extends BinaryPKBaseEntity {
+  @Column("uuid")
+  @ValidateIf((_, value) => !!value)
+  @IsDefined()
+  @IsUUID()
+  hashKey!: string;
+
   @Column("varchar")
   @IsString()
   @IsDefined()
@@ -41,6 +47,13 @@ export class Repository extends BinaryPKBaseEntity {
   @IsString()
   @ValidateIf((_, value) => !!value)
   licenseCode?: string;
+
+  @Column({
+    name: "last_repo_update_at",
+    type: "timestamp",
+    default: () => "CURRENT_TIMESTAMP(6)",
+  })
+  lastRepoUpdateAt!: any;
 
   @Column("uuid")
   @IsDefined()

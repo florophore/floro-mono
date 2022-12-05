@@ -1,3 +1,8 @@
+extend type Query {
+  fetchRepositoryByName(ownerHandle: String, repoName: String): FetchRepositoryReponse
+  fetchRepositoryById(id: ID!): FetchRepositoryReponse
+}
+
 extend type Mutation {
   createOrgRepository(
     name: String!

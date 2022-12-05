@@ -252,7 +252,7 @@ const OrgHome = (props: Props) => {
                   ?.canCreateRepos && (
                   <Button
                     onClick={onGoToCreateOrgRepo}
-                    style={{ marginBottom: 16 }}
+                    style={{ maxWidth: "100%" }}
                     label={"create repo"}
                     size={"medium"}
                     bg={"purple"}

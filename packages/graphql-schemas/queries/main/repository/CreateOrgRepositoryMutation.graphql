@@ -1,0 +1,36 @@
+mutation CreateOrgRepository(
+  $organizationId: ID!
+  $name: String!
+  $isPrivate: Boolean!
+  $licenseCode: String
+) {
+  createOrgRepository(
+    name: $name
+    organizationId: $organizationId
+    isPrivate: $isPrivate
+    licenseCode: $licenseCode
+  ) {
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+    ... on CreateOrganizationRepositorySuccess {
+      repository {
+        ...Repository
+      }
+      organization {
+        id
+        publicRepositories {
+          ...Repository
+        }
+        privateRepositories {
+          ...Repository
+        }
+      }
+    }
+    ... on CreateOrganizationRepositoryError {
+      message
+      type
+    }
+  }
+}

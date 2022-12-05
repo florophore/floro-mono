@@ -1,11 +1,13 @@
 type Repository {
   id: ID
+  hashKey: UUID
   name: String
   repoType: String
   isPrivate: Boolean
   licenseCode: String
   user: User
   organization: Organization
+  lastRepoUpdateAt: DateTime
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -39,3 +41,16 @@ union CreateOrganizationRepositoryResponse =
     CreateOrganizationRepositorySuccess
   | CreateOrganizationRepositoryError
   | UnAuthenticatedError
+
+type FetchRepositorySuccess {
+  repository: Repository
+}
+
+type FetchRepositoryError {
+  message: String
+  type: String
+}
+
+union FetchRepositoryReponse =
+    FetchRepositorySuccess
+  | FetchRepositoryError

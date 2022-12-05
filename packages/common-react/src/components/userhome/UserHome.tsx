@@ -207,13 +207,14 @@ const UserHome = () => {
             <ButtonActionWrapper>
               <Button
                 onClick={onGoToCreateUserRepo}
-                style={{ marginBottom: 16 }}
+                style={{ marginBottom: 16, maxWidth: "100%" }}
                 label={"create repo"}
                 size={"medium"}
                 bg={"purple"}
               />
               <Button
                 onClick={onGoToCreateOrg}
+                style={{ maxWidth: "100%" }}
                 label={"create org"}
                 size={"medium"}
                 bg={"teal"}

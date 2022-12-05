@@ -1,0 +1,19 @@
+query fetchRepositoryByName($ownerHandle: String!, $repoName: String!) {
+  fetchRepositoryByName(ownerHandle: $ownerHandle, repoName: $repoName) {
+    ... on FetchRepositorySuccess {
+      repository {
+        ...Repository
+        organization {
+          ...Organization
+        }
+        user {
+          ...User
+        }
+      }
+    }
+    ... on FetchRepositoryError {
+      message
+      type
+    }
+  }
+}

@@ -58,12 +58,18 @@ export interface ColorTheme {
     sidebarTitleTextColor: string;
     sidebarTitleBorderColor: string;
     profilePictureBorderColor: string;
+    repoBriefRowColor: string;
+    repoBriefRowUpdateColor: string;
+  };
+  gradients: {
+    backgroundNoOpacity: string;
+    backgroundFullOpacity: string;
   };
   shadows: {
     modalContainer: string;
     innerDropdown: string;
     outerDropdown: string;
-  },
+  };
   loaders: {
     googleButtonLoader: keyof ColorPalette; 
   }
@@ -127,6 +133,12 @@ export const LightTheme: ColorTheme = {
     sidebarTitleTextColor: palette.purple,
     sidebarTitleBorderColor: palette.purple,
     profilePictureBorderColor: palette.lightGray,
+    repoBriefRowColor: palette.gray,
+    repoBriefRowUpdateColor: palette.gray,
+  },
+  gradients: {
+    backgroundNoOpacity: palette.lightModeBG.substring(0, 7) + Opacity[0],
+    backgroundFullOpacity: palette.lightModeBG.substring(0, 7) + Opacity[100],
   },
   shadows: {
     modalContainer: palette.mediumGray.substring(0, 7) + Opacity[70],
@@ -196,11 +208,17 @@ export const DarkTheme: ColorTheme = {
         sidebarTitleTextColor: palette.lightPurple,
         sidebarTitleBorderColor: palette.lightPurple,
         profilePictureBorderColor: palette.white,
+        repoBriefRowColor: palette.white,
+        repoBriefRowUpdateColor: palette.white
     },
     shadows: {
         modalContainer: palette.black.substring(0, 7) + Opacity[70],
         innerDropdown: palette.black.substring(0, 7) + Opacity[70],
         outerDropdown: palette.black.substring(0, 7) + Opacity[50],
+    },
+    gradients: {
+      backgroundNoOpacity: palette.darkModeBG.substring(0, 7) + Opacity[0],
+      backgroundFullOpacity: palette.darkModeBG.substring(0, 7) + Opacity[100],
     },
     loaders: {
         googleButtonLoader: 'white',

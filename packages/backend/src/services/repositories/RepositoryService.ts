@@ -2,6 +2,7 @@ import { injectable, inject } from "inversify";
 
 import DatabaseConnection from "@floro/database/src/connection/DatabaseConnection";
 import ContextFactory from "@floro/database/src/contexts/ContextFactory";
+import RepoHelper from "@floro/database/src/contexts/utils/RepoHelper";
 import { User } from "@floro/database/src/entities/User";
 import RepositoriesContext from "@floro/database/src/contexts/repositories/RepositoriesContext";
 import { REPO_REGEX } from "@floro/common-web/src/utils/validators";
@@ -26,7 +27,11 @@ export const LICENSE_CODE_LIST = new Set([
 ]);
 
 export interface CreateRepositoryReponse {
-  action: "REPO_CREATED" | "REPO_NAME_TAKEN_ERROR" | "INVALID_PARAMS_ERROR" | "LOG_ERROR";
+  action:
+    | "REPO_CREATED"
+    | "REPO_NAME_TAKEN_ERROR"
+    | "INVALID_PARAMS_ERROR"
+    | "LOG_ERROR";
   repository?: Repository;
   error?: {
     type: string;
@@ -44,7 +49,7 @@ export default class RepositoryService {
   constructor(
     @inject(DatabaseConnection) databaseConnection: DatabaseConnection,
     @inject(ContextFactory) contextFactory: ContextFactory,
-    @inject(RepoAccessor) repoAccessor: RepoAccessor 
+    @inject(RepoAccessor) repoAccessor: RepoAccessor
   ) {
     this.databaseConnection = databaseConnection;
     this.contextFactory = contextFactory;
@@ -55,7 +60,7 @@ export default class RepositoryService {
     user: User,
     name: string,
     isPrivate: boolean,
-    licenseCode?: string|null
+    licenseCode?: string | null
   ): Promise<CreateRepositoryReponse> {
     if (!REPO_REGEX.test(name)) {
       return {
@@ -63,6 +68,16 @@ export default class RepositoryService {
         error: {
           type: "INVALID_PARAMS_ERROR",
           message: "Missing license code",
+        },
+      };
+    }
+    const hashKey = RepoHelper.getRepoHashUUID(user.username, name);
+    if (!hashKey) {
+      return {
+        action: "INVALID_PARAMS_ERROR",
+        error: {
+          type: "INVALID_PARAMS_ERROR",
+          message: "Invalid hash key",
         },
       };
     }
@@ -103,27 +118,54 @@ export default class RepositoryService {
         const repository = await repositoriesContext.createRepo({
           userId: user.id,
           createdByUserId: user.id,
+          hashKey,
           isPrivate,
           name: name.trim(),
+          repoType: "user_repo"
         });
+        const loadedRepository = await repositoriesContext.getById(repository.id);
+        if (!loadedRepository) {
+          await queryRunner.rollbackTransaction();
+          return {
+            action: "LOG_ERROR",
+            error: {
+              type: "REPO_NOT_CREATED",
+              message: "Repository not created",
+            },
+          };
+        }
         await this.repoAccessor.initInitialRepoFoldersAndFiles(repository);
         await queryRunner.commitTransaction();
         return {
           action: "REPO_CREATED",
-          repository,
+          repository: loadedRepository,
         };
       } else {
         const repository = await repositoriesContext.createRepo({
           userId: user.id,
           createdByUserId: user.id,
+          hashKey,
           isPrivate,
           name: name.trim(),
           licenseCode: licenseCode as string,
+          repoType: "user_repo"
         });
+        const loadedRepository = await repositoriesContext.getById(repository.id);
+        if (!loadedRepository) {
+          await queryRunner.rollbackTransaction();
+          return {
+            action: "LOG_ERROR",
+            error: {
+              type: "REPO_NOT_CREATED",
+              message: "Repository not created",
+            },
+          };
+        }
+        await this.repoAccessor.initInitialRepoFoldersAndFiles(repository);
         await queryRunner.commitTransaction();
         return {
           action: "REPO_CREATED",
-          repository,
+          repository: loadedRepository,
         };
       }
     } catch (e: any) {
@@ -149,7 +191,7 @@ export default class RepositoryService {
     currentUser: User,
     name: string,
     isPrivate: boolean,
-    licenseCode?: string|null
+    licenseCode?: string | null
   ): Promise<CreateRepositoryReponse> {
     if (!REPO_REGEX.test(name)) {
       return {
@@ -157,6 +199,16 @@ export default class RepositoryService {
         error: {
           type: "INVALID_PARAMS_ERROR",
           message: "Missing license code",
+        },
+      };
+    }
+    const hashKey = RepoHelper.getRepoHashUUID(organization.handle, name);
+    if (!hashKey) {
+      return {
+        action: "INVALID_PARAMS_ERROR",
+        error: {
+          type: "INVALID_PARAMS_ERROR",
+          message: "Invalid hash key",
         },
       };
     }
@@ -192,31 +244,58 @@ export default class RepositoryService {
           },
         };
       }
-
       if (isPrivate) {
         const repository = await repositoriesContext.createRepo({
           organizationId: organization.id,
           createdByUserId: currentUser.id,
+          hashKey,
           isPrivate,
           name: name.trim(),
+          repoType: "org_repo"
         });
+        const loadedRepository = await repositoriesContext.getById(repository.id);
+        if (!loadedRepository) {
+          await queryRunner.rollbackTransaction();
+          return {
+            action: "LOG_ERROR",
+            error: {
+              type: "REPO_NOT_CREATED",
+              message: "Repository not created",
+            },
+          };
+        }
+        await this.repoAccessor.initInitialRepoFoldersAndFiles(repository);
         await queryRunner.commitTransaction();
         return {
           action: "REPO_CREATED",
-          repository,
+          repository: loadedRepository,
         };
       } else {
         const repository = await repositoriesContext.createRepo({
           organizationId: organization.id,
           createdByUserId: currentUser.id,
+          hashKey,
           isPrivate,
           name: name.trim(),
           licenseCode: licenseCode as string,
+          repoType: "org_repo"
         });
+        const loadedRepository = await repositoriesContext.getById(repository.id);
+        if (!loadedRepository) {
+          await queryRunner.rollbackTransaction();
+          return {
+            action: "LOG_ERROR",
+            error: {
+              type: "REPO_NOT_CREATED",
+              message: "Repository not created",
+            },
+          };
+        }
+        await this.repoAccessor.initInitialRepoFoldersAndFiles(repository);
         await queryRunner.commitTransaction();
         return {
           action: "REPO_CREATED",
-          repository,
+          repository: loadedRepository,
         };
       }
     } catch (e: any) {
@@ -235,6 +314,27 @@ export default class RepositoryService {
       if (!queryRunner.isReleased) {
         await queryRunner.release();
       }
+    }
+  }
+
+  public async fetchRepoByName(ownerName?: string, repoName?: string) {
+    const hashKey = RepoHelper.getRepoHashUUID(ownerName, repoName);
+    if (!hashKey) {
+      return null;
+    }
+    const repositoriesContext = await this.contextFactory.createContext(RepositoriesContext);
+    return await repositoriesContext.getByHashKey(hashKey);
+  }
+
+  public async fetchRepoById(id?: string) {
+    if (!id) {
+      return null;
+    }
+    try {
+      const repositoriesContext = await this.contextFactory.createContext(RepositoriesContext);
+      return await repositoriesContext.getById(id);
+    } catch(e) {
+      return null;
     }
   }
 }

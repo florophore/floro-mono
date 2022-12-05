@@ -13,22 +13,22 @@ export const useCurrentUserRepos = () => {
   const repositories = useMemo(() => {
     return [...privateRepositories, ...publicRepositories].sort(
       (repoA, repoB) => {
-        if (!repoA?.updatedAt && !repoB?.updatedAt) {
+        if (!repoA?.lastRepoUpdateAt && !repoB?.lastRepoUpdateAt) {
           return 0;
         }
-        if (!repoA?.updatedAt) {
+        if (!repoA?.lastRepoUpdateAt) {
+          return 1;
+        }
+        if (!repoB?.lastRepoUpdateAt) {
           return -1;
         }
-        if (!repoB?.updatedAt) {
-          return 1;
-        }
-        if (repoA.updatedAt == repoB.updatedAt) {
+        if (repoA.lastRepoUpdateAt == repoB.lastRepoUpdateAt) {
           return 0;
         }
-        if (repoA.updatedAt > repoB.updatedAt) {
-          return 1;
+        if (repoA.lastRepoUpdateAt > repoB.lastRepoUpdateAt) {
+          return -1;
         }
-        return -1;
+        return 1;
       }
     );
   }, [privateRepositories, publicRepositories]);

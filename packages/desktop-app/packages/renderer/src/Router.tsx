@@ -9,6 +9,7 @@ import {AnimatePresence} from 'framer-motion';
 import CreateUserRepoPage from './create_user_repo/CreateUserRepoPage';
 import OrganizationPage from './organization/OrganizationPage';
 import CreateOrgRepoPage from './create_org_repo/CreateOrgRepoPage';
+import RepoHomePage from './repository/RepoHomePage';
 
 const Router = (): React.ReactElement => {
     const location = useLocation();
@@ -23,6 +24,7 @@ const Router = (): React.ReactElement => {
           <Route path="/home/create-repo" element={<CreateUserRepoPage />} />
           <Route path="/org/@/:handle" element={<OrganizationPage />} />
           <Route path="/org/@/:handle/create-repo" element={<CreateOrgRepoPage/>} />
+          <Route path="/repo/@/:ownerHandle/:repoName" element={<RepoHomePage/>} />
         </Routes>
       </AnimatePresence>
     );
