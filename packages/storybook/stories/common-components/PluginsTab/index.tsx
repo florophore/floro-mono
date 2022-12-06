@@ -33,9 +33,13 @@ const TextSpan = styled.span`
     font-weight: 600;
     color: ${props => props.theme.colors.followerTextColor};
 `;
+const PluginCountNumeral = styled.span`
+    font-weight: 400;
+`;
 
 
 export interface Props {
+  pluginCount: number;
 }
 
 const PluginsTab = (props: Props): React.ReactElement => {
@@ -51,7 +55,7 @@ const PluginsTab = (props: Props): React.ReactElement => {
     <Container>
       <Icon src={pluginsIcon} />
       <TextContainer>
-        <TextSpan>{"Plugins"}</TextSpan>
+        <TextSpan>{"Plugins "}<PluginCountNumeral>{props.pluginCount ?? 0}</PluginCountNumeral></TextSpan>
       </TextContainer>
     </Container>
   );

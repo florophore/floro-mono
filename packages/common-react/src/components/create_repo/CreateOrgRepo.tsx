@@ -11,6 +11,7 @@ import {
   useCreateOrgRepositoryMutation,
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { useOfflinePhoto } from "../../offline/OfflinePhotoContext";
+import { useIsOnline } from "../../hooks/offline";
 
 const Background = styled.div`
   background-color: ${(props) => props.theme.background};
@@ -47,6 +48,7 @@ interface Props {
 const CreateOrgRepo = (props: Props) => {
   const navigate = useNavigate();
   const profanityFilter = useMemo(() => new ProfanityFilter(), []);
+  const isOnline = useIsOnline();
   const [name, setName] = useState("");
   const [isPrivate, setIsPrivate] = useState(true);
   const [licenseCode, setLicenseCode] = useState<string | null>(null);
@@ -130,7 +132,7 @@ const CreateOrgRepo = (props: Props) => {
             bg={"orange"}
             size={"big"}
             label={"Create Repo"}
-            isDisabled={!isValid}
+            isDisabled={!isValid && isOnline}
             isLoading={loading}
             onClick={onSubmit}
           />

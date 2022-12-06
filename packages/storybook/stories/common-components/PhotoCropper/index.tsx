@@ -80,11 +80,12 @@ export interface Props {
   src: string;
   show: boolean;
   isLoading: boolean;
+  isDisabled: boolean;
   onCancel: () => void;
   onSave: (croppedArea: CropArea) => void;
 }
 
-const PhotoCropper = ({ title, src, show, onCancel, onSave, isLoading }: Props): React.ReactElement => {
+const PhotoCropper = ({ title, src, show, onCancel, onSave, isLoading, isDisabled }: Props): React.ReactElement => {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCropAreaPixels] = useState<CropArea>({height: 500, width: 500, x: 0, y: 0});
@@ -114,7 +115,7 @@ const PhotoCropper = ({ title, src, show, onCancel, onSave, isLoading }: Props):
             </ModalSubContainer>
             <ModalSubContainer>
                 <ButtonWrapper>
-                    <Button size="small" label="save" bg="teal" onClick={onSaveCrop} isLoading={isLoading}/>
+                    <Button size="small" label="save" bg="teal" onClick={onSaveCrop} isLoading={isLoading} isDisabled={isDisabled}/>
                     <Button size="small" label="cancel" bg="gray" onClick={onCancel} isDisabled={isLoading}/>
                 </ButtonWrapper>
             </ModalSubContainer>

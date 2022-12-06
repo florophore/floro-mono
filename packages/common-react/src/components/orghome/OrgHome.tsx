@@ -24,6 +24,7 @@ import {
 } from "../../offline/OfflinePhotoContext";
 import ChangeOrgNameModal from "./ChangeOrgNameModal";
 import PluginsTab from "@floro/storybook/stories/common-components/PluginsTab";
+import { useIsOnline } from "../../hooks/offline";
 
 const Background = styled.div`
   background-color: ${(props) => props.theme.background};
@@ -83,6 +84,7 @@ export interface Props {
 
 const OrgHome = (props: Props) => {
   const navigate = useNavigate();
+  const isOnline = useIsOnline();
   const [uploadPhoto, uploadPhotoRequest] =
     useUploadOrganizationProfilePhotoMutation();
   const [removePhoto, removePhotoRequest] =
@@ -190,6 +192,7 @@ const OrgHome = (props: Props) => {
         isLoading={uploadPhotoRequest.loading}
         onCancel={onCancelPhotoUpload}
         onSave={onSaveProfilePhoto}
+        isDisabled={!isOnline}
       />
       <Background>
         {props.organization && (
@@ -198,8 +201,8 @@ const OrgHome = (props: Props) => {
               <OrgProfileInfo
                 organization={props.organization}
                 isEdittable={
-                  props?.organization?.membership?.permissions
-                    ?.canModifyOrganizationSettings ?? false
+                  (props?.organization?.membership?.permissions
+                    ?.canModifyOrganizationSettings ?? false) && isOnline
                 }
                 onSelectFile={onSelectUploadPhoto}
                 isLoading={
@@ -212,7 +215,7 @@ const OrgHome = (props: Props) => {
             </ProfileInfoWrapper>
             <BottomNavContainer>
               <TopInfo>
-                <OrgFollowerTab followerCount={0} isFollowing={false} />
+                <OrgFollowerTab followerCount={0} isFollowing={false} isLoading={false} isDisabled={!isOnline} />
                 <div style={{ marginTop: 16, display: "flex" }}>
                   <MembersInfoTab
                     membersCount={props?.organization?.membersActiveCount ?? 0}
@@ -222,16 +225,16 @@ const OrgHome = (props: Props) => {
                   />
                 </div>
                 <div style={{ marginTop: 16, display: "flex" }}>
-                  <OrgSettingsTab />
+                  <MemberSettingsTab />
                 </div>
                 <div style={{ marginTop: 16, display: "flex" }}>
-                  <MemberSettingsTab />
+                  <OrgSettingsTab />
                 </div>
                 <div style={{ marginTop: 16, display: "flex" }}>
                   <DevSettingsTab />
                 </div>
                 <div style={{ marginTop: 16, display: "flex" }}>
-                  <PluginsTab />
+                  <PluginsTab pluginCount={0} />
                 </div>
                 <div style={{ marginTop: 16, display: "flex" }}>
                   <StorageTab
@@ -256,6 +259,7 @@ const OrgHome = (props: Props) => {
                     label={"create repo"}
                     size={"medium"}
                     bg={"purple"}
+                    isDisabled={!isOnline}
                   />
                 )}
               </ButtonActionWrapper>

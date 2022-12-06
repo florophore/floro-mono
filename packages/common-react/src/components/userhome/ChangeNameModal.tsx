@@ -6,6 +6,7 @@ import Input from "@floro/storybook/stories/design-system/Input";
 import { useSession } from "../../session/session-context";
 import { NAME_REGEX } from "@floro/common-web/src/utils/validators";
 import { User, useUpdateUserNameMutation } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import { useIsOnline } from "../../hooks/offline";
 
 const HeaderWrapper = styled.div`
   height: 100%;
@@ -39,6 +40,7 @@ const ChangeNameModal = (props: Props) => {
   const { currentUser, setCurrentUser } = useSession();
   const [firstName, setFirstName] = useState(currentUser?.firstName ?? "");
   const [lastName, setLastName] = useState(currentUser?.lastName ?? "");
+  const isOnline = useIsOnline();
 
   const [updateName, { data, error, loading}] = useUpdateUserNameMutation();
 
@@ -51,8 +53,8 @@ const ChangeNameModal = (props: Props) => {
   }, [lastName]);
 
   const isValid = useMemo(() => {
-    return firstNameIsValid && lastNameIsValid;
-  }, [firstNameIsValid, lastNameIsValid]);
+    return firstNameIsValid && lastNameIsValid && isOnline;
+  }, [firstNameIsValid, lastNameIsValid, isOnline]);
 
   const onClickUpdateName = useCallback(() => {
     if (isValid) {

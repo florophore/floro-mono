@@ -10,6 +10,7 @@ export interface Props {
   src: string;
   show: boolean;
   isLoading: boolean;
+  isDisabled: boolean;
   onCancel: () => void;
   onSave: (croppedArea: CropArea) => void;
 }
@@ -22,6 +23,7 @@ const RootPhotoCropper = (props: Props) => {
       title={props.title}
       src={props.src}
       isLoading={props.isLoading}
+      isDisabled={props.isDisabled}
       onCancel={props.onCancel}
       onSave={props.onSave}
     />,

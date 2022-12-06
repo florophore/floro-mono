@@ -6,6 +6,7 @@ import Input from "@floro/storybook/stories/design-system/Input";
 import { NAME_REGEX } from "@floro/common-web/src/utils/validators";
 import { useUpdateOrganizationNameMutation } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { Organization } from "@floro/graphql-schemas/build/generated/main-graphql";
+import { useIsOnline } from "../../hooks/offline";
 
 const HeaderWrapper = styled.div`
   height: 100%;
@@ -39,6 +40,7 @@ export interface Props {
 const ChangeOrgNameModal = (props: Props) => {
   const [name, setName] = useState(props.organization?.name ?? "");
   const [legalName, setLegalName] = useState(props.organization?.legalName ?? "");
+  const isOnline = useIsOnline();
 
   const [updateName, { data, error, loading}] = useUpdateOrganizationNameMutation();
 
@@ -51,8 +53,8 @@ const ChangeOrgNameModal = (props: Props) => {
   }, [legalName]);
 
   const isValid = useMemo(() => {
-    return firstNameIsValid && lastNameIsValid;
-  }, [firstNameIsValid, lastNameIsValid]);
+    return firstNameIsValid && lastNameIsValid && isOnline;
+  }, [firstNameIsValid, lastNameIsValid, isOnline]);
 
   const onClickUpdateName = useCallback(() => {
     if (isValid && props.organization?.id) {

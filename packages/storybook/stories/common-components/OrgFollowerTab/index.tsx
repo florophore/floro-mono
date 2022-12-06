@@ -64,6 +64,7 @@ export interface Props {
   followerCount: number;
   isFollowing: boolean;
   isLoading?: boolean;
+  isDisabled?: boolean;
 }
 
 const OrgFollowerTab = (props: Props): React.ReactElement => {
@@ -92,7 +93,7 @@ const OrgFollowerTab = (props: Props): React.ReactElement => {
                 <FollowerText style={{marginRight: 8}}>Followers <FollowerNumeral>{followerCount}</FollowerNumeral></FollowerText>
             </TextContainer>
         </Container>
-        <Button isLoading={props.isLoading ?? false} size='extra-small' label={props.isFollowing ? 'unfollow' : 'follow'} bg={'orange'}/>
+        <Button isLoading={props.isLoading ?? false} isDisabled={props.isDisabled ?? false} size='extra-small' label={props.isFollowing ? 'unfollow' : 'follow'} bg={'orange'}/>
     </OuterContainer>
   );
 };

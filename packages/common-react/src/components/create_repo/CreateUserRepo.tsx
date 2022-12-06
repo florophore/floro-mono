@@ -12,6 +12,7 @@ import ProfanityFilter from "bad-words";
 import { NAME_REGEX, REPO_REGEX, USERNAME_REGEX } from "@floro/common-web/src/utils/validators";
 import { useCreateUserRepositoryMutation, Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { useOfflinePhoto } from "../../offline/OfflinePhotoContext";
+import { useIsOnline } from "../../hooks/offline";
 
 const Background = styled.div`
   background-color: ${(props) => props.theme.background};
@@ -48,6 +49,7 @@ const CreateUserRepo = (props: Props) => {
   const { currentUser, session } = useSession();
   const navigate = useNavigate();
   const profanityFilter = useMemo(() => new ProfanityFilter(), []);
+  const isOnline = useIsOnline();
   const [name, setName] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
   const [licenseCode, setLicenseCode] = useState<string|null>(null);
@@ -126,7 +128,7 @@ const CreateUserRepo = (props: Props) => {
             bg={"orange"}
             size={"big"}
             label={"Create Repo"}
-            isDisabled={!isValid}
+            isDisabled={!isValid && isOnline}
             onClick={onSubmit}
             isLoading={loading}
           />

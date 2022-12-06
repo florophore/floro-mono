@@ -9,6 +9,7 @@ import EmailValidator from 'email-validator';
 import ProfanityFilter from "bad-words";
 import { NAME_REGEX, USERNAME_REGEX } from "@floro/common-web/src/utils/validators";
 import { useUsernameCheckLazyQuery, useCreateOrganizationMutation } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import { useIsOnline } from "../../hooks/offline";
 
 const Background = styled.div`
   background-color: ${(props) => props.theme.background};
@@ -40,6 +41,7 @@ const ButtonContainer = styled.div`
 const CreateOrg = () => {
   const { currentUser, session } = useSession();
   const navigate = useNavigate();
+  const isOnline = useIsOnline();
   const [name, setName] = useState("");
   const [legalName, setLegalName] = useState("");
   const [contactEmail, setContactEmail] = useState(session?.authenticationCredentials?.[0]?.email ?? "");
@@ -105,6 +107,7 @@ const CreateOrg = () => {
 
   const canSubmit = useMemo(() => {
     return (
+      isOnline &&
       nameIsValid &&
       legalNameIsValid &&
       contactEmailIsValid &&
@@ -121,6 +124,7 @@ const CreateOrg = () => {
   handle,
   handleIsValid,
   data?.usernameCheck?.username,
+  isOnline,
   ]);
 
   useEffect(() => {

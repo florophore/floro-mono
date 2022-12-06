@@ -19,6 +19,7 @@ import ChangeNameModal from "./ChangeNameModal";
 import { useOfflinePhoto, useSaveOfflinePhoto } from "../../offline/OfflinePhotoContext";
 import StorageTab from "@floro/storybook/stories/common-components/StorageTab";
 import HomeDashboard from "./HomeDashboard";
+import { useIsOnline } from "../../hooks/offline";
 
 const Background = styled.div`
   background-color: ${(props) => props.theme.background};
@@ -75,6 +76,7 @@ const TopInfo = styled.div`
 const UserHome = () => {
   const { currentUser, setCurrentUser } = useSession();
   const isDaemonConnected = useDaemonIsConnected();
+  const isOnline = useIsOnline();
   const navigate = useNavigate();
   const [uploadPhoto, uploadPhotoRequest] = useUploadUserProfilePhotoMutation();
   const [removePhoto, removePhotoRequest] = useRemoveUserProfilePhotoMutation();
@@ -157,6 +159,7 @@ const UserHome = () => {
         isLoading={uploadPhotoRequest.loading}
         onCancel={onCancelPhotoUpload}
         onSave={onSaveProfilePhoto}
+        isDisabled={!isOnline}
       />
       <ChangeNameModal
         show={showChangeName}
@@ -167,7 +170,7 @@ const UserHome = () => {
           <ProfileInfoWrapper>
             <ProfileInfo
               user={currentUser}
-              isEdittable={true}
+              isEdittable={isOnline}
               onSelectFile={onSelectUploadPhoto}
               isLoading={removePhotoRequest.loading || uploadPhotoRequest.loading}
               onRemoveProfilePhoto={removePhoto}
@@ -188,7 +191,7 @@ const UserHome = () => {
                 <DevSettingsTab />
               </div>
               <div style={{ marginTop: 16, display: "flex" }}>
-                <PluginsTab />
+                  <PluginsTab pluginCount={0} />
               </div>
               <div style={{ marginTop: 16, display: "flex" }}>
                 <StorageTab
@@ -211,6 +214,7 @@ const UserHome = () => {
                 label={"create repo"}
                 size={"medium"}
                 bg={"purple"}
+                isDisabled={!isOnline}
               />
               <Button
                 onClick={onGoToCreateOrg}
@@ -218,6 +222,7 @@ const UserHome = () => {
                 label={"create org"}
                 size={"medium"}
                 bg={"teal"}
+                isDisabled={!isOnline}
               />
             </ButtonActionWrapper>
           </BottomNavContainer>
