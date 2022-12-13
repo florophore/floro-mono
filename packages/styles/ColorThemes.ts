@@ -60,6 +60,8 @@ export interface ColorTheme {
     profilePictureBorderColor: string;
     repoBriefRowColor: string;
     repoBriefRowUpdateColor: string;
+    pluginIconTextColor: string;
+    versionControllerBorderColor: string;
   };
   gradients: {
     backgroundNoOpacity: string;
@@ -76,10 +78,10 @@ export interface ColorTheme {
 }
 
 export const LightTheme: ColorTheme = {
-  name: "light",
-  background: palette.lightModeBG,
+  name: "light", // this is keyable
+  background: palette.lightModeBG, //this is keyable
   colors: {
-    standardText: palette.mediumGray,
+    standardText: palette.mediumGray, //"$.theme.colors.standardText"
     contrastText: palette.mediumGray,
     disableOverlay: palette.white,
     checkboxBorder: palette.gray,
@@ -135,6 +137,8 @@ export const LightTheme: ColorTheme = {
     profilePictureBorderColor: palette.lightGray,
     repoBriefRowColor: palette.mediumGray,
     repoBriefRowUpdateColor: palette.gray,
+    pluginIconTextColor: palette.purple,
+    versionControllerBorderColor: palette.mediumGray,
   },
   gradients: {
     backgroundNoOpacity: palette.lightModeBG.substring(0, 7) + Opacity[0],
@@ -209,7 +213,9 @@ export const DarkTheme: ColorTheme = {
         sidebarTitleBorderColor: palette.lightPurple,
         profilePictureBorderColor: palette.white,
         repoBriefRowColor: palette.white,
-        repoBriefRowUpdateColor: palette.white
+        repoBriefRowUpdateColor: palette.gray,
+        pluginIconTextColor: palette.lightPurple,
+        versionControllerBorderColor: palette.white,
     },
     shadows: {
         modalContainer: palette.black.substring(0, 7) + Opacity[70],

@@ -20,7 +20,6 @@
       "jsxImportSource": "@emotion/react",
     },
     "exclude": ["node_modules"],
-    "references": [{ "path": "./tsconfig.node.json" }],
     "ts-node": {
       "esm": true,
       "compilerOptions": {

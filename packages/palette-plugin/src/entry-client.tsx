@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 
 const ClientApp = (
-    <BrowserRouter basename='/plugins/floro-figma-plugin'>
+    <BrowserRouter basename='/plugins/floro-palette-plugin'>
         <App/>
     </BrowserRouter>
 );

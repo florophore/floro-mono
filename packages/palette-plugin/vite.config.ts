@@ -7,7 +7,10 @@ export default defineConfig({
     '../common-assets/assets/**/*.png',
     '../common-assets/assets/**/*.txt',
     '../common-assets/assets/**/*.ttf',
+    './floro.manifest.json',
+    './palette-plguin-icon.svg',
   ],
-  base: '/plugins/floro-figma-plugin/',
-  plugins: [react() as any]
+  base: '/plugins/floro-palette-plugin/',
+  plugins: [react() as any],
+  publicDir: 'public'
 });

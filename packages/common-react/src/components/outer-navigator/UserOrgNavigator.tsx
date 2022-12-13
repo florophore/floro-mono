@@ -13,7 +13,7 @@ import { useUserOrganizations } from "../../hooks/offline";
 import UserProfilePhoto from "@floro/storybook/stories/common-components/UserProfilePhoto";
 import { useNavigationAnimatorContext } from "../../navigation/navigation-animator";
 
-const Navigator = styled.main`
+const Navigator = styled.nav`
   width: 72px;
   border-right: 1px solid ${ColorPalette.lightPurple};
   padding: 0;

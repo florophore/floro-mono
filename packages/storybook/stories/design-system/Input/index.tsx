@@ -17,7 +17,9 @@ export interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   onFocus?: (event: React.FocusEvent<HTMLInputElement, Element>) => void;
   onBlur?: (event: React.FocusEvent<HTMLInputElement, Element>) => void;
   tabIndex?: number;
+  inputPaddingLeft?: number;
   rightElement?: React.ReactElement|null;
+  leftElement?: React.ReactElement|null;
 }
 
 const Container = styled.div`
@@ -97,6 +99,7 @@ const Input = React.forwardRef(
       isValid = true,
       isLoading,
       placeholder,
+      inputPaddingLeft = 16,
       ...rest
     }: Props,
     ref: React.ForwardedRef<HTMLInputElement | null>
@@ -159,6 +162,11 @@ const Input = React.forwardRef(
           <LabelBorderEnd style={{ right: -1 }} />
         </LabelContainer>
         <InputRowWrapper>
+          {!!rest?.leftElement &&
+            <div style={{height: 64, position: 'relative', marginTop: -27}}>
+              {rest?.leftElement}
+            </div>
+          }
           <InputElement
             value={value}
             ref={inputRef}
@@ -167,6 +175,9 @@ const Input = React.forwardRef(
             onBlur={onInputBlur}
             placeholder={placeholder}
             spellCheck={'false'}
+            style={{
+              paddingLeft: inputPaddingLeft
+            }}
             {...rest}
           />
           {!!rest?.rightElement &&

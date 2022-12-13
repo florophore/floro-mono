@@ -55,6 +55,9 @@ const OptionText = styled.span`
   font-weight: 400;
   font-size: 1.2rem;
   color: ${(props) => props.theme.colors.optionTextColor};
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow-x: hidden;
 `;
 
 const LoaderWrapper = styled.div`
@@ -138,6 +141,8 @@ export interface Props<T> {
   tabIndex?: number;
   filterInput?: boolean;
   isDropdown?: boolean;
+  leftElement?: React.ReactElement|null;
+  inputPaddingLeft?: number;
 }
 
 const InputSelector = <T,>({
@@ -399,6 +404,8 @@ const InputSelector = <T,>({
           placeholder={placeholder}
           onKeyDown={onKeyDown}
           rightElement={RightElement}
+          leftElement={rest.leftElement}
+          inputPaddingLeft={rest.inputPaddingLeft}
           ref={input}
         />
         {showList && (

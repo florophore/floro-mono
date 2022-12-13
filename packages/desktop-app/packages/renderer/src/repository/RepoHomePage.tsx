@@ -2,27 +2,58 @@ import React, {useMemo} from 'react';
 import OuterNavigator from '@floro/common-react/src/components/outer-navigator/OuterNavigator';
 import {useNavigationAnimator} from '@floro/common-react/src/navigation/navigation-animator';
 import {useLinkTitle} from '@floro/common-react/src/components/header_links/HeaderLink';
-import {useParams} from 'react-router-dom';
+import {useParams, useSearchParams} from 'react-router-dom';
 import {useFetchRepositoryByNameQuery} from '@floro/graphql-schemas/src/generated/main-client-graphql';
 import {useSession} from '@floro/common-react/src/session/session-context';
+import {useUserOrganizations} from '@floro/common-react/src/hooks/offline';
+import LocalPluginLoader from '@floro/common-react/src/plugin-loader/LocalPluginLoader';
+import RepoNavigator from '@floro/common-react/src/components/repository/RepoNavigator';
 
 const RepoHomePage = () => {
   const params = useParams();
+  const [searchParams] = useSearchParams();
   const {currentUser} = useSession();
   const ownerHandle = params?.['ownerHandle'] ?? '';
   const repoName = params?.['repoName'] ?? '';
+  const plugin = searchParams.get('plugin');
+  const userOrganizations = useUserOrganizations();
   const {data} = useFetchRepositoryByNameQuery({
     variables: {
       ownerHandle,
       repoName,
     },
   });
+
   const repository = useMemo(() => {
     if (data?.fetchRepositoryByName?.__typename == 'FetchRepositorySuccess') {
       return data?.fetchRepositoryByName.repository;
     }
+    if (ownerHandle.toLowerCase() == currentUser?.username?.toLocaleLowerCase()) {
+      const userRepo = [
+        ...(currentUser?.privateRepositories ?? []),
+        ...(currentUser?.publicRepositories ?? []),
+      ].find(repo => repo?.name?.toLowerCase() == repoName?.toLowerCase());
+      if (userRepo) {
+        return userRepo;
+      }
+    }
+    const userOrgHandles = new Set(userOrganizations?.map(org => org.handle?.toLowerCase()));
+    if (userOrgHandles.has(ownerHandle.toLowerCase())) {
+      const org = userOrganizations.find(
+        org => org?.handle?.toLowerCase() == ownerHandle.toLowerCase(),
+      );
+      if (org) {
+        const orgRepo = [
+          ...(org?.privateRepositories ?? []),
+          ...(org?.publicRepositories ?? []),
+        ].find(repo => repo?.name?.toLowerCase() == repoName?.toLowerCase());
+        if (orgRepo) {
+          return orgRepo;
+        }
+      }
+    }
     return null;
-  }, [data]);
+  }, [data, currentUser, ownerHandle, repoName, userOrganizations]);
 
   const handleValue = useMemo(() => {
     if (!repository) {
@@ -41,7 +72,7 @@ const RepoHomePage = () => {
   const handleLabel = useMemo(() => {
     if (!repository) {
       // will work on this
-      return ownerHandle;
+      return '@' + ownerHandle;
     }
     if (repository.repoType == 'user_repo') {
       return `@${repository?.user?.username}`;
@@ -82,7 +113,7 @@ const RepoHomePage = () => {
       value: handleValue,
       label: handleLabel,
       next: {
-        prefix: "/",
+        prefix: '/',
         value: repoValue,
         label: repoLabel,
       },
@@ -103,7 +134,16 @@ const RepoHomePage = () => {
       title={title}
       organizationId={repository?.organization?.id ?? null}
     >
-      <div>{'REPO HERE'}</div>
+      <>
+        {repository && (
+          <RepoNavigator repository={repository} plugin={plugin ?? "home"}>
+            <LocalPluginLoader />
+          </RepoNavigator>
+        )}
+        {!repository && (
+          <div/>
+        )}
+      </>
     </OuterNavigator>
   );
 };

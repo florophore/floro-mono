@@ -7,7 +7,7 @@ import express from 'express';
 import compression from "compression";
 
 // change this to whatever
-const PORT = 11000;
+const PORT = 2000;
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const resolve = (p: string) => path.resolve(__dirname, p);
@@ -28,28 +28,28 @@ async function createServer() {
         app.use("/assets", requestHandler);
     } else {
         const requestHandler = express.static(resolve("./dist/assets"));
-        app.use("/plugins/floro-figma-plugin/assets", requestHandler);
+        app.use("/plugins/floro-palette-plugin/assets", requestHandler);
         app.use(compression())
     }
+
+    const publicRequestHandler = express.static(resolve("../floro"));
+    app.use(publicRequestHandler);
+    app.use("/plugins/floro-palette-plugin/floro", publicRequestHandler);
   
-    // Create Vite server in middleware mode and configure the app type as
-    // 'custom', disabling Vite's own HTML serving logic so parent server
-    // can take control
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: 'custom'
     })
 
-    // use vite's connect instance as middleware
-    // if you use your own express router (express.Router()), you should use router.use
     app.use(vite.middlewares)
     app.use(bodyParser.json());
 
-    app.get("/plugins/floro-figma-plugin*", async (req, res) => {
+    app.get("*", async (req, res) => {
+      const template = isProduction
+        ? indexHTMLTemplate
+        : await vite.transformIndexHtml(req.originalUrl, indexHTMLTemplate);
 
-        const template = isProduction ? indexHTMLTemplate : await vite.transformIndexHtml(req.originalUrl, indexHTMLTemplate);
-
-        return res.status(200).set({ "Content-Type": "text/html" }).end(template);
+      return res.status(200).set({ "Content-Type": "text/html" }).end(template);
     });
 
     app.listen(PORT);
