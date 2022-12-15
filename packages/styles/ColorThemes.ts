@@ -62,6 +62,10 @@ export interface ColorTheme {
     repoBriefRowUpdateColor: string;
     pluginIconTextColor: string;
     versionControllerBorderColor: string;
+    localRemoteBorderColor: string;
+    localRemoteTextColor: string;
+    localRemoteSelectedTextColor: string;
+    localRemoteSelectedBackgroundColor: string;
   };
   gradients: {
     backgroundNoOpacity: string;
@@ -71,6 +75,7 @@ export interface ColorTheme {
     modalContainer: string;
     innerDropdown: string;
     outerDropdown: string;
+    localRemoteSelected: string;
   };
   loaders: {
     googleButtonLoader: keyof ColorPalette; 
@@ -139,6 +144,10 @@ export const LightTheme: ColorTheme = {
     repoBriefRowUpdateColor: palette.gray,
     pluginIconTextColor: palette.purple,
     versionControllerBorderColor: palette.mediumGray,
+    localRemoteBorderColor: palette.mediumGray,
+    localRemoteTextColor: palette.gray,
+    localRemoteSelectedTextColor: palette.white,
+    localRemoteSelectedBackgroundColor: palette.teal,
   },
   gradients: {
     backgroundNoOpacity: palette.lightModeBG.substring(0, 7) + Opacity[0],
@@ -148,6 +157,7 @@ export const LightTheme: ColorTheme = {
     modalContainer: palette.mediumGray.substring(0, 7) + Opacity[70],
     innerDropdown: palette.mediumGray.substring(0, 7) + Opacity[100],
     outerDropdown: palette.black.substring(0, 7) + Opacity[50],
+    localRemoteSelected: palette.darkGray.substring(0, 7) + Opacity[50],
   },
   loaders: {
     googleButtonLoader: "gray",
@@ -216,11 +226,16 @@ export const DarkTheme: ColorTheme = {
         repoBriefRowUpdateColor: palette.gray,
         pluginIconTextColor: palette.lightPurple,
         versionControllerBorderColor: palette.white,
+        localRemoteBorderColor: palette.white,
+        localRemoteTextColor: palette.white,
+        localRemoteSelectedTextColor: palette.white,
+        localRemoteSelectedBackgroundColor: palette.teal,
     },
     shadows: {
         modalContainer: palette.black.substring(0, 7) + Opacity[70],
         innerDropdown: palette.black.substring(0, 7) + Opacity[70],
         outerDropdown: palette.black.substring(0, 7) + Opacity[50],
+        localRemoteSelected: palette.darkGray.substring(0, 7) + Opacity[50],
     },
     gradients: {
       backgroundNoOpacity: palette.darkModeBG.substring(0, 7) + Opacity[0],

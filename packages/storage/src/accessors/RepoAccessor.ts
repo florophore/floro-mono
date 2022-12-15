@@ -3,6 +3,8 @@ import { injectable, inject } from 'inversify';
 import path from 'path';
 import StorageDriver from '../drivers/StrorageDriver';
 import StorageClient from '../StorageClient';
+import { Pack } from 'tar';
+import { Readable } from 'stream';
 
 @injectable()
 export default class RepoAccessor {
@@ -39,6 +41,12 @@ export default class RepoAccessor {
       subdirectory,
       repo.id
     );
+  }
+
+
+  public async getRepoZip(repo: Repository): Promise<Readable> {
+    const path = this.getRepoPath(repo);
+    return await this.driver.zipDirectory(path);
   }
 
   public async initInitialRepoFoldersAndFiles(repo: Repository) {

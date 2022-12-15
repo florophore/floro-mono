@@ -21,10 +21,11 @@ import {
 import { useUserOrganizations } from "../../hooks/offline";
 import AdjustExtend from "@floro/common-assets/assets/images/icons/adjust.extend.svg";
 import AdjustShrink from "@floro/common-assets/assets/images/icons/adjust.shrink.svg";
-import LaptopLight from "@floro/common-assets/assets/images/icons/laptop.light.svg";
-import GlobeLight from "@floro/common-assets/assets/images/icons/globe.light.svg";
+import LaptopWhite from "@floro/common-assets/assets/images/icons/laptop.white.svg";
+import GlobeWhite from "@floro/common-assets/assets/images/icons/globe.white.svg";
 import Button from "@floro/storybook/stories/design-system/Button";
-import { useQuery, useMutation } from "react-query";
+import LocalRemoteToggle from "@floro/storybook/stories/common-components/LocalRemoteToggle";
+import { useQuery, useMutation, useQueryClient } from "react-query";
 import axios from 'axios';
 
 const Container = styled.nav`
@@ -92,7 +93,7 @@ const RemoteToggleIconWrapper = styled.div`
   height: 40px;
   background: ${ColorPalette.teal};
   left: -40px;
-  top: 12px;
+  top: 64px;
   border-top-left-radius: 10px;
   border-bottom-left-radius: 10px;
   cursor: pointer;
@@ -108,7 +109,7 @@ const LocalToggleIconWrapper = styled.div`
   height: 40px;
   background: ${ColorPalette.gray};
   left: -40px;
-  top: 64px;
+  top: 12px;
   border-top-left-radius: 10px;
   border-bottom-left-radius: 10px;
   cursor: pointer;
@@ -128,12 +129,12 @@ interface Props {
 }
 
 const useRepoExistsLocally = (repository: Repository) => {
-    return useQuery("repo:" + repository.id, async () => {
+    return useQuery("repo-exists:" + repository.id, async () => {
         try {
             if (!repository.id) {
                 return false;
             }
-            const result = await axios.get('http://localhost:63403/repo/exists/' + repository.id)
+            const result = await axios.get(`http://localhost:63403/repo/${repository.id}/exists`)
             return result?.data?.exists ?? false;
         } catch(e) {
             return false;
@@ -142,17 +143,23 @@ const useRepoExistsLocally = (repository: Repository) => {
 }
 
 const useCloneRepo = (repository: Repository) => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: () => {
-        return axios.post(
-          "http://localhost:63403/repo/clone/" + repository.id
+        return axios.get(
+          `http://localhost:63403/repo/${repository.id}/clone`
         );
     },
+    onSuccess: (result) => {
+      if (result?.data?.status == "success") {
+        queryClient.invalidateQueries("repo-exists:" + repository.id);
+      }
+    }
   });
 };
 
 const VersionControlPanel = (props: Props) => {
-  const { data: repoExistsLocally } = useRepoExistsLocally(props.repository);
+  const { data: repoExistsLocally, isLoading } = useRepoExistsLocally(props.repository);
   const cloneRepoMutation = useCloneRepo(props.repository);
   const cloneRepo = useCallback(() => {
     cloneRepoMutation.mutate();
@@ -204,7 +211,7 @@ const VersionControlPanel = (props: Props) => {
   const remoteIconsOffset = useMemo(() => {
     if (isExpanded) {
       return {
-        transform: "translate(0px, -52px)",
+        transform: "translate(0px, -104px)",
       };
     }
     return {
@@ -215,7 +222,7 @@ const VersionControlPanel = (props: Props) => {
   const localIconsOffset = useMemo(() => {
     if (isExpanded) {
       return {
-        transform: "translate(0px, -104px)",
+        transform: "translate(0px, -52px)",
       };
     }
     return {
@@ -227,6 +234,11 @@ const VersionControlPanel = (props: Props) => {
     <Container style={panelStyle}>
       <InnerContainer style={innerStyle}>
         <InnerContainerContent>
+          {repoExistsLocally &&
+            <div style={{height: 65}}>
+              <LocalRemoteToggle tab={"remote"}/>
+            </div>
+          }
           <TopContainer>
             <div style={{ marginTop: 24 }}>
               <BranchSelector />
@@ -236,8 +248,8 @@ const VersionControlPanel = (props: Props) => {
             </div>
           </TopContainer>
           <BottomContainer>
-            {!repoExistsLocally &&
-                <Button label="clone repo" bg={"orange"} size={"big"} onClick={cloneRepo} />
+            {!repoExistsLocally && !isLoading &&
+                <Button label="clone repo" bg={"orange"} size={"big"} onClick={cloneRepo} isLoading={cloneRepoMutation.isLoading}/>
             }
           </BottomContainer>
         </InnerContainerContent>
@@ -248,10 +260,10 @@ const VersionControlPanel = (props: Props) => {
       {repoExistsLocally && (
         <>
           <RemoteToggleIconWrapper style={remoteIconsOffset}>
-            <ToggleIcon src={GlobeLight} />
+            <ToggleIcon src={GlobeWhite} />
           </RemoteToggleIconWrapper>
           <LocalToggleIconWrapper style={localIconsOffset}>
-            <ToggleIcon src={LaptopLight} />
+            <ToggleIcon src={LaptopWhite} />
           </LocalToggleIconWrapper>
         </>
       )}

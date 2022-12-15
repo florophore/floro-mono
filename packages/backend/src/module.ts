@@ -41,6 +41,7 @@ import RepositoryService from './services/repositories/RepositoryService';
 import RepositoryResolverModule from './resolvers/repository/RepositoryResolverModule';
 import PhotoUploadService from './services/photos/PhotoUploadService';
 import PhotoResolverModule from './resolvers/photo/PhotoResolverModule';
+import RepoController from './controllers/RepoController';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -104,6 +105,7 @@ export default new ContainerModule((bind): void => {
 
     // Controllers
     bind<AuthenticationController>("Controllers").to(AuthenticationController);
+    bind<RepoController>("Controllers").to(RepoController);
 
     // RESOLVER MODULES
     bind<UsersResolverModule>("ResolverModule").to(UsersResolverModule);

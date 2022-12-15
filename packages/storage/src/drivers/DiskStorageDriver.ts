@@ -3,6 +3,8 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import StorageDriver from "./StrorageDriver";
 import fs from 'fs';
+import tar from 'tar';
+import { Readable } from "stream";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -35,6 +37,13 @@ export default class DiskStorageDriver implements StorageDriver {
 
   public async write(path: string, data: Buffer) {
     return await fs.promises.writeFile(path, data, );
+  }
+
+  public async zipDirectory(path: string): Promise<Readable> {
+    return tar.c({
+      gzip: true,
+      cwd: path
+    }, ["."])
   }
 
   public staticRoot() {
