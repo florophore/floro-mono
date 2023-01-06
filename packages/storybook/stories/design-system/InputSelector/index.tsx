@@ -38,6 +38,17 @@ const InnerContainer = styled.div`
     `inset 0 0 3px ${props.theme.shadows.innerDropdown}`};
   overflow-y: scroll;
   scroll-behavior: smooth;
+  &::-webkit-scrollbar {
+    width: 9px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(155, 155, 155, 0.5);
+    border-radius: 20px;
+    border: transparent;
+  }
 `;
 
 const OptionContainer = styled.div`

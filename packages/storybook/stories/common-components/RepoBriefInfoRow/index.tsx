@@ -90,6 +90,7 @@ const ElapseSince = styled.span`
 
 export interface Props {
   repo: Repository;
+  isLocal: boolean;
 }
 
 const RepoBriefInfoRow = (props: Props): React.ReactElement => {
@@ -123,11 +124,12 @@ const RepoBriefInfoRow = (props: Props): React.ReactElement => {
   );
 
   const linkLocation = useMemo(() => {
+    const searchParams = props.isLocal ? "?from=local&test=5" : "?from=remote";
     if (props.repo.repoType == "user_repo") {
-      return `/repo/@/${props.repo.user?.username}/${props.repo.name}`;
+      return `/repo/@/${props.repo.user?.username}/${props.repo.name}${searchParams}`;
     }
-    return `/repo/@/${props.repo.organization?.handle}/${props.repo.name}`;
-  }, [props.repo]);
+    return `/repo/@/${props.repo.organization?.handle}/${props.repo.name}${searchParams}`;
+  }, [props.repo, props.isLocal]);
 
   const onStartHover = useCallback(() => {
     setIsHovering(true);

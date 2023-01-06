@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useSearchParams } from "react-router-dom";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import ColorPalette from "@floro/styles/ColorPalette";
@@ -81,6 +81,7 @@ interface Props {
 const RepoSideNavigator = (props: Props): React.ReactElement => {
   const theme = useTheme();
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const HomeIcon = useMemo(() => {
     if (props.plugin?.toLowerCase() == "home") {
       return PluginHomeSelected;

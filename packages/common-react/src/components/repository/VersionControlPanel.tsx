@@ -6,7 +6,7 @@ import React, {
   useEffect,
 } from "react";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import styled from "@emotion/styled";
 import { css } from "@emotion/css";
 import { useTheme } from "@emotion/react";
@@ -27,6 +27,7 @@ import Button from "@floro/storybook/stories/design-system/Button";
 import LocalRemoteToggle from "@floro/storybook/stories/common-components/LocalRemoteToggle";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import axios from 'axios';
+import { useDaemonIsConnected } from "../../pubsub/socket";
 
 const Container = styled.nav`
   display: flex;
@@ -91,7 +92,6 @@ const RemoteToggleIconWrapper = styled.div`
   position: absolute;
   width: 40px;
   height: 40px;
-  background: ${ColorPalette.teal};
   left: -40px;
   top: 64px;
   border-top-left-radius: 10px;
@@ -107,7 +107,6 @@ const LocalToggleIconWrapper = styled.div`
   position: absolute;
   width: 40px;
   height: 40px;
-  background: ${ColorPalette.gray};
   left: -40px;
   top: 12px;
   border-top-left-radius: 10px;
@@ -153,23 +152,46 @@ const useCloneRepo = (repository: Repository) => {
     onSuccess: (result) => {
       if (result?.data?.status == "success") {
         queryClient.invalidateQueries("repo-exists:" + repository.id);
+        queryClient.invalidateQueries("local-repos");
       }
     }
   });
 };
 
 const VersionControlPanel = (props: Props) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const from: "remote"|"local" = searchParams.get?.('from') as "remote"|"local" ?? "remote";
   const { data: repoExistsLocally, isLoading } = useRepoExistsLocally(props.repository);
   const cloneRepoMutation = useCloneRepo(props.repository);
   const cloneRepo = useCallback(() => {
     cloneRepoMutation.mutate();
   }, [props.repository?.id]);
   const theme = useTheme();
-  const [isExpanded, setIsExpanded] = useState(true);
+  const isDaemonConnected = useDaemonIsConnected();
+  const [isExpanded, setIsExpanded] = useState(false);
   const adjustIcon = useMemo(
     () => (isExpanded ? AdjustShrink : AdjustExtend),
     [isExpanded]
   );
+
+  useEffect(() => {
+    // open expansion on load
+    const timeout = setTimeout(() => {
+      setIsExpanded(true);
+    }, 150);
+    return () => {
+      clearTimeout(timeout);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isDaemonConnected) {
+      setSearchParams({
+        from: "remote"
+      });
+    }
+
+  }, [searchParams, isDaemonConnected]);
 
   const onTogglePanel = useCallback(() => {
     setIsExpanded(!isExpanded);
@@ -230,15 +252,51 @@ const VersionControlPanel = (props: Props) => {
     };
   }, [isExpanded, theme]);
 
+  const onToggleFrom = useCallback((from: "local"|"remote") => {
+    const params = {};
+    for (const [k,v] of searchParams.entries()) {
+      params[k] = v;
+    }
+    setSearchParams({
+      ...params,
+      from
+    });
+
+  }, [searchParams]);
+
+  const onGoToLocal = useCallback(() => {
+    const params = {};
+    for (const [k,v] of searchParams.entries()) {
+      params[k] = v;
+    }
+    setSearchParams({
+      ...params,
+      from: "local"
+    });
+
+  }, [searchParams]);
+
+  const onGoToRemote = useCallback(() => {
+    const params = {};
+    for (const [k,v] of searchParams.entries()) {
+      params[k] = v;
+    }
+    setSearchParams({
+      ...params,
+      from: "remote"
+    });
+
+  }, [searchParams]);
+
   return (
     <Container style={panelStyle}>
       <InnerContainer style={innerStyle}>
         <InnerContainerContent>
-          {repoExistsLocally &&
-            <div style={{height: 65}}>
-              <LocalRemoteToggle tab={"remote"}/>
+          {repoExistsLocally && isDaemonConnected && (
+            <div style={{ height: 65 }}>
+              <LocalRemoteToggle tab={from} onChange={onToggleFrom} />
             </div>
-          }
+          )}
           <TopContainer>
             <div style={{ marginTop: 24 }}>
               <BranchSelector />
@@ -248,21 +306,41 @@ const VersionControlPanel = (props: Props) => {
             </div>
           </TopContainer>
           <BottomContainer>
-            {!repoExistsLocally && !isLoading &&
-                <Button label="clone repo" bg={"orange"} size={"big"} onClick={cloneRepo} isLoading={cloneRepoMutation.isLoading}/>
-            }
+            {!repoExistsLocally && !isLoading && (
+              <Button
+                label="clone repo"
+                bg={"orange"}
+                size={"big"}
+                onClick={cloneRepo}
+                isLoading={cloneRepoMutation.isLoading}
+              />
+            )}
           </BottomContainer>
         </InnerContainerContent>
       </InnerContainer>
       <AdjustIconWrapper onClick={onTogglePanel} style={iconOffset}>
         <AdjustIcon src={adjustIcon} />
       </AdjustIconWrapper>
-      {repoExistsLocally && (
+      {repoExistsLocally && isDaemonConnected && (
         <>
-          <RemoteToggleIconWrapper style={remoteIconsOffset}>
+          <RemoteToggleIconWrapper
+            style={{
+              ...remoteIconsOffset,
+              background:
+                from == "remote" ? ColorPalette.teal : ColorPalette.gray,
+            }}
+            onClick={onGoToRemote}
+          >
             <ToggleIcon src={GlobeWhite} />
           </RemoteToggleIconWrapper>
-          <LocalToggleIconWrapper style={localIconsOffset}>
+          <LocalToggleIconWrapper
+            style={{
+              ...localIconsOffset,
+              background:
+                from == "local" ? ColorPalette.teal : ColorPalette.gray,
+            }}
+            onClick={onGoToLocal}
+          >
             <ToggleIcon src={LaptopWhite} />
           </LocalToggleIconWrapper>
         </>

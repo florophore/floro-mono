@@ -121,32 +121,6 @@ interface Props {
 
 const RepoNavigator = (props: Props): React.ReactElement => {
   const theme = useTheme();
-  const HomeIcon = useMemo(() => {
-    if (props.plugin?.toLowerCase() == "home") {
-      return PluginHomeSelected;
-    }
-    return theme.name == "light"
-      ? PluginHomeUnSelectedLight
-      : PluginHomeUnSelectedDark;
-  }, [props.plugin, theme.name]);
-
-  const SettingsIcon = useMemo(() => {
-    if (props.plugin?.toLowerCase() == "settings") {
-      return PluginSettingsSelected;
-    }
-    return theme.name == "light"
-      ? PluginSettingsUnSelectedLight
-      : PluginSettingsUnSelectedDark;
-  }, [props.plugin, theme.name]);
-
-  const DefaultAppIcon = useMemo(() => {
-    if (props.plugin?.toLowerCase() == "other") {
-      return PluginDefaultSelected;
-    }
-    return theme.name == "light"
-      ? PluginDefaultUnSelectedLight
-      : PluginDefaultUnSelectedDark;
-  }, [props.plugin, theme.name]);
 
   return (
     <Container>

@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import RepoBriefInfoRow from "@floro/storybook/stories/common-components/RepoBriefInfoRow";
@@ -27,7 +27,7 @@ import {
   useSaveOfflinePhoto,
 } from "../../offline/OfflinePhotoContext";
 import StorageTab from "@floro/storybook/stories/common-components/StorageTab";
-import { useCurrentUserRepos } from "../../hooks/repos";
+import { useCurrentUserRepos, useLocalRepos } from "../../hooks/repos";
 
 const Container = styled.div`
   flex: 1;
@@ -79,8 +79,7 @@ const RepoContainer = styled.div`
   flex: 5;
   flex-direction: column;
   border-bottom: 1px solid ${(props) => props.theme.colors.commonBorder};
-  overflow-y: scroll;
-  overflow-x: hidden;
+  overflow: hidden;
   max-width: 263px;
   position: relative;
 `;
@@ -93,6 +92,17 @@ const RepoInnerContainer = styled.div`
   position: relative;
   height: 100%;
   overflow-y: scroll;
+  &::-webkit-scrollbar {
+    width: 9px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(155, 155, 155, 0.5);
+    border-radius: 20px;
+    border: transparent;
+  }
 `;
 
 const InvitationContainer = styled.div`
@@ -128,6 +138,13 @@ const BottomGradiuent = styled.div`
 
 const HomeDashboard = () => {
   const { repositories } = useCurrentUserRepos();
+  const localRepos = useLocalRepos();
+  const localRepoIds = useMemo(() => {
+    if (!localRepos) {
+      return new Set();
+    }
+    return new Set(localRepos ?? []);
+  }, [localRepos])
 
   return (
     <Container>
@@ -139,7 +156,7 @@ const HomeDashboard = () => {
           </SideBarTitleWrapper>
           <RepoInnerContainer>
             {repositories?.map((repo, index) => {
-              return <RepoBriefInfoRow repo={repo as Repository} key={index} />;
+              return <RepoBriefInfoRow repo={repo as Repository} key={index} isLocal={localRepoIds.has(repo?.id)} />;
             })}
           </RepoInnerContainer>
           <TopGradient />

@@ -1,6 +1,11 @@
+import { useEffect } from 'react';
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { useMemo } from "react";
+import { useQuery, useQueryClient } from "react-query";
+import { useDaemonIsConnected } from "../pubsub/socket";
 import { useSession } from "../session/session-context";
+import { useIsOnline } from "./offline";
+import axios from 'axios';
 
 export const useCurrentUserRepos = () => {
   const { currentUser } = useSession();
@@ -41,3 +46,23 @@ export const useCurrentUserRepos = () => {
     [privateRepositories, publicRepositories, repositories]
   );
 };
+
+export const useLocalRepos = () => {
+  const daemonIsRunning = useDaemonIsConnected();
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    if (!daemonIsRunning) {
+      queryClient.invalidateQueries("local-repos");
+    }
+  }, [daemonIsRunning, queryClient]);
+
+  const response = useQuery("local-repos", async () => {
+    try {
+      const response =  await axios.get("http://localhost:63403/repos")
+      return response?.data?.repos ?? [];
+    } catch(e) {
+      return []
+    }
+  });
+  return response?.data ?? [];
+}
