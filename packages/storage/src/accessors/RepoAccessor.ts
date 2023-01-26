@@ -64,7 +64,7 @@ export default class RepoAccessor {
     );
     const stashDirPath = path.join(
       this.getRepoPath(repo),
-      "stash"
+      "stashes"
     );
     const currentJsonPath = path.join(
       this.getRepoPath(repo),

@@ -42,10 +42,12 @@ import RepositoryResolverModule from './resolvers/repository/RepositoryResolverM
 import PhotoUploadService from './services/photos/PhotoUploadService';
 import PhotoResolverModule from './resolvers/photo/PhotoResolverModule';
 import RepoController from './controllers/RepoController';
+import ApolloRestClientFactory from './controllers/ApolloRestClientFactory';
 
 export default new ContainerModule((bind): void => {
     //main
     bind(Backend).toSelf();
+    bind(ApolloRestClientFactory).toSelf();
     //admin
     bind(AdminBackend).toSelf();
 

@@ -13,9 +13,9 @@ import RedisQueueWorkers from "@floro/redis/src/RedisQueueWorkers";
 import { GraphQLSchema } from "graphql";
 import RedisPubsubFactory from "@floro/redis/src/RedisPubsubFactory";
 import BaseController from "./controllers/BaseController";
-import SessionStore from "@floro/redis/src/sessions/SessionStore";
 import RequestCache from "./request/RequestCache";
 import StorageClient from "@floro/storage/src/StorageClient";
+import ApolloRestClientFactory from "./controllers/ApolloRestClientFactory";
 
 @injectable()
 export default class AdminBackend extends Backend {
@@ -32,8 +32,8 @@ export default class AdminBackend extends Backend {
     @inject(StorageClient) storageClient: StorageClient,
     @inject(ContextFactory) contextFactory: ContextFactory,
     @inject(Server) httpServer: Server,
-    @inject(SessionStore) sessionStore: SessionStore,
-    @inject(RequestCache) requestCache: RequestCache
+    @inject(RequestCache) requestCache: RequestCache,
+    @inject(ApolloRestClientFactory) apolloRestClientFactory: ApolloRestClientFactory,
   ) {
     super(
       resolverModules,
@@ -45,8 +45,8 @@ export default class AdminBackend extends Backend {
       storageClient,
       contextFactory,
       httpServer,
-      sessionStore,
-      requestCache
+      requestCache,
+      apolloRestClientFactory
     );
     this.resolverModules = [...resolverModules, ...adminResolverModules];
   }

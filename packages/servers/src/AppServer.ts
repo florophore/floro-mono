@@ -140,6 +140,7 @@ export default class AppServer {
     this.app.get("*", async (req, res, next): Promise<
       Response | undefined | void
     > => {
+      const cacheKey = this.backend.requestCache.init();
       try {
         const sessionContext = await this.backend.fetchSessionUserContext(req.cookies?.["user-session"]);
         const url = req.originalUrl;
@@ -153,6 +154,7 @@ export default class AppServer {
           url,
           should404: false,
           isSSR: true,
+          cacheKey
         };
         const client = new ApolloClient({
           ssrMode: true,
@@ -167,6 +169,7 @@ export default class AppServer {
           { client },
           context
         );
+        this.backend.requestCache.release(cacheKey);
         if (context.url && context.url != url) {
           return res.redirect(301, context.url);
         }
@@ -193,6 +196,7 @@ export default class AppServer {
         }
         return res.status(200).set({ "Content-Type": "text/html" }).end(html);
       } catch (e) {
+        this.backend.requestCache.release(cacheKey);
         vite.ssrFixStacktrace(e as Error);
         next(e);
       }

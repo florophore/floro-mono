@@ -1,39 +1,40 @@
 import { inject, injectable, multiInject } from "inversify";
 import BaseResolverModule from "./resolvers/BaseResolverModule";
-import { main , mainSchema as typeDefs } from '@floro/graphql-schemas'; 
-import { Server } from 'http';
-import { resolvers as scalarResolvers } from 'graphql-scalars';
+import { main, mainSchema as typeDefs } from "@floro/graphql-schemas";
+import { Server } from "http";
+import { resolvers as scalarResolvers } from "graphql-scalars";
 import { ApolloServer } from "apollo-server-express";
 import {
-    ApolloServerPluginDrainHttpServer,
-    ApolloServerPluginLandingPageDisabled,
-    ApolloServerPluginLandingPageLocalDefault,
-  } from 'apollo-server-core';
+  ApolloServerPluginDrainHttpServer,
+  ApolloServerPluginLandingPageDisabled,
+  ApolloServerPluginLandingPageLocalDefault,
+} from "apollo-server-core";
 import GraphQLUpload from "graphql-upload/GraphQLUpload.mjs";
 import DatabaseConnection from "@floro/database/src/connection/DatabaseConnection";
 import ContextFactory from "@floro/database/src/contexts/ContextFactory";
 import RedisClient from "@floro/redis/src/RedisClient";
 import process from "process";
 import { makeExecutableSchema } from "graphql-tools";
-import { WebSocketServer } from 'ws';
-import { useServer } from 'graphql-ws/lib/use/ws';
+import { WebSocketServer } from "ws";
+import { Extra, useServer } from "graphql-ws/lib/use/ws";
 import RedisQueueWorkers from "@floro/redis/src/RedisQueueWorkers";
-import { GraphQLSchema } from 'graphql';
+import { GraphQLSchema } from "graphql";
 import RedisPubsubFactory from "@floro/redis/src/RedisPubsubFactory";
 import BaseController from "./controllers/BaseController";
 import { Express } from "express";
-import SessionStore from "@floro/redis/src/sessions/SessionStore";
-import UsersContext from "@floro/database/src/contexts/users/UsersContext";
 import StorageClient from "@floro/storage/src/StorageClient";
 import RequestCache from "./request/RequestCache";
+import ApolloRestClientFactory from "./controllers/ApolloRestClientFactory";
+import { Context } from "graphql-ws";
 
-const isProduction = process.env.NODE_ENV === 'production';
+const isProduction = process.env.NODE_ENV === "production";
 
 @injectable()
 export default class Backend {
   public resolverModules: BaseResolverModule[];
   public controllers: BaseController[];
   public storageClient!: StorageClient;
+  public requestCache!: RequestCache;
 
   protected httpServer: Server;
   private databaseConnection!: DatabaseConnection;
@@ -41,8 +42,7 @@ export default class Backend {
   private redisQueueWorkers!: RedisQueueWorkers;
   private redisPubSubFactory!: RedisPubsubFactory;
   private contextFactory!: ContextFactory;
-  private sessionStore!: SessionStore;
-  private requestCache!: RequestCache;
+  private apolloRestClientFactory!: ApolloRestClientFactory;
 
   constructor(
     @multiInject("ResolverModule") resolverModules: BaseResolverModule[],
@@ -54,8 +54,9 @@ export default class Backend {
     @inject(StorageClient) storageClient: StorageClient,
     @inject(ContextFactory) contextFactory: ContextFactory,
     @inject(Server) httpServer: Server,
-    @inject(SessionStore) sessionStore: SessionStore,
-    @inject(RequestCache) requestCache: RequestCache
+    @inject(RequestCache) requestCache: RequestCache,
+    @inject(ApolloRestClientFactory)
+    apolloRestClientFactory: ApolloRestClientFactory
   ) {
     this.resolverModules = resolverModules;
     this.controllers = controllers;
@@ -66,11 +67,11 @@ export default class Backend {
     this.redisPubSubFactory = redisPubSubFactory;
     this.storageClient = storageClient;
     this.contextFactory = contextFactory;
-    this.sessionStore = sessionStore;
     this.requestCache = requestCache;
+    this.apolloRestClientFactory = apolloRestClientFactory;
   }
 
-  public async startStorageClient(): Promise<null|string> {
+  public async startStorageClient(): Promise<null | string> {
     await this.storageClient.start();
     return this.storageClient?.getStaticRoot?.() ?? null;
   }
@@ -115,57 +116,30 @@ export default class Backend {
     });
   }
 
-  public async fetchSessionUserContext(authorizationToken) {
-    try {
-      if ((authorizationToken?.length ?? 0) > 0) {
-        const session = await this.sessionStore.fetchSession(
-          authorizationToken
-        );
-        const usersContext = await this.contextFactory.createContext(
-          UsersContext
-        );
-        if (!session?.userId) {
-          return {
-            session: null,
-            currentUser: null,
-            authorizationToken,
-          };
-        }
-        const currentUser = await usersContext.getById(session?.userId);
-        if (!currentUser) {
-          return {
-            session: null,
-            currentUser: null,
-            authorizationToken,
-          };
-        }
-        return {
-          session,
-          currentUser,
-          authorizationToken,
-        };
-      }
-      return {
-        session: null,
-        currentUser: null,
-        authorizationToken,
-      };
-    } catch (e) {
-      return {
-        session: null,
-        currentUser: null,
-        authorizationToken
-      };
-    }
+  public async fetchSessionUserContext(authorizationToken?: string) {
+    return this.apolloRestClientFactory.createSessionContext(
+      authorizationToken
+    );
   }
 
   public buildApolloServer(): ApolloServer {
     const schema = this.buildExecutableSchema();
 
+    this.apolloRestClientFactory.setSchema(schema);
+
     const wsServer = this.getWsServer();
 
-    const getDynamicContext = async (ctx, _msg, _args) => {
-      return await this.fetchSessionUserContext(ctx.authorizationToken);
+    const getDynamicContext = async (
+      ctx: Context<
+        Record<string, unknown> | undefined,
+        Extra & Partial<Record<PropertyKey, never>>
+      >,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      _msg: unknown,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      _args: unknown
+    ) => {
+      return await this.fetchSessionUserContext(ctx["authorizationToken"]);
     };
 
     const serverCleanup = useServer(
@@ -186,16 +160,21 @@ export default class Backend {
       cache: "bounded",
       context: async ({ req }) => {
         if (req?.cookies?.["user-session"]) {
-          return await this.fetchSessionUserContext(req?.cookies?.["user-session"]);
+          return await this.fetchSessionUserContext(
+            req?.cookies?.["user-session"]
+          );
         }
         if (req?.headers?.authorization?.startsWith("Bearer")) {
-          const [, token] = req?.headers?.authorization?.split("Bearer ") ?? ["", ""];
+          const [, token] = req?.headers?.authorization?.split("Bearer ") ?? [
+            "",
+            "",
+          ];
           return await this.fetchSessionUserContext(token);
         }
         return {
           session: null,
           currentUser: null,
-          authorizationToken: ""
+          authorizationToken: "",
         };
       },
       plugins: [
@@ -203,20 +182,13 @@ export default class Backend {
           async requestDidStart(requestContext) {
             const requestCacheId = requestCache.init();
             requestContext.context.cacheKey = requestCacheId;
-            const requestStartTime = new Date().getTime();
             return {
               async willSendResponse(requestContext) {
-                console.log("CACHE SIZE", requestCache.getSize(requestContext.context.cacheKey));
-                console.log("CUMULATIVE CACHE SIZE", requestCache.getSize());
                 requestCache.release(requestContext.context.cacheKey);
-                const requestEndTime = new Date().getTime();
-                const latency = requestEndTime -  requestStartTime;
-                console.log("REQUEST LATENCY", latency);
                 return;
-              }
-            }
-          }
-
+              },
+            };
+          },
         },
         ApolloServerPluginDrainHttpServer({ httpServer: this.httpServer }),
         {
