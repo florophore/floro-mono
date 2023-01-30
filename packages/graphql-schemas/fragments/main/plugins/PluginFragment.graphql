@@ -1,0 +1,13 @@
+fragment Plugin on Plugin {
+    id
+    name
+    isPrivate
+    createdAt
+    updatedAt
+    user {
+        ...User
+    }
+    organization {
+        ...Organization
+    }
+}

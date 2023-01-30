@@ -7,7 +7,6 @@ import LoggedInUserGuard from "../hooks/guards/LoggedInUserGuard";
 import { runWithHooks } from "../hooks/ResolverHook";
 import RootOrganizationMemberPermissionsLoader from "../hooks/loaders/Root/OrganizationID/RootOrganizationMemberPermissionsLoader";
 import RepositoryService from "../../services/repositories/RepositoryService";
-import { Repository } from "@floro/graphql-schemas/src/generated/main-graphql";
 import OrganizationMembersContext from "@floro/database/src/contexts/organizations/OrganizationMembersContext";
 
 @injectable()

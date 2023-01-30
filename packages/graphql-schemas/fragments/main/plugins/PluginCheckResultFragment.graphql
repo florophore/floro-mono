@@ -1,0 +1,4 @@
+fragment PluginCheckResult on PluginCheckResult {
+    exists
+    pluginName
+}

@@ -1,10 +1,8 @@
 type Plugin {
   id: ID
-  nameKey: UUID
   name: String
   ownerType: String
   isPrivate: Boolean
-  licenseCode: String
   user: User
   organization: Organization
   createdAt: DateTime
@@ -13,5 +11,35 @@ type Plugin {
 
 type PluginCheckResult {
     exists: Boolean
-    name: String
+    pluginName: String
 }
+
+type CreateUserPluginSuccess {
+  plugin: Plugin
+  user: User
+}
+
+type CreateUserPluginError {
+  message: String
+  type: String
+}
+
+union CreateUserPluginResponse =
+    CreateUserPluginSuccess
+  | CreateUserPluginError
+  | UnAuthenticatedError
+
+type CreateOrganizationPluginSuccess {
+  plugin: Plugin
+  organization: Organization
+}
+
+type CreateOrganizationPluginError {
+  message: String
+  type: String
+}
+
+union CreateOrganizationPluginResponse =
+    CreateOrganizationPluginSuccess
+  | CreateOrganizationPluginError
+  | UnAuthenticatedError

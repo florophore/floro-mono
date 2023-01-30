@@ -1,0 +1,26 @@
+mutation CreateUserPlugin(
+  $name: String!
+  $isPrivate: Boolean!
+) {
+  createUserPlugin(
+    name: $name
+    isPrivate: $isPrivate
+  ) {
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+    ... on CreateUserPluginSuccess {
+      plugin {
+        ...Plugin
+      }
+      user {
+        id
+      }
+    }
+    ... on CreateUserPluginError {
+      message
+      type
+    }
+  }
+}

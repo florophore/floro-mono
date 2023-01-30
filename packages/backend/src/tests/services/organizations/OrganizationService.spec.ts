@@ -18,6 +18,7 @@ import { Organization } from "@floro/database/src/entities/Organization";
 import OrganizationMemberRolesContext from "@floro/database/src/contexts/organizations/OrganizationMemberRolesContext";
 import { OrganizationRole } from "@floro/database/src/entities/OrganizationRole";
 import OrganizationRolePresetModel from "../../../services/organizations/presets/OrganizationRolePresetModel";
+import DatabaseConnection from "@floro/database/src/connection/DatabaseConnection";
 
 describe("OrganizationService", () => {
   let organizationService: OrganizationService;
@@ -104,19 +105,23 @@ describe("OrganizationService", () => {
       );
 
       const contextFactory = container.get(ContextFactory);
+      const databaseConnection = container.get(DatabaseConnection);
       const orgMembersContext = await contextFactory.createContext(
-        OrganizationMembersContext
+        OrganizationMembersContext,
+        await databaseConnection.makeQueryRunner()
       );
 
       const orgRolesContext = await contextFactory.createContext(
-        OrganizationRolesContext
+        OrganizationRolesContext,
+        await databaseConnection.makeQueryRunner()
       );
       const organizationMember = await orgMembersContext.getByOrgAndUser(
         result.organization as Organization,
         currentUser
       );
       const orgMemberRoleContext = await contextFactory.createContext(
-        OrganizationMemberRolesContext
+        OrganizationMemberRolesContext,
+        await databaseConnection.makeQueryRunner()
       );
       expect(result.organization?.name).to.eql("floro");
       expect(result.organization?.handle).to.eql("florophore");

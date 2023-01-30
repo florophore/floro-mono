@@ -12,6 +12,7 @@ const __dirname = dirname(__filename);
 
 export const loadFixtures = async <T extends BaseEntity[]> (fixtureNames: string[]): Promise<T> => {
   const out: Array<unknown|BaseEntity> = [];
+  const outMap = {};
   const dbConn = container.get(DatabaseConnection);
   const loader = new Loader();
   loader.load(path.resolve(__dirname + '../../../../fixtures'));
@@ -25,8 +26,12 @@ export const loadFixtures = async <T extends BaseEntity[]> (fixtureNames: string
       const entity = await builder.build(fixture);
       const repo = dbConn.datasource.getRepository(fixture.entity);
       const outEntity = await repo.save(entity);
-      out.push(outEntity);
+      const key = `${fixture.entity}:${fixture.name}`;
+      outMap[key] = outEntity
     }
+  }
+  for (const key of fixtureNames) {
+    out.push(outMap[key]);
   }
   if (fixtureNames.length != out.length) {
     throw new Error("Invalid fixures loaded in: " + JSON.stringify(fixtureNames));

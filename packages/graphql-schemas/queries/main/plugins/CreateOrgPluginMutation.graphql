@@ -1,0 +1,28 @@
+mutation CreateOrgPlugin(
+  $organizationId: ID!
+  $name: String!
+  $isPrivate: Boolean!
+) {
+  createOrgPlugin(
+    name: $name
+    organizationId: $organizationId
+    isPrivate: $isPrivate
+  ) {
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+    ... on CreateOrganizationPluginSuccess {
+      plugin {
+        ...Plugin
+      }
+      organization {
+        id
+      }
+    }
+    ... on CreateOrganizationPluginError {
+      message
+      type
+    }
+  }
+}

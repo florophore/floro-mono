@@ -1,0 +1,8 @@
+query PluginNameCheck($pluginName: String) {
+  checkPluginNameIsTaken(pluginName: $pluginName) {
+    ... on PluginCheckResult {
+      ...PluginCheckResult
+    }
+  }
+}
+

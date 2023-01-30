@@ -2,3 +2,16 @@
 extend type Query {
     checkPluginNameIsTaken(pluginName: String): PluginCheckResult
 }
+
+extend type Mutation {
+  createOrgPlugin(
+    name: String!
+    organizationId: ID!
+    isPrivate: Boolean!
+  ): CreateOrganizationPluginResponse
+
+  createUserPlugin(
+    name: String!
+    isPrivate: Boolean!
+  ): CreateUserPluginResponse
+}
