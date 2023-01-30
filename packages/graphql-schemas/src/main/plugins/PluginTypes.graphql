@@ -1,0 +1,17 @@
+type Plugin {
+  id: ID
+  nameKey: UUID
+  name: String
+  ownerType: String
+  isPrivate: Boolean
+  licenseCode: String
+  user: User
+  organization: Organization
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+type PluginCheckResult {
+    exists: Boolean
+    name: String
+}

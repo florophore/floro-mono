@@ -7,6 +7,7 @@ import { OrganizationRole } from "./OrganizationRole";
 import { Photo } from "./Photo";
 import { Referral } from "./Referral";
 import { Repository } from "./Repository";
+import { Plugin } from "./Plugin";
 import { UserAuthCredential } from "./UserAuthCredential";
 import { UserServiceAgreement } from "./UserServiceAgreement";
 
@@ -75,10 +76,16 @@ export class User extends BinaryPKBaseEntity {
   @OneToMany("Repository", "user")
   repositories?: Relation<Repository>[];
 
+  @OneToMany("Plugin", "user")
+  plugins?: Relation<Plugin>[];
+
+  @OneToMany("Plugin", "user")
+  createdPlugins?: Relation<Plugin>[];
+
   @Column("uuid")
   profilePhotoId?: string|null;
 
-  @OneToOne("Photo", "organization")
+  @OneToOne("Photo", "user")
   @JoinColumn()
   profilePhoto?: Relation<Photo>|null;
 }

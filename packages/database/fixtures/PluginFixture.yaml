@@ -1,0 +1,30 @@
+entity: Plugin
+items:
+  plugin_user_public_0:
+    name: test-plugin
+    nameKey: ccde3ea0-407e-7005-b618-44c65fa4315a
+    ownerType: user_plugin
+    user: '@user_0'
+    createdByUser: '@user_0'
+    isPrivate: false
+  plugin_user_private_0:
+    name: test-plugin
+    nameKey: ccde3ea0-407e-7005-b618-44c65fa4315a
+    ownerType: user_plugin
+    user: '@user_0'
+    createdByUser: '@user_0'
+    isPrivate: true
+  plugin_org_public_0:
+    name: test-plugin
+    nameKey: ccde3ea0-407e-7005-b618-44c65fa4315a
+    ownerType: org_plugin
+    organization: '@org_0'
+    createdByUser: '@user_0'
+    isPrivate: false
+  plugin_org_private_0:
+    name: test-plugin
+    nameKey: ccde3ea0-407e-7005-b618-44c65fa4315a
+    ownerType: org_plugin
+    organization: '@org_0'
+    createdByUser: '@user_0'
+    isPrivate: true

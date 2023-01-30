@@ -43,6 +43,8 @@ import PhotoUploadService from './services/photos/PhotoUploadService';
 import PhotoResolverModule from './resolvers/photo/PhotoResolverModule';
 import RepoController from './controllers/RepoController';
 import ApolloRestClientFactory from './controllers/ApolloRestClientFactory';
+import PluginRegistryService from './services/plugins/PluginRegistryService';
+import PluginResolverModule from './resolvers/plugin/PluginResolverModule';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -92,6 +94,9 @@ export default new ContainerModule((bind): void => {
     bind(OrganizationMemberService).toSelf();
     bind(OrganizationRoleService).toSelf();
 
+    // PLUGINS
+    bind(PluginRegistryService).toSelf();
+
     // PHOTOS
     bind(PhotoUploadService).toSelf();
 
@@ -119,6 +124,7 @@ export default new ContainerModule((bind): void => {
     bind<ReferralResolverModule>("ResolverModule").to(ReferralResolverModule);
     bind<RepositoryResolverModule>("ResolverModule").to(RepositoryResolverModule);
     bind<PhotoResolverModule>("ResolverModule").to(PhotoResolverModule);
+    bind<PluginResolverModule>("ResolverModule").to(PluginResolverModule);
 
     // ADMIN MODULES OVERRIDE WITH AdminResolverModule
     bind<AdminUsersResolverModule>("AdminResolverModule").to(AdminUsersResolverModule);

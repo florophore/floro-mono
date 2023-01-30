@@ -28,6 +28,7 @@ import { OrganizationRole } from "./OrganizationRole";
 import { User } from "./User";
 import { Repository } from "./Repository";
 import { Photo } from "./Photo";
+import { Plugin } from "./Plugin";
 
 @Entity("organizations")
 export class Organization extends BinaryPKBaseEntity {
@@ -135,6 +136,9 @@ export class Organization extends BinaryPKBaseEntity {
 
   @OneToMany("Repository", "organization")
   repositories?: Relation<Repository>[];
+
+  @OneToMany("Plugin", "organization")
+  plugins?: Relation<Plugin>[];
 
   @Column("uuid")
   profilePhotoId?: string|null;

@@ -1,0 +1,4 @@
+
+extend type Query {
+    checkPluginNameIsTaken(pluginName: String): PluginCheckResult
+}
