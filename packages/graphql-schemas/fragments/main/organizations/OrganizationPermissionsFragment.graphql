@@ -7,6 +7,9 @@ fragment OrganizationPermissions on OrganizationPermissions {
   canModifyInvites
   canModifyOwnInternalHandle
   canModifyBilling
+  canRegisterPlugins,
+  canUploadPlugins,
+  canReleasePlugins,
   canModifyOrganizationRoles
   canAssignRoles
 }

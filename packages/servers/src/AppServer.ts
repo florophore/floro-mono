@@ -12,6 +12,7 @@ import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.mjs";
 import path from "path";
 import compression from "compression";
 import serveStatic from "serve-static";
+import busboy from 'connect-busboy';
 import { fileURLToPath } from "url";
 
 import { createServer as createViteServer } from "vite";
@@ -59,10 +60,11 @@ export default class AppServer {
     this.backend.startRedis();
 
     this.app.use(cookieParser());
+    this.app.use(busboy());
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
 
-    this.app.use(graphqlUploadExpress());
+    this.app.use("/graphql", graphqlUploadExpress());
 
     this.backend.setupRestRoutes(this.app);
     const apolloServer = this.backend.buildApolloServer();

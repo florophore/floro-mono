@@ -32,7 +32,7 @@ const LocalPluginLoader = () => {
                 border: 0
             }}
             seamless
-            src={"http://localhost:63403/plugins/floro-palette-plugin"}/>
+            src={"http://localhost:63403/plugins/palette/dev"}/>
         </div>
 
     );

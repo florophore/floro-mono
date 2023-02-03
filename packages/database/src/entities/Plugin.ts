@@ -1,7 +1,8 @@
 import { IsBoolean, IsDefined, IsIn, IsString, IsUUID, ValidateIf } from "class-validator";
-import { Entity, Column, OneToOne, Relation, JoinColumn, ManyToOne } from "typeorm";
+import { Entity, Column, OneToOne, Relation, JoinColumn, ManyToOne, OneToMany } from "typeorm";
 import { BinaryPKBaseEntity } from "./BinaryPKBaseEntity";
 import { Organization } from "./Organization";
+import { PluginVersion } from "./PluginVersion";
 import { User } from "./User";
 
 @Entity("plugins")
@@ -48,4 +49,7 @@ export class Plugin extends BinaryPKBaseEntity {
   @ManyToOne("Organization", "plugins")
   @JoinColumn()
   organization?: Relation<Organization>;
+
+  @OneToMany("PluginVersion", "plugin")
+  versions?: Relation<PluginVersion>[];
 }

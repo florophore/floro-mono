@@ -17,6 +17,9 @@ export interface OrganizationPermissions {
   canModifyInvites: boolean;
   canModifyOwnInternalHandle: boolean;
   canModifyBilling: boolean;
+  canRegisterPlugins: boolean,
+  canUploadPlugins: boolean,
+  canReleasePlugins: boolean,
   canModifyOrganizationRoles: boolean;
   canAssignRoles: boolean;
 }
@@ -30,6 +33,9 @@ export const PERMISSION_KEYS: (keyof OrganizationPermissions)[] = [
     "canModifyInvites",
     "canModifyOwnInternalHandle",
     "canModifyBilling",
+    "canRegisterPlugins",
+    "canUploadPlugins",
+    "canReleasePlugins",
     "canModifyOrganizationRoles",
     "canAssignRoles"
 ];
@@ -65,6 +71,9 @@ export default class OrganizationPermissionService {
       canModifyInvites: false,
       canModifyOwnInternalHandle: false,
       canModifyBilling: false,
+      canRegisterPlugins: false,
+      canUploadPlugins: false,
+      canReleasePlugins: false,
       canModifyOrganizationRoles: false,
       canAssignRoles: false
     };

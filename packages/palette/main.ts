@@ -14,6 +14,10 @@ const resolve = (p: string) => path.resolve(__dirname, p);
 const isDevelopment = process.env.NODE_ENV == 'development';
 const isProduction = process.env.NODE_ENV == "production";
 
+const manifest = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "floro", "floro.manifest.json"), "utf8")
+);
+
 let indexHTMLTemplate = fs.readFileSync(
   path.resolve(__dirname, isDevelopment ? 'index.html' : './dist/index.html'),
   'utf-8'
@@ -21,20 +25,19 @@ let indexHTMLTemplate = fs.readFileSync(
 
 async function createServer() {
     const app = express()
-
     if (!isProduction) {
         const requestHandler = express.static(resolve("../common-assets/assets"));
         app.use(requestHandler);
         app.use("/assets", requestHandler);
+
+        const publicRequestHandler = express.static(resolve("../floro"));
+        app.use(publicRequestHandler);
+        app.use(`/plugins/${manifest.name}/dev/floro`, publicRequestHandler);
     } else {
         const requestHandler = express.static(resolve("./dist/assets"));
-        app.use("/plugins/floro-palette-plugin/assets", requestHandler);
+        app.use(`/plugins/${manifest.name}/${manifest.version}/assets`, requestHandler);
         app.use(compression())
     }
-
-    const publicRequestHandler = express.static(resolve("../floro"));
-    app.use(publicRequestHandler);
-    app.use("/plugins/floro-palette-plugin/floro", publicRequestHandler);
   
     const vite = await createViteServer({
       server: { middlewareMode: true },

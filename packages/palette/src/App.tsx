@@ -4,21 +4,21 @@ import { useColorTheme } from "@floro/common-web/src/hooks/color-theme";
 import { Routes, Route, Link } from "react-router-dom";
 import WarningLabel from '@floro/storybook/stories/design-system/WarningLabel';
 
-const Home = () => {
+const Read = () => {
   return (
     <div style={{width: '100%'}}>
-      <h1>Home</h1>
-      <Link to={"/about"}>About</Link>
+      <h1>READ</h1>
+      <Link to={"/write"}>WRITE</Link>
     </div>
   );
 };
 
-const About = () => {
+const Edit = () => {
   return (
     <div>
-      <h1>About</h1>
+      <h1>WRITE</h1>
       <WarningLabel label="testing" size="small"/>
-      <Link to={"/"}>Home</Link>
+      <Link to={"/"}>READ</Link>
     </div>
   );
 };
@@ -29,8 +29,8 @@ function App() {
   return (
     <ThemeProvider theme={colorTheme}>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
+        <Route path="/" element={<Read />} />
+        <Route path="/write" element={<Edit />} />
       </Routes>
     </ThemeProvider>
   );

@@ -45,6 +45,7 @@ import RepoController from './controllers/RepoController';
 import ApolloRestClientFactory from './controllers/ApolloRestClientFactory';
 import PluginRegistryService from './services/plugins/PluginRegistryService';
 import PluginResolverModule from './resolvers/plugin/PluginResolverModule';
+import PluginController from './controllers/PluginController';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -113,6 +114,7 @@ export default new ContainerModule((bind): void => {
     // Controllers
     bind<AuthenticationController>("Controllers").to(AuthenticationController);
     bind<RepoController>("Controllers").to(RepoController);
+    bind<PluginController>("Controllers").to(PluginController);
 
     // RESOLVER MODULES
     bind<UsersResolverModule>("ResolverModule").to(UsersResolverModule);

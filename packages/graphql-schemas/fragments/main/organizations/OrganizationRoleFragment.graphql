@@ -11,6 +11,9 @@ fragment OrganizationRole on OrganizationRole {
   canModifyInvites
   canModifyOwnInternalHandle
   canModifyBilling
+  canRegisterPlugins,
+  canUploadPlugins,
+  canReleasePlugins,
   canModifyOrganizationRoles
   canAssignRoles
 }

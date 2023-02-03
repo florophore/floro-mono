@@ -1,10 +1,10 @@
-import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 
 const ClientApp = (
-    <BrowserRouter basename='/plugins/floro-palette-plugin'>
+    //@ts-ignore next-line
+    <BrowserRouter basename={`/plugins/${FLORO_MANIFEST_NAME}/${FLORO_MANIFEST_VERSION}`}>
         <App/>
     </BrowserRouter>
 );

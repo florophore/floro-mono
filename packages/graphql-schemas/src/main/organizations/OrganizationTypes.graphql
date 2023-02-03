@@ -61,6 +61,11 @@ type OrganizationRole {
   canModifyInvites: Boolean
   canModifyOwnInternalHandle: Boolean
   canModifyBilling: Boolean
+
+  canRegisterPlugins: Boolean
+  canUploadPlugins: Boolean
+  canReleasePlugins: Boolean
+
   canModifyOrganizationRoles: Boolean
   canAssignRoles: Boolean
 
@@ -78,6 +83,9 @@ type OrganizationPermissions {
   canModifyInvites: Boolean
   canModifyOwnInternalHandle: Boolean
   canModifyBilling: Boolean
+  canRegisterPlugins: Boolean
+  canUploadPlugins: Boolean
+  canReleasePlugins: Boolean
   canModifyOrganizationRoles: Boolean
   canAssignRoles: Boolean
 }

@@ -28,6 +28,9 @@ extend type Mutation {
         canModifyInvites: Boolean!,
         canModifyOwnInternalHandle: Boolean!,
         canModifyBilling: Boolean!,
+        canRegisterPlugins: Boolean!,
+        canUploadPlugins: Boolean!,
+        canReleasePlugins: Boolean!,
         canModifyOrganizationRoles: Boolean!,
         canAssignRoles: Boolean!
     ): CreateOrganizationRoleResponse
@@ -45,6 +48,9 @@ extend type Mutation {
         canModifyInvites: Boolean!,
         canModifyOwnInternalHandle: Boolean!,
         canModifyBilling: Boolean!,
+        canRegisterPlugins: Boolean!,
+        canUploadPlugins: Boolean!,
+        canReleasePlugins: Boolean!,
         canModifyOrganizationRoles: Boolean!,
         canAssignRoles: Boolean!
     ): UpdateOrganizationRoleResponse

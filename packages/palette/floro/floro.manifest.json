@@ -1,0 +1,41 @@
+{
+  "version": "0.0.0",
+  "name": "palette",
+  "displayName": "palette",
+  "description": "Simple plugin to organize colors.",
+  "icon": {
+    "light": "./palette-plugin-icon.svg",
+    "dark": "./palette-plugin-icon.svg"
+  },
+  "imports": {},
+  "types": {
+    "color": {
+      "name": {
+        "type": "string",
+        "isKey": true
+      },
+      "hexcode": {
+        "type": "string"
+      }
+    },
+    "opacity": {
+      "percentage": {
+        "type": "int",
+        "isKey": true
+      },
+      "hexcode": {
+        "type": "string"
+      }
+    }
+  },
+  "store": {
+    "colors": {
+      "type": "collection",
+      "values": "color"
+    },
+    "opacities": {
+      "type": "collection",
+      "values": "opacity"
+    }
+  }
+}

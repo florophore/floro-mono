@@ -15,6 +15,11 @@ export interface OrganizationRoleModel {
   canModifyInvites: boolean;
   canModifyOwnInternalHandle: boolean;
   canModifyBilling: boolean;
+
+  canRegisterPlugins: boolean,
+  canUploadPlugins: boolean,
+  canReleasePlugins: boolean,
+
   canModifyOrganizationRoles: boolean;
   canAssignRoles: boolean;
 
@@ -36,6 +41,11 @@ export default class OrganizationRolePresetModel implements OrganizationRoleMode
   public canModifyInvites!: boolean;
   public canModifyOwnInternalHandle!: boolean;
   public canModifyBilling!: boolean;
+
+  public canRegisterPlugins!: boolean;
+  public canUploadPlugins!: boolean;
+  public canReleasePlugins!: boolean;
+
   public canModifyOrganizationRoles!: boolean;
   public canAssignRoles!: boolean;
 
@@ -56,6 +66,9 @@ export default class OrganizationRolePresetModel implements OrganizationRoleMode
     canModifyInvites: boolean,
     canModifyOwnInternalHandle: boolean,
     canModifyBilling: boolean,
+    canRegisterPlugins: boolean,
+    canUploadPlugins: boolean,
+    canReleasePlugins: boolean,
     canModifyOrganizationRoles: boolean,
     canAssignRoles: boolean,
     organizationId: string,
@@ -75,6 +88,9 @@ export default class OrganizationRolePresetModel implements OrganizationRoleMode
     this.canModifyInvites = canModifyInvites;
     this.canModifyOwnInternalHandle = canModifyOwnInternalHandle;
     this.canModifyBilling = canModifyBilling;
+    this.canRegisterPlugins = canRegisterPlugins;
+    this.canUploadPlugins = canUploadPlugins;
+    this.canReleasePlugins = canReleasePlugins;
     this.canModifyOrganizationRoles = canModifyOrganizationRoles;
     this.canAssignRoles = canAssignRoles;
 
@@ -99,6 +115,9 @@ export default class OrganizationRolePresetModel implements OrganizationRoleMode
       canModifyInvites: this.canModifyInvites,
       canModifyOwnInternalHandle: this.canModifyOwnInternalHandle,
       canModifyBilling: this.canModifyBilling,
+      canRegisterPlugins: this.canRegisterPlugins,
+      canUploadPlugins: this.canUploadPlugins,
+      canReleasePlugins: this.canReleasePlugins,
       canModifyOrganizationRoles: this.canModifyOrganizationRoles,
       canAssignRoles: this.canAssignRoles,
       organizationId: this.organizationId,
@@ -125,6 +144,9 @@ export default class OrganizationRolePresetModel implements OrganizationRoleMode
       true,    //  canModifyInvites
       true,    //  canModifyOwnInternalHandle
       true,    //  canModifyBilling
+      true,    //  canRegisterPlugins
+      true,    //  canUploadPlugins
+      true,    //  canReleasePlugins
       true,    //  canModifyOrganizationRoles
       true,    //  canAssignRoles
       organization.id,
@@ -151,6 +173,9 @@ export default class OrganizationRolePresetModel implements OrganizationRoleMode
       false,         //  canModifyInvites
       true,          //  canModifyOwnInternalHandle
       false,         //  canModifyBilling
+      true,          //  canRegisterPlugins
+      true,          //  canUploadPlugins
+      true,          //  canReleasePlugins
       false,         //  canModifyOrganizationRoles
       false,         //  canAssignRoles
       organization.id,
@@ -176,6 +201,9 @@ export default class OrganizationRolePresetModel implements OrganizationRoleMode
       false,           //  canInviteMembers
       false,           //  canModifyInvites
       true,            //  canModifyOwnInternalHandle
+      false,           //  canRegisterPlugins
+      false,           //  canUploadPlugins
+      false,           //  canReleasePlugins
       true,            //  canModifyBilling
       false,           //  canModifyOrganizationRoles
       false,           //  canAssignRoles
@@ -203,6 +231,9 @@ export default class OrganizationRolePresetModel implements OrganizationRoleMode
       true,              //  canModifyInvites
       true,              //  canModifyOwnInternalHandle
       false,             //  canModifyBilling
+      true,              //  canRegisterPlugins
+      true,              //  canUploadPlugins
+      true,              //  canReleasePlugins
       true,              //  canModifyOrganizationRoles
       true,              //  canAssignRoles
       organization.id,

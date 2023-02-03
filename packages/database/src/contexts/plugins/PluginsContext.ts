@@ -1,8 +1,8 @@
-
 import { DeepPartial, QueryRunner, Repository as TypeormRepository } from "typeorm";
 import BaseContext from "../BaseContext";
 import ContextFactory from "../ContextFactory";
 import { Plugin } from "../../entities/Plugin";
+import PluginHelper from "../utils/PluginHelper";
 
 export default class PluginsContext extends BaseContext {
   private pluginRepo!: TypeormRepository<Plugin>;
@@ -37,6 +37,23 @@ export default class PluginsContext extends BaseContext {
       where: { nameKey },
     });
     return !!result;
+  }
+
+  public async getByName(name?: string): Promise<Plugin | null> {
+    if (!name) {
+      return null;
+    }
+    const nameKey = PluginHelper.getPluginKeyUUID(name);
+    if (!nameKey) {
+      return null;
+    }
+    return await this.queryRunner.manager.findOne(Plugin, {
+      where: { nameKey },
+      relations: {
+        user: true,
+        organization: true,
+      }
+    });
   }
 
   public async getByNameKey(nameKey: string): Promise<Plugin | null> {

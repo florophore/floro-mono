@@ -28,3 +28,10 @@ items:
     organization: '@org_0'
     createdByUser: '@user_0'
     isPrivate: true
+  palette_plugin_user_public_0:
+    name: palette
+    nameKey: 19e4bd2d-806b-ed3c-364f-d84d0bf220af
+    ownerType: user_plugin
+    user: '@user_0'
+    createdByUser: '@user_0'
+    isPrivate: false

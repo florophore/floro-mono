@@ -80,6 +80,21 @@ export class OrganizationRole extends BinaryPKBaseEntity {
   @Column("boolean", { default: false })
   @IsDefined()
   @IsBoolean()
+  canRegisterPlugins?: boolean;
+
+  @Column("boolean", { default: false })
+  @IsDefined()
+  @IsBoolean()
+  canUploadPlugins?: boolean;
+
+  @Column("boolean", { default: false })
+  @IsDefined()
+  @IsBoolean()
+  canReleasePlugins?: boolean;
+
+  @Column("boolean", { default: false })
+  @IsDefined()
+  @IsBoolean()
   canModifyOrganizationRoles?: boolean;
 
   @Column("boolean", { default: false })
