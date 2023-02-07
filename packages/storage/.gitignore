@@ -2,6 +2,9 @@ node_modules
 # Keep environment variables out of version control
 .env
 .local_root
+.local_private_root
+.test_root
+.test_private_root
 yarn-error.log
 build/
 coverage/

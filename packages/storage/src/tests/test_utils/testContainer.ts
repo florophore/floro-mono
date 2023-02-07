@@ -1,7 +1,8 @@
 import "reflect-metadata"
 
 import { Container } from "inversify";
-import StorageModule from '../module';
+import StorageModule from '../../module';
+import ConfigModule from '@floro/config/src/module';
 
 const container: Container = new Container({
     autoBindInjectable: true,
@@ -9,7 +10,8 @@ const container: Container = new Container({
 });
 
 container.load(
-  StorageModule
+  StorageModule,
+  ConfigModule
 );
 
 export default container;

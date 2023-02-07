@@ -7,10 +7,11 @@ import http, { Server } from 'http';
 import MainConfigModule from "@floro/config/src/module";
 import MailerClientModule from "@floro/mailer/src/module";
 import { mockMailerDeps } from '@floro/mailer/src/test/test_utils/testContainer';
-import BackendModule from '../module';
+import BackendModule from '../../module';
 import DBModule from "@floro/database/src/module";
 import RedisModule from "@floro/redis/src/module";
 import ThirdPartyServicesModule from '@floro/third-party-services/src/module'; 
+import StorageModule from '@floro/storage/src/module'; 
 
 const container: Container = new Container({
     autoBindInjectable: true,
@@ -30,6 +31,7 @@ container.load(
   ThirdPartyServicesModule,
   DBModule,
   RedisModule,
+  StorageModule,
   mockMailerDeps,
   downstreamDependencies,
   BackendModule

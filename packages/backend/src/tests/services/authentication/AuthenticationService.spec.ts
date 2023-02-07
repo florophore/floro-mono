@@ -1,9 +1,9 @@
-import container from "../../../test_utils/testContainer";
+import container from "../../test_utils/testContainer";
 import nock from "nock";
 import { deserialize } from "@dhkatz/json-ts";
 import { test } from "mocha";
 
-import "../../../test_utils/setupTests";
+import "../../test_utils/setupTests";
 
 import GoogleAccessToken from "@floro/third-party-services/src/google/schemas/GoogleAccessToken";
 import GoogleUser from "@floro/third-party-services/src/google/schemas/GoogleUser";

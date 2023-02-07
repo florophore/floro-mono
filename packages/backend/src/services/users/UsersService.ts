@@ -40,6 +40,11 @@ export default class UsersService {
     return await handleChecker.usernameOrHandleTaken(username);
   }
 
+  public async getUser(userId: string) {
+    const usersContext = await this.contextFactory.createContext(UsersContext);
+    return usersContext.getById(userId);
+  }
+
   public async updateUserName(
     currentUser: User,
     firstName?: string|null,

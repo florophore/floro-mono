@@ -1,7 +1,7 @@
-import container from "../../../test_utils/testContainer";
+import container from "../../test_utils/testContainer";
 import { test } from "mocha";
 
-import "../../../test_utils/setupTests";
+import "../../test_utils/setupTests";
 
 import { loadFixtures } from "@floro/database/src/test/test_utils/setupFixtures";
 

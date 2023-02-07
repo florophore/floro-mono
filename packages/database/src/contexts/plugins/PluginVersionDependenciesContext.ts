@@ -15,7 +15,7 @@ export default class PluginsVersionDependenciesContext extends BaseContext {
     this.pluginVersionDependencyRepo = this.conn.datasource.getRepository(PluginVersionDependency);
   }
 
-  public async createPluginVersion(
+  public async createPluginVersionDependency(
     pluginVersionDependencyArgs: DeepPartial<PluginVersionDependency>
   ): Promise<PluginVersionDependency> {
     const pluginVersionDependencyEntity = this.pluginVersionDependencyRepo.create(pluginVersionDependencyArgs);

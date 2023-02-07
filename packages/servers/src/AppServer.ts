@@ -54,7 +54,8 @@ export default class AppServer {
   }
 
   public async startServer(indexHTMLTemplate: string): Promise<void> {
-    const storageRoot = await this.backend.startStorageClient();
+    const publicStorageRoot = await this.backend.startPublicStorageClient();
+    const privateStorageRoot = await this.backend.startPrivateStorageClient();
     const schema = this.backend.buildExecutableSchema();
     await this.backend.startDatabase();
     this.backend.startRedis();
@@ -122,12 +123,21 @@ export default class AppServer {
     this.app.use(requestHandler);
     this.app.use("/assets", requestHandler);
 
-    if (storageRoot) {
+    if (publicStorageRoot) {
       const storageRequestHandler = express.static(
-        storageRoot
+        publicStorageRoot
       );
       this.app.use(storageRequestHandler);
       this.app.use("/cdn", storageRequestHandler);
+    }
+
+    if (privateStorageRoot) {
+      // TODO: update this to requiring signed urls
+      const storageRequestHandler = express.static(
+        privateStorageRoot
+      );
+      this.app.use(storageRequestHandler);
+      this.app.use("/private-cdn", storageRequestHandler);
     }
 
     if (isProduction) {

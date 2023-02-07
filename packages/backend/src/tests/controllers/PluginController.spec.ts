@@ -1,22 +1,16 @@
-import container from "../../test_utils/testContainer";
+import container from "../test_utils/testContainer";
 import { test } from "mocha";
 
-import "../../test_utils/setupTests";
+import "../test_utils/setupTests";
 
 import { loadFixtures } from "@floro/database/src/test/test_utils/setupFixtures";
 
-import { Organization } from "@floro/database/src/entities/Organization";
 import { Plugin } from "@floro/database/src/entities/Plugin";
 import { User } from "@floro/database/src/entities/User";
 import Backend from "../../Backend";
 import { GraphQLSchema } from "graphql";
 import { ApolloServer } from "apollo-server-express";
 import ApolloRestClientFactory from "../../controllers/ApolloRestClientFactory";
-import {
-  PluginNameCheckDocument,
-  CreateUserPluginDocument,
-} from "@floro/graphql-schemas/build/generated/main-client-graphql";
-import { expect } from "chai";
 import { UserAuthCredential } from "@floro/database/src/entities/UserAuthCredential";
 import SessionStore from "@floro/redis/src/sessions/SessionStore";
 import express, { Express } from "express";
@@ -26,9 +20,8 @@ import path, { dirname } from "path";
 import tar from "tar";
 import * as fs from "fs";
 import { fileURLToPath } from "url";
-import FormData from "form-data";
 import busboy from 'connect-busboy';
-import ContextFactory from "@floro/database/src/contexts/ContextFactory";
+import { expect } from "chai";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -46,6 +39,8 @@ describe("PluginController", () => {
     schema = backend.buildExecutableSchema();
     apolloServer = backend.buildApolloServer();
     apolloServer.start().then(async () => {
+      await backend.startPublicStorageClient();
+      await backend.startPrivateStorageClient();
       apolloRestClientFactory = container.get(ApolloRestClientFactory);
       apolloRestClientFactory.setSchema(schema);
       app = express();
@@ -106,7 +101,7 @@ describe("PluginController", () => {
           .set("session_key", session.clientKey)
           .attach('file', tarPath)
           .expect(200, (err, res) => {
-            console.log("GOT HERE", res);
+            expect(res.text).eq('{"message":"Successfully uploaded 0.0.0"}')
             resolve(null);
           });
       })

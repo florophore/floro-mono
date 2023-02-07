@@ -46,6 +46,7 @@ import ApolloRestClientFactory from './controllers/ApolloRestClientFactory';
 import PluginRegistryService from './services/plugins/PluginRegistryService';
 import PluginResolverModule from './resolvers/plugin/PluginResolverModule';
 import PluginController from './controllers/PluginController';
+import PrivateCDNTestController from './controllers/PrivateCDNTestController';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -115,6 +116,7 @@ export default new ContainerModule((bind): void => {
     bind<AuthenticationController>("Controllers").to(AuthenticationController);
     bind<RepoController>("Controllers").to(RepoController);
     bind<PluginController>("Controllers").to(PluginController);
+    bind<PrivateCDNTestController>("Controllers").to(PrivateCDNTestController);
 
     // RESOLVER MODULES
     bind<UsersResolverModule>("ResolverModule").to(UsersResolverModule);

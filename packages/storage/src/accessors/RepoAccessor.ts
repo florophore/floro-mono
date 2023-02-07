@@ -10,7 +10,7 @@ export default class RepoAccessor {
   private driver!: StorageDriver;
 
   constructor(@inject(StorageClient) storageClient: StorageClient) {
-    this.driver = storageClient.driver;
+    this.driver = storageClient.privateDriver;
   }
 
   public parentRootDirectory(repo: Repository) {
@@ -33,15 +33,12 @@ export default class RepoAccessor {
   }
 
   public getRepoPath(repo: Repository): string {
-    const subdirectory = repo.isPrivate ? "private" : "public";
     return path.join(
       this.parentRootDirectory(repo),
       "repos",
-      subdirectory,
       repo.id
     );
   }
-
 
   public async getRepoZip(repo: Repository): Promise<Readable> {
     const path = this.getRepoPath(repo);

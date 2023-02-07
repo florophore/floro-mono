@@ -28,6 +28,8 @@ import ApolloRestClientFactory from "./controllers/ApolloRestClientFactory";
 import { Context } from "graphql-ws";
 
 const isProduction = process.env.NODE_ENV === "production";
+const isTest = process.env.NODE_ENV === "test";
+const isDevelopment = process.env.NODE_ENV === "development";
 
 @injectable()
 export default class Backend {
@@ -71,9 +73,14 @@ export default class Backend {
     this.apolloRestClientFactory = apolloRestClientFactory;
   }
 
-  public async startStorageClient(): Promise<null | string> {
+  public async startPublicStorageClient(): Promise<null | string> {
     await this.storageClient.start();
-    return this.storageClient?.getStaticRoot?.() ?? null;
+    return this.storageClient?.getStaticRoot?.("public") ?? null;
+  }
+
+  public async startPrivateStorageClient(): Promise<null | string> {
+    await this.storageClient.start();
+    return this.storageClient?.getStaticRoot?.("private") ?? null;
   }
 
   public async startDatabase(): Promise<void> {
@@ -210,12 +217,27 @@ export default class Backend {
   public setupRestRoutes(app: Express): void {
     for (const HttpMethod in BaseController.routingTable) {
       const routes = BaseController.routingTable[HttpMethod];
+      const controllers = this.controllers.filter(c => {
+        if (isProduction) {
+          return c.envs.includes("production");
+        }
+        if (isDevelopment) {
+          return c.envs.includes("development");
+        }
+        if (isTest) {
+          return c.envs.includes("test");
+        }
+        return false;
+      });
       for (const route in routes) {
-        const controller = this.controllers.find((controller) => {
+        const controller = controllers.find((controller) => {
           return (
             controller?.[routes[route]["name"]] === routes[route]["method"]
           );
         });
+        if (!controller) {
+          continue;
+        }
         if (HttpMethod == "POST") {
           app.post(route, (request, response) =>
             controller?.[routes[route]["name"]](request, response)

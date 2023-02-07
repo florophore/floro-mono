@@ -11,7 +11,7 @@ export default class OrganizationAccessor {
     constructor(
         @inject(StorageClient) storageClient: StorageClient
     ) {
-        this.driver = storageClient.driver;
+        this.driver = storageClient.publicDriver;
     }
 
     public orgDirectory(org: Organization) {

@@ -11,7 +11,7 @@ export default class UserAccessor {
     constructor(
         @inject(StorageClient) storageClient: StorageClient
     ) {
-        this.driver = storageClient.driver;
+        this.driver = storageClient.publicDriver;
     }
 
     public userDirectory(user: User) {

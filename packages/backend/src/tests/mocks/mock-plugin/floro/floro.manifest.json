@@ -16,6 +16,10 @@
       },
       "hexcode": {
         "type": "string"
+      },
+      "loopedType": {
+        "type": "set",
+        "values": "opacity"
       }
     },
     "opacity": {
@@ -30,11 +34,11 @@
   },
   "store": {
     "colors": {
-      "type": "collection",
+      "type": "set",
       "values": "color"
     },
     "opacities": {
-      "type": "collection",
+      "type": "set",
       "values": "opacity"
     }
   }

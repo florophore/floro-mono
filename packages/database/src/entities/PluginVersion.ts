@@ -20,6 +20,12 @@ export class PluginVersion extends BinaryPKBaseEntity {
   @IsUUID()
   nameKey!: string;
 
+  @Column("uuid")
+  @ValidateIf((_, value) => !!value)
+  @IsDefined()
+  @IsUUID()
+  uploadHash!: string;
+
   @Column("varchar")
   @IsSemVer()
   @IsDefined()
@@ -67,14 +73,14 @@ export class PluginVersion extends BinaryPKBaseEntity {
   isPrivate!: boolean;
 
   @Column("varchar")
-  @IsIn(["unreleased", "released"])
+  @IsIn(["unreleased", "released", "cancelled"])
   @IsString()
   @IsDefined()
   state!: string;
 
   @Column("boolean")
   @IsBoolean()
-  isBackwardsComptible!: boolean;
+  isBackwardsCompatible!: boolean;
 
   @Column("varchar")
   @ValidateIf((_, value) => !!value)

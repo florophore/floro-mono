@@ -37,6 +37,7 @@
     "isomorphic-fetch": "^3.0.0",
     "memfs": "^3.4.13",
     "object-sizeof": "^1.6.3",
+    "readable-stream-clone": "^0.0.7",
     "reflect-metadata": "^0.1.13",
     "sharp": "^0.31.2",
     "ts-jest": "^28.0.7",

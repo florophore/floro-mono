@@ -5,6 +5,11 @@ import isSvg from "is-svg";
 import semver from "semver";
 import { init as CJSInit, parse as CJSParser } from "cjs-module-lexer";
 import * as fastXML from "fast-xml-parser";
+import { Manifest } from "@floro/floro-lib/src/plugins";
+import { v4 as uuidv4} from 'uuid';
+import os from 'os';
+import fs, { ReadStream } from 'fs';
+import { createHash } from "crypto";
 
 await CJSInit();
 
@@ -14,29 +19,28 @@ const ENTRY_MAX_SIZE = 5_000_000;
 const CUMMULATIVE_MAX_SIZE = 20_000_000;
 
 export class PluginUploadStream {
-  private tarStream: Stream;
   private entryMap: { [key: string]: Buffer } = {};
   private cummulativeSize = 0;
 
+  private tarStream: Stream;
+
   public name?: string;
-  public version?: string;
+  public version?: string|null;
   public displayName?: string;
   public description?: string;
 
-  public originalManifest?: {
-    name: string;
-    version: string;
-    displayName: string;
-    description: string;
-    icon: string | { light: string; dark: string };
-  };
+  public originalManifest?: Manifest;
 
+  public lightIconPath?: string;
+  public darkIconPath?: string;
   public originalLightIcon?: string;
   public originalDarkIcon?: string;
 
   public originalIndexHTML?: string;
   public indexJSPath?: string;
   public originalIndexJS?: string;
+
+  public uuid!: string;
 
   public originalAssets: {
     [path: string]: string | Buffer;
@@ -46,6 +50,7 @@ export class PluginUploadStream {
   public errorMessage?: string;
 
   constructor(tarStream: Stream) {
+    this.uuid = uuidv4();
     this.tarStream = tarStream;
   }
 
@@ -53,14 +58,37 @@ export class PluginUploadStream {
     return new PluginUploadStream(tarStream);
   }
 
-  public start(): Promise<PluginUploadStream> {
+  public async start(): Promise<PluginUploadStream> {
     const checks = [
       this.parseManifest.bind(this),
       this.parseIcons.bind(this),
       this.validateEntry.bind(this),
     ];
-    return new Promise((resolve) => {
-      this.tarStream
+    let written = false;
+    await new Promise(resolve => {
+      this.tarStream 
+      .pipe(fs.createWriteStream(this.tmpPath()))
+      .on("finish", () => {
+        if (!written) {
+          resolve(this);
+          written = true;
+        }
+      })
+      .on("error", () => {
+        this.hasErrors = true;
+        this.errorMessage = "Unable to unzip tar.";
+        if (!written) {
+          resolve(this);
+          written = true;
+        }
+      });
+    });
+    return await new Promise((resolve) => {
+      if (this.hasErrors) {
+        resolve(this);
+        return;
+      }
+      this.getReadStream()
         .pipe(tar.t())
         .on("entry", this.addEntryToTarEntries.bind(this))
         .on("end", async () => {
@@ -77,6 +105,14 @@ export class PluginUploadStream {
           resolve(this);
         });
     });
+  }
+
+  private tmpPath(): string {
+    return path.join(os.tmpdir(), `${this.uuid}.tar.gz`);
+  }
+
+  public getReadStream(): ReadStream {
+    return fs.createReadStream(this.tmpPath());
   }
 
   private addEntryToTarEntries(entry: ReadEntry) {
@@ -123,8 +159,8 @@ export class PluginUploadStream {
         return;
       }
 
-      this.version = this.originalManifest?.version;
-      if (!semver.valid(this.version)) {
+      this.version = semver.clean(this.originalManifest?.version) ?? null;
+      if (!this.version || !semver.valid(this.version)) {
         this.hasErrors = true;
         this.errorMessage = `Invalid version ${this.version}.`;
         return;
@@ -180,6 +216,8 @@ export class PluginUploadStream {
         this.errorMessage = `Invalid icon in manifest (${lightSVGPath}). Icons need to be valid SVG.`;
         return;
       }
+      const lightSha = createHash("sha256");
+      this.lightIconPath = `${lightSha.update(this.originalLightIcon).digest("hex")}.svg`;
 
       const darkSVG: string | undefined =
         typeof this.originalManifest?.icon == "string"
@@ -205,6 +243,9 @@ export class PluginUploadStream {
         this.errorMessage = `Invalid icon in manifest (${darkSVGPath}). Icons need to be valid SVG.`;
         return;
       }
+
+      const darkSha = createHash("sha256");
+      this.darkIconPath = `${darkSha.update(this.originalDarkIcon).digest("hex")}.svg`;
       // release
       delete this.entryMap[lightSVGPath];
       if (this.entryMap[darkSVGPath]) {
@@ -292,6 +333,14 @@ export class PluginUploadStream {
     } catch (e) {
       this.hasErrors = true;
       this.errorMessage = "Failed plugin introspection check.";
+    }
+  }
+
+  public release() {
+    try {
+      fs.promises.rm(this.tmpPath(), {recursive: true});
+    } catch(e) {
+      return;
     }
   }
 }

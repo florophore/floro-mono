@@ -18,7 +18,8 @@ export default class PluginsVersionsContext extends BaseContext {
   public async createPluginVersion(
     pluginVersionArgs: DeepPartial<PluginVersion>
   ): Promise<PluginVersion> {
-    const pluginVersionEntity = this.pluginVersionRepo.create(pluginVersionArgs);
+    const pluginVersionEntity =
+      this.pluginVersionRepo.create(pluginVersionArgs);
     return await this.queryRunner.manager.save(pluginVersionEntity);
   }
 
@@ -28,16 +29,19 @@ export default class PluginsVersionsContext extends BaseContext {
       relations: {
         user: true,
         organization: true,
-      }
+      },
     });
   }
 
-  public async getByNameAndVersion(name: string, version: string): Promise<PluginVersion | null> {
+  public async getByNameAndVersion(
+    name: string,
+    version: string
+  ): Promise<PluginVersion | null> {
     return await this.queryRunner.manager.findOne(PluginVersion, {
       where: { name, version },
       relations: {
         dependencies: true,
-      }
+      },
     });
   }
 
@@ -53,7 +57,7 @@ export default class PluginsVersionsContext extends BaseContext {
       where: { nameKey },
       relations: {
         dependencies: true,
-      }
+      },
     });
   }
 
@@ -62,7 +66,32 @@ export default class PluginsVersionsContext extends BaseContext {
       where: { pluginId },
       relations: {
         dependencies: true,
-      }
+      },
     });
+  }
+  public async updatePluginVersion(
+    pluginVersion: PluginVersion,
+    pluginVersionArgs: DeepPartial<PluginVersion>
+  ): Promise<PluginVersion> {
+    return (
+      (await this.updatePluginVersionById(
+        pluginVersion.id,
+        pluginVersionArgs
+      )) ?? pluginVersion
+    );
+  }
+
+  public async updatePluginVersionById(
+    id: string,
+    pluginVersionArgs: DeepPartial<PluginVersion>
+  ): Promise<PluginVersion | null> {
+    const pluginVersion = await this.getById(id);
+    if (pluginVersion === null) {
+      throw new Error("Invalid ID to update for PluginVersion.id: " + id);
+    }
+    for (const prop in pluginVersionArgs) {
+      pluginVersion[prop] = pluginVersionArgs[prop];
+    }
+    return await this.queryRunner.manager.save(PluginVersion, pluginVersion);
   }
 }

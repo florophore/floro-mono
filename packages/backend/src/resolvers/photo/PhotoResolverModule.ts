@@ -49,10 +49,10 @@ export default class PhotoResolverModule extends BaseResolverModule {
 
   public Photo: main.PhotoResolvers = {
     url: (photo) => {
-      return this.mainConfig.uploadRoot() + photo.path;
+      return this.mainConfig.publicRoot() + photo.path;
     },
     thumbnailUrl: (photo) => {
-      return this.mainConfig.uploadRoot() + photo.thumbnailPath;
+      return this.mainConfig.publicRoot() + photo.thumbnailPath;
     },
   };
 

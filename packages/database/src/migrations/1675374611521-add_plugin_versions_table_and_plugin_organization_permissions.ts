@@ -116,6 +116,11 @@ export class addPluginVersionsTableAndPluginOrganizationPermissions1675374611521
             isNullable: true,
           },
           {
+            name: "upload_hash",
+            type: "uuid",
+            isNullable: false,
+          },
+          {
             name: "name_key",
             type: "uuid",
             isNullable: false,
@@ -168,11 +173,6 @@ export class addPluginVersionsTableAndPluginOrganizationPermissions1675374611521
           },
           {
             name: "is_private",
-            type: "boolean",
-            isNullable: false,
-          },
-          {
-            name: "is_released",
             type: "boolean",
             isNullable: false,
           },
@@ -271,6 +271,14 @@ export class addPluginVersionsTableAndPluginOrganizationPermissions1675374611521
     await queryRunner.createIndex(
       "plugin_versions",
       new TableIndex({
+        name: "IDX_plugin_upload_hash",
+        columnNames: ["upload_hash"],
+      })
+    );
+
+    await queryRunner.createIndex(
+      "plugin_versions",
+      new TableIndex({
         name: "IDX_plugin_versions_name",
         columnNames: ["name"],
       })
@@ -333,6 +341,11 @@ export class addPluginVersionsTableAndPluginOrganizationPermissions1675374611521
           },
           {
             name: "plugin_version_id",
+            type: "uuid",
+            isNullable: false,
+          },
+          {
+            name: "plugin_upload_hash",
             type: "uuid",
             isNullable: false,
           },
@@ -443,6 +456,14 @@ export class addPluginVersionsTableAndPluginOrganizationPermissions1675374611521
       new TableIndex({
         name: "IDX_plugin_version_deps_name",
         columnNames: ["name"],
+      })
+    );
+
+    await queryRunner.createIndex(
+      "plugin_version_dependencies",
+      new TableIndex({
+        name: "IDX_plugin_version_deps_upload_hash",
+        columnNames: ["plugin_upload_hash"],
       })
     );
 

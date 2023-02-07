@@ -13,6 +13,11 @@ export class PluginVersionDependency extends BinaryPKBaseEntity {
   @IsDefined()
   isPrimaryDependency!: boolean;
 
+  @Column("uuid")
+  @IsDefined()
+  @IsUUID()
+  pluginUploadHash!: string;
+
   @Column("varchar")
   @IsString()
   @IsDefined()

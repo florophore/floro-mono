@@ -1,5 +1,4 @@
 import { injectable, inject } from 'inversify';
-import DiskStorageDriver from './drivers/DiskStorageDriver';
 import StorageDriver from './drivers/StrorageDriver';
 import { env } from 'process';
 import { createHash } from "crypto";
@@ -11,25 +10,32 @@ const isTest = NODE_ENV == "test";
 
 @injectable()
 export default class StorageClient {
-  public driver!: StorageDriver;
+  public publicDriver!: StorageDriver;
+  public privateDriver!: StorageDriver;
 
-  constructor(@inject(DiskStorageDriver) diskStorageDriver: StorageDriver) {
+  // INJECT S3 storage as well
+  constructor(
+    @inject("PublicDiskStorageDriver") publicDiskStorageDriver: StorageDriver,
+    @inject("PrivateDiskStorageDriver") privateDiskStorageDriver: StorageDriver
+    ) {
     if (isDevelopment || isTest) {
-      this.driver = diskStorageDriver;
+      this.publicDriver = publicDiskStorageDriver;
+      this.privateDriver = privateDiskStorageDriver;
     } 
     if (isProduction) {
       // REPLACE WITH S3
-      this.driver = diskStorageDriver;
+      //this.publicDriver = diskStorageDriver;
     }
   }
 
   public async start(): Promise<void> {
-    await this.driver.init();
+    await this.publicDriver.init();
+    await this.privateDriver.init();
   }
 
-  public getStaticRoot() {
+  public getStaticRoot(storageType: "public" | "private") {
     if (isDevelopment || isTest) {
-      return this.driver?.staticRoot?.();
+      return storageType == "public" ? this.publicDriver?.staticRoot?.() : this.privateDriver?.staticRoot?.();
     }
     return null;
   }

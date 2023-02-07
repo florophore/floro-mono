@@ -6,6 +6,6 @@ export default interface StorageDriver {
     exists: (path: string) => Promise<boolean>;
     read: (path: string) => Promise<Buffer|string>;
     mkdir: (path: string) => Promise<void>;
-    write: (path: string, data: Buffer) => Promise<void>;
+    write: (path: string, data: Buffer|string) => Promise<void>;
     staticRoot?: () => string;
 }
