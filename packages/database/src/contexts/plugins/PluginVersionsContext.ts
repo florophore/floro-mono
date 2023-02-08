@@ -1,4 +1,4 @@
-import { DeepPartial, QueryRunner, Repository as TypeormRepository } from "typeorm";
+import { DeepPartial, In, QueryRunner, Repository as TypeormRepository } from "typeorm";
 import BaseContext from "../BaseContext";
 import ContextFactory from "../ContextFactory";
 import { PluginVersion } from "../../entities/PluginVersion";
@@ -69,6 +69,13 @@ export default class PluginsVersionsContext extends BaseContext {
       },
     });
   }
+
+  public async getByIds(ids: string[]): Promise<PluginVersion[]> {
+    return await this.queryRunner.manager.find(PluginVersion, {
+      where: { id: In(ids) }
+    });
+  }
+
   public async updatePluginVersion(
     pluginVersion: PluginVersion,
     pluginVersionArgs: DeepPartial<PluginVersion>

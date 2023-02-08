@@ -20,7 +20,7 @@ import path, { dirname } from "path";
 import tar from "tar";
 import * as fs from "fs";
 import { fileURLToPath } from "url";
-import busboy from 'connect-busboy';
+import busboy from "connect-busboy";
 import { expect } from "chai";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -72,26 +72,28 @@ describe("PluginController", () => {
     //let plugin: Plugin;
 
     beforeEach(async () => {
-      [user, credential] = await loadFixtures<[User, UserAuthCredential, Plugin]>([
+      [user, credential] = await loadFixtures<
+        [User, UserAuthCredential, Plugin]
+      >([
         "User:user_0",
         "UserAuthCredential:email_pass_for_test@gmail",
-        "Plugin:palette_plugin_user_public_0"
+        "Plugin:palette_plugin_user_public_0",
       ]);
       if (fs.existsSync(tarPath)) {
-        fs.rmSync(tarPath, {recursive: true});
+        fs.rmSync(tarPath, { recursive: true });
       }
       await tar.create(
         {
           gzip: true,
           file: tarPath,
           C: mockPath,
-          portable: true
+          portable: true,
         },
         await fs.promises.readdir(mockPath)
       );
     });
 
-    test.only("work", async () => {
+    test("end to end plugin upload", async () => {
       const sessionStorage = container.get(SessionStore);
       const session = await sessionStorage.setNewSession(user, credential);
       await new Promise((resolve) => {
@@ -99,12 +101,52 @@ describe("PluginController", () => {
           .post("/api/plugin/upload")
           .set("Content-Type", "multipart/form-data")
           .set("session_key", session.clientKey)
-          .attach('file', tarPath)
+          .attach("file", tarPath)
           .expect(200, (err, res) => {
-            expect(res.text).eq('{"message":"Successfully uploaded 0.0.0"}')
+            expect(res.text).eq('{"message":"Successfully uploaded 0.0.0"}');
             resolve(null);
           });
-      })
+      });
+      const signedUrl: string = await new Promise((resolve) => {
+        request(app)
+          .get("/api/plugin/palette/0.0.0/install")
+          .set("session_key", session.clientKey)
+          .send()
+          .end((err, res) => {
+            console.log(res.body)
+            resolve(res.body.link);
+          });
+      });
+      const [, url] = signedUrl.split("http://localhost:9000");
+      await new Promise((resolve) => {
+        request(app)
+          .get(url)
+          .send()
+          .end((err, res) => {
+            expect(res.status).eql(200);
+            resolve(null);
+          });
+      });
+      await new Promise((resolve) => {
+        request(app)
+          .get("/api/plugin/palette/0.0.0/manifest")
+          .set("session_key", session.clientKey)
+          .send()
+          .end((err, res) => {
+            console.log("RES", res.body);
+            resolve(null);
+          });
+      });
+      await new Promise((resolve) => {
+        request(app)
+          .get("/plugins/palette/0.0.0")
+          .set("session_key", session.clientKey)
+          .send()
+          .end((err, res) => {
+            console.log("RES", res.text);
+            resolve(null);
+          });
+      });
     });
   });
 });

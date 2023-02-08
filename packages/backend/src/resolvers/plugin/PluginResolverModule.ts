@@ -74,7 +74,6 @@ export default class PluginResolverModule extends BaseResolverModule {
           "user_plugin",
           currentUser
         );
-        console.log("UH", result);
         if (result.action == "PLUGIN_CREATED") {
           return {
             __typename: "CreateUserPluginSuccess",
@@ -147,8 +146,7 @@ export default class PluginResolverModule extends BaseResolverModule {
           cacheKey,
           membership.id
         );
-        // TODO: ADD THIS PERMISSION
-        if (!permissions.canCreateRepos) {
+        if (!permissions.canRegisterPlugins) {
           return {
             __typename: "CreateOrganizationPluginError",
             message: "Forbidden Action",
@@ -184,6 +182,134 @@ export default class PluginResolverModule extends BaseResolverModule {
         }
         return {
           __typename: "CreateOrganizationPluginError",
+          message: result.error?.message ?? "Unknown Error",
+          type: result.error?.type ?? "UNKNOWN_ERROR",
+        };
+      }
+    ),
+    releaseUserPlugin: runWithHooks(
+      () => [this.loggedInUserGuard],
+      async (
+        _root,
+        { pluginVersionId }: main.MutationReleaseUserPluginArgs,
+        { currentUser }
+      ) => {
+        if (!currentUser) {
+          return {
+            __typename: "ReleaseUserPluginError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        const result = await this.pluginRegistryService.releasePlugin(
+          pluginVersionId,
+          currentUser
+        );
+        if (result.action == "PLUGIN_VERSION_RELEASED") {
+          return {
+            __typename: "ReleaseUserPluginSuccess",
+            plugin: result.plugin,
+            pluginVersion: result.pluginVersion,
+          };
+        }
+        if (result.action == "LOG_ERROR") {
+          console.error(
+            result.error?.type,
+            result?.error?.message,
+            result?.error?.meta
+          );
+          return {
+            __typename: "ReleaseUserPluginError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        return {
+          __typename: "ReleaseUserPluginError",
+          message: result.error?.message ?? "Unknown Error",
+          type: result.error?.type ?? "UNKNOWN_ERROR",
+        };
+      }
+    ),
+    releaseOrgPlugin: runWithHooks(
+      () => [
+        this.loggedInUserGuard,
+        this.rootOrganizationMemberPermissionsLoader,
+      ],
+      async (
+        _root,
+        { pluginVersionId, organizationId }: main.MutationReleaseOrgPluginArgs,
+        { currentUser, cacheKey }
+      ) => {
+        if (!currentUser) {
+          return {
+            __typename: "ReleaseOrgPluginError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        const organization = this.requestCache.getOrganization(
+          cacheKey,
+          organizationId
+        );
+        if (!organization) {
+          return {
+            __typename: "ReleaseOrgPluginError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        const membership = this.requestCache.getOrganizationMembership(
+          cacheKey,
+          organizationId,
+          currentUser
+        );
+        if (!membership) {
+          return {
+            __typename: "ReleaseOrgPluginError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+
+        const permissions = this.requestCache.getMembershipPermissions(
+          cacheKey,
+          membership.id
+        );
+        if (!permissions.canReleasePlugins) {
+          return {
+            __typename: "ReleaseOrgPluginError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        const result = await this.pluginRegistryService.releasePlugin(
+          pluginVersionId,
+          currentUser,
+          organization
+        );
+        if (result.action == "PLUGIN_VERSION_RELEASED") {
+          return {
+            __typename: "ReleaseOrgPluginSuccess",
+            plugin: result.plugin,
+            pluginVersion: result.pluginVersion,
+            organization,
+          };
+        }
+        if (result.action == "LOG_ERROR") {
+          console.error(
+            result.error?.type,
+            result?.error?.message,
+            result?.error?.meta
+          );
+          return {
+            __typename: "ReleaseOrgPluginError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        return {
+          __typename: "ReleaseOrgPluginError",
           message: result.error?.message ?? "Unknown Error",
           type: result.error?.type ?? "UNKNOWN_ERROR",
         };

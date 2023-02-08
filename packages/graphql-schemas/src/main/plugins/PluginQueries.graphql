@@ -14,4 +14,13 @@ extend type Mutation {
     name: String!
     isPrivate: Boolean!
   ): CreateUserPluginResponse
+
+  releaseUserPlugin(
+    pluginVersionId: ID!
+  ): ReleaseUserPluginResponse
+
+  releaseOrgPlugin(
+    pluginVersionId: ID!,
+    organizationId: ID!
+  ): ReleaseOrgPluginResponse
 }

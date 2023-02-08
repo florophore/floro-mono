@@ -9,6 +9,25 @@ type Plugin {
   updatedAt: DateTime
 }
 
+type PluginVersion {
+  id: ID
+  name: String
+  version: String
+  isBackwardsCompatible: Boolean
+  previousReleaseVersion: String
+  codeDocsUrl: String
+  codeRepoUrl: String
+  lightIcon: String
+  darkIcon: String
+  description: String
+  ownerType: String
+  user: User
+  organization: Organization
+  state: String
+  pluginDependencies: [PluginVersion]
+  plugin: Plugin
+}
+
 type PluginCheckResult {
     exists: Boolean
     pluginName: String
@@ -42,4 +61,36 @@ type CreateOrganizationPluginError {
 union CreateOrganizationPluginResponse =
     CreateOrganizationPluginSuccess
   | CreateOrganizationPluginError
+  | UnAuthenticatedError
+
+type ReleaseUserPluginSuccess {
+  plugin: Plugin
+  pluginVersion: PluginVersion
+  user: User
+}
+
+type ReleaseUserPluginError {
+  message: String
+  type: String
+}
+
+union ReleaseUserPluginResponse =
+    ReleaseUserPluginSuccess
+  | ReleaseUserPluginError
+  | UnAuthenticatedError
+
+type ReleaseOrgPluginSuccess {
+  plugin: Plugin
+  pluginVersion: PluginVersion
+  organization: Organization
+}
+
+type ReleaseOrgPluginError {
+  message: String
+  type: String
+}
+
+union ReleaseOrgPluginResponse =
+    ReleaseOrgPluginSuccess
+  | ReleaseOrgPluginError
   | UnAuthenticatedError

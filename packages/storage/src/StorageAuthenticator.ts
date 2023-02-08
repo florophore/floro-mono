@@ -19,10 +19,10 @@ export default class StorageAuthenticator {
     this.config = config;
   }
 
-  public signURL(url: string, ttlSec: number) {
+  public signURL(url: string, path: string, ttlSec: number) {
     const now = new Date().getTime();
     const expiration = now + ttlSec * 1000;
-    const data = Buffer.from(`${url}:expiration=${expiration}`);
+    const data = Buffer.from(`${path}:expiration=${expiration}`);
     const signature = sign("SHA256", data, this.config.cdnPrivatePEM());
     return `${url}&expiration=${expiration}&signature=${signature.toString(
       "hex"
@@ -32,9 +32,9 @@ export default class StorageAuthenticator {
   /**
    * in prod this is handled by CDN
    */
-  public verifySignedURL(signedUrl: string) {
+  public verifySignedURL(fullPath: string, reqPath: string) {
     try {
-      const map = parse(signedUrl);
+      const map = parse(fullPath);
       if (!map?.["expiration"] || !map?.["signature"]) {
         return false;
       }
@@ -44,7 +44,7 @@ export default class StorageAuthenticator {
         return false;
       }
       const data = Buffer.from(
-        `${signedUrl?.split("&")[0]}:expiration=${expiration}`
+        `${reqPath}:expiration=${expiration}`
       );
       const signature = Buffer.from(map?.["signature"] as string, "hex");
       return verify("SHA256", data, this.config.cdnPublicPEM(), signature);

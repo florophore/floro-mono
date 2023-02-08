@@ -26,15 +26,16 @@ export default class PrivateCDNTestController extends BaseController {
   @Get("/private-cdn/*")
   public async getAsset(req, res) {
     try {
-      const url = this.fullUrl(req);
-      const isValid = this.storageAuthenticator.verifySignedURL(url);
+      const reqPath = req.path.split("&")[0];
+      const reqRelativePath = reqPath.split("/private-cdn")[1]
+      const isValid = this.storageAuthenticator.verifySignedURL(req.path, reqRelativePath);
       if (!isValid) {
         res.status(403).json({
           message: "Forbidden.",
         });
         return;
       }
-      const pathParts = req.path.split("/").slice(1);
+      const pathParts = reqRelativePath.split("/").slice(1);
       const staticRoot = this.storageClient.getStaticRoot("private");
       const assetPath = path.join(staticRoot as string, ...pathParts);
 
@@ -54,13 +55,5 @@ export default class PrivateCDNTestController extends BaseController {
       });
       return;
     }
-  }
-
-  private fullUrl(req) {
-    return url.format({
-      protocol: req.protocol,
-      host: req.get("host"),
-      pathname: req.originalUrl,
-    });
   }
 }

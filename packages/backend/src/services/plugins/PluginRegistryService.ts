@@ -57,6 +57,23 @@ export interface UploadPluginReponse {
   };
 }
 
+export interface ReleasePluginReponse {
+  action:
+    | "PLUGIN_VERSION_RELEASED"
+    | "FORBIDDEN_ACTION_ERROR"
+    | "ILLEGAL_STATE_ERROR"
+    | "CONCURRENCY_ERROR"
+    | "NOT_FOUND_ERROR"
+    | "LOG_ERROR";
+  pluginVersion?: PluginVersion;
+  plugin?: Plugin;
+  error?: {
+    type: string;
+    message: string;
+    meta?: unknown;
+  };
+}
+
 @injectable()
 export default class PluginRegistryService {
   private databaseConnection!: DatabaseConnection;
@@ -270,6 +287,15 @@ export default class PluginRegistryService {
             error: {
               type: "MANIFEST_DEPENDENCY_ERROR",
               message: "Unable to locate upstream dependencies.",
+            },
+          };
+        }
+        if (pluginVersion.state != "released") {
+          return {
+            action: "MANIFEST_DEPENDENCY_ERROR",
+            error: {
+              type: "MANIFEST_DEPENDENCY_ERROR",
+              message: `Cannot depend on unreleased plugins. Remove ${pluginVersion.name}@${pluginVersion.version}`,
             },
           };
         }
@@ -592,4 +618,130 @@ export default class PluginRegistryService {
       }
     };
   };
+
+  public async releasePlugin(
+    pluginVersionId: string,
+    currentUser: User,
+    organization?: Organization
+  ): Promise<ReleasePluginReponse> {
+    const queryRunner = await this.databaseConnection.makeQueryRunner();
+    try {
+      await queryRunner.startTransaction();
+      const pluginContext = await this.contextFactory.createContext(
+        PluginsContext,
+        queryRunner
+      );
+      const pluginVersionContext = await this.contextFactory.createContext(
+        PluginVersionsContext,
+        queryRunner
+      );
+      const pluginVersion = await pluginVersionContext.getById(pluginVersionId);
+      if (!pluginVersion) {
+        // ADD ERROR
+        await queryRunner.rollbackTransaction();
+        return {
+          action: "NOT_FOUND_ERROR",
+          error: {
+            type: "NOT_FOUND_ERROR",
+            message: "Plugin Version not found",
+          },
+        };
+      }
+      const plugin = await pluginContext.getById(pluginVersion.pluginId);
+      if (!plugin) {
+        // ADD ERROR
+        await queryRunner.rollbackTransaction();
+        return {
+          action: "NOT_FOUND_ERROR",
+          error: {
+            type: "NOT_FOUND_ERROR",
+            message: "Plugin not found",
+          },
+        };
+      }
+
+      if (
+        pluginVersion.ownerType == "user_plugin" &&
+        pluginVersion.userId != currentUser.id
+      ) {
+        // ADD ERROR
+        await queryRunner.rollbackTransaction();
+        return {
+          action: "FORBIDDEN_ACTION_ERROR",
+          error: {
+            type: "FORBIDDEN_ACTION_ERROR",
+            message: "Forbidden Action",
+          },
+        };
+      }
+      if (
+        pluginVersion.ownerType == "org_plugin" &&
+        (!organization?.id || pluginVersion.organizationId != organization?.id)
+      ) {
+        // ADD ERROR
+        await queryRunner.rollbackTransaction();
+        return {
+          action: "FORBIDDEN_ACTION_ERROR",
+          error: {
+            type: "FORBIDDEN_ACTION_ERROR",
+            message: "Forbidden Action",
+          },
+        };
+      }
+
+      if (pluginVersion.state != "unreleased") {
+        await queryRunner.rollbackTransaction();
+        return {
+          action: "ILLEGAL_STATE_ERROR",
+          error: {
+            type: "ILLEGAL_STATE_ERROR",
+            message: "Cannot release unreleased or cancelled plugin.",
+          },
+        };
+      }
+
+      const updatedPluginVersion =
+        await pluginVersionContext.updatePluginVersion(pluginVersion, {
+          state: "released",
+        });
+
+      const existingVersionsAfterInsertion =
+        await pluginVersionContext.getByPlugin(pluginVersion.pluginId);
+      const unreleasedVersionsAfterInsertion =
+        existingVersionsAfterInsertion.filter((v) => v.state == "unreleased");
+      // run sanity check and ensure only one unreleased version exists before commiting
+      if (unreleasedVersionsAfterInsertion.length != 0) {
+        await queryRunner.rollbackTransaction();
+        return {
+          action: "CONCURRENCY_ERROR",
+          error: {
+            type: "CONCURRENCY_ERROR",
+            message:
+              "Failed to release due to release conflict. Please try again.",
+          },
+        };
+      }
+      await queryRunner.commitTransaction();
+      return {
+        action: "PLUGIN_VERSION_RELEASED",
+        pluginVersion: updatedPluginVersion,
+      };
+    } catch (e: any) {
+      if (!queryRunner.isReleased) {
+        await queryRunner.rollbackTransaction();
+      }
+      return {
+        action: "LOG_ERROR",
+        error: {
+          type: "UNKNOWN_PLUGIN_RELEASE_ERROR",
+          message: e?.message,
+          meta: e,
+        },
+      };
+    } finally {
+      if (!queryRunner.isReleased) {
+        await queryRunner.release();
+      }
+    }
+  }
 }

@@ -28,18 +28,18 @@ export default class PluginsVersionDependenciesContext extends BaseContext {
     });
   }
 
-  public async getDependenciesByNameAndVersion(name: string, version: string): Promise<PluginVersionDependency[]> {
+  public async getDependenciesByUploadHash(uploadHash: string): Promise<PluginVersionDependency[]> {
     return await this.queryRunner.manager.find(PluginVersionDependency, {
-      where: { name, version },
+      where: { pluginUploadHash: uploadHash },
       relations: {
         dependencyPluginVersion: true,
       }
     });
   }
 
-  public async getDependentsByNameAndVersion(name: string, version: string): Promise<PluginVersionDependency[]> {
+  public async getDependentsByUploadHash(uploadHash: string): Promise<PluginVersionDependency[]> {
     return await this.queryRunner.manager.find(PluginVersionDependency, {
-      where: { dependencyName: name, dependencyVersion: version },
+      where: { pluginUploadHash: uploadHash },
       relations: {
         pluginVersion: true,
       }
