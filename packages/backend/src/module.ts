@@ -47,6 +47,8 @@ import PluginRegistryService from './services/plugins/PluginRegistryService';
 import PluginResolverModule from './resolvers/plugin/PluginResolverModule';
 import PluginController from './controllers/PluginController';
 import PrivateCDNTestController from './controllers/PrivateCDNTestController';
+import PluginPermissionService from './services/plugins/PluginPermissionService';
+import PluginVersionResolverModule from './resolvers/plugin/PluginVersionResolverModule';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -98,6 +100,7 @@ export default new ContainerModule((bind): void => {
 
     // PLUGINS
     bind(PluginRegistryService).toSelf();
+    bind(PluginPermissionService).toSelf();
 
     // PHOTOS
     bind(PhotoUploadService).toSelf();
@@ -129,6 +132,7 @@ export default new ContainerModule((bind): void => {
     bind<RepositoryResolverModule>("ResolverModule").to(RepositoryResolverModule);
     bind<PhotoResolverModule>("ResolverModule").to(PhotoResolverModule);
     bind<PluginResolverModule>("ResolverModule").to(PluginResolverModule);
+    bind<PluginVersionResolverModule>("ResolverModule").to(PluginVersionResolverModule);
 
     // ADMIN MODULES OVERRIDE WITH AdminResolverModule
     bind<AdminUsersResolverModule>("AdminResolverModule").to(AdminUsersResolverModule);

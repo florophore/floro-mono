@@ -52,4 +52,18 @@ export class Plugin extends BinaryPKBaseEntity {
 
   @OneToMany("PluginVersion", "plugin")
   versions?: Relation<PluginVersion>[];
+
+  @Column("uuid")
+  lastReleasedPublicPluginVersionId!: string;
+
+  @OneToOne("PluginVersion", "plugin")
+  @JoinColumn()
+  lastReleasedPublicPluginVersion?: Relation<PluginVersion>;
+
+  @Column("uuid")
+  lastReleasedPrivatePluginVersionId!: string;
+
+  @OneToOne("PluginVersion", "plugin")
+  @JoinColumn()
+  lastReleasedPrivatePluginVersion?: Relation<PluginVersion>;
 }

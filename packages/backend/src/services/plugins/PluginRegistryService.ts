@@ -45,7 +45,6 @@ export interface UploadPluginReponse {
     | "PLUGIN_NAME_TAKEN_ERROR"
     | "DEPENDENCY_PERMISSION_ERROR"
     | "MANIFEST_DEPENDENCY_ERROR"
-    | "CONCURRENCY_ERROR"
     | "PLUGIN_COMPATABILITY_ERROR"
     | "BAD_VERSION_ERROR"
     | "LOG_ERROR";
@@ -64,6 +63,7 @@ export interface ReleasePluginReponse {
     | "ILLEGAL_STATE_ERROR"
     | "CONCURRENCY_ERROR"
     | "NOT_FOUND_ERROR"
+    | "BAD_VERSION_ERROR"
     | "LOG_ERROR";
   pluginVersion?: PluginVersion;
   plugin?: Plugin;
@@ -343,6 +343,21 @@ export default class PluginRegistryService {
         dependenciesPluginVersions.push(pluginVersion);
       }
 
+      const lastVersion = existingVersions[existingVersions.length - 1];
+
+      if (
+        lastVersion &&
+        !semver.gt(pluginUploadStream.version as string, lastVersion.version)
+      ) {
+        return {
+          action: "BAD_VERSION_ERROR",
+          error: {
+            type: "BAD_VERSION_ERROR",
+            message: `Version should be greater than last verion ${lastVersion.version}. Please upload again with a higher version number.`,
+          },
+        };
+      }
+
       const lastReleaseVersion = this.getLastReleasedVersion(existingVersions);
       const lastReleaseVersionNumber = lastReleaseVersion
         ? lastReleaseVersion.version
@@ -408,6 +423,10 @@ export default class PluginRegistryService {
         icon: {
           light: `${publicCdnUrl}/plugins/${pluginUploadStream.uuid}/floro/${pluginUploadStream.lightIconPath}`,
           dark: `${publicCdnUrl}/plugins/${pluginUploadStream.uuid}/floro/${pluginUploadStream.darkIconPath}`,
+          selected: {
+            light: `${publicCdnUrl}/plugins/${pluginUploadStream.uuid}/floro/${pluginUploadStream.selectedLightIconPath}`,
+            dark: `${publicCdnUrl}/plugins/${pluginUploadStream.uuid}/floro/${pluginUploadStream.selectedDarkIconPath}`,
+          }
         },
       };
       const files: { [key: string]: string | Buffer | undefined } = {
@@ -416,6 +435,10 @@ export default class PluginRegistryService {
           pluginUploadStream.originalDarkIcon,
         ["floro/" + pluginUploadStream.lightIconPath]:
           pluginUploadStream.originalLightIcon,
+        ["floro/" + pluginUploadStream.selectedLightIconPath]:
+          pluginUploadStream.originalSelectedLightIcon,
+        ["floro/" + pluginUploadStream.selectedDarkIconPath]:
+          pluginUploadStream.originalSelectedDarkIcon,
         ["index.html"]: pluginUploadStream.originalIndexHTML,
         [pluginUploadStream.indexJSPath as string]:
           pluginUploadStream.originalIndexJS,
@@ -444,6 +467,23 @@ export default class PluginRegistryService {
         };
       }
       const unreleasedVersions = this.getUnReleasedVersions(existingVersions);
+      const lastUnreleasedVersion =
+        unreleasedVersions?.[unreleasedVersions.length - 1];
+      if (
+        lastUnreleasedVersion &&
+        !semver.gt(
+          pluginUploadStream.version as string,
+          lastUnreleasedVersion?.version as string
+        )
+      ) {
+        return {
+          action: "BAD_VERSION_ERROR",
+          error: {
+            type: "BAD_VERSION_ERROR",
+            message: `Version should be greater than last verion ${lastUnreleasedVersion.version}. Please update your version number and upload again.`,
+          },
+        };
+      }
       const queryRunner = await this.databaseConnection.makeQueryRunner();
       try {
         await queryRunner.startTransaction();
@@ -473,6 +513,8 @@ export default class PluginRegistryService {
           displayName: pluginUploadStream.displayName,
           lightIcon: writeManifest.icon.light,
           darkIcon: writeManifest.icon.dark,
+          selectedLightIcon: writeManifest.icon.selected.light,
+          selectedDarkIcon: writeManifest.icon.selected.dark,
           indexHtml: files?.["index.html"] as string,
           pluginId: plugin.id,
           uploadedByUserId: currentUser.id,
@@ -497,31 +539,6 @@ export default class PluginRegistryService {
             dependencyPluginId: dep.pluginId,
             dependencyPluginVersionId: dep.id,
           });
-        }
-        for (const unreleasedVersion of unreleasedVersions) {
-          await pluginVersionTXContext.updatePluginVersion(unreleasedVersion, {
-            state: "cancelled",
-          });
-        }
-
-        const existingVersionsAfterInsertion =
-          await pluginVersionTXContext.getByPlugin(plugin.id);
-        const unreleasedVersionsAfterInsertion =
-          existingVersionsAfterInsertion.filter((v) => v.state == "unreleased");
-        // run sanity check and ensure only one unreleased version exists before commiting
-        if (
-          unreleasedVersionsAfterInsertion.length != 1 ||
-          unreleasedVersionsAfterInsertion[0].id != pluginVersion.id
-        ) {
-          await queryRunner.rollbackTransaction();
-          return {
-            action: "CONCURRENCY_ERROR",
-            error: {
-              type: "CONCURRENCY_ERROR",
-              message:
-                "Failed to upload due to release conflict. Please try again with an incremented version.",
-            },
-          };
         }
         await queryRunner.commitTransaction();
         return {
@@ -648,8 +665,31 @@ export default class PluginRegistryService {
         };
       }
       const plugin = await pluginContext.getById(pluginVersion.pluginId);
+      const existingVersions = await pluginVersionContext.getByPlugin(
+        pluginVersion.pluginId
+      );
+      const existingVersionsExcludingVersion = existingVersions.filter(
+        (v) => v.id != pluginVersionId
+      );
+      const lastVersion =
+        existingVersionsExcludingVersion[
+          existingVersionsExcludingVersion.length - 1
+        ];
+      if (
+        lastVersion &&
+        !semver.gt(pluginVersion.version, lastVersion.version)
+      ) {
+        await queryRunner.rollbackTransaction();
+        return {
+          action: "BAD_VERSION_ERROR",
+          error: {
+            type: "BAD_VERSION_ERROR",
+            message: `Version should be greater than last verion ${lastVersion.version}. You can only release the lastest version.`,
+          },
+        };
+      }
+
       if (!plugin) {
-        // ADD ERROR
         await queryRunner.rollbackTransaction();
         return {
           action: "NOT_FOUND_ERROR",
@@ -664,7 +704,6 @@ export default class PluginRegistryService {
         pluginVersion.ownerType == "user_plugin" &&
         pluginVersion.userId != currentUser.id
       ) {
-        // ADD ERROR
         await queryRunner.rollbackTransaction();
         return {
           action: "FORBIDDEN_ACTION_ERROR",
@@ -678,7 +717,6 @@ export default class PluginRegistryService {
         pluginVersion.ownerType == "org_plugin" &&
         (!organization?.id || pluginVersion.organizationId != organization?.id)
       ) {
-        // ADD ERROR
         await queryRunner.rollbackTransaction();
         return {
           action: "FORBIDDEN_ACTION_ERROR",
@@ -699,32 +737,27 @@ export default class PluginRegistryService {
           },
         };
       }
-
       const updatedPluginVersion =
         await pluginVersionContext.updatePluginVersion(pluginVersion, {
           state: "released",
         });
-
-      const existingVersionsAfterInsertion =
-        await pluginVersionContext.getByPlugin(pluginVersion.pluginId);
-      const unreleasedVersionsAfterInsertion =
-        existingVersionsAfterInsertion.filter((v) => v.state == "unreleased");
-      // run sanity check and ensure only one unreleased version exists before commiting
-      if (unreleasedVersionsAfterInsertion.length != 0) {
-        await queryRunner.rollbackTransaction();
-        return {
-          action: "CONCURRENCY_ERROR",
-          error: {
-            type: "CONCURRENCY_ERROR",
-            message:
-              "Failed to release due to release conflict. Please try again.",
-          },
-        };
+      let updatedPlugin: Plugin;
+      if (plugin.isPrivate) {
+        updatedPlugin = await pluginContext.updatePlugin(plugin, {
+          lastReleasedPrivatePluginVersionId: updatedPluginVersion.id,
+          lastReleasedPrivatePluginVersion: updatedPluginVersion
+        })
+      } else {
+        updatedPlugin = await pluginContext.updatePlugin(plugin, {
+          lastReleasedPublicPluginVersionId: updatedPluginVersion.id,
+          lastReleasedPublicPluginVersion: updatedPluginVersion
+        })
       }
       await queryRunner.commitTransaction();
       return {
         action: "PLUGIN_VERSION_RELEASED",
         pluginVersion: updatedPluginVersion,
+        plugin: updatedPlugin
       };
     } catch (e: any) {
       if (!queryRunner.isReleased) {

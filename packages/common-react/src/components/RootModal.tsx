@@ -10,6 +10,7 @@ export interface Props {
   disableBackgroundDismiss?: boolean;
   showExitIcon?: boolean;
   headerChildren?: React.ReactElement | React.ReactElement[];
+  headerSize?: "small"|"normal";
 }
 
 const RootModal = (props: Props) => {
@@ -21,6 +22,7 @@ const RootModal = (props: Props) => {
       headerChildren={props?.headerChildren}
       showExitIcon={props?.showExitIcon}
       disableBackgroundDismiss={props?.disableBackgroundDismiss}
+      headerSize={props?.headerSize}
     >
       {props?.children}
     </Modal>,

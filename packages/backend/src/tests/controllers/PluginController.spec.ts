@@ -113,7 +113,6 @@ describe("PluginController", () => {
           .set("session_key", session.clientKey)
           .send()
           .end((err, res) => {
-            console.log(res.body)
             resolve(res.body.link);
           });
       });
@@ -133,7 +132,7 @@ describe("PluginController", () => {
           .set("session_key", session.clientKey)
           .send()
           .end((err, res) => {
-            console.log("RES", res.body);
+            expect(res.status).eql(200);
             resolve(null);
           });
       });
@@ -143,7 +142,7 @@ describe("PluginController", () => {
           .set("session_key", session.clientKey)
           .send()
           .end((err, res) => {
-            console.log("RES", res.text);
+            expect(res.status).eql(200);
             resolve(null);
           });
       });

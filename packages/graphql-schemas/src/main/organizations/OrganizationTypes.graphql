@@ -22,6 +22,10 @@ type Organization {
   privateRepositories: [Repository]
 
   profilePhoto: Photo
+
+  publicPlugins: [Plugin]
+  privatePlugins: [Plugin]
+  pluginCount: Int
 }
 
 type OrganizationMember {

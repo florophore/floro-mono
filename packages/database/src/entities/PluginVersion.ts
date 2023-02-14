@@ -52,6 +52,16 @@ export class PluginVersion extends BinaryPKBaseEntity {
   @IsString()
   darkIcon!: string;
 
+  @Column("varchar")
+  @IsDefined()
+  @IsString()
+  selectedLightIcon!: string;
+
+  @Column("varchar")
+  @IsDefined()
+  @IsString()
+  selectedDarkIcon!: string;
+
   @Column("text")
   @IsDefined()
   @IsString()

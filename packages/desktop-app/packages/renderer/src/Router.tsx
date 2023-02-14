@@ -10,6 +10,7 @@ import CreateUserRepoPage from './create_user_repo/CreateUserRepoPage';
 import OrganizationPage from './organization/OrganizationPage';
 import CreateOrgRepoPage from './create_org_repo/CreateOrgRepoPage';
 import RepoHomePage from './repository/RepoHomePage';
+import UserPluginsPage from './user_plugins/UserPluginsPage';
 
 const Router = (): React.ReactElement => {
     const location = useLocation();
@@ -22,6 +23,7 @@ const Router = (): React.ReactElement => {
           <Route path="/home" element={<HomePage />} />
           <Route path="/home/create-org" element={<CreateOrgPage />} />
           <Route path="/home/create-repo" element={<CreateUserRepoPage />} />
+          <Route path="/home/plugins" element={<UserPluginsPage />} />
           <Route path="/org/@/:handle" element={<OrganizationPage />} />
           <Route path="/org/@/:handle/create-repo" element={<CreateOrgRepoPage/>} />
           <Route path="/repo/@/:ownerHandle/:repoName" element={<RepoHomePage/>} />

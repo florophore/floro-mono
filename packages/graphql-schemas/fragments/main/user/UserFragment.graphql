@@ -9,4 +9,11 @@ fragment User on User {
   profilePhoto {
     ...Photo
   }
+  pluginCount
+  privatePlugins {
+    ...Plugin
+  }
+  publicPlugins {
+    ...Plugin
+  }
 }

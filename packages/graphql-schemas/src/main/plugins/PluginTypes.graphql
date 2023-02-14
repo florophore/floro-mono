@@ -5,27 +5,45 @@ type Plugin {
   isPrivate: Boolean
   user: User
   organization: Organization
+  createdByUser: User
   createdAt: DateTime
   updatedAt: DateTime
+  versions: [PluginVersion]
+
+  # DERIVED PROPS
+  displayName: String
+  lightIcon: String
+  darkIcon: String
+  selectedLightIcon: String
+  selectedDarkIcon: String
+  lastReleasedPublicVersion: PluginVersion
+  lastReleasedPrivateVersion: PluginVersion
 }
 
 type PluginVersion {
   id: ID
   name: String
   version: String
+  manifest: String
+  isPrivate: Boolean
   isBackwardsCompatible: Boolean
   previousReleaseVersion: String
   codeDocsUrl: String
   codeRepoUrl: String
   lightIcon: String
   darkIcon: String
+  selectedLightIcon: String,
+  selectedDarkIcon: String,
+  displayName: String
   description: String
   ownerType: String
   user: User
   organization: Organization
   state: String
   pluginDependencies: [PluginVersion]
-  plugin: Plugin
+
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 type PluginCheckResult {

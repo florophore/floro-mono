@@ -1,0 +1,52 @@
+fragment PluginVersion on PluginVersion {
+  id
+  name
+  isPrivate
+  version
+  manifest
+  codeDocsUrl
+  codeRepoUrl
+  description
+  ownerType
+  createdAt
+  updatedAt
+
+  isBackwardsCompatible
+  previousReleaseVersion
+  state
+
+  displayName
+  lightIcon
+  darkIcon
+  selectedLightIcon
+  selectedDarkIcon
+  user {
+    id
+    username
+  }
+  organization {
+    id
+    handle
+  }
+
+  pluginDependencies {
+    id
+    name
+    description
+    version
+    isPrivate
+    ownerType
+    lightIcon
+    darkIcon
+    selectedLightIcon
+    selectedDarkIcon
+    user {
+        id
+        username
+    }
+    organization {
+        id
+        handle
+    }
+  }
+}

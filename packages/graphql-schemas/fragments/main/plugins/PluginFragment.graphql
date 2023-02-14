@@ -1,13 +1,35 @@
 fragment Plugin on Plugin {
+  id
+  name
+  isPrivate
+  createdAt
+  updatedAt
+
+  displayName
+  lightIcon
+  darkIcon
+  selectedLightIcon
+  selectedDarkIcon
+
+  createdByUser {
     id
-    name
-    isPrivate
-    createdAt
-    updatedAt
-    user {
-        ...User
-    }
-    organization {
-        ...Organization
-    }
+    username
+  }
+  user {
+    id
+    username
+  }
+  organization {
+    id
+    handle
+  }
+  lastReleasedPublicVersion {
+    id
+  }
+  lastReleasedPrivateVersion {
+    id
+  }
+  versions {
+    ...PluginVersion
+  }
 }

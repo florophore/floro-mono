@@ -8,6 +8,7 @@ export interface ButtonProps {
     label: string;
     bg: "purple"|"orange"|"teal"|"gray";
     size: "big"|"medium"|"small"|"extra-small";
+    textSize?: "normal"|"small";
     isDisabled?: boolean;
     isLoading?: boolean;
     onClick?: React.MouseEventHandler<HTMLButtonElement>;
@@ -22,6 +23,7 @@ const Button = ({
     isDisabled,
     isLoading,
     size,
+    textSize = "normal",
     ...rest
 }: ButtonProps): React.ReactElement => {
 
@@ -95,11 +97,31 @@ const Button = ({
     }, [isDisabled, isLoading, onClick])
 
     const fontSize = useMemo(() => {
-      if (size == 'big') return '1.7rem';
-      if (size == 'medium') return '1.4rem';
-      if (size == 'small') return '1.2rem';
-      if (size == 'extra-small') return '0.9rem';
-    }, [size]);
+      if (size == 'big') {
+        if (textSize == "small") {
+          return '1.36rem'
+        }
+        return '1.7rem'
+      };
+      if (size == 'medium') {
+        if (textSize == "small") {
+          return '1.12rem'
+        }
+        return '1.4rem'
+      };
+      if (size == 'small') {
+        if (textSize == "small") {
+          return '0.96rem'
+        }
+        return '1.2rem'
+      };
+      if (size == 'extra-small') {
+        if (textSize == "small") {
+          return '0.72rem'
+        }
+        return '0.9rem'
+      };
+    }, [size, textSize]);
 
     const width = useMemo(() => {
       if (size == 'big') return 312;

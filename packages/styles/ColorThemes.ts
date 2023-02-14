@@ -66,6 +66,7 @@ export interface ColorTheme {
     localRemoteTextColor: string;
     localRemoteSelectedTextColor: string;
     localRemoteSelectedBackgroundColor: string;
+    pageBannerInfo: string;
   };
   gradients: {
     backgroundNoOpacity: string;
@@ -148,6 +149,7 @@ export const LightTheme: ColorTheme = {
     localRemoteTextColor: palette.gray,
     localRemoteSelectedTextColor: palette.white,
     localRemoteSelectedBackgroundColor: palette.teal,
+    pageBannerInfo: palette.mediumGray,
   },
   gradients: {
     backgroundNoOpacity: palette.lightModeBG.substring(0, 7) + Opacity[0],
@@ -230,6 +232,7 @@ export const DarkTheme: ColorTheme = {
         localRemoteTextColor: palette.white,
         localRemoteSelectedTextColor: palette.white,
         localRemoteSelectedBackgroundColor: palette.teal,
+        pageBannerInfo: palette.white,
     },
     shadows: {
         modalContainer: palette.black.substring(0, 7) + Opacity[70],

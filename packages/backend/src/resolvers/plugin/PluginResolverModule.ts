@@ -8,14 +8,20 @@ import { runWithHooks } from "../hooks/ResolverHook";
 import RepositoryService from "../../services/repositories/RepositoryService";
 import PluginRegistryService from "../../services/plugins/PluginRegistryService";
 import RootOrganizationMemberPermissionsLoader from "../hooks/loaders/Root/OrganizationID/RootOrganizationMemberPermissionsLoader";
+import { Plugin as DBPlugin } from "@floro/database/src/entities/Plugin";
+import { PluginVersion as DBPluginVersion } from "@floro/database/src/entities/PluginVersion";
+import semver from "semver";
+import MainConfig from "@floro/config/src/MainConfig";
 
 @injectable()
 export default class PluginResolverModule extends BaseResolverModule {
   public resolvers: Array<keyof this & keyof main.ResolversTypes> = [
     "Query",
     "Mutation",
+    "Plugin",
   ];
   protected repositoryService!: RepositoryService;
+  protected config!: MainConfig;
   protected contextFactory!: ContextFactory;
   protected requestCache!: RequestCache;
 
@@ -25,6 +31,7 @@ export default class PluginResolverModule extends BaseResolverModule {
 
   constructor(
     @inject(ContextFactory) contextFactory: ContextFactory,
+    @inject(MainConfig) config: MainConfig,
     @inject(RequestCache) requestCache: RequestCache,
     @inject(PluginRegistryService) pluginRegistryService: PluginRegistryService,
     @inject(LoggedInUserGuard) loggedInUserGuard: LoggedInUserGuard,
@@ -33,12 +40,22 @@ export default class PluginResolverModule extends BaseResolverModule {
   ) {
     super();
     this.contextFactory = contextFactory;
+    this.config = config;
     this.requestCache = requestCache;
     this.pluginRegistryService = pluginRegistryService;
 
     this.loggedInUserGuard = loggedInUserGuard;
     this.rootOrganizationMemberPermissionsLoader =
       rootOrganizationMemberPermissionsLoader;
+  }
+
+  private sortBySemver(pluginVersions: DBPluginVersion[]): DBPluginVersion[] {
+    return pluginVersions.sort((a: DBPluginVersion, b: DBPluginVersion) => {
+      if (semver.eq(a.version, b.version)) {
+        return 0;
+      }
+      return semver.gt(a.version, b.version) ? -1 : 1;
+    });
   }
 
   public Query: main.QueryResolvers = {
@@ -51,6 +68,391 @@ export default class PluginResolverModule extends BaseResolverModule {
         pluginName: (pluginName ?? "").toLowerCase().trim(),
       };
     },
+  };
+
+  public Plugin: main.PluginResolvers = {
+    versions: runWithHooks(
+      () => [],
+      async (plugin, _, { cacheKey, currentUser }) => {
+        const dbPlugin = plugin as DBPlugin;
+        const membership = this.requestCache.getOrganizationMembership(
+          cacheKey,
+          dbPlugin.id,
+          currentUser?.id
+        );
+        if (
+          dbPlugin.ownerType == "user_plugin" &&
+          currentUser?.id == dbPlugin.userId
+        ) {
+          return this.sortBySemver(dbPlugin?.versions ?? []);
+        }
+        if (
+          dbPlugin.ownerType == "org_plugin" &&
+          membership &&
+          membership.membershipState == "active"
+        ) {
+          return this.sortBySemver(dbPlugin?.versions ?? []);
+        }
+        if (!dbPlugin?.isPrivate) {
+          return this.sortBySemver(
+            dbPlugin?.versions?.filter?.((v) => {
+              return v.state == "released" && !v.isPrivate;
+            }) ?? []
+          );
+        }
+        return null;
+      }
+    ),
+    lastReleasedPrivateVersion: runWithHooks(
+      () => [],
+      async (plugin, _, { cacheKey, currentUser }) => {
+        const dbPlugin = plugin as DBPlugin;
+        const membership = this.requestCache.getOrganizationMembership(
+          cacheKey,
+          dbPlugin.id,
+          currentUser?.id
+        );
+        if (
+          dbPlugin.ownerType == "user_plugin" &&
+          currentUser?.id == dbPlugin.userId
+        ) {
+          return dbPlugin.lastReleasedPrivatePluginVersion ?? null;
+        }
+        if (
+          dbPlugin.ownerType == "org_plugin" &&
+          membership &&
+          membership.membershipState == "active"
+        ) {
+          return dbPlugin.lastReleasedPrivatePluginVersion ?? null;
+        }
+        return null;
+      }
+    ),
+    isPrivate: runWithHooks(
+      () => [],
+      async (plugin, _, { cacheKey, currentUser }) => {
+        const dbPlugin = plugin as DBPlugin;
+        const membership = this.requestCache.getOrganizationMembership(
+          cacheKey,
+          dbPlugin.id,
+          currentUser?.id
+        );
+        if (!plugin.isPrivate) {
+          return false;
+        }
+        if (
+          dbPlugin.ownerType == "user_plugin" &&
+          currentUser?.id == dbPlugin.userId
+        ) {
+          return plugin.isPrivate;
+        }
+        if (
+          dbPlugin.ownerType == "org_plugin" &&
+          membership &&
+          membership.membershipState == "active"
+        ) {
+          return plugin.isPrivate;
+        }
+        return null;
+      }
+    ),
+    ownerType: runWithHooks(
+      () => [],
+      async (plugin, _, { cacheKey, currentUser }) => {
+        const dbPlugin = plugin as DBPlugin;
+        const membership = this.requestCache.getOrganizationMembership(
+          cacheKey,
+          dbPlugin.id,
+          currentUser?.id
+        );
+        if (!plugin.isPrivate) {
+          return plugin.ownerType as string;
+        }
+        if (
+          dbPlugin.ownerType == "user_plugin" &&
+          currentUser?.id == dbPlugin.userId
+        ) {
+          return plugin.ownerType as string;
+        }
+        if (
+          dbPlugin.ownerType == "org_plugin" &&
+          membership &&
+          membership.membershipState == "active"
+        ) {
+          return plugin.ownerType as string;
+        }
+        return null;
+      }
+    ),
+    displayName: runWithHooks(
+      () => [],
+      async (plugin, _, { cacheKey, currentUser }) => {
+        const dbPlugin = plugin as DBPlugin;
+        const membership = this.requestCache.getOrganizationMembership(
+          cacheKey,
+          dbPlugin.id,
+          currentUser?.id
+        );
+        if (
+          dbPlugin.ownerType == "user_plugin" &&
+          currentUser?.id == dbPlugin.userId
+        ) {
+          if (dbPlugin.isPrivate && dbPlugin.lastReleasedPrivatePluginVersion) {
+            return dbPlugin.lastReleasedPrivatePluginVersion.displayName;
+          }
+          if (!dbPlugin.isPrivate && dbPlugin.lastReleasedPublicPluginVersion) {
+            return dbPlugin.lastReleasedPublicPluginVersion.displayName;
+          }
+          const versions = this.sortBySemver(dbPlugin?.versions ?? []);
+          const lastVersion = versions[0];
+          if (lastVersion) {
+            return lastVersion.displayName;
+          }
+          return dbPlugin.name;
+        }
+        if (
+          dbPlugin.ownerType == "org_plugin" &&
+          membership &&
+          membership.membershipState == "active"
+        ) {
+          if (dbPlugin.isPrivate && dbPlugin.lastReleasedPrivatePluginVersion) {
+            return dbPlugin.lastReleasedPrivatePluginVersion.displayName;
+          }
+          if (!dbPlugin.isPrivate && dbPlugin.lastReleasedPublicPluginVersion) {
+            return dbPlugin.lastReleasedPublicPluginVersion.displayName;
+          }
+          const versions = this.sortBySemver(dbPlugin?.versions ?? []);
+          const lastVersion = versions[0];
+          if (lastVersion) {
+            return lastVersion.displayName;
+          }
+          return dbPlugin.name;
+        }
+        if (!dbPlugin.isPrivate) {
+          if (dbPlugin.lastReleasedPublicPluginVersion) {
+            return dbPlugin.lastReleasedPublicPluginVersion.displayName;
+          }
+          return dbPlugin.name;
+        }
+        return null;
+      }
+    ),
+    lightIcon: runWithHooks(
+      () => [],
+      async (plugin, _, { cacheKey, currentUser }) => {
+        const dbPlugin = plugin as DBPlugin;
+        const membership = this.requestCache.getOrganizationMembership(
+          cacheKey,
+          dbPlugin.id,
+          currentUser?.id
+        );
+        if (
+          dbPlugin.ownerType == "user_plugin" &&
+          currentUser?.id == dbPlugin.userId
+        ) {
+          if (dbPlugin.isPrivate && dbPlugin.lastReleasedPrivatePluginVersion) {
+            return dbPlugin.lastReleasedPrivatePluginVersion.lightIcon;
+          }
+          if (!dbPlugin.isPrivate && dbPlugin.lastReleasedPublicPluginVersion) {
+            return dbPlugin.lastReleasedPublicPluginVersion.lightIcon;
+          }
+          const versions = this.sortBySemver(dbPlugin?.versions ?? []);
+          const lastVersion = versions[0];
+          if (lastVersion) {
+            return lastVersion.lightIcon;
+          }
+          return `${this.config.assetHost()}/assets/images/icons/plugin_default.unselected.light.svg`;
+        }
+
+        if (
+          dbPlugin.ownerType == "org_plugin" &&
+          membership &&
+          membership.membershipState == "active"
+        ) {
+          if (dbPlugin.isPrivate && dbPlugin.lastReleasedPrivatePluginVersion) {
+            return dbPlugin.lastReleasedPrivatePluginVersion.lightIcon;
+          }
+          if (!dbPlugin.isPrivate && dbPlugin.lastReleasedPublicPluginVersion) {
+            return dbPlugin.lastReleasedPublicPluginVersion.lightIcon;
+          }
+          const versions = this.sortBySemver(dbPlugin?.versions ?? []);
+          const lastVersion = versions[0];
+          if (lastVersion) {
+            return lastVersion.lightIcon;
+          }
+          return `${this.config.assetHost()}/assets/images/icons/plugin_default.unselected.light.svg`;
+        }
+        if (!dbPlugin.isPrivate) {
+          if (dbPlugin.lastReleasedPublicPluginVersion) {
+            return dbPlugin.lastReleasedPublicPluginVersion.lightIcon;
+          }
+          return `${this.config.assetHost()}/assets/images/icons/plugin_default.unselected.light.svg`;
+        }
+        return null;
+      }
+    ),
+    darkIcon: runWithHooks(
+      () => [],
+      async (plugin, _, { cacheKey, currentUser }) => {
+        const dbPlugin = plugin as DBPlugin;
+        const membership = this.requestCache.getOrganizationMembership(
+          cacheKey,
+          dbPlugin.id,
+          currentUser?.id
+        );
+        if (
+          dbPlugin.ownerType == "user_plugin" &&
+          currentUser?.id == dbPlugin.userId
+        ) {
+          if (dbPlugin.isPrivate && dbPlugin.lastReleasedPrivatePluginVersion) {
+            return dbPlugin.lastReleasedPrivatePluginVersion.darkIcon;
+          }
+          if (!dbPlugin.isPrivate && dbPlugin.lastReleasedPublicPluginVersion) {
+            return dbPlugin.lastReleasedPublicPluginVersion.darkIcon;
+          }
+          const versions = this.sortBySemver(dbPlugin?.versions ?? []);
+          const lastVersion = versions[0];
+          if (lastVersion) {
+            return lastVersion.lightIcon;
+          }
+          return `${this.config.assetHost()}/assets/images/icons/plugin_default.unselected.dark.svg`;
+        }
+
+        if (
+          dbPlugin.ownerType == "org_plugin" &&
+          membership &&
+          membership.membershipState == "active"
+        ) {
+          if (dbPlugin.isPrivate && dbPlugin.lastReleasedPrivatePluginVersion) {
+            return dbPlugin.lastReleasedPrivatePluginVersion.darkIcon;
+          }
+          if (!dbPlugin.isPrivate && dbPlugin.lastReleasedPublicPluginVersion) {
+            return dbPlugin.lastReleasedPublicPluginVersion.darkIcon;
+          }
+          const versions = this.sortBySemver(dbPlugin?.versions ?? []);
+          const lastVersion = versions[0];
+          if (lastVersion) {
+            return lastVersion.darkIcon;
+          }
+          return `${this.config.assetHost()}/assets/images/icons/plugin_default.unselected.dark.svg`;
+        }
+        if (!dbPlugin.isPrivate) {
+          if (dbPlugin.lastReleasedPublicPluginVersion) {
+            return dbPlugin.lastReleasedPublicPluginVersion.darkIcon;
+          }
+          return `${this.config.assetHost()}/assets/images/icons/plugin_default.unselected.dark.svg`;
+        }
+        return null;
+      }
+    ),
+    selectedLightIcon: runWithHooks(
+      () => [],
+      async (plugin, _, { cacheKey, currentUser }) => {
+        const dbPlugin = plugin as DBPlugin;
+        const membership = this.requestCache.getOrganizationMembership(
+          cacheKey,
+          dbPlugin.id,
+          currentUser?.id
+        );
+        if (
+          dbPlugin.ownerType == "user_plugin" &&
+          currentUser?.id == dbPlugin.userId
+        ) {
+          if (dbPlugin.isPrivate && dbPlugin.lastReleasedPrivatePluginVersion) {
+            return dbPlugin.lastReleasedPrivatePluginVersion.selectedLightIcon;
+          }
+          if (!dbPlugin.isPrivate && dbPlugin.lastReleasedPublicPluginVersion) {
+            return dbPlugin.lastReleasedPublicPluginVersion.selectedLightIcon;
+          }
+          const versions = this.sortBySemver(dbPlugin?.versions ?? []);
+          const lastVersion = versions[0];
+          if (lastVersion) {
+            return lastVersion.selectedLightIcon;
+          }
+          return `${this.config.assetHost()}/assets/images/icons/plugin_default.selected.svg`;
+        }
+
+        if (
+          dbPlugin.ownerType == "org_plugin" &&
+          membership &&
+          membership.membershipState == "active"
+        ) {
+          if (dbPlugin.isPrivate && dbPlugin.lastReleasedPrivatePluginVersion) {
+            return dbPlugin.lastReleasedPrivatePluginVersion.selectedLightIcon;
+          }
+          if (!dbPlugin.isPrivate && dbPlugin.lastReleasedPublicPluginVersion) {
+            return dbPlugin.lastReleasedPublicPluginVersion.selectedLightIcon;
+          }
+          const versions = this.sortBySemver(dbPlugin?.versions ?? []);
+          const lastVersion = versions[0];
+          if (lastVersion) {
+            return lastVersion.selectedLightIcon;
+          }
+          return `${this.config.assetHost()}/assets/images/icons/plugin_default.selected.svg`;
+        }
+        if (!dbPlugin.isPrivate) {
+          if (dbPlugin.lastReleasedPublicPluginVersion) {
+            return dbPlugin.lastReleasedPublicPluginVersion.selectedLightIcon;
+          }
+          return `${this.config.assetHost()}/assets/images/icons/plugin_default.selected.svg`;
+        }
+        return null;
+      }
+    ),
+    selectedDarkIcon: runWithHooks(
+      () => [],
+      async (plugin, _, { cacheKey, currentUser }) => {
+        const dbPlugin = plugin as DBPlugin;
+        const membership = this.requestCache.getOrganizationMembership(
+          cacheKey,
+          dbPlugin.id,
+          currentUser?.id
+        );
+        if (
+          dbPlugin.ownerType == "user_plugin" &&
+          currentUser?.id == dbPlugin.userId
+        ) {
+          if (dbPlugin.isPrivate && dbPlugin.lastReleasedPrivatePluginVersion) {
+            return dbPlugin.lastReleasedPrivatePluginVersion.selectedDarkIcon;
+          }
+          if (!dbPlugin.isPrivate && dbPlugin.lastReleasedPublicPluginVersion) {
+            return dbPlugin.lastReleasedPublicPluginVersion.selectedDarkIcon;
+          }
+          const versions = this.sortBySemver(dbPlugin?.versions ?? []);
+          const lastVersion = versions[0];
+          if (lastVersion) {
+            return lastVersion.selectedDarkIcon;
+          }
+          return `${this.config.assetHost()}/assets/images/icons/plugin_default.selected.svg`;
+        }
+
+        if (
+          dbPlugin.ownerType == "org_plugin" &&
+          membership &&
+          membership.membershipState == "active"
+        ) {
+          if (dbPlugin.isPrivate && dbPlugin.lastReleasedPrivatePluginVersion) {
+            return dbPlugin.lastReleasedPrivatePluginVersion.selectedDarkIcon;
+          }
+          if (!dbPlugin.isPrivate && dbPlugin.lastReleasedPublicPluginVersion) {
+            return dbPlugin.lastReleasedPublicPluginVersion.selectedDarkIcon;
+          }
+          const versions = this.sortBySemver(dbPlugin?.versions ?? []);
+          const lastVersion = versions[0];
+          if (lastVersion) {
+            return lastVersion.selectedDarkIcon;
+          }
+          return `${this.config.assetHost()}/assets/images/icons/plugin_default.selected.svg`;
+        }
+        if (!dbPlugin.isPrivate) {
+          if (dbPlugin.lastReleasedPublicPluginVersion) {
+            return dbPlugin.lastReleasedPublicPluginVersion.selectedDarkIcon;
+          }
+          return `${this.config.assetHost()}/assets/images/icons/plugin_default.selected.svg`;
+        }
+        return null;
+      }
+    ),
   };
 
   public Mutation: main.MutationResolvers = {

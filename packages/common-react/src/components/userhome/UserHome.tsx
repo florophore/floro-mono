@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect } from "react";
-import { useNavigate, } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import styled from "@emotion/styled";
 import ProfileInfo from "@floro/storybook/stories/common-components/ProfileInfo";
 import FollowerInfo from "@floro/storybook/stories/common-components/FollowerInfo";
@@ -191,7 +191,9 @@ const UserHome = () => {
                 <DevSettingsTab />
               </div>
               <div style={{ marginTop: 16, display: "flex" }}>
-                  <PluginsTab pluginCount={0} />
+                <Link to={'/home/plugins'}>
+                  <PluginsTab pluginCount={currentUser?.pluginCount ?? 0} />
+                </Link>
               </div>
               <div style={{ marginTop: 16, display: "flex" }}>
                 <StorageTab

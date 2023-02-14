@@ -4,6 +4,27 @@ import ContextFactory from "../ContextFactory";
 import { Plugin } from "../../entities/Plugin";
 import PluginHelper from "../utils/PluginHelper";
 
+const READ_RELATIONS = {
+  user: true,
+  organization: true,
+  createdByUser: true,
+  versions: {
+    dependencies: {
+      dependencyPluginVersion: true
+    },
+  },
+  lastReleasedPrivatePluginVersion: {
+    dependencies: {
+      dependencyPluginVersion: true
+    },
+  },
+  lastReleasedPublicPluginVersion: {
+    dependencies: {
+      dependencyPluginVersion: true
+    },
+  },
+};
+
 export default class PluginsContext extends BaseContext {
   private pluginRepo!: TypeormRepository<Plugin>;
 
@@ -25,10 +46,7 @@ export default class PluginsContext extends BaseContext {
   public async getById(id: string): Promise<Plugin | null> {
     return await this.queryRunner.manager.findOne(Plugin, {
       where: { id },
-      relations: {
-        user: true,
-        organization: true,
-      }
+      relations: READ_RELATIONS
     });
   }
 
@@ -49,39 +67,93 @@ export default class PluginsContext extends BaseContext {
     }
     return await this.queryRunner.manager.findOne(Plugin, {
       where: { nameKey },
-      relations: {
-        user: true,
-        organization: true,
-      }
+      relations: READ_RELATIONS
     });
   }
 
   public async getByNameKey(nameKey: string): Promise<Plugin | null> {
     return await this.queryRunner.manager.findOne(Plugin, {
       where: { nameKey },
-      relations: {
-        user: true,
-        organization: true,
-      }
+      relations: READ_RELATIONS
     });
   }
 
   public async getUserPlugins(userId: string): Promise<Plugin[]> {
     return await this.queryRunner.manager.find(Plugin, {
       where: { userId },
-      relations: {
-        user: true,
-        organization: true,
-      }
+      order: {
+        name: 'ASC'
+      },
+      relations: READ_RELATIONS
+    });
+  }
+
+  public async getUserPluginsByType(userId: string, isPrivate: boolean): Promise<Plugin[]> {
+    return await this.queryRunner.manager.find(Plugin, {
+      where: { userId, isPrivate },
+      order: {
+        name: 'ASC'
+      },
+      relations: READ_RELATIONS
+    });
+  }
+
+  public async getUserPluginCountType(userId: string, isPrivate: boolean): Promise<number> {
+    return await this.queryRunner.manager.countBy(Plugin, {
+      userId,
+      isPrivate,
+    });
+  }
+
+  public async getOrgPluginCountType(organizationId: string, isPrivate: boolean): Promise<number> {
+    return await this.queryRunner.manager.countBy(Plugin, {
+      organizationId,
+      isPrivate,
     });
   }
 
   public async getOrgPlugins(organizationId: string): Promise<Plugin[]> {
     return await this.queryRunner.manager.find(Plugin, {
       where: { organizationId },
-      relations: {
-        organization: true,
-      }
+      order: {
+        name: 'ASC'
+      },
+      relations: READ_RELATIONS
     });
+  }
+
+  public async getOrgPluginsByType(organizationId: string, isPrivate: boolean): Promise<Plugin[]> {
+    return await this.queryRunner.manager.find(Plugin, {
+      where: { organizationId, isPrivate },
+      order: {
+        name: 'ASC'
+      },
+      relations: READ_RELATIONS
+    });
+  }
+  public async updatePlugin(
+    plugin: Plugin,
+    pluginArgs: DeepPartial<Plugin>
+  ): Promise<Plugin> {
+    return (
+      (await this.updatePluginById(
+        plugin.id,
+        pluginArgs
+      )) ?? plugin
+    );
+  }
+
+  public async updatePluginById(
+    id: string,
+    pluginArgs: DeepPartial<Plugin>
+  ): Promise<Plugin | null> {
+    const pluginVersion = await this.getById(id);
+    if (pluginVersion === null) {
+      throw new Error("Invalid ID to update for Plugin.id: " + id);
+    }
+    for (const prop in pluginArgs) {
+      pluginVersion[prop] = pluginArgs[prop];
+    }
+    return await this.queryRunner.manager.save(Plugin, pluginVersion);
   }
 }

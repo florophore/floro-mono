@@ -27,6 +27,7 @@ import RepositoriesContext from "@floro/database/src/contexts/repositories/Repos
 import PhotosContext from "@floro/database/src/contexts/photos/PhotosContext";
 import { Photo } from "@floro/database/src/entities/Photo";
 import RootOrganizationMemberPermissionsLoader from "../hooks/loaders/Root/OrganizationID/RootOrganizationMemberPermissionsLoader";
+import PluginsContext from "@floro/database/src/contexts/plugins/PluginsContext";
 
 @injectable()
 export default class OrganizationResolverModule extends BaseResolverModule {
@@ -387,7 +388,7 @@ export default class OrganizationResolverModule extends BaseResolverModule {
             organization.id,
             currentUser.id
           );
-        if (organizationMembership.membershipState == "inactive") {
+        if (organizationMembership?.membershipState != "active") {
           return null;
         }
         const cachedMembers = this.requestCache.getOrganizationMembers(
@@ -443,7 +444,7 @@ export default class OrganizationResolverModule extends BaseResolverModule {
             organization.id as string,
             currentUser.id
           );
-        if (organizationMembership?.membershipState == "inactive") {
+        if (organizationMembership?.membershipState != "active") {
           return null;
         }
         const permissions = this.requestCache.getMembershipPermissions(
@@ -522,15 +523,16 @@ export default class OrganizationResolverModule extends BaseResolverModule {
             organization.id,
             currentUser.id
           );
-        if (organizationMembership?.membershipState == "inactive") {
+        if (organizationMembership?.membershipState != "active") {
           return null;
         }
-        const cachedPublicRepos = this.requestCache.getOrganizationPrivateRepos(
-          cacheKey,
-          organization.id as string
-        );
-        if (cachedPublicRepos) {
-          return cachedPublicRepos as Repository[];
+        const cachedPrivateRepos =
+          this.requestCache.getOrganizationPrivateRepos(
+            cacheKey,
+            organization.id as string
+          );
+        if (cachedPrivateRepos) {
+          return cachedPrivateRepos as Repository[];
         }
         const repositoriesContext = await this.contextFactory.createContext(
           RepositoriesContext
@@ -545,6 +547,112 @@ export default class OrganizationResolverModule extends BaseResolverModule {
           privateRepos
         );
         return privateRepos as Repository[];
+      }
+    ),
+    publicPlugins: runWithHooks(
+      () => [this.organizationMemberLoader],
+      async (organization, _, { cacheKey, currentUser }) => {
+        const cachedPublicPlugins = this.requestCache.getOrgPublicPlugins(
+          cacheKey,
+          organization.id as string
+        );
+        if (cachedPublicPlugins) {
+          return cachedPublicPlugins;
+        }
+
+        const pluginsContext = await this.contextFactory.createContext(
+          PluginsContext
+        );
+        const publicPlugins = await pluginsContext.getOrgPluginsByType(
+          organization?.id as string,
+          false
+        );
+        this.requestCache.setOrgPublicPlugins(
+          cacheKey,
+          organization as Organization,
+          publicPlugins
+        );
+        return publicPlugins;
+      }
+    ),
+    privatePlugins: runWithHooks(
+      () => [this.organizationMemberLoader],
+      async (organization, _, { cacheKey, currentUser }) => {
+        const cachedPrivatePlugins = this.requestCache.getOrgPrivatePlugins(
+          cacheKey,
+          organization.id as string
+        );
+        if (cachedPrivatePlugins) {
+          return cachedPrivatePlugins;
+        }
+
+        const organizationMembership =
+          this.requestCache.getOrganizationMembership(
+            cacheKey,
+            organization.id,
+            currentUser.id
+          );
+        if (organizationMembership?.membershipState != "active") {
+          return null;
+        }
+
+        const pluginsContext = await this.contextFactory.createContext(
+          PluginsContext
+        );
+        const privatePlugins = await pluginsContext.getOrgPluginsByType(
+          organization?.id as string,
+          true
+        );
+        this.requestCache.setOrgPrivatePlugins(
+          cacheKey,
+          organization as Organization,
+          privatePlugins
+        );
+        return privatePlugins;
+      }
+    ),
+    pluginCount: runWithHooks(
+      () => [this.organizationMemberLoader],
+      async (organization, _, { cacheKey, currentUser }) => {
+        const cachedPluginCount = this.requestCache.getOrgPluginCount(
+          cacheKey,
+          organization.id as string
+        );
+        if (cachedPluginCount !== undefined) {
+          return cachedPluginCount;
+        }
+        const pluginsContext = await this.contextFactory.createContext(
+          PluginsContext
+        );
+        const publicCount = await pluginsContext.getOrgPluginCountType(
+          organization?.id as string,
+          false
+        );
+
+        const organizationMembership =
+          this.requestCache.getOrganizationMembership(
+            cacheKey,
+            organization.id,
+            currentUser.id
+          );
+        if (organizationMembership?.membershipState != "active") {
+          this.requestCache.setOrgPluginCount(
+            cacheKey,
+            organization,
+            publicCount
+          );
+          return publicCount;
+        }
+        const privateCount = await pluginsContext.getOrgPluginCountType(
+          organization?.id as string,
+          true
+        );
+        this.requestCache.setOrgPluginCount(
+          cacheKey,
+          organization,
+          privateCount + publicCount
+        );
+        return privateCount + publicCount;
       }
     ),
   };
@@ -580,7 +688,7 @@ export default class OrganizationResolverModule extends BaseResolverModule {
             return {
               __typename: "CreateOrganizationSuccess",
               organization: result.organization,
-              user: currentUser
+              user: currentUser,
             };
           }
           if (result.action == "LOG_ERROR") {

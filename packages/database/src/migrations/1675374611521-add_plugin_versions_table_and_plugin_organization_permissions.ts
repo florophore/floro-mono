@@ -166,6 +166,16 @@ export class addPluginVersionsTableAndPluginOrganizationPermissions1675374611521
             isNullable: false,
           },
           {
+            name: "selected_light_icon",
+            type: "varchar",
+            isNullable: false,
+          },
+          {
+            name: "selected_dark_icon",
+            type: "varchar",
+            isNullable: false,
+          },
+          {
             name: "state",
             type: "varchar",
             default: "'unreleased'",
@@ -522,9 +532,48 @@ export class addPluginVersionsTableAndPluginOrganizationPermissions1675374611521
         columnNames: ["dependency_name", "dependency_version"],
       })
     );
+
+    await queryRunner.addColumn(
+        "plugins",
+        new TableColumn({
+            name: "last_released_public_plugin_version_id",
+            type: "uuid",
+            isNullable: true,
+        }),
+    );
+
+    await queryRunner.addColumn(
+        "plugins",
+        new TableColumn({
+            name: "last_released_private_plugin_version_id",
+            type: "uuid",
+            isNullable: true,
+        }),
+    );
+    await queryRunner.createForeignKey(
+      "plugins",
+      new TableForeignKey({
+        columnNames: ["last_released_public_plugin_version_id"],
+        referencedColumnNames: ["id"],
+        referencedTableName: "plugin_versions",
+        onDelete: "SET NULL",
+      })
+    );
+
+    await queryRunner.createForeignKey(
+      "plugins",
+      new TableForeignKey({
+        columnNames: ["last_released_private_plugin_version_id"],
+        referencedColumnNames: ["id"],
+        referencedTableName: "plugin_versions",
+        onDelete: "SET NULL",
+      })
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.dropColumn("plugins", "last_released_public_plugin_version_id");
+    await queryRunner.dropColumn("plugins", "last_released_private_plugin_version_id");
     await queryRunner.dropTable("plugin_version_dependencies");
     await queryRunner.dropTable("plugin_versions");
     await queryRunner.dropColumn("organization_roles", "can_register_plugins");

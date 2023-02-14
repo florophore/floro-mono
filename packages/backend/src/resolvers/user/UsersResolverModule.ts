@@ -25,6 +25,7 @@ import { Repository } from "@floro/graphql-schemas/build/generated/main-graphql"
 import PhotoUploadService from "../../services/photos/PhotoUploadService";
 import PhotosContext from "@floro/database/src/contexts/photos/PhotosContext";
 import { Photo } from "@floro/database/src/entities/Photo";
+import PluginsContext from "@floro/database/src/contexts/plugins/PluginsContext";
 
 @injectable()
 export default class UsersResolverModule extends BaseResolverModule {
@@ -72,7 +73,7 @@ export default class UsersResolverModule extends BaseResolverModule {
       async (_root, _, { currentUser }) => {
         return {
           __typename: "User",
-          ...currentUser
+          ...currentUser,
         };
       }
     ),
@@ -464,7 +465,7 @@ export default class UsersResolverModule extends BaseResolverModule {
       return publicRepos;
     },
     privateRepositories: async (user, _, { cacheKey, currentUser }) => {
-      if (user.id != currentUser.id) {
+      if (user.id != currentUser?.id) {
         return null;
       }
       const cachedPrivateRepos = this.requestCache.getUserPrivateRepos(
@@ -487,6 +488,88 @@ export default class UsersResolverModule extends BaseResolverModule {
         privateRepos
       );
       return privateRepos;
+    },
+    publicPlugins: async (user, _, { cacheKey }) => {
+      const cachedPublicPlugins = this.requestCache.getUserPublicPlugins(
+        cacheKey,
+        user.id as string
+      );
+      if (cachedPublicPlugins) {
+        return cachedPublicPlugins;
+      }
+      const pluginsContext = await this.contextFactory.createContext(
+        PluginsContext
+      );
+      const publicPlugins = await pluginsContext.getUserPluginsByType(
+        user?.id as string,
+        false
+      );
+      this.requestCache.setUserPublicPlugins(
+        cacheKey,
+        user as User,
+        publicPlugins
+      );
+      return publicPlugins;
+    },
+    privatePlugins: async (user, _, { cacheKey, currentUser }) => {
+      if (user.id != currentUser?.id) {
+        return [];
+      }
+      const cachedPrivatePlugins = this.requestCache.getUserPrivatePlugins(
+        cacheKey,
+        user.id as string
+      );
+      if (cachedPrivatePlugins) {
+        return cachedPrivatePlugins;
+      }
+      const pluginsContext = await this.contextFactory.createContext(
+        PluginsContext
+      );
+      const privatePlugins = await pluginsContext.getUserPluginsByType(
+        user?.id as string,
+        true
+      );
+      this.requestCache.setUserPrivatePlugins(
+        cacheKey,
+        user as User,
+        privatePlugins
+      );
+      return privatePlugins;
+    },
+    pluginCount: async (user, _, { cacheKey, currentUser }) => {
+      const cachedPluginCount = this.requestCache.getUserPluginCount(
+        cacheKey,
+        user.id as string
+      );
+      if (cachedPluginCount !== undefined) {
+        return cachedPluginCount;
+      }
+      const pluginsContext = await this.contextFactory.createContext(
+        PluginsContext
+      );
+      const publicCount = await pluginsContext.getUserPluginCountType(
+        user?.id as string,
+        false
+      );
+      if (user.id != currentUser?.id) {
+        this.requestCache.setUserPluginCount(
+          cacheKey,
+          user as User,
+          publicCount
+        );
+        return publicCount;
+      }
+
+      const privateCount = await pluginsContext.getUserPluginCountType(
+        user?.id as string,
+        true
+      );
+      this.requestCache.setUserPluginCount(
+        cacheKey,
+        user as User,
+        publicCount + privateCount
+      );
+      return publicCount + privateCount;
     },
   };
 }

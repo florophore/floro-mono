@@ -15,6 +15,9 @@ type User {
     publicRepositories: [Repository]
     privateRepositories: [Repository]
     profilePhoto: Photo
+    publicPlugins: [Plugin]
+    privatePlugins: [Plugin]
+    pluginCount: Int
 }
 union CurrentUserResponse =
   | User

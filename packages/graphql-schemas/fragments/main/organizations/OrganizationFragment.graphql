@@ -15,5 +15,12 @@ fragment Organization on Organization {
   profilePhoto {
     ...Photo
   }
+  pluginCount
+  privatePlugins {
+    ...Plugin
+  }
+  publicPlugins {
+    ...Plugin
+  }
 }
 

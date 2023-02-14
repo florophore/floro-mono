@@ -1,5 +1,6 @@
 
 import RepoBriefInfoRow from "./index";
+import { BrowserRouter } from 'react-router-dom';
 
 export default {
   title: "floro-app/common-components/RepoBriefInfoRow",
@@ -7,7 +8,7 @@ export default {
   argTypes: {},
 };
 
-const Template = (args) => <div style={{maxWidth: 263}}><RepoBriefInfoRow {...args} /></div>
+const Template = (args) => <BrowserRouter><div style={{maxWidth: 263}}><RepoBriefInfoRow {...args} /></div></BrowserRouter>
 
 export const Primary: any = Template.bind({});
 Primary.args = {

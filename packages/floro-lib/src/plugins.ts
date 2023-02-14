@@ -35,6 +35,10 @@ export interface Manifest {
     | {
         light: string;
         dark: string;
+        selected?: string | {
+          dark?: string;
+          light?: string;
+        };
       };
   imports: {
     [name: string]: string;

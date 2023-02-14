@@ -2,7 +2,8 @@ import { injectable } from "inversify";
 import { Organization } from "@floro/database/src/entities/Organization";
 import { OrganizationMember } from "@floro/database/src/entities/OrganizationMember";
 import { User } from "@floro/database/src/entities/User";
-import { v4 as uuid } from 'uuid';
+import { v4 as uuid } from "uuid";
+import { Plugin } from "@floro/database/src/entities/Plugin";
 import { OrganizationRole } from "@floro/database/src/entities/OrganizationRole";
 import { OrganizationPermissions } from "../services/organizations/OrganizationPermissionService";
 import sizeof from "object-sizeof";
@@ -11,211 +12,431 @@ import { Repository } from "@floro/database/src/entities/Repository";
 
 @injectable()
 export default class RequestCache {
-    private cache: {[key: string]: object} = {};
+  private cache: { [key: string]: object } = {};
 
-    public init(): string {
-        const cacheKey = uuid();
-        this.cache[cacheKey] = {};
-        return cacheKey;
+  public init(): string {
+    const cacheKey = uuid();
+    this.cache[cacheKey] = {};
+    return cacheKey;
+  }
+
+  public release(cacheKey: string) {
+    delete this.cache[cacheKey];
+  }
+
+  public getCache(cacheKey: string) {
+    if (!this.cache[cacheKey]) {
+      this.cache[cacheKey] = {};
     }
+    return this.cache[cacheKey];
+  }
 
-    public release(cacheKey: string) {
-        delete this.cache[cacheKey];
+  public getSize(cacheKey?: string) {
+    if (cacheKey) {
+      return sizeof(this.cache[cacheKey]);
     }
+    return sizeof(this.cache);
+  }
 
-    public getCache(cacheKey: string) {
-        if (!this.cache[cacheKey]) {
-            this.cache[cacheKey] = {};
-        }
-        return this.cache[cacheKey];
-    }
+  public setOrganization(cacheKey: string, organization: Organization) {
+    const cache = this.getCache(cacheKey);
+    cache[`organization:${organization.id}`] = organization;
+  }
 
-    public getSize(cacheKey?: string) {
-        if (cacheKey) {
-            return sizeof(this.cache[cacheKey]);
-        }
-        return sizeof(this.cache);
-    }
+  public getOrganization(
+    cacheKey: string,
+    organizationId: string
+  ): Organization {
+    const cache = this.getCache(cacheKey);
+    return cache[`organization:${organizationId}`] as Organization;
+  }
 
-    public setOrganization(cacheKey: string, organization: Organization) {
-        const cache = this.getCache(cacheKey);
-        cache[`organization:${organization.id}`] = organization;
-    }
+  public setUserOrganizations(
+    cacheKey: string,
+    user: User,
+    organizations: Organization[]
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`user-organizations:${user.id}`] = organizations;
+  }
 
-    public getOrganization(cacheKey: string, organizationId: string): Organization {
-        const cache = this.getCache(cacheKey);
-        return cache[`organization:${organizationId}`] as Organization;
-    } 
+  public getUserOrganizations(
+    cacheKey: string,
+    userId: string
+  ): Organization[] {
+    const cache = this.getCache(cacheKey);
+    return cache[`user-organizations:${userId}`] as Organization[];
+  }
 
-    public setUserOrganizations(cacheKey: string, user: User, organizations: Organization[]) {
-        const cache = this.getCache(cacheKey);
-        cache[`user-organizations:${user.id}`] = organizations;
-    }
+  public setOrganizationMembership(
+    cacheKey: string,
+    organization: Organization,
+    user: User,
+    organizationMember: OrganizationMember
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`organization-membership:${organization.id}:${user.id}`] =
+      organizationMember;
+  }
 
-    public getUserOrganizations(cacheKey: string, userId: string): Organization[] {
-        const cache = this.getCache(cacheKey);
-        return cache[`user-organizations:${userId}`] as Organization[];
-    } 
+  public getOrganizationMembership(
+    cacheKey: string,
+    organizationId: string,
+    userId: string
+  ): OrganizationMember {
+    const cache = this.getCache(cacheKey);
+    return (
+      (cache[
+        `organization-membership:${organizationId}:${userId}`
+      ] as OrganizationMember) ?? null
+    );
+  }
 
-    public setOrganizationMembership(cacheKey: string, organization: Organization, user: User, organizationMember: OrganizationMember) {
-        const cache = this.getCache(cacheKey);
-        cache[`organization-membership:${organization.id}:${user.id}`] = organizationMember;
-    }
+  public setMembershipRoles(
+    cacheKey: string,
+    organizationMember: OrganizationMember,
+    roles: OrganizationRole[]
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`membership-roles:${organizationMember.id}`] = roles;
+  }
 
-    public getOrganizationMembership(cacheKey: string, organizationId: string, userId: string): OrganizationMember {
-        const cache = this.getCache(cacheKey);
-        return cache[`organization-membership:${organizationId}:${userId}`] as OrganizationMember ?? null;
-    }
+  public clearMembershipRoles(
+    cacheKey: string,
+    organizationMember: OrganizationMember
+  ) {
+    const cache = this.getCache(cacheKey);
+    delete cache[`membership-roles:${organizationMember.id}`];
+    this.cache[cacheKey] = cache;
+  }
 
-    public setMembershipRoles(cacheKey: string, organizationMember: OrganizationMember, roles: OrganizationRole[]) {
-        const cache = this.getCache(cacheKey);
-        cache[`membership-roles:${organizationMember.id}`] = roles;
-    }
+  public getMembershipRoles(
+    cacheKey: string,
+    organizationMemberId: string
+  ): OrganizationRole[] {
+    const cache = this.getCache(cacheKey);
+    return (
+      (cache[
+        `membership-roles:${organizationMemberId}`
+      ] as OrganizationRole[]) ?? null
+    );
+  }
 
-    public clearMembershipRoles(cacheKey: string, organizationMember: OrganizationMember) {
-        const cache = this.getCache(cacheKey);
-        delete cache[`membership-roles:${organizationMember.id}`];
-        this.cache[cacheKey] = cache;
-    }
+  public setMembershipPermissions(
+    cacheKey: string,
+    organizationMember: OrganizationMember,
+    permissions: OrganizationPermissions
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`membership-permissions:${organizationMember.id}`] = permissions;
+  }
 
-    public getMembershipRoles(cacheKey: string, organizationMemberId: string): OrganizationRole[] {
-        const cache = this.getCache(cacheKey);
-        return cache[`membership-roles:${organizationMemberId}`] as OrganizationRole[] ?? null;
-    }
+  public getMembershipPermissions(
+    cacheKey: string,
+    organizationMemberId: string
+  ): OrganizationPermissions {
+    const cache = this.getCache(cacheKey);
+    return (
+      (cache[
+        `membership-permissions:${organizationMemberId}`
+      ] as OrganizationPermissions) ?? null
+    );
+  }
 
-    public setMembershipPermissions(cacheKey: string, organizationMember: OrganizationMember, permissions: OrganizationPermissions) {
-        const cache = this.getCache(cacheKey);
-        cache[`membership-permissions:${organizationMember.id}`] = permissions;
-    }
+  public setOrganizationRoles(
+    cacheKey: string,
+    organization: Organization,
+    roles: OrganizationRole[]
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`organization-roles:${organization.id}`] = roles;
+  }
 
-    public getMembershipPermissions(cacheKey: string, organizationMemberId: string): OrganizationPermissions {
-        const cache = this.getCache(cacheKey);
-        return cache[`membership-permissions:${organizationMemberId}`] as OrganizationPermissions ?? null;
-    }
+  public getOrganizationRoles(
+    cacheKey: string,
+    organizationId: string
+  ): OrganizationRole[] {
+    const cache = this.getCache(cacheKey);
+    return (
+      (cache[`organization-roles:${organizationId}`] as OrganizationRole[]) ??
+      null
+    );
+  }
 
-    public setOrganizationRoles(cacheKey: string, organization: Organization, roles: OrganizationRole[]) {
-        const cache = this.getCache(cacheKey);
-        cache[`organization-roles:${organization.id}`] = roles;
-    }
+  public clearOrganizationRoles(cacheKey: string, organization: Organization) {
+    const cache = this.getCache(cacheKey);
+    delete cache[`organization-roles:${organization.id}`];
+    this.cache[cacheKey] = cache;
+  }
 
-    public getOrganizationRoles(cacheKey: string, organizationId: string): OrganizationRole[] {
-        const cache = this.getCache(cacheKey);
-        return cache[`organization-roles:${organizationId}`] as OrganizationRole[] ?? null;
-    }
+  public setOrganizationMembers(
+    cacheKey: string,
+    organization: Organization,
+    members: OrganizationMember[]
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`organization-members:${organization.id}`] = members;
+  }
 
-    public clearOrganizationRoles(cacheKey: string, organization: Organization) {
-        const cache = this.getCache(cacheKey);
-        delete cache[`organization-roles:${organization.id}`];
-        this.cache[cacheKey] = cache;
-    }
+  public getOrganizationMembers(
+    cacheKey: string,
+    organizationId: string
+  ): OrganizationMember[] {
+    const cache = this.getCache(cacheKey);
+    return (
+      (cache[
+        `organization-members:${organizationId}`
+      ] as OrganizationMember[]) ?? null
+    );
+  }
 
-    public setOrganizationMembers(cacheKey: string, organization: Organization, members: OrganizationMember[]) {
-        const cache = this.getCache(cacheKey);
-        cache[`organization-members:${organization.id}`] = members;
-    }
+  public setOrganizationInvitations(
+    cacheKey: string,
+    organization: Organization,
+    organizationInvitations: OrganizationInvitation[]
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`organization-invitations:${organization.id}`] =
+      organizationInvitations;
+  }
 
-    public getOrganizationMembers(cacheKey: string, organizationId: string): OrganizationMember[] {
-        const cache = this.getCache(cacheKey);
-        return cache[`organization-members:${organizationId}`] as OrganizationMember[] ?? null;
-    }
+  public getOrganizationInvitations(
+    cacheKey: string,
+    organizationId: string
+  ): OrganizationInvitation[] {
+    const cache = this.getCache(cacheKey);
+    return (
+      (cache[
+        `organization-invitations:${organizationId}`
+      ] as OrganizationInvitation[]) ?? null
+    );
+  }
 
-    public setOrganizationInvitations(cacheKey: string, organization: Organization, organizationInvitations: OrganizationInvitation[]) {
-        const cache = this.getCache(cacheKey);
-        cache[`organization-invitations:${organization.id}`] = organizationInvitations;
-    }
+  public setOrganizationInvitationRoles(
+    cacheKey: string,
+    organizationInvitation: OrganizationInvitation,
+    roles: OrganizationRole[]
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`organization-invitation-roles:${organizationInvitation.id}`] = roles;
+  }
 
-    public getOrganizationInvitations(cacheKey: string, organizationId: string): OrganizationInvitation[] {
-        const cache = this.getCache(cacheKey);
-        return cache[`organization-invitations:${organizationId}`] as OrganizationInvitation[] ?? null;
-    }
+  public getOrganizationInvitationRoles(
+    cacheKey: string,
+    organizationInvitationId: string
+  ): OrganizationRole[] {
+    const cache = this.getCache(cacheKey);
+    return (
+      (cache[
+        `organization-invitation-roles:${organizationInvitationId}`
+      ] as OrganizationRole[]) ?? null
+    );
+  }
 
-    public setOrganizationInvitationRoles(cacheKey: string, organizationInvitation: OrganizationInvitation, roles: OrganizationRole[]) {
-        const cache = this.getCache(cacheKey);
-        cache[`organization-invitation-roles:${organizationInvitation.id}`] = roles;
-    }
+  public setOrganizationActiveMemberCount(
+    cacheKey: string,
+    organization: Organization,
+    count: number
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`organization-active-members-count:${organization.id}`] = count;
+  }
 
-    public getOrganizationInvitationRoles(cacheKey: string, organizationInvitationId: string): OrganizationRole[] {
-        const cache = this.getCache(cacheKey);
-        return cache[`organization-invitation-roles:${organizationInvitationId}`] as OrganizationRole[] ?? null;
-    }
+  public getOrganizationActiveMemberCount(
+    cacheKey: string,
+    organizationId: string
+  ): number {
+    const cache = this.getCache(cacheKey);
+    return (
+      (cache[
+        `organization-active-members-count:${organizationId}`
+      ] as number) ?? null
+    );
+  }
 
-    public setOrganizationActiveMemberCount(cacheKey: string, organization: Organization, count: number) {
-        const cache = this.getCache(cacheKey);
-        cache[`organization-active-members-count:${organization.id}`] = count;
-    }
+  public setOrganizationSentInvitationsCount(
+    cacheKey: string,
+    organization: Organization,
+    count: number
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`organization-sent-invitations-count:${organization.id}`] = count;
+  }
 
-    public getOrganizationActiveMemberCount(cacheKey: string, organizationId: string): number {
-        const cache = this.getCache(cacheKey);
-        return cache[`organization-active-members-count:${organizationId}`] as number ?? null;
-    }
+  public getOrganizationSentInvitationsCount(
+    cacheKey: string,
+    organizationId: string
+  ): number {
+    const cache = this.getCache(cacheKey);
+    return (
+      (cache[
+        `organization-sent-invitations-count:${organizationId}`
+      ] as number) ?? null
+    );
+  }
 
-    public setOrganizationSentInvitationsCount(cacheKey: string, organization: Organization, count: number) {
-        const cache = this.getCache(cacheKey);
-        cache[`organization-sent-invitations-count:${organization.id}`] = count;
-    }
+  public setUserRepos(cacheKey: string, user: User, repos: Repository[]) {
+    const cache = this.getCache(cacheKey);
+    cache[`user-repos:${user.id}`] = repos;
+  }
 
-    public getOrganizationSentInvitationsCount(cacheKey: string, organizationId: string): number {
-        const cache = this.getCache(cacheKey);
-        return cache[`organization-sent-invitations-count:${organizationId}`] as number ?? null;
-    }
+  public getUserRepos(cacheKey: string, userId: string): Repository[] {
+    const cache = this.getCache(cacheKey);
+    return cache[`user-repos:${userId}`] as Repository[];
+  }
 
-    public setUserRepos(cacheKey: string, user: User, repos: Repository[]) {
-        const cache = this.getCache(cacheKey);
-        cache[`user-repos:${user.id}`] = repos;
-    }
+  public setUserPrivateRepos(
+    cacheKey: string,
+    user: User,
+    repos: Repository[]
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`user-private-repos:${user.id}`] = repos;
+  }
 
-    public getUserRepos(cacheKey: string, userId: string): Repository[] {
-        const cache = this.getCache(cacheKey);
-        return cache[`user-repos:${userId}`] as Repository[];
-    }
+  public getUserPrivateRepos(cacheKey: string, userId: string): Repository[] {
+    const cache = this.getCache(cacheKey);
+    return cache[`user-private-repos:${userId}`] as Repository[];
+  }
 
-    public setUserPrivateRepos(cacheKey: string, user: User, repos: Repository[]) {
-        const cache = this.getCache(cacheKey);
-        cache[`user-private-repos:${user.id}`] = repos;
-    }
+  public setUserPublicRepos(cacheKey: string, user: User, repos: Repository[]) {
+    const cache = this.getCache(cacheKey);
+    cache[`user-public-repos:${user.id}`] = repos;
+  }
 
-    public getUserPrivateRepos(cacheKey: string, userId: string): Repository[] {
-        const cache = this.getCache(cacheKey);
-        return cache[`user-private-repos:${userId}`] as Repository[];
-    }
+  public getUserPublicRepos(cacheKey: string, userId: string): Repository[] {
+    const cache = this.getCache(cacheKey);
+    return cache[`user-public-repos:${userId}`] as Repository[];
+  }
 
-    public setUserPublicRepos(cacheKey: string, user: User, repos: Repository[]) {
-        const cache = this.getCache(cacheKey);
-        cache[`user-public-repos:${user.id}`] = repos;
-    }
+  public setOrganizationRepos(
+    cacheKey: string,
+    organization: Organization,
+    repos: Repository[]
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`organization-repos:${organization.id}`] = repos;
+  }
 
-    public getUserPublicRepos(cacheKey: string, userId: string): Repository[] {
-        const cache = this.getCache(cacheKey);
-        return cache[`user-public-repos:${userId}`] as Repository[];
-    }
+  public getOrganizationRepos(
+    cacheKey: string,
+    organizationId: string
+  ): Repository[] {
+    const cache = this.getCache(cacheKey);
+    return cache[`organization-repos:${organizationId}`] as Repository[];
+  }
 
-    public setOrganizationRepos(cacheKey: string, organization: Organization, repos: Repository[]) {
-        const cache = this.getCache(cacheKey);
-        cache[`organization-repos:${organization.id}`] = repos;
-    }
+  public setOrganizationPrivateRepos(
+    cacheKey: string,
+    organization: Organization,
+    repos: Repository[]
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`organization-private-repos:${organization.id}`] = repos;
+  }
 
-    public getOrganizationRepos(cacheKey: string, organizationId: string): Repository[] {
-        const cache = this.getCache(cacheKey);
-        return cache[`organization-repos:${organizationId}`] as Repository[];
-    }
+  public getOrganizationPrivateRepos(
+    cacheKey: string,
+    organizationId: string
+  ): Repository[] {
+    const cache = this.getCache(cacheKey);
+    return cache[
+      `organization-private-repos:${organizationId}`
+    ] as Repository[];
+  }
 
-    public setOrganizationPrivateRepos(cacheKey: string, organization: Organization, repos: Repository[]) {
-        const cache = this.getCache(cacheKey);
-        cache[`organization-private-repos:${organization.id}`] = repos;
-    }
+  public setOrganizationPublicRepos(
+    cacheKey: string,
+    organization: Organization,
+    repos: Repository[]
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`organization-public-repos:${organization.id}`] = repos;
+  }
 
-    public getOrganizationPrivateRepos(cacheKey: string, organizationId: string): Repository[] {
-        const cache = this.getCache(cacheKey);
-        return cache[`organization-private-repos:${organizationId}`] as Repository[];
-    }
+  public getOrganizationPublicRepos(
+    cacheKey: string,
+    organizationId: string
+  ): Repository[] {
+    const cache = this.getCache(cacheKey);
+    return cache[`organization-public-repos:${organizationId}`] as Repository[];
+  }
 
-    public setOrganizationPublicRepos(cacheKey: string, organization: Organization, repos: Repository[]) {
-        const cache = this.getCache(cacheKey);
-        cache[`organization-public-repos:${organization.id}`] = repos;
-    }
+  public setUserPrivatePlugins(cacheKey: string, user: User, repos: Plugin[]) {
+    const cache = this.getCache(cacheKey);
+    cache[`user-private-plugins:${user.id}`] = repos;
+  }
 
-    public getOrganizationPublicRepos(cacheKey: string, organizationId: string): Repository[] {
-        const cache = this.getCache(cacheKey);
-        return cache[`organization-public-repos:${organizationId}`] as Repository[];
-    }
+  public getUserPrivatePlugins(cacheKey: string, userId: string): Plugin[] {
+    const cache = this.getCache(cacheKey);
+    return cache[`user-private-plugins:${userId}`] as Plugin[];
+  }
+
+  public setUserPublicPlugins(cacheKey: string, user: User, repos: Plugin[]) {
+    const cache = this.getCache(cacheKey);
+    cache[`user-public-plugins:${user.id}`] = repos;
+  }
+
+  public getUserPublicPlugins(cacheKey: string, userId: string): Plugin[] {
+    const cache = this.getCache(cacheKey);
+    return cache[`user-public-plugins:${userId}`] as Plugin[];
+  }
+
+  public setUserPluginCount(cacheKey: string, user: User, count: number) {
+    const cache = this.getCache(cacheKey);
+    cache[`user-public-plugin-count:${user.id}`] = count;
+  }
+
+  public getUserPluginCount(cacheKey: string, userId: string): number {
+    const cache = this.getCache(cacheKey);
+    return cache[`user-public-plugins:${userId}`] as number;
+  }
+
+  public setOrgPrivatePlugins(
+    cacheKey: string,
+    organization: Organization,
+    repos: Plugin[]
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`org-private-plugins:${organization.id}`] = repos;
+  }
+
+  public getOrgPrivatePlugins(
+    cacheKey: string,
+    organizationId: string
+  ): Plugin[] {
+    const cache = this.getCache(cacheKey);
+    return cache[`org-private-plugins:${organizationId}`] as Plugin[];
+  }
+
+  public setOrgPublicPlugins(
+    cacheKey: string,
+    org: Organization,
+    repos: Plugin[]
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`org-public-plugins:${org.id}`] = repos;
+  }
+
+  public getOrgPublicPlugins(
+    cacheKey: string,
+    organizationId: string
+  ): Plugin[] {
+    const cache = this.getCache(cacheKey);
+    return cache[`org-public-plugins:${organizationId}`] as Plugin[];
+  }
+
+  public setOrgPluginCount(
+    cacheKey: string,
+    organization: Organization,
+    count: number
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`user-public-plugin-count:${organization.id}`] = count;
+  }
+
+  public getOrgPluginCount(cacheKey: string, organizationId: string): number {
+    const cache = this.getCache(cacheKey);
+    return cache[`org-public-plugins:${organizationId}`] as number;
+  }
 }

@@ -17,6 +17,7 @@ const Template = (args) => {
         <button onClick={() => setShow(true)}>show</button>
       </div>
       <Modal
+        headerSize={args.headerSize}
         onDismiss={() => setShow(false)}
         show={show}
         disableBackgroundDismiss={args.disableBackgroundDismiss}
