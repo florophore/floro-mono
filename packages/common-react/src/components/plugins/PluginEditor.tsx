@@ -1,16 +1,23 @@
-import React, { useCallback, useState} from "react";
+import React, { useCallback, useState, useMemo} from "react";
 import PluginController from "@floro/storybook/stories/common-components/PluginController";
+import PluginNoVersion from "@floro/storybook/stories/common-components/PluginNoVersion";
 import RegisterPluginModal from "./RegisterPluginModal";
-import { Plugin } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import { Plugin, PluginVersion } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import { useOfflineIconMap } from "../../offline/OfflineIconsContext";
 
 interface Props {
   accountType: "user"|"org";
   plugins: Plugin[];
+  linkPrefix: string;
+  currentPlugin?: Plugin|null;
+  currentVersion?: PluginVersion|null;
+  onPressOpenDocs: () => void;
 }
 
 const PluginEditor = (props: Props) => {
-  console.log("PROPS", props.plugins);
   const [showRegistry, setShowRegistery] = useState(false); 
+
+  const icons = useOfflineIconMap();
 
   const onPressRegisterNewPlugin = useCallback(() => {
     setShowRegistery(true);
@@ -20,13 +27,25 @@ const PluginEditor = (props: Props) => {
     setShowRegistery(false);
   }, []);
 
+  const content = useMemo(() => {
+    if (!props.currentVersion) {
+      return <PluginNoVersion onPressOpenDocs={props.onPressOpenDocs} icons={icons} currentPlugin={props.currentPlugin}/>
+    }
+    // TODO: UPDATE THIS
+    return <div>{'fill me in'}</div>;
+
+  }, [props.currentPlugin, props.currentVersion, icons]);
+
   return (
     <>
       <PluginController
-        plugins={[]}
+        linkPrefix={props.linkPrefix}
+        currentPlugin={props.currentPlugin}
+        icons={icons}
+        plugins={props.plugins}
         onPressRegisterNewPlugin={onPressRegisterNewPlugin}
       >
-        <div style={{ width: "100%" }}>{"hello world test"}</div>
+        <>{content}</>
       </PluginController>
       <RegisterPluginModal
         accountType={props.accountType}

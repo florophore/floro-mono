@@ -384,12 +384,12 @@ export default class RequestCache {
 
   public setUserPluginCount(cacheKey: string, user: User, count: number) {
     const cache = this.getCache(cacheKey);
-    cache[`user-public-plugin-count:${user.id}`] = count;
+    cache[`user-plugin-count:${user.id}`] = count;
   }
 
   public getUserPluginCount(cacheKey: string, userId: string): number {
     const cache = this.getCache(cacheKey);
-    return cache[`user-public-plugins:${userId}`] as number;
+    return cache[`user-plugin-count:${userId}`] as number;
   }
 
   public setOrgPrivatePlugins(
@@ -432,11 +432,11 @@ export default class RequestCache {
     count: number
   ) {
     const cache = this.getCache(cacheKey);
-    cache[`user-public-plugin-count:${organization.id}`] = count;
+    cache[`org-plugin-count:${organization.id}`] = count;
   }
 
   public getOrgPluginCount(cacheKey: string, organizationId: string): number {
     const cache = this.getCache(cacheKey);
-    return cache[`org-public-plugins:${organizationId}`] as number;
+    return cache[`org-plugin-count:${organizationId}`] as number;
   }
 }

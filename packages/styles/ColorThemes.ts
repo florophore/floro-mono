@@ -67,6 +67,13 @@ export interface ColorTheme {
     localRemoteSelectedTextColor: string;
     localRemoteSelectedBackgroundColor: string;
     pageBannerInfo: string;
+    unselectedPluginRowBorderColor: string;
+    unselectedPluginRow: string;
+    selectedPluginRow: string;
+    pluginDisplayTitle: string;
+    pluginSectionTitle: string;
+    blurbBorder: string;
+    blurbText: string;
   };
   gradients: {
     backgroundNoOpacity: string;
@@ -150,6 +157,13 @@ export const LightTheme: ColorTheme = {
     localRemoteSelectedTextColor: palette.white,
     localRemoteSelectedBackgroundColor: palette.teal,
     pageBannerInfo: palette.mediumGray,
+    unselectedPluginRowBorderColor: palette.white,
+    unselectedPluginRow: palette.lightPurple,
+    selectedPluginRow: palette.purple,
+    pluginDisplayTitle: palette.purple,
+    pluginSectionTitle: palette.purple,
+    blurbBorder: palette.mediumGray,
+    blurbText: palette.mediumGray,
   },
   gradients: {
     backgroundNoOpacity: palette.lightModeBG.substring(0, 7) + Opacity[0],
@@ -233,6 +247,13 @@ export const DarkTheme: ColorTheme = {
         localRemoteSelectedTextColor: palette.white,
         localRemoteSelectedBackgroundColor: palette.teal,
         pageBannerInfo: palette.white,
+        unselectedPluginRowBorderColor: palette.white,
+        unselectedPluginRow: palette.white,
+        selectedPluginRow: palette.lightPurple,
+        pluginDisplayTitle: palette.lightPurple,
+        pluginSectionTitle: palette.lightPurple,
+        blurbBorder: palette.white,
+        blurbText: palette.white,
     },
     shadows: {
         modalContainer: palette.black.substring(0, 7) + Opacity[70],

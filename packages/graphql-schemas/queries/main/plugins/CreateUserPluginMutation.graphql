@@ -16,6 +16,13 @@ mutation CreateUserPlugin(
       }
       user {
         id
+        privatePlugins {
+          ...Plugin
+        }
+        publicPlugins {
+          ...Plugin
+        }
+        pluginCount
       }
     }
     ... on CreateUserPluginError {

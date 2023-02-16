@@ -17,6 +17,7 @@ import {setContext} from '@apollo/client/link/context';
 import Cookies from 'js-cookie';
 import {SessionProvider} from '@floro/common-react/src/session/session-context';
 import {OfflinePhotoProvider} from "@floro/common-react/src/offline/OfflinePhotoContext";
+import {OfflineIconProvider} from "@floro/common-react/src/offline/OfflineIconsContext";
 import ColorPalette from '@floro/styles/ColorPalette';
 import { createUploadLink } from 'apollo-upload-client';
 
@@ -54,25 +55,25 @@ const splitLink = split(
   uploadLink,
 );
 
-const mergeFunction = (existing: object, incoming: object) => {
-  return {
-    ...existing,
-    ...incoming,
-  };
-};
+//const mergeFunction = (existing: object, incoming: object) => {
+//  return {
+//    ...existing,
+//    ...incoming,
+//  };
+//};
 
 const cache = new InMemoryCache({
-  typePolicies: {
-    User: {
-      merge: mergeFunction,
-    },
-    Organization: {
-      merge: mergeFunction,
-    },
-    Repository: {
-      merge: mergeFunction,
-    },
-  },
+  //typePolicies: {
+  //  User: {
+  //    merge: mergeFunction,
+  //  },
+  //  Organization: {
+  //    merge: mergeFunction,
+  //  },
+  //  Repository: {
+  //    merge: mergeFunction,
+  //  },
+  //},
 });
 
 const client = new ApolloClient({
@@ -103,13 +104,15 @@ const App = (props: Props): React.ReactElement => {
           <QueryClientProvider client={queryClient}>
             <ThemeProvider theme={colorTheme}>
               <FloroSocketProvider client={'desktop'}>
-                <OfflinePhotoProvider>
-                  <SessionProvider>
-                    <DOMMount>
-                      <Router />
-                    </DOMMount>
-                  </SessionProvider>
-                </OfflinePhotoProvider>
+                <OfflineIconProvider>
+                  <OfflinePhotoProvider>
+                    <SessionProvider>
+                      <DOMMount>
+                        <Router />
+                      </DOMMount>
+                    </SessionProvider>
+                  </OfflinePhotoProvider>
+                </OfflineIconProvider>
               </FloroSocketProvider>
             </ThemeProvider>
           </QueryClientProvider>

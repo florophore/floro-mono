@@ -24,10 +24,12 @@ const NoPluginsText = styled.h2`
 `
 
 export interface Props {
-    currentPlugin?: Plugin;
+    currentPlugin?: Plugin|null;
     plugins: Plugin[];
     children: React.ReactElement;
     onPressRegisterNewPlugin: () => void;
+    icons: {[key: string]: string};
+    linkPrefix: string;
 }
 
 const NoPlugins = () => {
@@ -43,16 +45,16 @@ const NoPlugins = () => {
 }
 
 const PluginController = (props: Props) => {
-    const content = useMemo(() => {
-        if (props.plugins?.length == 0) {
-            return <NoPlugins/>
-        }
-        return props.children;
+  const content = useMemo(() => {
+      if (props.plugins?.length == 0) {
+          return <NoPlugins/>
+      }
+      return props.children;
 
-    }, [props.plugins, props.children]);
+  }, [props.plugins, props.children, props.currentPlugin]);
     
   return (
-    <SideNavWrapper nav={<PluginNav onPressRegisterNewPlugin={props.onPressRegisterNewPlugin} plugins={[]} />}>
+    <SideNavWrapper nav={<PluginNav linkPrefix={props.linkPrefix} currentPlugin={props.currentPlugin} icons={props.icons} onPressRegisterNewPlugin={props.onPressRegisterNewPlugin} plugins={props.plugins} />}>
         {content}
     </SideNavWrapper>
   );

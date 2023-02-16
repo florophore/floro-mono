@@ -132,6 +132,7 @@ interface Props {
 }
 
 const RegisterPluginModal = (props: Props) => {
+  const {setCurrentUser} = useSession();
   const [pluginName, setPluginName] = useState("");
   const [pluginNameIsFocused, setPluginNameIsFocused] = useState(false);
   const [isHoveringTooltip, setIsHoveringToolTip] = useState(false);
@@ -149,6 +150,21 @@ const RegisterPluginModal = (props: Props) => {
       registerOrgPluginRequest.loading || registerUserPluginRequest.loading
     );
   }, [registerOrgPluginRequest.loading, registerUserPluginRequest.loading]);
+
+  useEffect(() => {
+    if (registerUserPluginRequest?.data?.createUserPlugin?.__typename == "CreateUserPluginSuccess") {
+      //if (registerUserPluginRequest?.data?.createUserPlugin?.user) {
+      //  setCurrentUser(registerUserPluginRequest?.data?.createUserPlugin?.user);
+      //}
+      props.onDismiss?.();
+    }
+  }, [registerUserPluginRequest?.data?.createUserPlugin?.__typename])
+
+  useEffect(() => {
+    if (registerOrgPluginRequest?.data?.createOrgPlugin?.__typename == "CreateOrganizationPluginSuccess") {
+      props.onDismiss?.();
+    }
+  }, [registerOrgPluginRequest?.data?.createOrgPlugin?.__typename])
 
   const pluginInputIsValid = useMemo(() => {
     if (pluginName == "") {
@@ -168,7 +184,6 @@ const RegisterPluginModal = (props: Props) => {
     if (!canRegister) {
       return;
     }
-    alert(props.accountType)
     if (props.accountType == "user") {
       registerUserPlugin({
         variables: {
@@ -196,7 +211,8 @@ const RegisterPluginModal = (props: Props) => {
   ]);
 
   const [checkPluginName, { data, loading }] = usePluginNameCheckLazyQuery({
-    nextFetchPolicy: "network-only",
+    fetchPolicy: 'network-only', // Used for first execution
+    nextFetchPolicy: 'no-cache', 
   });
   const { currentUser } = useSession();
   const offlinePhoto = useOfflinePhoto(currentUser?.profilePhoto ?? null);

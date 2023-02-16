@@ -136,18 +136,12 @@ const UserHome = () => {
   useEffect(() => {
     if (uploadPhotoRequest.data?.uploadUserProfilePhoto?.__typename === "UploadUserProfilePhotoSuccess") {
       setShowProfilePictureCroppper(false);
-      //setCurrentUser(uploadPhotoRequest.data?.uploadUserProfilePhoto?.user as User);
       if (uploadPhotoRequest.data?.uploadUserProfilePhoto?.user?.profilePhoto) {
         savePhoto(uploadPhotoRequest.data?.uploadUserProfilePhoto?.user?.profilePhoto);
       }
     }
   }, [uploadPhotoRequest.data, savePhoto])
 
-  useEffect(() => {
-    if (removePhotoRequest.data?.removeUserProfilePhoto?.__typename === "RemoveUserProfilePhotoSuccess") {
-      //setCurrentUser(removePhotoRequest.data?.removeUserProfilePhoto?.user as User);
-    }
-  }, [removePhotoRequest.data]);
   const offlinePhoto = useOfflinePhoto(currentUser?.profilePhoto ?? null);
 
   return (

@@ -30,7 +30,7 @@ const Prefix = styled.span`
 
 `;
 
-interface LinkChain {
+export interface LinkChain {
   label: string;
   prefix?: null | "/" | ">";
   value?: string;

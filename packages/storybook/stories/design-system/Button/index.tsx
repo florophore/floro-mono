@@ -5,7 +5,7 @@ import { useTheme } from '@emotion/react';
 import DotsLoader from '../DotsLoader';
 
 export interface ButtonProps {
-    label: string;
+    label: string|React.ReactElement;
     bg: "purple"|"orange"|"teal"|"gray";
     size: "big"|"medium"|"small"|"extra-small";
     textSize?: "normal"|"small";

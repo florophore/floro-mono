@@ -369,7 +369,7 @@ export default class PluginResolverModule extends BaseResolverModule {
           if (lastVersion) {
             return lastVersion.selectedLightIcon;
           }
-          return `${this.config.assetHost()}/assets/images/icons/plugin_default.selected.svg`;
+          return `${this.config.assetHost()}/assets/images/icons/plugin_default.selected.light.svg`;
         }
 
         if (
@@ -388,13 +388,13 @@ export default class PluginResolverModule extends BaseResolverModule {
           if (lastVersion) {
             return lastVersion.selectedLightIcon;
           }
-          return `${this.config.assetHost()}/assets/images/icons/plugin_default.selected.svg`;
+          return `${this.config.assetHost()}/assets/images/icons/plugin_default.selected.light.svg`;
         }
         if (!dbPlugin.isPrivate) {
           if (dbPlugin.lastReleasedPublicPluginVersion) {
             return dbPlugin.lastReleasedPublicPluginVersion.selectedLightIcon;
           }
-          return `${this.config.assetHost()}/assets/images/icons/plugin_default.selected.svg`;
+          return `${this.config.assetHost()}/assets/images/icons/plugin_default.selected.light.svg`;
         }
         return null;
       }
@@ -423,7 +423,7 @@ export default class PluginResolverModule extends BaseResolverModule {
           if (lastVersion) {
             return lastVersion.selectedDarkIcon;
           }
-          return `${this.config.assetHost()}/assets/images/icons/plugin_default.selected.svg`;
+          return `${this.config.assetHost()}/assets/images/icons/plugin_default.selected.dark.svg`;
         }
 
         if (
@@ -442,13 +442,13 @@ export default class PluginResolverModule extends BaseResolverModule {
           if (lastVersion) {
             return lastVersion.selectedDarkIcon;
           }
-          return `${this.config.assetHost()}/assets/images/icons/plugin_default.selected.svg`;
+          return `${this.config.assetHost()}/assets/images/icons/plugin_default.selected.dark.svg`;
         }
         if (!dbPlugin.isPrivate) {
           if (dbPlugin.lastReleasedPublicPluginVersion) {
             return dbPlugin.lastReleasedPublicPluginVersion.selectedDarkIcon;
           }
-          return `${this.config.assetHost()}/assets/images/icons/plugin_default.selected.svg`;
+          return `${this.config.assetHost()}/assets/images/icons/plugin_default.selected.dark.svg`;
         }
         return null;
       }

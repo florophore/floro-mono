@@ -9,10 +9,11 @@ import {
 import { useSocketEvent } from "../pubsub/socket";
 import { useQueryClient } from "react-query";
 import { removeClientSession, setClientSession } from "./client-session";
-import { useApolloClient } from "@apollo/client";
+import { gql, useApolloClient, useFragment_experimental } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useSaveOfflinePhoto } from "../offline/OfflinePhotoContext";
+import { useSaveOfflineIcon } from "../offline/OfflineIconsContext";
 
 const SessionContext = React.createContext<{
   session: Session | null;
@@ -39,6 +40,7 @@ export const SessionProvider = (props: Props) => {
   const apolloClient = useApolloClient();
   const queryClient = useQueryClient();
   const savePhoto = useSaveOfflinePhoto();
+  const saveIcon = useSaveOfflineIcon();
 
   const logout = useCallback(() => {
     setCurrentUser(null);
@@ -124,8 +126,40 @@ export const SessionProvider = (props: Props) => {
       if (data?.exchangeSession?.user?.profilePhoto) {
         savePhoto(data?.exchangeSession?.user?.profilePhoto);
       }
+
+      [
+        ...(data?.exchangeSession?.user?.privatePlugins ?? []),
+        ...(data?.exchangeSession?.user.publicPlugins ?? []),
+      ].forEach((plugin) => {
+        if (plugin?.lightIcon) {
+          saveIcon(plugin?.lightIcon);
+        }
+        if (plugin?.darkIcon) {
+          saveIcon(plugin?.darkIcon);
+        }
+        if (plugin?.selectedLightIcon) {
+          saveIcon(plugin?.selectedLightIcon);
+        }
+        if (plugin?.selectedDarkIcon) {
+          saveIcon(plugin?.selectedDarkIcon);
+        }
+        plugin?.versions?.forEach((version) => {
+          if (version?.lightIcon) {
+            saveIcon(version?.lightIcon);
+          }
+          if (version?.darkIcon) {
+            saveIcon(version?.darkIcon);
+          }
+          if (version?.selectedLightIcon) {
+            saveIcon(version?.selectedLightIcon);
+          }
+          if (version?.selectedDarkIcon) {
+            saveIcon(version?.selectedDarkIcon);
+          }
+        });
+      });
     }
-  }, [data?.exchangeSession, savePhoto]);
+  }, [data?.exchangeSession, savePhoto, saveIcon]);
 
   return (
     <SessionContext.Provider

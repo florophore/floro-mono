@@ -2,6 +2,7 @@ import React from "react";
 import styled from "@emotion/styled";
 import Button from "../../../design-system/Button";
 import { Plugin } from "@floro/graphql-schemas/build/generated/main-graphql";
+import PluginNavRow from "./PluginNavRow";
 
 const RelativeWrapper = styled.div`
   height: 100%;
@@ -34,6 +35,7 @@ const TopWrapper = styled.div`
   max-height: calc(100% - 80px);
   overflow: scroll;
   padding-bottom: 80px;
+  padding-top: 12px;
 `;
 
 const BottomWrapper = styled.div`
@@ -42,19 +44,36 @@ const BottomWrapper = styled.div`
   align-items: center;
   padding-top: 16px;
   padding-bottom: 16px;
+  height: 80px;
+  box-sizing: border-box;
+  background: ${props => props.theme.background};
 `;
 
 export interface Props {
-    currentPlugin?: Plugin;
+    currentPlugin?: Plugin|null;
     plugins: Plugin[];
     onPressRegisterNewPlugin: () => void;
+    icons: {[key: string]: string};
+    linkPrefix: string;
 }
 
 const PluginNav = (props: Props) => {
   return (
     <RelativeWrapper>
       <Container>
-        <TopWrapper></TopWrapper>
+        <TopWrapper>
+          {props.plugins.map((plugin, index) => {
+            return (
+              <PluginNavRow
+                linkPrefix={props.linkPrefix}
+                key={index}
+                plugin={plugin}
+                icons={props.icons}
+                isSelected={props?.currentPlugin?.id == plugin?.id}
+              />
+            );
+          })}
+        </TopWrapper>
         <BottomWrapper>
           <Button
             onClick={props.onPressRegisterNewPlugin}

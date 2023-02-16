@@ -70,7 +70,6 @@ const ChangeNameModal = (props: Props) => {
 
   useEffect(() => {
     if (data?.updateUserName?.__typename == "UpdateUserNameSuccess") {
-      //setCurrentUser(data?.updateUserName?.user as User);
       setFirstName(data?.updateUserName?.user?.firstName ?? firstName);
       setLastName(data?.updateUserName?.user?.lastName ?? lastName);
       props.onDismissModal();

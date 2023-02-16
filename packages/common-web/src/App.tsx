@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { FloroSocketProvider } from "@floro/common-react/src/pubsub/socket";
 import { SessionProvider } from "@floro/common-react/src/session/session-context";
 import {OfflinePhotoProvider} from "@floro/common-react/src/offline/OfflinePhotoContext";
+import {OfflineIconProvider} from "@floro/common-react/src/offline/OfflineIconsContext";
 
 import "./index.css";
 
@@ -24,17 +25,19 @@ function App(props: Props) {
     <ThemeProvider theme={colorTheme}>
       <QueryClientProvider client={queryClient}>
         <FloroSocketProvider client={"web"}>
-          <OfflinePhotoProvider>
-            <SessionProvider>
-              <Routes>
-                {props.routing.map((route, key) => {
-                  const Page = route.component();
-                  return <Route key={key} path={route.path} element={<Page />} />;
-                })}
-                <Route path="*" element={notFound} />
-              </Routes>
-            </SessionProvider>
-          </OfflinePhotoProvider>
+          <OfflineIconProvider>
+            <OfflinePhotoProvider>
+              <SessionProvider>
+                <Routes>
+                  {props.routing.map((route, key) => {
+                    const Page = route.component();
+                    return <Route key={key} path={route.path} element={<Page />} />;
+                  })}
+                  <Route path="*" element={notFound} />
+                </Routes>
+              </SessionProvider>
+            </OfflinePhotoProvider>
+          </OfflineIconProvider>
         </FloroSocketProvider>
       </QueryClientProvider>
     </ThemeProvider>

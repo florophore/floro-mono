@@ -18,6 +18,13 @@ mutation CreateOrgPlugin(
       }
       organization {
         id
+        privatePlugins {
+          ...Plugin
+        }
+        publicPlugins {
+          ...Plugin
+        }
+        pluginCount
       }
     }
     ... on CreateOrganizationPluginError {

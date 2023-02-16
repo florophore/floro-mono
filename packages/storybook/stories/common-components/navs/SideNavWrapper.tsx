@@ -15,17 +15,17 @@ const Container = styled.div`
 
 const Nav = styled.div`
   width: 263px;
+  height: calc(100vh - 72px);
   border-right: 1px solid ${(props) => props.theme.colors.commonBorder};
-  height: 100%;
   display: flex;
   flex-direction: column;
 `;
 
 const Main = styled.div`
   height: 100%;
-  display: flex;
-  flex-grow: 1;
-  flex-direction: column;
+  width: calc(100vw - 335px);
+  height: calc(100vh - 72px);
+  overflow: scroll;
 `;
 
 interface Props {

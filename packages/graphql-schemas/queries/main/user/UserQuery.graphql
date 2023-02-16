@@ -1,0 +1,28 @@
+query User($id: ID!) {
+  user(id: $id) {
+    ... on User {
+      ...CurrentUser
+      organizations {
+        ...Organization
+        membership {
+          ...OrganizationMember
+          permissions {
+            ...OrganizationPermissions
+          }
+          roles {
+            ...OrganizationRole
+          }
+        }
+        members {
+          ...OrganizationMember
+          roles {
+            ...OrganizationRole
+          }
+        }
+        roles {
+          ...OrganizationRole
+        }
+      }
+    }
+  }
+}
