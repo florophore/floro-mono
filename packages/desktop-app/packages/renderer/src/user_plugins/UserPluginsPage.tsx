@@ -7,6 +7,7 @@ import PluginEditor from '@floro/common-react/src/components/plugins/PluginEdito
 import React from 'react';
 import type {Plugin} from '@floro/graphql-schemas/src/generated/main-client-graphql';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigationAnimator } from '@floro/common-react/src/navigation/navigation-animator';
 
 const UserPluginsPage = () => {
   const params = useParams();
@@ -24,7 +25,7 @@ const UserPluginsPage = () => {
           : -1;
       },
     ) as Plugin[];
-  }, [currentUser?.privatePlugins, currentUser?.publicPlugins]);
+  }, [currentUser?.privatePlugins,  currentUser?.publicPlugins]);
 
   const currentPlugin = useMemo(() => {
     if (plugins.length === 0) {
@@ -48,7 +49,7 @@ const UserPluginsPage = () => {
             (currentPlugin.isPrivate
               ? currentPlugin?.lastReleasedPrivateVersion?.version
               : currentPlugin?.lastReleasedPublicVersion?.version),
-        ) ?? null
+        ) ?? currentPlugin?.versions?.[0] ?? null
       );
     }
     return (
@@ -60,9 +61,10 @@ const UserPluginsPage = () => {
             ? currentPlugin?.lastReleasedPrivateVersion?.version
             : currentPlugin?.lastReleasedPublicVersion?.version),
       ) ??
+      currentPlugin?.versions?.[0] ??
       null
     );
-  }, [params, currentPlugin]);
+  }, [params, plugins, currentPlugin]);
 
   useEffect(() => {
     if (!params['plugin'] && !params['version'] && currentPlugin?.name && currentVersion?.version) {
@@ -94,14 +96,20 @@ const UserPluginsPage = () => {
       };
     }
     if (currentPlugin && currentVersion && info?.next?.next) {
-      info.next.next = {
-        prefix: '/',
-        label: currentVersion.version ?? params?.['version'] ?? '',
+      info.next.next.next = {
+        prefix: '@',
+        label: (currentVersion.version ?? params?.['version'] ?? ''),
         value: `/home/plugins/${currentPlugin.name}/v/${currentVersion?.version}`,
       };
     }
     return info;
   }, [params, currentUser?.username, currentPlugin, currentVersion]);
+
+  useNavigationAnimator({
+    dashboardView: true,
+    outerNavTab: 'home',
+    innerNavTab: 'plugins',
+  });
 
   const title = useLinkTitle(linkInfo, [linkInfo]);
 

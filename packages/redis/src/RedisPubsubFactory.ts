@@ -13,8 +13,7 @@ export default class RedisPubsubFactory {
 
   public create(): RedisPubSub {
     return new RedisPubSub({
-      publisher: this.redisClient.redis,
-      subscriber: this.redisClient.redis,
+      connection: this.redisClient.getConnectionConfig()
     });
   }
 }

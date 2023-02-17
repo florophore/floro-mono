@@ -277,6 +277,15 @@ export default class PluginController extends BaseController {
         }
         if (uploadResponse.action == "PLUGIN_VERSION_CREATED") {
           request.unpipe(response.busboy);
+          if (plugin.ownerType == "user_plugin") {
+            this.pubsub?.publish?.(`PLUGIN_UPDATED:user:${plugin.userId}`, {
+              userPluginUpdated: uploadResponse.plugin
+            });
+          } else {
+            this.pubsub?.publish?.(`PLUGIN_UPDATED:org:${plugin.organizationId}`, {
+              orgPluginUpdated: uploadResponse.plugin
+            });
+          }
           response.status(200).json({
             message: `Successfully uploaded ${pluginStream.version}`,
           });

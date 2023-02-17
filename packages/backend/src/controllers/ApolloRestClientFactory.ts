@@ -46,18 +46,24 @@ export default class ApolloRestClientFactory {
     currentUser: User | null;
     authorizationToken?: string;
   }> {
-    if (sessionKey && (sessionKey?.length ?? 0) == 0) {
+    if (!sessionKey) {
       return {
         session: null,
         currentUser: null,
         authorizationToken: sessionKey,
       };
     }
-
     try {
       const currentSession = await this.sessionStore.fetchSession(
         sessionKey as string
       );
+      if (!currentSession) {
+        return {
+          session: null,
+          currentUser: null,
+          authorizationToken: sessionKey,
+        };
+      }
       const usersContext = await this.contextFactory.createContext(
         UsersContext
       );

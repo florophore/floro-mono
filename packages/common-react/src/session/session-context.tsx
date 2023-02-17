@@ -5,6 +5,7 @@ import {
   Session,
   useExchangeSessionMutation,
   User,
+  UserFragmentDoc,
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { useSocketEvent } from "../pubsub/socket";
 import { useQueryClient } from "react-query";

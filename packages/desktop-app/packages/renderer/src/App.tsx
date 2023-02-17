@@ -20,6 +20,7 @@ import {OfflinePhotoProvider} from "@floro/common-react/src/offline/OfflinePhoto
 import {OfflineIconProvider} from "@floro/common-react/src/offline/OfflineIconsContext";
 import ColorPalette from '@floro/styles/ColorPalette';
 import { createUploadLink } from 'apollo-upload-client';
+import { CurrentUserSubscriberMount } from '@floro/common-react/src/components/subscribers/UserSubscriber';
 
 const authMiddleware = setContext((_, {headers}) => {
   // add the authorization to the headers
@@ -34,11 +35,24 @@ const authMiddleware = setContext((_, {headers}) => {
 });
 
 const wsLink = new GraphQLWsLink(
+
   createClient({
     url: 'ws://localhost:9000/graphql-subscriptions',
-    lazy: false,
+    lazy: true,
     disablePong: false,
-    keepAlive: 10_000,
+    keepAlive: 5_000,
+    shouldRetry: () => {
+      return true;
+    },
+    connectionParams: () => {
+      const token = Cookies.get('user-session');
+      if (!token) {
+        return {};
+      }
+      return {
+        authorization: token ? `Bearer ${token}` : '',
+      };
+    }
   }),
 );
 
@@ -107,9 +121,11 @@ const App = (props: Props): React.ReactElement => {
                 <OfflineIconProvider>
                   <OfflinePhotoProvider>
                     <SessionProvider>
-                      <DOMMount>
-                        <Router />
-                      </DOMMount>
+                      <CurrentUserSubscriberMount>
+                        <DOMMount>
+                          <Router />
+                        </DOMMount>
+                      </CurrentUserSubscriberMount>
                     </SessionProvider>
                   </OfflinePhotoProvider>
                 </OfflineIconProvider>

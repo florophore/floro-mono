@@ -14,12 +14,13 @@ import Button from "@floro/storybook/stories/design-system/Button";
 import { useSession } from "../../session/session-context";
 import { useDaemonIsConnected } from "../../pubsub/socket";
 import RootPhotoCropper from "../RootPhotoCropper";
-import { User, useRemoveUserProfilePhotoMutation, useUploadUserProfilePhotoMutation, useCurrentUserHomeQuery, Organization } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import { User, useRemoveUserProfilePhotoMutation, useUploadUserProfilePhotoMutation, useCurrentUserHomeQuery, Organization, useUserPluginUpdatedSubscription } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import ChangeNameModal from "./ChangeNameModal";
 import { useOfflinePhoto, useSaveOfflinePhoto } from "../../offline/OfflinePhotoContext";
 import StorageTab from "@floro/storybook/stories/common-components/StorageTab";
 import HomeDashboard from "./HomeDashboard";
 import { useIsOnline } from "../../hooks/offline";
+import UserSubscriber from "../subscribers/UserSubscriber";
 
 const Background = styled.div`
   background-color: ${(props) => props.theme.background};
@@ -74,7 +75,7 @@ const TopInfo = styled.div`
 `;
 
 const UserHome = () => {
-  const { currentUser, setCurrentUser } = useSession();
+  const { currentUser } = useSession();
   const isDaemonConnected = useDaemonIsConnected();
   const isOnline = useIsOnline();
   const navigate = useNavigate();

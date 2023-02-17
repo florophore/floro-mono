@@ -32,7 +32,7 @@ const Prefix = styled.span`
 
 export interface LinkChain {
   label: string;
-  prefix?: null | "/" | ">";
+  prefix?: null | "/" | "@"| ">";
   value?: string;
   next?: LinkChain | null;
 }
@@ -49,7 +49,7 @@ const HeaderLink = (props: Props) => {
       current != null;
       current = current?.next ?? null
     ) {
-      if (current.prefix == "/" && current.value) {
+      if ((current.prefix == "/" || current.prefix == "@") && current.value) {
         children.push(
           <LinkComponentContainer>
             <Prefix>{current.prefix}</Prefix>

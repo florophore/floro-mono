@@ -73,33 +73,35 @@ const PluginNavRow = (props: Props) => {
     if (props.isSelected) {
       if (theme.name == "light") {
         return (
-          props?.icons?.[props?.icons?.selectedLightIcon] ??
-          props?.icons?.selectedLightIcon ??
+          props?.icons?.[props?.plugin?.selectedLightIcon as string] ??
+          props.plugin?.selectedLightIcon ??
           PluginDefaultSelectedLight
         );
       }
       return (
-        props?.icons?.[props?.icons?.selectedDarkIcon] ??
-        props?.icons?.selectedDarkIcon ??
+        props?.icons?.[props?.plugin?.selectedDarkIcon as string] ??
+        props.plugin?.selectedDarkIcon ??
         PluginDefaultSelectedDark
       );
     }
     if (theme.name == "light") {
       return (
-        props?.icons?.[props?.icons?.lightIcon] ??
-        props?.icons?.lightIcon ??
+        props?.icons?.[props?.plugin?.lightIcon as string] ??
+        props.plugin?.lightIcon ??
         PluginDefaultLight
       );
     }
     return (
-      props?.icons?.[props?.icons?.darkIcon] ??
-      props?.icons?.darkIcon ??
+      props?.icons?.[props?.plugin?.darkIcon as string] ??
+      props.plugin?.darkIcon ??
       PluginDefaultDark
     );
   }, [
     theme.name,
     props.plugin.darkIcon,
     props.plugin.lightIcon,
+    props.plugin.selectedDarkIcon,
+    props.plugin.selectedLightIcon,
     props.icons,
     props.isSelected,
   ]);

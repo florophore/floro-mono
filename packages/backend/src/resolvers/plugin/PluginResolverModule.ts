@@ -12,6 +12,8 @@ import { Plugin as DBPlugin } from "@floro/database/src/entities/Plugin";
 import { PluginVersion as DBPluginVersion } from "@floro/database/src/entities/PluginVersion";
 import semver from "semver";
 import MainConfig from "@floro/config/src/MainConfig";
+import { withFilter } from 'graphql-subscriptions';
+import { SubscriptionSubscribeFn } from "@floro/graphql-schemas/build/generated/main-graphql";
 
 @injectable()
 export default class PluginResolverModule extends BaseResolverModule {
@@ -19,6 +21,7 @@ export default class PluginResolverModule extends BaseResolverModule {
     "Query",
     "Mutation",
     "Plugin",
+    "Subscription",
   ];
   protected repositoryService!: RepositoryService;
   protected config!: MainConfig;
@@ -608,6 +611,9 @@ export default class PluginResolverModule extends BaseResolverModule {
           currentUser
         );
         if (result.action == "PLUGIN_VERSION_RELEASED") {
+          this.pubsub.publish('PLUGIN_UPDATED', {
+            userPluginUpdated: result.plugin
+          });
           return {
             __typename: "ReleaseUserPluginSuccess",
             plugin: result.plugin,
@@ -717,5 +723,40 @@ export default class PluginResolverModule extends BaseResolverModule {
         };
       }
     ),
+  };
+
+  public Subscription: main.SubscriptionResolvers = {
+    userPluginAdded: {
+      subscribe: withFilter(
+        (_, { userId }) => {
+          if (userId) {
+            return this.pubsub.asyncIterator(`PLUGIN_ADDED:user:${userId}`);
+          }
+          return this.pubsub.asyncIterator([]);
+        },
+        async (payload, _, context) => {
+          if (payload?.userPluginUpdated?.isPrivate) {
+            return context?.currentUser?.id && payload?.userPluginUpdated?.userId == context?.currentUser?.id; 
+          }
+          return true;
+        }
+      ) as unknown as SubscriptionSubscribeFn<any, any, any, any>,
+    },
+    userPluginUpdated: {
+      subscribe: withFilter(
+        (_, { userId }) => {
+          if (userId) {
+            return this.pubsub.asyncIterator(`PLUGIN_UPDATED:user:${userId}`);
+          }
+          return this.pubsub.asyncIterator([]);
+        },
+        async (payload, _, context) => {
+          if (payload?.userPluginUpdated?.isPrivate) {
+            return context?.currentUser?.id && payload?.userPluginUpdated?.userId == context?.currentUser?.id; 
+          }
+          return true;
+        }
+      ) as unknown as SubscriptionSubscribeFn<any, any, any, any>,
+    }
   };
 }

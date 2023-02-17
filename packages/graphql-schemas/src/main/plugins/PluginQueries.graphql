@@ -24,3 +24,10 @@ extend type Mutation {
     organizationId: ID!
   ): ReleaseOrgPluginResponse
 }
+
+extend type Subscription {
+  userPluginAdded(userId: ID!): User
+  userPluginUpdated(userId: ID!): Plugin
+  organizationPluginAdded(organizationId: ID!): Organization
+  organizationPluginUpdated(organizationId: ID!): Plugin
+}

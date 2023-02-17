@@ -22,19 +22,16 @@
       "percentage": {
         "type": "int",
         "isKey": true
-      },
-      "hexcode": {
-        "type": "string"
       }
     }
   },
   "store": {
     "colors": {
-      "type": "collection",
+      "type": "set",
       "values": "color"
     },
     "opacities": {
-      "type": "collection",
+      "type": "set",
       "values": "opacity"
     }
   }

@@ -13,7 +13,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@apollo/client": "^3.7.0",
+    "@apollo/client": "^3.7.1",
     "@floro/common-assets": "1.0.0",
     "apollo-upload-client": "^17.0.0",
     "apollo3-cache-persist": "^0.14.1",

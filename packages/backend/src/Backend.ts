@@ -96,6 +96,9 @@ export default class Backend {
     this.resolverModules.forEach((resolverModule) => {
       resolverModule.setRedisPubsub(pubsub);
     });
+    this.controllers.forEach((controller) => {
+      controller.setRedisPubsub(pubsub);
+    })
   }
 
   public mergeResolvers(): Partial<main.ResolversTypes> {
@@ -136,6 +139,8 @@ export default class Backend {
 
     const wsServer = this.getWsServer();
 
+    const requestCache = this.requestCache;
+
     const getDynamicContext = async (
       ctx: Context<
         Record<string, unknown> | undefined,
@@ -145,21 +150,38 @@ export default class Backend {
       _msg: unknown,
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       _args: unknown
-    ) => {
-      return await this.fetchSessionUserContext(ctx["authorizationToken"]);
+    ): Promise<{[key: string]: any}> => {
+      const token = (ctx?.connectionParams?.["authorization"] as string)?.split?.("Bearer ")?.[1] as string;
+      const context = await this.fetchSessionUserContext(token);
+      return context;
     };
 
     const serverCleanup = useServer(
       {
         schema,
-        context: (ctx, msg, args) => {
-          return getDynamicContext(ctx, msg, args);
+        context: async (ctx, msg, args) => {
+          const dynamicContext = await getDynamicContext(ctx, msg, args);
+          const requestCacheId = requestCache.init();
+          dynamicContext.cacheKey = requestCacheId;
+          if (ctx['cacheKey']) {
+            requestCache.release(ctx['cacheKey']);
+          }
+          ctx['cacheKey'] = requestCacheId;
+          return dynamicContext;
         },
+        onNext: (_ctx, _args, context) => {
+          if (context.contextValue?.['cacheKey']) {
+            requestCache.clear(context.contextValue?.['cacheKey'] as string);
+          }
+        },
+        onComplete: (ctx) => {
+          if (ctx['cacheKey']) {
+            requestCache.release(ctx['cacheKey'])
+          }
+        }
       },
       wsServer
     );
-
-    const requestCache = this.requestCache;
 
     return new ApolloServer({
       schema,

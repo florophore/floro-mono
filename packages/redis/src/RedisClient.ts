@@ -16,6 +16,10 @@ export default class RedisClient {
         return !!this.redis;
     }
 
+    public getConnectionConfig() {
+        return this.redisClientConfig.url();
+    }
+
     public startRedis(): void {
         this.redis = new IORedis(this.redisClientConfig.url());
         this.redis.options.maxRetriesPerRequest = null;

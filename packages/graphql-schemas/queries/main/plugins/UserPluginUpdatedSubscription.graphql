@@ -1,0 +1,5 @@
+subscription UserPluginUpdated($userId: ID!) {
+  userPluginUpdated(userId: $userId) {
+    ...Plugin
+  }
+}

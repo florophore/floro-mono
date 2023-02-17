@@ -49,6 +49,7 @@ export interface UploadPluginReponse {
     | "BAD_VERSION_ERROR"
     | "LOG_ERROR";
   pluginVersion?: PluginVersion;
+  plugin?: Plugin;
   error?: {
     type: string;
     message: string;
@@ -491,6 +492,10 @@ export default class PluginRegistryService {
           PluginVersionsContext,
           queryRunner
         );
+        const pluginTXContext = await this.contextFactory.createContext(
+          PluginsContext,
+          queryRunner
+        );
         const pluginVersionDepsTXContext =
           await this.contextFactory.createContext(
             PluginVersionDependenciesContext,
@@ -540,10 +545,12 @@ export default class PluginRegistryService {
             dependencyPluginVersionId: dep.id,
           });
         }
+        const updatedPlugin = await pluginTXContext.getById(plugin.id);
         await queryRunner.commitTransaction();
         return {
           action: "PLUGIN_VERSION_CREATED",
           pluginVersion,
+          plugin: updatedPlugin as Plugin
         };
       } catch (e: any) {
         if (!queryRunner.isReleased) {

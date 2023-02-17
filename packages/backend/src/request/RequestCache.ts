@@ -24,6 +24,10 @@ export default class RequestCache {
     delete this.cache[cacheKey];
   }
 
+  public clear(cacheKey: string) {
+    this.cache[cacheKey] = {};
+  }
+
   public getCache(cacheKey: string) {
     if (!this.cache[cacheKey]) {
       this.cache[cacheKey] = {};
