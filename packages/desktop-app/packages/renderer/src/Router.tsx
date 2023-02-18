@@ -23,9 +23,9 @@ const Router = (): React.ReactElement => {
           <Route path="/home" element={<HomePage />} />
           <Route path="/home/create-org" element={<CreateOrgPage />} />
           <Route path="/home/create-repo" element={<CreateUserRepoPage />} />
-          <Route path="/home/plugins" element={<UserPluginsPage />} />
-          <Route path="/home/plugins/:plugin" element={<UserPluginsPage />} />
           <Route path="/home/plugins/:plugin/v/:version" element={<UserPluginsPage />} />
+          <Route path="/home/plugins/:plugin" element={<UserPluginsPage />} />
+          <Route path="/home/plugins" element={<UserPluginsPage />} />
           <Route path="/org/@/:handle" element={<OrganizationPage />} />
           <Route path="/org/@/:handle/create-repo" element={<CreateOrgRepoPage/>} />
           <Route path="/repo/@/:ownerHandle/:repoName" element={<RepoHomePage/>} />

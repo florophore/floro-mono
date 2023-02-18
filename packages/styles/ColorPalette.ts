@@ -20,7 +20,7 @@ export interface ColorPalette {
   darkPurple: string;
   linkBlue: string;
 }
-export default {
+const ColorPalette = {
     white: '#FFFFFFFF',
     lightModeBG: '#FFFFFFFF',
     darkModeBG: '#222222FF',
@@ -43,6 +43,8 @@ export default {
     darkPurple: '#251F51FF',
     linkBlue: '#56A4FAFF'
 } as ColorPalette;
+
+export default ColorPalette;
 
 export const Opacity = {
   0: '00',

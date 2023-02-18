@@ -10,7 +10,7 @@ import {
 import { useSocketEvent } from "../pubsub/socket";
 import { useQueryClient } from "react-query";
 import { removeClientSession, setClientSession } from "./client-session";
-import { gql, useApolloClient, useFragment_experimental } from "@apollo/client";
+import { useApolloClient, useFragment_experimental } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useSaveOfflinePhoto } from "../offline/OfflinePhotoContext";
@@ -42,6 +42,15 @@ export const SessionProvider = (props: Props) => {
   const queryClient = useQueryClient();
   const savePhoto = useSaveOfflinePhoto();
   const saveIcon = useSaveOfflineIcon();
+
+  const fragmentUser = useFragment_experimental({
+    fragment: UserFragmentDoc,
+    fragmentName: 'User',
+    from: {
+      id: currentUser?.id,
+      __typename: 'User'
+    }
+  });
 
   const logout = useCallback(() => {
     setCurrentUser(null);
@@ -88,6 +97,7 @@ export const SessionProvider = (props: Props) => {
       setCurrentUser(null);
       setSession(null);
       removeClientSession();
+      localStorage.clear();
       apolloClient.clearStore();
       queryClient.resetQueries();
       navigate("/");
@@ -120,17 +130,14 @@ export const SessionProvider = (props: Props) => {
   }, []);
 
   useEffect(() => {
-    if (data?.exchangeSession?.user) {
-      setClientSession(data.exchangeSession);
-      setSession(data.exchangeSession);
-      setCurrentUser(data.exchangeSession.user);
-      if (data?.exchangeSession?.user?.profilePhoto) {
-        savePhoto(data?.exchangeSession?.user?.profilePhoto);
+    if (fragmentUser?.data?.id) {
+      setCurrentUser(fragmentUser?.data);
+      if (fragmentUser?.data?.profilePhoto) {
+        savePhoto(fragmentUser?.data?.profilePhoto);
       }
-
       [
-        ...(data?.exchangeSession?.user?.privatePlugins ?? []),
-        ...(data?.exchangeSession?.user.publicPlugins ?? []),
+        ...(fragmentUser?.data?.privatePlugins ?? []),
+        ...(fragmentUser?.data.publicPlugins ?? []),
       ].forEach((plugin) => {
         if (plugin?.lightIcon) {
           saveIcon(plugin?.lightIcon);
@@ -160,7 +167,14 @@ export const SessionProvider = (props: Props) => {
         });
       });
     }
-  }, [data?.exchangeSession, savePhoto, saveIcon]);
+  }, [fragmentUser?.data, savePhoto, saveIcon]);
+
+  useEffect(() => {
+    if (data?.exchangeSession?.user) {
+      setClientSession(data.exchangeSession);
+      setSession(data.exchangeSession);
+    }
+  }, [data?.exchangeSession]);
 
   return (
     <SessionContext.Provider

@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useCallback } from 'react';
 
-import FloroLogo from '@floro/common-assets/assets/images/floro_v3_logo.svg';
+import FloroLogo from '@floro/common-assets/assets/images/floro_logo.svg';
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
@@ -99,6 +99,20 @@ interface Props {
 }
 
 const LoadingPage = ({isTransitionIn = false}: Props) => {
+  useEffect(() => {
+    const onKeyPress = (e: KeyboardEvent) => {
+      if (e.code == 'Space') {
+        quack();
+      }
+    };
+    window.addEventListener('keypress', onKeyPress);
+
+    return () => {
+      window.removeEventListener('keypress', onKeyPress);
+    };
+  }, []);
+
+  const onQuackCB = useCallback(quack, []);
 
     const { session } = useSession();
     useNavigationAnimator({
@@ -155,7 +169,7 @@ const LoadingPage = ({isTransitionIn = false}: Props) => {
             <Ring style={{animationDelay: '0.75s'}} />
             <Ring style={{animationDelay: '1s'}} />
           </RingContainer>
-          <Image draggable={false} src={FloroLogo} />
+          <Image draggable={false} src={FloroLogo} onClick={onQuackCB}/>
         </Background>
         <DragBar/>
       </motion.div>

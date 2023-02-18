@@ -31,6 +31,12 @@ const HomePage = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if (currentUser == null) {
+      navigate('/');
+    }
+  }, [currentUser]);
+
   return (
     <OuterNavigator outerNavTab={'home'} page={'home'} title={title}>
       <UserHome />

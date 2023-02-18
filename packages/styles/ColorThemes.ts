@@ -74,6 +74,12 @@ export interface ColorTheme {
     pluginSectionTitle: string;
     blurbBorder: string;
     blurbText: string;
+    pluginDisplaySubTitle: string;
+    evenBackground: string;
+    oddBackground: string;
+    highlightedRowBorder: string;
+    releasedText: string;
+    unreleasedText: string;
   };
   gradients: {
     backgroundNoOpacity: string;
@@ -164,6 +170,12 @@ export const LightTheme: ColorTheme = {
     pluginSectionTitle: palette.purple,
     blurbBorder: palette.mediumGray,
     blurbText: palette.mediumGray,
+    pluginDisplaySubTitle: palette.mediumGray,
+    evenBackground: palette.lightGray,
+    oddBackground: palette.lightModeBG,
+    highlightedRowBorder: palette.purple,
+    releasedText: palette.purple,
+    unreleasedText: palette.red,
   },
   gradients: {
     backgroundNoOpacity: palette.lightModeBG.substring(0, 7) + Opacity[0],
@@ -196,8 +208,8 @@ export const DarkTheme: ColorTheme = {
         googleButtonBorder: palette.black,
         modalBackdropHidden: palette.mediumGray.substring(0, 7) + Opacity[0],
         modalBackdropShown: palette.mediumGray.substring(0, 7) + Opacity[50],
-        modalHeaderBackground: palette.darkPurple,
-        modalHeaderTitleColor: palette.purple,
+        modalHeaderBackground: palette.purple,
+        modalHeaderTitleColor: palette.lightPurple,
         modalHeaderSubtitleColor: palette.white,
         inputBorderColor: palette.white,
         inputLabelTextColor: palette.white,
@@ -214,8 +226,8 @@ export const DarkTheme: ColorTheme = {
         signupTooltipUsernameEmphasizedSymbols: palette.lightPurple,
         signupTooltipUsernameErrorText: palette.lightRed,
         signupTooltipUsernameValidText: palette.lightPurple,
-        heroHeaderBackgroundColor: palette.darkPurple,
-        heroHeaderTextColor: palette.purple,
+        heroHeaderBackgroundColor: palette.purple,
+        heroHeaderTextColor: palette.lightPurple,
         profileInfoNameTextColor: palette.lightPurple,
         profileInfoUsernameTextColor: palette.white,
         profileHoverOpacity: palette.black.substring(0, 7) + Opacity[50],
@@ -254,6 +266,12 @@ export const DarkTheme: ColorTheme = {
         pluginSectionTitle: palette.lightPurple,
         blurbBorder: palette.white,
         blurbText: palette.white,
+        pluginDisplaySubTitle: palette.white,
+        evenBackground: palette.mediumGray,
+        oddBackground: palette.darkModeBG,
+        highlightedRowBorder: palette.lightPurple,
+        releasedText: palette.lightPurple,
+        unreleasedText: palette.lightRed,
     },
     shadows: {
         modalContainer: palette.black.substring(0, 7) + Opacity[70],

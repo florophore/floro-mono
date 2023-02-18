@@ -6,6 +6,7 @@ import { useMutation } from 'react-query';
 import axios from 'axios';
 import { setClientSession } from '@floro/common-react/src/session/client-session';
 import WarningLabel from '@floro/storybook/stories/design-system/WarningLabel';
+import { useFloroSocket } from '@floro/common-react/src/pubsub/socket';
 
 
 const OAuthCallback = (): React.ReactElement => {
@@ -23,6 +24,8 @@ const OAuthCallback = (): React.ReactElement => {
     ssr: false
   });
 
+  const { socket } = useFloroSocket();
+
   const completeSignupMutation = useMutation(async (completeSignupInfo: CompleteSignupAction) => {
      try {
       await axios.post('http://localhost:63403/complete_signup', completeSignupInfo);
@@ -34,7 +37,9 @@ const OAuthCallback = (): React.ReactElement => {
 
   const loginMutation = useMutation(async (loginInfo: PassedLoginAction) => {
      try {
-      setClientSession(loginInfo);
+      if (loginInfo.session) {
+        setClientSession(loginInfo.session);
+      }
       await axios.post('http://localhost:63403/login', loginInfo);
       return true;
      } catch(e) {
@@ -43,12 +48,14 @@ const OAuthCallback = (): React.ReactElement => {
   });
 
   useEffect(() => {
+    console.log(data?.submitOAuthForAction)
     if (data?.submitOAuthForAction?.type == "COMPLETE_SIGNUP") {
       completeSignupMutation.mutate(data?.submitOAuthForAction?.action as CompleteSignupAction);
     }
     if (data?.submitOAuthForAction?.type == "LOGIN") {
       loginMutation.mutate(data?.submitOAuthForAction?.action as PassedLoginAction);
     }
+    // TODO: Add OAuth FAILED! emit from socket
   }, [data?.submitOAuthForAction]);
 
   if (graphqlError) {

@@ -285,6 +285,9 @@ const RegisterPluginModal = (props: Props) => {
   }, [theme.name]);
 
   useEffect(() => {
+    if (pluginName.length <= 2) {
+      return;
+    }
     checkPluginNameDebounced({
       variables: {
         pluginName,
@@ -443,7 +446,7 @@ const RegisterPluginModal = (props: Props) => {
             label={"register plugin"}
             bg={"purple"}
             size={"big"}
-            isDisabled={!canRegister}
+            isDisabled={data?.checkPluginNameIsTaken?.exists || !canRegister}
           />
         </BottomContentContainer>
       </ContentContainer>

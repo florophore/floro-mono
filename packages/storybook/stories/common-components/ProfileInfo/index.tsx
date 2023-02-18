@@ -79,8 +79,8 @@ const UploadInput = styled.input`
     position: absolute;
     height: 168px;
     width: 168px;
-    opacity: 0;
     cursor: pointer;
+    opacity: 0;
 `;
 
 const RemoveUpload = styled.div`
@@ -263,7 +263,7 @@ const ProfileInfo = (props: Props): React.ReactElement => {
             </EditPhotoTextContainer>
           </OverlayContainer>
         )}
-        {props.isEdittable && (
+        {props?.isEdittable &&
           <UploadInput
             type={"file"}
             name={"avatar"}
@@ -271,7 +271,7 @@ const ProfileInfo = (props: Props): React.ReactElement => {
             onChange={onChooseFile}
             onClick={onInputHackResetClick}
           />
-        )}
+        }
         {props.isEdittable && !!props?.user?.profilePhoto?.id && (
           <RemoveUpload
             style={{ opacity: xCircleOpacity }}

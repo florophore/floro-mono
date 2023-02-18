@@ -28,8 +28,10 @@ const CredentialAuthCallback = (): React.ReactElement => {
   useSocketEvent<PassedLoginAction>(
     "login",
     (payload) => {
-      setClientSession(payload);
-      navigate("/home");
+      if (payload.session) {
+        setClientSession(payload.session);
+        navigate("/home");
+      }
     },
     [navigate]
   );
@@ -51,9 +53,11 @@ const CredentialAuthCallback = (): React.ReactElement => {
   const loginMutation = useMutation(
     async (loginInfo: PassedLoginAction | AccountCreationSuccessAction) => {
       try {
-        setClientSession(loginInfo);
-        await axios.post("http://localhost:63403/login", loginInfo);
-        navigate("/home");
+        if (loginInfo.session) {
+          setClientSession(loginInfo.session);
+          await axios.post("http://localhost:63403/login", loginInfo);
+          navigate("/home");
+        }
         return true;
       } catch (e) {
         return false;

@@ -67,7 +67,8 @@ const Modal = (props: Props): React.ReactElement => {
     if (theme.name == "light") {
       return ExitIconLight;
     }
-    return ExitIconDark;
+    // ignore dark for now
+    return ExitIconLight;
   }, [theme.name]);
 
   const contentHeight = useMemo(() => {

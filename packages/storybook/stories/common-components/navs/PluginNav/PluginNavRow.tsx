@@ -51,19 +51,19 @@ const PluginNavRow = (props: Props) => {
   const href = useMemo(() => {
     if (props.plugin.isPrivate) {
         if (props.plugin.lastReleasedPrivateVersion) {
-            return `${props.linkPrefix}/${props.plugin.name}/v/${props.plugin.lastReleasedPrivateVersion.version}`
+            return `${props.linkPrefix}/${props.plugin.name}/v/${props.plugin.lastReleasedPrivateVersion.version?.replaceAll(".", "-")}`
         }
         if (props?.plugin?.versions?.[0]) {
-            return `${props.linkPrefix}/${props.plugin.name}/v/${props?.plugin?.versions?.[0].version}`
+            return `${props.linkPrefix}/${props.plugin.name}/v/${props?.plugin?.versions?.[0].version?.replaceAll(".", "-")}`
         }
     }
 
     if (!props.plugin.isPrivate) {
         if (props.plugin.lastReleasedPublicVersion) {
-            return `${props.linkPrefix}/${props.plugin.name}/v/${props.plugin.lastReleasedPublicVersion.version}`
+            return `${props.linkPrefix}/${props.plugin.name}/v/${props.plugin.lastReleasedPublicVersion.version?.replaceAll(".", "-")}`
         }
         if (props?.plugin?.versions?.[0]) {
-            return `${props.linkPrefix}/${props.plugin.name}/v/${props?.plugin?.versions?.[0].version}`
+            return `${props.linkPrefix}/${props.plugin.name}/v/${props?.plugin?.versions?.[0].version?.replaceAll(".", "-")}`
         }
     }
     return `${props.linkPrefix}/${props.plugin.name}`;

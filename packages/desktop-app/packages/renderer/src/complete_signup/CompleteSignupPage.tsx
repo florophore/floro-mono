@@ -50,8 +50,10 @@ const CompleteSignupPage = (props: Props) => {
     }, [navigate]);
 
     useSocketEvent<PassedLoginAction>('login', (payload) => {
-      setClientSession(payload);
-      navigate('/home');
+      if (payload.session) {
+        setClientSession(payload.session);
+        navigate('/home');
+      }
     }, [navigate]);
 
     const loginMutation = useMutation(

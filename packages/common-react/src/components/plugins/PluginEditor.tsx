@@ -1,21 +1,25 @@
-import React, { useCallback, useState, useMemo} from "react";
+import React, { useCallback, useState, useMemo } from "react";
 import PluginController from "@floro/storybook/stories/common-components/PluginController";
 import PluginNoVersion from "@floro/storybook/stories/common-components/PluginNoVersion";
+import PluginDetails from "./PluginDetails";
 import RegisterPluginModal from "./RegisterPluginModal";
-import { Plugin, PluginVersion } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import {
+  Plugin,
+  PluginVersion,
+} from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { useOfflineIconMap } from "../../offline/OfflineIconsContext";
 
 interface Props {
-  accountType: "user"|"org";
+  accountType: "user" | "org";
   plugins: Plugin[];
   linkPrefix: string;
-  currentPlugin?: Plugin|null;
-  currentVersion?: PluginVersion|null;
+  currentPlugin?: Plugin | null;
+  currentVersion?: PluginVersion | null;
   onPressOpenDocs: () => void;
 }
 
 const PluginEditor = (props: Props) => {
-  const [showRegistry, setShowRegistery] = useState(false); 
+  const [showRegistry, setShowRegistery] = useState(false);
 
   const icons = useOfflineIconMap();
 
@@ -28,12 +32,23 @@ const PluginEditor = (props: Props) => {
   }, []);
 
   const content = useMemo(() => {
-    if (!props.currentVersion) {
-      return <PluginNoVersion onPressOpenDocs={props.onPressOpenDocs} icons={icons} currentPlugin={props.currentPlugin}/>
+    if (!props.currentVersion || !props.currentPlugin) {
+      return (
+        <PluginNoVersion
+          onPressOpenDocs={props.onPressOpenDocs}
+          icons={icons}
+          currentPlugin={props.currentPlugin}
+        />
+      );
     }
-    // TODO: UPDATE THIS
-    return <div>{'fill me in'}</div>;
-
+    return (
+      <PluginDetails
+        plugin={props.currentPlugin}
+        pluginVersion={props.currentVersion}
+        linkPrefix={props.linkPrefix}
+        icons={icons}
+      />
+    );
   }, [props.currentPlugin, props.currentVersion, icons]);
 
   return (

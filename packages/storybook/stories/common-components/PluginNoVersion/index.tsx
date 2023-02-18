@@ -20,8 +20,8 @@ const TopContainer = styled.div`
 `;
 
 const Icon = styled.img`
-  width: 64px;
-  height: 64px;
+  width: 80px;
+  height: 80px;
   margin-right: 24px;
 `;
 

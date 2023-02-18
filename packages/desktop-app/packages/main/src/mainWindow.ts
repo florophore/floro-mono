@@ -77,9 +77,9 @@ async function createWindow() {
       }
       oauthWindow.once('ready-to-show', () => {
         oauthWindow?.show();
-        if (import.meta.env.DEV) {
-          //oauthWindow?.webContents.openDevTools();
-        }
+        //if (import.meta.env.DEV) {
+        //  oauthWindow?.webContents.openDevTools();
+        //}
       });
 
       socket.on('login', () => {
@@ -90,6 +90,13 @@ async function createWindow() {
       });
 
       socket.on('complete_signup', () => {
+        oauthWindow.close();
+        oauthWindow.destroy();
+        socket.off('login');
+        socket.off('complete_signup');
+      });
+
+      socket.on('oauth_failed', () => {
         oauthWindow.close();
         oauthWindow.destroy();
         socket.off('login');

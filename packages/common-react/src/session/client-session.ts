@@ -9,6 +9,7 @@ export const setClientSession = (
 ) => {
   Cookies.set("user-session", session?.clientKey as string, {
     expires: 14,
+    sameSite: 'lax'
   });
   localStorage.setItem("user", JSON.stringify(session.user));
   localStorage.setItem("session", JSON.stringify(session));

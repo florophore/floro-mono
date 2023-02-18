@@ -11,6 +11,7 @@ import { useNavigationAnimator } from '@floro/common-react/src/navigation/naviga
 
 const UserPluginsPage = () => {
   const params = useParams();
+  const paramsVersion = (params?.['version'] ?? '')?.replaceAll("-", ".");
   const {currentUser} = useSession();
   const navigate = useNavigate();
 
@@ -41,7 +42,7 @@ const UserPluginsPage = () => {
     if (!currentPlugin) {
       return null;
     }
-    if (!params['version']) {
+    if (!paramsVersion) {
       return (
         currentPlugin?.versions?.find(
           version =>
@@ -53,7 +54,7 @@ const UserPluginsPage = () => {
       );
     }
     return (
-      currentPlugin?.versions?.find(version => version?.version == params['version']) ??
+      currentPlugin?.versions?.find(version => version?.version == paramsVersion) ??
       currentPlugin?.versions?.find(
         version =>
           version?.version ==
@@ -64,11 +65,11 @@ const UserPluginsPage = () => {
       currentPlugin?.versions?.[0] ??
       null
     );
-  }, [params, plugins, currentPlugin]);
+  }, [params, paramsVersion, plugins, currentPlugin]);
 
   useEffect(() => {
-    if (!params['plugin'] && !params['version'] && currentPlugin?.name && currentVersion?.version) {
-      navigate(`/home/plugins/${currentPlugin?.name}/v/${currentVersion?.version}`);
+    if (!params['plugin'] && !paramsVersion && currentPlugin?.name && currentVersion?.version) {
+      navigate(`/home/plugins/${currentPlugin?.name}/v/${currentVersion?.version?.replaceAll(".", "-")}`);
       return;
     }
 
@@ -77,7 +78,7 @@ const UserPluginsPage = () => {
       return;
     }
 
-  }, [params, currentPlugin, currentVersion, navigate]);
+  }, [params, paramsVersion, currentPlugin, currentVersion, navigate]);
 
   const linkInfo = useMemo(() => {
     const info: LinkChain = {
@@ -99,7 +100,7 @@ const UserPluginsPage = () => {
       info.next.next.next = {
         prefix: '@',
         label: (currentVersion.version ?? params?.['version'] ?? ''),
-        value: `/home/plugins/${currentPlugin.name}/v/${currentVersion?.version}`,
+        value: `/home/plugins/${currentPlugin.name}/v/${currentVersion?.version?.replaceAll(".", "-")}`,
       };
     }
     return info;
