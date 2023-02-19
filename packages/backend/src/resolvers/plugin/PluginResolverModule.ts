@@ -12,7 +12,7 @@ import { Plugin as DBPlugin } from "@floro/database/src/entities/Plugin";
 import { PluginVersion as DBPluginVersion } from "@floro/database/src/entities/PluginVersion";
 import semver from "semver";
 import MainConfig from "@floro/config/src/MainConfig";
-import { withFilter } from 'graphql-subscriptions';
+import { withFilter } from "graphql-subscriptions";
 import { SubscriptionSubscribeFn } from "@floro/graphql-schemas/build/generated/main-graphql";
 
 @injectable()
@@ -537,7 +537,7 @@ export default class PluginResolverModule extends BaseResolverModule {
         const membership = this.requestCache.getOrganizationMembership(
           cacheKey,
           organizationId,
-          currentUser
+          currentUser?.id
         );
         if (!membership) {
           return {
@@ -611,9 +611,12 @@ export default class PluginResolverModule extends BaseResolverModule {
           currentUser
         );
         if (result.action == "PLUGIN_VERSION_RELEASED") {
-          this.pubsub.publish('PLUGIN_UPDATED', {
-            userPluginUpdated: result.plugin
-          });
+          this.pubsub?.publish?.(
+            `PLUGIN_UPDATED:user:${result?.plugin?.userId}`,
+            {
+              userPluginUpdated: result.plugin,
+            }
+          );
           return {
             __typename: "ReleaseUserPluginSuccess",
             plugin: result.plugin,
@@ -670,7 +673,7 @@ export default class PluginResolverModule extends BaseResolverModule {
         const membership = this.requestCache.getOrganizationMembership(
           cacheKey,
           organizationId,
-          currentUser
+          currentUser.id
         );
         if (!membership) {
           return {
@@ -697,6 +700,12 @@ export default class PluginResolverModule extends BaseResolverModule {
           organization
         );
         if (result.action == "PLUGIN_VERSION_RELEASED") {
+          this.pubsub?.publish?.(
+            `PLUGIN_UPDATED:org:${result?.plugin?.organizationId}`,
+            {
+              userPluginUpdated: result.plugin,
+            }
+          );
           return {
             __typename: "ReleaseOrgPluginSuccess",
             plugin: result.plugin,
@@ -734,12 +743,57 @@ export default class PluginResolverModule extends BaseResolverModule {
           }
           return this.pubsub.asyncIterator([]);
         },
-        async (payload, _, context) => {
-          if (payload?.userPluginUpdated?.isPrivate) {
-            return context?.currentUser?.id && payload?.userPluginUpdated?.userId == context?.currentUser?.id; 
+        runWithHooks(
+          () => [],
+          async (payload, _, context) => {
+            if (payload?.userPluginAdded?.isPrivate) {
+              return (
+                context?.currentUser?.id &&
+                payload?.userPluginAdded?.userId == context?.currentUser?.id
+              );
+            }
+            return true;
           }
-          return true;
-        }
+        )
+      ) as unknown as SubscriptionSubscribeFn<any, any, any, any>,
+    },
+    organizationPluginAdded: {
+      subscribe: withFilter(
+        (_, { organizationId }) => {
+          if (organizationId) {
+            return this.pubsub.asyncIterator(
+              `PLUGIN_ADDED:org:${organizationId}`
+            );
+          }
+          return this.pubsub.asyncIterator([]);
+        },
+        runWithHooks(
+          () => [this.rootOrganizationMemberPermissionsLoader],
+          async (payload, { organizationId }, { cacheKey, currentUser }) => {
+            if (!payload?.organizationPluginAdded?.isPrivate) {
+              return true;
+            }
+            if (!currentUser) {
+              return false;
+            }
+            const organization = this.requestCache.getOrganization(
+              cacheKey,
+              organizationId
+            );
+            if (!organization) {
+              return false;
+            }
+            const membership = this.requestCache.getOrganizationMembership(
+              cacheKey,
+              organizationId,
+              currentUser.id
+            );
+            if (!membership) {
+              return false;
+            }
+            return membership.membershipState == "active";
+          }
+        )
       ) as unknown as SubscriptionSubscribeFn<any, any, any, any>,
     },
     userPluginUpdated: {
@@ -750,13 +804,58 @@ export default class PluginResolverModule extends BaseResolverModule {
           }
           return this.pubsub.asyncIterator([]);
         },
-        async (payload, _, context) => {
-          if (payload?.userPluginUpdated?.isPrivate) {
-            return context?.currentUser?.id && payload?.userPluginUpdated?.userId == context?.currentUser?.id; 
+        runWithHooks(
+          () => [],
+          async (payload, _, context) => {
+            if (payload?.userPluginUpdated?.isPrivate) {
+              return (
+                context?.currentUser?.id &&
+                payload?.userPluginUpdated?.userId == context?.currentUser?.id
+              );
+            }
+            return true;
           }
-          return true;
-        }
+        )
       ) as unknown as SubscriptionSubscribeFn<any, any, any, any>,
-    }
+    },
+    organizationPluginUpdated: {
+      subscribe: withFilter(
+        (_, { organizationId }) => {
+          if (organizationId) {
+            return this.pubsub.asyncIterator(
+              `PLUGIN_UPDATED:org:${organizationId}`
+            );
+          }
+          return this.pubsub.asyncIterator([]);
+        },
+        runWithHooks(
+          () => [this.rootOrganizationMemberPermissionsLoader],
+          async (payload, { organizationId }, { cacheKey, currentUser }) => {
+            if (!payload?.organizationPluginUpdated?.isPrivate) {
+              return true;
+            }
+            if (!currentUser) {
+              return false;
+            }
+            const organization = this.requestCache.getOrganization(
+              cacheKey,
+              organizationId
+            );
+            if (!organization) {
+              return false;
+            }
+            const membership = this.requestCache.getOrganizationMembership(
+              cacheKey,
+              organizationId,
+              currentUser.id
+            );
+            if (!membership) {
+              return false;
+            }
+            return membership.membershipState == "active";
+          }
+        )
+      ) as unknown as SubscriptionSubscribeFn<any, any, any, any>,
+    },
   };
 }

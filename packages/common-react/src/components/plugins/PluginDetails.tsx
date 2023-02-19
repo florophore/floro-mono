@@ -179,7 +179,8 @@ export interface Props {
 
 const PluginDetails = (props: Props) => {
   const theme = useTheme();
-  const [releaseCandidate, setReleaseCandidate] = useState<PluginVersion|null>(null)
+  const [releaseCandidate, setReleaseCandidate] =
+    useState<PluginVersion | null>(null);
   const [showModal, setShowModal] = useState<boolean>(false);
   const icon = useMemo(() => {
     if (theme.name == "light") {
@@ -303,7 +304,12 @@ const PluginDetails = (props: Props) => {
         linkPrefix={props.linkPrefix}
         onClickReleaseVersion={onClickReleaseVersion}
       />
-      <ReleasePluginModal show={showModal} pluginVersion={releaseCandidate} onDismiss={onDismissModal}/>
+      <ReleasePluginModal
+        plugin={props?.plugin}
+        show={showModal}
+        pluginVersion={releaseCandidate}
+        onDismiss={onDismissModal}
+      />
     </Container>
   );
 };

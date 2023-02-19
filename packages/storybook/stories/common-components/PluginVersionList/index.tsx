@@ -1,7 +1,8 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState, useCallback } from "react";
 import { PluginVersion } from "@floro/graphql-schemas/build/generated/main-graphql";
 import styled from "@emotion/styled";
 import PluginVersionRow from "./PluginVersionRow";
+import DualToggle from "../../design-system/DualToggle";
 
 const SectionContainer = styled.div`
   max-width: 624px;
@@ -13,7 +14,6 @@ const SectionTitle = styled.h3`
   font-weight: 600;
   font-size: 1.4rem;
   color: ${(props) => props.theme.colors.pluginDisplayTitle};
-  margin-bottom: 24px;
 `;
 
 const DependencyBox = styled.div`
@@ -25,11 +25,12 @@ const DependencyBox = styled.div`
   border-radius: 8px;
 `;
 
-const Row = styled.div`
+const TopRow = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 24px;
 `;
 
 export interface Props {
@@ -41,11 +42,53 @@ export interface Props {
 }
 
 const PluginVersionList = (props: Props) => {
+  const [versionFilter, setVersionFilter] = useState("all");
+
+  const onChangeFilter = useCallback((value) => {
+    setVersionFilter(value);
+  }, []);
+
+  const hasAReleasedVersion = useMemo(() => {
+    return (
+      props?.versions?.reduce?.((hasRelease, version) => {
+        if (hasRelease) {
+          return true;
+        }
+        return version?.state == "released";
+      }, false) ?? false
+    );
+  }, [props.versions]);
+
+  const versions = useMemo(() => {
+    if (!hasAReleasedVersion || versionFilter == "all") {
+      return props.versions;
+    }
+    return props.versions.filter((v) => {
+      return v.state == "released";
+    });
+  }, [props.versions, versionFilter, hasAReleasedVersion]);
+
   return (
     <SectionContainer>
-      <SectionTitle>{"Versions"}</SectionTitle>
+      <TopRow>
+        <SectionTitle>{"Versions"}</SectionTitle>
+        {hasAReleasedVersion && (
+          <DualToggle
+            leftOption={{
+              value: "all",
+              label: "all",
+            }}
+            rightOption={{
+              value: "released",
+              label: "released",
+            }}
+            value={versionFilter}
+            onChange={onChangeFilter}
+          />
+        )}
+      </TopRow>
       <DependencyBox>
-        {props.versions?.map((pluginVersion, index) => {
+        {versions?.map((pluginVersion, index) => {
           return (
             <PluginVersionRow
               isFirst={0 == index}

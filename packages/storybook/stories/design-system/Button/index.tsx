@@ -70,7 +70,7 @@ const Button = ({
     }, [isDisabled, isLoading, hoverRadialGradient, hoverRadialGradient0Opacity]);
 
     const overlayOpacityLayer1 = useMemo(() => {
-        return isDisabled ? 0.8 : 0;
+        return isDisabled ? 0.6 : 0;
     }, [isDisabled]);
 
     const overlayOpacityLayer2 = useMemo(() => {

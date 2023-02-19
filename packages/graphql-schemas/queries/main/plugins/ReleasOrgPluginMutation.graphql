@@ -1,0 +1,23 @@
+mutation ReleaseOrgPlugin(
+  $organizationId: ID!
+  $pluginVersionId: ID!
+) {
+  releaseOrgPlugin(
+    organizationId: $organizationId
+    pluginVersionId: $pluginVersionId
+  ) {
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+    ... on ReleaseOrgPluginSuccess {
+      plugin {
+        ...Plugin
+      }
+    }
+    ... on ReleaseOrgPluginError {
+      message
+      type
+    }
+  }
+}

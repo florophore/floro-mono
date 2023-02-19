@@ -129,12 +129,14 @@ export class PluginVersion extends BinaryPKBaseEntity {
   @Column("uuid")
   userId!: string;
 
+  @ManyToOne("User", "versions")
   @JoinColumn()
   user?: Relation<User>;
 
   @Column("uuid")
   organizationId!: string;
 
+  @ManyToOne("User", "versions")
   @JoinColumn()
   organization?: Relation<Organization>;
 

@@ -6,6 +6,7 @@ export interface ColorTheme {
   colors: {
     standardText: string;
     contrastText: string;
+    promptText: string;
     disableOverlay: string;
     checkboxBorder: string;
     checkboxFill: string;
@@ -80,6 +81,8 @@ export interface ColorTheme {
     highlightedRowBorder: string;
     releasedText: string;
     unreleasedText: string;
+    releaseTextColor: string;
+    toggleColor: string;
   };
   gradients: {
     backgroundNoOpacity: string;
@@ -102,6 +105,7 @@ export const LightTheme: ColorTheme = {
   colors: {
     standardText: palette.mediumGray, //"$.theme.colors.standardText"
     contrastText: palette.mediumGray,
+    promptText: palette.mediumGray,
     disableOverlay: palette.white,
     checkboxBorder: palette.gray,
     checkboxFill: palette.white,
@@ -176,6 +180,8 @@ export const LightTheme: ColorTheme = {
     highlightedRowBorder: palette.purple,
     releasedText: palette.purple,
     unreleasedText: palette.red,
+    releaseTextColor: palette.purple,
+    toggleColor: palette.purple,
   },
   gradients: {
     backgroundNoOpacity: palette.lightModeBG.substring(0, 7) + Opacity[0],
@@ -198,6 +204,7 @@ export const DarkTheme: ColorTheme = {
     colors: {
         standardText: palette.gray,
         contrastText: palette.white,
+        promptText: palette.white,
         disableOverlay: palette.gray,
         checkboxBorder: palette.mediumGray,
         checkboxFill: palette.gray,
@@ -272,6 +279,8 @@ export const DarkTheme: ColorTheme = {
         highlightedRowBorder: palette.lightPurple,
         releasedText: palette.lightPurple,
         unreleasedText: palette.lightRed,
+        releaseTextColor: palette.lightPurple,
+        toggleColor: palette.lightPurple,
     },
     shadows: {
         modalContainer: palette.black.substring(0, 7) + Opacity[70],

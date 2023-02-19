@@ -524,6 +524,7 @@ export default class PluginRegistryService {
           pluginId: plugin.id,
           uploadedByUserId: currentUser.id,
           organizationId: organization?.id,
+          userId: plugin.ownerType == "user_plugin" ? currentUser?.id : undefined
         });
 
         for (const dep of dependenciesPluginVersions) {
@@ -570,6 +571,8 @@ export default class PluginRegistryService {
         }
       }
     } catch (e: any) {
+      // TODO: REMOVE THIS LOG!
+      console.log("E", e);
       return {
         action: "LOG_ERROR",
         error: {
@@ -760,11 +763,22 @@ export default class PluginRegistryService {
           lastReleasedPublicPluginVersion: updatedPluginVersion
         })
       }
+      const returnPlugin = await pluginContext.getById(updatedPlugin.id);
+      if (!returnPlugin) {
+        await queryRunner.rollbackTransaction();
+        return {
+          action: "LOG_ERROR",
+          error: {
+            type: "UNKNOWN_PLUGIN_RELEASE_ERROR",
+            message: "Unknown error"
+          },
+        };
+      }
       await queryRunner.commitTransaction();
       return {
         action: "PLUGIN_VERSION_RELEASED",
         pluginVersion: updatedPluginVersion,
-        plugin: updatedPlugin
+        plugin: returnPlugin
       };
     } catch (e: any) {
       if (!queryRunner.isReleased) {

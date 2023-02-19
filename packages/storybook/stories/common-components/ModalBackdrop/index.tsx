@@ -75,6 +75,16 @@ const ModalBackdrop = (props: Props): React.ReactElement => {
           >
             {props?.children}
           </motion.div>
+          {/* DIV HERE SO THAT MODAL DOESNT DISMISS WHEN DRAGGING HEADER */}
+          <div
+            onClick={onClickStopPropagation}
+            style={{
+              position: "absolute",
+              top: 0,
+              width: "100%",
+              height: 72,
+            }}
+          />
         </motion.div>
       )}
     </AnimatePresence>

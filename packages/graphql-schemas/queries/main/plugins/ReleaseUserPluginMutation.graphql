@@ -1,0 +1,21 @@
+mutation ReleaseUserPlugin(
+  $pluginVersionId: ID!
+) {
+  releaseUserPlugin(
+    pluginVersionId: $pluginVersionId
+  ) {
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+    ... on ReleaseUserPluginSuccess {
+      plugin {
+        ...Plugin
+      }
+    }
+    ... on ReleaseUserPluginError {
+      message
+      type
+    }
+  }
+}

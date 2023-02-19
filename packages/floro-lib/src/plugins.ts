@@ -79,7 +79,7 @@ export const pluginManifestsAreCompatibleForUpdate = async (
     return null;
   }
 
-  return Object.keys(newSchemaMap).map(k => newManifest[k]).reduce((isCompatible, newManifest) => {
+  return Object.keys(newSchemaMap).map(k => newSchemaMap[k]).reduce((isCompatible, newManifest) => {
     if (!isCompatible) {
       return false;
     }

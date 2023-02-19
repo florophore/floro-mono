@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>5 Icons/5 Error/1 Light Mode@1x</title>
+    <g id="5-Icons/5-Error/1-Light-Mode" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <polygon id="Polygon" fill="#FF3D44FF" transform="translate(16.000000, 16.000000) rotate(90.000000) translate(-16.000000, -16.000000) " points="16 0 29.8564065 8 29.8564065 24 16 32 2.14359354 24 2.14359354 8"></polygon>
+        <path d="M14.1256187,20.3764055 L13.5,6 L18.5,6 L17.8743813,20.3764055 L14.1256187,20.3764055 Z M13.7232231,26 L13.7232231,22.3779048 L18.2767769,22.3779048 L18.2767769,26 L13.7232231,26 Z" id="Exclamation-Mark" fill="#FFFFFF" fill-rule="nonzero"></path>
+    </g>
+</svg>

@@ -10,6 +10,7 @@ import { Repository } from "./Repository";
 import { Plugin } from "./Plugin";
 import { UserAuthCredential } from "./UserAuthCredential";
 import { UserServiceAgreement } from "./UserServiceAgreement";
+import { PluginVersion } from "./PluginVersion";
 
 @Entity("users")
 export class User extends BinaryPKBaseEntity {
@@ -78,6 +79,9 @@ export class User extends BinaryPKBaseEntity {
 
   @OneToMany("Plugin", "user")
   plugins?: Relation<Plugin>[];
+
+  @OneToMany("PluginVersion", "user")
+  versions?: Relation<PluginVersion>[];
 
   @OneToMany("Plugin", "user")
   createdPlugins?: Relation<Plugin>[];
