@@ -1,5 +1,5 @@
 {
-  "version": "0.0.1",
+  "version": "0.0.2",
   "name": "palette",
   "displayName": "Palette",
   "description": "Simple plugin to organize colors.",
@@ -9,7 +9,7 @@
   },
   "imports": {},
   "types": {
-    "color": {
+    "Color": {
       "name": {
         "type": "string",
         "isKey": true
@@ -18,7 +18,7 @@
         "type": "string"
       }
     },
-    "opacity": {
+    "Opacity": {
       "percentage": {
         "type": "int",
         "isKey": true
@@ -28,11 +28,11 @@
   "store": {
     "colors": {
       "type": "set",
-      "values": "color"
+      "values": "Color"
     },
     "opacities": {
       "type": "set",
-      "values": "opacity"
+      "values": "Opacity"
     }
   }
 }

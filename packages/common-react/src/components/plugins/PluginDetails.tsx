@@ -16,6 +16,7 @@ const Container = styled.div`
   max-width: 100%;
   overflow-x: scroll;
   padding: 24px;
+  user-select: text;
 `;
 
 const TopContainer = styled.div`
@@ -271,21 +272,21 @@ const PluginDetails = (props: Props) => {
   const manifestTheme = useMemo(() => {
     if (theme.name == "dark") {
       return {
-        main: `line-height:1.3;color:${ColorPalette.white};`,
-        error: `line-height:1.3;color:${ColorPalette.white};`,
-        key: `color:${ColorPalette.lightPurple};`,
-        string: `color:${ColorPalette.orange};`,
-        value: `color:${ColorPalette.orange};`,
-        boolean: `color:${ColorPalette.teal};`,
+        main: `line-height:1.3;color:${ColorPalette.white};font-family:MavenPro;`,
+        error: `line-height:1.3;color:${ColorPalette.white};font-family:MavenPro;`,
+        key: `color:${ColorPalette.lightPurple};font-family:MavenPro;`,
+        string: `color:${ColorPalette.orange};font-family:MavenPro;`,
+        value: `color:${ColorPalette.orange};font-family:MavenPro;`,
+        boolean: `color:${ColorPalette.teal};font-family:MavenPro;`,
       };
     }
     return {
-      main: `line-height:1.3;color:${ColorPalette.lightPurple};`,
-      error: `line-height:1.3;color:${ColorPalette.lightPurple};`,
-      key: `color:${ColorPalette.purple};`,
-      string: `color:${ColorPalette.orange};`,
-      value: `color:${ColorPalette.orange};`,
-      boolean: `color:${ColorPalette.teal};`,
+      main: `line-height:1.3;color:${ColorPalette.lightPurple};font-family:MavenPro;`,
+      error: `line-height:1.3;color:${ColorPalette.lightPurple};font-family:MavenPro;`,
+      key: `color:${ColorPalette.purple};font-family:MavenPro;`,
+      string: `color:${ColorPalette.orange};font-family:MavenPro;`,
+      value: `color:${ColorPalette.orange};font-family:MavenPro;`,
+      boolean: `color:${ColorPalette.teal};font-family:MavenPro;`,
     };
   }, [theme.name]);
 
@@ -362,7 +363,7 @@ const PluginDetails = (props: Props) => {
           <SectionTitle>{"Schema Type Definitions"}</SectionTitle>
           <BlurbBox style={{ overflowX: "scroll" }}>
             <JSONPretty
-              id="json-pretty"
+              space="4"
               data={manifestTypes}
               theme={manifestTheme}
             ></JSONPretty>
@@ -374,7 +375,7 @@ const PluginDetails = (props: Props) => {
           <SectionTitle>{"Store Schema"}</SectionTitle>
           <BlurbBox style={{ overflowX: "scroll" }}>
             <JSONPretty
-              id="json-pretty"
+              space="4"
               data={manifestStore}
               theme={manifestTheme}
             ></JSONPretty>
