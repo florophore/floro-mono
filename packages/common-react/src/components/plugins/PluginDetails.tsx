@@ -9,6 +9,7 @@ import ColorPalette from "@floro/styles/ColorPalette";
 import PluginDependencyList from "@floro/storybook/stories/common-components/PluginDependencyList";
 import PluginVersionList from "@floro/storybook/stories/common-components/PluginVersionList";
 import ReleasePluginModal from "./ReleasePluginModal";
+import JSONPretty from "react-json-pretty";
 
 const Container = styled.div`
   height: 100%;
@@ -59,6 +60,11 @@ const SubTitle = styled.span`
 
 const SectionContainer = styled.div`
   max-width: 528px;
+  margin-bottom: 48px;
+`;
+
+const BigSectionContainer = styled.div`
+  max-width: 624px;
   margin-bottom: 48px;
 `;
 
@@ -175,6 +181,7 @@ export interface Props {
   pluginVersion?: PluginVersion;
   icons: { [key: string]: string };
   linkPrefix: string;
+  canRelease: boolean;
 }
 
 const PluginDetails = (props: Props) => {
@@ -236,6 +243,51 @@ const PluginDetails = (props: Props) => {
   const onDismissModal = useCallback(() => {
     setShowModal(false);
   }, []);
+
+  const manifest = useMemo(() => {
+    const parsedManifest = JSON.parse(props?.pluginVersion?.manifest ?? "{}");
+    if (parsedManifest["types"]) {
+      return {
+        types: parsedManifest["types"],
+        store: parsedManifest["store"],
+      };
+    }
+    return {
+      store: parsedManifest["store"],
+    };
+  }, [props.pluginVersion?.manifest]);
+
+  const manifestTypes = useMemo(() => {
+    if (manifest["types"]) {
+      return manifest["types"];
+    }
+    return null;
+  }, [manifest]);
+
+  const manifestStore = useMemo(() => {
+    return manifest["store"];
+  }, [manifest]);
+
+  const manifestTheme = useMemo(() => {
+    if (theme.name == "dark") {
+      return {
+        main: `line-height:1.3;color:${ColorPalette.white};`,
+        error: `line-height:1.3;color:${ColorPalette.white};`,
+        key: `color:${ColorPalette.lightPurple};`,
+        string: `color:${ColorPalette.orange};`,
+        value: `color:${ColorPalette.orange};`,
+        boolean: `color:${ColorPalette.teal};`,
+      };
+    }
+    return {
+      main: `line-height:1.3;color:${ColorPalette.lightPurple};`,
+      error: `line-height:1.3;color:${ColorPalette.lightPurple};`,
+      key: `color:${ColorPalette.purple};`,
+      string: `color:${ColorPalette.orange};`,
+      value: `color:${ColorPalette.orange};`,
+      boolean: `color:${ColorPalette.teal};`,
+    };
+  }, [theme.name]);
 
   return (
     <Container>
@@ -303,7 +355,32 @@ const PluginDetails = (props: Props) => {
         icons={props.icons}
         linkPrefix={props.linkPrefix}
         onClickReleaseVersion={onClickReleaseVersion}
+        canRelease={props.canRelease}
       />
+      {manifestTypes && (
+        <BigSectionContainer>
+          <SectionTitle>{"Schema Type Definitions"}</SectionTitle>
+          <BlurbBox style={{ overflowX: "scroll" }}>
+            <JSONPretty
+              id="json-pretty"
+              data={manifestTypes}
+              theme={manifestTheme}
+            ></JSONPretty>
+          </BlurbBox>
+        </BigSectionContainer>
+      )}
+      {manifestStore && (
+        <BigSectionContainer>
+          <SectionTitle>{"Store Schema"}</SectionTitle>
+          <BlurbBox style={{ overflowX: "scroll" }}>
+            <JSONPretty
+              id="json-pretty"
+              data={manifestStore}
+              theme={manifestTheme}
+            ></JSONPretty>
+          </BlurbBox>
+        </BigSectionContainer>
+      )}
       <ReleasePluginModal
         plugin={props?.plugin}
         show={showModal}

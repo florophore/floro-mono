@@ -84,6 +84,7 @@ export interface Props {
   isEven: boolean;
   isSelected: boolean;
   isFirst: boolean;
+  canRelease: boolean;
   linkPrefix: string;
   onClickReleaseVersion: (version: PluginVersion) => void;
 }
@@ -168,7 +169,7 @@ const PluginVersionRow = (props: Props) => {
           label={"release"}
           bg={"orange"}
           size={"extra-small"}
-          isDisabled={!props.isSelected}
+          isDisabled={!props.isSelected && props.canRelease}
           onClick={onClickRelease}
         />
       );
@@ -177,7 +178,7 @@ const PluginVersionRow = (props: Props) => {
       return <ReleasedText>{"released"}</ReleasedText>;
     }
     return <UnReleasedText>{"unreleased"}</UnReleasedText>;
-  }, [props.isFirst, props.version, props.isSelected]);
+  }, [props.isFirst, props.version, props.isSelected, props.canRelease]);
 
   return (
     <Link

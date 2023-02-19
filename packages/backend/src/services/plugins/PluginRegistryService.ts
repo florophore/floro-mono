@@ -571,8 +571,6 @@ export default class PluginRegistryService {
         }
       }
     } catch (e: any) {
-      // TODO: REMOVE THIS LOG!
-      console.log("E", e);
       return {
         action: "LOG_ERROR",
         error: {

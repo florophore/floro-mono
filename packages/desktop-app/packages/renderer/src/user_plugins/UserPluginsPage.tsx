@@ -120,7 +120,15 @@ const UserPluginsPage = () => {
 
   return (
     <OuterNavigator outerNavTab={'home'} page={'plugins'} title={title} organizationId={null}>
-      <PluginEditor onPressOpenDocs={onOpenDocs} currentPlugin={currentPlugin} currentVersion={currentVersion} linkPrefix={'/home/plugins'} accountType={'user'} plugins={plugins} />
+      <PluginEditor
+        onPressOpenDocs={onOpenDocs}
+        currentPlugin={currentPlugin}
+        currentVersion={currentVersion}
+        linkPrefix={'/home/plugins'}
+        accountType={'user'}
+        plugins={plugins}
+        canRelease={true}
+      />
     </OuterNavigator>
   );
 };

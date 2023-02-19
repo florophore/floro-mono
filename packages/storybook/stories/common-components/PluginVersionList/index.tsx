@@ -38,6 +38,7 @@ export interface Props {
   currentVersion: PluginVersion;
   icons: { [key: string]: string };
   linkPrefix: string;
+  canRelease: boolean;
   onClickReleaseVersion: (version: PluginVersion) => void;
 }
 
@@ -49,7 +50,8 @@ const PluginVersionList = (props: Props) => {
   }, []);
 
   const hasAReleasedVersion = useMemo(() => {
-    return (
+    // REALLY HAS RELEASED VERSION AND NOT JUST A SINGLE VERSION
+    return props?.versions?.length > 1 && (
       props?.versions?.reduce?.((hasRelease, version) => {
         if (hasRelease) {
           return true;
@@ -100,6 +102,7 @@ const PluginVersionList = (props: Props) => {
               version={pluginVersion}
               linkPrefix={props.linkPrefix}
               onClickReleaseVersion={props.onClickReleaseVersion}
+              canRelease={props.canRelease}
             />
           );
         })}

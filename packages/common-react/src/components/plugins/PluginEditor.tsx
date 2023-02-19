@@ -16,6 +16,7 @@ interface Props {
   currentPlugin?: Plugin | null;
   currentVersion?: PluginVersion | null;
   onPressOpenDocs: () => void;
+  canRelease: boolean;
 }
 
 const PluginEditor = (props: Props) => {
@@ -47,6 +48,7 @@ const PluginEditor = (props: Props) => {
         pluginVersion={props.currentVersion}
         linkPrefix={props.linkPrefix}
         icons={icons}
+        canRelease={props.canRelease}
       />
     );
   }, [props.currentPlugin, props.currentVersion, icons]);
