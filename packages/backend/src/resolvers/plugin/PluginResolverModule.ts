@@ -316,7 +316,7 @@ export default class PluginResolverModule extends BaseResolverModule {
           const versions = this.sortBySemver(dbPlugin?.versions ?? []);
           const lastVersion = versions[0];
           if (lastVersion) {
-            return lastVersion.lightIcon;
+            return lastVersion.darkIcon;
           }
           return `${this.config.assetHost()}/assets/images/icons/plugin_default.unselected.dark.svg`;
         }

@@ -5,7 +5,7 @@ import StorageAuthenticator from "@floro/storage/src/StorageAuthenticator";
 import url from "url";
 import StorageClient from "@floro/storage/src/StorageClient";
 import path from "path";
-import fs from "fs";
+import fs, { createReadStream } from "fs";
 import mime from "mime-types";
 
 @injectable()
@@ -47,8 +47,19 @@ export default class PrivateCDNTestController extends BaseController {
         return;
       }
       const contentType = mime.contentType(path.extname(assetPath));
-      res.setHeader("content-type", contentType);
-      res.send(file.toString());
+      if (contentType == "application/gzip") {
+        res.writeHead(200, {
+            'Content-Type': contentType,
+            'Content-disposition': `attachment; filename=${pathParts[pathParts.length - 1]}`
+        });
+        const readStream = createReadStream(assetPath);
+        readStream.pipe(res);
+      } else {
+        res.writeHead(200, {
+            'Content-Type': contentType,
+        });
+        res.send(file);
+      }
     } catch (e) {
       res.status(404).json({
         message: "Not Found.",

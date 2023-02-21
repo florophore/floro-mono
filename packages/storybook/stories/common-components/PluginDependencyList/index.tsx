@@ -88,7 +88,7 @@ const PluginDependencyList = (props: Props) => {
           >
             <LeftSide>
               <Icon src={props.icons[icon] ?? icon} />
-              <DependencyTitle>{pluginVersion?.displayName}</DependencyTitle>
+              <DependencyTitle>{pluginVersion?.name}</DependencyTitle>
             </LeftSide>
             <VersionTitle>{pluginVersion?.version}</VersionTitle>
           </Row>

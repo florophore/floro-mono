@@ -70,7 +70,7 @@ export class PluginUploadStream {
     ];
     let written = false;
     await new Promise(resolve => {
-      this.tarStream 
+      this.tarStream
       .pipe(fs.createWriteStream(this.tmpPath()))
       .on("finish", () => {
         if (!written) {
@@ -264,7 +264,6 @@ export class PluginUploadStream {
         return;
       }
       if (typeof this.originalManifest.icon?.selected == "string") {
-
         const selectedSVGPath = path.join("floro", this.originalManifest.icon.selected);
         if (!this.entryMap[selectedSVGPath]) {
           this.hasErrors = true;
@@ -294,17 +293,20 @@ export class PluginUploadStream {
         this.errorMessage = "Invalid icon in manifest.";
         return;
       }
-      if (!this.entryMap[this.originalManifest.icon.selected.light]) {
+
+      const selectedLightSVGPath = path.join("floro", this.originalManifest.icon.selected.light);
+      if (!this.entryMap[selectedLightSVGPath]) {
         this.hasErrors = true;
         this.errorMessage = `Icon (${this.originalManifest.icon.selected.light}) not found.`;
         return;
       }
-      if (!this.entryMap[this.originalManifest.icon.selected.dark]) {
+      const selectedDarkSVGPath = path.join("floro", this.originalManifest.icon.selected.dark);
+      if (!this.entryMap[selectedDarkSVGPath]) {
         this.hasErrors = true;
         this.errorMessage = `Icon (${this.originalManifest.icon.selected.dark}) not found.`;
         return;
       }
-      this.originalSelectedLightIcon = this.entryMap[this.originalManifest.icon.selected.light].toString();
+      this.originalSelectedLightIcon = this.entryMap[selectedLightSVGPath].toString();
       if (!isSvg(this.originalSelectedLightIcon)) {
         this.hasErrors = true;
         this.errorMessage = `Invalid icon in manifest (${this.originalManifest.icon.selected.light}). Icons need to be valid SVG.`;
@@ -313,17 +315,17 @@ export class PluginUploadStream {
 
       const selectedLightSha = createHash("sha256");
       this.selectedLightIconPath = `${selectedLightSha.update(this.originalSelectedLightIcon).digest("hex")}.svg`;
-      delete this.entryMap[this.originalManifest.icon.selected.light];
+      delete this.entryMap[selectedLightSVGPath];
 
-      this.originalSelectedDarkIcon = this.entryMap[this.originalManifest.icon.selected.dark].toString();
+      this.originalSelectedDarkIcon = this.entryMap[selectedDarkSVGPath].toString();
       if (!isSvg(this.originalSelectedDarkIcon)) {
         this.hasErrors = true;
         this.errorMessage = `Invalid icon in manifest (${this.originalManifest.icon.selected.dark}). Icons need to be valid SVG.`;
         return;
       }
       const selectedDarkSha = createHash("sha256");
-      this.selectedLightIconPath = `${selectedDarkSha.update(this.originalSelectedDarkIcon).digest("hex")}.svg`;
-      delete this.entryMap[this.originalManifest.icon.selected.dark];
+      this.selectedDarkIconPath = `${selectedDarkSha.update(this.originalSelectedDarkIcon).digest("hex")}.svg`;
+      delete this.entryMap[selectedDarkSVGPath];
 
     } catch (e) {
       this.hasErrors = true;

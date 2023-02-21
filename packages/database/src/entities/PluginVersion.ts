@@ -136,7 +136,7 @@ export class PluginVersion extends BinaryPKBaseEntity {
   @Column("uuid")
   organizationId!: string;
 
-  @ManyToOne("User", "versions")
+  @ManyToOne("Organization", "versions")
   @JoinColumn()
   organization?: Relation<Organization>;
 

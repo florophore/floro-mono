@@ -269,6 +269,10 @@ const PluginDetails = (props: Props) => {
     return manifest["store"];
   }, [manifest]);
 
+  const hasTypes = useMemo(() => {
+    return Object.keys(manifest?.types ?? {}).length > 0;
+  }, [manifest]);
+
   const manifestTheme = useMemo(() => {
     if (theme.name == "dark") {
       return {
@@ -358,7 +362,7 @@ const PluginDetails = (props: Props) => {
         onClickReleaseVersion={onClickReleaseVersion}
         canRelease={props.canRelease}
       />
-      {manifestTypes && (
+      {hasTypes && manifestTypes && (
         <BigSectionContainer>
           <SectionTitle>{"Schema Type Definitions"}</SectionTitle>
           <BlurbBox style={{ overflowX: "scroll" }}>

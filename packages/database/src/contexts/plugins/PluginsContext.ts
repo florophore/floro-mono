@@ -10,17 +10,26 @@ const READ_RELATIONS = {
   createdByUser: true,
   versions: {
     dependencies: {
-      dependencyPluginVersion: true
+      dependencyPluginVersion: {
+        user: true,
+        organization: true,
+      }
     },
   },
   lastReleasedPrivatePluginVersion: {
     dependencies: {
-      dependencyPluginVersion: true
+      dependencyPluginVersion: {
+        user: true,
+        organization: true,
+      }
     },
   },
   lastReleasedPublicPluginVersion: {
     dependencies: {
-      dependencyPluginVersion: true
+      dependencyPluginVersion: {
+        user: true,
+        organization: true,
+      }
     },
   },
 };

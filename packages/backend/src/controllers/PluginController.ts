@@ -56,6 +56,84 @@ export default class PluginController extends BaseController {
     this.repoAccessor = repoAccessor;
     this.storageAuthenticator = storageAuthenticator;
   }
+  private async runPluginAccessChecks(request, response): Promise<PluginVersion|null> {
+    const pluginContext = await this.contextFactory.createContext(
+      PluginsContext
+    );
+    const sessionKey = request.headers["session_key"];
+    const session = await this.sessionStore.fetchSession(sessionKey);
+    if (!session) {
+      response.status(403).json({
+        message: "Forbidden.",
+      });
+      return null;
+    }
+
+    const user = await this.usersService.getUser(session?.userId as string);
+    if (!user) {
+      response.status(403).json({
+        message: "Forbidden.",
+      });
+      return null;
+    }
+
+    const plugin = await pluginContext.getByName(
+      request?.params["name"] ?? ""
+    );
+    if (!plugin) {
+      response.status(404).json({
+        message: "Not found.",
+      });
+      return null;
+    }
+
+    if (plugin.ownerType == "user_plugin" && plugin.isPrivate) {
+      if (user.id != plugin.userId) {
+        response.status(403).json({
+          message: "Forbidden.",
+        });
+        return null;
+      }
+    }
+
+    if (plugin.ownerType == "org_plugin" && plugin.isPrivate) {
+      const organization = await this.organizationService.fetchOrganization(
+        plugin.organizationId
+      );
+      const organizationMember =
+        await this.organizationPermissionService.getUserMembership(
+          organization as Organization,
+          user as User
+        );
+      if (
+        !organizationMember ||
+        organizationMember.membershipState != "active"
+      ) {
+        response.status(403).json({
+          message: "Forbidden.",
+        });
+        return null;
+      }
+    }
+
+    if (!plugin.isPrivate && !plugin.lastReleasedPublicPluginVersion) {
+        response.status(404).json({
+          message: "Not Found.",
+        });
+        return null;
+    }
+
+    if (plugin.isPrivate && !plugin.lastReleasedPrivatePluginVersionId) {
+        response.status(404).json({
+          message: "Not Found.",
+        });
+        return null;
+    }
+    if (plugin.isPrivate) {
+      return plugin.lastReleasedPrivatePluginVersion ?? null;
+    }
+    return plugin.lastReleasedPublicPluginVersion ?? null;
+  }
 
   private async runPluginVersionAccessChecks(request, response): Promise<PluginVersion|null> {
     const pluginVersionsContext = await this.contextFactory.createContext(
@@ -139,15 +217,24 @@ export default class PluginController extends BaseController {
       .send(pluginVersion.indexHtml);
   }
 
+  @Get("/api/plugin/:name/last/manifest")
+  public async getLastManifest(request, response) {
+    const pluginVersion = await this.runPluginAccessChecks(request, response);
+    if (!pluginVersion) {
+      return;
+    }
+    response.status(200).json(JSON.parse(pluginVersion.manifest));
+  }
+
   @Get("/api/plugin/:name/:version/manifest")
   public async getManifest(request, response) {
     const pluginVersion = await this.runPluginVersionAccessChecks(request, response);
     if (!pluginVersion) {
       return;
     }
-    response.status(200).json(pluginVersion.manifest);
+    response.status(200).json(JSON.parse(pluginVersion.manifest));
   }
-  
+
   @Get("/api/plugin/:name/:version/install")
   public async getTar(request, response) {
     const pluginVersion = await this.runPluginVersionAccessChecks(request, response);
@@ -165,6 +252,7 @@ export default class PluginController extends BaseController {
         const url = privateCdnUrl + urlPath;
         const signedUrl = this.storageAuthenticator.signURL(url, urlPath, 3600);
         return {
+          hash: pluginVersion?.uploadHash,
           name: pluginVersion?.name,
           version: pluginVersion?.version,
           link: signedUrl,
@@ -175,6 +263,7 @@ export default class PluginController extends BaseController {
     const url = privateCdnUrl + urlPath;
     const signedUrl = this.storageAuthenticator.signURL(url, urlPath, 3600);
     response.status(200).json({
+        hash: pluginVersion.uploadHash,
         name: pluginVersion?.name,
         version: pluginVersion?.version,
         link: signedUrl,
