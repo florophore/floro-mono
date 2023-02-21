@@ -1,5 +1,5 @@
 {
-  "version": "0.0.2",
+  "version": "0.0.3",
   "name": "palette",
   "displayName": "Palette",
   "description": "Simple plugin to organize colors.",
@@ -9,7 +9,7 @@
   },
   "imports": {},
   "types": {
-    "Color": {
+    "CColor": {
       "name": {
         "type": "string",
         "isKey": true
@@ -28,7 +28,7 @@
   "store": {
     "colors": {
       "type": "set",
-      "values": "Color"
+      "values": "CColor"
     },
     "opacities": {
       "type": "set",
