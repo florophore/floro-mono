@@ -93,7 +93,7 @@ const RemoteToggleIconWrapper = styled.div`
   width: 40px;
   height: 40px;
   left: -40px;
-  top: 64px;
+  top: 140px;
   border-top-left-radius: 10px;
   border-bottom-left-radius: 10px;
   cursor: pointer;
@@ -108,7 +108,7 @@ const LocalToggleIconWrapper = styled.div`
   width: 40px;
   height: 40px;
   left: -40px;
-  top: 12px;
+  top: 88px;
   border-top-left-radius: 10px;
   border-bottom-left-radius: 10px;
   cursor: pointer;
@@ -233,7 +233,7 @@ const VersionControlPanel = (props: Props) => {
   const remoteIconsOffset = useMemo(() => {
     if (isExpanded) {
       return {
-        transform: "translate(0px, -104px)",
+        transform: "translate(0px, -180px)",
       };
     }
     return {
@@ -244,7 +244,7 @@ const VersionControlPanel = (props: Props) => {
   const localIconsOffset = useMemo(() => {
     if (isExpanded) {
       return {
-        transform: "translate(0px, -52px)",
+        transform: "translate(0px, -128px)",
       };
     }
     return {
@@ -293,17 +293,21 @@ const VersionControlPanel = (props: Props) => {
       <InnerContainer style={innerStyle}>
         <InnerContainerContent>
           {repoExistsLocally && isDaemonConnected && (
-            <div style={{ height: 65 }}>
+            <div style={{ height: 73 }}>
               <LocalRemoteToggle tab={from} onChange={onToggleFrom} />
             </div>
           )}
           <TopContainer>
-            <div style={{ marginTop: 24 }}>
-              <BranchSelector />
-            </div>
-            <div style={{ marginTop: 12 }}>
-              <CommitSelector />
-            </div>
+            {false &&
+            <>
+              <div style={{ marginTop: 24 }}>
+                <BranchSelector />
+              </div>
+              <div style={{ marginTop: 12 }}>
+                <CommitSelector />
+              </div>
+            </>
+            }
           </TopContainer>
           <BottomContainer>
             {!repoExistsLocally && !isLoading && (

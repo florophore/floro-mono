@@ -49,21 +49,6 @@ export interface Manifest {
 
 const primitives = new Set(["int", "float", "boolean", "string"]);
 
-export const getPluginManifest = async (
-  pluginName: string,
-  plugins: Array<PluginElement>,
-  pluginFetch: (pluginName: string, version: string) => Promise<Manifest | null>
-): Promise<Manifest | null> => {
-  const pluginInfo = plugins.find((v) => v.key == pluginName);
-  if (!pluginInfo) {
-    return null;
-  }
-  if (!pluginInfo.value) {
-    return null;
-  }
-  return await pluginFetch(pluginName, pluginInfo.value);
-};
-
 export const pluginManifestsAreCompatibleForUpdate = async (
   oldManifest: Manifest,
   newManifest: Manifest,
@@ -71,7 +56,6 @@ export const pluginManifestsAreCompatibleForUpdate = async (
 ): Promise<boolean | null> => {
   const oldSchemaMap = await getSchemaMapForManifest(oldManifest, pluginFetch);
   const newSchemaMap = await getSchemaMapForManifest(newManifest, pluginFetch);
-
 
   if (!oldSchemaMap) {
     return null;
@@ -100,13 +84,63 @@ export const pluginManifestsAreCompatibleForUpdate = async (
   );
 };
 
+export const schemaMapsAreCompatible = async (
+  oldSchemaMap: {[key: string]: Manifest},
+  newSchemaMap: {[key: string]: Manifest},
+  pluginFetch: (pluginName: string, version: string) => Promise<Manifest | null>
+): Promise<boolean | null> => {
+  if (!oldSchemaMap) {
+    return null;
+  }
+
+  if (!newSchemaMap) {
+    return null;
+  }
+
+  const isSubSet = await pluginManifestIsSubsetOfManifest(
+    oldSchemaMap,
+    newSchemaMap,
+    pluginFetch
+  );
+  return isSubSet;
+}
+
+export const topSortManifests = (manifests: Array<Manifest>) => {
+  const lexicallySortedManifests = manifests.sort((a, b) => {
+    if (a.name == b.name) return 0;
+    return a.name > b.name ? 1 : -1;
+  })
+  const visited = new Set();
+  const manifestMap = manifestListToSchemaMap(lexicallySortedManifests);
+  const out: Array<Manifest> = [];
+  for (const manifest of lexicallySortedManifests) {
+    if (visited.has(manifest.name)) {
+      continue;
+    }
+    const upstreamDeps = getUpstreamDepsInSchemaMap(
+      manifestMap,
+      manifest.name
+    ).map((pluginName) => manifestMap[pluginName]);
+    const depsToAdd = topSortManifests(upstreamDeps);
+    for (const upstreamDep of depsToAdd) {
+      if (!visited.has(upstreamDep.name)) {
+        visited.add(upstreamDep.name)
+        out.push(upstreamDep);
+      }
+    }
+    visited.add(manifest.name)
+    out.push(manifest);
+  }
+  return out;
+};
+
 export const getPluginManifests = async (
   pluginList: Array<PluginElement>,
   pluginFetch: (pluginName: string, version: string) => Promise<Manifest | null>
 ): Promise<Array<Manifest>> => {
   const manifests = await Promise.all(
-    pluginList.map(({ key: pluginName }) => {
-      return getPluginManifest(pluginName, pluginList, pluginFetch);
+    pluginList.map(({ key: pluginName, value: pluginVersion }) => {
+      return pluginFetch(pluginName, pluginVersion);
     })
   );
   return manifests?.filter((manifest: Manifest | null) => {
@@ -116,6 +150,17 @@ export const getPluginManifests = async (
     return true;
   }) as Array<Manifest>;
 };
+
+export const getManifestMapFromManifestList = (
+  manifests: Array<Manifest>
+) => {
+  return manifests.reduce((acc, manifest) => {
+    return {
+      ...acc,
+      [manifest.name]: manifest
+    }
+  }, {});
+}
 
 export const pluginListToMap = (
   pluginList: Array<PluginElement>
@@ -148,6 +193,17 @@ export const manifestListToSchemaMap = (
       [manifest.name]: manifest,
     };
   }, {});
+};
+
+export const manifestListToPluginList = (
+  manifestList: Array<Manifest>
+): Array<PluginElement> => {
+  return manifestList.map((p) => {
+    return {
+      key: p.name,
+      value: p.version,
+    };
+  });
 };
 
 export const hasPlugin = (
@@ -325,7 +381,7 @@ export const verifyPluginDependencyCompatability = async (
     };
   }
   for (const pluginName in depsMap) {
-    if (depsMap[pluginName].length == 0) {
+    if (depsMap[pluginName].length <= 1) {
       continue;
     }
     for (let i = 1; i < depsMap[pluginName].length; ++i) {
@@ -1878,7 +1934,7 @@ export const getKVStateForPlugin = async (
   );
 };
 
-const getUpstreamDepsInSchemaMap = (
+export const getUpstreamDepsInSchemaMap = (
   schemaMap: { [key: string]: Manifest },
   pluginName: string
 ): Array<string> => {
@@ -1894,7 +1950,7 @@ const getUpstreamDepsInSchemaMap = (
   return deps;
 };
 
-const getDownstreamDepsInSchemaMap = (
+export const getDownstreamDepsInSchemaMap = (
   schemaMap: { [key: string]: Manifest },
   pluginName: string,
   memo: { [pluginName: string]: boolean } = {}
@@ -1931,14 +1987,18 @@ const refSetFromKey = (key: string): Array<string> => {
   return out;
 };
 
-const asyncReduce = async <T, U> (initVal: T, list: Array<U>, callback: (a: T, e: U, i: number) => Promise<T>): Promise<T> => {
+const asyncReduce = async <T, U>(
+  initVal: T,
+  list: Array<U>,
+  callback: (a: T, e: U, i: number) => Promise<T>
+): Promise<T> => {
   let out = initVal;
   for (let i = 0; i < list.length; ++i) {
     const element = list[i];
     out = await callback(out, element, i);
   }
   return out;
-}
+};
 
 /***
  * cascading is heavy but infrequent. It only needs to be

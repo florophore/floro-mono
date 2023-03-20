@@ -6,7 +6,8 @@ import {useParams, useSearchParams} from 'react-router-dom';
 import {useFetchRepositoryByNameQuery} from '@floro/graphql-schemas/src/generated/main-client-graphql';
 import {useSession} from '@floro/common-react/src/session/session-context';
 import {useUserOrganizations} from '@floro/common-react/src/hooks/offline';
-import LocalPluginLoader from '@floro/common-react/src/plugin-loader/LocalPluginLoader';
+//import LocalPluginLoader from '@floro/common-react/src/plugin-loader/LocalPluginLoader';
+import LocalRepoController from '@floro/common-react/src/components/repository/local/LocalRepoController';
 import RepoNavigator from '@floro/common-react/src/components/repository/RepoNavigator';
 
 const RepoHomePage = () => {
@@ -127,6 +128,8 @@ const RepoHomePage = () => {
     innerNavTab: 'org',
   });
 
+  const from: 'remote' | 'local' = (searchParams.get?.('from') as 'remote' | 'local') ?? 'remote';
+
   return (
     <OuterNavigator
       outerNavTab={outerNavTab}
@@ -136,13 +139,14 @@ const RepoHomePage = () => {
     >
       <>
         {repository && (
-          <RepoNavigator repository={repository} plugin={plugin ?? "home"}>
-            <LocalPluginLoader />
+          <RepoNavigator repository={repository} plugin={plugin ?? 'home'}>
+            <>
+              {from == 'local' && <LocalRepoController repository={repository} plugin={plugin ?? 'home'} />}
+              {from == 'remote' && <div>{'fill ni alter'}</div>}
+            </>
           </RepoNavigator>
         )}
-        {!repository && (
-          <div/>
-        )}
+        {!repository && <div />}
       </>
     </OuterNavigator>
   );

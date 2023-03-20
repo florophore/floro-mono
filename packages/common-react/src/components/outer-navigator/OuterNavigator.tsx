@@ -59,6 +59,7 @@ const BottomContainer = styled.div`
   flex-direction: row;
   width: 100%;
   flex-grow: 1;
+  overflow-y: scroll;
 `;
 const Navigator = styled.main`
   width: 72px;

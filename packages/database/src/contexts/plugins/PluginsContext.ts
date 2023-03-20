@@ -1,7 +1,8 @@
-import { DeepPartial, QueryRunner, Repository as TypeormRepository } from "typeorm";
+import { DeepPartial, In, IsNull, Not, QueryRunner, Repository as TypeormRepository } from "typeorm";
 import BaseContext from "../BaseContext";
 import ContextFactory from "../ContextFactory";
 import { Plugin } from "../../entities/Plugin";
+import { Repository } from "../../entities/Repository";
 import PluginHelper from "../utils/PluginHelper";
 
 const READ_RELATIONS = {
@@ -55,6 +56,13 @@ export default class PluginsContext extends BaseContext {
   public async getById(id: string): Promise<Plugin | null> {
     return await this.queryRunner.manager.findOne(Plugin, {
       where: { id },
+      relations: READ_RELATIONS
+    });
+  }
+
+  public async getByIds(ids: string[]): Promise<Array<Plugin>> {
+    return await this.queryRunner.manager.find(Plugin, {
+      where: { id: In(ids) },
       relations: READ_RELATIONS
     });
   }
@@ -134,6 +142,31 @@ export default class PluginsContext extends BaseContext {
   public async getOrgPluginsByType(organizationId: string, isPrivate: boolean): Promise<Plugin[]> {
     return await this.queryRunner.manager.find(Plugin, {
       where: { organizationId, isPrivate },
+      order: {
+        name: 'ASC'
+      },
+      relations: READ_RELATIONS
+    });
+  }
+
+  public async getPublicReleasedPluginsForRepository(repository: Repository): Promise<Plugin[]> {
+    if (repository.repoType == "org_repo") {
+      return await this.queryRunner.manager.find(Plugin, {
+        where: [
+          { isPrivate: false, lastReleasedPublicPluginVersion: Not(IsNull()) },
+          { isPrivate: false, lastReleasedPublicPluginVersion: IsNull(), ownerType: "org_plugin", organizationId: repository.organizationId },
+        ],
+        order: {
+          name: 'ASC'
+        },
+        relations: READ_RELATIONS
+      });
+    }
+    return await this.queryRunner.manager.find(Plugin, {
+      where: [
+        { isPrivate: false, lastReleasedPublicPluginVersion: Not(IsNull()) },
+        { isPrivate: false, lastReleasedPublicPluginVersion: IsNull(), ownerType: "user_plugin", userId: repository.userId },
+      ],
       order: {
         name: 'ASC'
       },

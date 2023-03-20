@@ -16,7 +16,7 @@ export type Diff = {
   };
 };
 
-export type TextDiff = {
+export type StringDiff = {
   add: {
     [key: number]: string;
   };
@@ -29,23 +29,34 @@ export interface CommitData {
   sha?: string;
   diff: StateDiff;
   userId: string;
+  authorUserId?: string;
   timestamp: string;
   parent: string | null;
   historicalParent: string | null;
+  mergeBase?: string | null;
+  mergeRevertSha?: string | null;
+  idx: number;
   message: string;
 }
 
-const getObjectStringValue = (obj: {
-  [key: string]: number | string | boolean | Array<number | string | boolean>;
-}): string => {
-  if (typeof obj == "string") return obj;
-  return Object.keys(obj).sort().reduce((s, key) => {
-    if (Array.isArray(obj[key])) {
-      const value = (obj[key] as Array<number | string | boolean>).join("-");
-      return `${s}/${key}:${value}`;
-    }
-    return `${s}/${key}:${obj[key]}`;
-  }, "");
+const fastHash = (str) => {
+  let hash = 0;
+  let hash2 = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = hash * hash2 ^ ((hash << 5) - hash + str.charCodeAt(i));
+    hash2 = (hash2 << 5) - hash + str.charCodeAt(i);
+    hash |= 0;
+    hash2 |= 0;
+  }
+  return hash.toString(36).padEnd(6) + hash2.toString(36).padEnd(6)
+};
+
+export const hashBinary = (bin: BinaryData) => {
+  return Crypto.SHA256(bin);
+};
+
+export const hashString = (str: string) => {
+  return fastHash(str);
 };
 
 export const getKVHashes = (obj: {
@@ -54,12 +65,19 @@ export const getKVHashes = (obj: {
     [key: string]: number | string | boolean | Array<number | string | boolean>;
   };
 }): { keyHash: string; valueHash: string } => {
-  const keyHash = Crypto.SHA256(obj.key);
-  const valueHash = Crypto.SHA256(getObjectStringValue(obj.value));
+  const keyHash = fastHash(obj.key);
+  const valueHash = fastHash(JSON.stringify(obj.value));
   return {
     keyHash,
     valueHash,
   };
+};
+
+export const getKVHash = (obj: { key: string; value: {[key: string]: number | string | boolean | Array<number | string | boolean>}|string }): string => {
+  if (typeof obj.value == "string") {
+    return fastHash(obj.key + obj.value);
+  }
+  return fastHash(obj.key + JSON.stringify(obj.value));
 };
 
 export const getRowHash = (obj: {
@@ -68,8 +86,7 @@ export const getRowHash = (obj: {
     [key: string]: number | string | boolean | Array<number | string | boolean>;
   };
 }): string => {
-  const { keyHash, valueHash } = getKVHashes(obj);
-  return Crypto.SHA256(keyHash + valueHash);
+  return fastHash(obj.key + JSON.stringify(obj.value));
 };
 
 export const getDiffHash = (commitData: CommitData): string|null => {
@@ -83,14 +100,42 @@ export const getDiffHash = (commitData: CommitData): string|null => {
   if (!commitData.message) {
     return null;
   }
+
+  if (!commitData.parent && !commitData.historicalParent) {
+    const str = `userId:${commitData.userId}/authorUserId:${
+      commitData.authorUserId ?? commitData.userId
+    }/timestamp:${commitData.timestamp}/message:${commitData.message}/idx:${
+      commitData.idx
+    }/mergeBase:${commitData?.mergeBase ?? "none"}/diff:${diffString}`;
+    return Crypto.SHA256(str);
+  }
   if (!commitData.parent) {
-    const str = `userId:${commitData.userId}/timestamp:${commitData.timestamp}/message:${commitData.timestamp}/diff:${diffString}`;
+    const str = `userId:${commitData.userId}/authorUserId:${
+      commitData.authorUserId ?? commitData.userId
+    }/timestamp:${commitData.timestamp}/message:${
+      commitData.message
+    }/historicalParent:${commitData.historicalParent}/idx:${
+      commitData.idx
+    }/mergeBase:${commitData?.mergeBase ?? "none"}/diff:${diffString}`;
     return Crypto.SHA256(str);
   }
   if (!commitData.historicalParent) {
-    return null;
+    const str = `userId:${commitData.userId}/authorUserId:${
+      commitData.authorUserId ?? commitData.userId
+    }/timestamp:${commitData.timestamp}/message:${commitData.message}/parent:${
+      commitData.parent
+    }/idx:${commitData.idx}/mergeBase:${
+      commitData?.mergeBase ?? "none"
+    }/diff:${diffString}`;
+    return Crypto.SHA256(str);
   }
-  const str = `userId:${commitData.userId}/timestamp:${commitData.timestamp}/message:${commitData.timestamp}/parent:${commitData.parent}/historicalParent:${commitData.historicalParent}/diff:${diffString}`;
+  const str = `userId:${commitData.userId}/authorUserId:${
+    commitData.authorUserId ?? commitData.userId
+  }/timestamp:${commitData.timestamp}/message:${commitData.message}/parent:${
+    commitData.parent
+  }/historicalParent:${commitData.historicalParent}/idx:${
+    commitData.idx
+  }/mergeBase:${commitData.mergeBase ?? "none"}/diff:${diffString}`;
   return Crypto.SHA256(str);
 };
 
@@ -99,7 +144,8 @@ export const getLCS = (
   right: Array<string>
 ): Array<string> => {
   const diff = mdiff(left, right);
-  return diff.getLcs() as Array<string>;
+  const lcs = diff.getLcs();
+  return lcs as Array<string>;
 };
 
 export const getDiff = (
@@ -144,9 +190,7 @@ export const splitTextForDiff = (str: string): Array<string> => {
   return sentences;
 };
 
-export const getTextDiff = (before: string, after: string): TextDiff => {
-  const past = splitTextForDiff(before);
-  const present = splitTextForDiff(after);
+export const getArrayStringDiff = (past: Array<string>, present: Array<string>): StringDiff => {
   const longestSequence = getLCS(past, present);
 
   const diff = {
@@ -172,34 +216,30 @@ export const getTextDiff = (before: string, after: string): TextDiff => {
   return diff;
 };
 
+export const getTextDiff = (before: string, after: string): StringDiff => {
+  const past = splitTextForDiff(before);
+  const present = splitTextForDiff(after);
+  return getArrayStringDiff(past, present);
+};
+
 export const applyDiff = <T extends DiffElement | string>(
-  diffset: Diff | TextDiff,
+  diffset: Diff | StringDiff,
   state: Array<T>
 ): Array<T> => {
-  let assets = [...(state ?? [])];
-  const addIndices = Object.keys(diffset.add)
-    .map((v) => parseInt(v))
-    .sort((a, b) => a - b);
-  const removeIndices = Object.keys(diffset.remove)
-    .map((v) => parseInt(v))
-    .sort((a, b) => a - b);
+  const assets: Array<T> = [...(state ?? [])];
+  const addIndices = Object.keys(diffset.add).map((v) => parseInt(v));
+  const removeIndices = Object.keys(diffset.remove).map((v) => parseInt(v));
 
   let offset = 0;
   for (const removeIndex of removeIndices) {
     const index = removeIndex - offset;
-    assets = [
-      ...assets.slice(0, index),
-      ...assets.slice(index + 1, assets.length),
-    ];
+    assets.splice(index, 1);
     offset++;
   }
+
   for (const addIndex of addIndices) {
     const index = addIndex;
-    assets = [
-      ...assets.slice(0, index),
-      diffset.add[addIndex] as T,
-      ...assets.slice(index),
-    ];
+    assets.splice(index, 0, diffset.add[addIndex]);
   }
   return assets;
 };
@@ -208,14 +248,14 @@ export const getMergeSequence = (
   origin: Array<string>,
   from: Array<string>,
   into: Array<string>,
-  whose: "theirs" | "yours" = "yours"
+  direction: "theirs" | "yours" = "yours"
 ): Array<string> => {
   if (from.length == 0 && into.length == 0) {
     return [];
   }
   const lcs = getGreatestCommonLCS(origin, from, into);
   if (lcs.length == 0) {
-    return getMergeSubSequence(from, into, whose);
+    return getMergeSubSequence(from, into, direction);
   }
   const originOffsets = getLCSBoundaryOffsets(origin, lcs);
   const originSequences = getLCSOffsetMergeSeqments(origin, originOffsets);
@@ -247,7 +287,7 @@ export const getMergeSequence = (
         getMergeSubSequence(
           fromReconciledSequences[mergeIndex],
           intoReconciledSequences[mergeIndex],
-          whose
+          direction
         )
       );
     }
@@ -308,17 +348,18 @@ export const canAutoMerge = (
   return true;
 };
 
+// yours prioritizes into (you) from (them)
 const getMergeSubSequence = (
   from: Array<string>,
   into: Array<string>,
-  whose: "theirs" | "yours" = "yours"
+  direction: "theirs" | "yours" = "yours"
 ): Array<string> => {
   if (from.length == 0 && into.length == 0) {
     return [];
   }
   const lcs = getLCS(from, into);
   if (lcs.length == 0) {
-    if (whose == "yours") {
+    if (direction == "yours") {
       return [...from, ...into];
     } else {
       return [...into, ...from];
@@ -334,7 +375,7 @@ const getMergeSubSequence = (
   const mergeSequences: Array<Array<string>> = [];
   let mergeIndex = 0;
   while (mergeIndex <= lcs.length) {
-    if (whose == "yours") {
+    if (direction == "yours") {
       mergeSequences.push(fromSequences[mergeIndex]);
       mergeSequences.push(intoSequences[mergeIndex]);
     } else {

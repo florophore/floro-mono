@@ -14,6 +14,12 @@ import semver from "semver";
 import MainConfig from "@floro/config/src/MainConfig";
 import { withFilter } from "graphql-subscriptions";
 import { SubscriptionSubscribeFn } from "@floro/graphql-schemas/build/generated/main-graphql";
+import RepositoriesContext from "@floro/database/src/contexts/repositories/RepositoriesContext";
+import OrganizationMembersContext from "@floro/database/src/contexts/organizations/OrganizationMembersContext";
+import PluginSearchService from "../../services/plugins/PluginSearchService";
+import OrganizationsContext from "@floro/database/src/contexts/organizations/OrganizationsContext";
+import PluginsContext from "@floro/database/src/contexts/plugins/PluginsContext";
+import PluginsVersionsContext from "@floro/database/src/contexts/plugins/PluginVersionsContext";
 
 @injectable()
 export default class PluginResolverModule extends BaseResolverModule {
@@ -31,6 +37,7 @@ export default class PluginResolverModule extends BaseResolverModule {
   protected loggedInUserGuard!: LoggedInUserGuard;
   protected pluginRegistryService!: PluginRegistryService;
   protected rootOrganizationMemberPermissionsLoader!: RootOrganizationMemberPermissionsLoader;
+  protected pluginSearchService!: PluginSearchService;
 
   constructor(
     @inject(ContextFactory) contextFactory: ContextFactory,
@@ -38,6 +45,7 @@ export default class PluginResolverModule extends BaseResolverModule {
     @inject(RequestCache) requestCache: RequestCache,
     @inject(PluginRegistryService) pluginRegistryService: PluginRegistryService,
     @inject(LoggedInUserGuard) loggedInUserGuard: LoggedInUserGuard,
+    @inject(PluginSearchService) pluginSearchService: PluginSearchService,
     @inject(RootOrganizationMemberPermissionsLoader)
     rootOrganizationMemberPermissionsLoader: RootOrganizationMemberPermissionsLoader
   ) {
@@ -46,6 +54,7 @@ export default class PluginResolverModule extends BaseResolverModule {
     this.config = config;
     this.requestCache = requestCache;
     this.pluginRegistryService = pluginRegistryService;
+    this.pluginSearchService = pluginSearchService;
 
     this.loggedInUserGuard = loggedInUserGuard;
     this.rootOrganizationMemberPermissionsLoader =
@@ -70,6 +79,235 @@ export default class PluginResolverModule extends BaseResolverModule {
         exists,
         pluginName: (pluginName ?? "").toLowerCase().trim(),
       };
+    },
+    getPlugin: runWithHooks(
+      () => [this.loggedInUserGuard],
+      async (
+        _,
+        { pluginName }: main.QueryGetPluginArgs,
+        { currentUser, cacheKey }
+      ) => {
+        try {
+          const pluginsContext = await this.contextFactory.createContext(
+            PluginsContext
+          );
+          const plugin = await pluginsContext.getByName(
+            (pluginName ?? "").toLowerCase()
+          );
+          if (!plugin) {
+            return null;
+          }
+
+          if (plugin.isPrivate && plugin?.ownerType == "user_plugin") {
+            if (currentUser?.id != plugin?.userId) {
+              return {
+                __typename: "UnAuthenticatedError",
+                type: "UNAUTHENTICATED_ERROR",
+                message: "Unauthenticated request",
+              };
+            }
+          }
+          if (plugin?.ownerType == "org_plugin") {
+            const organizationContext = await this.contextFactory.createContext(
+              OrganizationsContext
+            );
+            const organization = await organizationContext.getById(
+              plugin.organizationId
+            );
+            if (!organization) {
+              return null;
+            }
+            const organizationMembersContext =
+              await this.contextFactory.createContext(
+                OrganizationMembersContext
+              );
+            const membership =
+              await organizationMembersContext.getByOrgIdAndUserId(
+                plugin.organizationId,
+                currentUser?.id ?? ""
+              );
+            if (membership) {
+              this.requestCache.setOrganizationMembership(
+                cacheKey,
+                organization,
+                currentUser,
+                membership
+              );
+            }
+            if (plugin.isPrivate && membership?.membershipState != "active") {
+              return {
+                __typename: "UnAuthenticatedError",
+                type: "UNAUTHENTICATED_ERROR",
+                message: "Unauthenticated request",
+              };
+            }
+          }
+          return {
+            __typename: "FetchPluginResult",
+            plugin,
+          };
+        } catch (e) {
+          return null;
+        }
+      }
+    ),
+    getDependencyPluginsForPlugin: runWithHooks(
+      () => [this.loggedInUserGuard],
+      async (
+        _,
+        { pluginVersionId }: main.QueryGetDependencyPluginsForPluginArgs,
+        { currentUser, cacheKey }
+      ) => {
+        const pluginVersionsContext = await this.contextFactory.createContext(
+          PluginsVersionsContext
+        );
+        const pluginVersion = await pluginVersionsContext.getById(
+          pluginVersionId
+        );
+        if (!pluginVersion) {
+          return null;
+        }
+        if (
+          pluginVersion.isPrivate &&
+          pluginVersion?.ownerType == "user_plugin"
+        ) {
+          if (currentUser?.id != pluginVersion?.userId) {
+            return {
+              __typename: "UnAuthenticatedError",
+              type: "UNAUTHENTICATED_ERROR",
+              message: "Unauthenticated request",
+            };
+          }
+        }
+        if (pluginVersion?.ownerType == "org_plugin") {
+          const organizationContext = await this.contextFactory.createContext(
+            OrganizationsContext
+          );
+          const organization = await organizationContext.getById(
+            pluginVersion.organizationId
+          );
+          if (!organization) {
+            return null;
+          }
+          const organizationMembersContext =
+            await this.contextFactory.createContext(OrganizationMembersContext);
+          const membership =
+            await organizationMembersContext.getByOrgIdAndUserId(
+              pluginVersion.organizationId,
+              currentUser?.id ?? ""
+            );
+          if (membership) {
+            this.requestCache.setOrganizationMembership(
+              cacheKey,
+              organization,
+              currentUser,
+              membership
+            );
+          }
+          if (
+            pluginVersion.isPrivate &&
+            membership?.membershipState != "active"
+          ) {
+            return {
+              __typename: "UnAuthenticatedError",
+              type: "UNAUTHENTICATED_ERROR",
+              message: "Unauthenticated request",
+            };
+          }
+        }
+        const dependencyPluginIds =
+          pluginVersion.dependencies?.map?.(
+            (dependency) => dependency.dependencyPluginId
+          ) ?? [];
+        const pluginsContext = await this.contextFactory.createContext(
+          PluginsContext
+        );
+        const plugins = await pluginsContext.getByIds(dependencyPluginIds);
+        return {
+          __typename: "PluginDependencyResult",
+          plugins,
+        };
+      }
+    ),
+    searchPluginsForRepository: async (_, { query, repositoryId }, context) => {
+      try {
+        if (!repositoryId || !context?.currentUser?.id) {
+          return {
+            __typename: "PluginSearchResult",
+            plugins: [],
+          };
+        }
+        const repositoriesContext = await this.contextFactory.createContext(
+          RepositoriesContext
+        );
+        const repository = await repositoriesContext.getById(repositoryId);
+        if (!repository) {
+          return {
+            __typename: "PluginSearchResult",
+            plugins: [],
+          };
+        }
+        if (repository.isPrivate && repository.repoType == "user_repo") {
+          if (context?.currentUser?.id != repository?.userId) {
+            return {
+              __typename: "PluginSearchResult",
+              plugins: [],
+            };
+          }
+        }
+        if (repository.repoType == "org_repo") {
+          const organizationContext = await this.contextFactory.createContext(
+            OrganizationsContext
+          );
+          const organization = await organizationContext.getById(
+            repository.organizationId
+          );
+          if (!organization) {
+            return {
+              __typename: "PluginSearchResult",
+              plugins: [],
+            };
+          }
+          const organizationMembersContext =
+            await this.contextFactory.createContext(OrganizationMembersContext);
+          const membership =
+            await organizationMembersContext.getByOrgIdAndUserId(
+              repository.organizationId,
+              context?.currentUser?.id ?? ""
+            );
+          if (membership) {
+            this.requestCache.setOrganizationMembership(
+              context.cacheKey,
+              organization,
+              context.currentUser,
+              membership
+            );
+          }
+          if (repository.isPrivate) {
+            if (!membership || membership?.membershipState != "active") {
+              return {
+                __typename: "PluginSearchResult",
+                plugins: [],
+              };
+            }
+          }
+        }
+        const plugins = await this.pluginSearchService.searchPluginsForRepo(
+          query ?? "",
+          repository,
+          context?.currentUser
+        );
+
+        return {
+          __typename: "PluginSearchResult",
+          plugins,
+        };
+      } catch (e) {
+        return {
+          __typename: "PluginSearchResult",
+          plugins: [],
+        };
+      }
     },
   };
 
@@ -106,13 +344,17 @@ export default class PluginResolverModule extends BaseResolverModule {
         return null;
       }
     ),
+    lastReleasedPublicVersion: (plugin) => {
+      const dbPlugin = plugin as DBPlugin;
+      return dbPlugin?.lastReleasedPublicPluginVersion ?? null;
+    },
     lastReleasedPrivateVersion: runWithHooks(
       () => [],
       async (plugin, _, { cacheKey, currentUser }) => {
         const dbPlugin = plugin as DBPlugin;
         const membership = this.requestCache.getOrganizationMembership(
           cacheKey,
-          dbPlugin.id,
+          dbPlugin.organizationId,
           currentUser?.id
         );
         if (

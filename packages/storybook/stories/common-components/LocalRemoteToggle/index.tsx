@@ -13,7 +13,7 @@ const Container = styled.div`
     align-items: center;
     user-select: none;
     width: 100%;
-    height: 64px;
+    height: 72px;
     border-bottom: 1px solid ${props => props.theme.colors.localRemoteBorderColor};
 `;
 

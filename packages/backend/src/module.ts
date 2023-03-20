@@ -49,6 +49,7 @@ import PluginController from './controllers/PluginController';
 import PrivateCDNTestController from './controllers/PrivateCDNTestController';
 import PluginPermissionService from './services/plugins/PluginPermissionService';
 import PluginVersionResolverModule from './resolvers/plugin/PluginVersionResolverModule';
+import PluginSearchService from './services/plugins/PluginSearchService';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -101,6 +102,7 @@ export default new ContainerModule((bind): void => {
     // PLUGINS
     bind(PluginRegistryService).toSelf();
     bind(PluginPermissionService).toSelf();
+    bind(PluginSearchService).toSelf();
 
     // PHOTOS
     bind(PhotoUploadService).toSelf();

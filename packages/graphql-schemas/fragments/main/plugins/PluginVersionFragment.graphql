@@ -10,6 +10,7 @@ fragment PluginVersion on PluginVersion {
   ownerType
   createdAt
   updatedAt
+  pluginId
 
   isBackwardsCompatible
   previousReleaseVersion
@@ -32,6 +33,7 @@ fragment PluginVersion on PluginVersion {
   pluginDependencies {
     id
     name
+    displayName
     description
     version
     isPrivate
@@ -40,6 +42,7 @@ fragment PluginVersion on PluginVersion {
     darkIcon
     selectedLightIcon
     selectedDarkIcon
+    pluginId
     user {
         id
         username

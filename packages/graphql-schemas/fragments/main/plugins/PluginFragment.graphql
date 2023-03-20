@@ -4,6 +4,7 @@ fragment Plugin on Plugin {
   isPrivate
   createdAt
   updatedAt
+  ownerType
 
   displayName
   lightIcon

@@ -1,0 +1,13 @@
+query GetDependencyPluginsForPlugin($pluginVersionId: ID!) {
+  getDependencyPluginsForPlugin(pluginVersionId: $pluginVersionId) {
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+    ...on PluginDependencyResult {
+      plugins {
+         ...Plugin
+      }
+    }
+  }
+}

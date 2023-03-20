@@ -1,0 +1,13 @@
+query GetPlugin($pluginName: String!) {
+  getPlugin(pluginName: $pluginName) {
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+    ...on FetchPluginResult {
+      plugin {
+         ...Plugin
+      }
+    }
+  }
+}

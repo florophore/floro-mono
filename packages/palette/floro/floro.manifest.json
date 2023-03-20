@@ -9,7 +9,7 @@
   },
   "imports": {},
   "types": {
-    "CColor": {
+    "Color": {
       "name": {
         "type": "string",
         "isKey": true
@@ -28,7 +28,7 @@
   "store": {
     "colors": {
       "type": "set",
-      "values": "CColor"
+      "values": "Color"
     },
     "opacities": {
       "type": "set",

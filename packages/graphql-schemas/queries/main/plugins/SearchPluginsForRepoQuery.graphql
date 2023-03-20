@@ -1,0 +1,13 @@
+query searchPluginsForRepository(
+  $query: String!
+  $repositoryId: ID!
+) {
+  searchPluginsForRepository(
+    query: $query
+    repositoryId: $repositoryId
+  ) {
+    plugins {
+      ...Plugin
+    }
+  }
+}

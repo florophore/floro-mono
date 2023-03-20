@@ -41,15 +41,34 @@ type PluginVersion {
   organization: Organization
   state: String
   pluginDependencies: [PluginVersion]
+  pluginId: ID
 
   createdAt: DateTime
   updatedAt: DateTime
 }
 
+type FetchPluginResult {
+    plugin: Plugin
+}
+
+union FetchPluginResponse = FetchPluginResult | UnAuthenticatedError
+
 type PluginCheckResult {
     exists: Boolean
     pluginName: String
 }
+
+type PluginSearchResult {
+    plugins: [Plugin]
+}
+
+type PluginDependencyResult {
+    plugins: [Plugin]
+}
+
+union PluginDependencyResultResponse =
+    PluginDependencyResult
+  | UnAuthenticatedError
 
 type CreateUserPluginSuccess {
   plugin: Plugin

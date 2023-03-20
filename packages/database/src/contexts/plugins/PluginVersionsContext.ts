@@ -29,6 +29,12 @@ export default class PluginsVersionsContext extends BaseContext {
       relations: {
         user: true,
         organization: true,
+        dependencies: {
+          dependencyPluginVersion: {
+            user: true,
+            organization: true,
+          }
+        },
       },
     });
   }
@@ -40,7 +46,12 @@ export default class PluginsVersionsContext extends BaseContext {
     return await this.queryRunner.manager.findOne(PluginVersion, {
       where: { name, version },
       relations: {
-        dependencies: true,
+        dependencies: {
+          dependencyPluginVersion: {
+            user: true,
+            organization: true,
+          }
+        },
       },
     });
   }
@@ -56,7 +67,12 @@ export default class PluginsVersionsContext extends BaseContext {
     return await this.queryRunner.manager.find(PluginVersion, {
       where: { nameKey },
       relations: {
-        dependencies: true,
+        dependencies: {
+          dependencyPluginVersion: {
+            user: true,
+            organization: true,
+          }
+        },
       },
     });
   }
@@ -65,14 +81,27 @@ export default class PluginsVersionsContext extends BaseContext {
     return await this.queryRunner.manager.find(PluginVersion, {
       where: { pluginId },
       relations: {
-        dependencies: true,
+        dependencies: {
+          dependencyPluginVersion: {
+            user: true,
+            organization: true,
+          }
+        },
       },
     });
   }
 
   public async getByIds(ids: string[]): Promise<PluginVersion[]> {
     return await this.queryRunner.manager.find(PluginVersion, {
-      where: { id: In(ids) }
+      where: { id: In(ids) },
+      relations: {
+        dependencies: {
+          dependencyPluginVersion: {
+            user: true,
+            organization: true,
+          }
+        },
+      },
     });
   }
 

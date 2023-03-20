@@ -83,6 +83,8 @@ export interface ColorTheme {
     unreleasedText: string;
     releaseTextColor: string;
     toggleColor: string;
+    searchHighlightedBackground: string;
+    updateAvailableTextColor: string;
   };
   gradients: {
     backgroundNoOpacity: string;
@@ -95,7 +97,7 @@ export interface ColorTheme {
     localRemoteSelected: string;
   };
   loaders: {
-    googleButtonLoader: keyof ColorPalette; 
+    googleButtonLoader: keyof ColorPalette;
   }
 }
 
@@ -182,6 +184,8 @@ export const LightTheme: ColorTheme = {
     unreleasedText: palette.red,
     releaseTextColor: palette.purple,
     toggleColor: palette.purple,
+    searchHighlightedBackground: palette.lightGray,
+    updateAvailableTextColor: palette.purple,
   },
   gradients: {
     backgroundNoOpacity: palette.lightModeBG.substring(0, 7) + Opacity[0],
@@ -196,7 +200,7 @@ export const LightTheme: ColorTheme = {
   loaders: {
     googleButtonLoader: "gray",
   },
-}; 
+};
 
 export const DarkTheme: ColorTheme = {
     name: 'dark',
@@ -281,6 +285,8 @@ export const DarkTheme: ColorTheme = {
         unreleasedText: palette.lightRed,
         releaseTextColor: palette.lightPurple,
         toggleColor: palette.lightPurple,
+        searchHighlightedBackground: palette.mediumGray,
+        updateAvailableTextColor: palette.lightPurple,
     },
     shadows: {
         modalContainer: palette.black.substring(0, 7) + Opacity[70],
@@ -295,9 +301,9 @@ export const DarkTheme: ColorTheme = {
     loaders: {
         googleButtonLoader: 'white',
     }
-} 
+}
 
 export const ColorThemes: ColorTheme[] = [
     LightTheme,
     DarkTheme
-] 
+]
