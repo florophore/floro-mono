@@ -2,7 +2,7 @@
   "version": "0.0.3",
   "name": "palette",
   "displayName": "Palette",
-  "description": "Simple plugin to organize colors.",
+  "description": "Something a little more profound. This is pretty cool though!",
   "icon": {
     "light": "./palette-plugin-icon.svg",
     "dark": "./palette-plugin-icon.svg"

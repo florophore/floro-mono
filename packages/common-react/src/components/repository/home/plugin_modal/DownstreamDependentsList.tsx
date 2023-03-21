@@ -1,6 +1,6 @@
 
 import React, { useMemo } from "react";
-import { Plugin, PluginVersion, Repository, useGetDependencyPluginsForPluginQuery } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import { Plugin, PluginVersion, Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 

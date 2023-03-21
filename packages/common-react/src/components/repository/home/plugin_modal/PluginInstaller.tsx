@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useEffect } from "react";
+import React, { useMemo, useCallback, useEffect, useRef } from "react";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import Button from "@floro/storybook/stories/design-system/Button";
@@ -18,9 +18,11 @@ import PluginDependencyList from "./PluginDependencyList";
 import PluginVersionNavigator from "./PluginVersionNavigator";
 import WarningLabel from "@floro/storybook/stories/design-system/WarningLabel";
 import { Manifest } from "@floro/floro-lib/src/plugins";
-import { transformLocalManifestToPartialPlugin } from "../../local/hooks/manifest-transforms";
+import { sortPluginVersions, transformLocalManifestToPartialPlugin } from "../../local/hooks/manifest-transforms";
 import DownstreamDependentsList from "./DownstreamDependentsList";
-import { useQueryClient } from "react-query";
+
+import WarningLight from "@floro/common-assets/assets/images/icons/warning.light.svg";
+import WarningDark from "@floro/common-assets/assets/images/icons/warning.dark.svg";
 
 const Container = styled.div`
   display: block;
@@ -52,19 +54,20 @@ const VersionInfoContainer = styled.div`
 const InstallContainer = styled.div`
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
   justify-content: space-between;
   align-items: flex-end;
-  flex-stretch: 1;
 `;
+// flex-grow: 1;
 
 const InstallVersionWrapper = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: space-between;
+  width: 100%;
   min-width: 320px;
 `;
+//min-width: 342px;
 
 const InstallerRow = styled.div`
   display: flex;
@@ -105,6 +108,15 @@ const SubTitle = styled.span`
   font-family: "MavenPro";
   font-weight: 500;
   font-size: 1rem;
+  color: ${(props) => props.theme.colors.pluginDisplaySubTitle};
+`;
+
+const VersionSubTitle = styled.span`
+  display: flex;
+  align-items: center;
+  font-family: "MavenPro";
+  font-weight: 600;
+  font-size: 1.1rem;
   color: ${(props) => props.theme.colors.pluginDisplaySubTitle};
 `;
 
@@ -149,6 +161,7 @@ interface Props {
   repository: Repository;
   onChangePluginVersion: (plugin: Plugin, pluginVersion: PluginVersion) => void;
   repoManifestList: Array<Manifest>;
+  developerPlugins: Array<Plugin>;
 }
 
 const PluginInstaller = (props: Props) => {
@@ -176,7 +189,34 @@ const PluginInstaller = (props: Props) => {
     return props.plugin;
   }, [fetchPluginRequest?.data, props.plugin]);
 
+  const developerPlugin = useMemo(() => {
+    if (
+      props?.developerPlugins
+    ) {
+      return props?.developerPlugins?.find(v => v.name == props.plugin.name) as Plugin;
+    }
+    return props.plugin;
+  }, [props?.developerPlugins, props.plugin]);
+
+  const developerPluginVersions = useMemo(() => {
+    if (developerPlugin) {
+      return (
+        developerPlugin?.versions?.filter?.((v) =>
+          v?.version?.startsWith("dev")
+        ) ?? ([] as Array<PluginVersion>)
+      );
+    }
+    return [];
+  }, [developerPlugin]);
+
   const pluginVersion = useMemo(() => {
+    if (developerPlugin && props.pluginVersion?.version?.startsWith("dev")) {
+      return (
+        developerPluginVersions?.find?.((v) => {
+          return v?.version == props.pluginVersion.version;
+        }) ?? props.pluginVersion
+      );
+    }
     if (
       fetchPluginRequest?.data?.getPlugin?.__typename == "FetchPluginResult"
     ) {
@@ -187,7 +227,13 @@ const PluginInstaller = (props: Props) => {
       );
     }
     return props.pluginVersion;
-  }, [fetchPluginRequest?.data, props.pluginVersion]);
+  }, [
+    fetchPluginRequest?.data,
+    props.pluginVersion,
+    developerPlugin,
+    developerPluginVersions,
+    props.developerPlugins,
+  ]);
 
   const isInstalled = useMemo(() => {
     for (const { key, value } of props?.apiReponse?.applicationState?.plugins ??
@@ -272,6 +318,20 @@ const PluginInstaller = (props: Props) => {
       }) as Array<[Plugin, PluginVersion]>;
   }, [downstreamPlugins, props.apiReponse.applicationState.plugins]);
 
+  const versions = useMemo(() => {
+    const mixedVersions: Array<PluginVersion> = [
+      ...((plugin?.versions?.filter((v) => !!v) as Array<PluginVersion>) ?? []),
+    ];
+    const mixedVersionSet = new Set(mixedVersions.map((v) => v?.version));
+    for (const developmentPluginVersion of developerPluginVersions) {
+      if (developmentPluginVersion && !mixedVersionSet.has(developmentPluginVersion?.version)) {
+        mixedVersions.push(developmentPluginVersion);
+        mixedVersionSet.add(developmentPluginVersion?.version);
+      }
+    }
+    return sortPluginVersions(mixedVersions);
+  }, [plugin.versions, developerPluginVersions])
+
   const onClickReleaseVersion = useCallback(
     (pluginVersion: PluginVersion) => {
       props.onChangePluginVersion(plugin, pluginVersion);
@@ -330,11 +390,22 @@ const PluginInstaller = (props: Props) => {
     updatePlugins.mutate(nextPlugins);
   }, [props.apiReponse, props.repository, plugin, pluginVersion, updatePlugins, isInstalled]);
 
+  const iconRef = useRef<HTMLImageElement>(null);
+  const onIconError = useCallback(() => {
+    if (iconRef.current) {
+      if (theme.name == "light") {
+        iconRef.current.src = WarningLight;
+        return;
+      }
+      iconRef.current.src = WarningDark;
+    }
+  }, [theme.name]);
+
   return (
     <Container>
       <TopContainer>
         <VersionInfoContainer>
-          <Icon src={icon} />
+          <Icon src={icon} onError={onIconError} ref={iconRef}/>
           <TitleWrapper>
             <Title>{pluginVersion?.displayName}</Title>
             <SubTitleWrapper>
@@ -347,9 +418,9 @@ const PluginInstaller = (props: Props) => {
         </VersionInfoContainer>
         <InstallContainer>
           <InstallVersionWrapper>
-            <SubTitle
+            <VersionSubTitle
               style={{ marginRight: 24 }}
-            >{`version ${pluginVersion?.version}`}</SubTitle>
+            >{`version ${pluginVersion?.version}`}</VersionSubTitle>
             {!isInstalled && (
               <Button
                 onClick={onInstallPlugin}
@@ -408,11 +479,8 @@ const PluginInstaller = (props: Props) => {
         />
       )}
       {pluginVersion?.pluginDependencies &&
-        pluginVersion?.id &&
         (pluginVersion?.pluginDependencies?.length ?? 0) > 0 && (
           <PluginDependencyList
-            pluginVersionId={pluginVersion.id}
-            dependencies={pluginVersion?.pluginDependencies as PluginVersion[]}
             onChangePluginVersion={props.onChangePluginVersion}
             dependencyComptability={
               compatabilityCheck?.data?.dependencies ?? []
@@ -424,7 +492,7 @@ const PluginInstaller = (props: Props) => {
         )}
       <PluginVersionNavigator
         onClickReleaseVersion={onClickReleaseVersion}
-        versions={(plugin?.versions ?? []) as PluginVersion[]}
+        versions={versions}
         currentVersion={pluginVersion as PluginVersion}
         linkPrefix={""}
         canRelease={false}

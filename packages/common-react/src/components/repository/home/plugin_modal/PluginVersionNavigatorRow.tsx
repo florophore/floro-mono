@@ -216,10 +216,10 @@ const PluginVersionNavigatorRow = (props: Props) => {
 
   return (
     <RowContainer onClick={onClickRelease} style={{ backgroundColor, borderColor }}>
-      <div style={{ flex: 1.2 }}>
+      <div style={{ flex: 1.8 }}>
         <VersionTitle>{props.version.version}</VersionTitle>
       </div>
-      <div style={{ flex: 2.2, paddingLeft: 12, boxSizing: "border-box" }}>
+      <div style={{ flex: 2.5, paddingLeft: 12, boxSizing: "border-box" }}>
         <ElapseTitle>{elapsedTime}</ElapseTitle>
       </div>
       <div style={{

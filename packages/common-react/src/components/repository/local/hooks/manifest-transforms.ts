@@ -160,6 +160,46 @@ const createPartialPluginVersionFromManifest = (
   return optimisticPluginVersion;
 };
 
+export const sortPluginVersions = (
+  pluginVersions: Array<PluginVersion>
+): Array<PluginVersion> => {
+  return pluginVersions.sort((a, b) => {
+    if (a.version == "dev") {
+      return -1;
+    }
+    if (b.version == "dev") {
+      return 1;
+    }
+    if (a?.version?.startsWith("dev@") && b?.version?.startsWith("dev@")) {
+      const [, aVer] = a.version.split("@");
+      const [, bVer] = b.version.split("@");
+      if (semver.eq(aVer as string, bVer as string)) {
+        return 0;
+      }
+      return semver.gt(aVer as string, bVer as string) ? -1 : 1;
+    }
+
+    if (a?.version?.startsWith("dev@")) {
+      const [, aVer] = a.version.split("@");
+      if (semver.eq(aVer as string, b.version as string)) {
+        return -1;
+      }
+      return semver.gt(aVer as string, b.version as string) ? -1 : 1;
+    }
+    if (b?.version?.startsWith("dev@")) {
+      const [, bVer] = b.version.split("@");
+      if (semver.eq(a.version as string, bVer as string)) {
+        return 1;
+      }
+      return semver.gt(a.version as string, bVer as string) ? -1 : 1;
+    }
+    if (semver.eq(a.version as string, b.version as string)) {
+      return 0;
+    }
+    return semver.gt(a.version as string, b.version as string) ? -1 : 1;
+  });
+};
+
 export const transformLocalManifestToPartialPlugin = (
   pluginName: string,
   pluginVersion: string,
@@ -173,24 +213,20 @@ export const transformLocalManifestToPartialPlugin = (
     manifestList
   );
 
-  const versions: Array<PluginVersion> = manifestList
-    .filter((versionManifest) => {
-      return versionManifest.name == manifest.name;
-    })
-    .map((versionManifest): PluginVersion => {
-      return createPartialPluginVersionFromManifest(
-        versionManifest.name,
-        versionManifest.version,
-        versionManifest,
-        manifestList
-      );
-    })
-    .sort((a, b) => {
-      if (semver.eq(a.version as string, b.version as string)) {
-        return 0;
-      }
-      return semver.gt(a.version as string, b.version as string) ? -1 : 1;
-    });
+  const versions: Array<PluginVersion> = sortPluginVersions(
+    manifestList
+      ?.filter?.((versionManifest) => {
+        return versionManifest.name == manifest.name;
+      })
+      ?.map?.((versionManifest): PluginVersion => {
+        return createPartialPluginVersionFromManifest(
+          versionManifest.name,
+          versionManifest.version,
+          versionManifest,
+          manifestList
+        );
+      }) ?? []
+  );
 
   const optimisticPlugin: Plugin = {
     __typename: "Plugin",

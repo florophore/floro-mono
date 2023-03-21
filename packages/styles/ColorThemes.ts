@@ -85,6 +85,9 @@ export interface ColorTheme {
     toggleColor: string;
     searchHighlightedBackground: string;
     updateAvailableTextColor: string;
+    pluginBorderDivider: string;
+    suggestedPluginBannerColor: string;
+    pluginDisplayNameTitleColor: string;
   };
   gradients: {
     backgroundNoOpacity: string;
@@ -186,6 +189,9 @@ export const LightTheme: ColorTheme = {
     toggleColor: palette.purple,
     searchHighlightedBackground: palette.lightGray,
     updateAvailableTextColor: palette.purple,
+    pluginBorderDivider: palette.mediumGray,
+    suggestedPluginBannerColor: palette.purple,
+    pluginDisplayNameTitleColor: palette.purple,
   },
   gradients: {
     backgroundNoOpacity: palette.lightModeBG.substring(0, 7) + Opacity[0],
@@ -287,6 +293,9 @@ export const DarkTheme: ColorTheme = {
         toggleColor: palette.lightPurple,
         searchHighlightedBackground: palette.mediumGray,
         updateAvailableTextColor: palette.lightPurple,
+        pluginBorderDivider: palette.white,
+        suggestedPluginBannerColor: palette.lightPurple,
+        pluginDisplayNameTitleColor: palette.lightPurple,
     },
     shadows: {
         modalContainer: palette.black.substring(0, 7) + Opacity[70],

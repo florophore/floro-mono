@@ -3,7 +3,7 @@ extend type Query {
     getPlugin(pluginName: String!): FetchPluginResponse
     checkPluginNameIsTaken(pluginName: String): PluginCheckResult
     searchPluginsForRepository(query: String, repositoryId: ID!): PluginSearchResult
-    getDependencyPluginsForPlugin(pluginVersionId: ID!): PluginDependencyResultResponse
+    fetchSuggestedPlugins: FetchSuggestedPluginsResponse
 }
 
 extend type Mutation {

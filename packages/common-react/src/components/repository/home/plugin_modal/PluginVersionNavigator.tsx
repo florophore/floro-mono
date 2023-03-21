@@ -8,7 +8,7 @@ import WarningLabel from "@floro/storybook/stories/design-system/WarningLabel";
 import { ApiReponse } from "@floro/floro-lib/src/repo";
 
 const SectionContainer = styled.div`
-  max-width: 682px;
+  max-width: 760px;
   margin-bottom: 48px;
 `;
 
@@ -54,7 +54,7 @@ const PluginVersionList = (props: Props) => {
       if (currentVersion && currentVersion.value == v.version) {
         return true;
       }
-      return v.state == "released" || index == 0;
+      return v.version?.startsWith("dev") || v.state == "released" || index == 0;
     });
   }, [props.versions, props.apiResponse.applicationState.plugins]);
 

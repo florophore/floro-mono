@@ -1,5 +1,5 @@
-import React, { useMemo, useEffect } from "react";
-import { Plugin, PluginVersion, Repository, useGetDependencyPluginsForPluginLazyQuery } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import React, { useMemo } from "react";
+import { Plugin, PluginVersion, Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import WarningLabel from "@floro/storybook/stories/design-system/WarningLabel";
@@ -83,7 +83,7 @@ const WarningImage = styled.img`
     margin-right: 12px
 `;
 
-const usePluginVersionDependecies = (repository: Repository, pluginVersion: PluginVersion) => {
+const usePluginVersionDependecies = (repository: Repository, pluginVersion: PluginVersion): [Array<Plugin>, Array<PluginVersion>] => {
   const pluginManifestList = usePluginManifestList(
     repository,
     pluginVersion.name as string,
@@ -101,25 +101,31 @@ const usePluginVersionDependecies = (repository: Repository, pluginVersion: Plug
   }, [pluginVersion, manifests]);
 
   return useMemo(() => {
-    return manifests.filter(m => {
+    const depTuple = manifests.filter(m => {
       if (!currentManifest) {
         return false;
       }
       return currentManifest.imports[m.name] == m?.version;
     }).map((manifest) => {
-      return transformLocalManifestToPartialPlugin(
+      const plugin = transformLocalManifestToPartialPlugin(
         manifest.name,
         manifest.version,
         manifest,
         manifests
       );
+      return [plugin, plugin.versions?.find(m => m?.version == manifest.version)] as [Plugin, PluginVersion];
     });
-  }, [manifests]);
+    const pluginsOut: Array<Plugin> = [];
+    const pluginVersionsOut: Array<PluginVersion> = [];
+    for (const entry of depTuple) {
+      pluginsOut.push(entry[0]);
+      pluginVersionsOut.push(entry[1]);
+    }
+    return [pluginsOut, pluginVersionsOut];
+  }, [manifests, repository, pluginVersion]);
 }
 
 export interface Props {
-  dependencies: PluginVersion[];
-  pluginVersionId: string;
   pluginVersion: PluginVersion;
   onChangePluginVersion: (plugin: Plugin, pluginVersion: PluginVersion) => void;
   dependencyComptability: Array<{
@@ -134,10 +140,23 @@ export interface Props {
 
 const PluginDependencyList = (props: Props) => {
   const theme = useTheme();
-  const dependencies = usePluginVersionDependecies(
+  const [pluginDependencies, pluginVersionDependecies] = usePluginVersionDependecies(
     props.repository,
     props.pluginVersion
   );
+
+  const pluginDependenciesWithImages = useMemo(() => {
+    return pluginVersionDependecies?.map((pd) => {
+      if (!pd.id) {
+        const remotePluginDep = props.pluginVersion.pluginDependencies?.find(v => v?.name == pd.name && v?.version == pd?.version);
+        if (remotePluginDep) {
+          return remotePluginDep;
+        }
+      }
+      return pd;
+    });
+
+  }, [pluginVersionDependecies, props.pluginVersion]);
 
   const hasIncompatibility = useMemo(() => {
     return props.dependencyComptability?.reduce?.((hasIncompatibility, compatibilityCheck) => {
@@ -159,7 +178,7 @@ const PluginDependencyList = (props: Props) => {
   }, [theme.name]);
 
   const rows = useMemo(() => {
-    return props.dependencies?.map((pluginVersion, index) => {
+    return pluginDependenciesWithImages?.map((pluginVersion, index) => {
       const icon =
         theme.name == "light"
           ? pluginVersion.selectedLightIcon ?? ""
@@ -176,10 +195,10 @@ const PluginDependencyList = (props: Props) => {
           key={index}
           style={{
             marginBottom:
-              index != (props?.dependencies?.length ?? 0) - 1 ? 18 : 0,
+              index != (pluginVersionDependecies?.length ?? 0) - 1 ? 18 : 0,
           }}
           onClick={() => {
-            const plugin = dependencies?.find(
+            const plugin = pluginDependencies?.find(
               (plugin: Plugin) => plugin.name == pluginVersion.name
             );
             const nextPluginVersion = (
@@ -204,12 +223,12 @@ const PluginDependencyList = (props: Props) => {
       );
     });
   }, [
+    pluginDependenciesWithImages,
     theme.name,
-    props.dependencies,
-    dependencies,
+    pluginDependencies,
     props.onChangePluginVersion,
     props.dependencyComptability,
-    warningIcon,
+    warningIcon
   ]);
   return (
     <SectionContainer>

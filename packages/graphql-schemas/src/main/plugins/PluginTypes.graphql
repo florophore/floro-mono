@@ -53,6 +53,12 @@ type FetchPluginResult {
 
 union FetchPluginResponse = FetchPluginResult | UnAuthenticatedError
 
+type FetchSuggestedPluginsResult {
+    plugins: [Plugin]
+}
+
+union FetchSuggestedPluginsResponse = FetchSuggestedPluginsResult | UnAuthenticatedError
+
 type PluginCheckResult {
     exists: Boolean
     pluginName: String

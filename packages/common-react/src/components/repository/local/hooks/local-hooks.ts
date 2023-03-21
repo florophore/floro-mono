@@ -1,8 +1,10 @@
+import { useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import axios, { AxiosResponse } from "axios";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { ApiReponse } from "@floro/floro-lib/src/repo";
 import { Manifest } from "@floro/floro-lib/src/plugins";
+import { useSession } from "../../../../session/session-context";
 
 export const useCurrentRepoState = (repository: Repository) => {
   return useQuery(
@@ -266,6 +268,62 @@ export const useCanUpdatePluginInRepo = (
         return result?.data ?? { canUpdate: false};
       } catch (e) {
         return { canUpdate: false};
+      }
+    },
+    {
+      cacheTime: 0,
+    }
+  );
+};
+
+export const usePossibleDevPlugins = (repository: Repository): Array<string> => {
+  const { currentUser } = useSession();
+  return useMemo(() => {
+    if (repository.repoType == "user_repo") {
+      return [
+        ...(currentUser?.privatePlugins ?? []),
+        ...(currentUser?.publicPlugins ?? []),
+      ].map((p) => p?.name as string);
+    }
+    if (!repository?.organization?.id) {
+      return [];
+    }
+    const organization = currentUser?.organizations?.find(
+      (o) => o?.id == repository?.organization?.id
+    );
+    if (!organization) {
+      return [];
+    }
+    return [
+      ...(organization?.privatePlugins ?? []),
+      ...(organization?.publicPlugins ?? []),
+    ].map((p) => p?.name as string);
+  }, [repository, currentUser]);
+};
+
+export const useRepoDevPlugins = (
+  repository: Repository
+) => {
+  const pluginNames = usePossibleDevPlugins(repository);
+  return useQuery(
+    "dev-plugins:" +
+      repository.id +
+      ":" +
+      pluginNames.join("-"),
+    async (): Promise<{ [pluginName: string]: {[version: string]: { isCompatible: boolean, manifest: Manifest}}}> => {
+      try {
+        if (!repository.id) {
+          return {};
+        }
+        const result = await axios.post(
+          `http://localhost:63403/repo/${repository.id}/developmentplugins`,
+          {
+            pluginNames
+          }
+        );
+        return result?.data ?? {};
+      } catch (e) {
+        return {};
       }
     },
     {

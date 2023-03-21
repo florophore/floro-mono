@@ -10,6 +10,7 @@ import debouncer from "lodash.debounce";
 import { ApiReponse } from "@floro/floro-lib/src/repo";
 import PluginInstaller from "./PluginInstaller";
 import { Manifest } from "@floro/floro-lib/src/plugins";
+import PluginSearchSplashScreen from "./PluginSearchSplashScreen";
 
 export interface Props {
   onDismiss: () => void;
@@ -20,6 +21,8 @@ export interface Props {
   onChangePluginVersion: (plugin?: Plugin, pluginVersion?: PluginVersion) => void;
   selectedPlugin?: Plugin;
   selectedPluginVersion?: PluginVersion;
+  developerPlugin: Array<Plugin>;
+  suggestedPlugin: Array<Plugin>;
 }
 
 const AddPluginsModal = (props: Props) => {
@@ -90,9 +93,17 @@ const AddPluginsModal = (props: Props) => {
             pluginVersion={props.selectedPluginVersion}
             onChangePluginVersion={props.onChangePluginVersion}
             repoManifestList={props.repoManifestList}
+            developerPlugins={props.developerPlugin}
           />
         )}
-        {!props.selectedPlugin && <>{"nothing"}</>}
+        {!props.selectedPlugin && (
+          <PluginSearchSplashScreen
+            apiReponse={props.apiReponse}
+            onChangePluginVersion={props.onChangePluginVersion}
+            developerPlugins={props.developerPlugin}
+            suggestedPlugins={props.suggestedPlugin}
+          />
+        )}
       </>
     </FindPluginModal>
   );

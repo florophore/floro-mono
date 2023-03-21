@@ -15,6 +15,8 @@ export interface Props {
   onChangePluginVersion: (plugin?: Plugin, pluginVersion?: PluginVersion) => void;
   selectedPlugin?: Plugin;
   selectedPluginVersion?: PluginVersion;
+  developerPlugin: Array<Plugin>;
+  suggestedPlugin: Array<Plugin>;
 }
 
 const RootFindPluginModal = (props: Props) => {
@@ -29,6 +31,8 @@ const RootFindPluginModal = (props: Props) => {
       onChangePluginVersion={props.onChangePluginVersion}
       selectedPlugin={props.selectedPlugin}
       selectedPluginVersion={props.selectedPluginVersion}
+      developerPlugin={props.developerPlugin}
+      suggestedPlugin={props.suggestedPlugin}
     />,
     target
   );

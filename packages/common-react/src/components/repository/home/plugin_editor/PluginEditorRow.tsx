@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useRef } from 'react';
 import { ApiReponse } from '@floro/floro-lib/src/repo';
 import { Repository, Plugin, useGetPluginQuery, PluginVersion  } from '@floro/graphql-schemas/src/generated/main-client-graphql';
 import styled from "@emotion/styled";
@@ -7,6 +7,9 @@ import EditIconLight from "@floro/common-assets/assets/images/icons/edit.light.s
 import EditIconDark from "@floro/common-assets/assets/images/icons/edit.dark.svg";
 import semver from 'semver';
 import { useCanUpdatePluginInRepo } from '../../local/hooks/local-hooks';
+
+import WarningLight from "@floro/common-assets/assets/images/icons/warning.light.svg";
+import WarningDark from "@floro/common-assets/assets/images/icons/warning.dark.svg";
 
 const Row = styled.div`
   display: flex;
@@ -96,7 +99,8 @@ interface Props {
     plugins: Array<Plugin>;
     pluginName: string;
     pluginVersion: string;
-    onChangePluginVersion: (plugin?: Plugin, pluginVersion?: PluginVersion) => void;
+    onChangePluginVersion?: (plugin?: Plugin, pluginVersion?: PluginVersion) => void;
+    isEditMode: boolean;
 }
 
 const PluginEditorRow = (props: Props) => {
@@ -167,13 +171,28 @@ const PluginEditorRow = (props: Props) => {
     }, [theme.name]);
 
     const onClickEditIcon = useCallback(() => {
-        props?.onChangePluginVersion?.(plugin, pluginVersion as PluginVersion);
-    }, [props.onChangePluginVersion, plugin, pluginVersion]);
+      if (!props.isEditMode) {
+        return;
+      }
+      props?.onChangePluginVersion?.(plugin, pluginVersion as PluginVersion);
+    }, [props.onChangePluginVersion, plugin, pluginVersion, props.isEditMode]);
+
+
+    const iconRef = useRef<HTMLImageElement>(null);
+    const onIconError = useCallback(() => {
+      if (iconRef.current) {
+        if (theme.name == "light") {
+          iconRef.current.src = WarningLight;
+          return;
+        }
+        iconRef.current.src = WarningDark;
+      }
+    }, [theme.name]);
 
     return (
         <Row>
             <LeftSide>
-                <Icon src={icon}/>
+                <Icon src={icon} ref={iconRef} onError={onIconError}/>
             </LeftSide>
             <CenterInfo>
                 <DisplayName>{pluginVersion?.displayName}</DisplayName>
@@ -191,7 +210,9 @@ const PluginEditorRow = (props: Props) => {
             <RightSide>
                 <VersionNumber>{pluginVersion?.version}</VersionNumber>
                 <EditIconContainer onClick={onClickEditIcon}>
+                  {props.isEditMode &&
                     <EditIcon src={editIcon}/>
+                  }
                 </EditIconContainer>
 
             </RightSide>

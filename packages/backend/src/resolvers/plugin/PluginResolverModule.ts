@@ -151,82 +151,23 @@ export default class PluginResolverModule extends BaseResolverModule {
         }
       }
     ),
-    getDependencyPluginsForPlugin: runWithHooks(
+    fetchSuggestedPlugins: runWithHooks(
       () => [this.loggedInUserGuard],
-      async (
-        _,
-        { pluginVersionId }: main.QueryGetDependencyPluginsForPluginArgs,
-        { currentUser, cacheKey }
-      ) => {
-        const pluginVersionsContext = await this.contextFactory.createContext(
-          PluginsVersionsContext
-        );
-        const pluginVersion = await pluginVersionsContext.getById(
-          pluginVersionId
-        );
-        if (!pluginVersion) {
-          return null;
-        }
-        if (
-          pluginVersion.isPrivate &&
-          pluginVersion?.ownerType == "user_plugin"
-        ) {
-          if (currentUser?.id != pluginVersion?.userId) {
-            return {
-              __typename: "UnAuthenticatedError",
-              type: "UNAUTHENTICATED_ERROR",
-              message: "Unauthenticated request",
-            };
-          }
-        }
-        if (pluginVersion?.ownerType == "org_plugin") {
-          const organizationContext = await this.contextFactory.createContext(
-            OrganizationsContext
-          );
-          const organization = await organizationContext.getById(
-            pluginVersion.organizationId
-          );
-          if (!organization) {
-            return null;
-          }
-          const organizationMembersContext =
-            await this.contextFactory.createContext(OrganizationMembersContext);
-          const membership =
-            await organizationMembersContext.getByOrgIdAndUserId(
-              pluginVersion.organizationId,
-              currentUser?.id ?? ""
-            );
-          if (membership) {
-            this.requestCache.setOrganizationMembership(
-              cacheKey,
-              organization,
-              currentUser,
-              membership
-            );
-          }
-          if (
-            pluginVersion.isPrivate &&
-            membership?.membershipState != "active"
-          ) {
-            return {
-              __typename: "UnAuthenticatedError",
-              type: "UNAUTHENTICATED_ERROR",
-              message: "Unauthenticated request",
-            };
-          }
-        }
-        const dependencyPluginIds =
-          pluginVersion.dependencies?.map?.(
-            (dependency) => dependency.dependencyPluginId
-          ) ?? [];
+      async () => {
         const pluginsContext = await this.contextFactory.createContext(
           PluginsContext
         );
-        const plugins = await pluginsContext.getByIds(dependencyPluginIds);
+        const suggestedPlugins = await Promise.all([
+          pluginsContext.getByName("palette"),
+          pluginsContext.getByName("theme"),
+          pluginsContext.getByName("icons"),
+        ]);
+
+        const plugins =  suggestedPlugins?.filter(v => v != null);
         return {
-          __typename: "PluginDependencyResult",
-          plugins,
-        };
+          __typename: "FetchSuggestedPluginsResult",
+          plugins
+        }
       }
     ),
     searchPluginsForRepository: async (_, { query, repositoryId }, context) => {

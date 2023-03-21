@@ -6,6 +6,7 @@ import { useCurrentLicenses } from "../local/hooks/local-hooks";
 import InputSelector from "@floro/storybook/stories/design-system/InputSelector";
 import { ApiReponse } from "@floro/floro-lib/src/repo";
 import ColorPalette from "@floro/styles/ColorPalette";
+import { Plugin } from '@floro/graphql-schemas/src/generated/main-client-graphql';
 
 const HeaderContainer = styled.div`
   display: flex;

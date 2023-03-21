@@ -1,0 +1,13 @@
+query FetchSuggestedPlugins {
+  fetchSuggestedPlugins {
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+    ...on FetchSuggestedPluginsResult {
+      plugins {
+         ...Plugin
+      }
+    }
+  }
+}

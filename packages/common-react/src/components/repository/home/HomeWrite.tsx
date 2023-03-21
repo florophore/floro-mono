@@ -12,10 +12,10 @@ import {
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import ColorPalette from "@floro/styles/ColorPalette";
-import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import { Repository, useFetchSuggestedPluginsQuery } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { ApiReponse } from "@floro/floro-lib/src/repo";
 import DotsLoader from "@floro/storybook/stories/design-system/DotsLoader";
-import { useRepoManifestList, useUpdateDescription, useUpdateLicenses } from "../local/hooks/local-hooks";
+import { usePossibleDevPlugins, useRepoDevPlugins, useRepoManifestList, useUpdateDescription, useUpdateLicenses } from "../local/hooks/local-hooks";
 import EditIconLight from "@floro/common-assets/assets/images/icons/edit.light.svg";
 import EditIconDark from "@floro/common-assets/assets/images/icons/edit.dark.svg";
 import RedXLight from "@floro/common-assets/assets/images/icons/red_x_circle.light.svg";
@@ -250,13 +250,58 @@ const HomeWrite = (props: Props) => {
 
   const queryClient = useQueryClient();
   const repoManifestList = useRepoManifestList(props.repository);
+  const devPluginsRequest = useRepoDevPlugins(props.repository);
+
+  const suggestedPluginsFetch = useFetchSuggestedPluginsQuery({
+    fetchPolicy: 'cache-first'
+  });
+
+  const suggestedPlugins = useMemo(() => {
+    if (suggestedPluginsFetch?.data?.fetchSuggestedPlugins?.__typename == "FetchSuggestedPluginsResult") {
+      return (suggestedPluginsFetch?.data?.fetchSuggestedPlugins?.plugins ?? []) as Array<Plugin>;
+    }
+    return [] as Array<Plugin>;
+  }, [suggestedPluginsFetch?.data?.fetchSuggestedPlugins])
+
+  const manifestList = useMemo(() => {
+    const devManifestList: Array<Manifest> = [];
+    for (const pluginName in (devPluginsRequest?.data ?? {})) {
+      const versions = devPluginsRequest?.data?.[pluginName] ?? {};
+      for (const version in versions) {
+        if (versions?.[version]?.manifest) {
+          devManifestList.push(versions?.[version]?.manifest)
+        }
+      }
+    }
+    return [...(repoManifestList?.data ?? []), ...devManifestList];
+  }, [repoManifestList?.data, devPluginsRequest]);
+
+  const developerPlugins = useMemo(() => {
+    if (!devPluginsRequest?.data) {
+      return [];
+    }
+    const devPluginList: Array<Plugin> = [];
+    for (const pluginName in devPluginsRequest?.data) {
+      const versions = devPluginsRequest?.data[pluginName];
+      if (Object.keys(versions)[0]) {
+        const devPlugin = transformLocalManifestToPartialPlugin(
+          pluginName,
+          Object.keys(versions)[0],
+          versions?.[Object.keys(versions)[0]]?.manifest,
+          manifestList
+        );
+        devPluginList.push(devPlugin);
+      }
+    }
+    return devPluginList;
+  }, [manifestList, devPluginsRequest]);
 
   const installedPlugins = useMemo(() => {
-    if (!repoManifestList?.data) {
+    if (!manifestList) {
       return [];
     }
     return props.apiResponse.applicationState.plugins.map((pluginKV) => {
-      const manifest = repoManifestList.data.find(
+      const manifest = manifestList.find(
         (v) => v.name == pluginKV.key && v.version == pluginKV.value
       );
       if (!manifest) {
@@ -266,10 +311,11 @@ const HomeWrite = (props: Props) => {
         pluginKV.key,
         pluginKV.value,
         manifest as Manifest,
-        repoManifestList?.data
+        manifestList
       );
-    })?.filter(v => v != null) as Array<Plugin>;
-  }, [repoManifestList, props.apiResponse.applicationState.plugins]);
+    })
+    ?.filter(v => v != null) as Array<Plugin>;
+  }, [manifestList, props.apiResponse.applicationState.plugins]);
 
   useEffect(() => {
     queryClient.invalidateQueries(["manifest-list:" + props.repository.id])
@@ -468,15 +514,16 @@ const HomeWrite = (props: Props) => {
             onClick={onShowSearchPlugin}
           />
         </SectionRow>
-        <BlurbBox style={{ paddingTop: 0, paddingBottom: 0 }}>
-          {installedPlugins.length > 0 && (
-            <PluginEditor
-              repository={props.repository}
-              apiReponse={props.apiResponse}
-              plugins={installedPlugins}
-              onChangePluginVersion={onChangePluginVersionFromPluginEditor}
-            />
-          )}
+        <BlurbBox style={{ padding: 0}}>
+          <PluginEditor
+            repository={props.repository}
+            apiReponse={props.apiResponse}
+            plugins={installedPlugins}
+            onChangePluginVersion={onChangePluginVersionFromPluginEditor}
+            isEditMode={true}
+            developerPlugins={developerPlugins}
+            suggestedPlugins={suggestedPlugins}
+          />
         </BlurbBox>
       </BigSectionContainer>
       <AddLicenseModal
@@ -491,10 +538,12 @@ const HomeWrite = (props: Props) => {
         show={showSearchPlugin}
         apiReponse={props.apiResponse}
         repository={props.repository}
-        repoManifestList={repoManifestList?.data ?? []}
+        repoManifestList={manifestList}
         onChangePluginVersion={onChangePluginVersion}
         selectedPlugin={selectedPlugin}
         selectedPluginVersion={selectedPluginVersion}
+        developerPlugin={developerPlugins}
+        suggestedPlugin={suggestedPlugins}
       />
     </Container>
   );

@@ -10,6 +10,10 @@ import PluginDependencyList from "@floro/storybook/stories/common-components/Plu
 import PluginVersionList from "@floro/storybook/stories/common-components/PluginVersionList";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { ApiReponse } from "@floro/floro-lib/src/repo";
+import { useRepoDevPlugins, useRepoManifestList } from "../local/hooks/local-hooks";
+import { Manifest } from "@floro/floro-lib/src/plugins";
+import { transformLocalManifestToPartialPlugin } from "../local/hooks/manifest-transforms";
+import PluginEditor from "./plugin_editor/PluginEditor";
 
 const Container = styled.div`
   height: 100%;
@@ -163,6 +167,64 @@ interface Props {
 }
 
 const HomeRead = (props: Props) => {
+
+  const repoManifestList = useRepoManifestList(props.repository);
+  const devPluginsRequest = useRepoDevPlugins(props.repository);
+
+  const manifestList = useMemo(() => {
+    const devManifestList: Array<Manifest> = [];
+    for (const pluginName in (devPluginsRequest?.data ?? {})) {
+      const versions = devPluginsRequest?.data?.[pluginName] ?? {};
+      for (const version in versions) {
+        if (versions?.[version]?.manifest) {
+          devManifestList.push(versions?.[version]?.manifest)
+        }
+      }
+    }
+    return [...(repoManifestList?.data ?? []), ...devManifestList];
+  }, [repoManifestList?.data, devPluginsRequest]);
+
+  const developerPlugins = useMemo(() => {
+    if (!devPluginsRequest?.data) {
+      return [];
+    }
+    const devPluginList: Array<Plugin> = [];
+    for (const pluginName in devPluginsRequest?.data) {
+      const versions = devPluginsRequest?.data[pluginName];
+      if (Object.keys(versions)[0]) {
+        const devPlugin = transformLocalManifestToPartialPlugin(
+          pluginName,
+          Object.keys(versions)[0],
+          versions?.[Object.keys(versions)[0]]?.manifest,
+          manifestList
+        );
+        devPluginList.push(devPlugin);
+      }
+    }
+    return devPluginList;
+  }, [manifestList, devPluginsRequest]);
+
+  const installedPlugins = useMemo(() => {
+    if (!manifestList) {
+      return [];
+    }
+    return props.apiResponse.applicationState.plugins.map((pluginKV) => {
+      const manifest = manifestList.find(
+        (v) => v.name == pluginKV.key && v.version == pluginKV.value
+      );
+      if (!manifest) {
+        return null;
+      }
+      return transformLocalManifestToPartialPlugin(
+        pluginKV.key,
+        pluginKV.value,
+        manifest as Manifest,
+        manifestList
+      );
+    })
+    ?.filter(v => v != null) as Array<Plugin>;
+  }, [manifestList, props.apiResponse.applicationState.plugins]);
+
   const description = useMemo((): string => {
     if ((props?.apiResponse?.applicationState?.description?.length ?? 0) == 0) {
       return "No description";
@@ -175,8 +237,8 @@ const HomeRead = (props: Props) => {
   }, [props.apiResponse]);
 
   const hasNoPlugins = useMemo(() => {
-    return (props?.apiResponse?.applicationState?.plugins?.length ?? 0) == 0;
-  }, [props.apiResponse]);
+    return (installedPlugins?.length ?? 0) == 0;
+  }, [installedPlugins]);
 
   return (
     <Container>
@@ -217,11 +279,21 @@ const HomeRead = (props: Props) => {
             <SectionTitle>{"Installed Plugins"}</SectionTitle>
           </SectionTitleWrapper>
         </SectionRow>
-        <BlurbBox style={{ paddingTop: 0, paddingBottom: 0 }}>
+        <BlurbBox style={{ padding: 0}}>
           {hasNoPlugins && (
             <NoLicenseContainer>
               <NoLicensesText>{"No plugins installed"}</NoLicensesText>
             </NoLicenseContainer>
+          )}
+          {installedPlugins.length > 0 && (
+            <PluginEditor
+              repository={props.repository}
+              apiReponse={props.apiResponse}
+              plugins={installedPlugins}
+              isEditMode={false}
+              developerPlugins={developerPlugins}
+              suggestedPlugins={[]}
+            />
           )}
         </BlurbBox>
       </BigSectionContainer>
