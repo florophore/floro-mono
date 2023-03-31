@@ -1,8 +1,7 @@
 {
-  "version": "0.0.3",
+  "version": "0.0.0",
   "name": "palette",
-  "displayName": "Palette",
-  "description": "Something a little more profound. This is pretty cool though!",
+  "displayName": "palette",
   "icon": {
     "light": "./palette-plugin-icon.svg",
     "dark": "./palette-plugin-icon.svg"
@@ -10,29 +9,58 @@
   "imports": {},
   "types": {
     "Color": {
-      "name": {
-        "type": "string",
-        "isKey": true
+      "id": {
+        "isKey": true,
+        "type": "string"
       },
-      "hexcode": {
+      "name": {
         "type": "string"
       }
     },
-    "Opacity": {
-      "percentage": {
-        "type": "int",
-        "isKey": true
+    "Shade": {
+      "id": {
+        "isKey": true,
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
       }
     }
   },
   "store": {
+    "shades": {
+      "type": "set",
+      "values": "Shade"
+    },
     "colors": {
       "type": "set",
       "values": "Color"
     },
-    "opacities": {
+    "palette": {
       "type": "set",
-      "values": "Opacity"
+      "values": {
+        "id": {
+          "isKey": true,
+          "type": "ref<Color>"
+        },
+        "colors": {
+          "type": "set",
+          "values": {
+            "id": {
+              "isKey": true,
+              "type": "ref<Shade>"
+            },
+            "hexcode": {
+              "nullable": true,
+              "type": "string"
+            },
+            "alpha": {
+              "nullable": true,
+              "type": "int"
+            }
+          }
+        }
+      }
     }
   }
 }

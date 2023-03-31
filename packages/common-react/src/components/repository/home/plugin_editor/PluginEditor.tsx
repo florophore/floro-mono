@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo } from "react";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import { ApiReponse } from "@floro/floro-lib/src/repo";
@@ -60,7 +60,7 @@ interface Props {
     pluginVersion?: PluginVersion
   ) => void;
   developerPlugins: Array<Plugin>;
-  suggestedPlugins: Array<Plugin>;
+  suggestedPlugins?: Array<Plugin>;
   isEditMode: boolean;
 }
 
@@ -78,15 +78,24 @@ const PluginEditor = (props: Props) => {
     const seen = new Set(
       props.apiReponse?.applicationState?.plugins?.map?.((v) => v.key) ?? []
     );
-    return props?.suggestedPlugins?.filter((sp) => !seen.has(sp?.name ?? ""));
+    return (
+      (props?.suggestedPlugins?.filter?.(
+        (sp) => !seen.has(sp?.name ?? "")
+      ) as Array<Plugin>) ?? []
+    );
   }, [props.apiReponse?.applicationState?.plugins, props?.suggestedPlugins]);
 
   const showTopDividerForSuggestedPlugin = useMemo(() => {
-    return suggestedPlugins?.length > 0 && (
-      props.apiReponse.applicationState.plugins?.length > 0 ||
-      (props.developerPlugins?.length ?? 0) > 0
+    return (
+      suggestedPlugins?.length > 0 &&
+      (props.apiReponse.applicationState.plugins?.length > 0 ||
+        (props.developerPlugins?.length ?? 0) > 0)
     );
-  }, [props.apiReponse.applicationState.plugins, props.developerPlugins, suggestedPlugins]);
+  }, [
+    props.apiReponse.applicationState.plugins,
+    props.developerPlugins,
+    suggestedPlugins,
+  ]);
 
   return (
     <div>
@@ -153,7 +162,7 @@ const PluginEditor = (props: Props) => {
                 {"suggested plugins"}
               </DevelopmentPluginsTitle>
               <DevelopmentPluginsList>
-                {suggestedPlugins?.map((developerPlugin, index) => {
+                {suggestedPlugins?.map?.((developerPlugin, index) => {
                   return (
                     <PreviewPlugin
                       developmentPlugin={developerPlugin}

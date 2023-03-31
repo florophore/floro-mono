@@ -123,8 +123,21 @@ const ToggleIcon = styled.img`
   margin-left: 4px;
 `;
 
+const OuterShadow = styled.div`
+  height: 100px;
+  width: 0px;
+  top: 72px;
+  left: -2px;
+  position: absolute;
+  height: calc(100% - 72px);
+  box-shadow: -2px 4px 3px 4px ${props => props.theme.shadows.versionControlSideBarShadow};
+  transform: opacity 400ms;
+`;
+
 interface Props {
   repository: Repository;
+  isExpanded: boolean;
+  onSetIsExpanded: (isExpanded: boolean) => void;
 }
 
 const useRepoExistsLocally = (repository: Repository) => {
@@ -168,16 +181,15 @@ const VersionControlPanel = (props: Props) => {
   }, [props.repository?.id]);
   const theme = useTheme();
   const isDaemonConnected = useDaemonIsConnected();
-  const [isExpanded, setIsExpanded] = useState(false);
   const adjustIcon = useMemo(
-    () => (isExpanded ? AdjustShrink : AdjustExtend),
-    [isExpanded]
+    () => (props.isExpanded ? AdjustShrink : AdjustExtend),
+    [props.isExpanded]
   );
 
   useEffect(() => {
     // open expansion on load
     const timeout = setTimeout(() => {
-      setIsExpanded(true);
+      props.onSetIsExpanded(true);
     }, 150);
     return () => {
       clearTimeout(timeout);
@@ -194,11 +206,11 @@ const VersionControlPanel = (props: Props) => {
   }, [searchParams, isDaemonConnected]);
 
   const onTogglePanel = useCallback(() => {
-    setIsExpanded(!isExpanded);
-  }, [isExpanded]);
+    props.onSetIsExpanded(!props.isExpanded);
+  }, [props.isExpanded]);
 
   const panelStyle = useMemo(() => {
-    if (isExpanded) {
+    if (props.isExpanded) {
       return {
         borderLeft: `1px solid ${theme.colors.versionControllerBorderColor}`,
       };
@@ -206,10 +218,10 @@ const VersionControlPanel = (props: Props) => {
     return {
       borderLeft: `0px solid ${theme.colors.versionControllerBorderColor}`,
     };
-  }, [isExpanded, theme]);
+  }, [props.isExpanded, theme]);
 
   const innerStyle = useMemo(() => {
-    if (isExpanded) {
+    if (props.isExpanded) {
       return {
         width: 503,
       };
@@ -217,10 +229,10 @@ const VersionControlPanel = (props: Props) => {
     return {
       width: 0,
     };
-  }, [isExpanded, theme]);
+  }, [props.isExpanded, theme]);
 
   const iconOffset = useMemo(() => {
-    if (isExpanded) {
+    if (props.isExpanded) {
       return {
         left: -41,
       };
@@ -228,10 +240,10 @@ const VersionControlPanel = (props: Props) => {
     return {
       left: -40,
     };
-  }, [isExpanded, theme]);
+  }, [props.isExpanded, theme]);
 
   const remoteIconsOffset = useMemo(() => {
-    if (isExpanded) {
+    if (props.isExpanded) {
       return {
         transform: "translate(0px, -180px)",
       };
@@ -239,10 +251,10 @@ const VersionControlPanel = (props: Props) => {
     return {
       transform: "translate(0px, 0px)",
     };
-  }, [isExpanded, theme]);
+  }, [props.isExpanded, theme]);
 
   const localIconsOffset = useMemo(() => {
-    if (isExpanded) {
+    if (props.isExpanded) {
       return {
         transform: "translate(0px, -128px)",
       };
@@ -250,7 +262,14 @@ const VersionControlPanel = (props: Props) => {
     return {
       transform: "translate(0px, 0px)",
     };
-  }, [isExpanded, theme]);
+  }, [props.isExpanded, theme]);
+
+  const shadowOpacity = useMemo(() => {
+    if (props.isExpanded) {
+      return 1;
+    }
+    return 0;
+  }, [props.isExpanded]);
 
   const onToggleFrom = useCallback((from: "local"|"remote") => {
     const params = {};
@@ -322,6 +341,7 @@ const VersionControlPanel = (props: Props) => {
           </BottomContainer>
         </InnerContainerContent>
       </InnerContainer>
+      <OuterShadow style={{opacity: shadowOpacity}}/>
       <AdjustIconWrapper onClick={onTogglePanel} style={iconOffset}>
         <AdjustIcon src={adjustIcon} />
       </AdjustIconWrapper>

@@ -106,6 +106,29 @@ export const useUpdatePlugins = (repository: Repository) => {
   });
 };
 
+
+export const useUpdatePluginState = (pluginName: string, repository: Repository) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ state, id, pluginName: pluginNameToUpdate}: {state: unknown, id: string, pluginName: string}): Promise<{id: string, result: ApiReponse}> => {
+      const result = await axios.post<ApiReponse>(
+        `http://localhost:63403/repo/${repository.id}/plugin/${pluginName}/state`,
+        {
+          state,
+          pluginName: pluginNameToUpdate
+        }
+      );
+      return {
+        id,
+        result: result?.data
+      }
+    },
+    onSuccess: ({result}) => {
+      queryClient.setQueryData(["repo-current:" + repository.id], result);
+    }
+  });
+};
+
 export interface PluginCompatability {
   pluginName: string;
   pluginVersion: string;

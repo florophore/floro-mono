@@ -1,3 +1,4 @@
+import { Manifest } from "./plugins";
 import { Diff, StringDiff } from "./versioncontrol";
 
 export interface RepoState {
@@ -123,6 +124,7 @@ export interface ApiStoreInvalidity {
 export interface ApiReponse {
   repoState: RepoState;
   applicationState: RenderedApplicationState;
+  schemaMap: {[key: string]: Manifest};
   beforeState?: RenderedApplicationState;
   apiDiff?: ApiDiff;
   apiStoreInvalidity?: ApiStoreInvalidity;

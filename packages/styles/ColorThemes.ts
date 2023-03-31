@@ -88,6 +88,9 @@ export interface ColorTheme {
     pluginBorderDivider: string;
     suggestedPluginBannerColor: string;
     pluginDisplayNameTitleColor: string;
+    pluginSelected: string;
+    pluginUnSelected: string;
+    pluginTitle: string;
   };
   gradients: {
     backgroundNoOpacity: string;
@@ -98,6 +101,7 @@ export interface ColorTheme {
     innerDropdown: string;
     outerDropdown: string;
     localRemoteSelected: string;
+    versionControlSideBarShadow: string;
   };
   loaders: {
     googleButtonLoader: keyof ColorPalette;
@@ -167,7 +171,7 @@ export const LightTheme: ColorTheme = {
     repoBriefRowUpdateColor: palette.gray,
     pluginIconTextColor: palette.purple,
     versionControllerBorderColor: palette.mediumGray,
-    localRemoteBorderColor: palette.mediumGray,
+    localRemoteBorderColor: palette.gray,
     localRemoteTextColor: palette.gray,
     localRemoteSelectedTextColor: palette.white,
     localRemoteSelectedBackgroundColor: palette.teal,
@@ -192,6 +196,9 @@ export const LightTheme: ColorTheme = {
     pluginBorderDivider: palette.mediumGray,
     suggestedPluginBannerColor: palette.purple,
     pluginDisplayNameTitleColor: palette.purple,
+    pluginSelected: palette.purple,
+    pluginUnSelected: palette.lightPurple,
+    pluginTitle: palette.purple,
   },
   gradients: {
     backgroundNoOpacity: palette.lightModeBG.substring(0, 7) + Opacity[0],
@@ -202,6 +209,7 @@ export const LightTheme: ColorTheme = {
     innerDropdown: palette.mediumGray.substring(0, 7) + Opacity[100],
     outerDropdown: palette.black.substring(0, 7) + Opacity[50],
     localRemoteSelected: palette.darkGray.substring(0, 7) + Opacity[50],
+    versionControlSideBarShadow: palette.darkGray.substring(0, 7) + Opacity[20],
   },
   loaders: {
     googleButtonLoader: "gray",
@@ -296,12 +304,16 @@ export const DarkTheme: ColorTheme = {
         pluginBorderDivider: palette.white,
         suggestedPluginBannerColor: palette.lightPurple,
         pluginDisplayNameTitleColor: palette.lightPurple,
+        pluginSelected: palette.lightPurple,
+        pluginUnSelected: palette.white,
+        pluginTitle: palette.lightPurple,
     },
     shadows: {
         modalContainer: palette.black.substring(0, 7) + Opacity[70],
         innerDropdown: palette.black.substring(0, 7) + Opacity[70],
         outerDropdown: palette.black.substring(0, 7) + Opacity[50],
         localRemoteSelected: palette.darkGray.substring(0, 7) + Opacity[50],
+        versionControlSideBarShadow: palette.black.substring(0, 7) + Opacity[50],
     },
     gradients: {
       backgroundNoOpacity: palette.darkModeBG.substring(0, 7) + Opacity[0],

@@ -1,8 +1,6 @@
-import React, { useMemo } from "react";
+import React, { useState, useCallback } from "react";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import styled from "@emotion/styled";
-import { useTheme } from "@emotion/react";
-import ColorPalette from "@floro/styles/ColorPalette";
 import RepoSideNavigator from "./RepoSideNavigator";
 import VersionControlPanel from "./VersionControlPanel";
 
@@ -25,27 +23,29 @@ const ContentContainer = styled.div`
 
 const Content = styled.div`
   max-height: 100%;
+  flex: 1;
 `;
-
 
 interface Props {
   repository: Repository;
   plugin: string;
   children: React.ReactElement;
+  isExpanded: boolean;
+  onSetIsExpanded: (isExpanded: boolean) => void;
 }
 
 const RepoNavigator = (props: Props): React.ReactElement => {
-  const theme = useTheme();
-
   return (
     <Container>
-      <RepoSideNavigator repository={props.repository} plugin={props.plugin}/>
+      <RepoSideNavigator repository={props.repository} plugin={props.plugin} />
       <ContentContainer>
-        <Content>
-          {props.children}
-        </Content>
+        <Content>{props.children}</Content>
       </ContentContainer>
-      <VersionControlPanel repository={props.repository} />
+      <VersionControlPanel
+        isExpanded={props.isExpanded}
+        onSetIsExpanded={props.onSetIsExpanded}
+        repository={props.repository}
+      />
     </Container>
   );
 };
