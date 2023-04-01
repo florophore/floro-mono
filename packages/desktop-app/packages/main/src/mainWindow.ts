@@ -18,7 +18,7 @@ async function createWindow() {
     height: 900,
     width: 1200,
     minHeight: 800,
-    minWidth: 1000,
+    minWidth: 1050,
     webPreferences: {
       webSecurity: false,
       nodeIntegration: false,
@@ -110,7 +110,7 @@ async function createWindow() {
     });
   });
   /***
-   * 
+   *
    * https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A//www.googleapis.com/auth/userinfo.email%20https://www.googleapis.com/auth/userinfo.profile&include_granted_scopes=true&response_type=code&redirect_uri=http%3A//localhost:9000/oauth/google/callback&client_id=417722275204-e8n6h2vqcgnbnj7uuj3p561ij5sqn3tg.apps.googleusercontent.com
    */
 

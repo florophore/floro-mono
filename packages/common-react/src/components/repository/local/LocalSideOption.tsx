@@ -11,6 +11,9 @@ import { useTheme } from "@emotion/react";
 import ColorPalette from "@floro/styles/ColorPalette";
 import WarningLight from "@floro/common-assets/assets/images/icons/warning.light.svg";
 import WarningDark from "@floro/common-assets/assets/images/icons/warning.dark.svg";
+
+import XCircleLight from "@floro/common-assets/assets/images/icons/red_x_circle.light.svg";
+import XCircleDark from "@floro/common-assets/assets/images/icons/red_x_circle.dark.svg";
 import { useQueryClient } from "react-query";
 import { useCurrentRepoState, useRepoDevPlugins, useRepoManifestList } from "./hooks/local-hooks";
 import { Manifest } from "@floro/floro-lib/src/plugins";
@@ -69,10 +72,20 @@ const NavIconWrapper = styled.div`
   position: relative;
 `;
 
-
+const XCircleImage = styled.img`
+  position: absolute;
+  right: 6px;
+  top: 0px;
+  height: 20px;
+  width: 20px;
+  border: 2px solid ${ColorPalette.white};
+  border-radius: 50%;
+  background: ${props => props.theme.background};
+`;
 
 interface Props {
     isSelected: boolean;
+    isInvalid: boolean;
     locationPath: string;
     plugin: Plugin;
 }
@@ -91,6 +104,13 @@ const LocalSideOption = (props: Props): React.ReactElement => {
           : (props.plugin.darkIcon as string),
       [props.plugin, theme.name]
     );
+
+    const xCircle = useMemo(() => {
+      if (theme.name == "light") {
+        return WarningLight;
+      }
+      return WarningDark;
+    }, [theme.name]);
 
     const iconRef = useRef<HTMLImageElement>(null);
     const onIconError = useCallback(() => {
@@ -121,6 +141,9 @@ const LocalSideOption = (props: Props): React.ReactElement => {
                     {props.plugin.displayName}
                   </NavText>
                 </NavIconWrapper>
+                {props.isInvalid &&
+                  <XCircleImage src={xCircle}/>
+                }
               </Link>
             </NavOption>
     );

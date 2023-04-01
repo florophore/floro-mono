@@ -153,6 +153,14 @@ const LocalSideNavigator = (props: Props): React.ReactElement => {
       : PluginSettingsUnSelectedDark;
   }, [props.plugin, theme.name]);
 
+  const invalidityMap = useMemo(() => {
+    const out: { [key: string]: boolean} = {};
+    for (const plugin in apiResponse?.apiStoreInvalidity) {
+      out[plugin] = (apiResponse?.apiStoreInvalidity?.[plugin] ?? []).length > 0;
+    }
+    return out;
+  }, [apiResponse]);
+
   return (
     <Navigator>
       <NavOptionList>
@@ -198,12 +206,14 @@ const LocalSideNavigator = (props: Props): React.ReactElement => {
         </NavOption>
         {installedPlugins.map((plugin, index) => {
             const isSelected = props.plugin == plugin.name;
+            const isInvalid = invalidityMap[plugin?.name as string];
             return (
                 <LocalSideOption
                 locationPath={location.pathname}
                 plugin={plugin}
                 isSelected={isSelected}
                 key={index}
+                isInvalid={isInvalid}
                 />
             );
         })}

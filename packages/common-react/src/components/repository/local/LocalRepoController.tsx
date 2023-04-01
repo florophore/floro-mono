@@ -43,6 +43,8 @@ const LocalRepoController = (props: Props) => {
       updateCommandState.mutate("view")
     } else if (data?.repoState?.commandMode == "view") {
       updateCommandState.mutate("edit")
+    } else if (data?.repoState?.commandMode == "compare") {
+      updateCommandState.mutate("view")
     }
   }, [data?.repoState?.commandMode, updateCommandState]);
 
@@ -57,6 +59,7 @@ const LocalRepoController = (props: Props) => {
       window.removeEventListener("keydown", commandToggleListeners);
     };
   }, [onToggleCommandMode]);
+
   return (
     <>
       {!data && (
@@ -66,12 +69,14 @@ const LocalRepoController = (props: Props) => {
       )}
       {data && (
         <>
-          <LocalRepoSubHeader repository={props.repository} />
+          <LocalRepoSubHeader repository={props.repository}  plugin={props.plugin}/>
           {props.plugin == "home" && data?.repoState?.commandMode == "view" && (
-            <HomeRead repository={props.repository} apiResponse={data} />
+            <HomeRead
+             repository={props.repository} apiResponse={data} />
           )}
           {props.plugin == "home" && data?.repoState?.commandMode == "edit" && (
-            <HomeWrite repository={props.repository} apiResponse={data} />
+            <HomeWrite
+             repository={props.repository} apiResponse={data} />
           )}
           {props.plugin != "home" &&
             props.plugin != "settings" &&
@@ -82,6 +87,7 @@ const LocalRepoController = (props: Props) => {
                 apiResponse={data}
                 isExpanded={props.isExpanded}
                 onSetIsExpanded={props.onSetIsExpanded}
+                onToggleCommandMode={onToggleCommandMode}
               />
             )}
         </>

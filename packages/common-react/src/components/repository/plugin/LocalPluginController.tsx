@@ -15,6 +15,7 @@ interface Props {
   repository: Repository;
   isExpanded: boolean;
   onSetIsExpanded: (isExpanded: boolean) => void;
+  onToggleCommandMode: () => void;
 }
 
 interface Packet {
@@ -65,19 +66,9 @@ const LocalPluginController = (props: Props) => {
     props.pluginName,
     props.repository
   );
-  const updateCommandState = useUpdateCurrentCommand(props.repository);
-
   const onToggleVCSContainer = useCallback(() => {
     props.onSetIsExpanded(!props.isExpanded);
   }, [props.isExpanded, props.onSetIsExpanded]);
-
-  const onToggleCommandMode = useCallback(() => {
-    if (props.apiResponse.repoState.commandMode == "edit") {
-      updateCommandState.mutate("view")
-    } else if (props.apiResponse.repoState.commandMode == "view") {
-      updateCommandState.mutate("edit")
-    }
-  }, [props.apiResponse.repoState.commandMode, updateCommandState]);
 
   useEffect(() => {
     setHasLoaded(false);
@@ -168,7 +159,7 @@ const LocalPluginController = (props: Props) => {
           return;
       }
       if (data == "toggle-command-mode") {
-          onToggleCommandMode();
+          props.onToggleCommandMode();
           return;
       }
       if (!incoming[data.id]) {
@@ -194,7 +185,7 @@ const LocalPluginController = (props: Props) => {
     return () => {
       window.removeEventListener("message", onMessage, true);
     };
-  }, [props.pluginName, onToggleVCSContainer, onToggleCommandMode]);
+  }, [props.pluginName, onToggleVCSContainer, props.onToggleCommandMode]);
 
   if (!iframeUri) {
     return <div>{"missing plugin"}</div>;

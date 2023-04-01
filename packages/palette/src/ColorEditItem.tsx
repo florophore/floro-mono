@@ -96,7 +96,7 @@ const ColorEditItem = (props: ColorItemProps) => {
         setColor(
           {
             id: color.id,
-            name,
+            name: name.trimStart(),
           },
           true
         );

@@ -96,7 +96,7 @@ const ShadeEditItem = (props: ShadeItemProps) => {
         setShade(
           {
             id: shade.id,
-            name,
+            name: name.trimStart(),
           },
           true
         );
