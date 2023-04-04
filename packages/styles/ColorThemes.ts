@@ -91,6 +91,8 @@ export interface ColorTheme {
     pluginSelected: string;
     pluginUnSelected: string;
     pluginTitle: string;
+    sourceGraphNodeOutline: string;
+    sourceGraphNodeBranchlessOutline: string;
   };
   gradients: {
     backgroundNoOpacity: string;
@@ -199,6 +201,8 @@ export const LightTheme: ColorTheme = {
     pluginSelected: palette.purple,
     pluginUnSelected: palette.lightPurple,
     pluginTitle: palette.purple,
+    sourceGraphNodeOutline: palette.mediumGray,
+    sourceGraphNodeBranchlessOutline: palette.lightGray,
   },
   gradients: {
     backgroundNoOpacity: palette.lightModeBG.substring(0, 7) + Opacity[0],
@@ -307,6 +311,8 @@ export const DarkTheme: ColorTheme = {
         pluginSelected: palette.lightPurple,
         pluginUnSelected: palette.white,
         pluginTitle: palette.lightPurple,
+        sourceGraphNodeOutline: palette.white,
+        sourceGraphNodeBranchlessOutline: palette.gray,
     },
     shadows: {
         modalContainer: palette.black.substring(0, 7) + Opacity[70],
