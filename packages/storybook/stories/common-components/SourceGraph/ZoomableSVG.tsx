@@ -3,9 +3,10 @@ import React, {
   useState,
   useEffect,
   useRef,
-  useCallback
+  useCallback,
 } from "react";
 import * as d3 from "d3";
+import SVGScaleProvider from "./SVGScaleContext";
 
 interface Props {
   children: React.ReactElement;
@@ -18,7 +19,7 @@ interface Props {
   startX: number;
   startY: number;
   isDebug?: boolean;
-  focalPoint: null|[number, number];
+  focalPoint: null | [number, number];
 }
 
 const ZoomableSVG = ({
@@ -32,9 +33,8 @@ const ZoomableSVG = ({
   startX = 0,
   startY = 0,
   isDebug = false,
-  focalPoint = null
+  focalPoint = null,
 }: Props) => {
-
   const offsetX = useMemo(() => width / 2, [width]);
   const offsetY = useMemo(() => height / 2, [height]);
   const startingXOffset = useMemo(() => columnDistance / 2, [columnDistance]);
@@ -79,9 +79,9 @@ const ZoomableSVG = ({
     if (focalPoint) {
       const selection = d3.select(svgRef.current);
       selection
-        .transition()
-        .duration(150)
-        .call(zoomRef.current.scaleTo, 0.5)
+        //.transition()
+        //.duration(150)
+        //.call(zoomRef.current.scaleTo, 0.5)
         .transition()
         .duration(300)
         .call(
@@ -137,7 +137,19 @@ const ZoomableSVG = ({
       zoomRef.current.on("start", null);
       zoomRef.current.on("end", null);
     };
-  }, [minX, minY, maxX, maxY, startX, startY, hasLoaded, offsetX, offsetY, onGrabStart, onGrabEnd]);
+  }, [
+    minX,
+    minY,
+    maxX,
+    maxY,
+    startX,
+    startY,
+    hasLoaded,
+    offsetX,
+    offsetY,
+    onGrabStart,
+    onGrabEnd,
+  ]);
 
   const coordinateDebugger = useMemo(() => {
     if (isDebug) {
@@ -147,25 +159,27 @@ const ZoomableSVG = ({
           <p>'y: '{y}</p>
           <p>'k: '{k}</p>
         </div>
-      )
+      );
     }
     return false;
-  }, [isDebug, x ,y ,k])
+  }, [isDebug, x, y, k]);
 
   return (
-    <>
-      <svg
-        style={{cursor: isGrabbing ? 'move' : 'auto'}}
-        ref={svgRef}
-        width={width}
-        height={height}
-        viewBox={`${0} ${0} ${width} ${height}`}
-      >
-        <g transform={`translate(${x},${y})scale(${k})`}>{children}</g>
-      </svg>
-      {coordinateDebugger}
-    </>
+    <SVGScaleProvider k={k}>
+      <>
+        <svg
+          style={{ cursor: isGrabbing ? "move" : "auto" }}
+          ref={svgRef}
+          width={width}
+          height={height}
+          viewBox={`${0} ${0} ${width} ${height}`}
+        >
+          <g transform={`translate(${x},${y})scale(${k})`}>{children}</g>
+        </svg>
+        {coordinateDebugger}
+      </>
+    </SVGScaleProvider>
   );
-}
+};
 
 export default React.memo(ZoomableSVG);

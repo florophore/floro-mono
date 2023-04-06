@@ -1,5 +1,8 @@
+import { useState } from 'react';
+import { useTheme } from "@emotion/react";
 import SourceGraph from "./index";
 import { SIMPLE_BRANCHES, SIMPLE_MAIN_HISTORY } from "./mocks";
+import ColorPalette from "@floro/styles/ColorPalette";
 
 export default {
   title: "floro-app/common-components/SourceGraph",
@@ -8,6 +11,10 @@ export default {
 };
 
 const Template = (args) => {
+  const theme = useTheme();
+  const [currentSha, setCurrentSha] = useState("E");
+  const [highlightedBranchId, setHighlightedBranchId] = useState<string|null>(null);
+  const [selectedBranchId, setSelectedBranch] = useState<string|null>(null);
   return (
     <div>
       <div>
@@ -15,7 +22,34 @@ const Template = (args) => {
           {...args}
           rootNodes={SIMPLE_MAIN_HISTORY}
           branches={SIMPLE_BRANCHES}
-          startSha={"M0"}
+          currentSha={currentSha}
+          onSelectBranch={(branch) => {
+            //setSelectedBranch(branch.id);
+          }}
+          onMouseOverBranch={(branch) => {
+            setHighlightedBranchId(branch.id);
+          }}
+          onMouseOffBranch={() => {
+            setHighlightedBranchId(null);
+          }}
+          selectedBranchId={selectedBranchId}
+          highlightedBranchId={highlightedBranchId ?? selectedBranchId}
+          renderPopup={({ sourceCommit}: any) => {
+            return (
+              <div>
+                <p style={{
+                  padding: 0,
+                  margin: 0,
+                  color: ColorPalette.lightPurple
+                }}>
+                  {'SHA: ' + sourceCommit.sha}
+                </p>
+                <button onClick={() => {
+                  setCurrentSha(sourceCommit.sha);
+                }}>{'update'}</button>
+              </div>
+            );
+          }}
         />
       </div>
     </div>

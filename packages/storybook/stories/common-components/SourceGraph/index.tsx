@@ -1,16 +1,14 @@
-import React, {
-  useMemo,
-  useState
-} from "react";
+import React, { useMemo, useState, useRef } from "react";
 import styled from "@emotion/styled";
 import {
   Branch,
   SourceCommitNode,
+  SourceCommitNodeWithGridDimensions,
   getBranchMap,
   getEdges,
   getInitNode,
   getNodes,
-  getTopologicalBranchMap,
+  getNodesWithCurrentLineage,
   getVertices,
   mapSourceGraphRootsToGrid,
 } from "./grid";
@@ -30,17 +28,29 @@ export interface Props {
   isDebug?: boolean;
   columnDistance?: number;
   rowDistance?: number;
-  startSha?: number;
   filterBranchlessNodes?: boolean;
-};
+  currentSha?: string;
+  onSelectNode?: (sourceCommit: SourceCommitNodeWithGridDimensions, terminalBranches: Array<Branch>) => void;
+  onSelectBranch?: (branch: Branch) => void;
+  onMouseOverBranch?: (branch: Branch) => void;
+  onMouseOffBranch?: (branch: Branch) => void;
+  renderPopup?: (props?: {
+    onHidePopup?: () => void;
+    sourceCommit?: SourceCommitNodeWithGridDimensions;
+    terminalBranches?: Array<Branch>;
+  }) => React.ReactElement|null;
+  highlightedBranchId?: string;
+  selectedBranchId?: string;
+}
 
 const SourceGraph = (props: Props): React.ReactElement => {
   const columnDistance = useMemo(
     () => props?.columnDistance ?? 500,
     [props?.columnDistance]
   );
+
   const rowDistance = useMemo(
-    () => props?.rowDistance ?? 240,
+    () => props?.rowDistance ?? 300,
     [props?.rowDistance]
   );
 
@@ -49,13 +59,19 @@ const SourceGraph = (props: Props): React.ReactElement => {
   }, [props.rootNodes, props.filterBranchlessNodes]);
 
   const gridData = useMemo(
-    () => mapSourceGraphRootsToGrid(nodes, props.branches, props.isDebug),
-    [nodes, props.branches, props.isDebug]
+    () =>
+      mapSourceGraphRootsToGrid(
+        nodes,
+        props.branches,
+        props.currentSha,
+        props.isDebug
+      ),
+    [nodes, props.branches, props.isDebug, props.currentSha]
   );
 
   const branchMap = useMemo(() => {
     return getBranchMap(props.branches);
-  }, [props.branches])
+  }, [props.branches]);
 
   const columns = gridData.gridColumnSize;
   const rows = gridData.gridRowSize;
@@ -71,19 +87,19 @@ const SourceGraph = (props: Props): React.ReactElement => {
   );
 
   const startingCoordinate = useMemo(() => {
-    if (!props.startSha && gridData?.grid.length == 0) {
+    if (!props.currentSha && gridData?.grid.length == 0) {
       return null;
     }
-    if (!props.startSha) {
+    if (!props.currentSha) {
       return getInitNode(gridData?.grid);
     }
-    const node = gridData?.pointerMap[props.startSha];
+    const node = gridData?.pointerMap[props.currentSha];
     if (!node) {
       return null;
     }
     return node;
   }, [
-    props.startSha,
+    props.currentSha,
     gridData?.pointerMap,
     gridData.grid,
     columnDistance,
@@ -105,7 +121,7 @@ const SourceGraph = (props: Props): React.ReactElement => {
     rowDistance,
   ]);
 
-  const [focalPoint, setFocalPoint] = useState<null|[number, number]>(null);
+  const [focalPoint, setFocalPoint] = useState<null | [number, number]>(null);
   const debugCrossOverlay = useMemo(() => {
     if (props.isDebug) {
       return (
@@ -139,36 +155,46 @@ const SourceGraph = (props: Props): React.ReactElement => {
   }, [props.isDebug]);
 
   return (
-    <Container style={{ width: props.width, height: props.height, background }}>
-      <ZoomableSVG
-        width={props.width}
-        height={props.height}
-        columns={columns}
-        rows={rows}
-        columnDistance={columnDistance}
-        rowDistance={rowDistance}
-        startX={startingCoordinates[0]}
-        startY={startingCoordinates[1]}
-        isDebug={props.isDebug}
-        focalPoint={focalPoint}
+      <Container
+        style={{ width: props.width, height: props.height, background }}
       >
-        <CommitChart
+        <ZoomableSVG
           width={props.width}
           height={props.height}
-          grid={gridData.grid}
-          edges={edges}
-          vertices={vertices}
           columns={columns}
           rows={rows}
-          isDebug={props.isDebug}
           columnDistance={columnDistance}
           rowDistance={rowDistance}
-          onChangeFocalPoint={setFocalPoint}
-          branchMap={branchMap}
-        />
-      </ZoomableSVG>
-      {debugCrossOverlay}
-    </Container>
+          startX={startingCoordinates[0]}
+          startY={startingCoordinates[1]}
+          isDebug={props.isDebug}
+          focalPoint={focalPoint}
+        >
+          <CommitChart
+            width={props.width}
+            height={props.height}
+            grid={gridData.grid}
+            edges={edges}
+            vertices={vertices}
+            columns={columns}
+            rows={rows}
+            isDebug={props.isDebug}
+            columnDistance={columnDistance}
+            rowDistance={rowDistance}
+            onChangeFocalPoint={setFocalPoint}
+            branchMap={branchMap}
+            pointerMap={gridData.pointerMap}
+            renderPopup={props.renderPopup}
+            currentSha={props.currentSha}
+            onSelectBranch={props.onSelectBranch}
+            onMouseOverBranch={props.onMouseOverBranch}
+            onMouseOffBranch={props.onMouseOffBranch}
+            highlightedBranchId={props.highlightedBranchId}
+            selectedBranchId={props.selectedBranchId}
+          />
+        </ZoomableSVG>
+        {debugCrossOverlay}
+      </Container>
   );
 };
 

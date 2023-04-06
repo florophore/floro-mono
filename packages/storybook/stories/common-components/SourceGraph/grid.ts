@@ -19,6 +19,7 @@ export interface SourceCommitNode extends CommitHistory {
   isCurrent?: boolean;
   isUserBranch?: boolean;
   branchIds: Array<string>;
+  isInCurrentLineage?: boolean;
 }
 
 export interface SourceCommitNodeWithGridDimensions extends SourceCommitNode {
@@ -272,6 +273,7 @@ function canInsertIntoRow(
 export const mapSourceGraphRootsToGrid = (
   rootNodes: Array<SourceCommitNode>,
   branches: Array<Branch>,
+  currentSha?: string,
   isDebug = false
 ): {
   roots: Array<SourceCommitNodeWithGridDimensions>;
@@ -354,7 +356,7 @@ export const mapSourceGraphRootsToGrid = (
     console.table(tmpGrid);
   }
   return {
-    roots,
+    roots: getNodesWithCurrentLineage(roots, pointerMap, currentSha),
     grid,
     pointerMap,
     gridRowSize: grid.length,
@@ -463,7 +465,6 @@ export const getInitNode = (
 };
 
 const filterNode = (node: SourceCommitNode, filterBranchlessNodes: boolean) => {
-  console.log(filterBranchlessNodes)
   if (filterBranchlessNodes && node.branchIds.length == 0) {
     return null;
   }
@@ -482,3 +483,44 @@ export const getNodes = (
     return filterNode(node, filterBranchlessNodes);
   })?.filter(n => n != null);
 }
+
+export const getNodesWithCurrentLineage = (
+  rootNodes: Array<SourceCommitNodeWithGridDimensions>,
+  pointerMap: { [sha: string]: SourceCommitNodeWithGridDimensions },
+  currentSha?: string
+) => {
+  resetLineage(rootNodes, pointerMap);
+  if (!currentSha) {
+    return rootNodes;
+  }
+  let current: SourceCommitNodeWithGridDimensions|undefined|null = pointerMap[currentSha];
+  if (!current) {
+    return rootNodes;
+  }
+  while(current) {
+    current.isInCurrentLineage = true;
+    if (!current?.parent) {
+      current = null
+    } else {
+      current = pointerMap[current?.parent];
+    }
+  }
+  return rootNodes;
+}
+
+
+export const resetLineage = (
+  nodes: Array<SourceCommitNodeWithGridDimensions>,
+  pointerMap: { [sha: string]: SourceCommitNodeWithGridDimensions }
+) => {
+  for (const node of nodes) {
+    node.isInUserBranchLineage = false;
+    if (node.sha && pointerMap[node.sha]) {
+      pointerMap[node.sha].isInCurrentLineage = false
+    }
+    resetLineage(
+      (node?.children ?? []) as Array<SourceCommitNodeWithGridDimensions>,
+      pointerMap
+    );
+  }
+};

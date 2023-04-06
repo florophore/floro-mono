@@ -22,7 +22,7 @@ export const SIMPLE_BRANCHES: Array<Branch> = [
         name: "Feature X",
         baseBranchId: "feature",
         createdBy: "user1",
-        lastCommit: "E",
+        lastCommit: "Y",
         createdAt: "Sat Jan 01 2000 00:00:00 GMT-0800",
     },
     {
