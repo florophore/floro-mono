@@ -3,6 +3,7 @@ import { Branch, Edge, SourceCommitNodeWithGridDimensions } from "./grid";
 import { useTheme } from "@emotion/react";
 import { motion } from "framer-motion";
 import ColorPalette from "@floro/styles/ColorPalette";
+import { getColorForRow } from "./color-mod";
 
 interface Props {
   edge: Edge;
@@ -49,25 +50,7 @@ const CommitEdge = (props: Props) => {
     if (highlightedRow == -1) {
       return null;
     }
-    if (highlightedRow % 5 == 0) {
-      return theme.name == "light"
-        ? ColorPalette.purple
-        : ColorPalette.lightPurple;
-    }
-    if (highlightedRow % 5 == 1) {
-      return theme.name == "light" ? ColorPalette.teal : ColorPalette.teal;
-    }
-    if (highlightedRow % 5 == 2) {
-      return theme.name == "light" ? ColorPalette.orange : ColorPalette.orange;
-    }
-
-    if (highlightedRow % 5 == 3) {
-      return theme.name == "light" ? ColorPalette.gray : ColorPalette.gray;
-    }
-
-    if (highlightedRow % 5 == 4) {
-      return theme.name == "light" ? ColorPalette.red : ColorPalette.lightRed;
-    }
+    return getColorForRow(theme, highlightedRow);
   }, [theme.name, highlightedRow]);
 
   const isHighlighted = useMemo(() => {

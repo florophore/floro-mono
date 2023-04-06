@@ -5,7 +5,7 @@ export interface ISVGScaleContext {
   scale: number;
 }
 const SVGScaleContext = createContext({
-  scale: 2,
+  scale: 1,
 } as ISVGScaleContext);
 
 interface Props {

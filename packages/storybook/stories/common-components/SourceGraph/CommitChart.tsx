@@ -4,6 +4,7 @@ import DebugGraph from "./DebugGraph";
 import CommitVertice from "./CommitVertice";
 import CommitEdge from "./CommitEdge";
 import SVGPortalProvider from "./SVGPortalContext";
+import { useTheme } from "@emotion/react";
 
 interface Props {
   width: number;
@@ -30,7 +31,7 @@ interface Props {
     terminalBranches?: Array<Branch>,
   }) => React.ReactElement|null;
   highlightedBranchId?: string;
-  selectedBranchId?: string;
+  htmlContentHeight?: number;
 }
 
 const CommitChart = ({
@@ -50,13 +51,14 @@ const CommitChart = ({
   renderPopup,
   currentSha,
   highlightedBranchId,
-  selectedBranchId,
   onSelectBranch,
   onMouseOverBranch,
-  onMouseOffBranch
+  onMouseOffBranch,
+  htmlContentHeight
 }: Props) => {
   const portalRef = useRef<SVGGElement>(null);
   const [portal, setPortal] = useState<SVGGElement|null>(null);
+  const theme = useTheme()
 
   useEffect(() => {
     if (portalRef.current) {
@@ -74,7 +76,7 @@ const CommitChart = ({
               y={-30}
               width={columnDistance * (columns - 1) + 60}
               height={rowDistance * (rows - 1) + 60}
-              fill="white"
+              fill={theme.background}
             />
             <DebugGraph
               columns={columns}
@@ -111,6 +113,7 @@ const CommitChart = ({
               onSelectBranch={onSelectBranch}
               onMouseOverBranch={onMouseOverBranch}
               onMouseOffBranch={onMouseOffBranch}
+              htmlContentHeight={htmlContentHeight}
             />
           );
         })}

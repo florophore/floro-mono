@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useRef } from "react";
+import React, { useMemo, useState } from "react";
 import styled from "@emotion/styled";
 import {
   Branch,
@@ -8,7 +8,6 @@ import {
   getEdges,
   getInitNode,
   getNodes,
-  getNodesWithCurrentLineage,
   getVertices,
   mapSourceGraphRootsToGrid,
 } from "./grid";
@@ -30,7 +29,10 @@ export interface Props {
   rowDistance?: number;
   filterBranchlessNodes?: boolean;
   currentSha?: string;
-  onSelectNode?: (sourceCommit: SourceCommitNodeWithGridDimensions, terminalBranches: Array<Branch>) => void;
+  onSelectNode?: (
+    sourceCommit: SourceCommitNodeWithGridDimensions,
+    terminalBranches: Array<Branch>
+  ) => void;
   onSelectBranch?: (branch: Branch) => void;
   onMouseOverBranch?: (branch: Branch) => void;
   onMouseOffBranch?: (branch: Branch) => void;
@@ -38,9 +40,9 @@ export interface Props {
     onHidePopup?: () => void;
     sourceCommit?: SourceCommitNodeWithGridDimensions;
     terminalBranches?: Array<Branch>;
-  }) => React.ReactElement|null;
+  }) => React.ReactElement | null;
   highlightedBranchId?: string;
-  selectedBranchId?: string;
+  htmlContentHeight?: number;
 }
 
 const SourceGraph = (props: Props): React.ReactElement => {
@@ -155,46 +157,44 @@ const SourceGraph = (props: Props): React.ReactElement => {
   }, [props.isDebug]);
 
   return (
-      <Container
-        style={{ width: props.width, height: props.height, background }}
+    <Container style={{ width: props.width, height: props.height, background }}>
+      <ZoomableSVG
+        width={props.width}
+        height={props.height}
+        columns={columns}
+        rows={rows}
+        columnDistance={columnDistance}
+        rowDistance={rowDistance}
+        startX={startingCoordinates[0]}
+        startY={startingCoordinates[1]}
+        isDebug={props.isDebug}
+        focalPoint={focalPoint}
       >
-        <ZoomableSVG
+        <CommitChart
           width={props.width}
           height={props.height}
+          grid={gridData.grid}
+          edges={edges}
+          vertices={vertices}
           columns={columns}
           rows={rows}
+          isDebug={props.isDebug}
           columnDistance={columnDistance}
           rowDistance={rowDistance}
-          startX={startingCoordinates[0]}
-          startY={startingCoordinates[1]}
-          isDebug={props.isDebug}
-          focalPoint={focalPoint}
-        >
-          <CommitChart
-            width={props.width}
-            height={props.height}
-            grid={gridData.grid}
-            edges={edges}
-            vertices={vertices}
-            columns={columns}
-            rows={rows}
-            isDebug={props.isDebug}
-            columnDistance={columnDistance}
-            rowDistance={rowDistance}
-            onChangeFocalPoint={setFocalPoint}
-            branchMap={branchMap}
-            pointerMap={gridData.pointerMap}
-            renderPopup={props.renderPopup}
-            currentSha={props.currentSha}
-            onSelectBranch={props.onSelectBranch}
-            onMouseOverBranch={props.onMouseOverBranch}
-            onMouseOffBranch={props.onMouseOffBranch}
-            highlightedBranchId={props.highlightedBranchId}
-            selectedBranchId={props.selectedBranchId}
-          />
-        </ZoomableSVG>
-        {debugCrossOverlay}
-      </Container>
+          onChangeFocalPoint={setFocalPoint}
+          branchMap={branchMap}
+          pointerMap={gridData.pointerMap}
+          renderPopup={props.renderPopup}
+          currentSha={props.currentSha}
+          onSelectBranch={props.onSelectBranch}
+          onMouseOverBranch={props.onMouseOverBranch}
+          onMouseOffBranch={props.onMouseOffBranch}
+          highlightedBranchId={props.highlightedBranchId}
+          htmlContentHeight={props.htmlContentHeight}
+        />
+      </ZoomableSVG>
+      {debugCrossOverlay}
+    </Container>
   );
 };
 

@@ -270,6 +270,22 @@ function canInsertIntoRow(
   return true;
 }
 
+const printDebugGrid = (
+  grid: Array<Array<SourceCommitNodeWithGridDimensions | null>>,
+  columnSize: number
+) => {
+  const debugGrid: Array<Array<string | null>> = buildNullGrid(
+    grid.length,
+    columnSize
+  ) as unknown as Array<Array<string>>;
+  for (let i = 0; i < grid.length; ++i) {
+    for (let j = 0; j < grid[i].length; ++j) {
+      debugGrid[i][j] = grid[i][j]?.sha ?? null;
+    }
+  }
+  console.table(debugGrid);
+};
+
 export const mapSourceGraphRootsToGrid = (
   rootNodes: Array<SourceCommitNode>,
   branches: Array<Branch>,
@@ -344,16 +360,10 @@ export const mapSourceGraphRootsToGrid = (
     );
   }
   if (isDebug) {
-    const tmpGrid: Array<Array<string | null>> = buildNullGrid(
-      grid.length,
+    printDebugGrid(
+      grid,
       columnSize
-    ) as unknown as Array<Array<string>>;
-    for (let i = 0; i < grid.length; ++i) {
-      for (let j = 0; j < grid[i].length; ++j) {
-        tmpGrid[i][j] = grid[i][j]?.sha ?? null;
-      }
-    }
-    console.table(tmpGrid);
+    );
   }
   return {
     roots: getNodesWithCurrentLineage(roots, pointerMap, currentSha),

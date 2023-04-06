@@ -1,13 +1,19 @@
-import React, { useMemo, useCallback, useState, useEffect, useRef } from "react";
+import React, {
+  useMemo,
+  useCallback,
+  useState,
+  useEffect,
+  useRef,
+} from "react";
 import { SourceCommitNodeWithGridDimensions } from "./grid";
 import { useTheme } from "@emotion/react";
-import ColorPalette from "@floro/styles/ColorPalette";
 import { Branch } from "./grid";
 import { useSvgSourceGraphPortal } from "./SVGPortalContext";
 import { useSvgScale } from "./SVGScaleContext";
 import CommitContent from "./CommitContent";
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
 import TerminalBranch from "./TerminalBranch";
+import { getColorForRow } from "./color-mod";
 
 const RHO = (Math.PI * 3) / 16;
 const THETA = Math.PI / 4;
@@ -29,15 +35,19 @@ interface Props {
   branchMap: { [key: string]: Branch };
   onChangeFocalPoint: (point: null | [number, number]) => void;
   currentSha?: string;
-  onSelectNode?: (sourceCommit: SourceCommitNodeWithGridDimensions, terminalBranches: Array<Branch>) => void;
+  onSelectNode?: (
+    sourceCommit: SourceCommitNodeWithGridDimensions,
+    terminalBranches: Array<Branch>
+  ) => void;
   onSelectBranch?: (branch: Branch) => void;
   onMouseOverBranch?: (branch: Branch) => void;
   onMouseOffBranch?: (branch: Branch) => void;
   renderPopup?: (props?: {
-    onHidePopup?: () => void,
-    sourceCommit?: SourceCommitNodeWithGridDimensions,
-    terminalBranches?: Array<Branch>,
-  }) => React.ReactElement|null;
+    onHidePopup?: () => void;
+    sourceCommit?: SourceCommitNodeWithGridDimensions;
+    terminalBranches?: Array<Branch>;
+  }) => React.ReactElement | null;
+  htmlContentHeight?: number;
 }
 
 const CommitVertice = (props: Props) => {
@@ -170,25 +180,7 @@ const CommitVertice = (props: Props) => {
     if (props.vertice.branchIds.length == 0) {
       return theme.background;
     }
-    if (props.vertice.row % 5 == 0) {
-      return theme.name == "light"
-        ? ColorPalette.purple
-        : ColorPalette.lightPurple;
-    }
-    if (props.vertice.row % 5 == 1) {
-      return theme.name == "light" ? ColorPalette.teal : ColorPalette.teal;
-    }
-    if (props.vertice.row % 5 == 2) {
-      return theme.name == "light" ? ColorPalette.orange : ColorPalette.orange;
-    }
-
-    if (props.vertice.row % 5 == 3) {
-      return theme.name == "light" ? ColorPalette.gray : ColorPalette.gray;
-    }
-
-    if (props.vertice.row % 5 == 4) {
-      return theme.name == "light" ? ColorPalette.red : ColorPalette.lightRed;
-    }
+    return getColorForRow(theme, props.vertice.row);
   }, [theme.name, props.vertice.row, props.vertice.branchIds]);
 
   const selectedFill = useMemo(() => {
@@ -200,26 +192,31 @@ const CommitVertice = (props: Props) => {
 
   const stroke = useMemo(() => {
     if (props.vertice.branchIds.length == 0) {
-      if (props.currentSha == props.vertice.sha || props.vertice.isInCurrentLineage) {
+      if (
+        props.currentSha == props.vertice.sha ||
+        props.vertice.isInCurrentLineage
+      ) {
         return theme.colors.sourceGraphNodeOutline;
       }
 
       return theme.colors.sourceGraphNodeBranchlessOutline;
     }
     return theme.colors.sourceGraphNodeOutline;
-  }, [theme, props.vertice.branchIds, props.currentSha, props.vertice.isInCurrentLineage]);
+  }, [
+    theme,
+    props.vertice.branchIds,
+    props.currentSha,
+    props.vertice.isInCurrentLineage,
+  ]);
 
   const scale = useSvgScale();
   const invScale = 1 / scale;
-  const isSelected = useMemo(
-    () => {
-      if (props?.currentSha) {
-        return props?.currentSha == props.vertice.sha;
-      }
-      return false;
-    },
-    [props.vertice, props.currentSha]
-  );
+  const isSelected = useMemo(() => {
+    if (props?.currentSha) {
+      return props?.currentSha == props.vertice.sha;
+    }
+    return false;
+  }, [props.vertice, props.currentSha]);
 
   // DETERMINES OFFSETS FOR STEM/POLYGON/HTML if isSelected Node
   const selectedOffset = isSelected ? R * 2 - S : 4;
@@ -248,7 +245,11 @@ const CommitVertice = (props: Props) => {
   const polyP2y = polyP0y + RHO_ANGLE_BOTTOM_Y * POLY_L;
 
   // HTML CONTAINER MATH
-  const htmlHeight = props.rowDistance / 3;
+  const htmlHeight = useMemo(
+    () => props.htmlContentHeight ?? props.rowDistance / 3,
+    [props.htmlContentHeight]
+  );
+
   const htmlWidth = props.columnDistance / 2;
 
   return (
@@ -268,7 +269,6 @@ const CommitVertice = (props: Props) => {
                       ${branchStemBezierEnd[0]},${branchStemBezierEnd[1]}
                       ${branchStemX2},${branchStemY2}
                   `}
-
               animate={{
                 d: `
                       M${branchStemX1},${branchStemY1}
@@ -279,7 +279,7 @@ const CommitVertice = (props: Props) => {
               }}
               transition={{
                 duration: 0.2,
-                ease: 'easeInOut',
+                ease: "easeInOut",
               }}
             />
             <motion.polygon
@@ -302,7 +302,7 @@ const CommitVertice = (props: Props) => {
               }}
               transition={{
                 duration: 0.2,
-                ease: 'easeInOut',
+                ease: "easeInOut",
               }}
             />
           </>
@@ -319,7 +319,7 @@ const CommitVertice = (props: Props) => {
             strokeWidth={`${S * 2}`}
             transition={{
               duration: 0.2,
-              ease: 'easeInOut',
+              ease: "easeInOut",
             }}
             initial={{
               r: R,
@@ -359,7 +359,8 @@ const CommitVertice = (props: Props) => {
           );
         })}
       </g>
-      {showHTMLNode && nodeHtml &&
+      {showHTMLNode &&
+        nodeHtml &&
         svgPortal(
           <g
             ref={htmlContainerRef}
@@ -377,15 +378,13 @@ const CommitVertice = (props: Props) => {
                 width={`${htmlWidth}`}
                 height={`${htmlHeight}`}
               >
-                <CommitContent>
-                  {nodeHtml}
-                </CommitContent>
+                <CommitContent>{nodeHtml}</CommitContent>
               </foreignObject>
             </g>
           </g>
         )}
     </>
   );
-};;
+};
 
 export default React.memo(CommitVertice);

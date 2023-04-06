@@ -1,9 +1,11 @@
+import { useTheme } from '@emotion/react';
 import React, { useMemo } from 'react'
 
 function DebugCell({ column, row, columnDistance, rowDistance }) {
 
   const x = useMemo(() => column * columnDistance -30, [column, columnDistance]);
   const y = useMemo(() => row * rowDistance -30, [row, rowDistance]);
+  const theme = useTheme();
 
   return (
     <>
@@ -11,7 +13,7 @@ function DebugCell({ column, row, columnDistance, rowDistance }) {
         <>
           <path
             fill="transparent"
-            stroke="green"
+            stroke={theme.name == "light" ? "green" : "white"}
             strokeLinecap="round"
             strokeWidth="1"
             strokeDasharray={10}
@@ -19,7 +21,7 @@ function DebugCell({ column, row, columnDistance, rowDistance }) {
           />
           <path
             fill="transparent"
-            stroke="green"
+            stroke={theme.name == "light" ? "green" : "white"}
             strokeLinecap="round"
             strokeWidth="1"
             strokeDasharray={10}
@@ -32,7 +34,7 @@ function DebugCell({ column, row, columnDistance, rowDistance }) {
         <>
           <path
             fill="transparent"
-            stroke="green"
+            stroke={theme.name == "light" ? "green" : "white"}
             strokeLinecap="round"
             strokeWidth="1"
             strokeDasharray={10}
@@ -40,7 +42,7 @@ function DebugCell({ column, row, columnDistance, rowDistance }) {
           />
           <path
             fill="transparent"
-            stroke="green"
+            stroke={theme.name == "light" ? "green" : "white"}
             strokeLinecap="round"
             strokeWidth="1"
             strokeDasharray={10}
@@ -69,11 +71,11 @@ function DebugGraph({ columns, rows, columnDistance, rowDistance }) {
 
   return (
     <>
-      {matrix.flatMap((column, i) => {
-        return column.map((row, j) => {
+      {matrix.flatMap((row, i) => {
+        return row.map((_, j) => {
           return (
             <DebugCell
-              key={`column-${i}-row-${j}`}
+              key={`row-${i}-column-${j}`}
               column={i}
               row={j}
               columnDistance={columnDistance}

@@ -1,17 +1,9 @@
 import React, {
   useMemo,
   useCallback,
-  useState,
-  useEffect,
-  useRef,
 } from "react";
-import { SourceCommitNodeWithGridDimensions } from "./grid";
-import { useTheme } from "@emotion/react";
-import ColorPalette from "@floro/styles/ColorPalette";
+
 import { Branch } from "./grid";
-import { useSvgSourceGraphPortal } from "./SVGPortalContext";
-import { useSvgScale } from "./SVGScaleContext";
-import CommitContent from "./CommitContent";
 import { motion } from "framer-motion";
 
 interface Props {

@@ -1,65 +1,65 @@
 import { SourceCommitNode, Branch } from "./grid";
 
-export const SIMPLE_BRANCHES: Array<Branch> = [
-    {
-        id: "main",
-        name: "Main",
-        baseBranchId: null,
-        createdBy: "user1",
-        lastCommit: "C",
-        createdAt: "Sat Jan 01 2000 00:00:00 GMT-0800",
-    },
-    {
-        id: "feature",
-        name: "Feature",
-        baseBranchId: "main",
-        createdBy: "user1",
-        lastCommit: "E",
-        createdAt: "Sat Jan 01 2000 00:00:00 GMT-0800",
-    },
-    {
-        id: "feature-x",
-        name: "Feature X",
-        baseBranchId: "feature",
-        createdBy: "user1",
-        lastCommit: "Y",
-        createdAt: "Sat Jan 01 2000 00:00:00 GMT-0800",
-    },
-    {
-        id: "side-feature",
-        name: "Side Feature",
-        baseBranchId: "main",
-        createdBy: "user1",
-        lastCommit: "G",
-        createdAt: "Sat Jan 01 2000 00:00:00 GMT-0800",
-    },
-    {
-        id: "side-feature-2",
-        name: "Side Feature 2",
-        baseBranchId: "main",
-        createdBy: "user1",
-        lastCommit: "H",
-        createdAt: "Sat Jan 01 2000 00:00:00 GMT-0800",
-    },
-    {
-        id: "main-disjoint",
-        name: "Main Disjoint",
-        baseBranchId: null,
-        createdBy: "user1",
-        lastCommit: "M0",
-        createdAt: "Sat Jan 01 2000 00:00:00 GMT-0800",
-    },
-    {
-        id: "feature-disjoint",
-        name: "Feature Disjoint",
-        baseBranchId: "main-disjoin",
-        createdBy: "user1",
-        lastCommit: "DD0",
-        createdAt: "Sat Jan 01 2000 00:00:00 GMT-0800",
-    },
-]
+export const BRANCHES: Array<Branch> = [
+  {
+    id: "main",
+    name: "Main",
+    baseBranchId: null,
+    createdBy: "user1",
+    lastCommit: "C",
+    createdAt: "Sat Jan 01 2000 00:00:00 GMT-0800",
+  },
+  {
+    id: "feature",
+    name: "Feature",
+    baseBranchId: "main",
+    createdBy: "user1",
+    lastCommit: "E",
+    createdAt: "Sat Jan 01 2000 00:00:00 GMT-0800",
+  },
+  {
+    id: "feature-x",
+    name: "Feature X",
+    baseBranchId: "feature",
+    createdBy: "user1",
+    lastCommit: "Y",
+    createdAt: "Sat Jan 01 2000 00:00:00 GMT-0800",
+  },
+  {
+    id: "side-feature",
+    name: "Side Feature",
+    baseBranchId: "main",
+    createdBy: "user1",
+    lastCommit: "G",
+    createdAt: "Sat Jan 01 2000 00:00:00 GMT-0800",
+  },
+  {
+    id: "side-feature-2",
+    name: "Side Feature 2",
+    baseBranchId: "main",
+    createdBy: "user1",
+    lastCommit: "H",
+    createdAt: "Sat Jan 01 2000 00:00:00 GMT-0800",
+  },
+  {
+    id: "main-disjoint",
+    name: "Main Disjoint",
+    baseBranchId: null,
+    createdBy: "user1",
+    lastCommit: "M0",
+    createdAt: "Sat Jan 01 2000 00:00:00 GMT-0800",
+  },
+  {
+    id: "feature-disjoint",
+    name: "Feature Disjoint",
+    baseBranchId: "main-disjoin",
+    createdBy: "user1",
+    lastCommit: "DD0",
+    createdAt: "Sat Jan 01 2000 00:00:00 GMT-0800",
+  },
+];
 
-export const SIMPLE_MAIN_HISTORY: Array<SourceCommitNode> = [
+export const SOURCE_HISTORY: Array<SourceCommitNode> = [
   {
     sha: "A",
     timestamp: "Sat Jan 01 2000 00:00:00 GMT-0800",

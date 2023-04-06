@@ -79,9 +79,6 @@ const ZoomableSVG = ({
     if (focalPoint) {
       const selection = d3.select(svgRef.current);
       selection
-        //.transition()
-        //.duration(150)
-        //.call(zoomRef.current.scaleTo, 0.5)
         .transition()
         .duration(300)
         .call(
