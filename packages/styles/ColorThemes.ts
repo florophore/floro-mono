@@ -6,6 +6,8 @@ export interface ColorTheme {
   colors: {
     standardText: string;
     contrastText: string;
+    contrastTextLight: string;
+    titleText: string;
     promptText: string;
     disableOverlay: string;
     checkboxBorder: string;
@@ -93,6 +95,7 @@ export interface ColorTheme {
     pluginTitle: string;
     sourceGraphNodeOutline: string;
     sourceGraphNodeBranchlessOutline: string;
+    currentInfoBorder: string;
   };
   gradients: {
     backgroundNoOpacity: string;
@@ -116,6 +119,8 @@ export const LightTheme: ColorTheme = {
   colors: {
     standardText: palette.mediumGray, //"$.theme.colors.standardText"
     contrastText: palette.mediumGray,
+    contrastTextLight: palette.gray,
+    titleText: palette.purple,
     promptText: palette.mediumGray,
     disableOverlay: palette.white,
     checkboxBorder: palette.gray,
@@ -203,6 +208,7 @@ export const LightTheme: ColorTheme = {
     pluginTitle: palette.purple,
     sourceGraphNodeOutline: palette.mediumGray,
     sourceGraphNodeBranchlessOutline: palette.lightGray,
+    currentInfoBorder: palette.purple,
   },
   gradients: {
     backgroundNoOpacity: palette.lightModeBG.substring(0, 7) + Opacity[0],
@@ -226,6 +232,8 @@ export const DarkTheme: ColorTheme = {
     colors: {
         standardText: palette.gray,
         contrastText: palette.white,
+        contrastTextLight: palette.white,
+        titleText: palette.lightPurple,
         promptText: palette.white,
         disableOverlay: palette.gray,
         checkboxBorder: palette.mediumGray,
@@ -313,6 +321,7 @@ export const DarkTheme: ColorTheme = {
         pluginTitle: palette.lightPurple,
         sourceGraphNodeOutline: palette.white,
         sourceGraphNodeBranchlessOutline: palette.gray,
+        currentInfoBorder: palette.lightPurple,
     },
     shadows: {
         modalContainer: palette.black.substring(0, 7) + Opacity[70],

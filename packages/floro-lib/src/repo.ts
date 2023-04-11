@@ -19,6 +19,20 @@ export interface RepoState {
   };
 }
 
+export interface CommitData {
+  sha?: string;
+  diff: StateDiff;
+  userId: string;
+  authorUserId?: string;
+  timestamp: string;
+  parent: string | null;
+  historicalParent: string | null;
+  mergeBase?: string | null;
+  mergeRevertSha?: string | null;
+  idx: number;
+  message: string;
+}
+
 export interface RepoSetting {
   mainBranch: string;
 }
@@ -128,6 +142,31 @@ export interface ApiReponse {
   beforeState?: RenderedApplicationState;
   apiDiff?: ApiDiff;
   apiStoreInvalidity?: ApiStoreInvalidity;
+  isWIP?: boolean;
+  branch?: Branch;
+  baseBranch?: Branch;
+  lastCommit?: CommitData;
+}
+
+export interface SourceCommitNode extends CommitHistory {
+    children?: Array<SourceCommitNode>;
+    message: string;
+    userId: string;
+    authorUserId: string;
+    timestamp: string;
+    isBranchHead?: boolean;
+    isInBranchLineage?: boolean;
+    isInUserBranchLineage?: boolean;
+    isCurrent?: boolean;
+    isUserBranch?: boolean;
+    branchIds: Array<string>;
+}
+
+export interface SourceGraphResponse {
+  pointers: { [sha: string]: SourceCommitNode };
+  rootNodes: Array<SourceCommitNode>;
+  branches: Array<Branch>;
+  branchesMetaState: BranchesMetaState;
 }
 
 export const EMPTY_COMMIT_STATE: ApplicationKVState = {

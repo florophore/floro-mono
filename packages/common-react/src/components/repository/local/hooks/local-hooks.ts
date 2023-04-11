@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from "react-query";
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
-import { ApiReponse } from "@floro/floro-lib/src/repo";
+import { ApiReponse, SourceGraphResponse } from "@floro/floro-lib/src/repo";
 import { Manifest } from "@floro/floro-lib/src/plugins";
 import { useSession } from "../../../../session/session-context";
 
@@ -24,6 +24,50 @@ export const useCurrentRepoState = (repository: Repository) => {
     }
   );
 };
+
+export const useSourceGraph = (repository: Repository) => {
+  return useQuery(
+    "repo-sourcegraph:" + repository.id,
+    async (): Promise<SourceGraphResponse | null> => {
+      try {
+        if (!repository.id) {
+          return null;
+        }
+        const result = await axios.get(
+          `http://localhost:63403/repo/${repository.id}/sourcegraph`
+        );
+        return result?.data ?? null;
+      } catch (e) {
+        return null;
+      }
+    }
+  );
+};
+
+export const useCanMoveWIP = (repository: Repository, sha?: string|null) => {
+  return useQuery(
+    "repo-can-switch:" + repository.id + ":branch:" + sha,
+    async (): Promise<{canSwitch: boolean}> => {
+      try {
+        if (!repository.id) {
+          return {canSwitch: false};
+        }
+        if (!sha) {
+          return {canSwitch: true};
+        }
+        const result = await axios.get(
+          `http://localhost:63403/repo/${repository.id}/sha/${sha}/canswitchwip`
+        );
+        return result?.data ?? null;
+      } catch (e) {
+        return {canSwitch: false};
+      }
+    }, {
+      cacheTime: 0
+    }
+  );
+};
+
 export const useCurrentLicenses = () => {
   return useQuery("local-licenses:", async (): Promise<
     Array<{ value: string; label: string }>
@@ -106,7 +150,6 @@ export const useUpdatePlugins = (repository: Repository) => {
   });
 };
 
-
 export const useUpdatePluginState = (pluginName: string, repository: Repository) => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -126,6 +169,87 @@ export const useUpdatePluginState = (pluginName: string, repository: Repository)
     onSuccess: ({result}) => {
       queryClient.setQueryData(["repo-current:" + repository.id], result);
     }
+  });
+};
+
+export const useCreateBranch = (repository: Repository) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      branchName,
+      branchHead,
+      baseBranchId,
+      switchBranchOnCreate
+    }: {
+      branchName: string;
+      branchHead: string|null;
+      baseBranchId?: string|null;
+      switchBranchOnCreate: boolean;
+    }): Promise<{ apiResponse: ApiReponse; sourceGraphResponse: SourceGraphResponse }> => {
+      const result = await axios.post<{ apiResponse: ApiReponse; sourceGraphResponse: SourceGraphResponse }>(
+        `http://localhost:63403/repo/${repository.id}/branch`,
+        {
+        branchName,
+        branchHead,
+        baseBranchId,
+        switchBranchOnCreate
+        }
+      );
+      return result?.data;
+    },
+    onSuccess: ({ apiResponse, sourceGraphResponse }) => {
+      queryClient.setQueryData(["repo-current:" + repository.id], apiResponse);
+      queryClient.setQueryData(["repo-sourcegraph:" + repository.id], sourceGraphResponse);
+    },
+  });
+};
+
+export const useSwitchBranch = (repository: Repository) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      branchId,
+    }: {
+      branchId: string|null;
+    }): Promise<{ apiResponse: ApiReponse; sourceGraphResponse: SourceGraphResponse }> => {
+      const result = await axios.post<{ apiResponse: ApiReponse; sourceGraphResponse: SourceGraphResponse }>(
+        `http://localhost:63403/repo/${repository.id}/branch/switch`,
+        {
+        branchId,
+        }
+      );
+      return result?.data;
+    },
+    onSuccess: ({ apiResponse, sourceGraphResponse }) => {
+      queryClient.setQueryData(["repo-current:" + repository.id], apiResponse);
+      queryClient.setQueryData(["repo-sourcegraph:" + repository.id], sourceGraphResponse);
+    },
+  });
+};
+
+export const useDeleteBranch = (repository: Repository) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      branchId,
+    }: {
+      branchId: string;
+    }): Promise<{ apiResponse: ApiReponse; sourceGraphResponse: SourceGraphResponse }> => {
+      if (!branchId) {
+        throw new Error("branchId cannot be null");
+      }
+      const result = await axios.post<{ apiResponse: ApiReponse; sourceGraphResponse: SourceGraphResponse }>(
+        `http://localhost:63403/repo/${repository.id}/branch/${branchId}/delete`,
+        {
+        branchId,
+        }
+      );
+      return result?.data;
+    },
+    onSuccess: ({ apiResponse, sourceGraphResponse }) => {
+      queryClient.setQueryData(["repo-current:" + repository.id], apiResponse);
+      queryClient.setQueryData(["repo-sourcegraph:" + repository.id], sourceGraphResponse);
+    },
   });
 };
 

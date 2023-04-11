@@ -1,8 +1,10 @@
-import React, { useState, useCallback } from "react";
+import React, { useMemo, useState, useCallback } from "react";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import styled from "@emotion/styled";
 import RepoSideNavigator from "./RepoSideNavigator";
 import VersionControlPanel from "./VersionControlPanel";
+import { useLocalVCSNavContext } from "./local/vcsnav/LocalVCSContext";
+import { useSourceGraphIsShown } from "./ui-state-hook";
 
 const Container = styled.main`
   display: flex;
@@ -35,9 +37,12 @@ interface Props {
 }
 
 const RepoNavigator = (props: Props): React.ReactElement => {
+  const sourceMapIsShown = useSourceGraphIsShown();
   return (
     <Container>
-      <RepoSideNavigator repository={props.repository} plugin={props.plugin} />
+      {!sourceMapIsShown &&
+        <RepoSideNavigator repository={props.repository} plugin={props.plugin} />
+      }
       <ContentContainer>
         <Content>{props.children}</Content>
       </ContentContainer>

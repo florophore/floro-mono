@@ -30,6 +30,7 @@ const Container = styled.div`
   box-sizing: border-box;
   padding-left: 24px;
   padding-right: 40px;
+  box-shadow: -10px 2px 3px 4px ${props => props.theme.shadows.versionControlSideBarShadow};
 `;
 
 const LeftContainer = styled.div`

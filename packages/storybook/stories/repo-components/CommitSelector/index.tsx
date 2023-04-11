@@ -19,22 +19,31 @@ const Icon = styled.img`
 `
 
 export interface Props {
-
+    size?: 'regular'|'wide';
 }
+
+
 
 const CommitSelector = (props: Props) => {
-    const theme = useTheme();
-    const icon = useMemo(() => {
-        return theme.name == "light" ? CommitIconLight : CommitIconDark;
-    }, [theme.name])
+  const theme = useTheme();
+  const icon = useMemo(() => {
+    return theme.name == "light" ? CommitIconLight : CommitIconDark;
+  }, [theme.name]);
 
-    return (
-        <InputSelector options={[]} label={"commit"} placeholder={"select commit"} inputPaddingLeft={0} leftElement={(
-            <IconWrapper>
-                <Icon src={icon}/>
-            </IconWrapper>
-        )}/>
-    );
-}
+  return (
+    <InputSelector
+      size={props?.size ?? "regular"}
+      options={[]}
+      label={"commit"}
+      placeholder={"select commit"}
+      inputPaddingLeft={0}
+      leftElement={
+        <IconWrapper>
+          <Icon src={icon} />
+        </IconWrapper>
+      }
+    />
+  );
+};
 
 export default React.memo(CommitSelector);

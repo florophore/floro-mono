@@ -7,7 +7,7 @@ import DotsLoader from '../DotsLoader';
 export interface ButtonProps {
     label: string|React.ReactElement;
     bg: "purple"|"orange"|"teal"|"gray";
-    size: "big"|"medium"|"small"|"extra-small";
+    size: "extra-big"|"big"|"medium"|"small"|"extra-small";
     textSize?: "normal"|"small";
     isDisabled?: boolean;
     isLoading?: boolean;
@@ -52,16 +52,16 @@ const Button = ({
         }
         return colorPalette.lightPurple;
     }, [bg]);
-    
+
     const hoverRadialGradient = useMemo(() => {
-        const edgeColor = backgroundColor.substring(0, 7) + Opacity[50]; 
-        const centerColor = hoverRadialGradientMiddleBackgroundColor.substring(0, 7) + Opacity[80]; 
+        const edgeColor = backgroundColor.substring(0, 7) + Opacity[50];
+        const centerColor = hoverRadialGradientMiddleBackgroundColor.substring(0, 7) + Opacity[80];
         return `radial-gradient(circle farthest-side, ${edgeColor}, ${centerColor})`;
     }, [backgroundColor, hoverRadialGradientMiddleBackgroundColor]);
 
     const hoverRadialGradient0Opacity = useMemo(() => {
-        const edgeColor = backgroundColor.substring(0, 7) + Opacity[0]; 
-        const centerColor = hoverRadialGradientMiddleBackgroundColor.substring(0, 7) + Opacity[0]; 
+        const edgeColor = backgroundColor.substring(0, 7) + Opacity[0];
+        const centerColor = hoverRadialGradientMiddleBackgroundColor.substring(0, 7) + Opacity[0];
         return `radial-gradient(circle farthest-side, ${edgeColor}, ${centerColor})`;
     }, [backgroundColor, hoverRadialGradientMiddleBackgroundColor]);
 
@@ -97,7 +97,7 @@ const Button = ({
     }, [isDisabled, isLoading, onClick])
 
     const fontSize = useMemo(() => {
-      if (size == 'big') {
+      if (size == 'big' || size == 'extra-big') {
         if (textSize == "small") {
           return '1.36rem'
         }
@@ -124,6 +124,7 @@ const Button = ({
     }, [size, textSize]);
 
     const width = useMemo(() => {
+      if (size == 'extra-big') return 486;
       if (size == 'big') return 312;
       if (size == 'medium') return 192;
       if (size == 'small') return 120;
@@ -131,6 +132,7 @@ const Button = ({
     }, [size]);
 
     const height = useMemo(() => {
+      if (size == 'extra-big') return 64;
       if (size == 'big') return 64;
       if (size == 'medium') return 48;
       if (size == 'small') return 40;

@@ -19,7 +19,6 @@ const Container = styled.div`
 `;
 
 export interface Props {
-  roots: Array<SourceCommitNode>;
   width: number;
   height: number;
   rootNodes: Array<SourceCommitNode>;
@@ -29,6 +28,7 @@ export interface Props {
   rowDistance?: number;
   filterBranchlessNodes?: boolean;
   currentSha?: string;
+  onLoaded?: () => void;
   onSelectNode?: (
     sourceCommit: SourceCommitNodeWithGridDimensions,
     terminalBranches: Array<Branch>
@@ -36,7 +36,7 @@ export interface Props {
   onSelectBranch?: (branch: Branch) => void;
   onMouseOverBranch?: (branch: Branch) => void;
   onMouseOffBranch?: (branch: Branch) => void;
-  renderPopup?: (props?: {
+  renderPopup?: (props: {
     onHidePopup?: () => void;
     sourceCommit?: SourceCommitNodeWithGridDimensions;
     terminalBranches?: Array<Branch>;
@@ -157,7 +157,7 @@ const SourceGraph = (props: Props): React.ReactElement => {
   }, [props.isDebug]);
 
   return (
-    <Container style={{ width: props.width, height: props.height, background }}>
+    <Container style={{ width: '100%', height: '100%', background }}>
       <ZoomableSVG
         width={props.width}
         height={props.height}
@@ -169,6 +169,7 @@ const SourceGraph = (props: Props): React.ReactElement => {
         startY={startingCoordinates[1]}
         isDebug={props.isDebug}
         focalPoint={focalPoint}
+        onLoaded={props.onLoaded}
       >
         <CommitChart
           width={props.width}

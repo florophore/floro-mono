@@ -10,6 +10,9 @@ import LocalRepoSubHeader from "./LocalRepoSubHeader";
 import HomeRead from "../home/HomeRead";
 import HomeWrite from "../home/HomeWrite";
 import LocalPluginController from "../plugin/LocalPluginController";
+import { useLocalVCSNavContext } from "./vcsnav/LocalVCSContext";
+import { useSourceGraphIsShown } from "../ui-state-hook";
+import SourceGraphMount from "../sourcegraph/SourceGraphMount";
 
 const LoadingContainer = styled.div`
   display: flex;
@@ -35,10 +38,15 @@ const LocalRepoController = (props: Props) => {
     [theme.name]
   );
   const { data } = useCurrentRepoState(props.repository);
+  const { subAction } = useLocalVCSNavContext();
 
   const updateCommandState = useUpdateCurrentCommand(props.repository);
+  const showSourceGraph = useSourceGraphIsShown();
 
   const onToggleCommandMode = useCallback(() => {
+    if (showSourceGraph) {
+      return;
+    }
     if (data?.repoState?.commandMode == "edit") {
       updateCommandState.mutate("view")
     } else if (data?.repoState?.commandMode == "view") {
@@ -46,7 +54,7 @@ const LocalRepoController = (props: Props) => {
     } else if (data?.repoState?.commandMode == "compare") {
       updateCommandState.mutate("view")
     }
-  }, [data?.repoState?.commandMode, updateCommandState]);
+  }, [data?.repoState?.commandMode, updateCommandState, showSourceGraph]);
 
   useEffect(() => {
     const commandToggleListeners = (event: KeyboardEvent) => {
@@ -60,6 +68,13 @@ const LocalRepoController = (props: Props) => {
     };
   }, [onToggleCommandMode]);
 
+  const localRepoHeader = useMemo(() => {
+    if (showSourceGraph) {
+      return null;
+    }
+    return  <LocalRepoSubHeader repository={props.repository}  plugin={props.plugin}/>
+  }, [props.repository, props.plugin, showSourceGraph]);
+
   return (
     <>
       {!data && (
@@ -69,14 +84,19 @@ const LocalRepoController = (props: Props) => {
       )}
       {data && (
         <>
-          <LocalRepoSubHeader repository={props.repository}  plugin={props.plugin}/>
-          {props.plugin == "home" && data?.repoState?.commandMode == "view" && (
-            <HomeRead
-             repository={props.repository} apiResponse={data} />
-          )}
-          {props.plugin == "home" && data?.repoState?.commandMode == "edit" && (
-            <HomeWrite
-             repository={props.repository} apiResponse={data} />
+          {localRepoHeader}
+          {showSourceGraph && <SourceGraphMount/>}
+          {!showSourceGraph && (
+            <>
+              {props.plugin == "home" && data?.repoState?.commandMode == "view" && (
+                <HomeRead
+                repository={props.repository} apiResponse={data} />
+              )}
+              {props.plugin == "home" && data?.repoState?.commandMode == "edit" && (
+                <HomeWrite
+                repository={props.repository} apiResponse={data} />
+              )}
+            </>
           )}
           {props.plugin != "home" &&
             props.plugin != "settings" &&

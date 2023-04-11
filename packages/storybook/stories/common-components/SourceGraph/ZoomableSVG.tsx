@@ -20,6 +20,7 @@ interface Props {
   startY: number;
   isDebug?: boolean;
   focalPoint: null | [number, number];
+  onLoaded?: () => void;
 }
 
 const ZoomableSVG = ({
@@ -34,6 +35,7 @@ const ZoomableSVG = ({
   startY = 0,
   isDebug = false,
   focalPoint = null,
+  onLoaded
 }: Props) => {
   const offsetX = useMemo(() => width / 2, [width]);
   const offsetY = useMemo(() => height / 2, [height]);
@@ -118,10 +120,11 @@ const ZoomableSVG = ({
           .on("end", onGrabEnd);
     if (svgRef.current && zoomRef.current) {
       if (!hasLoaded) {
+        onLoaded?.();
         setHasLoaded(true);
         const selection = d3.select(svgRef.current);
         selection.call(zoomRef.current);
-        zoomRef.current.scaleTo(selection, 0.5);
+        zoomRef.current.scaleTo(selection, 0.4);
         zoomRef.current.translateTo(
           selection,
           offsetX + startX,
@@ -146,6 +149,7 @@ const ZoomableSVG = ({
     offsetY,
     onGrabStart,
     onGrabEnd,
+    onLoaded
   ]);
 
   const coordinateDebugger = useMemo(() => {
@@ -167,8 +171,8 @@ const ZoomableSVG = ({
         <svg
           style={{ cursor: isGrabbing ? "move" : "auto" }}
           ref={svgRef}
-          width={width}
-          height={height}
+          width={'100%'}
+          height={'100%'}
           viewBox={`${0} ${0} ${width} ${height}`}
         >
           <g transform={`translate(${x},${y})scale(${k})`}>{children}</g>

@@ -42,7 +42,7 @@ interface Props {
   onSelectBranch?: (branch: Branch) => void;
   onMouseOverBranch?: (branch: Branch) => void;
   onMouseOffBranch?: (branch: Branch) => void;
-  renderPopup?: (props?: {
+  renderPopup?: (props: {
     onHidePopup?: () => void;
     sourceCommit?: SourceCommitNodeWithGridDimensions;
     terminalBranches?: Array<Branch>;

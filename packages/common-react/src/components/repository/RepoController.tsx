@@ -12,6 +12,8 @@ import { useUserOrganizations } from "@floro/common-react/src/hooks/offline";
 //import LocalPluginLoader from '@floro/common-react/src/plugin-loader/LocalPluginLoader';
 import LocalRepoController from "@floro/common-react/src/components/repository/local/LocalRepoController";
 import RepoNavigator from "@floro/common-react/src/components/repository/RepoNavigator";
+import { LocalVCSNavProvider } from "./local/vcsnav/LocalVCSContext";
+import { SourceGraphUIProvider } from "./sourcegraph/SourceGraphUIContext";
 
 interface Props {
   from: "local" | "remote";
@@ -31,10 +33,6 @@ const RepoController = (props: Props) => {
       if (event.metaKey && event.shiftKey && event.key == "p") {
         onTogglePanel?.();
       }
-
-      if (event.metaKey && event.key == "e") {
-        //onTogglePanel?.();
-      }
     };
     window.addEventListener("keydown", commandPToggleListener);
     return () => {
@@ -44,24 +42,28 @@ const RepoController = (props: Props) => {
   }, [onTogglePanel]);
 
   return (
-    <RepoNavigator
-      repository={props.repository}
-      plugin={props.plugin ?? "home"}
-      isExpanded={isExpanded}
-      onSetIsExpanded={setIsExpanded}
-    >
-      <>
-        {props.from == "local" && (
-          <LocalRepoController
-            repository={props.repository}
-            plugin={props.plugin ?? "home"}
-            isExpanded={isExpanded}
-            onSetIsExpanded={setIsExpanded}
-          />
-        )}
-        {props.from == "remote" && <div>{"fill in later"}</div>}
-      </>
-    </RepoNavigator>
+      <SourceGraphUIProvider isExpanded={isExpanded}>
+        <LocalVCSNavProvider>
+            <RepoNavigator
+              repository={props.repository}
+              plugin={props.plugin ?? "home"}
+              isExpanded={isExpanded}
+              onSetIsExpanded={setIsExpanded}
+            >
+              <>
+                {props.from == "local" && (
+                  <LocalRepoController
+                    repository={props.repository}
+                    plugin={props.plugin ?? "home"}
+                    isExpanded={isExpanded}
+                    onSetIsExpanded={setIsExpanded}
+                  />
+                )}
+                {props.from == "remote" && <div>{"fill in later"}</div>}
+              </>
+            </RepoNavigator>
+        </LocalVCSNavProvider>
+      </SourceGraphUIProvider>
   );
 };
 

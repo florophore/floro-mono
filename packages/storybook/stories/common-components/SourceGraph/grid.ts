@@ -86,6 +86,40 @@ const getBranchTopOrder = (
   ]);
 };
 
+export const getPotentialBaseBranchesForSha = (
+  sha: string|undefined|null,
+  branches: Array<Branch>,
+  pointerMap: { [sha: string]: SourceCommitNode } = {}
+): Array<Branch> => {
+  if (!sha) {
+    return branches.filter?.(b => !b.lastCommit) ?? [];
+  }
+
+  const sourceCommit = pointerMap[sha];
+  if (!sourceCommit) {
+    return branches.filter?.(b => !b.lastCommit) ?? [];
+  }
+  const visitedBranches = new Set<string>([]);
+  const branchMap = getBranchMap(branches);
+  const topologicalBranchMap = getTopologicalBranchMap(branches);
+  const order: Array<string> = [];
+  let index = 0;
+  for (const branchId of sourceCommit?.branchIds ?? []) {
+    const upsteamBranches = [branchId, ...getBranchTopOrder(branchId, topologicalBranchMap)];
+    for (let bId of upsteamBranches) {
+      if (bId && !visitedBranches.has(bId)) {
+        visitedBranches.add(bId);
+        order[bId] = index++;
+      }
+    }
+  }
+  const out: Array<Branch> = [];
+  for (const branchId of order) {
+    out.push(branchMap[branchId]);
+  }
+  return out;
+}
+
 const getTargetBranchId = (
   branches: Array<Branch>,
   branchIds: Array<string>

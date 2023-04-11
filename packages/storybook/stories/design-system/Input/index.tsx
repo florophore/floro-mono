@@ -20,6 +20,7 @@ export interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   inputPaddingLeft?: number;
   rightElement?: React.ReactElement|null;
   leftElement?: React.ReactElement|null;
+  widthSize?: 'regular'|'wide';
 }
 
 const Container = styled.div`
@@ -100,6 +101,7 @@ const Input = React.forwardRef(
       isLoading,
       placeholder,
       inputPaddingLeft = 16,
+      widthSize = 'regular',
       ...rest
     }: Props,
     ref: React.ForwardedRef<HTMLInputElement | null>
@@ -154,7 +156,7 @@ const Input = React.forwardRef(
     return (
       <Container
         onClick={onClickContainer}
-        style={{ border: `2px solid ${borderColor}` }}
+        style={{ border: `2px solid ${borderColor}`, width: widthSize == 'regular' ? 432 : 470 }}
       >
         <LabelContainer>
           <LabelBorderEnd style={{ left: -1, background: borderColor }} />

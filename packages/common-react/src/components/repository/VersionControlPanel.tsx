@@ -12,8 +12,7 @@ import { css } from "@emotion/css";
 import { useTheme } from "@emotion/react";
 import ColorPalette from "@floro/styles/ColorPalette";
 import { useSession } from "../../session/session-context";
-import BranchSelector from "@floro/storybook/stories/common-components/BranchSelector";
-import CommitSelector from "@floro/storybook/stories/common-components/CommitSelector";
+import CommitSelector from "@floro/storybook/stories/repo-components/CommitSelector";
 import {
   useOfflinePhoto,
   useOfflinePhotoMap,
@@ -28,6 +27,10 @@ import LocalRemoteToggle from "@floro/storybook/stories/common-components/LocalR
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import axios from 'axios';
 import { useDaemonIsConnected } from "../../pubsub/socket";
+import RemoteVCSNavHome from "./home/vcsnav/RemoteVCSNavHome";
+import LocalVCSNavController from "./local/vcsnav/LocalVCSNavController";
+import { LocalVCSNavProvider, useLocalVCSNavContext } from "./local/vcsnav/LocalVCSContext";
+import { useSourceGraphIsShown } from "./ui-state-hook";
 
 const Container = styled.nav`
   display: flex;
@@ -44,6 +47,7 @@ const InnerContainer = styled.div`
   overflow: hidden;
   transition: width 400ms;
 `;
+
 const InnerContainerContent = styled.div`
   display: flex;
   height: 100%;
@@ -51,6 +55,15 @@ const InnerContainerContent = styled.div`
   flex-direction: column;
   justify-content: space-between;
 `;
+
+const InnerContent = styled.div`
+  display: flex;
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+  justify-content: space-between;
+`;
+
 const TopContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -126,10 +139,8 @@ const ToggleIcon = styled.img`
 const OuterShadow = styled.div`
   height: 100px;
   width: 0px;
-  top: 72px;
   left: -2px;
   position: absolute;
-  height: calc(100% - 72px);
   box-shadow: -2px 4px 3px 4px ${props => props.theme.shadows.versionControlSideBarShadow};
   transform: opacity 400ms;
 `;
@@ -176,6 +187,13 @@ const VersionControlPanel = (props: Props) => {
   const from: "remote"|"local" = searchParams.get?.('from') as "remote"|"local" ?? "remote";
   const { data: repoExistsLocally, isLoading } = useRepoExistsLocally(props.repository);
   const cloneRepoMutation = useCloneRepo(props.repository);
+  const sourceGraphIsShown = useSourceGraphIsShown();
+  const isFullShadow = useMemo(() => {
+    if (sourceGraphIsShown) {
+      return true;
+    }
+    return false;
+  }, [sourceGraphIsShown]);
   const cloneRepo = useCallback(() => {
     cloneRepoMutation.mutate();
   }, [props.repository?.id]);
@@ -231,6 +249,8 @@ const VersionControlPanel = (props: Props) => {
     };
   }, [props.isExpanded, theme]);
 
+  const isSourceGraphShown = useSourceGraphIsShown();
+
   const iconOffset = useMemo(() => {
     if (props.isExpanded) {
       return {
@@ -242,6 +262,13 @@ const VersionControlPanel = (props: Props) => {
     };
   }, [props.isExpanded, theme]);
 
+  const remoteIconTop = useMemo(() => {
+    if (isSourceGraphShown) {
+      return 18;
+    }
+    return 140;
+  }, [isSourceGraphShown]);
+
   const remoteIconsOffset = useMemo(() => {
     if (props.isExpanded) {
       return {
@@ -251,7 +278,14 @@ const VersionControlPanel = (props: Props) => {
     return {
       transform: "translate(0px, 0px)",
     };
-  }, [props.isExpanded, theme]);
+  }, [props.isExpanded, isSourceGraphShown, theme]);
+
+  const localIconTop = useMemo(() => {
+    if (isSourceGraphShown) {
+      return 70;
+    }
+    return 88;
+  }, [isSourceGraphShown]);
 
   const localIconsOffset = useMemo(() => {
     if (props.isExpanded) {
@@ -262,7 +296,7 @@ const VersionControlPanel = (props: Props) => {
     return {
       transform: "translate(0px, 0px)",
     };
-  }, [props.isExpanded, theme]);
+  }, [props.isExpanded, isSourceGraphShown, theme]);
 
   const shadowOpacity = useMemo(() => {
     if (props.isExpanded) {
@@ -316,32 +350,21 @@ const VersionControlPanel = (props: Props) => {
               <LocalRemoteToggle tab={from} onChange={onToggleFrom} />
             </div>
           )}
-          <TopContainer>
-            {false &&
-            <>
-              <div style={{ marginTop: 24 }}>
-                <BranchSelector />
-              </div>
-              <div style={{ marginTop: 12 }}>
-                <CommitSelector />
-              </div>
-            </>
-            }
-          </TopContainer>
-          <BottomContainer>
-            {!repoExistsLocally && !isLoading && (
-              <Button
-                label="clone repo"
-                bg={"orange"}
-                size={"big"}
-                onClick={cloneRepo}
-                isLoading={cloneRepoMutation.isLoading}
-              />
-            )}
-          </BottomContainer>
+          {from == "remote" && (
+            <RemoteVCSNavHome repository={props.repository} />
+          )}
+          {from == "local" && (
+            <LocalVCSNavController repository={props.repository} />
+          )}
         </InnerContainerContent>
       </InnerContainer>
-      <OuterShadow style={{opacity: shadowOpacity}}/>
+      <OuterShadow
+        style={{
+          opacity: shadowOpacity,
+          height: isFullShadow ? "100%" : "calc(100% - 72px)",
+          top: isFullShadow ? 0 : 72,
+        }}
+      />
       <AdjustIconWrapper onClick={onTogglePanel} style={iconOffset}>
         <AdjustIcon src={adjustIcon} />
       </AdjustIconWrapper>
@@ -350,6 +373,7 @@ const VersionControlPanel = (props: Props) => {
           <RemoteToggleIconWrapper
             style={{
               ...remoteIconsOffset,
+              top: remoteIconTop,
               background:
                 from == "remote" ? ColorPalette.teal : ColorPalette.gray,
             }}
@@ -360,6 +384,7 @@ const VersionControlPanel = (props: Props) => {
           <LocalToggleIconWrapper
             style={{
               ...localIconsOffset,
+              top: localIconTop,
               background:
                 from == "local" ? ColorPalette.teal : ColorPalette.gray,
             }}

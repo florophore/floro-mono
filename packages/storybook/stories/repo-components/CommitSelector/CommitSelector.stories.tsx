@@ -1,7 +1,7 @@
 import CommitSelector from "./index";
 
 export default {
-  title: "floro-app/common-components/CommitSelector",
+  title: "floro-app/repo-components/CommitSelector",
   component: CommitSelector,
   argTypes: {},
 };

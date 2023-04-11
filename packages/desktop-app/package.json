@@ -58,6 +58,7 @@
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
     "apollo-upload-client": "^17.0.0",
+    "electron-acrylic-window": "^0.5.11",
     "electron-updater": "5.2.1",
     "framer-motion": "^10.10.0",
     "http-terminator": "^3.2.0",

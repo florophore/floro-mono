@@ -1,7 +1,7 @@
 import BranchSelector from "./index";
 
 export default {
-  title: "floro-app/common-components/BranchSelector",
+  title: "floro-app/repo-components/BranchSelector",
   component: BranchSelector,
   argTypes: {},
 };

@@ -132,7 +132,7 @@ export interface OptionProps {
 }
 
 export interface Option<T> {
-  value: T;
+  value: T|null;
   textValue?: string;
   searchValue?: string;
   label: string | ((props: OptionProps) => React.ReactElement);
@@ -154,6 +154,9 @@ export interface Props<T> {
   isDropdown?: boolean;
   leftElement?: React.ReactElement|null;
   inputPaddingLeft?: number;
+  noResultsMessage?: string;
+  size?: 'regular'|'wide';
+  disableNull?: boolean
 }
 
 const InputSelector = <T,>({
@@ -168,6 +171,8 @@ const InputSelector = <T,>({
   isDropdown = true,
   isLoading,
   placeholder,
+  size = 'regular',
+  disableNull = true,
   ...rest
 }: Props<T>) => {
 
@@ -182,6 +187,7 @@ const InputSelector = <T,>({
   }, [value, rest.options])
 
   const [text, setText] = useState(initTextValue);
+  const [optionText, setOptionText] = useState(initTextValue);
   const [isFocused, setIsFocused] = useState(false);
   const [isHoveringList, setIsHoveringList] = useState(false);
   const [isTapping, setIsTapping] = useState(false);
@@ -190,6 +196,20 @@ const InputSelector = <T,>({
   const theme = useTheme();
   const input = useRef(null);
   const optionContainer = useRef(null);
+
+  useEffect(() => {
+    const option = rest.options.find?.(option => option.value == value);
+    let initText;
+    if (!option) initText = "";
+    if (typeof option?.label == "string") {
+       initText = option?.label;
+    } else {
+      initText = option?.textValue ?? "";
+    }
+     if (optionText != initText) {
+        setOptionText(initText);
+     }
+  }, [value, rest.options, optionText])
 
   const onFocusInput = useCallback(() => {
     setIsFocused(true);
@@ -200,7 +220,7 @@ const InputSelector = <T,>({
   const onBlurInput = useCallback(() => {
     setIsFocused(false);
     setHighlightIndex(null);
-  }, []);
+  }, [value, disableNull, onChange, rest.options]);
 
   const onStartHoveringList = useCallback(() => {
     setIsHoveringList(true);
@@ -211,7 +231,7 @@ const InputSelector = <T,>({
   }, []);
 
   const onInputChanged = useCallback(
-    (text) => {
+    (text: string) => {
     setHighlightIndex(null);
     setDisableHover(true);
       setText(text);
@@ -245,20 +265,22 @@ const InputSelector = <T,>({
   }, [rest.options, filterInput, text]);
 
   const onSelect = useCallback(
-    (option: Option<T>, index: number) => {
+    (option: Option<T>) => {
       setIsHoveringList(false);
-      onChange?.(option);
       if (typeof option.label == "string") {
         setText(option.label);
+        setOptionText(option.label);
       } else {
         setText(option.textValue ?? "");
+        setOptionText(option?.textValue ?? "");
       }
+      onChange?.(option);
     },
     [filteredOptions, onChange]
   );
 
   const options = useMemo(() => {
-    return filteredOptions.map((option, index) => {
+    return filteredOptions.map((option: Option<T>, index: number) => {
       if (typeof option.label == "string") {
         return (
           <OptionContainer
@@ -268,7 +290,10 @@ const InputSelector = <T,>({
               setHighlightIndex(index);
               setIsTapping(false);
             }}
-            onClick={() => onSelect(option, index)}
+            onClick={() => {
+                setOptionText((option?.label as string) ?? "");
+                onSelect(option)
+            }}
             style={{
               ...(highlightIndex == index
                 ? {
@@ -284,13 +309,16 @@ const InputSelector = <T,>({
       return (
         <div
           key={index}
-          onClick={() => onSelect(option, index)}
+          onClick={() => {
+            setOptionText((option?.textValue as string) ?? "");
+            onSelect(option)
+          }}
           onMouseEnter={() => {
             if (disableHover) return;
             setIsTapping(false);
           }}
         >
-          {option.label({ isHightlighted: highlightIndex == index })}
+          {option.label({ isHighlighted: highlightIndex != null && highlightIndex == index })}
         </div>
       );
     });
@@ -337,7 +365,7 @@ const InputSelector = <T,>({
         event.preventDefault();
         event.stopPropagation();
         (input?.current as HTMLInputElement | null)?.blur?.();
-        onSelect(filteredOptions[highlightIndex], highlightIndex);
+        onSelect(filteredOptions[highlightIndex]);
       }
     },
     [highlightIndex, filteredOptions, onSelect]
@@ -371,10 +399,10 @@ const InputSelector = <T,>({
     }
     return (
       <NoOptionContainer>
-        <NoOptionText>{isLoading ? "Loading..." : "No results found..."}</NoOptionText>
+        <NoOptionText>{isLoading ? "Loading..." : rest?.noResultsMessage ?? "No results found..."}</NoOptionText>
       </NoOptionContainer>
     );
-  }, [filteredOptions, theme.name, isLoading]);
+  }, [filteredOptions, theme.name, isLoading, rest?.noResultsMessage]);
 
   const RightElement = useMemo(() => {
     if (isDropdown) {
@@ -403,9 +431,9 @@ const InputSelector = <T,>({
 
   return (
     <div style={{ display: "flex" }}>
-      <Container>
+      <Container style={{width: size == 'regular' ? 432 : 470}}>
         <Input
-          value={text}
+          value={isFocused ? text : optionText}
           label={label}
           onTextChanged={onInputChanged}
           onFocus={onFocusInput}
@@ -418,6 +446,7 @@ const InputSelector = <T,>({
           leftElement={rest.leftElement}
           inputPaddingLeft={rest.inputPaddingLeft}
           ref={input}
+          widthSize={size}
         />
         {showList && (
           <DropdownContainer
