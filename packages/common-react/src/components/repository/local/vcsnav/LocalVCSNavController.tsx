@@ -34,6 +34,11 @@ import LocalBranchesNavPage from "./LocalBranchesNavPage";
 import { useSourceGraphIsShown } from "../../ui-state-hook";
 import SourceGraphMount from "../../sourcegraph/SourceGraphMount";
 import NewBranchNavPage from "./NewBranchNavPage";
+import LocalVCSEditMode from "./LocalVCSEditMode";
+import LocalVCSCompareMode from "./LocalVCSCompareMode";
+import WriteCommitNavPage from "./WriteCommitNavPage";
+import EditBranchNavPage from "./EditBranchNavPage";
+import LocalVCSCompareMergeMode from "./LocalVCSCompareMergeMode";
 
 const Container = styled.nav`
   display: flex;
@@ -93,14 +98,36 @@ const LocalVCSNavController = (props: Props) => {
 
   const { data } = useCurrentRepoState(props.repository);
   const { subAction} = useLocalVCSNavContext();
-  if (data?.repoState.commandMode == "view") {
+
+  if (data) {
     if (subAction == "branches") {
         return <LocalBranchesNavPage apiResponse={data} repository={props.repository}/>
     }
     if (subAction == "new_branch") {
       return <NewBranchNavPage apiResponse={data} repository={props.repository}/>
     }
+
+    if (subAction == "edit_branch") {
+      return <EditBranchNavPage apiResponse={data} repository={props.repository}/>
+    }
+
+    if (subAction == "write_commit") {
+      return <WriteCommitNavPage apiResponse={data} repository={props.repository}/>
+    }
+  }
+  if (data?.repoState.commandMode == "view") {
     return <LocalVCSViewMode apiResponse={data} repository={props.repository} />;
+  }
+
+  if (data?.repoState.commandMode == "compare") {
+    if (data?.repoState?.comparison?.against == "merge") {
+    return <LocalVCSCompareMergeMode apiResponse={data} repository={props.repository} />;
+    }
+    return <LocalVCSCompareMode apiResponse={data} repository={props.repository} />;
+  }
+
+  if (data?.repoState.commandMode == "edit") {
+    return <LocalVCSEditMode apiResponse={data} repository={props.repository} />;
   }
   return null;
 };

@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
-import { ApiReponse } from "@floro/floro-lib/src/repo";
+import { ApiResponse } from "@floro/floro-lib/src/repo";
 import {
   Repository,
   Plugin,
@@ -9,6 +9,7 @@ import {
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import PluginEditorRow from "./PluginEditorRow";
 import PreviewPlugin from "./PreviewPlugin";
+import { useLocalVCSNavContext } from "../../local/vcsnav/LocalVCSContext";
 
 const PluginContainer = styled.div`
   padding: 16px;
@@ -53,7 +54,7 @@ const NoPluginsText = styled.h3`
 
 interface Props {
   repository: Repository;
-  apiReponse: ApiReponse;
+  apiResponse: ApiResponse;
   plugins: Array<Plugin>;
   onChangePluginVersion?: (
     plugin?: Plugin,
@@ -70,38 +71,74 @@ const PluginEditor = (props: Props) => {
     return `1px solid ${theme.colors.pluginBorderDivider}`;
   }, [theme]);
 
+  const { compareFrom } = useLocalVCSNavContext();
+
+  const plugins = useMemo(() => {
+    if (
+      props.apiResponse.repoState.commandMode == "compare" &&
+      compareFrom == "before"
+    ) {
+      return props?.apiResponse?.beforeState?.plugins ?? [];
+    }
+
+    return props?.apiResponse?.applicationState?.plugins ?? [];
+  }, [
+    props.apiResponse.repoState.commandMode,
+    props.apiResponse.applicationState,
+    props.apiResponse.beforeState,
+    compareFrom,
+  ]);
+
+  const pluginChanges = useMemo(() => {
+    if (props.apiResponse.repoState.commandMode == "compare") {
+      if (compareFrom == "before") {
+        return new Set(props?.apiResponse?.apiDiff?.plugins?.removed);
+      }
+      return new Set(props?.apiResponse?.apiDiff?.plugins?.added);
+    }
+
+    return new Set<number>();
+  }, [
+    props?.apiResponse?.apiDiff?.plugins?.added,
+    props?.apiResponse?.apiDiff?.plugins?.removed,
+    props.apiResponse.repoState.commandMode,
+    props.apiResponse.applicationState,
+    props.apiResponse.beforeState,
+    compareFrom,
+  ]);
+
   const showTopDividerForDevelopmentPlugin = useMemo(() => {
-    return (props.apiReponse.applicationState.plugins?.length ?? 0) > 0;
-  }, [props.apiReponse.applicationState.plugins]);
+    return (plugins?.length ?? 0) > 0;
+  }, [plugins]);
 
   const suggestedPlugins = useMemo(() => {
     const seen = new Set(
-      props.apiReponse?.applicationState?.plugins?.map?.((v) => v.key) ?? []
+      props.apiResponse?.applicationState?.plugins?.map?.((v) => v.key) ?? []
     );
     return (
       (props?.suggestedPlugins?.filter?.(
         (sp) => !seen.has(sp?.name ?? "")
       ) as Array<Plugin>) ?? []
     );
-  }, [props.apiReponse?.applicationState?.plugins, props?.suggestedPlugins]);
+  }, [props.apiResponse?.applicationState?.plugins, props?.suggestedPlugins]);
 
   const showTopDividerForSuggestedPlugin = useMemo(() => {
     return (
       suggestedPlugins?.length > 0 &&
-      (props.apiReponse.applicationState.plugins?.length > 0 ||
+      (props.apiResponse.applicationState.plugins?.length > 0 ||
         (props.developerPlugins?.length ?? 0) > 0)
     );
   }, [
-    props.apiReponse.applicationState.plugins,
+    props.apiResponse.applicationState.plugins,
     props.developerPlugins,
     suggestedPlugins,
   ]);
 
   return (
     <div>
-      {(props.apiReponse?.applicationState?.plugins?.length ?? 0) > 0 && (
+      {(props.apiResponse?.applicationState?.plugins?.length ?? 0) > 0 && (
         <PluginContainer>
-          {props.apiReponse.applicationState.plugins.map((pluginKV, index) => {
+          {props.apiResponse.applicationState.plugins.map((pluginKV, index) => {
             return (
               <PluginEditorRow
                 key={index}
@@ -111,13 +148,16 @@ const PluginEditor = (props: Props) => {
                 pluginVersion={pluginKV.value}
                 onChangePluginVersion={props.onChangePluginVersion}
                 isEditMode={props.isEditMode}
+                isCompareMode={props.apiResponse.repoState.commandMode == "compare"}
+                wasAdded={compareFrom == "after" && pluginChanges.has(index)}
+                wasRemoved={compareFrom == "before" && pluginChanges.has(index)}
               />
             );
           })}
         </PluginContainer>
       )}
 
-      {(props.apiReponse?.applicationState?.plugins?.length ?? 0) == 0 &&
+      {(props.apiResponse?.applicationState?.plugins?.length ?? 0) == 0 &&
         // add suggested plugins length check here
         (props?.developerPlugins?.length ?? 0) == 0 && (
           <NoPluginsContainer>

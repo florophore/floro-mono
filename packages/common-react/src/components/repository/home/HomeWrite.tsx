@@ -13,7 +13,7 @@ import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import ColorPalette from "@floro/styles/ColorPalette";
 import { Repository, useFetchSuggestedPluginsQuery } from "@floro/graphql-schemas/src/generated/main-client-graphql";
-import { ApiReponse } from "@floro/floro-lib/src/repo";
+import { ApiResponse } from "@floro/floro-lib/src/repo";
 import DotsLoader from "@floro/storybook/stories/design-system/DotsLoader";
 import { usePossibleDevPlugins, useRepoDevPlugins, useRepoManifestList, useUpdateDescription, useUpdateLicenses } from "../local/hooks/local-hooks";
 import EditIconLight from "@floro/common-assets/assets/images/icons/edit.light.svg";
@@ -238,15 +238,11 @@ const LicenseRemoveIcon = styled.img`
 
 interface Props {
   repository: Repository;
-  apiResponse: ApiReponse;
+  apiResponse: ApiResponse;
 }
 
 const HomeWrite = (props: Props) => {
   const theme = useTheme();
-  const loaderColor = useMemo(
-    () => (theme.name == "light" ? "purple" : "lightPurple"),
-    [theme.name]
-  );
 
   const queryClient = useQueryClient();
   const repoManifestList = useRepoManifestList(props.repository);
@@ -393,9 +389,28 @@ const HomeWrite = (props: Props) => {
     return (props?.apiResponse?.applicationState?.licenses?.length ?? 0) == 0;
   }, [props.apiResponse]);
 
+  const debounceTimeout = useRef<NodeJS.Timeout>();
+
   useEffect(() => {
+    if (debounceTimeout.current !== undefined) {
+      clearTimeout(debounceTimeout.current);
+    }
+    debounceTimeout.current = setTimeout(() => {
+      setDescription(readDescription);
+    }, 100);
+    return () => {
+      if (debounceTimeout.current !== undefined) {
+        clearTimeout(debounceTimeout.current);
+      }
+    }
+  }, [readDescription])
+
+  useEffect(() => {
+    if (debounceTimeout.current !== undefined) {
+      clearTimeout(debounceTimeout.current);
+    }
     if (textareaContainer?.current) {
-      textareaContainer.current.dataset.value = description;
+      textareaContainer.current.dataset.value = description ?? ' ';
     }
   }, [description]);
 
@@ -441,12 +456,7 @@ const HomeWrite = (props: Props) => {
           <SectionTitleWrapper>
             <SectionTitle>{"Description"}</SectionTitle>
           </SectionTitleWrapper>
-          {updateDescriptionMutation.isLoading && (
-            <DotsLoader size={"small"} color={loaderColor} />
-          )}
-          {!updateDescriptionMutation.isLoading && (
-            <EditIcon onClick={onClickEditIcon} src={editIcon} />
-          )}
+          <EditIcon onClick={onClickEditIcon} src={editIcon} />
         </SectionRow>
         <TextAreaBlurbBox
           style={{
@@ -463,7 +473,7 @@ const HomeWrite = (props: Props) => {
             ref={textarea}
             onFocus={onFocusDescription}
             onBlur={onBlurDescription}
-            defaultValue={readDescription}
+            value={description}
             onChange={onTextBoxChanged}
           />
         </TextAreaBlurbBox>
@@ -517,7 +527,7 @@ const HomeWrite = (props: Props) => {
         <BlurbBox style={{ padding: 0}}>
           <PluginEditor
             repository={props.repository}
-            apiReponse={props.apiResponse}
+            apiResponse={props.apiResponse}
             plugins={installedPlugins}
             onChangePluginVersion={onChangePluginVersionFromPluginEditor}
             isEditMode={true}

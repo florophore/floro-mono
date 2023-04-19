@@ -16,6 +16,7 @@ interface Props {
     onSelectBranch?: (branch: Branch) => void;
     onMouseOverBranch?: (branch: Branch) => void;
     onMouseOffBranch?: (branch: Branch) => void;
+    isCurrentBranch?: boolean;
 }
 
 const TerminalBranch = ({
@@ -25,6 +26,7 @@ const TerminalBranch = ({
     terminalBranches,
     branch,
     fill,
+    isCurrentBranch = false,
     ...rest
 
 }: Props) => {
@@ -44,7 +46,7 @@ const TerminalBranch = ({
         return branchStemX2 + 16;
     }, [branchStemX2])
     const y = useMemo(() => {
-      return branchStemY2 + 8 - 48 * (index - (terminalBranches.length - 1));
+      return branchStemY2 + 48 * (index - (terminalBranches.length - 1));
     }, [branchStemY2, index, terminalBranches.length]);
   return (
     <motion.text
@@ -53,7 +55,8 @@ const TerminalBranch = ({
       fill={fill}
       fontWeight={600}
       fontFamily="MavenPro"
-      fontSize={32}
+      fontSize={isCurrentBranch ? 36 : 32}
+      textDecoration={isCurrentBranch ? "underline" : "none"}
       style={{
         cursor: "pointer",
       }}
@@ -61,7 +64,7 @@ const TerminalBranch = ({
       onMouseEnter={onMouseOverBranch}
       onMouseLeave={onMouseOffBranch}
     >
-      {`${branch.name}`}
+      {`${branch.name.length > 20 ? branch.name.substring(0, 20) + "...": branch.name}`}
     </motion.text>
   );
 };

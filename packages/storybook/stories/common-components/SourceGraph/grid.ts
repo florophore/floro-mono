@@ -1,30 +1,10 @@
-export interface CommitHistory {
-  sha: null | string;
-  parent: null | string;
-  historicalParent: null | string;
-  mergeBase: null | string;
-  idx: number;
-  message: string;
-}
-
-export interface SourceCommitNode extends CommitHistory {
-  children?: Array<SourceCommitNode>;
-  message: string;
-  userId: string;
-  authorUserId: string;
-  timestamp: string;
-  isBranchHead?: boolean;
-  isInBranchLineage?: boolean;
-  isInUserBranchLineage?: boolean;
-  isCurrent?: boolean;
-  isUserBranch?: boolean;
-  branchIds: Array<string>;
-  isInCurrentLineage?: boolean;
-}
+import { SourceCommitNode } from "@floro/floro-lib/src/repo";
 
 export interface SourceCommitNodeWithGridDimensions extends SourceCommitNode {
   row: number;
   column: number;
+  maxChainLength?: number;
+  isInCurrentLineage?: boolean;
 }
 
 export interface Branch {
@@ -94,15 +74,19 @@ export const getPotentialBaseBranchesForSha = (
   if (!sha) {
     return branches.filter?.(b => !b.lastCommit) ?? [];
   }
+  let firstCommitWithBranchIds = pointerMap[sha];
+  while(firstCommitWithBranchIds?.parent && firstCommitWithBranchIds?.branchIds?.length == 0) {
+    firstCommitWithBranchIds = pointerMap[firstCommitWithBranchIds.parent];
+  }
 
-  const sourceCommit = pointerMap[sha];
+  const sourceCommit = pointerMap[firstCommitWithBranchIds?.sha as string];
   if (!sourceCommit) {
     return branches.filter?.(b => !b.lastCommit) ?? [];
   }
   const visitedBranches = new Set<string>([]);
   const branchMap = getBranchMap(branches);
   const topologicalBranchMap = getTopologicalBranchMap(branches);
-  const order: Array<string> = [];
+  const order: {[key: string]: number} = {};
   let index = 0;
   for (const branchId of sourceCommit?.branchIds ?? []) {
     const upsteamBranches = [branchId, ...getBranchTopOrder(branchId, topologicalBranchMap)];
@@ -114,11 +98,35 @@ export const getPotentialBaseBranchesForSha = (
     }
   }
   const out: Array<Branch> = [];
-  for (const branchId of order) {
-    out.push(branchMap[branchId]);
+  for (let i = 0; i < Object.keys(order).length; ++i) {
+    out.push();
+  }
+  for (const branchId in order) {
+    out[order[branchId]] = branchMap[branchId];
   }
   return out;
 }
+
+const sortBranchIdsIntoTopologicalOrder = (
+  branches: Array<Branch>,
+  branchIds: Array<string>
+): {[k: string]: number} => {
+  const topologicalBranchMap = getTopologicalBranchMap(branches);
+  const out: Array<{ branchId: string; length: number }> = [];
+  for (const branchId of branchIds) {
+    const subBranchIds = getBranchTopOrder(
+      branchId,
+      topologicalBranchMap
+    ).filter((id) => {
+      return branchIds.includes(id);
+    });
+    out.push({
+      branchId,
+      length: subBranchIds.length,
+    });
+  }
+  return out.reduce((acc, v) => ({ ...acc, [v.branchId]: v.length }), {});
+};
 
 const getTargetBranchId = (
   branches: Array<Branch>,
@@ -154,29 +162,33 @@ const getTargetBranchId = (
 
 const getTargetCommitLeaf = (
   rootNode: SourceCommitNode,
-  branches: Array<Branch>
+  pointerMap: {[k: string]: SourceCommitNodeWithGridDimensions},
+  branches: Array<Branch>,
+  branchRankMap: {[k: string]: number}
 ): SourceCommitNode => {
-  const leaves = getSubGraphLeaves(rootNode);
   const topBranch = getTargetBranchId(branches, rootNode.branchIds);
-  if (topBranch) {
-    for (const leaf of leaves) {
-      if (leaf.branchIds.includes(topBranch)) {
-        return leaf;
-      }
-    }
+  const topCommit = branches?.find(b => b.id == topBranch)?.lastCommit;
+  if (topCommit && pointerMap[topCommit]) {
+    return pointerMap[topCommit];
   }
+  const leaves = getSubGraphLeaves(rootNode);
   return (
     leaves.sort((a, b) => {
-      if (a.branchIds.length == b.branchIds.length) {
-        if (a.idx == b.idx) {
-          if (new Date(a.timestamp) == new Date(b.timestamp)) {
-            return 0;
+      const scoreA = getNodeBranchRank(a, branchRankMap);
+      const scoreB = getNodeBranchRank(b, branchRankMap);
+      if (scoreA == scoreB) {
+        if (a.branchIds.length == b.branchIds.length) {
+          if (a.idx == b.idx) {
+            if (new Date(a.timestamp) == new Date(b.timestamp)) {
+              return 0;
+            }
+            return new Date(a.timestamp) > new Date(b.timestamp) ? -1 : 1;
           }
-          return new Date(a.timestamp) > new Date(b.timestamp) ? -1 : 1;
+          return a.idx > b.idx ? -1 : 1;
         }
-        return a.idx > b.idx ? -1 : 1;
+        return a.branchIds.length > b.branchIds.length ? -1 : 1;
       }
-      return a.branchIds.length > b.branchIds.length ? -1 : 1;
+      return scoreA > scoreB ? 1 : -1;
     })?.[0] ?? rootNode
   );
 };
@@ -208,6 +220,17 @@ const buildNullGrid = (
   return grid;
 };
 
+const getNodeBranchRank = (node: SourceCommitNode, branchRankMap: {[k: string]: number}) => {
+  if (node.branchIds.length == 0) {
+    return Number.MAX_SAFE_INTEGER;
+  }
+  let score = 0;
+  for (const branchId of node.branchIds) {
+    score += branchRankMap?.[branchId] ?? 0;
+  }
+  return score;
+}
+
 function insertNodeIntoGrid(
   grid: Array<Array<SourceCommitNodeWithGridDimensions | null>>,
   node: SourceCommitNodeWithGridDimensions,
@@ -215,7 +238,8 @@ function insertNodeIntoGrid(
   column: number,
   visitedNodes: Set<string>,
   targetNodes: Set<string>,
-  gridMaxColSize: number
+  gridMaxColSize: number,
+  branchRankMap: {[k: string]: number}
 ) {
   ensureGridIsSafe(grid, row, gridMaxColSize);
   node.row = row;
@@ -223,22 +247,28 @@ function insertNodeIntoGrid(
   grid[row][column] = node;
   visitedNodes.add(node.sha as string);
   const childrenToTraverse =
-    node?.children
+    (node?.children as Array<SourceCommitNodeWithGridDimensions>)
       ?.filter?.((child) => {
         return !visitedNodes.has(child.sha as string);
       })
       ?.sort((a, b) => {
-        if (a.branchIds.length == b.branchIds.length) {
-          if (a.idx == b.idx) {
-            if (new Date(a.timestamp) == new Date(b.timestamp)) {
-              return 0;
+        const scoreA = getNodeBranchRank(a, branchRankMap);
+        const scoreB = getNodeBranchRank(b, branchRankMap);
+        if (scoreA == scoreB) {
+          if (a.branchIds.length == b.branchIds.length) {
+            if (a.maxChainLength == b.maxChainLength) {
+              if (new Date(a.timestamp) == new Date(b.timestamp)) {
+                return 0;
+              }
+              return new Date(a.timestamp) > new Date(b.timestamp) ? -1 : 1;
             }
-            return new Date(a.timestamp) > new Date(b.timestamp) ? -1 : 1;
+            return (a?.maxChainLength ?? 0) > (b?.maxChainLength ?? 0) ? -1 : 1;
           }
-          return a.idx > b.idx ? -1 : 1;
+          return a.branchIds.length > b.branchIds.length ? -1 : 1;
         }
-        return a.branchIds.length > b.branchIds.length ? -1 : 1;
+        return scoreA > scoreB ? 1 : -1;
       }) ?? [];
+
   for (const child of childrenToTraverse as Array<SourceCommitNodeWithGridDimensions>) {
     const childColumn = column + 1;
     const childEndColumn = getSubGraphWidth(child);
@@ -255,12 +285,26 @@ function insertNodeIntoGrid(
       childRow++;
     }
 
-    childRow =
+    if (
       childRow == node.row &&
-      child.branchIds.length < node.branchIds?.length &&
+      child.branchIds.length != node.branchIds?.length &&
       !targetNodes.has(child.sha as string)
-        ? childRow + 1
-        : childRow;
+    ) {
+      if (child.branchIds.length != node.branchIds?.length) {
+        childRow++;
+      }
+      while (
+        !canInsertIntoRow(
+          grid,
+          childRow,
+          childColumn,
+          childEndColumn,
+          gridMaxColSize
+        )
+      ) {
+        childRow++;
+      }
+    }
     insertNodeIntoGrid(
       grid,
       child,
@@ -268,7 +312,8 @@ function insertNodeIntoGrid(
       childColumn,
       visitedNodes,
       targetNodes,
-      gridMaxColSize
+      gridMaxColSize,
+      branchRankMap
     );
   }
 }
@@ -320,10 +365,21 @@ const printDebugGrid = (
   console.table(debugGrid);
 };
 
+const assignMaxSizeToRoot = (rootNode: SourceCommitNodeWithGridDimensions): SourceCommitNodeWithGridDimensions => {
+  let maxSize = rootNode.idx;
+  for (const child of rootNode?.children ?? []) {
+    const c = assignMaxSizeToRoot(child as SourceCommitNodeWithGridDimensions);
+    maxSize = Math.max(maxSize, c.maxChainLength ?? 0)
+
+  }
+  rootNode.maxChainLength = maxSize;
+  return rootNode;
+}
+
 export const mapSourceGraphRootsToGrid = (
   rootNodes: Array<SourceCommitNode>,
   branches: Array<Branch>,
-  currentSha?: string,
+  currentSha?: string|null,
   isDebug = false
 ): {
   roots: Array<SourceCommitNodeWithGridDimensions>;
@@ -342,7 +398,6 @@ export const mapSourceGraphRootsToGrid = (
     };
   }
   const pointerMap = buildPointerMap(rootNodes);
-
   const orderedRootNodes = rootNodes.sort((a, b) => {
     if (a.branchIds.length == b.branchIds.length) {
       if (new Date(a.timestamp) == new Date(b.timestamp)) {
@@ -368,14 +423,20 @@ export const mapSourceGraphRootsToGrid = (
   const visitedNodes: Set<string> = new Set();
   const targetSetMap: Array<Set<string>> = [];
   for (let n = 0; n < subgraphs.length; ++n) {
-    const subgraph = subgraphs[n];
+    const subgraph = assignMaxSizeToRoot(subgraphs[n] as SourceCommitNodeWithGridDimensions);
+    const branchRankMap = sortBranchIdsIntoTopologicalOrder(
+      branches,
+      subgraph.branchIds
+    );
     let current: SourceCommitNode | SourceCommitNodeWithGridDimensions | null =
-      getTargetCommitLeaf(subgraph, branches);
+      getTargetCommitLeaf(subgraph, pointerMap, branches, branchRankMap);
     targetSetMap.push(new Set());
     while (current) {
-      if (current.sha) {
+      // consider removing
+      if (current.sha && current?.parent) {
         targetSetMap[n].add(current.sha);
       }
+
       if (current?.parent) {
         current = pointerMap[current.parent];
       } else {
@@ -390,7 +451,8 @@ export const mapSourceGraphRootsToGrid = (
       roots[n].idx,
       visitedNodes,
       targetSetMap[n],
-      columnSize
+      columnSize,
+      branchRankMap
     );
   }
   if (isDebug) {
@@ -531,7 +593,7 @@ export const getNodes = (
 export const getNodesWithCurrentLineage = (
   rootNodes: Array<SourceCommitNodeWithGridDimensions>,
   pointerMap: { [sha: string]: SourceCommitNodeWithGridDimensions },
-  currentSha?: string
+  currentSha?: string|null
 ) => {
   resetLineage(rootNodes, pointerMap);
   if (!currentSha) {

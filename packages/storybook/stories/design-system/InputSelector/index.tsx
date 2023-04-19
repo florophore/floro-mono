@@ -15,11 +15,13 @@ import { useTheme } from "@emotion/react";
 const Container = styled.div`
   position: relative;
   width: 436px;
+  max-height: 332px;
 `;
 
 const DropdownContainer = styled.div`
   position: absolute;
   top: 82px;
+  left: 0;
   display: inline-block;
   width: 100%;
   border-radius: 8px;
@@ -214,7 +216,7 @@ const InputSelector = <T,>({
   const onFocusInput = useCallback(() => {
     setIsFocused(true);
     setText("");
-    onChange?.(null);
+    //onChange?.(null);
   }, [onChange]);
 
   const onBlurInput = useCallback(() => {
@@ -327,7 +329,7 @@ const InputSelector = <T,>({
   const onKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLInputElement>) => {
       if (event.key == "ArrowDown") {
-        event.preventDefault();
+        //event.preventDefault();
         event.stopPropagation();
         setIsTapping(true);
         setDisableHover(true);
@@ -344,7 +346,7 @@ const InputSelector = <T,>({
         }
       }
       if (event.key == "ArrowUp") {
-        event.preventDefault();
+        //event.preventDefault();
         event.stopPropagation();
         setIsTapping(true);
         setDisableHover(true);
@@ -425,12 +427,12 @@ const InputSelector = <T,>({
     if (highlightIndex !== null) {
       const child = (optionContainer.current as HTMLDivElement | null)
         ?.children?.[highlightIndex];
-      child?.scrollIntoView?.({block: "center", inline: "center"});
+      child?.scrollIntoView?.({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     }
   }, [highlightIndex, isTapping]);
 
   return (
-    <div style={{ display: "flex" }}>
+    <div style={{ display: "flex", position: "relative" }}>
       <Container style={{width: size == 'regular' ? 432 : 470}}>
         <Input
           value={isFocused ? text : optionText}

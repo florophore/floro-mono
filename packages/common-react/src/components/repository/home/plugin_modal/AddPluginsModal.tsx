@@ -7,7 +7,7 @@ import {
   useSearchPluginsForRepositoryLazyQuery,
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import debouncer from "lodash.debounce";
-import { ApiReponse } from "@floro/floro-lib/src/repo";
+import { ApiResponse } from "@floro/floro-lib/src/repo";
 import PluginInstaller from "./PluginInstaller";
 import { Manifest } from "@floro/floro-lib/src/plugins";
 import PluginSearchSplashScreen from "./PluginSearchSplashScreen";
@@ -15,7 +15,7 @@ import PluginSearchSplashScreen from "./PluginSearchSplashScreen";
 export interface Props {
   onDismiss: () => void;
   show: boolean;
-  apiReponse: ApiReponse;
+  apiReponse: ApiResponse;
   repository: Repository;
   repoManifestList: Array<Manifest>;
   onChangePluginVersion: (plugin?: Plugin, pluginVersion?: PluginVersion) => void;

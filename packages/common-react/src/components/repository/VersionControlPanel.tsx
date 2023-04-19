@@ -49,37 +49,13 @@ const InnerContainer = styled.div`
 `;
 
 const InnerContainerContent = styled.div`
-  display: flex;
   height: 100%;
   width: 502px;
-  flex-direction: column;
-  justify-content: space-between;
-`;
-
-const InnerContent = styled.div`
-  display: flex;
-  height: 100%;
-  width: 100%;
-  flex-direction: column;
-  justify-content: space-between;
-`;
-
-const TopContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100%;
-  position: relative;
-  align-items: center;
 `;
-
-const BottomContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  height: 100%;
-  position: relative;
-  align-items: center;
-  padding: 24px;
+const NavigationWrapper = styled.div`
+  flex: 1;
 `;
 
 const AdjustIconWrapper = styled.div`
@@ -350,12 +326,14 @@ const VersionControlPanel = (props: Props) => {
               <LocalRemoteToggle tab={from} onChange={onToggleFrom} />
             </div>
           )}
-          {from == "remote" && (
-            <RemoteVCSNavHome repository={props.repository} />
-          )}
-          {from == "local" && (
-            <LocalVCSNavController repository={props.repository} />
-          )}
+          <NavigationWrapper>
+            {from == "remote" && (
+              <RemoteVCSNavHome repository={props.repository} />
+            )}
+            {from == "local" && (
+              <LocalVCSNavController repository={props.repository} />
+            )}
+          </NavigationWrapper>
         </InnerContainerContent>
       </InnerContainer>
       <OuterShadow

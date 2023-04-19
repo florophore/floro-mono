@@ -1,12 +1,16 @@
-import React, { useMemo, useCallback, useRef } from 'react';
-import { ApiReponse } from '@floro/floro-lib/src/repo';
-import { Repository, Plugin, useGetPluginQuery, PluginVersion  } from '@floro/graphql-schemas/src/generated/main-client-graphql';
+import React, { useMemo, useCallback, useRef } from "react";
+import {
+  Repository,
+  Plugin,
+  useGetPluginQuery,
+  PluginVersion,
+} from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import EditIconLight from "@floro/common-assets/assets/images/icons/edit.light.svg";
 import EditIconDark from "@floro/common-assets/assets/images/icons/edit.dark.svg";
-import semver from 'semver';
-import { useCanUpdatePluginInRepo } from '../../local/hooks/local-hooks';
+import semver from "semver";
+import { useCanUpdatePluginInRepo } from "../../local/hooks/local-hooks";
 
 import WarningLight from "@floro/common-assets/assets/images/icons/warning.light.svg";
 import WarningDark from "@floro/common-assets/assets/images/icons/warning.dark.svg";
@@ -80,144 +84,177 @@ const VersionNumber = styled.span`
 `;
 
 const EditIconContainer = styled.div`
-    display: flex;
-    width: 40px;
-    height: 56px;
-    flex-direction: row;
-    justify-content: flex-end;
-    align-items: center;
-    cursor: pointer;
+  display: flex;
+  width: 40px;
+  height: 56px;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  cursor: pointer;
 `;
 
 const EditIcon = styled.img`
-    height: 24px;
-    width: 24px;
-`
+  height: 24px;
+  width: 24px;
+`;
 
 interface Props {
-    repository: Repository;
-    plugins: Array<Plugin>;
-    pluginName: string;
-    pluginVersion: string;
-    onChangePluginVersion?: (plugin?: Plugin, pluginVersion?: PluginVersion) => void;
-    isEditMode: boolean;
+  repository: Repository;
+  plugins: Array<Plugin>;
+  pluginName: string;
+  pluginVersion: string;
+  onChangePluginVersion?: (
+    plugin?: Plugin,
+    pluginVersion?: PluginVersion
+  ) => void;
+  isEditMode: boolean;
+  isCompareMode?: boolean;
+  wasAdded?: boolean;
+  wasRemoved?: boolean;
 }
 
 const PluginEditorRow = (props: Props) => {
+  const theme = useTheme();
 
-    const theme = useTheme();
+  const remotePluginRequest = useGetPluginQuery({
+    variables: {
+      pluginName: props.pluginName,
+    },
+  });
 
-    const remotePluginRequest = useGetPluginQuery({
-      variables: {
-        pluginName: props.pluginName,
-      },
-    });
+  const remotePlugin = useMemo(() => {
+    if (
+      remotePluginRequest?.data?.getPlugin?.__typename == "FetchPluginResult"
+    ) {
+      return remotePluginRequest?.data?.getPlugin?.plugin;
+    }
+    return null;
+  }, [remotePluginRequest?.data]);
 
-    const remotePlugin = useMemo(() => {
-      if (
-        remotePluginRequest?.data?.getPlugin?.__typename == "FetchPluginResult"
-      ) {
-        return remotePluginRequest?.data?.getPlugin?.plugin;
+  const plugin = useMemo((): Plugin => {
+    return props.plugins.find((p) => p.name == props.pluginName) as Plugin;
+  }, [props.plugins, props.pluginName]);
+
+  const pluginVersion = useMemo(() => {
+    return plugin?.versions?.find?.((pv) => pv?.version == props.pluginVersion);
+  }, [plugin, props.pluginVersion]);
+
+  const potentialUpdateVersions =
+    useMemo(() => {
+      if (!remotePlugin) {
+        return [];
       }
-      return null;
-    }, [remotePluginRequest?.data]);
-
-    const plugin = useMemo((): Plugin => {
-        return props.plugins.find(p => p.name == props.pluginName) as Plugin;
-    }, [props.plugins, props.pluginName])
-
-    const pluginVersion = useMemo(() => {
-        return plugin?.versions?.find?.(pv => pv?.version == props.pluginVersion);
-    }, [plugin, props.pluginVersion])
-
-    const potentialUpdateVersions = useMemo(() => {
-        if (!remotePlugin) {
-            return [];
-        }
-        if (pluginVersion?.version?.startsWith("dev")) {
-            return [];
-        }
-        return remotePlugin?.versions?.filter?.(v => {
-            if (v?.state != "released") {
-                return false;
-            }
-            if (!v?.version || !pluginVersion?.version) {
-                return false;
-            }
-            return semver.gt(v.version, pluginVersion?.version);
-        }) ?? [];
+      if (pluginVersion?.version?.startsWith("dev")) {
+        return [];
+      }
+      return (
+        remotePlugin?.versions?.filter?.((v) => {
+          if (v?.state != "released") {
+            return false;
+          }
+          if (!v?.version || !pluginVersion?.version) {
+            return false;
+          }
+          return semver.gt(v.version, pluginVersion?.version);
+        }) ?? []
+      );
     }, [remotePlugin, pluginVersion]) ?? [];
 
-    const canUpdateRequest = useCanUpdatePluginInRepo(
-        props.repository,
-        pluginVersion?.name as string,
-        pluginVersion?.version as string,
-        potentialUpdateVersions.map(v => v?.version as string)
-    )
+  const canUpdateRequest = useCanUpdatePluginInRepo(
+    props.repository,
+    pluginVersion?.name as string,
+    pluginVersion?.version as string,
+    potentialUpdateVersions.map((v) => v?.version as string)
+  );
 
-    const icon = useMemo(() => {
+  const icon = useMemo(() => {
+    if (theme.name == "light") {
+      return pluginVersion?.selectedLightIcon as string;
+    }
+
+    return pluginVersion?.selectedDarkIcon as string;
+  }, [pluginVersion, theme.name]);
+
+  const editIcon = useMemo(() => {
+    if (theme.name == "light") {
+      return EditIconLight;
+    }
+    return EditIconDark;
+  }, [theme.name]);
+
+  const onClickEditIcon = useCallback(() => {
+    if (!props.isEditMode) {
+      return;
+    }
+    props?.onChangePluginVersion?.(plugin, pluginVersion as PluginVersion);
+  }, [props.onChangePluginVersion, plugin, pluginVersion, props.isEditMode]);
+
+  const iconRef = useRef<HTMLImageElement>(null);
+  const onIconError = useCallback(() => {
+    if (iconRef.current) {
       if (theme.name == "light") {
-        return pluginVersion?.selectedLightIcon as string;
-      }
-
-      return pluginVersion?.selectedDarkIcon as string;
-    }, [pluginVersion, theme.name]);
-
-    const editIcon = useMemo(() => {
-        if (theme.name == "light") {
-        return EditIconLight;
-        }
-        return EditIconDark;
-    }, [theme.name]);
-
-    const onClickEditIcon = useCallback(() => {
-      if (!props.isEditMode) {
+        iconRef.current.src = WarningLight;
         return;
       }
-      props?.onChangePluginVersion?.(plugin, pluginVersion as PluginVersion);
-    }, [props.onChangePluginVersion, plugin, pluginVersion, props.isEditMode]);
+      iconRef.current.src = WarningDark;
+    }
+  }, [theme.name]);
 
-
-    const iconRef = useRef<HTMLImageElement>(null);
-    const onIconError = useCallback(() => {
-      if (iconRef.current) {
-        if (theme.name == "light") {
-          iconRef.current.src = WarningLight;
-          return;
-        }
-        iconRef.current.src = WarningDark;
-      }
-    }, [theme.name]);
-
-    return (
-        <Row>
-            <LeftSide>
-                <Icon src={icon} ref={iconRef} onError={onIconError}/>
-            </LeftSide>
-            <CenterInfo>
-                <DisplayName>{pluginVersion?.displayName}</DisplayName>
-                {!canUpdateRequest.error &&
-                <>
-                    {!canUpdateRequest?.data?.canUpdate &&
-                        <UpdateText>{'(up to date)'}</UpdateText>
-                    }
-                    {potentialUpdateVersions.length > 0 && canUpdateRequest?.data?.canUpdate &&
-                        <UpdateAvailableText>{'(update available)'}</UpdateAvailableText>
-                    }
-                </>
-                }
-            </CenterInfo>
-            <RightSide>
-                <VersionNumber>{pluginVersion?.version}</VersionNumber>
-                <EditIconContainer onClick={onClickEditIcon}>
-                  {props.isEditMode &&
-                    <EditIcon src={editIcon}/>
-                  }
-                </EditIconContainer>
-
-            </RightSide>
-        </Row>
-    );
-}
+  return (
+    <Row>
+      <LeftSide>
+        <Icon src={icon} ref={iconRef} onError={onIconError} />
+      </LeftSide>
+      <CenterInfo>
+        <DisplayName
+          style={{
+            color: props.isCompareMode
+              ? props.wasAdded
+                ? theme.colors.addedText
+                : props.wasRemoved
+                ? theme.colors.removedText
+                : theme.colors.connectionTextColor
+              : theme.colors.connectionTextColor,
+          }}
+        >
+          {pluginVersion?.displayName}
+        </DisplayName>
+        {!canUpdateRequest.error && !props.isCompareMode && (
+          <>
+            {!canUpdateRequest?.data?.canUpdate && (
+              <UpdateText>
+                {"(up to date)"}
+              </UpdateText>
+            )}
+            {potentialUpdateVersions.length > 0 &&
+              canUpdateRequest?.data?.canUpdate && (
+                <UpdateAvailableText>
+                  {"(update available)"}
+                </UpdateAvailableText>
+              )}
+          </>
+        )}
+      </CenterInfo>
+      <RightSide>
+        <VersionNumber
+          style={{
+            color: props.isCompareMode
+              ? props.wasAdded
+                ? theme.colors.addedText
+                : props.wasRemoved
+                ? theme.colors.removedText
+                : theme.colors.connectionTextColor
+              : theme.colors.connectionTextColor,
+          }}
+        >
+          {pluginVersion?.version}
+        </VersionNumber>
+        <EditIconContainer onClick={onClickEditIcon}>
+          {props.isEditMode && <EditIcon src={editIcon} />}
+        </EditIconContainer>
+      </RightSide>
+    </Row>
+  );
+};
 
 export default React.memo(PluginEditorRow);

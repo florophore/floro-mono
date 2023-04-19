@@ -21,6 +21,7 @@ const Main = styled.main`
   height: 100%;
   width: 100%;
   background: ${(props) => props.theme.background};
+  min-width: 930px;
 `;
 
 const headerCss = css`

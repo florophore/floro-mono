@@ -6,38 +6,16 @@ import React, {
   useEffect,
 } from "react";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
-import { Link, useSearchParams } from "react-router-dom";
 import styled from "@emotion/styled";
-import { css } from "@emotion/css";
 import { useTheme } from "@emotion/react";
-import ColorPalette from "@floro/styles/ColorPalette";
-import { useSession } from "../../../../session/session-context";
-import CurrentInfo from "@floro/storybook/stories/repo-components/CurrentInfo";
-import CommitSelector from "@floro/storybook/stories/repo-components/CommitSelector";
-import {
-  useOfflinePhoto,
-  useOfflinePhotoMap,
-} from "../../../../offline/OfflinePhotoContext";
-import { useUserOrganizations } from "../../../../hooks/offline";
-import AdjustExtend from "@floro/common-assets/assets/images/icons/adjust.extend.svg";
-import AdjustShrink from "@floro/common-assets/assets/images/icons/adjust.shrink.svg";
-import LaptopWhite from "@floro/common-assets/assets/images/icons/laptop.white.svg";
-import GlobeWhite from "@floro/common-assets/assets/images/icons/globe.white.svg";
 import Button from "@floro/storybook/stories/design-system/Button";
-import LocalRemoteToggle from "@floro/storybook/stories/common-components/LocalRemoteToggle";
-import { useQuery, useMutation, useQueryClient } from "react-query";
-import axios from "axios";
-import { useDaemonIsConnected } from "../../../../pubsub/socket";
-import { ApiReponse } from "@floro/floro-lib/src/repo";
+import { ApiResponse } from "@floro/floro-lib/src/repo";
 import { useLocalVCSNavContext } from "./LocalVCSContext";
 import { useSourceGraphPortal } from "../../sourcegraph/SourceGraphUIContext";
 import SourceGraph from "@floro/storybook/stories/common-components/SourceGraph";
-import {
-  SOURCE_HISTORY,
-  BRANCHES,
-} from "@floro/storybook/stories/common-components/SourceGraph/mocks";
 import { SourceCommitNodeWithGridDimensions, Branch, mapSourceGraphRootsToGrid, getPotentialBaseBranchesForSha } from "@floro/storybook/stories/common-components/SourceGraph/grid";
 import BranchSelector from "@floro/storybook/stories/repo-components/BranchSelector";
+import SelectedShaDisplay from "@floro/storybook/stories/repo-components/SelectedShaDisplay";
 import { useCanMoveWIP, useCreateBranch, useSourceGraph } from "../hooks/local-hooks";
 
 import BackArrowIconLight from "@floro/common-assets/assets/images/icons/back_arrow.light.svg";
@@ -45,6 +23,8 @@ import BackArrowIconDark from "@floro/common-assets/assets/images/icons/back_arr
 import Input from "@floro/storybook/stories/design-system/Input";
 import Checkbox from "@floro/storybook/stories/design-system/Checkbox";
 import { getColorForRow } from "@floro/storybook/stories/common-components/SourceGraph/color-mod";
+import SGPlainModal from "../../sourcegraph/sourgraphmodals/SGPlainModal";
+import SGSwitchHeadModal from "../../sourcegraph/sourgraphmodals/SGSwitchHeadModal";
 
 const InnerContent = styled.div`
   display: flex;
@@ -145,7 +125,7 @@ export const getBranchIdFromName = (name: string): string => {
 
 interface Props {
   repository: Repository;
-  apiResponse: ApiReponse;
+  apiResponse: ApiResponse;
 }
 
 const NewBranchNavPage = (props: Props) => {
@@ -204,28 +184,51 @@ const NewBranchNavPage = (props: Props) => {
     [sourceGraphResponse?.rootNodes, sourceGraphResponse?.branches]
   );
 
+  const branchHeadSourceCommit = useMemo(() => {
+    if (!branchHead || !gridData?.pointerMap) {
+      return null;
+    }
+    return gridData?.pointerMap?.[branchHead];
+  }, [branchHead, gridData?.pointerMap]);
+
   const branchHeadColor = useMemo(() => {
     if (!branchHead) {
-      return null;
+      return 'transparent';
     }
     const sourceCommit = gridData.pointerMap[branchHead];
     if (!sourceCommit) {
-      return null;
+      return 'transparent';
+    }
+    if (sourceCommit?.branchIds.length == 0) {
+      return 'transparent';
     }
     return getColorForRow(theme, sourceCommit.row);
   }, [gridData.pointerMap, branchHead, theme]);
 
   const baseBranches = useMemo(() => {
-    return getPotentialBaseBranchesForSha(
+    const potentialBranches = getPotentialBaseBranchesForSha(
       branchHead,
       sourceGraphResponse?.branches ?? [],
       sourceGraphResponse?.pointers ?? {},
     );
+    return potentialBranches;
   }, [branchHead, sourceGraphResponse?.branches, sourceGraphResponse?.pointers]);
+
 
   const [baseBranch, setBaseBranch] = useState<Branch | null>(
     props.apiResponse?.branch ?? null
   );
+
+  useEffect(() => {
+    setBaseBranch(baseBranches?.[0] ?? null);
+  }, [branchHead])
+
+  const onClickBaseBranch = useCallback((branch) => {
+    const hasBranch = !!baseBranches?.find(b => b.id == branch.id);
+    if (hasBranch) {
+      setBaseBranch(branch);
+    }
+  }, [baseBranches]);
 
   const onGoBack = useCallback(() => {
     setSubAction("branches");
@@ -268,24 +271,36 @@ const NewBranchNavPage = (props: Props) => {
     };
   }, []);
 
-  const renderPopup = useCallback(({ sourceCommit }: {
-    sourceCommit?: SourceCommitNodeWithGridDimensions;
-  }): React.ReactElement | null => {
-    return (
-      <div>
-        <p
-          style={{
-            padding: 0,
-            margin: 0,
-            color: ColorPalette.lightPurple,
-          }}
-        >
-          {"SHA: " + sourceCommit?.sha}
-        </p>
-      </div>
-    );
-  }, [
-  ]);
+  const onUnsetBranchHead = useCallback(() => {
+    setBranchHead(null);
+  }, []);
+
+  const onSetBranchHead = useCallback((sourceCommit: SourceCommitNodeWithGridDimensions|null) => {
+    setBranchHead(sourceCommit?.sha ?? null);
+  }, []);
+
+  const renderPopup = useCallback(
+    ({
+      sourceCommit,
+      onHidePopup,
+      terminalBranches,
+    }: {
+      sourceCommit?: SourceCommitNodeWithGridDimensions;
+      onHidePopup?: () => void;
+      terminalBranches?: Array<Branch>;
+    }): React.ReactElement | null => {
+      return (
+        <SGSwitchHeadModal
+          sourceCommit={sourceCommit}
+          onHidePopup={onHidePopup}
+          terminalBranches={terminalBranches}
+          onSwitchHead={onSetBranchHead}
+          currentSha={branchHead}
+        />
+      );
+    },
+    [branchHead]
+  );
 
   const sgPortal = useSourceGraphPortal(
     ({ width, height, hasLoaded, onSourceGraphLoaded }) => {
@@ -311,13 +326,19 @@ const NewBranchNavPage = (props: Props) => {
           }}
         >
           <SourceGraph
-            rootNodes={SOURCE_HISTORY}
-            branches={BRANCHES}
+            rootNodes={sourceGraphResponse?.rootNodes ?? []}
+            branches={sourceGraphResponse?.branches ?? []}
             height={height}
             width={width}
-            currentSha={"C"}
+            currentSha={branchHead}
             onLoaded={onSourceGraphLoaded}
             renderPopup={renderPopup}
+            currentBranchId={baseBranch?.id ?? undefined}
+            highlightedBranchId={baseBranch?.id}
+            onSelectBranch={onClickBaseBranch}
+            filterBranches
+            filteredBranches={baseBranches}
+            htmlContentHeight={160}
           />
         </div>
       );
@@ -325,7 +346,12 @@ const NewBranchNavPage = (props: Props) => {
     [
       renderPopup,
       sourceGraphLoading,
-      sourceGraphResponse
+      sourceGraphResponse,
+      props?.apiResponse?.repoState?.commit,
+      props?.apiResponse?.repoState?.branch,
+      baseBranch?.id,
+      baseBranches,
+      branchHead
     ]
   );
   return (
@@ -359,6 +385,18 @@ const NewBranchNavPage = (props: Props) => {
               isValid={branchNameInputIsValid}
             />
           </Row>
+          {gridData?.roots?.length > 0 && (
+            <Row>
+              <SelectedShaDisplay
+                widthSize={"wide"}
+                label={"branch head"}
+                sha={branchHeadSourceCommit?.sha}
+                message={branchHeadSourceCommit?.message}
+                shaBackground={branchHeadColor}
+                button={<Button label={"no head"} bg={"gray"} size={"small"} onClick={onUnsetBranchHead} />}
+              />
+            </Row>
+          )}
           <Row>
             <BranchSelector
               size="wide"

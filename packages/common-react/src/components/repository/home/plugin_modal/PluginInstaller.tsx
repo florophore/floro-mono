@@ -13,7 +13,7 @@ import {
   Repository,
   useGetPluginQuery,
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
-import { ApiReponse } from "@floro/floro-lib/src/repo";
+import { ApiResponse } from "@floro/floro-lib/src/repo";
 import PluginDependencyList from "./PluginDependencyList";
 import PluginVersionNavigator from "./PluginVersionNavigator";
 import WarningLabel from "@floro/storybook/stories/design-system/WarningLabel";
@@ -157,7 +157,7 @@ interface Props {
   pluginVersion: PluginVersion;
   show?: boolean;
   onDismiss?: () => void;
-  apiReponse: ApiReponse;
+  apiReponse: ApiResponse;
   repository: Repository;
   onChangePluginVersion: (plugin: Plugin, pluginVersion: PluginVersion) => void;
   repoManifestList: Array<Manifest>;
@@ -466,7 +466,7 @@ const PluginInstaller = (props: Props) => {
       <SectionContainer>
         <SectionTitle>{"Description"}</SectionTitle>
         <BlurbBox>
-          <BlurbText>{pluginVersion?.description}</BlurbText>
+          <BlurbText>{pluginVersion?.description ?? "No description provided"}</BlurbText>
         </BlurbBox>
       </SectionContainer>
 

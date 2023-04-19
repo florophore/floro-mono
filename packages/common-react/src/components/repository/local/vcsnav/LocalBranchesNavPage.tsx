@@ -10,7 +10,7 @@ import styled from "@emotion/styled";
 import ColorPalette from "@floro/styles/ColorPalette";
 import CurrentInfo from "@floro/storybook/stories/repo-components/CurrentInfo";
 import Button from "@floro/storybook/stories/design-system/Button";
-import { ApiReponse } from "@floro/floro-lib/src/repo";
+import { ApiResponse } from "@floro/floro-lib/src/repo";
 import { useLocalVCSNavContext } from "./LocalVCSContext";
 import { useSourceGraphPortal } from "../../sourcegraph/SourceGraphUIContext";
 import SourceGraph from "@floro/storybook/stories/common-components/SourceGraph";
@@ -21,6 +21,7 @@ import {
 import { SourceCommitNodeWithGridDimensions, Branch } from "@floro/storybook/stories/common-components/SourceGraph/grid";
 import BranchSelector from "@floro/storybook/stories/repo-components/BranchSelector";
 import { useCanMoveWIP, useDeleteBranch, useSourceGraph, useSwitchBranch } from "../hooks/local-hooks";
+import SGPlainModal from "../../sourcegraph/sourgraphmodals/SGPlainModal";
 
 const InnerContent = styled.div`
   display: flex;
@@ -82,7 +83,7 @@ const WarningText = styled.p`
 
 interface Props {
   repository: Repository;
-  apiResponse: ApiReponse;
+  apiResponse: ApiResponse;
 }
 
 const LocalBranchesNavPage = (props: Props) => {
@@ -133,6 +134,13 @@ const LocalBranchesNavPage = (props: Props) => {
     }
   }, [])
 
+  const onChangeBranchIdFromGraph = useCallback((id: string) => {
+    const branch = sourceGraphResponse?.branches?.find(v => v.id == id);
+    if (branch) {
+      setSelectedBranch(branch)
+    }
+  }, [sourceGraphResponse?.branches])
+
   const onDeleteBranch = useCallback(() => {
     if (!selectedBranch?.id) {
       return;
@@ -158,24 +166,26 @@ const LocalBranchesNavPage = (props: Props) => {
     };
   }, []);
 
-  const renderPopup = useCallback(({ sourceCommit }: {
-    sourceCommit?: SourceCommitNodeWithGridDimensions;
-  }): React.ReactElement | null => {
-    return (
-      <div>
-        <p
-          style={{
-            padding: 0,
-            margin: 0,
-            color: ColorPalette.lightPurple,
-          }}
-        >
-          {"SHA: " + sourceCommit?.sha}
-        </p>
-      </div>
-    );
-  }, [
-  ]);
+  const renderPopup = useCallback(
+    ({
+      sourceCommit,
+      onHidePopup,
+      terminalBranches,
+    }: {
+      sourceCommit?: SourceCommitNodeWithGridDimensions;
+      onHidePopup?: () => void;
+      terminalBranches?: Array<Branch>;
+    }): React.ReactElement | null => {
+      return (
+        <SGPlainModal
+          sourceCommit={sourceCommit}
+          onHidePopup={onHidePopup}
+          terminalBranches={terminalBranches}
+        />
+      );
+    },
+    []
+  );
 
   const sgPortal = useSourceGraphPortal(
     ({ width, height, hasLoaded, onSourceGraphLoaded }) => {
@@ -201,13 +211,17 @@ const LocalBranchesNavPage = (props: Props) => {
           }}
         >
           <SourceGraph
-            rootNodes={SOURCE_HISTORY}
-            branches={BRANCHES}
+            rootNodes={sourceGraphResponse?.rootNodes ?? []}
+            branches={sourceGraphResponse?.branches ?? []}
             height={height}
             width={width}
-            currentSha={"C"}
+            currentSha={props?.apiResponse?.repoState?.commit ?? null}
             onLoaded={onSourceGraphLoaded}
             renderPopup={renderPopup}
+            highlightedBranchId={selectedBranch?.id}
+            onSelectBranch={onChangeBranch}
+            currentBranchId={props?.apiResponse?.repoState?.branch ?? undefined}
+            filterBranchlessNodes
           />
         </div>
       );
@@ -215,7 +229,10 @@ const LocalBranchesNavPage = (props: Props) => {
     [
       renderPopup,
       sourceGraphLoading,
-      sourceGraphResponse
+      sourceGraphResponse,
+      props?.apiResponse?.repoState?.commit,
+      props?.apiResponse?.repoState?.branch,
+      selectedBranch,
     ]
   );
   return (
@@ -262,11 +279,16 @@ const LocalBranchesNavPage = (props: Props) => {
                 maxWidth: 260,
               }}
             >
-              {((selectedBranch?.id && !canMoveWIPQuery?.canSwitch)) && (
-                <WarningText>
-                  {`In order to switch to ${selectedBranch?.name}, first commit, stash, discard, or edit your current changes so no conflict exists.`}
-                </WarningText>
-              )}
+              {selectedBranch?.id &&
+                !props.apiResponse?.repoState?.branch &&
+                !canMoveWIPQuery?.canSwitch &&
+                !sourceGraphLoading &&
+                !switchBranchMutation?.isLoading &&
+                selectedBranch?.id != props.apiResponse?.repoState?.branch && (
+                  <WarningText>
+                    {`In order to switch to ${selectedBranch?.name}, first commit, stash, discard, or edit your current changes so no conflict exists.`}
+                  </WarningText>
+                )}
             </div>
             <Button
               isDisabled={

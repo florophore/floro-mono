@@ -1,11 +1,11 @@
 import {app} from 'electron';
-import { startDaemon } from 'floro/src/daemon';
-import { buildFloroFilestructure } from 'floro/src/filestructure';
+//import { startDaemon } from 'floro/src/daemon';
+//import { buildFloroFilestructure } from 'floro/src/filestructure';
 import './security-restrictions';
 import {restoreOrCreateWindow} from '/@/mainWindow';
 
-buildFloroFilestructure();
-startDaemon();
+//buildFloroFilestructure();
+//startDaemon();
 
 /**
  * Prevent electron from running multiple instances.

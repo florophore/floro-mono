@@ -48,7 +48,6 @@ const OAuthCallback = (): React.ReactElement => {
   });
 
   useEffect(() => {
-    console.log(data?.submitOAuthForAction)
     if (data?.submitOAuthForAction?.type == "COMPLETE_SIGNUP") {
       completeSignupMutation.mutate(data?.submitOAuthForAction?.action as CompleteSignupAction);
     }

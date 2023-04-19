@@ -8,7 +8,15 @@ export const useSourceGraphIsShown = () => {
       return true;
     }
 
+    if (subAction == "edit_branch") {
+      return true;
+    }
+
     if (subAction == "new_branch") {
+      return true;
+    }
+
+    if (subAction == "select_comparison_sha") {
       return true;
     }
 

@@ -8,7 +8,7 @@ import { getColorForRow } from "./color-mod";
 interface Props {
   edge: Edge;
   highlightedBranchId?: string;
-  currentSha?: string;
+  currentSha?: string|null;
   branchMap: { [key: string]: Branch };
   pointerMap: { [key: string]: SourceCommitNodeWithGridDimensions };
 }

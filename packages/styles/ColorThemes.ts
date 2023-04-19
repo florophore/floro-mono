@@ -5,6 +5,7 @@ export interface ColorTheme {
   background: ColorPalette[keyof ColorPalette];
   colors: {
     standardText: string;
+    standardTextLight: string;
     contrastText: string;
     contrastTextLight: string;
     titleText: string;
@@ -96,6 +97,10 @@ export interface ColorTheme {
     sourceGraphNodeOutline: string;
     sourceGraphNodeBranchlessOutline: string;
     currentInfoBorder: string;
+    addedText: string;
+    addedBackground: string;
+    removedText: string;
+    removedBackground: string;
   };
   gradients: {
     backgroundNoOpacity: string;
@@ -118,6 +123,7 @@ export const LightTheme: ColorTheme = {
   background: palette.lightModeBG, //this is keyable
   colors: {
     standardText: palette.mediumGray, //"$.theme.colors.standardText"
+    standardTextLight: palette.gray,
     contrastText: palette.mediumGray,
     contrastTextLight: palette.gray,
     titleText: palette.purple,
@@ -209,6 +215,10 @@ export const LightTheme: ColorTheme = {
     sourceGraphNodeOutline: palette.mediumGray,
     sourceGraphNodeBranchlessOutline: palette.lightGray,
     currentInfoBorder: palette.purple,
+    addedText: palette.teal,
+    addedBackground: palette.teal,
+    removedText: palette.red,
+    removedBackground: palette.red,
   },
   gradients: {
     backgroundNoOpacity: palette.lightModeBG.substring(0, 7) + Opacity[0],
@@ -231,6 +241,7 @@ export const DarkTheme: ColorTheme = {
     background: palette.darkModeBG,
     colors: {
         standardText: palette.gray,
+        standardTextLight: palette.gray,
         contrastText: palette.white,
         contrastTextLight: palette.white,
         titleText: palette.lightPurple,
@@ -322,6 +333,10 @@ export const DarkTheme: ColorTheme = {
         sourceGraphNodeOutline: palette.white,
         sourceGraphNodeBranchlessOutline: palette.gray,
         currentInfoBorder: palette.lightPurple,
+        addedText: palette.lightTeal,
+        addedBackground: palette.lightTeal,
+        removedText: palette.lightRed,
+        removedBackground: palette.lightRed,
     },
     shadows: {
         modalContainer: palette.black.substring(0, 7) + Opacity[70],

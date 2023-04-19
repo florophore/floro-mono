@@ -1,10 +1,8 @@
-
 import React, { useMemo, useRef, useCallback } from "react";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
 import {
   Plugin,
-  PluginVersion,
 } from "@floro/graphql-schemas/build/generated/main-graphql";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
@@ -12,28 +10,9 @@ import ColorPalette from "@floro/styles/ColorPalette";
 import WarningLight from "@floro/common-assets/assets/images/icons/warning.light.svg";
 import WarningDark from "@floro/common-assets/assets/images/icons/warning.dark.svg";
 
-import XCircleLight from "@floro/common-assets/assets/images/icons/red_x_circle.light.svg";
-import XCircleDark from "@floro/common-assets/assets/images/icons/red_x_circle.dark.svg";
-import { useQueryClient } from "react-query";
-import { useCurrentRepoState, useRepoDevPlugins, useRepoManifestList } from "./hooks/local-hooks";
-import { Manifest } from "@floro/floro-lib/src/plugins";
-import { transformLocalManifestToPartialPlugin } from "./hooks/manifest-transforms";
+import { ApiResponse } from "@floro/floro-lib/src/repo";
+import { useLocalVCSNavContext } from "./vcsnav/LocalVCSContext";
 
-const Navigator = styled.nav`
-  width: 72px;
-  border-right: 1px solid ${ColorPalette.lightPurple};
-  padding: 0;
-  margin: 0;
-  position: relative;
-  background: ${(props) => props.theme.background};
-`;
-
-const NavOptionList = styled.div`
-  z-index: 0;
-  width: 72px;
-  display: flex;
-  flex-direction: column;
-`;
 const NavOption = styled.div`
   height: 72px;
   width: 72px;
@@ -80,73 +59,131 @@ const XCircleImage = styled.img`
   width: 20px;
   border: 2px solid ${ColorPalette.white};
   border-radius: 50%;
-  background: ${props => props.theme.background};
+  background: ${(props) => props.theme.background};
+`;
+
+const ChangeDot = styled.div`
+  position: absolute;
+  right: 10px;
+  bottom: 20px;
+  height: 16px;
+  width: 16px;
+  border: 2px solid ${ColorPalette.white};
+  border-radius: 50%;
 `;
 
 interface Props {
-    isSelected: boolean;
-    isInvalid: boolean;
-    locationPath: string;
-    plugin: Plugin;
+  isSelected: boolean;
+  isInvalid: boolean;
+  locationPath: string;
+  plugin: Plugin;
+  apiResponse?: ApiResponse | null;
 }
 
 const LocalSideOption = (props: Props): React.ReactElement => {
+  const theme = useTheme();
+  const { compareFrom } = useLocalVCSNavContext();
+  const icon = useMemo(
+    () =>
+      props.isSelected
+        ? theme.name == "light"
+          ? (props.plugin.selectedLightIcon as string)
+          : (props.plugin.selectedDarkIcon as string)
+        : theme.name == "light"
+        ? (props.plugin.lightIcon as string)
+        : (props.plugin.darkIcon as string),
+    [props.plugin, theme.name]
+  );
 
-    const theme = useTheme();
-    const icon = useMemo(
-      () =>
-        props.isSelected
-          ? theme.name == "light"
-            ? (props.plugin.selectedLightIcon as string)
-            : (props.plugin.selectedDarkIcon as string)
-          : theme.name == "light"
-          ? (props.plugin.lightIcon as string)
-          : (props.plugin.darkIcon as string),
-      [props.plugin, theme.name]
-    );
+  const xCircle = useMemo(() => {
+    if (theme.name == "light") {
+      return WarningLight;
+    }
+    return WarningDark;
+  }, [theme.name]);
 
-    const xCircle = useMemo(() => {
+  const iconRef = useRef<HTMLImageElement>(null);
+  const onIconError = useCallback(() => {
+    if (iconRef.current) {
       if (theme.name == "light") {
-        return WarningLight;
+        iconRef.current.src = WarningLight;
+        return;
       }
-      return WarningDark;
-    }, [theme.name]);
+      iconRef.current.src = WarningDark;
+    }
+  }, [theme.name]);
 
-    const iconRef = useRef<HTMLImageElement>(null);
-    const onIconError = useCallback(() => {
-      if (iconRef.current) {
-        if (theme.name == "light") {
-          iconRef.current.src = WarningLight;
-          return;
-        }
-        iconRef.current.src = WarningDark;
-      }
-    }, [theme.name]);
+  const hasAdditions = useMemo(() => {
+    if (
+      props?.apiResponse?.repoState?.commandMode != "compare" ||
+      compareFrom != "after"
+    ) {
+      return false;
+    }
     return (
-            <NavOption>
-              <Link
-                to={props.locationPath + `?plugin=${props.plugin.name}&from=local`}
-                style={{ textDecoration: "none", display: "contents" }}
-              >
-                <NavIconWrapper>
-                  <NavIcon src={icon} ref={iconRef} onError={onIconError}/>
-                  <NavText
-                    style={{
-                      color:
-                        props.isSelected
-                        ? theme.colors.pluginSelected
-                        : theme.colors.pluginUnSelected,
-                    }}
-                  >
-                    {props.plugin.displayName}
-                  </NavText>
-                </NavIconWrapper>
-                {props.isInvalid &&
-                  <XCircleImage src={xCircle}/>
-                }
-              </Link>
-            </NavOption>
+      (props?.apiResponse?.apiDiff?.store?.[props?.plugin?.name ?? ""]?.added
+        ?.length ?? 0) > 0
     );
-}
+  }, [
+    props.plugin.name,
+    compareFrom,
+    props?.apiResponse?.apiDiff,
+    props?.apiResponse?.repoState?.commandMode,
+  ]);
+
+  const hasRemovals = useMemo(() => {
+    if (
+      props?.apiResponse?.repoState?.commandMode != "compare" ||
+      compareFrom != "before"
+    ) {
+      return false;
+    }
+    return (
+      (props?.apiResponse?.apiDiff?.store?.[props?.plugin?.name ?? ""]?.removed
+        ?.length ?? 0) > 0
+    );
+  }, [
+    props.plugin.name,
+    compareFrom,
+    props?.apiResponse?.apiDiff,
+    props?.apiResponse?.repoState?.commandMode,
+  ]);
+  return (
+    <NavOption>
+      <Link
+        to={props.locationPath + `?plugin=${props.plugin.name}&from=local`}
+        style={{ textDecoration: "none", display: "contents" }}
+      >
+        <NavIconWrapper>
+          <NavIcon src={icon} ref={iconRef} onError={onIconError} />
+          <NavText
+            style={{
+              color: props.isSelected
+                ? theme.colors.pluginSelected
+                : theme.colors.pluginUnSelected,
+            }}
+          >
+            {props.plugin.displayName}
+          </NavText>
+        </NavIconWrapper>
+        {props.isInvalid && <XCircleImage src={xCircle} />}
+        {hasAdditions && (
+          <ChangeDot
+            style={{
+              background: theme.colors.addedBackground,
+            }}
+          />
+        )}
+        {hasRemovals && (
+          <ChangeDot
+            style={{
+              background: theme.colors.removedBackground,
+            }}
+          />
+        )}
+      </Link>
+    </NavOption>
+  );
+};
 
 export default React.memo(LocalSideOption);

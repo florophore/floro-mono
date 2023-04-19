@@ -1,11 +1,12 @@
 
 import React, { useMemo } from "react";
-import { SchemaTypes, useIsFloroInvalid, useQueryRef } from "./floro-schema-api";
+import { SchemaTypes, useIsFloroInvalid, useQueryRef, useWasAdded, useWasRemoved } from "./floro-schema-api";
 import { motion } from "framer-motion";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import WarningLight from "@floro/common-assets/assets/images/icons/warning.light.svg";
 import WarningDark from "@floro/common-assets/assets/images/icons/warning.dark.svg";
+import ColorPalette from "@floro/styles/ColorPalette";
 
 const ShadeContainer = styled.div`
   padding: 0px 0px 0px 0px;
@@ -62,6 +63,18 @@ const ShadeReadItem = (props: ShadeItemProps) => {
   const theme = useTheme();
   const shadeQuery = useQueryRef("$(palette).shades.id<?>", props.shade.id);
   const isInvalid = useIsFloroInvalid(shadeQuery);
+  const wasRemoved = useWasRemoved(shadeQuery);
+  const wasAdded = useWasAdded(shadeQuery);
+
+  const color = useMemo(() => {
+    if (wasRemoved) {
+      return theme.colors.removedText;
+    }
+    if (wasAdded) {
+      return theme.colors.addedText;
+    }
+    return theme.colors.contrastText;
+  }, [theme, wasRemoved, wasAdded]);
 
   const warningIcon = useMemo(() => {
     if (theme.name == "light") {
@@ -86,13 +99,13 @@ const ShadeReadItem = (props: ShadeItemProps) => {
       <ShadeContainer>
         <ShadeDotContainer>
           {!isInvalid &&
-            <ShadeDot/>
+            <ShadeDot style={{ background: color }}/>
           }
           {isInvalid &&
             <WarningIconImg src={warningIcon}/>
           }
         </ShadeDotContainer>
-        <ShadeLabel>{isInvalid ? props?.shade?.id : props?.shade.name}</ShadeLabel>
+        <ShadeLabel style={{ color }}>{isInvalid ? props?.shade?.id : props?.shade.name}</ShadeLabel>
       </ShadeContainer>
     </motion.li>
   );

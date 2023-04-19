@@ -1,5 +1,5 @@
 import { Manifest } from "@floro/floro-lib/src/plugins";
-import { ApiReponse } from "@floro/floro-lib/src/repo";
+import { ApiResponse } from "@floro/floro-lib/src/repo";
 import { Repository, Plugin, PluginVersion } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import React from "react";
 import ReactDOM from "react-dom";
@@ -9,7 +9,7 @@ import AddPluginsModal from "./repository/home/plugin_modal/AddPluginsModal";
 export interface Props {
   onDismiss: () => void;
   show: boolean;
-  apiReponse: ApiReponse;
+  apiReponse: ApiResponse;
   repository: Repository;
   repoManifestList: Array<Manifest>;
   onChangePluginVersion: (plugin?: Plugin, pluginVersion?: PluginVersion) => void;

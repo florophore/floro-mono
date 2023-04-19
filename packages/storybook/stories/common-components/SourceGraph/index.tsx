@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import {
   Branch,
@@ -27,7 +27,7 @@ export interface Props {
   columnDistance?: number;
   rowDistance?: number;
   filterBranchlessNodes?: boolean;
-  currentSha?: string;
+  currentSha?: string|null;
   onLoaded?: () => void;
   onSelectNode?: (
     sourceCommit: SourceCommitNodeWithGridDimensions,
@@ -42,7 +42,10 @@ export interface Props {
     terminalBranches?: Array<Branch>;
   }) => React.ReactElement | null;
   highlightedBranchId?: string;
+  currentBranchId?: string;
   htmlContentHeight?: number;
+  filterBranches?: boolean;
+  filteredBranches?: Array<Branch>;
 }
 
 const SourceGraph = (props: Props): React.ReactElement => {
@@ -67,6 +70,7 @@ const SourceGraph = (props: Props): React.ReactElement => {
         props.branches,
         props.currentSha,
         props.isDebug
+
       ),
     [nodes, props.branches, props.isDebug, props.currentSha]
   );
@@ -87,6 +91,36 @@ const SourceGraph = (props: Props): React.ReactElement => {
     () => getVertices(gridData.roots, columnDistance, rowDistance),
     [gridData.roots, columnDistance, rowDistance]
   );
+
+  const [sha, setSha] = useState(props?.currentSha);
+
+  useEffect(() => {
+
+    if (sha == props.currentSha) {
+      const branch = props.branches?.find(v => v.id == props.highlightedBranchId);
+      if (branch && branch?.lastCommit) {
+        const commit = gridData?.pointerMap[branch.lastCommit];
+        if (commit) {
+          setFocalPoint([
+            columnDistance * commit.column,
+            rowDistance * commit.row,
+          ])
+        }
+      }
+    } else {
+      setSha(props.currentSha);
+
+    if (props.currentSha) {
+      const commit = gridData?.pointerMap[props.currentSha];
+      if (commit) {
+        setFocalPoint([
+          columnDistance * commit.column,
+          rowDistance * commit.row,
+        ])
+      }
+    }
+    }
+  }, [props.highlightedBranchId, props.currentSha]);
 
   const startingCoordinate = useMemo(() => {
     if (!props.currentSha && gridData?.grid.length == 0) {
@@ -165,8 +199,8 @@ const SourceGraph = (props: Props): React.ReactElement => {
         rows={rows}
         columnDistance={columnDistance}
         rowDistance={rowDistance}
-        startX={startingCoordinates[0]}
-        startY={startingCoordinates[1]}
+        startX={startingCoordinates?.[0] ?? 0}
+        startY={startingCoordinates?.[1] ?? 0}
         isDebug={props.isDebug}
         focalPoint={focalPoint}
         onLoaded={props.onLoaded}
@@ -192,6 +226,9 @@ const SourceGraph = (props: Props): React.ReactElement => {
           onMouseOffBranch={props.onMouseOffBranch}
           highlightedBranchId={props.highlightedBranchId}
           htmlContentHeight={props.htmlContentHeight}
+          currentBranchId={props.currentBranchId}
+          filterBranches={props.filterBranches}
+          filteredBranches={props.filteredBranches}
         />
       </ZoomableSVG>
       {debugCrossOverlay}

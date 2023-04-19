@@ -4,7 +4,7 @@ import styled from "@emotion/styled";
 import Button from "@floro/storybook/stories/design-system/Button";
 import { useCurrentLicenses } from "../local/hooks/local-hooks";
 import InputSelector from "@floro/storybook/stories/design-system/InputSelector";
-import { ApiReponse } from "@floro/floro-lib/src/repo";
+import { ApiResponse } from "@floro/floro-lib/src/repo";
 import ColorPalette from "@floro/styles/ColorPalette";
 import { Plugin } from '@floro/graphql-schemas/src/generated/main-client-graphql';
 
@@ -47,7 +47,7 @@ const BottomContentContainer = styled.div`
 interface Props {
   show?: boolean;
   onDismiss?: () => void;
-  apiReponse: ApiReponse;
+  apiReponse: ApiResponse;
   onAddLicense?: (licenses: Array<{ key: string; value: string }>) => void;
   isLoading?: boolean;
 }

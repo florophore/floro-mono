@@ -12,6 +12,7 @@ import FindPluginSearchDropdown from "../FindPluginSearchDropdown";
 const Container = styled.div`
   width: 960px;
   height: 800px;
+  overflow: hidden;
   box-shadow: ${(props) =>
     `0px 8px 40px ${props.theme.shadows.modalContainer}`};
   position: relative;

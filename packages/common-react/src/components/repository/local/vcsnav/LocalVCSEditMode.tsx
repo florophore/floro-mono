@@ -1,0 +1,208 @@
+import React, {
+  useMemo,
+  useState,
+  useCallback,
+  useRef,
+  useEffect,
+} from "react";
+import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import styled from "@emotion/styled";
+import ColorPalette from "@floro/styles/ColorPalette";
+import CurrentInfo from "@floro/storybook/stories/repo-components/CurrentInfo";
+import RepoActionButton from "@floro/storybook/stories/repo-components/RepoActionButton";
+import { ApiResponse } from "@floro/floro-lib/src/repo";
+import { useLocalVCSNavContext } from "./LocalVCSContext";
+import { usePopStashedChanges, useStashChanges, useUpdateCurrentCommand } from "../hooks/local-hooks";
+import ConfirmDiscardChangesModal from "../modals/ConfirmDiscardChangesModal";
+
+const InnerContent = styled.div`
+  display: flex;
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+  justify-content: space-between;
+`;
+
+const TopContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+  align-items: center;
+  padding: 16px;
+`;
+
+const BottomContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 100%;
+  position: relative;
+  align-items: center;
+  padding: 24px 16px;
+`;
+
+const ButtonRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+`;
+
+const ButtonCol = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
+
+const SettingLinkText = styled.h3`
+  font-weight: 600;
+  font-size: 1.2rem;
+  font-family: "MavenPro";
+  text-decoration: underline;
+  color: ${props => ColorPalette.linkBlue};
+`;
+
+interface Props {
+  repository: Repository;
+  apiResponse: ApiResponse;
+}
+
+const LocalVCSEditMode = (props: Props) => {
+  const { setSubAction } = useLocalVCSNavContext();
+  const [showDiscard, setShowDiscard] = useState(false);
+
+  const onShowDiscard = useCallback(() => {
+    setShowDiscard(true);
+  }, []);
+
+  const onCloseDiscard = useCallback(() => {
+    setShowDiscard(false);
+  }, []);
+
+  const onShowBranches = useCallback(() => {
+    setSubAction("branches");
+  }, []);
+
+  const onShowEditBranch = useCallback(() => {
+    setSubAction("edit_branch");
+  }, []);
+
+  const updateCommand = useUpdateCurrentCommand(props.repository);
+  const stashChangesMutation = useStashChanges(props.repository);
+  const popStashedChangesMutation = usePopStashedChanges(props.repository);
+
+  const onStashChanges = useCallback(() => {
+    stashChangesMutation.mutate();
+  }, [stashChangesMutation]);
+
+  const onPopStashedChanges = useCallback(() => {
+    popStashedChangesMutation.mutate();
+  }, [popStashedChangesMutation]);
+
+  const updateToViewMode = useCallback(() => {
+    updateCommand.mutate("view");
+  }, [updateCommand]);
+
+  const updateToCompareMode = useCallback(() => {
+    updateCommand.mutate("compare");
+  }, [updateCommand]);
+
+  useEffect(() => {
+    const commandToggleListeners = (event: KeyboardEvent) => {
+      if (event.metaKey && event.shiftKey && event.key == "b") {
+        onShowBranches();
+      }
+    };
+    window.addEventListener("keydown", commandToggleListeners);
+    return () => {
+      window.removeEventListener("keydown", commandToggleListeners);
+    };
+  }, []);
+
+  return (
+    <InnerContent>
+      <TopContainer>
+        <CurrentInfo
+          respository={props.repository}
+          showWIP
+          showBackButton
+          isMerge
+          mergeDirection={props.apiResponse?.repoState?.merge?.direction}
+          mergeCommit={props.apiResponse.mergeCommit}
+          branch={props.apiResponse.branch}
+          baseBranch={props.apiResponse.baseBranch}
+          lastCommit={props.apiResponse.lastCommit}
+          isWIP={props.apiResponse.isWIP}
+          onGoBack={updateToViewMode}
+          onShowBranches={onShowBranches}
+          onShowEditBranch={onShowEditBranch}
+          showBranchButtons={!props.apiResponse?.repoState?.isInMergeConflict}
+        />
+
+        {!props.apiResponse?.repoState?.isInMergeConflict && (
+          <ButtonRow style={{ marginTop: 24 }}>
+            <RepoActionButton
+              label={"compare"}
+              icon={"compare"}
+              onClick={updateToCompareMode}
+            />
+            <RepoActionButton label={"sha graph"} icon={"source-graph"} />
+          </ButtonRow>
+        )}
+        {props.apiResponse?.repoState?.isInMergeConflict && (
+            <ButtonRow style={{ marginTop: 24 }}>
+              <RepoActionButton
+                size={'large'}
+                onClick={updateToCompareMode}
+                isLoading={updateCommand.isLoading}
+                label={"manage merge conflict"}
+                icon={"merge"}
+              />
+            </ButtonRow>
+        )}
+      </TopContainer>
+      <BottomContainer>
+        <>
+          <ButtonRow>
+            <RepoActionButton
+              isDisabled={!props.apiResponse?.canPopStashedChanges}
+              label={"pop stash"}
+              icon={"stash-pop"}
+              isLoading={popStashedChangesMutation.isLoading}
+              onClick={onPopStashedChanges}
+            />
+            <RepoActionButton
+              isDisabled={!props.apiResponse?.isWIP}
+              label={
+                (props.apiResponse?.stashSize ?? 0) > 0
+                  ? `stash (${props.apiResponse?.stashSize})`
+                  : "stash"
+              }
+              icon={"stash"}
+              isLoading={stashChangesMutation.isLoading}
+              onClick={onStashChanges}
+            />
+          </ButtonRow>
+          <ButtonRow style={{ marginTop: 24 }}>
+            <RepoActionButton
+              isDisabled={!props.apiResponse?.isWIP}
+              size={"large"}
+              label={"discard current changes"}
+              icon={"discard"}
+              onClick={onShowDiscard}
+            />
+          </ButtonRow>
+        </>
+      </BottomContainer>
+      <ConfirmDiscardChangesModal
+        show={showDiscard}
+        onDismiss={onCloseDiscard}
+        repository={props.repository}
+      />
+    </InnerContent>
+  );
+};
+
+export default React.memo(LocalVCSEditMode);

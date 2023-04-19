@@ -1,6 +1,13 @@
 import { Manifest } from "./plugins";
 import { Diff, StringDiff } from "./versioncontrol";
 
+
+export interface Comparison {
+  against: "wip" | "branch" | "sha" | "merge";
+  branch: string | null;
+  commit: string | null;
+}
+
 export interface RepoState {
   branch: string | null;
   commit: string | null;
@@ -12,11 +19,7 @@ export interface RepoState {
     direction: "yours" | "theirs";
   };
   commandMode: "view" | "edit" | "compare";
-  comparison: null | {
-    against: "last"|"branch"|"sha"|"merge";
-    branch: string | null;
-    commit: string | null;
-  };
+  comparison: null | Comparison;
 }
 
 export interface CommitData {
@@ -135,21 +138,27 @@ export interface ApiStoreInvalidity {
   [key: string]: Array<string>;
 }
 
-export interface ApiReponse {
+export interface ApiResponse {
   repoState: RepoState;
   applicationState: RenderedApplicationState;
   schemaMap: {[key: string]: Manifest};
   beforeState?: RenderedApplicationState;
+  beforeApiStoreInvalidity?: ApiStoreInvalidity,
+  beforeManifests?: Array<Manifest>,
+  beforeSchemaMap?: { [pluginName: string]: Manifest }
   apiDiff?: ApiDiff;
   apiStoreInvalidity?: ApiStoreInvalidity;
   isWIP?: boolean;
   branch?: Branch;
   baseBranch?: Branch;
   lastCommit?: CommitData;
+  mergeCommit?: CommitData;
+  canPopStashedChanges?: boolean;
+  stashSize?: number;
 }
 
 export interface SourceCommitNode extends CommitHistory {
-    children?: Array<SourceCommitNode>;
+    children: Array<SourceCommitNode>;
     message: string;
     userId: string;
     authorUserId: string;
@@ -163,10 +172,10 @@ export interface SourceCommitNode extends CommitHistory {
 }
 
 export interface SourceGraphResponse {
-  pointers: { [sha: string]: SourceCommitNode };
-  rootNodes: Array<SourceCommitNode>;
+  commits: Array<SourceCommitNode>;
   branches: Array<Branch>;
   branchesMetaState: BranchesMetaState;
+  repoState: RepoState;
 }
 
 export const EMPTY_COMMIT_STATE: ApplicationKVState = {

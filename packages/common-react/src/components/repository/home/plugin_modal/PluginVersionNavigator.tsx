@@ -5,7 +5,7 @@ import PluginVersionNavigatorRow from "./PluginVersionNavigatorRow";
 import DualToggle from "@floro/storybook/stories/design-system/DualToggle";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import WarningLabel from "@floro/storybook/stories/design-system/WarningLabel";
-import { ApiReponse } from "@floro/floro-lib/src/repo";
+import { ApiResponse } from "@floro/floro-lib/src/repo";
 
 const SectionContainer = styled.div`
   max-width: 760px;
@@ -43,7 +43,7 @@ export interface Props {
   canRelease: boolean;
   onClickReleaseVersion: (version: PluginVersion) => void;
   repository: Repository;
-  apiResponse: ApiReponse;
+  apiResponse: ApiResponse;
   isCompatible: boolean;
 }
 

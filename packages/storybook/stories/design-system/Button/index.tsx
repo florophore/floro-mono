@@ -186,6 +186,22 @@ const Button = ({
                 display: flex;
                 justify-content: center;
                 align-items: center;
+              `}
+            >
+              {label}
+            </div>
+            <div
+              className={css`
+                position: absolute;
+                transition: opacity 300ms;
+                top: 0;
+                left: 0;
+                height: 100%;
+                width: 100%;
+                border-radius: 8px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
                 background-image: ${hoverBackgroundColor};
                 opacity: 0;
                 &:hover {
@@ -195,7 +211,6 @@ const Button = ({
             >
               {label}
             </div>
-            {label}
             <div
               className={css`
                 pointer-events: none;

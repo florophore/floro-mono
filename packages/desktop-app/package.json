@@ -38,7 +38,7 @@
     "@typescript-eslint/eslint-plugin": "5.32.0",
     "@vitejs/plugin-react": "2.0.1",
     "cross-env": "7.0.3",
-    "electron": "20.0.1",
+    "electron": "24.1.1 ",
     "electron-builder": "23.3.3",
     "eslint": "8.21.0",
     "happy-dom": "6.0.4",

@@ -5,17 +5,22 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-import { ApiReponse } from "@floro/floro-lib/src/repo";
+import { ApiResponse } from "@floro/floro-lib/src/repo";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { useUpdateCurrentCommand, useUpdatePluginState } from "../local/hooks/local-hooks";
+import { useLocalVCSNavContext } from "../local/vcsnav/LocalVCSContext";
 
 interface Props {
   pluginName: string;
-  apiResponse: ApiReponse;
+  apiResponse: ApiResponse;
   repository: Repository;
   isExpanded: boolean;
   onSetIsExpanded: (isExpanded: boolean) => void;
   onToggleCommandMode: () => void;
+  onToggleCompareMode: () => void;
+  onToggleBefore: () => void;
+  onToggleAfter: () => void;
+  onToggleBranches: () => void;
 }
 
 interface Packet {
@@ -62,6 +67,8 @@ const LocalPluginController = (props: Props) => {
   const [hasLoaded, setHasLoaded] = useState(false);
   const [hasSentFirstData, setHasSetFirstData] = useState(false);
   const [ackId, setAckId] = useState<string | null>(null);
+  const { compareFrom } = useLocalVCSNavContext();
+
   const updatePluginState = useUpdatePluginState(
     props.pluginName,
     props.repository
@@ -73,12 +80,24 @@ const LocalPluginController = (props: Props) => {
   useEffect(() => {
     setHasLoaded(false);
   }, [props.pluginName]);
+
   const manifest = useMemo(() => {
+    if (props.apiResponse.repoState.commandMode == "compare" && compareFrom == "before") {
+      if (!props.apiResponse.beforeSchemaMap?.[props.pluginName]) {
+        return null;
+      }
+      return props.apiResponse.beforeSchemaMap?.[props.pluginName];
+    }
     if (!props.apiResponse.schemaMap?.[props.pluginName]) {
       return null;
     }
     return props.apiResponse.schemaMap?.[props.pluginName];
-  }, [props.pluginName, props.apiResponse.schemaMap]);
+  }, [
+    compareFrom,
+    props.apiResponse.repoState.commandMode,
+    props.pluginName,
+    props.apiResponse.schemaMap,
+  ]);
 
   const iframeUri = useMemo(() => {
     if (!manifest) {
@@ -94,10 +113,19 @@ const LocalPluginController = (props: Props) => {
     const keys = [manifest.name, ...Object.keys(manifest.imports)];
     const out = {};
     for (const plugin of keys) {
-      out[plugin] = props?.apiResponse?.applicationState?.store?.[plugin] ?? {};
+      if (props.apiResponse.repoState.commandMode == "compare" && compareFrom == "before") {
+        out[plugin] = props?.apiResponse?.beforeState?.store?.[plugin] ?? {};
+      } else {
+        out[plugin] = props?.apiResponse?.applicationState?.store?.[plugin] ?? {};
+      }
     }
     return out;
-  }, [manifest, props.apiResponse?.applicationState]);
+  }, [manifest,
+     compareFrom,
+     props.apiResponse.repoState.commandMode,
+     props.apiResponse?.applicationState,
+     props.apiResponse?.beforeState,
+    ]);
 
   const apiStoreInvalidity = useMemo(() => {
     if (!manifest) {
@@ -106,25 +134,75 @@ const LocalPluginController = (props: Props) => {
     const keys = [manifest.name, ...Object.keys(manifest.imports)];
     const out = {};
     for (const plugin of keys) {
-      out[plugin] = props?.apiResponse?.apiStoreInvalidity?.[plugin] ?? {};
+      if (
+        props.apiResponse.repoState.commandMode == "compare" &&
+        compareFrom == "before"
+      ) {
+        out[plugin] =
+          props?.apiResponse?.beforeApiStoreInvalidity?.[plugin] ?? {};
+      } else {
+        out[plugin] = props?.apiResponse?.apiStoreInvalidity?.[plugin] ?? {};
+      }
     }
     return out;
-  }, [manifest, props?.apiResponse?.apiStoreInvalidity]);
+  }, [
+    manifest,
+    props?.apiResponse?.apiStoreInvalidity,
+    compareFrom,
+    props.apiResponse?.beforeApiStoreInvalidity,
+  ]);
+
+  const changeset = useMemo(() => {
+    if (props.apiResponse.repoState.commandMode != "compare" || !manifest) {
+      return []
+    }
+    const out: Array<string> = [];
+    const keys = [manifest.name, ...Object.keys(manifest.imports)];
+    for (const plugin of keys) {
+      if (compareFrom == "before"
+      ) {
+        out.push(
+          ...(props?.apiResponse?.apiDiff?.store?.[plugin]?.removed ?? [])
+        );
+      } else {
+        out.push(
+          ...(props?.apiResponse?.apiDiff?.store?.[plugin]?.added ?? [])
+        );
+      }
+    }
+    return out;
+  }, [
+    manifest,
+    props?.apiResponse?.apiStoreInvalidity,
+    compareFrom,
+    props.apiResponse?.beforeApiStoreInvalidity,
+    props?.apiResponse?.repoState?.comparison,
+  ])
 
   const pluginState = useMemo(() => {
     return {
+      changeset,
       applicationState,
       apiStoreInvalidity,
+      compareFrom: props?.apiResponse?.repoState?.commandMode == "compare" ? compareFrom : "none",
       commandMode: props?.apiResponse?.repoState?.commandMode ?? "view",
     };
-  }, [applicationState, apiStoreInvalidity, props?.apiResponse?.repoState?.commandMode]);
+  }, [
+    changeset,
+    applicationState,
+    apiStoreInvalidity,
+    props?.apiResponse?.repoState?.commandMode,
+    props?.apiResponse?.repoState?.comparison,
+  ]);
 
   useEffect(() => {
     if (hasLoaded && !hasSentFirstData && iframeRef.current) {
       sendMessage(iframeRef.current, "load", pluginState);
       setHasSetFirstData(true);
     }
-  }, [hasLoaded, hasSentFirstData, pluginState]);
+  }, [hasLoaded, hasSentFirstData, pluginState,
+    props?.apiResponse?.repoState?.comparison,
+  ]);
 
   useEffect(() => {
     if (ackId) {
@@ -133,13 +211,19 @@ const LocalPluginController = (props: Props) => {
       }
       setAckId(null);
     }
-  }, [ackId, pluginState]);
+  }, [ackId, pluginState,
+
+    props?.apiResponse?.repoState?.comparison,
+
+  ]);
 
   useEffect(() => {
     if (iframeRef.current && hasLoaded && hasSentFirstData) {
         sendMessage(iframeRef.current, "update", pluginState);
     }
-  }, [pluginState]);
+  }, [pluginState,
+    props?.apiResponse?.repoState?.comparison,
+  ]);
 
   useEffect(() => {
     if (updatePluginState?.data?.id) {
@@ -149,18 +233,54 @@ const LocalPluginController = (props: Props) => {
 
   useEffect(() => {
     const incoming = {};
-    const onMessage = ({ data }: { data: Packet|"ready"|"toggle-vcs"|"toggle-command-mode" }) => {
+    const onMessage = ({
+      data,
+    }: {
+      data:
+        | Packet
+        | "ready"
+        | "toggle-vcs"
+        | "toggle-command-mode"
+        | "toggle-before"
+        | "toggle-after"
+        | "toggle-compare-mode"
+        | "toggle-branches";
+    }) => {
       if (data == "ready") {
-          setHasLoaded(true);
-          return;
+        setHasLoaded(true);
+        return;
       }
       if (data == "toggle-vcs") {
-          onToggleVCSContainer();
-          return;
+        onToggleVCSContainer();
+        return;
       }
       if (data == "toggle-command-mode") {
-          props.onToggleCommandMode();
-          return;
+        props.onToggleCommandMode();
+        return;
+      }
+
+      if (data == "toggle-compare-mode") {
+        props.onToggleCompareMode();
+        return;
+      }
+
+      if (data == "toggle-before") {
+        props.onToggleBefore();
+        return;
+      }
+
+      if (data == "toggle-after") {
+        props.onToggleAfter();
+        return;
+      }
+
+      if (data == "toggle-branches") {
+        props.onToggleBranches();
+        return;
+      }
+
+      if (typeof data == "string") {
+        return;
       }
       if (!incoming[data.id]) {
         incoming[data.id] = {
@@ -176,7 +296,11 @@ const LocalPluginController = (props: Props) => {
         );
         const id = data.id;
         if (id && state.command == "save") {
-          updatePluginState.mutate({ state: state?.data, id, pluginName: data?.pluginName });
+          updatePluginState.mutate({
+            state: state?.data,
+            id,
+            pluginName: data?.pluginName,
+          });
         }
         delete incoming[data.id];
       }
@@ -188,7 +312,7 @@ const LocalPluginController = (props: Props) => {
   }, [props.pluginName, onToggleVCSContainer, props.onToggleCommandMode]);
 
   if (!iframeUri) {
-    return <div>{"missing plugin"}</div>;
+    return null;
   }
   return (
     <div
@@ -207,7 +331,7 @@ const LocalPluginController = (props: Props) => {
           border: 0,
         }}
         seamless
-        src={"http://localhost:63403/plugins/palette/dev"}
+        src={iframeUri}
       />
     </div>
   );

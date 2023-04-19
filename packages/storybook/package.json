@@ -14,7 +14,8 @@
     "@storybook/react": "^6.5.10",
     "@storybook/testing-library": "^0.0.13",
     "@types/d3": "^7.4.0",
-    "babel-loader": "^8.2.5"
+    "babel-loader": "^8.2.5",
+    "react-docgen-typescript-plugin": "^1.0.5"
   },
   "dependencies": {
     "@emotion/css": "^11.10.0",

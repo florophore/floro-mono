@@ -24,6 +24,7 @@ import { useCurrentRepoState, useRepoDevPlugins, useRepoManifestList } from "./h
 import { Manifest } from "@floro/floro-lib/src/plugins";
 import { transformLocalManifestToPartialPlugin } from "./hooks/manifest-transforms";
 import LocalSideOption from "./LocalSideOption";
+import { useLocalVCSNavContext } from "./vcsnav/LocalVCSContext";
 
 const Navigator = styled.nav`
   width: 72px;
@@ -78,6 +79,16 @@ const NavIconWrapper = styled.div`
   position: relative;
 `;
 
+const ChangeDot = styled.div`
+  position: absolute;
+  right: 10px;
+  bottom: 20px;
+  height: 16px;
+  width: 16px;
+  border: 2px solid ${ColorPalette.white};
+  border-radius: 50%;
+`;
+
 const NavHighlight = styled.div`
     position: absolute;
     z-index: 0;
@@ -92,10 +103,28 @@ interface Props {
 const LocalSideNavigator = (props: Props): React.ReactElement => {
   const theme = useTheme();
   const location = useLocation();
+  const { compareFrom } = useLocalVCSNavContext();
 
   const { data: apiResponse } = useCurrentRepoState(props.repository);
   const repoManifestList = useRepoManifestList(props.repository);
   const devPluginsRequest = useRepoDevPlugins(props.repository);
+
+  const apiManifestList = useMemo(() => {
+    if (
+      apiResponse?.repoState.commandMode == "compare" &&
+      compareFrom == "before"
+    ) {
+      return apiResponse?.beforeManifests ?? [];
+    }
+    return repoManifestList?.data ?? [];
+  }, [
+    apiResponse?.repoState?.commandMode,
+    apiResponse?.applicationState,
+    apiResponse?.beforeState,
+    compareFrom,
+    repoManifestList
+  ]);
+
 
   const manifestList = useMemo(() => {
     const devManifestList: Array<Manifest> = [];
@@ -107,13 +136,31 @@ const LocalSideNavigator = (props: Props): React.ReactElement => {
         }
       }
     }
-    return [...(repoManifestList?.data ?? []), ...devManifestList];
-  }, [repoManifestList?.data, devPluginsRequest]);
+    return [...(apiManifestList ?? []), ...devManifestList];
+  }, [apiManifestList, devPluginsRequest]);
+
+
+  const plugins = useMemo(() => {
+    if (
+      apiResponse?.repoState.commandMode == "compare" &&
+      compareFrom == "before"
+    ) {
+      return apiResponse?.beforeState?.plugins ?? [];
+    }
+
+    return apiResponse?.applicationState?.plugins ?? [];
+  }, [
+    apiResponse?.repoState?.commandMode,
+    apiResponse?.applicationState,
+    apiResponse?.beforeState,
+    compareFrom,
+  ]);
+
   const installedPlugins = useMemo(() => {
     if (!manifestList || !apiResponse) {
       return [];
     }
-    return apiResponse.applicationState.plugins
+    return plugins
       .map((pluginKV) => {
         const manifest = manifestList.find(
           (v) => v.name == pluginKV.key && v.version == pluginKV.value
@@ -129,7 +176,7 @@ const LocalSideNavigator = (props: Props): React.ReactElement => {
         );
       })
       ?.filter((v) => v != null) as Array<Plugin>;
-  }, [manifestList, apiResponse?.applicationState?.plugins]);
+  }, [manifestList, plugins]);
 
   const HomeIcon = useMemo(() => {
     if (props.plugin?.toLowerCase() == "home") {
@@ -153,13 +200,69 @@ const LocalSideNavigator = (props: Props): React.ReactElement => {
       : PluginSettingsUnSelectedDark;
   }, [props.plugin, theme.name]);
 
+  const apiStoreInvalidity = useMemo(() => {
+    if (
+      apiResponse?.repoState.commandMode == "compare" &&
+      compareFrom == "before"
+    ) {
+      return apiResponse?.beforeApiStoreInvalidity ?? {};
+    }
+
+    return apiResponse?.apiStoreInvalidity ?? {};
+  }, [
+    apiResponse?.repoState?.commandMode,
+    apiResponse?.apiStoreInvalidity,
+    apiResponse?.beforeApiStoreInvalidity,
+    compareFrom,
+  ]);
+
   const invalidityMap = useMemo(() => {
     const out: { [key: string]: boolean} = {};
-    for (const plugin in apiResponse?.apiStoreInvalidity) {
-      out[plugin] = (apiResponse?.apiStoreInvalidity?.[plugin] ?? []).length > 0;
+    for (const plugin in apiStoreInvalidity) {
+      out[plugin] = (apiStoreInvalidity?.[plugin] ?? []).length > 0;
     }
     return out;
-  }, [apiResponse]);
+  }, [apiStoreInvalidity]);
+
+    const homeHasAdditions = useMemo(() => {
+      if (apiResponse?.repoState?.commandMode != "compare" || compareFrom != "after") {
+        return false;
+      }
+      if ((apiResponse?.apiDiff?.description?.added?.length ?? 0) > 0) {
+        return true;
+      }
+      if ((apiResponse?.apiDiff?.licenses?.added?.length ?? 0) > 0) {
+        return true;
+      }
+      if ((apiResponse?.apiDiff?.plugins?.added?.length ?? 0) > 0) {
+        return true;
+      }
+      return false;
+    }, [
+      compareFrom,
+      apiResponse?.apiDiff,
+      apiResponse?.repoState?.commandMode
+    ]);
+
+    const homeHasRemovals = useMemo(() => {
+      if (apiResponse?.repoState?.commandMode != "compare" || compareFrom != "before") {
+        return false;
+      }
+      if ((apiResponse?.apiDiff?.description?.removed?.length ?? 0) > 0) {
+        return true;
+      }
+      if ((apiResponse?.apiDiff?.licenses?.removed?.length ?? 0) > 0) {
+        return true;
+      }
+      if ((apiResponse?.apiDiff?.plugins?.removed?.length ?? 0) > 0) {
+        return true;
+      }
+      return false;
+    }, [
+      compareFrom,
+      apiResponse?.apiDiff,
+      apiResponse?.repoState?.commandMode
+    ]);
 
   return (
     <Navigator>
@@ -182,26 +285,16 @@ const LocalSideNavigator = (props: Props): React.ReactElement => {
                 {"home"}
               </NavText>
             </NavIconWrapper>
-          </Link>
-        </NavOption>
-        <NavOption>
-          <Link
-            to={location.pathname + "?plugin=settings&from=local"}
-            style={{ textDecoration: "none", display: "contents" }}
-          >
-            <NavIconWrapper>
-              <NavIcon src={SettingsIcon} />
-              <NavText
-                style={{
-                  color:
-                    props.plugin == "settings"
-                    ? theme.colors.pluginSelected
-                    : theme.colors.pluginUnSelected,
-                }}
-              >
-                {"settings"}
-              </NavText>
-            </NavIconWrapper>
+            {homeHasAdditions && (
+              <ChangeDot style={{
+                background: theme.colors.addedBackground
+              }}/>
+            )}
+            {homeHasRemovals && (
+              <ChangeDot style={{
+                background: theme.colors.removedBackground
+              }}/>
+            )}
           </Link>
         </NavOption>
         {installedPlugins.map((plugin, index) => {
@@ -214,6 +307,7 @@ const LocalSideNavigator = (props: Props): React.ReactElement => {
                 isSelected={isSelected}
                 key={index}
                 isInvalid={isInvalid}
+                apiResponse={apiResponse}
                 />
             );
         })}

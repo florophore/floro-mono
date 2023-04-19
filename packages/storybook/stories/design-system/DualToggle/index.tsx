@@ -32,11 +32,11 @@ export interface Props {
   onChange: (value: string) => void;
   value: string;
   leftOption: {
-    label: string;
+    label: string|React.ReactElement;
     value: string;
   };
   rightOption: {
-    label: string;
+    label: string|React.ReactElement;
     value: string;
   };
 }

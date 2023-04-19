@@ -11,7 +11,7 @@ import RedXDark from "@floro/common-assets/assets/images/icons/red_x_circle.dark
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { usePluginCompatabilityCheck } from "../../local/hooks/local-hooks";
 import DotsLoader from "@floro/storybook/stories/design-system/DotsLoader";
-import { ApiReponse } from "@floro/floro-lib/src/repo";
+import { ApiResponse } from "@floro/floro-lib/src/repo";
 
 const RowContainer = styled.div`
   width: 100%;
@@ -93,7 +93,7 @@ export interface Props {
   linkPrefix: string;
   onClickReleaseVersion: (version: PluginVersion) => void;
   repository: Repository;
-  apiResponse: ApiReponse;
+  apiResponse: ApiResponse;
 }
 
 const PluginVersionNavigatorRow = (props: Props) => {

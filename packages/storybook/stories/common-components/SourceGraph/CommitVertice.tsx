@@ -23,9 +23,18 @@ const RHO_ANGLE_TOP_X = Math.cos(THETA + RHO);
 const RHO_ANGLE_TOP_Y = -Math.sin(THETA + RHO);
 const RHO_ANGLE_BOTTOM_X = Math.cos(THETA - RHO);
 const RHO_ANGLE_BOTTOM_Y = -Math.sin(THETA - RHO);
+
+const HERE_THETA = Math.PI /4;
+const HERE_THETA_ANGLE_0_X = Math.cos(-HERE_THETA);
+const HERE_THETA_ANGLE_0_Y = -Math.sin(-HERE_THETA);
+const HERE_THETA_ANGLE_1_X = Math.cos(-(HERE_THETA * 3));
+const HERE_THETA_ANGLE_1_Y = -Math.sin(-(HERE_THETA * 3));
+
 const R = 24;
 const S = 4;
 const POLY_L = 20;
+const HERE_POLY_L = 40;
+const HERE_RECT_L = 30;
 
 interface Props {
   vertice: SourceCommitNodeWithGridDimensions;
@@ -34,7 +43,7 @@ interface Props {
   rowDistance: number;
   branchMap: { [key: string]: Branch };
   onChangeFocalPoint: (point: null | [number, number]) => void;
-  currentSha?: string;
+  currentSha?: string|null;
   onSelectNode?: (
     sourceCommit: SourceCommitNodeWithGridDimensions,
     terminalBranches: Array<Branch>
@@ -48,6 +57,9 @@ interface Props {
     terminalBranches?: Array<Branch>;
   }) => React.ReactElement | null;
   htmlContentHeight?: number;
+  currentBranchId?: string;
+  filterBranches?: boolean;
+  filteredBranches?: Array<Branch>;
 }
 
 const CommitVertice = (props: Props) => {
@@ -66,27 +78,30 @@ const CommitVertice = (props: Props) => {
   const svgContainerRef = useRef<SVGGElement>(null);
 
   const terminalBranches = useMemo(() => {
-    // can performance optimize by checking if right cell is empty
-    if (!!props?.grid?.[props.vertice.row]?.[props.vertice.column + 1]) {
-      return [];
-    }
     const childrenBrancheSet = new Set<string>(
       props?.vertice?.children?.flatMap((c) => c?.branchIds ?? []) ?? []
     );
     let branches: Array<Branch> = [];
     for (const branchId of props.vertice.branchIds) {
       if (!childrenBrancheSet.has(branchId)) {
-        if (!branches.includes(props.branchMap[branchId])) {
-          branches.push(props.branchMap[branchId]);
+        const branch = props.branchMap[branchId];
+        if (branch.lastCommit == props.vertice.sha) {
+          branches.push(branch);
         }
       }
     }
-    return branches;
+    if (!props.filterBranches) {
+      return branches;
+    }
+    const filteredBranchIds = new Set(props?.filteredBranches?.map?.(v => v?.id) ?? []);
+    return branches?.filter(b => filteredBranchIds.has(b.id));
   }, [
+    props.vertice?.sha,
     props.vertice?.branchIds,
     props?.vertice?.children,
     props?.grid,
     props.branchMap,
+    props.filterBranches
   ]);
 
   const onSelectNode = useCallback(() => {
@@ -244,13 +259,32 @@ const CommitVertice = (props: Props) => {
   const polyP2x = polyP0x + RHO_ANGLE_BOTTOM_X * POLY_L;
   const polyP2y = polyP0y + RHO_ANGLE_BOTTOM_Y * POLY_L;
 
+  // CURRENT POLYGON
+  // TRIANGLE POLYGON MATH;
+  const herePolyP0x = x;
+  const herePolyP0y = y + (R + selectedOffset);
+  const herePolyP1x = herePolyP0x + HERE_THETA_ANGLE_0_X * HERE_POLY_L;
+  const herePolyP1y = herePolyP0y + HERE_THETA_ANGLE_0_Y * HERE_POLY_L;
+  const herePolyP2x = herePolyP0x + HERE_THETA_ANGLE_1_X * HERE_POLY_L;
+  const herePolyP2y = herePolyP0y + HERE_THETA_ANGLE_1_Y * HERE_POLY_L;
+  const hereTrinagleD = Math.abs(herePolyP1x - herePolyP2x);
+  const hereRectOffset = hereTrinagleD/3;
+  const hereP1Tx = herePolyP1x - hereRectOffset;
+  const hereP1Ty = herePolyP1y;
+  const hereP1TBx = hereP1Tx;
+  const hereP1TBy = hereP1Ty + HERE_RECT_L;
+  const hereP2Tx = herePolyP2x + hereRectOffset;
+  const hereP2Ty = herePolyP2y;
+  const hereP2TBx = hereP2Tx;
+  const hereP2TBy = hereP2Ty + HERE_RECT_L;
+
   // HTML CONTAINER MATH
   const htmlHeight = useMemo(
-    () => props.htmlContentHeight ?? props.rowDistance / 3,
+    () => props.htmlContentHeight ?? props.rowDistance * 0.4,
     [props.htmlContentHeight]
   );
 
-  const htmlWidth = props.columnDistance / 2;
+  const htmlWidth = props.columnDistance * 0.75;
 
   return (
     <>
@@ -341,6 +375,39 @@ const CommitVertice = (props: Props) => {
           stroke={`${stroke}`}
           strokeWidth={`${S}`}
         />
+        {props.vertice.isCurrent && (
+          <motion.polygon
+            strokeLinejoin="round"
+            style={{ cursor: "pointer" }}
+            strokeWidth={`${S}`}
+            fill={`${theme.colors.removedText}`}
+            stroke={`${stroke}`}
+            points={`
+                    ${herePolyP0x},${herePolyP0y}
+                    ${herePolyP1x},${herePolyP1y}
+                    ${hereP1Tx},${hereP1Ty}
+                    ${hereP1TBx},${hereP1TBy}
+                    ${hereP2TBx},${hereP2TBy}
+                    ${hereP2Tx},${hereP2Ty}
+                    ${herePolyP2x},${herePolyP2y}
+                `}
+              animate={{
+                points: `
+                    ${herePolyP0x},${herePolyP0y}
+                    ${herePolyP1x},${herePolyP1y}
+                    ${hereP1Tx},${hereP1Ty}
+                    ${hereP1TBx},${hereP1TBy}
+                    ${hereP2TBx},${hereP2TBy}
+                    ${hereP2Tx},${hereP2Ty}
+                    ${herePolyP2x},${herePolyP2y}
+                  `,
+              }}
+              transition={{
+                duration: 0.2,
+                ease: "easeInOut",
+              }}
+          />
+        )}
         {terminalBranches?.map((branch, index) => {
           return (
             <React.Fragment key={index}>
@@ -354,6 +421,7 @@ const CommitVertice = (props: Props) => {
                 onSelectBranch={props.onSelectBranch}
                 onMouseOffBranch={props.onMouseOffBranch}
                 onMouseOverBranch={props.onMouseOverBranch}
+                isCurrentBranch={props.currentBranchId == branch.id}
               />
             </React.Fragment>
           );

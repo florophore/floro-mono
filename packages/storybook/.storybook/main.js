@@ -1,17 +1,20 @@
 module.exports = {
-  "stories": [
+  stories: [
     "../stories/**/*.stories.mdx",
-    "../stories/**/**/*.stories.@(js|jsx|ts|tsx)"
+    "../stories/**/**/*.stories.@(js|jsx|ts|tsx)",
   ],
-  "addons": [
+  addons: [
     "@storybook/addon-links",
     "@storybook/addon-essentials",
     "@storybook/addon-interactions",
-    "@react-theming/storybook-addon"
+    "@react-theming/storybook-addon",
   ],
-  "framework": "@storybook/react",
-  "staticDirs": ['../stories/assets', "../fonts"],
-  "core": {
-    "builder": "@storybook/builder-webpack5"
-  }
-}
+  framework: "@storybook/react",
+  staticDirs: ["../stories/assets", "../fonts"],
+  core: {
+    builder: "@storybook/builder-webpack5",
+  },
+  typescript: {
+    reactDocgen: "react-docgen-typescript-plugin",
+  },
+};

@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback } from "react";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
-import { ApiReponse } from "@floro/floro-lib/src/repo";
+import { ApiResponse } from "@floro/floro-lib/src/repo";
 import {
   Plugin,
   PluginVersion,
@@ -43,7 +43,7 @@ const DevelopmentPluginsList = styled.div`
 `;
 
 interface Props {
-  apiReponse: ApiReponse;
+  apiReponse: ApiResponse;
   onChangePluginVersion?: (
     plugin?: Plugin,
     pluginVersion?: PluginVersion

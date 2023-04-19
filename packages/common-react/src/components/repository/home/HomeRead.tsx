@@ -9,11 +9,12 @@ import ColorPalette from "@floro/styles/ColorPalette";
 import PluginDependencyList from "@floro/storybook/stories/common-components/PluginDependencyList";
 import PluginVersionList from "@floro/storybook/stories/common-components/PluginVersionList";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
-import { ApiReponse } from "@floro/floro-lib/src/repo";
+import { ApiResponse } from "@floro/floro-lib/src/repo";
 import { useRepoDevPlugins, useRepoManifestList } from "../local/hooks/local-hooks";
 import { Manifest } from "@floro/floro-lib/src/plugins";
 import { transformLocalManifestToPartialPlugin } from "../local/hooks/manifest-transforms";
 import PluginEditor from "./plugin_editor/PluginEditor";
+import { useLocalVCSNavContext } from "../local/vcsnav/LocalVCSContext";
 
 const Container = styled.div`
   height: 100%;
@@ -163,13 +164,15 @@ const LicenseTitle = styled.div`
 
 interface Props {
   repository: Repository;
-  apiResponse: ApiReponse;
+  apiResponse: ApiResponse;
 }
 
 const HomeRead = (props: Props) => {
 
+  const theme = useTheme();
   const repoManifestList = useRepoManifestList(props.repository);
   const devPluginsRequest = useRepoDevPlugins(props.repository);
+  const { compareFrom } = useLocalVCSNavContext();
 
   const manifestList = useMemo(() => {
     const devManifestList: Array<Manifest> = [];
@@ -204,11 +207,27 @@ const HomeRead = (props: Props) => {
     return devPluginList;
   }, [manifestList, devPluginsRequest]);
 
+  const plugins = useMemo(() => {
+    if (
+      props.apiResponse.repoState.commandMode == "compare" &&
+      compareFrom == "before"
+    ) {
+      return props?.apiResponse?.beforeState?.plugins ?? [];
+    }
+
+    return props?.apiResponse?.applicationState?.plugins ?? [];
+  }, [
+    props.apiResponse.repoState.commandMode,
+    props.apiResponse.applicationState,
+    props.apiResponse.beforeState,
+    compareFrom,
+  ]);
+
   const installedPlugins = useMemo(() => {
     if (!manifestList) {
       return [];
     }
-    return props.apiResponse.applicationState.plugins.map((pluginKV) => {
+    return plugins.map((pluginKV) => {
       const manifest = manifestList.find(
         (v) => v.name == pluginKV.key && v.version == pluginKV.value
       );
@@ -219,22 +238,210 @@ const HomeRead = (props: Props) => {
         pluginKV.key,
         pluginKV.value,
         manifest as Manifest,
-        manifestList
+        manifestList,
       );
     })
     ?.filter(v => v != null) as Array<Plugin>;
-  }, [manifestList, props.apiResponse.applicationState.plugins]);
+  }, [manifestList, plugins]);
 
-  const description = useMemo((): string => {
+  const descriptionChanges = useMemo((): Set<number> => {
+    if (props?.apiResponse?.repoState?.commandMode != "compare") {
+      return new Set<number>([]);
+    }
+    if (compareFrom == "before") {
+      return new Set<number>(props?.apiResponse?.apiDiff?.description?.removed ?? []);
+    }
+    return new Set<number>(props?.apiResponse?.apiDiff?.description?.added ?? []);
+  }, [
+    props?.apiResponse?.repoState?.commandMode,
+    compareFrom,
+    props?.apiResponse?.apiDiff?.description?.added,
+    props?.apiResponse?.apiDiff?.description?.removed,
+  ]);
+
+  const description = useMemo((): string|React.ReactElement => {
     if ((props?.apiResponse?.applicationState?.description?.length ?? 0) == 0) {
       return "No description";
     }
+    if (props?.apiResponse?.repoState?.commandMode == "compare") {
+      if (compareFrom == "before") {
+        if ((props?.apiResponse?.beforeState?.description?.length ?? 0) == 0) {
+          return "No description";
+        }
+        return (
+          <>
+            {props?.apiResponse?.beforeState?.description?.map(
+              (sentence, index) => {
+                return (
+                  <React.Fragment key={index}>
+                    <span
+                      style={{
+                        background: descriptionChanges.has(index)
+                          ? ColorPalette.lightRed
+                          : "none",
+                        color: descriptionChanges.has(index)
+                          ? ColorPalette.black
+                          : theme.colors.contrastText,
+                        fontWeight: descriptionChanges.has(index)
+                          ? 500
+                          : 400,
+                        paddingLeft: descriptionChanges.has(index)
+                          ? 4
+                          : 0,
+                        paddingRight: descriptionChanges.has(index)
+                          ? 4
+                          : 0,
+                        }}
+                    >
+                      {sentence}
+                    </span>{" "}
+                  </React.Fragment>
+                );
+              }
+            )}
+          </>
+        );
+      }
+      return (
+        <>
+          {props.apiResponse.applicationState.description.map(
+            (sentence, index) => {
+              return (
+                <React.Fragment key={index}>
+                  <span
+                    style={{
+                      background: descriptionChanges.has(index)
+                        ? ColorPalette.lightTeal
+                        : "none",
+                      color: descriptionChanges.has(index)
+                        ? ColorPalette.black
+                        : theme.colors.contrastText,
+                      fontWeight: descriptionChanges.has(index)
+                        ? 500
+                        : 400,
+                      paddingLeft: descriptionChanges.has(index)
+                        ? 4
+                        : 0,
+                      paddingRight: descriptionChanges.has(index)
+                        ? 4
+                        : 0,
+                    }}
+                  >
+                    {sentence}
+                  </span>{" "}
+                </React.Fragment>
+              );
+            }
+          )}
+        </>
+      );
+    }
     return props.apiResponse.applicationState.description.join(" ");
-  }, [props?.apiResponse?.applicationState?.description]);
+  }, [
+    props?.apiResponse?.applicationState?.description,
+    props?.apiResponse?.repoState?.commandMode,
+    compareFrom,
+    descriptionChanges,
+    theme
+  ]);
 
   const hasNoLicense = useMemo(() => {
+    if (
+      props?.apiResponse?.repoState?.commandMode == "compare" &&
+      compareFrom == "before"
+    ) {
+      return (props?.apiResponse?.beforeState?.licenses?.length ?? 0) == 0;
+    }
     return (props?.apiResponse?.applicationState?.licenses?.length ?? 0) == 0;
-  }, [props.apiResponse]);
+  }, [props.apiResponse, compareFrom]);
+
+  const licensesChanges = useMemo((): Set<number> => {
+    if (props?.apiResponse?.repoState?.commandMode != "compare") {
+      return new Set<number>([]);
+    }
+    if (compareFrom == "before") {
+      return new Set<number>(props?.apiResponse?.apiDiff?.licenses?.removed ?? []);
+    }
+    return new Set<number>(props?.apiResponse?.apiDiff?.licenses?.added ?? []);
+  }, [
+    props?.apiResponse?.repoState?.commandMode,
+    compareFrom,
+    props?.apiResponse?.apiDiff?.licenses?.added,
+    props?.apiResponse?.apiDiff?.licenses?.removed,
+  ]);
+
+
+
+  const licenses = useMemo(() => {
+    if (
+      props?.apiResponse?.repoState?.commandMode == "compare") {
+      if (compareFrom == "before") {
+        return (
+          <BlurbBox style={{ paddingTop: 0, paddingBottom: 0 }}>
+            {hasNoLicense && (
+              <NoLicenseContainer>
+                <NoLicensesText>{"No licenses selected"}</NoLicensesText>
+              </NoLicenseContainer>
+            )}
+            {props?.apiResponse?.beforeState?.licenses.map((license, index) => {
+              return (
+                <LicenseRow key={index}>
+                  <LicenseTitle
+                  style={{
+                    color: licensesChanges.has(index) ? theme.colors.removedText :  theme.colors.contrastText
+                  }}
+                  >{license.value}</LicenseTitle>
+                </LicenseRow>
+              );
+            })}
+          </BlurbBox>
+        );
+      }
+      return (
+        <BlurbBox style={{ paddingTop: 0, paddingBottom: 0 }}>
+          {hasNoLicense && (
+            <NoLicenseContainer>
+              <NoLicensesText>{"No licenses selected"}</NoLicensesText>
+            </NoLicenseContainer>
+          )}
+          {props.apiResponse.applicationState.licenses.map((license, index) => {
+            return (
+              <LicenseRow key={index}>
+                <LicenseTitle
+                  style={{
+                    color: licensesChanges.has(index) ? theme.colors.addedText :  theme.colors.contrastText
+                  }}
+                >{license.value}</LicenseTitle>
+              </LicenseRow>
+            );
+          })}
+        </BlurbBox>
+      );
+    }
+
+    return (
+      <BlurbBox style={{ paddingTop: 0, paddingBottom: 0 }}>
+        {hasNoLicense && (
+          <NoLicenseContainer>
+            <NoLicensesText>{"No licenses selected"}</NoLicensesText>
+          </NoLicenseContainer>
+        )}
+        {props.apiResponse.applicationState.licenses.map((license, index) => {
+          return (
+            <LicenseRow key={index}>
+              <LicenseTitle>{license.value}</LicenseTitle>
+            </LicenseRow>
+          );
+        })}
+      </BlurbBox>
+    );
+  }, [
+    props?.apiResponse?.applicationState?.description,
+    props?.apiResponse?.repoState?.commandMode,
+    compareFrom,
+    descriptionChanges,
+    theme
+  ])
 
   const hasNoPlugins = useMemo(() => {
     return (installedPlugins?.length ?? 0) == 0;
@@ -258,20 +465,7 @@ const HomeRead = (props: Props) => {
             <SectionTitle>{"Licenses"}</SectionTitle>
           </SectionTitleWrapper>
         </SectionRow>
-        <BlurbBox style={{ paddingTop: 0, paddingBottom: 0 }}>
-          {hasNoLicense && (
-            <NoLicenseContainer>
-              <NoLicensesText>{"No licenses selected"}</NoLicensesText>
-            </NoLicenseContainer>
-          )}
-          {props.apiResponse.applicationState.licenses.map((license, index) => {
-            return (
-              <LicenseRow key={index}>
-                <LicenseTitle>{license.value}</LicenseTitle>
-              </LicenseRow>
-            );
-          })}
-        </BlurbBox>
+        {licenses}
       </BigSectionContainer>
       <BigSectionContainer>
         <SectionRow>
@@ -288,7 +482,7 @@ const HomeRead = (props: Props) => {
           {installedPlugins.length > 0 && (
             <PluginEditor
               repository={props.repository}
-              apiReponse={props.apiResponse}
+              apiResponse={props.apiResponse}
               plugins={installedPlugins}
               isEditMode={false}
               developerPlugins={developerPlugins}

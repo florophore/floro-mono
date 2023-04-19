@@ -56,7 +56,6 @@ describe("UsersContext", () => {
       } catch (e) {
         expect(e).to.be.an.instanceOf(QueryFailedError);
         const detail = (e as QueryFailedError).driverError.detail;
-        console.log(detail);
         expect(detail).to.equal(
           `Key (username)=(${defaultParams.username}) already exists.`
         );

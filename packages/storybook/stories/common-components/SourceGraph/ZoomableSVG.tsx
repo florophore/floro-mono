@@ -85,8 +85,8 @@ const ZoomableSVG = ({
         .duration(300)
         .call(
           zoomRef.current.translateTo,
-          offsetX + focalPoint[0],
-          offsetY + focalPoint[1]
+          offsetX + focalPoint?.[0] ?? 0,
+          offsetY + focalPoint?.[1] ?? 0
         );
     }
   }, [focalPoint, offsetX, offsetY]);
@@ -94,6 +94,9 @@ const ZoomableSVG = ({
   useEffect(() => {
     const zoomCallback = (event) => {
       const { x, y, k } = event.transform;
+      if (Number.isNaN(x) || Number.isNaN(y) || Number.isNaN(k)) {
+        return;
+      }
       setK(k);
       setX(x);
       setY(y);

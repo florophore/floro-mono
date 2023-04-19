@@ -27,10 +27,11 @@ import GlobeWhite from "@floro/common-assets/assets/images/icons/globe.white.svg
 import Button from "@floro/storybook/stories/design-system/Button";
 import LocalRemoteToggle from "@floro/storybook/stories/common-components/LocalRemoteToggle";
 import { useQuery, useMutation, useQueryClient } from "react-query";
-import axios from 'axios';
+import axios from "axios";
 import { useDaemonIsConnected } from "../../../../pubsub/socket";
-import { ApiReponse } from "@floro/floro-lib/src/repo";
+import { ApiResponse } from "@floro/floro-lib/src/repo";
 import { useLocalVCSNavContext } from "./LocalVCSContext";
+import { useUpdateCurrentCommand } from "../hooks/local-hooks";
 
 const InnerContent = styled.div`
   display: flex;
@@ -73,39 +74,56 @@ const ButtonCol = styled.div`
   width: 100%;
 `;
 
+const SettingLinkText = styled.h3`
+  font-weight: 600;
+  font-size: 1.2rem;
+  font-family: "MavenPro";
+  text-decoration: underline;
+  color: ${props => ColorPalette.linkBlue};
+`;
+
 interface Props {
   repository: Repository;
-  apiResponse: ApiReponse;
+  apiResponse: ApiResponse;
 }
 
 const LocalVCSViewMode = (props: Props) => {
-    const { setSubAction } = useLocalVCSNavContext();
-    const onShowBranches = useCallback(() => {
-        setSubAction("branches");
-    }, []);
+  const { setSubAction } = useLocalVCSNavContext();
+  const onShowBranches = useCallback(() => {
+    setSubAction("branches");
+  }, []);
 
-    const onShowEditBranch = useCallback(() => {
-        setSubAction("edit_branch");
-    }, []);
+  const onShowEditBranch = useCallback(() => {
+    setSubAction("edit_branch");
+  }, []);
 
-    useEffect(() => {
-      const commandToggleListeners = (event: KeyboardEvent) => {
-        if (event.metaKey && event.shiftKey && event.key == "b") {
-          onShowBranches();
-        }
-      };
-      window.addEventListener("keydown", commandToggleListeners);
-      return () => {
-        window.removeEventListener("keydown", commandToggleListeners);
-      };
-    }, []);
+  useEffect(() => {
+    const commandToggleListeners = (event: KeyboardEvent) => {
+      if (event.metaKey && event.shiftKey && event.key == "b") {
+        onShowBranches();
+      }
+    };
+    window.addEventListener("keydown", commandToggleListeners);
+    return () => {
+      window.removeEventListener("keydown", commandToggleListeners);
+    };
+  }, []);
+
+  const updateCommand = useUpdateCurrentCommand(props.repository);
+
+  const updateToCompareMode = useCallback(() => {
+    updateCommand.mutate("compare");
+  }, [updateCommand]);
   return (
     <InnerContent>
       <TopContainer>
         <CurrentInfo
           respository={props.repository}
           showWIP
-          showBranchButtons
+          isMerge
+          mergeDirection={props.apiResponse?.repoState?.merge?.direction}
+          mergeCommit={props.apiResponse.mergeCommit}
+          showBranchButtons={!props.apiResponse?.repoState?.isInMergeConflict}
           isWIP={props.apiResponse.isWIP}
           branch={props.apiResponse.branch}
           baseBranch={props.apiResponse.baseBranch}
@@ -113,19 +131,41 @@ const LocalVCSViewMode = (props: Props) => {
           onShowBranches={onShowBranches}
           onShowEditBranch={onShowEditBranch}
         />
-        <ButtonRow style={{marginTop: 24}}>
-          <RepoActionButton
-          label={"compare"} icon={"compare"} />
-          <RepoActionButton
-          label={"source graph"} icon={"source-graph"} />
-        </ButtonRow>
+        {!props.apiResponse?.repoState?.isInMergeConflict && (
+          <>
+            <ButtonRow style={{ marginTop: 24 }}>
+              <RepoActionButton
+                onClick={updateToCompareMode}
+                isLoading={updateCommand.isLoading}
+                label={"compare"}
+                icon={"compare"}
+              />
+              <RepoActionButton label={"sha graph"} icon={"source-graph"} />
+            </ButtonRow>
+            <ButtonRow style={{ marginTop: 24 }}>
+              <RepoActionButton label={"local repository settings"} icon={"settings"} size="large" />
+            </ButtonRow>
+          </>
+        )}
+        {props.apiResponse?.repoState?.isInMergeConflict && (
+            <ButtonRow style={{ marginTop: 24 }}>
+              <RepoActionButton
+                size={'large'}
+                onClick={updateToCompareMode}
+                isLoading={updateCommand.isLoading}
+                label={"manage merge conflict"}
+                icon={"merge"}
+              />
+            </ButtonRow>
+        )}
       </TopContainer>
       <BottomContainer>
-          <Button
-            label={"pull remote"}
-            bg={"purple"}
-            size={"extra-big"}
-          />
+
+        {!props.apiResponse?.repoState?.isInMergeConflict && (
+          <ButtonRow>
+            <Button label={"pull remote"} bg={"purple"} size={"extra-big"} />
+          </ButtonRow>
+        )}
       </BottomContainer>
     </InnerContent>
   );

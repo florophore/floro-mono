@@ -13,6 +13,42 @@ import CompareWhite from '@floro/common-assets/assets/images/repo_icons/compare.
 import CompareGray from '@floro/common-assets/assets/images/repo_icons/compare.gray.svg';
 import CompareMediumGray from '@floro/common-assets/assets/images/repo_icons/compare.medium_gray.svg';
 
+import SettingsWhite from '@floro/common-assets/assets/images/repo_icons/settings.white.svg';
+import SettingsGray from '@floro/common-assets/assets/images/repo_icons/settings.gray.svg';
+import SettingsMediumGray from '@floro/common-assets/assets/images/repo_icons/settings.medium_gray.svg';
+
+import StashWhite from '@floro/common-assets/assets/images/repo_icons/stash.white.svg';
+import StashGray from '@floro/common-assets/assets/images/repo_icons/stash.gray.svg';
+import StashMediumGray from '@floro/common-assets/assets/images/repo_icons/stash.medium_gray.svg';
+
+import StashPopWhite from '@floro/common-assets/assets/images/repo_icons/stash_pop.white.svg';
+import StashPopGray from '@floro/common-assets/assets/images/repo_icons/stash_pop.gray.svg';
+import StashPopMediumGray from '@floro/common-assets/assets/images/repo_icons/stash_pop.medium_gray.svg';
+
+import DiscardWhite from '@floro/common-assets/assets/images/repo_icons/discard.white.svg';
+import DiscardGray from '@floro/common-assets/assets/images/repo_icons/discard.gray.svg';
+import DiscardMediumGray from '@floro/common-assets/assets/images/repo_icons/discard.medium_gray.svg';
+
+import CommitWhite from '@floro/common-assets/assets/images/repo_icons/commit.white.svg';
+import CommitGray from '@floro/common-assets/assets/images/repo_icons/commit.gray.svg';
+import CommitMediumGray from '@floro/common-assets/assets/images/repo_icons/commit.medium_gray.svg';
+
+import MergeWhite from '@floro/common-assets/assets/images/repo_icons/merge.white.svg';
+import MergeGray from '@floro/common-assets/assets/images/repo_icons/merge.gray.svg';
+import MergeMediumGray from '@floro/common-assets/assets/images/repo_icons/merge.medium_gray.svg';
+
+import ResolveWhite from '@floro/common-assets/assets/images/repo_icons/resolve.white.svg';
+import ResolveGray from '@floro/common-assets/assets/images/repo_icons/resolve.gray.svg';
+import ResolveMediumGray from '@floro/common-assets/assets/images/repo_icons/resolve.medium_gray.svg';
+
+import AbortWhite from '@floro/common-assets/assets/images/repo_icons/abort.white.svg';
+import AbortGray from '@floro/common-assets/assets/images/repo_icons/abort.gray.svg';
+import AbortMediumGray from '@floro/common-assets/assets/images/repo_icons/abort.medium_gray.svg';
+
+import SurgeryWhite from '@floro/common-assets/assets/images/repo_icons/surgery.white.svg';
+import SurgeryGray from '@floro/common-assets/assets/images/repo_icons/surgery.gray.svg';
+import SurgeryMediumGray from '@floro/common-assets/assets/images/repo_icons/surgery.medium_gray.svg';
+
 export interface ButtonProps {
     label: string;
     isLoading?: boolean;
@@ -20,7 +56,7 @@ export interface ButtonProps {
     onClick?: React.MouseEventHandler<HTMLButtonElement>;
     tabIndex?: number;
     size?: "medium"|"large";
-    icon: "source-graph"|"compare";
+    icon: "source-graph"|"compare"|"settings"|"stash"|"stash-pop"|"discard"|"commit"|"merge"|"surgery"|"resolve"|"abort";
 }
 
 const IconWrapper = styled.div`
@@ -62,6 +98,69 @@ const RepoActionButton = ({
           return theme.name == "light" ? CompareGray : CompareMediumGray;
         }
         return theme.name == "light" ? CompareGray : CompareWhite;
+      }
+
+      if (icon == "settings") {
+        if (isDisabled && !isLoading) {
+          return theme.name == "light" ? SettingsGray : SettingsMediumGray;
+        }
+        return theme.name == "light" ? SettingsGray : SettingsWhite;
+      }
+
+      if (icon == "stash") {
+        if (isDisabled && !isLoading) {
+          return theme.name == "light" ? StashGray : StashMediumGray;
+        }
+        return theme.name == "light" ? StashGray : StashWhite;
+      }
+
+      if (icon == "stash-pop") {
+        if (isDisabled && !isLoading) {
+          return theme.name == "light" ? StashPopGray : StashPopMediumGray;
+        }
+        return theme.name == "light" ? StashPopGray : StashPopWhite;
+      }
+
+      if (icon == "discard") {
+        if (isDisabled && !isLoading) {
+          return theme.name == "light" ? DiscardGray : DiscardMediumGray;
+        }
+        return theme.name == "light" ? DiscardGray : DiscardWhite;
+      }
+
+      if (icon == "merge") {
+        if (isDisabled && !isLoading) {
+          return theme.name == "light" ? MergeGray : MergeMediumGray;
+        }
+        return theme.name == "light" ? MergeGray : MergeWhite;
+      }
+
+      if (icon == "commit") {
+        if (isDisabled && !isLoading) {
+          return theme.name == "light" ? CommitGray : CommitMediumGray;
+        }
+        return theme.name == "light" ? CommitGray : CommitWhite;
+      }
+
+      if (icon == "surgery") {
+        if (isDisabled && !isLoading) {
+          return theme.name == "light" ? SurgeryGray : SurgeryMediumGray;
+        }
+        return theme.name == "light" ? SurgeryGray : SurgeryWhite;
+      }
+
+      if (icon == "resolve") {
+        if (isDisabled && !isLoading) {
+          return theme.name == "light" ? ResolveGray : ResolveMediumGray;
+        }
+        return theme.name == "light" ? ResolveGray : ResolveWhite;
+      }
+
+      if (icon == "abort") {
+        if (isDisabled && !isLoading) {
+          return theme.name == "light" ? AbortGray : AbortMediumGray;
+        }
+        return theme.name == "light" ? AbortGray : AbortWhite;
       }
 
     }, [[size, isDisabled, isLoading, theme.name, icon]]);
@@ -140,7 +239,7 @@ const RepoActionButton = ({
               justify-content: center;
               align-items: center;
               color: ${theme.colors.contrastTextLight};
-              margin-right: 8px;
+              margin-right: 24px;
             `}
           >
             <LabelTag

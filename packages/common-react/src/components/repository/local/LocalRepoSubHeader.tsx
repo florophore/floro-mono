@@ -16,6 +16,8 @@ import WarningDark from "@floro/common-assets/assets/images/icons/warning.dark.s
 import XCircleLight from "@floro/common-assets/assets/images/icons/red_x_circle.light.svg";
 import XCircleDark from "@floro/common-assets/assets/images/icons/red_x_circle.dark.svg";
 import DualToggle from "@floro/storybook/stories/design-system/DualToggle";
+import { useLocalVCSNavContext } from "./vcsnav/LocalVCSContext";
+import ColorPalette from "@floro/styles/ColorPalette";
 
 const Container = styled.div`
   display: flex;
@@ -54,6 +56,26 @@ const InvalidText = styled.span`
   margin-left: 8px;
 `;
 
+const ChangeDot = styled.div`
+  position: absolute;
+  right: -12px;
+  top: -2px;
+  height: 12px;
+  width: 12px;
+  border: 2px solid ${ColorPalette.white};
+  border-radius: 50%;
+`;
+
+const ChangeDotAfter = styled.div`
+  position: absolute;
+  left: -16px;
+  top: -2px;
+  height: 16px;
+  width: 16px;
+  border: 2px solid ${ColorPalette.white};
+  border-radius: 50%;
+`;
+
 interface Props {
   repository: Repository;
   plugin?: string;
@@ -67,6 +89,7 @@ const LocalRepoSubHeader = (props: Props) => {
   );
   const { data: repoData } = useCurrentRepoState(props.repository);
   const updateCommand = useUpdateCurrentCommand(props.repository);
+  const { compareFrom, setCompareFrom} = useLocalVCSNavContext();
 
   const updateToViewMode = useCallback(() => {
     updateCommand.mutate("view");
@@ -91,29 +114,137 @@ const LocalRepoSubHeader = (props: Props) => {
   }, [theme.name]);
 
   const isInvalid = useMemo(() => {
+    if (
+      repoData?.repoState?.commandMode == "compare" &&
+      compareFrom == "before"
+    ) {
+      return (
+        (repoData?.beforeApiStoreInvalidity?.[props?.plugin ?? ""]?.length ??
+          0) > 0
+      );
+    }
     return (
       (repoData?.apiStoreInvalidity?.[props?.plugin ?? ""]?.length ?? 0) > 0
     );
-  }, [repoData?.apiStoreInvalidity, props.plugin]);
+  }, [
+    repoData?.apiStoreInvalidity,
+    repoData?.beforeApiStoreInvalidity,
+    props.plugin,
+    repoData?.repoState?.commandMode,
+    compareFrom,
+  ]);
+
+  useEffect(() => {
+    if (repoData?.repoState?.commandMode == "compare") {
+      setCompareFrom("after");
+    }
+
+  }, [repoData?.repoState?.commandMode])
+
+  const onChangeComparison = useCallback((compareFrom: "before"|"after")=> {
+    setCompareFrom(compareFrom);
+  }, []);
+
+    const hasAdditions = useMemo(() => {
+      if (repoData?.repoState?.commandMode != "compare") {
+        return false;
+      }
+      if ((repoData?.apiDiff?.description?.added?.length ?? 0) > 0) {
+        return true;
+      }
+      if ((repoData?.apiDiff?.licenses?.added?.length ?? 0) > 0) {
+        return true;
+      }
+      if ((repoData?.apiDiff?.plugins?.added?.length ?? 0) > 0) {
+        return true;
+      }
+      for (const plugin in repoData?.apiDiff?.store ?? {}) {
+        if ((repoData?.apiDiff?.store?.[plugin]?.added?.length ?? 0) > 0) {
+          return true;
+        }
+      }
+      return false;
+    }, [
+      repoData?.apiDiff,
+      repoData?.repoState?.commandMode
+    ]);
+
+    const hasRemovals = useMemo(() => {
+      if (repoData?.repoState?.commandMode != "compare") {
+        return false;
+      }
+      if ((repoData?.apiDiff?.description?.removed?.length ?? 0) > 0) {
+        return true;
+      }
+      if ((repoData?.apiDiff?.licenses?.removed?.length ?? 0) > 0) {
+        return true;
+      }
+      if ((repoData?.apiDiff?.plugins?.removed?.length ?? 0) > 0) {
+        return true;
+      }
+      for (const plugin in repoData?.apiDiff?.store ?? {}) {
+        if ((repoData?.apiDiff?.store?.[plugin]?.removed?.length ?? 0) > 0) {
+          return true;
+        }
+      }
+      return false;
+    }, [
+      repoData?.apiDiff,
+      repoData?.repoState?.commandMode
+    ]);
 
   return (
     <>
+      {repoData?.repoState?.commandMode == "compare" && (
+        <Container>
+          <LeftContainer>
+            <div style={{ marginRight: 12 }}>
+              <DualToggle
+                onChange={onChangeComparison as (_: string) => void}
+                value={compareFrom}
+                leftOption={{
+                  label: (
+                    <span style={{position: 'relative'}}>
+                      {'removed'}
+                      {hasRemovals && (
+                        <ChangeDot style={{background: theme.colors.removedBackground}}/>
+                      )}
+                    </span>
+                  ),
+                  value: "before",
+                }}
+                rightOption={{
+                  label: (
+                    <span style={{position: 'relative'}}>
+                      {'added'}
+                      {hasAdditions && (
+                        <ChangeDot style={{background: theme.colors.addedBackground}}/>
+                      )}
+                    </span>
+                  ),
+                  value: "after",
+                }}
+              />
+            </div>
+            {isInvalid && (
+              <>
+                <InvalidState src={warning} />
+                <InvalidText>{`(invalid)`}</InvalidText>
+              </>
+            )}
+          </LeftContainer>
+          <Button
+            label={"done comparing"}
+            bg={"gray"}
+            size={"medium"}
+            textSize={'small'}
+            onClick={updateToViewMode}
+          />
+        </Container>
+      )}
       {repoData?.repoState?.commandMode == "view" && (
         <Container>
           <LeftContainer>
-            {false &&
-              <div style={{marginRight: 12}}>
-                <DualToggle onChange={function (value: string): void {
-                  throw new Error("Function not implemented.");
-                } } value={"before"} leftOption={{
-                  label: "before",
-                  value: "before"
-                }} rightOption={{
-                  label: "after",
-                  value: "after"
-                }}/>
-              </div>
-            }
             {isInvalid && (
               <>
                 <InvalidState src={warning} />

@@ -1,11 +1,12 @@
 
 import React, { useMemo } from "react";
-import { SchemaTypes, useIsFloroInvalid, useQueryRef } from "./floro-schema-api";
+import { SchemaTypes, useFloroContext, useIsFloroInvalid, useQueryRef, useWasAdded, useWasRemoved } from "./floro-schema-api";
 import { motion } from "framer-motion";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import WarningLight from "@floro/common-assets/assets/images/icons/warning.light.svg";
 import WarningDark from "@floro/common-assets/assets/images/icons/warning.dark.svg";
+import ColorPalette from "@floro/styles/ColorPalette";
 
 const ColorContainer = styled.div`
   padding: 0px 0px 0px 0px;
@@ -62,6 +63,18 @@ const ColorReadItem = (props: ColorItemProps) => {
   const theme = useTheme();
   const colorQuery = useQueryRef("$(palette).colors.id<?>", props.color.id);
   const isInvalid = useIsFloroInvalid(colorQuery);
+  const wasRemoved = useWasRemoved(colorQuery);
+  const wasAdded = useWasAdded(colorQuery);
+
+  const color = useMemo(() => {
+    if (wasRemoved) {
+      return theme.colors.removedText;
+    }
+    if (wasAdded) {
+      return theme.colors.addedText;
+    }
+    return theme.colors.contrastText;
+  }, [theme, wasRemoved, wasAdded]);
 
   const warningIcon = useMemo(() => {
     if (theme.name == "light") {
@@ -77,22 +90,20 @@ const ColorReadItem = (props: ColorItemProps) => {
       animate={"visible"}
       exit={"hidden"}
       layoutId={props.color.id}
-      custom={(props.index + 1) * 0.05}
+      custom={0.05}
       whileHover={{ scale: 1 }}
       whileDrag={{ scale: 1.02 }}
       key={props.color.id}
-      style={{position: "relative"}}
+      style={{ position: "relative" }}
     >
       <ColorContainer>
         <ColorDotContainer>
-          {!isInvalid &&
-            <ColorDot/>
-          }
-          {isInvalid &&
-            <WarningIconImg src={warningIcon}/>
-          }
+          {!isInvalid && <ColorDot style={{ background: color }} />}
+          {isInvalid && <WarningIconImg src={warningIcon} />}
         </ColorDotContainer>
-        <ColorLabel>{isInvalid ? props?.color?.id : props?.color.name}</ColorLabel>
+        <ColorLabel style={{ color }}>
+          {isInvalid ? props?.color?.id : props?.color.name}
+        </ColorLabel>
       </ColorContainer>
     </motion.li>
   );

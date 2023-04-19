@@ -20,7 +20,7 @@ interface Props {
   branchMap: { [key: string]: Branch };
   pointerMap: { [key: string]: SourceCommitNodeWithGridDimensions };
   onChangeFocalPoint: (point: null | [number, number]) => void;
-  currentSha?: string;
+  currentSha?: string|null;
   onSelectNode?: (sourceCommit: SourceCommitNodeWithGridDimensions, terminalBranches: Array<Branch>) => void;
   onSelectBranch?: (branch: Branch) => void;
   onMouseOverBranch?: (branch: Branch) => void;
@@ -32,6 +32,9 @@ interface Props {
   }) => React.ReactElement|null;
   highlightedBranchId?: string;
   htmlContentHeight?: number;
+  currentBranchId?: string;
+  filterBranches?: boolean;
+  filteredBranches?: Array<Branch>;
 }
 
 const CommitChart = ({
@@ -54,7 +57,10 @@ const CommitChart = ({
   onSelectBranch,
   onMouseOverBranch,
   onMouseOffBranch,
-  htmlContentHeight
+  htmlContentHeight,
+  currentBranchId,
+  filterBranches,
+  filteredBranches,
 }: Props) => {
   const portalRef = useRef<SVGGElement>(null);
   const [portal, setPortal] = useState<SVGGElement|null>(null);
@@ -114,6 +120,9 @@ const CommitChart = ({
               onMouseOverBranch={onMouseOverBranch}
               onMouseOffBranch={onMouseOffBranch}
               htmlContentHeight={htmlContentHeight}
+              currentBranchId={currentBranchId}
+              filterBranches={filterBranches}
+              filteredBranches={filteredBranches}
             />
           );
         })}
