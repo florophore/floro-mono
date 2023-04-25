@@ -21,7 +21,7 @@ const CommitEdge = (props: Props) => {
       return null;
     }
     return props.branchMap[props.highlightedBranchId];
-  }, [props.highlightedBranchId, props.branchMap])
+  }, [props.highlightedBranchId, props.branchMap]);
 
   const highlightCommit = useMemo(() => {
     if (!highlightedBranch) {
@@ -31,9 +31,21 @@ const CommitEdge = (props: Props) => {
       }
       return null;
     }
-    const commit = props.pointerMap?.[highlightedBranch.lastCommit as string];
-    return commit ?? null;
-  }, [props.branchMap, props.edge.child.isInCurrentLineage, highlightedBranch, props.pointerMap, props.currentSha]);
+    if (highlightedBranch.lastCommit) {
+      const commit = props.pointerMap?.[highlightedBranch.lastCommit];
+      let current = commit;
+      while (current?.sha) {
+        if (current?.sha == props.edge.child.sha) {
+          return commit;
+        }
+        if (!current?.parent) {
+          return null;
+        }
+        current = props.pointerMap[current?.parent];
+      }
+    }
+    return null;
+  }, [props.branchMap, props.edge.child.sha, props.edge.child.isInCurrentLineage, highlightedBranch?.lastCommit, props.pointerMap, props.currentSha]);
 
   const highlightedRow = useMemo(() => {
     if (!highlightCommit) {
@@ -71,7 +83,7 @@ const CommitEdge = (props: Props) => {
       return 10;
     }
     return 5;
-  }, [isSelected, props.edge.child.isInCurrentLineage]);
+  }, [isSelected]);
 
   const stroke = useMemo(() => {
     if (highlightCommit && isHighlighted && highlightColor) {

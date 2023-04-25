@@ -134,6 +134,18 @@ const PluginEditor = (props: Props) => {
     suggestedPlugins,
   ]);
 
+
+  const pluginConflicts = useMemo((): Set<number> => {
+    if (!props?.apiResponse?.repoState?.isInMergeConflict) {
+      return new Set<number>([]);
+    }
+    return new Set<number>(props?.apiResponse?.conflictResolution?.plugins);
+
+  }, [
+    props?.apiResponse?.repoState?.isInMergeConflict,
+    props?.apiResponse?.conflictResolution
+  ]);
+
   return (
     <div>
       {(props.apiResponse?.applicationState?.plugins?.length ?? 0) > 0 && (
@@ -151,6 +163,7 @@ const PluginEditor = (props: Props) => {
                 isCompareMode={props.apiResponse.repoState.commandMode == "compare"}
                 wasAdded={compareFrom == "after" && pluginChanges.has(index)}
                 wasRemoved={compareFrom == "before" && pluginChanges.has(index)}
+                isConflict={pluginConflicts.has(index)}
               />
             );
           })}

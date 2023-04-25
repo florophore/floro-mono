@@ -259,6 +259,17 @@ const HomeRead = (props: Props) => {
     props?.apiResponse?.apiDiff?.description?.removed,
   ]);
 
+  const descriptionConflicts = useMemo((): Set<number> => {
+    if (!props?.apiResponse?.repoState?.isInMergeConflict) {
+      return new Set<number>([]);
+    }
+    return new Set<number>(props?.apiResponse?.conflictResolution?.description);
+
+  }, [
+    props?.apiResponse?.repoState?.isInMergeConflict,
+    props?.apiResponse?.conflictResolution
+  ]);
+
   const description = useMemo((): string|React.ReactElement => {
     if ((props?.apiResponse?.applicationState?.description?.length ?? 0) == 0) {
       return "No description";
@@ -278,20 +289,18 @@ const HomeRead = (props: Props) => {
                       style={{
                         background: descriptionChanges.has(index)
                           ? ColorPalette.lightRed
+                          : descriptionConflicts.has(index)
+                          ? theme.colors.conflictBackground
                           : "none",
                         color: descriptionChanges.has(index)
                           ? ColorPalette.black
+                          : descriptionConflicts.has(index)
+                          ? ColorPalette.black
                           : theme.colors.contrastText,
-                        fontWeight: descriptionChanges.has(index)
-                          ? 500
-                          : 400,
-                        paddingLeft: descriptionChanges.has(index)
-                          ? 4
-                          : 0,
-                        paddingRight: descriptionChanges.has(index)
-                          ? 4
-                          : 0,
-                        }}
+                        fontWeight: descriptionChanges.has(index) || descriptionConflicts.has(index) ? 500 : 400,
+                        paddingLeft: descriptionChanges.has(index) || descriptionConflicts.has(index) ? 4 : 0,
+                        paddingRight: descriptionChanges.has(index) || descriptionConflicts.has(index) ? 4 : 0,
+                      }}
                     >
                       {sentence}
                     </span>{" "}
@@ -312,17 +321,21 @@ const HomeRead = (props: Props) => {
                     style={{
                       background: descriptionChanges.has(index)
                         ? ColorPalette.lightTeal
+                        : descriptionConflicts.has(index)
+                        ? theme.colors.conflictBackground
                         : "none",
                       color: descriptionChanges.has(index)
                         ? ColorPalette.black
+                        : descriptionConflicts.has(index)
+                        ? ColorPalette.black
                         : theme.colors.contrastText,
-                      fontWeight: descriptionChanges.has(index)
+                      fontWeight: descriptionChanges.has(index) || descriptionConflicts.has(index)
                         ? 500
                         : 400,
-                      paddingLeft: descriptionChanges.has(index)
+                      paddingLeft: descriptionChanges.has(index) || descriptionConflicts.has(index)
                         ? 4
                         : 0,
-                      paddingRight: descriptionChanges.has(index)
+                      paddingRight: descriptionChanges.has(index) || descriptionConflicts.has(index)
                         ? 4
                         : 0,
                     }}
@@ -342,6 +355,7 @@ const HomeRead = (props: Props) => {
     props?.apiResponse?.repoState?.commandMode,
     compareFrom,
     descriptionChanges,
+    descriptionConflicts,
     theme
   ]);
 
@@ -370,7 +384,16 @@ const HomeRead = (props: Props) => {
     props?.apiResponse?.apiDiff?.licenses?.removed,
   ]);
 
+  const licenseConflicts = useMemo((): Set<number> => {
+    if (!props?.apiResponse?.repoState?.isInMergeConflict) {
+      return new Set<number>([]);
+    }
+    return new Set<number>(props?.apiResponse?.conflictResolution?.licenses);
 
+  }, [
+    props?.apiResponse?.repoState?.isInMergeConflict,
+    props?.apiResponse?.conflictResolution
+  ]);
 
   const licenses = useMemo(() => {
     if (
@@ -388,7 +411,11 @@ const HomeRead = (props: Props) => {
                 <LicenseRow key={index}>
                   <LicenseTitle
                   style={{
-                    color: licensesChanges.has(index) ? theme.colors.removedText :  theme.colors.contrastText
+                    color: licensesChanges.has(index)
+                      ? theme.colors.removedText
+                      : licenseConflicts.has(index)
+                      ? theme.colors.conflictText
+                      : theme.colors.contrastText,
                   }}
                   >{license.value}</LicenseTitle>
                 </LicenseRow>
@@ -409,9 +436,15 @@ const HomeRead = (props: Props) => {
               <LicenseRow key={index}>
                 <LicenseTitle
                   style={{
-                    color: licensesChanges.has(index) ? theme.colors.addedText :  theme.colors.contrastText
+                    color: licensesChanges.has(index)
+                      ? theme.colors.addedText
+                      : licenseConflicts.has(index)
+                      ? theme.colors.conflictText
+                      : theme.colors.contrastText,
                   }}
-                >{license.value}</LicenseTitle>
+                >
+                  {license.value}
+                </LicenseTitle>
               </LicenseRow>
             );
           })}
@@ -436,10 +469,11 @@ const HomeRead = (props: Props) => {
       </BlurbBox>
     );
   }, [
-    props?.apiResponse?.applicationState?.description,
+    props?.apiResponse?.applicationState?.licenses,
     props?.apiResponse?.repoState?.commandMode,
     compareFrom,
-    descriptionChanges,
+    licensesChanges,
+    licenseConflicts,
     theme
   ])
 

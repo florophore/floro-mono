@@ -12,8 +12,6 @@ import { css } from "@emotion/css";
 import { useTheme } from "@emotion/react";
 import ColorPalette from "@floro/styles/ColorPalette";
 import { useSession } from "../../../../session/session-context";
-import BranchSelector from "@floro/storybook/stories/common-components/BranchSelector";
-import CommitSelector from "@floro/storybook/stories/repo-components/CommitSelector";
 import {
   useOfflinePhoto,
   useOfflinePhotoMap,

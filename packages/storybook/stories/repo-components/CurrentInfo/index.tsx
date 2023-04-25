@@ -20,6 +20,9 @@ import { Repository } from "@floro/graphql-schemas/build/generated/main-graphql"
 import BackArrowIconLight from "@floro/common-assets/assets/images/icons/back_arrow.light.svg";
 import BackArrowIconDark from "@floro/common-assets/assets/images/icons/back_arrow.dark.svg";
 
+import WarningIconLight from "@floro/common-assets/assets/images/icons/warning.light.svg";
+import WarningIconDark from "@floro/common-assets/assets/images/icons/warning.dark.svg";
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -113,6 +116,12 @@ const GoBackIcon = styled.img`
   cursor: pointer;
 `;
 
+const WarningImg = styled.img`
+  width: 24px;
+  height: 24px;
+  margin-left: 12px;
+`;
+
 export interface Props {
   respository: Repository;
   showWIP?: boolean;
@@ -179,6 +188,13 @@ const CurrentInfo = (props: Props): React.ReactElement => {
     return null;
   }, [props.mergeCommit]);
 
+  const warningIcon = useMemo(() => {
+    if (theme.name == "light") {
+      return WarningIconLight;
+    }
+    return WarningIconDark;
+  }, [theme.name]);
+
   return (
     <Container>
       <Row style={{ marginBottom: 16, height: 40 }}>
@@ -202,6 +218,7 @@ const CurrentInfo = (props: Props): React.ReactElement => {
         <RightRow>
           {props.branch && <ValueSpan>{props.branch.name}</ValueSpan>}
           {!props.branch && <ValueSpan>{"None"}</ValueSpan>}
+          {!props.branch && <WarningImg src={warningIcon}/>}
         </RightRow>
       </Row>
       {props.branch && (
@@ -307,6 +324,7 @@ const CurrentInfo = (props: Props): React.ReactElement => {
             bg={"orange"}
             size={"medium"}
             onClick={props.onShowEditBranch}
+            isDisabled={!props.branch}
           />
         </ButtonRow>
       )}

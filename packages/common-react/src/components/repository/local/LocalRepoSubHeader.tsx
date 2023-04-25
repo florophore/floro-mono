@@ -1,6 +1,4 @@
 import React, { useRef, useEffect, useCallback, useMemo } from "react";
-import { useQuery, useMutation, useQueryClient } from "react-query";
-import axios from "axios";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
@@ -8,13 +6,10 @@ import {
   useCurrentRepoState,
   useUpdateCurrentCommand,
 } from "./hooks/local-hooks";
-import DotsLoader from "@floro/storybook/stories/design-system/DotsLoader";
 import Button from "@floro/storybook/stories/design-system/Button";
 
 import WarningLight from "@floro/common-assets/assets/images/icons/warning.light.svg";
 import WarningDark from "@floro/common-assets/assets/images/icons/warning.dark.svg";
-import XCircleLight from "@floro/common-assets/assets/images/icons/red_x_circle.light.svg";
-import XCircleDark from "@floro/common-assets/assets/images/icons/red_x_circle.dark.svg";
 import DualToggle from "@floro/storybook/stories/design-system/DualToggle";
 import { useLocalVCSNavContext } from "./vcsnav/LocalVCSContext";
 import ColorPalette from "@floro/styles/ColorPalette";
@@ -32,7 +27,8 @@ const Container = styled.div`
   box-sizing: border-box;
   padding-left: 24px;
   padding-right: 40px;
-  box-shadow: -10px 2px 3px 4px ${props => props.theme.shadows.versionControlSideBarShadow};
+  box-shadow: -10px 2px 3px 4px
+    ${(props) => props.theme.shadows.versionControlSideBarShadow};
 `;
 
 const LeftContainer = styled.div`
@@ -66,16 +62,6 @@ const ChangeDot = styled.div`
   border-radius: 50%;
 `;
 
-const ChangeDotAfter = styled.div`
-  position: absolute;
-  left: -16px;
-  top: -2px;
-  height: 16px;
-  width: 16px;
-  border: 2px solid ${ColorPalette.white};
-  border-radius: 50%;
-`;
-
 interface Props {
   repository: Repository;
   plugin?: string;
@@ -89,7 +75,7 @@ const LocalRepoSubHeader = (props: Props) => {
   );
   const { data: repoData } = useCurrentRepoState(props.repository);
   const updateCommand = useUpdateCurrentCommand(props.repository);
-  const { compareFrom, setCompareFrom} = useLocalVCSNavContext();
+  const { compareFrom, setCompareFrom } = useLocalVCSNavContext();
 
   const updateToViewMode = useCallback(() => {
     updateCommand.mutate("view");
@@ -98,13 +84,6 @@ const LocalRepoSubHeader = (props: Props) => {
   const updateToEditMode = useCallback(() => {
     updateCommand.mutate("edit");
   }, [updateCommand]);
-
-  const xCircle = useMemo(() => {
-    if (theme.name == "light") {
-      return XCircleLight;
-    }
-    return XCircleDark;
-  }, [theme.name]);
 
   const warning = useMemo(() => {
     if (theme.name == "light") {
@@ -138,60 +117,53 @@ const LocalRepoSubHeader = (props: Props) => {
     if (repoData?.repoState?.commandMode == "compare") {
       setCompareFrom("after");
     }
+  }, [repoData?.repoState?.commandMode]);
 
-  }, [repoData?.repoState?.commandMode])
-
-  const onChangeComparison = useCallback((compareFrom: "before"|"after")=> {
+  const onChangeComparison = useCallback((compareFrom: "before" | "after") => {
     setCompareFrom(compareFrom);
   }, []);
 
-    const hasAdditions = useMemo(() => {
-      if (repoData?.repoState?.commandMode != "compare") {
-        return false;
-      }
-      if ((repoData?.apiDiff?.description?.added?.length ?? 0) > 0) {
-        return true;
-      }
-      if ((repoData?.apiDiff?.licenses?.added?.length ?? 0) > 0) {
-        return true;
-      }
-      if ((repoData?.apiDiff?.plugins?.added?.length ?? 0) > 0) {
-        return true;
-      }
-      for (const plugin in repoData?.apiDiff?.store ?? {}) {
-        if ((repoData?.apiDiff?.store?.[plugin]?.added?.length ?? 0) > 0) {
-          return true;
-        }
-      }
+  const hasAdditions = useMemo(() => {
+    if (repoData?.repoState?.commandMode != "compare") {
       return false;
-    }, [
-      repoData?.apiDiff,
-      repoData?.repoState?.commandMode
-    ]);
+    }
+    if ((repoData?.apiDiff?.description?.added?.length ?? 0) > 0) {
+      return true;
+    }
+    if ((repoData?.apiDiff?.licenses?.added?.length ?? 0) > 0) {
+      return true;
+    }
+    if ((repoData?.apiDiff?.plugins?.added?.length ?? 0) > 0) {
+      return true;
+    }
+    for (const plugin in repoData?.apiDiff?.store ?? {}) {
+      if ((repoData?.apiDiff?.store?.[plugin]?.added?.length ?? 0) > 0) {
+        return true;
+      }
+    }
+    return false;
+  }, [repoData?.apiDiff, repoData?.repoState?.commandMode]);
 
-    const hasRemovals = useMemo(() => {
-      if (repoData?.repoState?.commandMode != "compare") {
-        return false;
-      }
-      if ((repoData?.apiDiff?.description?.removed?.length ?? 0) > 0) {
-        return true;
-      }
-      if ((repoData?.apiDiff?.licenses?.removed?.length ?? 0) > 0) {
-        return true;
-      }
-      if ((repoData?.apiDiff?.plugins?.removed?.length ?? 0) > 0) {
-        return true;
-      }
-      for (const plugin in repoData?.apiDiff?.store ?? {}) {
-        if ((repoData?.apiDiff?.store?.[plugin]?.removed?.length ?? 0) > 0) {
-          return true;
-        }
-      }
+  const hasRemovals = useMemo(() => {
+    if (repoData?.repoState?.commandMode != "compare") {
       return false;
-    }, [
-      repoData?.apiDiff,
-      repoData?.repoState?.commandMode
-    ]);
+    }
+    if ((repoData?.apiDiff?.description?.removed?.length ?? 0) > 0) {
+      return true;
+    }
+    if ((repoData?.apiDiff?.licenses?.removed?.length ?? 0) > 0) {
+      return true;
+    }
+    if ((repoData?.apiDiff?.plugins?.removed?.length ?? 0) > 0) {
+      return true;
+    }
+    for (const plugin in repoData?.apiDiff?.store ?? {}) {
+      if ((repoData?.apiDiff?.store?.[plugin]?.removed?.length ?? 0) > 0) {
+        return true;
+      }
+    }
+    return false;
+  }, [repoData?.apiDiff, repoData?.repoState?.commandMode]);
 
   return (
     <>
@@ -204,10 +176,12 @@ const LocalRepoSubHeader = (props: Props) => {
                 value={compareFrom}
                 leftOption={{
                   label: (
-                    <span style={{position: 'relative'}}>
-                      {'removed'}
+                    <span style={{ position: "relative" }}>
+                      {"removed"}
                       {hasRemovals && (
-                        <ChangeDot style={{background: theme.colors.removedBackground}}/>
+                        <ChangeDot
+                          style={{ background: theme.colors.removedBackground }}
+                        />
                       )}
                     </span>
                   ),
@@ -215,10 +189,12 @@ const LocalRepoSubHeader = (props: Props) => {
                 }}
                 rightOption={{
                   label: (
-                    <span style={{position: 'relative'}}>
-                      {'added'}
+                    <span style={{ position: "relative" }}>
+                      {"added"}
                       {hasAdditions && (
-                        <ChangeDot style={{background: theme.colors.addedBackground}}/>
+                        <ChangeDot
+                          style={{ background: theme.colors.addedBackground }}
+                        />
                       )}
                     </span>
                   ),
@@ -237,7 +213,7 @@ const LocalRepoSubHeader = (props: Props) => {
             label={"done comparing"}
             bg={"gray"}
             size={"medium"}
-            textSize={'small'}
+            textSize={"small"}
             onClick={updateToViewMode}
           />
         </Container>

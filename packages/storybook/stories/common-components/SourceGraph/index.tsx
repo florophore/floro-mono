@@ -2,7 +2,6 @@ import React, { useMemo, useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import {
   Branch,
-  SourceCommitNode,
   SourceCommitNodeWithGridDimensions,
   getBranchMap,
   getEdges,
@@ -13,6 +12,7 @@ import {
 } from "./grid";
 import ZoomableSVG from "./ZoomableSVG";
 import CommitChart from "./CommitChart";
+import { SourceCommitNode } from "@floro/floro-lib/src/repo";
 
 const Container = styled.div`
   position: relative;
@@ -46,6 +46,7 @@ export interface Props {
   htmlContentHeight?: number;
   filterBranches?: boolean;
   filteredBranches?: Array<Branch>;
+  disableZoomToHighlightedBranchOnLoad?: boolean;
 }
 
 const SourceGraph = (props: Props): React.ReactElement => {
@@ -72,7 +73,7 @@ const SourceGraph = (props: Props): React.ReactElement => {
         props.isDebug
 
       ),
-    [nodes, props.branches, props.isDebug, props.currentSha]
+    [nodes, props.branches, props.isDebug, props.currentSha, props.highlightedBranchId]
   );
 
   const branchMap = useMemo(() => {
@@ -93,34 +94,58 @@ const SourceGraph = (props: Props): React.ReactElement => {
   );
 
   const [sha, setSha] = useState(props?.currentSha);
+  const [hasLoaded, setHasLoaded] = useState(false);
 
   useEffect(() => {
-
-    if (sha == props.currentSha) {
-      const branch = props.branches?.find(v => v.id == props.highlightedBranchId);
-      if (branch && branch?.lastCommit) {
-        const commit = gridData?.pointerMap[branch.lastCommit];
-        if (commit) {
-          setFocalPoint([
-            columnDistance * commit.column,
-            rowDistance * commit.row,
-          ])
-        }
-      }
-    } else {
-      setSha(props.currentSha);
-
-    if (props.currentSha) {
-      const commit = gridData?.pointerMap[props.currentSha];
+    if (!!sha && sha == props.currentSha) {
+      //const branch = props.branches?.find(v => v.id == props.highlightedBranchId);
+      //if (branch && branch?.lastCommit) {
+      //const commit = gridData?.pointerMap[branch.lastCommit];
+      const commit = gridData?.pointerMap[sha];
       if (commit) {
         setFocalPoint([
           columnDistance * commit.column,
           rowDistance * commit.row,
-        ])
+        ]);
+      }
+      //}
+    } else {
+      setSha(props.currentSha);
+
+      if (props.currentSha) {
+        const commit = gridData?.pointerMap[props.currentSha];
+        if (commit) {
+          setFocalPoint([
+            columnDistance * commit.column,
+            rowDistance * commit.row,
+          ]);
+        }
       }
     }
+    setHasLoaded(true);
+  }, [props.currentSha, sha]);
+
+  useEffect(() => {
+    if (!hasLoaded) {
+      return;
     }
-  }, [props.highlightedBranchId, props.currentSha]);
+    if (props.disableZoomToHighlightedBranchOnLoad) {
+      return;
+    }
+
+    const branch = props.branches?.find(
+      (v) => v.id == props.highlightedBranchId
+    );
+    if (branch && branch?.lastCommit) {
+      const commit = gridData?.pointerMap[branch.lastCommit];
+      if (commit) {
+        setFocalPoint([
+          columnDistance * commit.column,
+          rowDistance * commit.row,
+        ]);
+      }
+    }
+  }, [props.highlightedBranchId, gridData, props.disableZoomToHighlightedBranchOnLoad]);
 
   const startingCoordinate = useMemo(() => {
     if (!props.currentSha && gridData?.grid.length == 0) {

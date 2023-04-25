@@ -261,15 +261,25 @@ const HomeWrite = (props: Props) => {
 
   const manifestList = useMemo(() => {
     const devManifestList: Array<Manifest> = [];
+    const seen: {[key: string]: Set<string>} = {}
     for (const pluginName in (devPluginsRequest?.data ?? {})) {
       const versions = devPluginsRequest?.data?.[pluginName] ?? {};
+      seen[pluginName] = new Set([]);
       for (const version in versions) {
         if (versions?.[version]?.manifest) {
-          devManifestList.push(versions?.[version]?.manifest)
+          if (!seen[pluginName].has(version)) {
+            devManifestList.push(versions?.[version]?.manifest)
+            seen[pluginName].add(version);
+          }
         }
       }
     }
-    return [...(repoManifestList?.data ?? []), ...devManifestList];
+    return [
+      ...(repoManifestList?.data ?? []).filter(
+        (v) => !seen[v.name] || !seen[v.name].has(v.version)
+      ),
+      ...devManifestList,
+    ];
   }, [repoManifestList?.data, devPluginsRequest]);
 
   const developerPlugins = useMemo(() => {

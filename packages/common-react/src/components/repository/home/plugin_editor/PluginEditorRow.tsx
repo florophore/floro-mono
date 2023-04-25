@@ -111,6 +111,7 @@ interface Props {
   isCompareMode?: boolean;
   wasAdded?: boolean;
   wasRemoved?: boolean;
+  isConflict?: boolean;
 }
 
 const PluginEditorRow = (props: Props) => {
@@ -213,8 +214,12 @@ const PluginEditorRow = (props: Props) => {
                 ? theme.colors.addedText
                 : props.wasRemoved
                 ? theme.colors.removedText
+                : props.isConflict
+                  ? theme.colors.conflictText
+                  : theme.colors.connectionTextColor
+              : props.isConflict
+                ? theme.colors.conflictText
                 : theme.colors.connectionTextColor
-              : theme.colors.connectionTextColor,
           }}
         >
           {pluginVersion?.displayName}
@@ -243,8 +248,12 @@ const PluginEditorRow = (props: Props) => {
                 ? theme.colors.addedText
                 : props.wasRemoved
                 ? theme.colors.removedText
+                : props.isConflict
+                  ? theme.colors.conflictText
+                  : theme.colors.connectionTextColor
+              : props.isConflict
+                ? theme.colors.conflictText
                 : theme.colors.connectionTextColor
-              : theme.colors.connectionTextColor,
           }}
         >
           {pluginVersion?.version}

@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { ApiResponse } from "@floro/floro-lib/src/repo";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
-import { useUpdateCurrentCommand, useUpdatePluginState } from "../local/hooks/local-hooks";
+import { useUpdatePluginState } from "../local/hooks/local-hooks";
 import { useLocalVCSNavContext } from "../local/vcsnav/LocalVCSContext";
 
 interface Props {
@@ -174,9 +174,22 @@ const LocalPluginController = (props: Props) => {
   }, [
     manifest,
     props?.apiResponse?.apiStoreInvalidity,
+    props?.apiResponse?.repoState?.comparison?.comparisonDirection,
     compareFrom,
     props.apiResponse?.beforeApiStoreInvalidity,
     props?.apiResponse?.repoState?.comparison,
+  ])
+
+  const conflictList = useMemo(() => {
+    if (!props?.apiResponse?.repoState?.isInMergeConflict) {
+      return [];
+    }
+    return (props?.apiResponse?.conflictResolution?.store[props?.pluginName ?? ""] ?? [])?.map(v => v.key) ?? [];
+  }, [
+
+    props?.apiResponse?.repoState?.isInMergeConflict,
+    props?.apiResponse?.conflictResolution,
+    props?.pluginName,
   ])
 
   const pluginState = useMemo(() => {
@@ -184,6 +197,7 @@ const LocalPluginController = (props: Props) => {
       changeset,
       applicationState,
       apiStoreInvalidity,
+      conflictList,
       compareFrom: props?.apiResponse?.repoState?.commandMode == "compare" ? compareFrom : "none",
       commandMode: props?.apiResponse?.repoState?.commandMode ?? "view",
     };
@@ -191,6 +205,7 @@ const LocalPluginController = (props: Props) => {
     changeset,
     applicationState,
     apiStoreInvalidity,
+    conflictList,
     props?.apiResponse?.repoState?.commandMode,
     props?.apiResponse?.repoState?.comparison,
   ]);

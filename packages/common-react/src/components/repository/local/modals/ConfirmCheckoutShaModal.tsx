@@ -4,18 +4,12 @@ import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 // eslint-disable-next-line import/no-named-as-default
 import ColorPalette from "@floro/styles/ColorPalette";
-import {
-  PluginVersion,
-  Plugin,
-  useReleaseOrgPluginMutation,
-  useReleaseUserPluginMutation,
-} from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import Button from "@floro/storybook/stories/design-system/Button";
-import TealHexagonWarningLight from "@floro/common-assets/assets/images/icons/teal_hexagon_warning.light.svg";
 import RedHexagonWarningLight from "@floro/common-assets/assets/images/icons/red_hexagon_warning.light.svg";
 import RedHexagonWarningDark from "@floro/common-assets/assets/images/icons/red_hexagon_warning.dark.svg";
-import { useChangeMergeDirection, useDiscardChanges } from "../hooks/local-hooks";
 import { Repository } from "@floro/graphql-schemas/build/generated/main-client-graphql";
+import { ApiResponse } from "@floro/floro-lib/src/repo";
+import { useCheckoutCommitSha } from "../hooks/local-hooks";
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -84,10 +78,11 @@ export interface Props {
   onDismiss: () => void;
   show?: boolean;
   repository: Repository;
-  direction: "yours"|"theirs";
+  apiReponse: ApiResponse;
+  selectedSha: string|null;
 }
 
-const ConfirmDirectionChangeModal = (props: Props) => {
+const ConfirmCheckoutShaModal = (props: Props) => {
   const theme = useTheme();
   const icon = useMemo(() => {
     return theme.name == "light"
@@ -95,28 +90,32 @@ const ConfirmDirectionChangeModal = (props: Props) => {
       : RedHexagonWarningDark;
   }, [theme.name]);
 
+  const checkoutCommitShaMutation = useCheckoutCommitSha(props.repository);
+
+  useEffect(() => {
+    if (checkoutCommitShaMutation.isSuccess) {
+      props.onDismiss();
+    }
+  }, [checkoutCommitShaMutation.isSuccess, props.onDismiss]);
+
   const title = useMemo(() => {
     return (
       <HeaderContainer>
-        <HeaderTitle>{"change merge direction"}</HeaderTitle>
+        <HeaderTitle>{"checkout commit"}</HeaderTitle>
       </HeaderContainer>
     );
   }, []);
-
-  const changeMergeDirection = useChangeMergeDirection(props.repository);
-
-  const onDiscard = useCallback(() => {
-    changeMergeDirection.mutate({
-      direction: props.direction == "yours" ? "theirs": "yours"
-    });
-  }, [props.direction]);
-
-  useEffect(() => {
-    if (changeMergeDirection.isSuccess) {
-        props.onDismiss();
+  const onClickCheckoutCommit = useCallback(() => {
+    if (!props.selectedSha) {
+        return;
     }
-
-  }, [changeMergeDirection.isSuccess, props.onDismiss]);
+    checkoutCommitShaMutation.mutate({
+      sha: props.selectedSha
+    });
+  }, [
+    checkoutCommitShaMutation,
+    props.selectedSha,
+  ]);
 
   return (
     <RootModal
@@ -128,22 +127,8 @@ const ConfirmDirectionChangeModal = (props: Props) => {
       <ContentContainer>
         <TopContentContainer>
           <WarningIcon src={icon} />
-          {props.direction == "yours" && (
-            <PromptText>
-              {
-                "Are you sure you want to change the merge direction from yours to theirs?"
-              }
-            </PromptText>
-          )}
-          {props.direction == "theirs" && (
-            <PromptText>
-              {
-                "Are you sure you want to change the merge direction from theirs to yours?"
-              }
-            </PromptText>
-          )}
           <PromptText>
-            {"You have current changes that will be discarded and are irrecoverable after changing the merge direction."}
+            {`Are you sure you want to checkout this commit? You have uncommited changes and will no longer be on a branch (current branch is ${props.apiReponse.branch?.name}).`}
           </PromptText>
         </TopContentContainer>
         <BottomContentContainer>
@@ -157,8 +142,8 @@ const ConfirmDirectionChangeModal = (props: Props) => {
             label={"confirm"}
             bg={"purple"}
             size={"medium"}
-            onClick={onDiscard}
-            isLoading={changeMergeDirection.isLoading}
+            isLoading={checkoutCommitShaMutation.isLoading}
+            onClick={onClickCheckoutCommit}
           />
         </BottomContentContainer>
       </ContentContainer>
@@ -166,4 +151,4 @@ const ConfirmDirectionChangeModal = (props: Props) => {
   );
 };
 
-export default React.memo(ConfirmDirectionChangeModal);
+export default React.memo(ConfirmCheckoutShaModal);

@@ -5,6 +5,7 @@ import DotsLoader from '../../design-system/DotsLoader';
 import styled from '@emotion/styled';
 import { useTheme } from '@emotion/react';
 import ColorPalette from '@floro/styles/ColorPalette';
+
 import SourceGraphWhite from '@floro/common-assets/assets/images/repo_icons/source_graph.white.svg';
 import SourceGraphGray from '@floro/common-assets/assets/images/repo_icons/source_graph.gray.svg';
 import SourceGraphMediumGray from '@floro/common-assets/assets/images/repo_icons/source_graph.medium_gray.svg';
@@ -49,14 +50,45 @@ import SurgeryWhite from '@floro/common-assets/assets/images/repo_icons/surgery.
 import SurgeryGray from '@floro/common-assets/assets/images/repo_icons/surgery.gray.svg';
 import SurgeryMediumGray from '@floro/common-assets/assets/images/repo_icons/surgery.medium_gray.svg';
 
+import AmendWhite from '@floro/common-assets/assets/images/repo_icons/amend.white.svg';
+import AmendGray from '@floro/common-assets/assets/images/repo_icons/amend.gray.svg';
+import AmendMediumGray from '@floro/common-assets/assets/images/repo_icons/amend.medium_gray.svg';
+
+import AutoFixWhite from '@floro/common-assets/assets/images/repo_icons/auto_fix.white.svg';
+import AutoFixGray from '@floro/common-assets/assets/images/repo_icons/auto_fix.gray.svg';
+import AutoFixMediumGray from '@floro/common-assets/assets/images/repo_icons/auto_fix.medium_gray.svg';
+
+import RevertWhite from '@floro/common-assets/assets/images/repo_icons/revert.white.svg';
+import RevertGray from '@floro/common-assets/assets/images/repo_icons/revert.gray.svg';
+import RevertMediumGray from '@floro/common-assets/assets/images/repo_icons/revert.medium_gray.svg';
+
+import CherryPickWhite from '@floro/common-assets/assets/images/repo_icons/cherry_pick.white.svg';
+import CherryPickGray from '@floro/common-assets/assets/images/repo_icons/cherry_pick.gray.svg';
+import CherryPickMediumGray from '@floro/common-assets/assets/images/repo_icons/cherry_pick.medium_gray.svg';
+
 export interface ButtonProps {
-    label: string;
-    isLoading?: boolean;
-    isDisabled?: boolean;
-    onClick?: React.MouseEventHandler<HTMLButtonElement>;
-    tabIndex?: number;
-    size?: "medium"|"large";
-    icon: "source-graph"|"compare"|"settings"|"stash"|"stash-pop"|"discard"|"commit"|"merge"|"surgery"|"resolve"|"abort";
+  label: string;
+  isLoading?: boolean;
+  isDisabled?: boolean;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  tabIndex?: number;
+  size?: "medium" | "large";
+  icon:
+    | "source-graph"
+    | "compare"
+    | "settings"
+    | "stash"
+    | "stash-pop"
+    | "discard"
+    | "commit"
+    | "merge"
+    | "surgery"
+    | "resolve"
+    | "abort"
+    | "amend"
+    | "auto-fix"
+    | "revert"
+    | "cherry-pick";
 }
 
 const IconWrapper = styled.div`
@@ -161,6 +193,34 @@ const RepoActionButton = ({
           return theme.name == "light" ? AbortGray : AbortMediumGray;
         }
         return theme.name == "light" ? AbortGray : AbortWhite;
+      }
+
+      if (icon == "amend") {
+        if (isDisabled && !isLoading) {
+          return theme.name == "light" ? AmendGray : AmendMediumGray;
+        }
+        return theme.name == "light" ? AmendGray : AmendWhite;
+      }
+
+      if (icon == "auto-fix") {
+        if (isDisabled && !isLoading) {
+          return theme.name == "light" ? AutoFixGray : AutoFixMediumGray;
+        }
+        return theme.name == "light" ? AutoFixGray : AutoFixWhite;
+      }
+
+      if (icon == "revert") {
+        if (isDisabled && !isLoading) {
+          return theme.name == "light" ? RevertGray : RevertMediumGray;
+        }
+        return theme.name == "light" ? RevertGray : RevertWhite;
+      }
+
+      if (icon == "cherry-pick") {
+        if (isDisabled && !isLoading) {
+          return theme.name == "light" ? CherryPickGray : CherryPickMediumGray;
+        }
+        return theme.name == "light" ? CherryPickGray : CherryPickWhite;
       }
 
     }, [[size, isDisabled, isLoading, theme.name, icon]]);

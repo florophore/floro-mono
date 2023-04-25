@@ -1,6 +1,6 @@
 
 import React, { useMemo } from "react";
-import { SchemaTypes, useFloroContext, useIsFloroInvalid, useQueryRef, useWasAdded, useWasRemoved } from "./floro-schema-api";
+import { SchemaTypes, useFloroContext, useHasConflict, useIsFloroInvalid, useQueryRef, useWasAdded, useWasRemoved } from "./floro-schema-api";
 import { motion } from "framer-motion";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
@@ -65,8 +65,12 @@ const ColorReadItem = (props: ColorItemProps) => {
   const isInvalid = useIsFloroInvalid(colorQuery);
   const wasRemoved = useWasRemoved(colorQuery);
   const wasAdded = useWasAdded(colorQuery);
+  const hasConflict = useHasConflict(colorQuery);
 
   const color = useMemo(() => {
+    if (hasConflict) {
+      return theme.colors.conflictText;
+    }
     if (wasRemoved) {
       return theme.colors.removedText;
     }
@@ -74,7 +78,7 @@ const ColorReadItem = (props: ColorItemProps) => {
       return theme.colors.addedText;
     }
     return theme.colors.contrastText;
-  }, [theme, wasRemoved, wasAdded]);
+  }, [theme, wasRemoved, wasAdded, hasConflict]);
 
   const warningIcon = useMemo(() => {
     if (theme.name == "light") {

@@ -2,7 +2,6 @@ import React, {
   useMemo,
   useState,
   useCallback,
-  useRef,
   useEffect,
 } from "react";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
@@ -13,15 +12,23 @@ import { ApiResponse } from "@floro/floro-lib/src/repo";
 import { useLocalVCSNavContext } from "./LocalVCSContext";
 import { useSourceGraphPortal } from "../../sourcegraph/SourceGraphUIContext";
 import SourceGraph from "@floro/storybook/stories/common-components/SourceGraph";
-import { SourceCommitNodeWithGridDimensions, Branch, mapSourceGraphRootsToGrid, getPotentialBaseBranchesForSha } from "@floro/storybook/stories/common-components/SourceGraph/grid";
+import {
+  SourceCommitNodeWithGridDimensions,
+  Branch,
+  mapSourceGraphRootsToGrid,
+  getPotentialBaseBranchesForSha,
+} from "@floro/storybook/stories/common-components/SourceGraph/grid";
 import BranchSelector from "@floro/storybook/stories/repo-components/BranchSelector";
 import SelectedShaDisplay from "@floro/storybook/stories/repo-components/SelectedShaDisplay";
-import { useCanMoveWIP, useCreateBranch, useSourceGraph, useUpdateBranch } from "../hooks/local-hooks";
+import {
+  useCanMoveWIP,
+  useSourceGraph,
+  useUpdateBranch,
+} from "../hooks/local-hooks";
 
 import BackArrowIconLight from "@floro/common-assets/assets/images/icons/back_arrow.light.svg";
 import BackArrowIconDark from "@floro/common-assets/assets/images/icons/back_arrow.dark.svg";
 import Input from "@floro/storybook/stories/design-system/Input";
-import Checkbox from "@floro/storybook/stories/design-system/Checkbox";
 import { getColorForRow } from "@floro/storybook/stories/common-components/SourceGraph/color-mod";
 import SGPlainModal from "../../sourcegraph/sourgraphmodals/SGPlainModal";
 import SGSwitchHeadModal from "../../sourcegraph/sourgraphmodals/SGSwitchHeadModal";
@@ -75,15 +82,15 @@ const EmptySourceGraphText = styled.h3`
   font-size: 2rem;
   font-family: "MavenPro";
   text-align: center;
-  color: ${props => props.theme.colors.contrastText};
+  color: ${(props) => props.theme.colors.contrastText};
 `;
 
 const TitleSpan = styled.span`
-    font-size: 1.7rem;
-    font-family: "MavenPro";
-    font-weight: 600;
-    color: ${props => props.theme.colors.titleText};
-    white-space: nowrap;
+  font-size: 1.7rem;
+  font-family: "MavenPro";
+  font-weight: 600;
+  color: ${(props) => props.theme.colors.titleText};
+  white-space: nowrap;
 `;
 
 const TitleRow = styled.div`
@@ -95,9 +102,9 @@ const TitleRow = styled.div`
 `;
 
 const GoBackIcon = styled.img`
-    width: 32px;
-    height: 32px;
-    cursor: pointer;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
 `;
 
 const Row = styled.div`
@@ -109,19 +116,14 @@ const Row = styled.div`
   margin-top: 24px;
 `;
 
-const SwitchText = styled.p`
-    font-size: 1.2rem;
-    font-family: "MavenPro";
-    font-weight: 400;
-    color: ${props => props.theme.colors.contrastText};
-`;
-
-
 export const BRANCH_NAME_REGEX = /^[-_ ()[\]'"|a-zA-Z0-9]{3,100}$/;
-export const ILLEGAL_BRANCH_NAMES = new Set(["none", "main"]);
+export const ILLEGAL_BRANCH_NAMES = new Set(["none"]);
 
 export const getBranchIdFromName = (name: string): string => {
-  return name.toLowerCase().replaceAll(" ", "-").replaceAll(/[[\]'"]/g, "");
+  return name
+    .toLowerCase()
+    .replaceAll(" ", "-")
+    .replaceAll(/[[\]'"]/g, "");
 };
 
 interface Props {
@@ -129,11 +131,12 @@ interface Props {
   apiResponse: ApiResponse;
 }
 
-const NewBranchNavPage = (props: Props) => {
-
+const EditBranchNavPage = (props: Props) => {
   const theme = useTheme();
   const { setSubAction } = useLocalVCSNavContext();
-  const [branchName, setBranchName] = useState(props?.apiResponse?.branch?.name ?? "");
+  const [branchName, setBranchName] = useState(
+    props?.apiResponse?.branch?.name ?? ""
+  );
   const [branchHead, setBranchHead] = useState<string | null>(
     props.apiResponse?.branch?.lastCommit ?? null
   );
@@ -142,9 +145,13 @@ const NewBranchNavPage = (props: Props) => {
 
   const editBranchMutation = useUpdateBranch(props.repository);
 
-  const { data: canMoveWIPQuery } = useCanMoveWIP(props.repository, branchHead ?? null);
+  const { data: canMoveWIPQuery } = useCanMoveWIP(
+    props.repository,
+    branchHead ?? null
+  );
 
-  const { data: sourceGraphResponse, isLoading: sourceGraphLoading } = useSourceGraph(props.repository);
+  const { data: sourceGraphResponse, isLoading: sourceGraphLoading } =
+    useSourceGraph(props.repository);
 
   const branchNameIsValid = useMemo(() => {
     if (!branchName) {
@@ -180,7 +187,7 @@ const NewBranchNavPage = (props: Props) => {
     () =>
       mapSourceGraphRootsToGrid(
         sourceGraphResponse?.rootNodes ?? [],
-        sourceGraphResponse?.branches ?? [],
+        sourceGraphResponse?.branches ?? []
       ),
     [sourceGraphResponse?.rootNodes, sourceGraphResponse?.branches]
   );
@@ -194,14 +201,14 @@ const NewBranchNavPage = (props: Props) => {
 
   const branchHeadColor = useMemo(() => {
     if (!branchHead) {
-      return 'transparent';
+      return "transparent";
     }
     const sourceCommit = gridData.pointerMap[branchHead];
     if (!sourceCommit) {
-      return 'transparent';
+      return "transparent";
     }
     if (sourceCommit?.branchIds.length == 0) {
-      return 'transparent';
+      return "transparent";
     }
     return getColorForRow(theme, sourceCommit.row);
   }, [gridData.pointerMap, branchHead, theme]);
@@ -210,28 +217,29 @@ const NewBranchNavPage = (props: Props) => {
     const potentialBranches = getPotentialBaseBranchesForSha(
       branchHead,
       sourceGraphResponse?.branches ?? [],
-      sourceGraphResponse?.pointers ?? {},
+      sourceGraphResponse?.pointers ?? {}
     );
-    return potentialBranches?.filter(v => v.id != props?.apiResponse?.branch?.id);
-  }, [branchHead, sourceGraphResponse?.branches, sourceGraphResponse?.pointers]);
-
+    return potentialBranches?.filter(
+      (v) => v.id != props?.apiResponse?.branch?.id
+    );
+  }, [
+    branchHead,
+    sourceGraphResponse?.branches,
+    sourceGraphResponse?.pointers,
+  ]);
 
   const [baseBranch, setBaseBranch] = useState<Branch | null>(
     props?.apiResponse?.baseBranch ?? null
   );
 
-
   const [hasLoaded, setHasLoaded] = useState(false);
   useEffect(() => {
-    //const baseBranchIds = new Set(baseBranches?.map(b => b.id))
-    //if (baseBranch?.id && !baseBranchIds?.has(baseBranch?.id)) {
-    //}
     if (!hasLoaded) {
-        setHasLoaded(true);
-        return;
+      setHasLoaded(true);
+      return;
     }
     setBaseBranch(baseBranches?.[0] ?? null);
-  }, [baseBranches])
+  }, [baseBranches]);
 
   const isSameAsOriginal = useMemo(() => {
     if (props.apiResponse?.branch?.name != branchName) {
@@ -257,20 +265,28 @@ const NewBranchNavPage = (props: Props) => {
 
   const isEditDisabled = useMemo(() => {
     if (isSameAsOriginal) {
-        return true;
+      return true;
     }
     if (!branchNameIsValid || branchName == "") {
       return true;
     }
     return false;
-  }, [canMoveWIPQuery?.canSwitch, branchNameIsValid, branchName, isSameAsOriginal]);
+  }, [
+    canMoveWIPQuery?.canSwitch,
+    branchNameIsValid,
+    branchName,
+    isSameAsOriginal,
+  ]);
 
-  const onClickBaseBranch = useCallback((branch) => {
-    const hasBranch = !!baseBranches?.find(b => b.id == branch.id);
-    if (hasBranch) {
-      setBaseBranch(branch);
-    }
-  }, [baseBranches]);
+  const onClickBaseBranch = useCallback(
+    (branch) => {
+      const hasBranch = !!baseBranches?.find((b) => b.id == branch.id);
+      if (hasBranch) {
+        setBaseBranch(branch);
+      }
+    },
+    [baseBranches]
+  );
 
   const onGoBack = useCallback(() => {
     setSubAction(null);
@@ -330,9 +346,12 @@ const NewBranchNavPage = (props: Props) => {
     setBranchHead(null);
   }, []);
 
-  const onSetBranchHead = useCallback((sourceCommit: SourceCommitNodeWithGridDimensions|null) => {
-    setBranchHead(sourceCommit?.sha ?? null);
-  }, []);
+  const onSetBranchHead = useCallback(
+    (sourceCommit: SourceCommitNodeWithGridDimensions | null) => {
+      setBranchHead(sourceCommit?.sha ?? null);
+    },
+    []
+  );
 
   const renderPopup = useCallback(
     ({
@@ -344,42 +363,39 @@ const NewBranchNavPage = (props: Props) => {
       onHidePopup?: () => void;
       terminalBranches?: Array<Branch>;
     }): React.ReactElement | null => {
-        if (showSurgery) {
-            return (
-                <SGSwitchHeadModal
-                sourceCommit={sourceCommit}
-                onHidePopup={onHidePopup}
-                terminalBranches={terminalBranches}
-                onSwitchHead={onSetBranchHead}
-                currentSha={branchHead}
-                />
-            );
-        }
+      if (showSurgery) {
         return (
-            <SGPlainModal
-                sourceCommit={sourceCommit}
-                onHidePopup={onHidePopup}
-                terminalBranches={terminalBranches}
-            />
-        )
+          <SGSwitchHeadModal
+            sourceCommit={sourceCommit}
+            onHidePopup={onHidePopup}
+            terminalBranches={terminalBranches}
+            onSwitchHead={onSetBranchHead}
+            currentSha={branchHead}
+          />
+        );
+      }
+      return (
+        <SGPlainModal
+          sourceCommit={sourceCommit}
+          onHidePopup={onHidePopup}
+          terminalBranches={terminalBranches}
+        />
+      );
     },
-    [
-        branchHead,
-        showSurgery
-    ]
+    [branchHead, showSurgery]
   );
 
   const sgPortal = useSourceGraphPortal(
     ({ width, height, hasLoaded, onSourceGraphLoaded }) => {
       if (sourceGraphLoading && !hasLoaded) {
-        return <div/>;
+        return <div />;
       }
       if ((sourceGraphResponse?.rootNodes?.length ?? 0) == 0) {
         return (
           <EmptySourceGraphContainer>
             <EmptySourceGraphTextWrapper>
               <EmptySourceGraphText>
-                {'Nothing committed to repository yet.'}
+                {"Nothing committed to repository yet."}
               </EmptySourceGraphText>
             </EmptySourceGraphTextWrapper>
           </EmptySourceGraphContainer>
@@ -406,6 +422,7 @@ const NewBranchNavPage = (props: Props) => {
             filterBranches
             filteredBranches={baseBranches}
             htmlContentHeight={showSurgery ? 160 : 120}
+            disableZoomToHighlightedBranchOnLoad
           />
         </div>
       );
@@ -417,7 +434,7 @@ const NewBranchNavPage = (props: Props) => {
       props?.apiResponse?.repoState?.commit,
       props?.apiResponse?.repoState?.branch,
       baseBranch?.id,
-      branchHead
+      branchHead,
     ]
   );
   return (
@@ -453,56 +470,55 @@ const NewBranchNavPage = (props: Props) => {
           </Row>
           {showSurgery && (
             <>
-                {gridData?.roots?.length > 0 && (
-                    <Row>
-                    <SelectedShaDisplay
-                        widthSize={"wide"}
-                        label={"branch head"}
-                        sha={branchHeadSourceCommit?.sha}
-                        message={branchHeadSourceCommit?.message}
-                        shaBackground={branchHeadColor}
-                        button={
-                        <Button
-                            label={"no head"}
-                            bg={"gray"}
-                            size={"small"}
-                            onClick={onUnsetBranchHead}
-                        />
-                        }
-                    />
-                    </Row>
-                )}
+              {gridData?.roots?.length > 0 && (
                 <Row>
-                    <BranchSelector
-                    size="wide"
-                    branches={baseBranches ?? []}
-                    branch={baseBranch}
-                    onChangeBranch={setBaseBranch}
-                    label={"base branch"}
-                    placeholder={"select base branch"}
-                    allowNone
-                    />
+                  <SelectedShaDisplay
+                    widthSize={"wide"}
+                    label={"branch head"}
+                    sha={branchHeadSourceCommit?.sha}
+                    message={branchHeadSourceCommit?.message}
+                    shaBackground={branchHeadColor}
+                    button={
+                      <Button
+                        label={"no head"}
+                        bg={"gray"}
+                        size={"small"}
+                        onClick={onUnsetBranchHead}
+                      />
+                    }
+                  />
                 </Row>
+              )}
+              <Row>
+                <BranchSelector
+                  size="wide"
+                  branches={baseBranches ?? []}
+                  branch={baseBranch}
+                  onChangeBranch={setBaseBranch}
+                  label={"base branch"}
+                  placeholder={"select base branch"}
+                  allowNone
+                />
+              </Row>
             </>
           )}
 
-          <Row style={{paddingTop: 12}}>
+          <Row style={{ paddingTop: 12 }}>
             {!showSurgery && (
-                <RepoActionButton
-                    size={"large"}
-                    label={"perform surgery"}
-                    icon={"surgery"}
-                    onClick={onShowSurgery}
-                />
+              <RepoActionButton
+                size={"large"}
+                label={"perform surgery"}
+                icon={"surgery"}
+                onClick={onShowSurgery}
+              />
             )}
             {showSurgery && (
-                <RepoActionButton
-                    size={"large"}
-                    label={"hide surgery options"}
-                    icon={"surgery"}
-                    onClick={onHideSurgery}
-                />
-
+              <RepoActionButton
+                size={"large"}
+                label={"hide surgery options"}
+                icon={"surgery"}
+                onClick={onHideSurgery}
+              />
             )}
           </Row>
         </TopContainer>
@@ -530,4 +546,4 @@ const NewBranchNavPage = (props: Props) => {
     </>
   );
 };
-export default React.memo(NewBranchNavPage);
+export default React.memo(EditBranchNavPage);

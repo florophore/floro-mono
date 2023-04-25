@@ -174,6 +174,7 @@ interface PluginState {
   compareFrom: "none" | "before" | "after";
   applicationState: SchemaRoot | null;
   apiStoreInvalidity: {[key: string]: Array<string>};
+  conflictList: Array<string>;
   changeset: Array<string>;
 }
 
@@ -184,6 +185,7 @@ interface IFloroContext {
   changeset: Set<string>;
   apiStoreInvalidity: {[key: string]: Array<string>};
   apiStoreInvaliditySets: {[key: string]: Set<string>};
+  conflictSet: Set<string>;
   hasLoaded: boolean;
   saveState: <T extends keyof SchemaRoot>(pluginName: T, state: SchemaRoot|null) => string | null;
   setPluginState: (state: PluginState) => void;
@@ -198,6 +200,7 @@ const FloroContext = createContext({
   changeset: new Set([]),
   apiStoreInvalidity: {},
   apiStoreInvaliditySets: {},
+  conflictSet: new Set([]),
   hasLoaded: false,
   saveState: (_state: null) => null,
   setPluginState: (_state: PluginState) => {},
@@ -206,6 +209,7 @@ const FloroContext = createContext({
     compareFrom: "none",
     applicationState: null,
     apiStoreInvalidity: {},
+    conflictList: [],
     changeset: [],
   },
   loadingIds: new Set([]),
@@ -245,6 +249,7 @@ export const FloroProvider = (props: Props) => {
     compareFrom: "none",
     applicationState: null,
     apiStoreInvalidity: {},
+    conflictList: [],
     changeset: [],
   });
   const [hasLoaded, setHasLoaded] = useState(false);
@@ -264,6 +269,10 @@ export const FloroProvider = (props: Props) => {
   const changeset = useMemo(() => {
     return new Set(pluginState.changeset);
   }, [pluginState.changeset]);
+
+  const conflictSet = useMemo(() => {
+    return new Set(pluginState.conflictList ?? []);
+  }, [pluginState.conflictList]);
 
   useEffect(() => {
     const commandToggleListeners = (event: KeyboardEvent) => {
@@ -403,6 +412,7 @@ export const FloroProvider = (props: Props) => {
         apiStoreInvalidity,
         apiStoreInvaliditySets,
         changeset,
+        conflictSet,
         commandMode,
         compareFrom,
         hasLoaded,
@@ -858,4 +868,25 @@ export function useWasRemoved(query: PartialDiffableQuery|DiffableQuery, fuzzy =
     }
     return containsDiffable(ctx.changeset, query, false);
   }, [ctx.changeset, query, fuzzy, ctx.compareFrom, ctx.commandMode])
+};
+export function useHasConflict(query: PointerTypes['$(palette).colors'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(palette).colors.id<?>'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(palette).palette'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(palette).palette.id<?>'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(palette).palette.id<?>.colors'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(palette).palette.id<?>.colors.id<?>'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(palette).shades'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(palette).shades.id<?>'], fuzzy?: boolean): boolean;
+
+export function useHasConflict(query: PartialDiffableQuery|DiffableQuery, fuzzy = true): boolean {
+  const ctx = useFloroContext();
+  return useMemo(() => {
+    if (ctx.commandMode != "compare") {
+      return false;
+    }
+    if (fuzzy) {
+      return containsDiffable(ctx.conflictSet, query, true);
+    }
+    return containsDiffable(ctx.conflictSet, query, false);
+  }, [ctx.conflictSet, query, fuzzy, ctx.commandMode])
 };

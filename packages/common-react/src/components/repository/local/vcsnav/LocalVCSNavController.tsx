@@ -39,6 +39,7 @@ import LocalVCSCompareMode from "./LocalVCSCompareMode";
 import WriteCommitNavPage from "./WriteCommitNavPage";
 import EditBranchNavPage from "./EditBranchNavPage";
 import LocalVCSCompareMergeMode from "./LocalVCSCompareMergeMode";
+import SourceGraphNav from "./SourceGraphNav";
 
 const Container = styled.nav`
   display: flex;
@@ -113,6 +114,10 @@ const LocalVCSNavController = (props: Props) => {
 
     if (subAction == "write_commit") {
       return <WriteCommitNavPage apiResponse={data} repository={props.repository}/>
+    }
+
+    if (subAction == "source_graph") {
+      return <SourceGraphNav apiResponse={data} repository={props.repository}/>
     }
   }
   if (data?.repoState.commandMode == "view") {

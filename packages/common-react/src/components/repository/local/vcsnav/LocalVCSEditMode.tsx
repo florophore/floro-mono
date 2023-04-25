@@ -1,18 +1,15 @@
-import React, {
-  useMemo,
-  useState,
-  useCallback,
-  useRef,
-  useEffect,
-} from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import styled from "@emotion/styled";
-import ColorPalette from "@floro/styles/ColorPalette";
 import CurrentInfo from "@floro/storybook/stories/repo-components/CurrentInfo";
 import RepoActionButton from "@floro/storybook/stories/repo-components/RepoActionButton";
 import { ApiResponse } from "@floro/floro-lib/src/repo";
 import { useLocalVCSNavContext } from "./LocalVCSContext";
-import { usePopStashedChanges, useStashChanges, useUpdateCurrentCommand } from "../hooks/local-hooks";
+import {
+  usePopStashedChanges,
+  useStashChanges,
+  useUpdateCurrentCommand,
+} from "../hooks/local-hooks";
 import ConfirmDiscardChangesModal from "../modals/ConfirmDiscardChangesModal";
 
 const InnerContent = styled.div`
@@ -48,20 +45,6 @@ const ButtonRow = styled.div`
   align-items: center;
   width: 100%;
   justify-content: space-between;
-`;
-
-const ButtonCol = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-`;
-
-const SettingLinkText = styled.h3`
-  font-weight: 600;
-  font-size: 1.2rem;
-  font-family: "MavenPro";
-  text-decoration: underline;
-  color: ${props => ColorPalette.linkBlue};
 `;
 
 interface Props {
@@ -109,6 +92,10 @@ const LocalVCSEditMode = (props: Props) => {
     updateCommand.mutate("compare");
   }, [updateCommand]);
 
+  const onShowSourceGraph = useCallback(() => {
+    setSubAction("source_graph");
+  }, []);
+
   useEffect(() => {
     const commandToggleListeners = (event: KeyboardEvent) => {
       if (event.metaKey && event.shiftKey && event.key == "b") {
@@ -148,19 +135,23 @@ const LocalVCSEditMode = (props: Props) => {
               icon={"compare"}
               onClick={updateToCompareMode}
             />
-            <RepoActionButton label={"sha graph"} icon={"source-graph"} />
+            <RepoActionButton
+              label={"sha graph"}
+              icon={"source-graph"}
+              onClick={onShowSourceGraph}
+            />
           </ButtonRow>
         )}
         {props.apiResponse?.repoState?.isInMergeConflict && (
-            <ButtonRow style={{ marginTop: 24 }}>
-              <RepoActionButton
-                size={'large'}
-                onClick={updateToCompareMode}
-                isLoading={updateCommand.isLoading}
-                label={"manage merge conflict"}
-                icon={"merge"}
-              />
-            </ButtonRow>
+          <ButtonRow style={{ marginTop: 24 }}>
+            <RepoActionButton
+              size={"large"}
+              onClick={updateToCompareMode}
+              isLoading={updateCommand.isLoading}
+              label={"manage merge conflict"}
+              icon={"merge"}
+            />
+          </ButtonRow>
         )}
       </TopContainer>
       <BottomContainer>

@@ -4,6 +4,7 @@ import { Diff, StringDiff } from "./versioncontrol";
 
 export interface Comparison {
   against: "wip" | "branch" | "sha" | "merge";
+  comparisonDirection: "forward" | "backward";
   branch: string | null;
   commit: string | null;
 }
@@ -17,8 +18,11 @@ export interface RepoState {
     intoSha: string;
     originSha: string;
     direction: "yours" | "theirs";
+    conflictList: ConflictList;
+    mergeState: ApplicationKVState;
   };
   commandMode: "view" | "edit" | "compare";
+  comparisonDirection: "forward" | "backward";
   comparison: null | Comparison;
 }
 
@@ -138,6 +142,18 @@ export interface ApiStoreInvalidity {
   [key: string]: Array<string>;
 }
 
+export interface ConflictList {
+  description: Array<number>;
+  licenses: Array<number>;
+  plugins: Array<number>;
+  store: {
+    [key: string]: Array<{
+      key: string,
+      index: number
+    }>;
+  };
+}
+
 export interface ApiResponse {
   repoState: RepoState;
   applicationState: RenderedApplicationState;
@@ -155,6 +171,7 @@ export interface ApiResponse {
   mergeCommit?: CommitData;
   canPopStashedChanges?: boolean;
   stashSize?: number;
+  conflictResolution?: ConflictList
 }
 
 export interface SourceCommitNode extends CommitHistory {

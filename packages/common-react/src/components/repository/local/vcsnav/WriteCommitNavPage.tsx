@@ -6,45 +6,16 @@ import React, {
   useEffect,
 } from "react";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
-import { Link, useSearchParams } from "react-router-dom";
 import styled from "@emotion/styled";
-import { css } from "@emotion/css";
 import { useTheme } from "@emotion/react";
 import ColorPalette from "@floro/styles/ColorPalette";
-import { useSession } from "../../../../session/session-context";
-import CurrentInfo from "@floro/storybook/stories/repo-components/CurrentInfo";
-import CommitSelector from "@floro/storybook/stories/repo-components/CommitSelector";
-import {
-  useOfflinePhoto,
-  useOfflinePhotoMap,
-} from "../../../../offline/OfflinePhotoContext";
-import { useUserOrganizations } from "../../../../hooks/offline";
-import AdjustExtend from "@floro/common-assets/assets/images/icons/adjust.extend.svg";
-import AdjustShrink from "@floro/common-assets/assets/images/icons/adjust.shrink.svg";
-import LaptopWhite from "@floro/common-assets/assets/images/icons/laptop.white.svg";
-import GlobeWhite from "@floro/common-assets/assets/images/icons/globe.white.svg";
 import Button from "@floro/storybook/stories/design-system/Button";
-import LocalRemoteToggle from "@floro/storybook/stories/common-components/LocalRemoteToggle";
-import { useQuery, useMutation, useQueryClient } from "react-query";
-import axios from "axios";
-import { useDaemonIsConnected } from "../../../../pubsub/socket";
 import { ApiResponse } from "@floro/floro-lib/src/repo";
 import { useLocalVCSNavContext } from "./LocalVCSContext";
-import { useSourceGraphPortal } from "../../sourcegraph/SourceGraphUIContext";
-import SourceGraph from "@floro/storybook/stories/common-components/SourceGraph";
-import {
-  SOURCE_HISTORY,
-  BRANCHES,
-} from "@floro/storybook/stories/common-components/SourceGraph/mocks";
-import { SourceCommitNodeWithGridDimensions, Branch, mapSourceGraphRootsToGrid, getPotentialBaseBranchesForSha } from "@floro/storybook/stories/common-components/SourceGraph/grid";
-import BranchSelector from "@floro/storybook/stories/repo-components/BranchSelector";
-import { useCanMoveWIP, useCommitChanges, useCreateBranch, useSourceGraph } from "../hooks/local-hooks";
+import {  useCommitChanges } from "../hooks/local-hooks";
 
 import BackArrowIconLight from "@floro/common-assets/assets/images/icons/back_arrow.light.svg";
 import BackArrowIconDark from "@floro/common-assets/assets/images/icons/back_arrow.dark.svg";
-import Input from "@floro/storybook/stories/design-system/Input";
-import Checkbox from "@floro/storybook/stories/design-system/Checkbox";
-import { getColorForRow } from "@floro/storybook/stories/common-components/SourceGraph/color-mod";
 
 const InnerContent = styled.div`
   display: flex;
@@ -71,30 +42,6 @@ const BottomContainer = styled.div`
   position: relative;
   align-items: center;
   padding: 24px 16px;
-`;
-
-const EmptySourceGraphContainer = styled.div`
-  display: flex;
-  height: 100%;
-  width: 100%;
-  flex-direction: center;
-  justify-content: center;
-  align-items: center;
-`;
-
-const EmptySourceGraphTextWrapper = styled.div`
-  width: 50%;
-  max-width: 450px;
-  flex-direction: center;
-  justify-content: center;
-`;
-
-const EmptySourceGraphText = styled.h3`
-  font-weight: 600;
-  font-size: 2rem;
-  font-family: "MavenPro";
-  text-align: center;
-  color: ${props => props.theme.colors.contrastText};
 `;
 
 const TitleSpan = styled.span`
@@ -126,13 +73,6 @@ const Row = styled.div`
   width: 100%;
   justify-content: space-between;
   margin-top: 24px;
-`;
-
-const SwitchText = styled.p`
-    font-size: 1.2rem;
-    font-family: "MavenPro";
-    font-weight: 400;
-    color: ${props => props.theme.colors.contrastText};
 `;
 
 const TextAreaBlurbBox = styled.div`
@@ -275,7 +215,6 @@ const NewBranchNavPage = (props: Props) => {
     }
   }, [commitMutation.isSuccess])
 
-
   return (
     <>
       <InnerContent>
@@ -298,25 +237,25 @@ const NewBranchNavPage = (props: Props) => {
             </div>
           </TitleRow>
           <Row>
-        <TextAreaBlurbBox
-          style={{
-            border: `1px solid ${textareaBorderColor}`,
-          }}
-          ref={textareaContainer}
-        >
-          {message == "" && (
-            <BlurbPlaceholder>
-              {"What changes did you make? (be descriptive)"}
-            </BlurbPlaceholder>
-          )}
-          <BlurbTextArea
-            ref={textarea}
-            onFocus={onFocusMessage}
-            onBlur={onBlurMessage}
-            value={message}
-            onChange={onTextBoxChanged}
-          />
-        </TextAreaBlurbBox>
+            <TextAreaBlurbBox
+              style={{
+                border: `1px solid ${textareaBorderColor}`,
+              }}
+              ref={textareaContainer}
+            >
+              {message == "" && (
+                <BlurbPlaceholder>
+                  {"What changes did you make? (be descriptive)"}
+                </BlurbPlaceholder>
+              )}
+              <BlurbTextArea
+                ref={textarea}
+                onFocus={onFocusMessage}
+                onBlur={onBlurMessage}
+                value={message}
+                onChange={onTextBoxChanged}
+              />
+            </TextAreaBlurbBox>
           </Row>
         </TopContainer>
         <BottomContainer>

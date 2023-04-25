@@ -1,37 +1,15 @@
-import React, {
-  useMemo,
-  useState,
-  useCallback,
-  useRef,
-  useEffect,
-} from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
-import { Link, useSearchParams } from "react-router-dom";
 import styled from "@emotion/styled";
-import { css } from "@emotion/css";
-import { useTheme } from "@emotion/react";
-import ColorPalette from "@floro/styles/ColorPalette";
-import { useSession } from "../../../../session/session-context";
 import CurrentInfo from "@floro/storybook/stories/repo-components/CurrentInfo";
 import RepoActionButton from "@floro/storybook/stories/repo-components/RepoActionButton";
-import CommitSelector from "@floro/storybook/stories/repo-components/CommitSelector";
-import {
-  useOfflinePhoto,
-  useOfflinePhotoMap,
-} from "../../../../offline/OfflinePhotoContext";
-import { useUserOrganizations } from "../../../../hooks/offline";
-import AdjustExtend from "@floro/common-assets/assets/images/icons/adjust.extend.svg";
-import AdjustShrink from "@floro/common-assets/assets/images/icons/adjust.shrink.svg";
-import LaptopWhite from "@floro/common-assets/assets/images/icons/laptop.white.svg";
-import GlobeWhite from "@floro/common-assets/assets/images/icons/globe.white.svg";
-import Button from "@floro/storybook/stories/design-system/Button";
-import LocalRemoteToggle from "@floro/storybook/stories/common-components/LocalRemoteToggle";
-import { useQuery, useMutation, useQueryClient } from "react-query";
-import axios from "axios";
-import { useDaemonIsConnected } from "../../../../pubsub/socket";
 import { ApiResponse } from "@floro/floro-lib/src/repo";
 import { useLocalVCSNavContext } from "./LocalVCSContext";
-import { useAbortMerge, useChangeMergeDirection, useResolveMerge, useUpdateCurrentCommand } from "../hooks/local-hooks";
+import {
+  useAbortMerge,
+  useChangeMergeDirection,
+  useResolveMerge,
+} from "../hooks/local-hooks";
 import ConfirmDirectionChangeModal from "../modals/ConfirmDirectionChangeModal";
 
 const InnerContent = styled.div`
@@ -69,26 +47,12 @@ const ButtonRow = styled.div`
   justify-content: space-between;
 `;
 
-const ButtonCol = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-`;
-
-const SettingLinkText = styled.h3`
-  font-weight: 600;
-  font-size: 1.2rem;
-  font-family: "MavenPro";
-  text-decoration: underline;
-  color: ${props => ColorPalette.linkBlue};
-`;
-
 interface Props {
   repository: Repository;
   apiResponse: ApiResponse;
 }
 
-const LocalVCSViewMode = (props: Props) => {
+const LocalVCSCompareMergeMode = (props: Props) => {
   const { setSubAction } = useLocalVCSNavContext();
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const onShowBranches = useCallback(() => {
@@ -115,7 +79,6 @@ const LocalVCSViewMode = (props: Props) => {
     };
   }, []);
 
-  const updateCommand = useUpdateCurrentCommand(props.repository);
   const updateDirection = useChangeMergeDirection(props.repository);
   const resolveMerge = useResolveMerge(props.repository);
   const abortMerge = useAbortMerge(props.repository);
@@ -128,19 +91,15 @@ const LocalVCSViewMode = (props: Props) => {
     abortMerge.mutate();
   }, [abortMerge]);
 
-  const updateToCompareMode = useCallback(() => {
-    updateCommand.mutate("compare");
-  }, [updateCommand]);
-
   const onChangeToYours = useCallback(() => {
     if (props.apiResponse.isWIP) {
       setShowConfirmModal(true);
       return;
     }
     updateDirection.mutate({
-      direction: "yours"
+      direction: "yours",
     });
-  }, [updateDirection, props.apiResponse.isWIP])
+  }, [updateDirection, props.apiResponse.isWIP]);
 
   const onChangeToTheirs = useCallback(() => {
     if (props.apiResponse.isWIP) {
@@ -148,13 +107,12 @@ const LocalVCSViewMode = (props: Props) => {
       return;
     }
     updateDirection.mutate({
-      direction: "theirs"
+      direction: "theirs",
     });
-  }, [updateDirection, props.apiResponse.isWIP])
+  }, [updateDirection, props.apiResponse.isWIP]);
 
   const onHideModal = useCallback(() => {
     setShowConfirmModal(false);
-
   }, []);
   return (
     <>
@@ -205,4 +163,4 @@ const LocalVCSViewMode = (props: Props) => {
   );
 };
 
-export default React.memo(LocalVCSViewMode);
+export default React.memo(LocalVCSCompareMergeMode);

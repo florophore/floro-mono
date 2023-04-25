@@ -89,6 +89,17 @@ const ChangeDot = styled.div`
   border-radius: 50%;
 `;
 
+const ConflictDot = styled.div`
+  position: absolute;
+  left: 10px;
+  bottom: 20px;
+  height: 16px;
+  width: 16px;
+  border: 2px solid ${ColorPalette.white};
+  background: ${props => props.theme.colors.conflictBackground};
+  border-radius: 50%;
+`;
+
 const NavHighlight = styled.div`
     position: absolute;
     z-index: 0;
@@ -264,6 +275,27 @@ const LocalSideNavigator = (props: Props): React.ReactElement => {
       apiResponse?.repoState?.commandMode
     ]);
 
+    const homeHasConflicts = useMemo(() => {
+      if (!apiResponse?.repoState?.isInMergeConflict) {
+        return false;
+      }
+      if ((apiResponse?.conflictResolution?.description?.length ?? 0) > 0) {
+        return true;
+      }
+      if ((apiResponse?.conflictResolution?.licenses?.length ?? 0) > 0) {
+        return true;
+      }
+      if ((apiResponse?.conflictResolution?.plugins?.length ?? 0) > 0) {
+        return true;
+      }
+      return false;
+    }, [
+      apiResponse?.conflictResolution,
+      apiResponse?.repoState?.isInMergeConflict
+    ]);
+
+
+
   return (
     <Navigator>
       <NavOptionList>
@@ -278,38 +310,43 @@ const LocalSideNavigator = (props: Props): React.ReactElement => {
                 style={{
                   color:
                     props.plugin == "home"
-                    ? theme.colors.pluginSelected
-                    : theme.colors.pluginUnSelected,
+                      ? theme.colors.pluginSelected
+                      : theme.colors.pluginUnSelected,
                 }}
               >
                 {"home"}
               </NavText>
             </NavIconWrapper>
             {homeHasAdditions && (
-              <ChangeDot style={{
-                background: theme.colors.addedBackground
-              }}/>
+              <ChangeDot
+                style={{
+                  background: theme.colors.addedBackground,
+                }}
+              />
             )}
             {homeHasRemovals && (
-              <ChangeDot style={{
-                background: theme.colors.removedBackground
-              }}/>
+              <ChangeDot
+                style={{
+                  background: theme.colors.removedBackground,
+                }}
+              />
             )}
+            {homeHasConflicts && <ConflictDot />}
           </Link>
         </NavOption>
         {installedPlugins.map((plugin, index) => {
-            const isSelected = props.plugin == plugin.name;
-            const isInvalid = invalidityMap[plugin?.name as string];
-            return (
-                <LocalSideOption
-                locationPath={location.pathname}
-                plugin={plugin}
-                isSelected={isSelected}
-                key={index}
-                isInvalid={isInvalid}
-                apiResponse={apiResponse}
-                />
-            );
+          const isSelected = props.plugin == plugin.name;
+          const isInvalid = invalidityMap[plugin?.name as string];
+          return (
+            <LocalSideOption
+              locationPath={location.pathname}
+              plugin={plugin}
+              isSelected={isSelected}
+              key={index}
+              isInvalid={isInvalid}
+              apiResponse={apiResponse}
+            />
+          );
         })}
       </NavOptionList>
     </Navigator>

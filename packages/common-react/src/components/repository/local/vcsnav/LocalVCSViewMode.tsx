@@ -1,34 +1,9 @@
-import React, {
-  useMemo,
-  useState,
-  useCallback,
-  useRef,
-  useEffect,
-} from "react";
+import React, { useCallback, useEffect } from "react";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
-import { Link, useSearchParams } from "react-router-dom";
 import styled from "@emotion/styled";
-import { css } from "@emotion/css";
-import { useTheme } from "@emotion/react";
-import ColorPalette from "@floro/styles/ColorPalette";
-import { useSession } from "../../../../session/session-context";
 import CurrentInfo from "@floro/storybook/stories/repo-components/CurrentInfo";
 import RepoActionButton from "@floro/storybook/stories/repo-components/RepoActionButton";
-import CommitSelector from "@floro/storybook/stories/repo-components/CommitSelector";
-import {
-  useOfflinePhoto,
-  useOfflinePhotoMap,
-} from "../../../../offline/OfflinePhotoContext";
-import { useUserOrganizations } from "../../../../hooks/offline";
-import AdjustExtend from "@floro/common-assets/assets/images/icons/adjust.extend.svg";
-import AdjustShrink from "@floro/common-assets/assets/images/icons/adjust.shrink.svg";
-import LaptopWhite from "@floro/common-assets/assets/images/icons/laptop.white.svg";
-import GlobeWhite from "@floro/common-assets/assets/images/icons/globe.white.svg";
 import Button from "@floro/storybook/stories/design-system/Button";
-import LocalRemoteToggle from "@floro/storybook/stories/common-components/LocalRemoteToggle";
-import { useQuery, useMutation, useQueryClient } from "react-query";
-import axios from "axios";
-import { useDaemonIsConnected } from "../../../../pubsub/socket";
 import { ApiResponse } from "@floro/floro-lib/src/repo";
 import { useLocalVCSNavContext } from "./LocalVCSContext";
 import { useUpdateCurrentCommand } from "../hooks/local-hooks";
@@ -68,20 +43,6 @@ const ButtonRow = styled.div`
   justify-content: space-between;
 `;
 
-const ButtonCol = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-`;
-
-const SettingLinkText = styled.h3`
-  font-weight: 600;
-  font-size: 1.2rem;
-  font-family: "MavenPro";
-  text-decoration: underline;
-  color: ${props => ColorPalette.linkBlue};
-`;
-
 interface Props {
   repository: Repository;
   apiResponse: ApiResponse;
@@ -95,6 +56,10 @@ const LocalVCSViewMode = (props: Props) => {
 
   const onShowEditBranch = useCallback(() => {
     setSubAction("edit_branch");
+  }, []);
+
+  const onShowSourceGraph = useCallback(() => {
+    setSubAction("source_graph");
   }, []);
 
   useEffect(() => {
@@ -140,27 +105,34 @@ const LocalVCSViewMode = (props: Props) => {
                 label={"compare"}
                 icon={"compare"}
               />
-              <RepoActionButton label={"sha graph"} icon={"source-graph"} />
+              <RepoActionButton
+                label={"sha graph"}
+                icon={"source-graph"}
+                onClick={onShowSourceGraph}
+              />
             </ButtonRow>
             <ButtonRow style={{ marginTop: 24 }}>
-              <RepoActionButton label={"local repository settings"} icon={"settings"} size="large" />
+              <RepoActionButton
+                label={"local repository settings"}
+                icon={"settings"}
+                size="large"
+              />
             </ButtonRow>
           </>
         )}
         {props.apiResponse?.repoState?.isInMergeConflict && (
-            <ButtonRow style={{ marginTop: 24 }}>
-              <RepoActionButton
-                size={'large'}
-                onClick={updateToCompareMode}
-                isLoading={updateCommand.isLoading}
-                label={"manage merge conflict"}
-                icon={"merge"}
-              />
-            </ButtonRow>
+          <ButtonRow style={{ marginTop: 24 }}>
+            <RepoActionButton
+              size={"large"}
+              onClick={updateToCompareMode}
+              isLoading={updateCommand.isLoading}
+              label={"manage merge conflict"}
+              icon={"merge"}
+            />
+          </ButtonRow>
         )}
       </TopContainer>
       <BottomContainer>
-
         {!props.apiResponse?.repoState?.isInMergeConflict && (
           <ButtonRow>
             <Button label={"pull remote"} bg={"purple"} size={"extra-big"} />

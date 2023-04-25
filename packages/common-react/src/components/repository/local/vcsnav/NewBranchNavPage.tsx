@@ -2,7 +2,6 @@ import React, {
   useMemo,
   useState,
   useCallback,
-  useRef,
   useEffect,
 } from "react";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
@@ -23,7 +22,6 @@ import BackArrowIconDark from "@floro/common-assets/assets/images/icons/back_arr
 import Input from "@floro/storybook/stories/design-system/Input";
 import Checkbox from "@floro/storybook/stories/design-system/Checkbox";
 import { getColorForRow } from "@floro/storybook/stories/common-components/SourceGraph/color-mod";
-import SGPlainModal from "../../sourcegraph/sourgraphmodals/SGPlainModal";
 import SGSwitchHeadModal from "../../sourcegraph/sourgraphmodals/SGSwitchHeadModal";
 
 const InnerContent = styled.div`

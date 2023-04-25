@@ -620,7 +620,6 @@ export const resetLineage = (
   pointerMap: { [sha: string]: SourceCommitNodeWithGridDimensions }
 ) => {
   for (const node of nodes) {
-    node.isInUserBranchLineage = false;
     if (node.sha && pointerMap[node.sha]) {
       pointerMap[node.sha].isInCurrentLineage = false
     }

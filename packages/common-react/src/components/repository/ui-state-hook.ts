@@ -20,6 +20,10 @@ export const useSourceGraphIsShown = () => {
       return true;
     }
 
+    if (subAction == "source_graph") {
+      return true;
+    }
+
     return false;
   }, [subAction]);
 };

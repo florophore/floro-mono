@@ -1,7 +1,7 @@
 import { createContext, useState, useContext } from "react";
 
 interface ILocalVCSNavContext {
-    subAction: null|"branches"|"edit_branch"|"new_branch"|"write_commit"|"select_comparison_sha";
+    subAction: null|"branches"|"edit_branch"|"new_branch"|"write_commit"|"select_comparison_sha"|"source_graph";
     setSubAction: React.Dispatch<React.SetStateAction<ILocalVCSNavContext["subAction"]>>;
 
     compareFrom: "before"|"after";

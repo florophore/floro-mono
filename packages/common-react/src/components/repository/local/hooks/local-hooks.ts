@@ -114,6 +114,79 @@ export const useCanAutoMerge = (repository: Repository, sha?: string|null) => {
   );
 };
 
+export const useCanCherryPick = (repository: Repository, sha?: string|null) => {
+  return useQuery(
+    "repo-can-cherrypick:" + repository.id + ":sha:" + sha,
+    async (): Promise<{canCherryPick: boolean}> => {
+      try {
+        if (!repository.id) {
+          return {canCherryPick: false};
+        }
+        if (!sha) {
+          return {canCherryPick: false};
+        }
+        const result = await axios.get(
+          `http://localhost:63403/repo/${repository.id}/sha/${sha}/cancherrypick`
+        );
+        return result?.data ?? null;
+      } catch (e) {
+        return {canCherryPick: false};
+      }
+    }, {
+      cacheTime: 0
+    }
+  );
+};
+
+
+export const useCanAmend = (repository: Repository, sha?: string|null) => {
+  return useQuery(
+    "repo-can-amend:" + repository.id + ":sha:" + sha,
+    async (): Promise<{canAmend: boolean}> => {
+      try {
+        if (!repository.id) {
+          return {canAmend: false};
+        }
+        if (!sha) {
+          return {canAmend: false};
+        }
+        const result = await axios.get(
+          `http://localhost:63403/repo/${repository.id}/sha/${sha}/canamend`
+        );
+        return result?.data ?? null;
+      } catch (e) {
+        return {canAmend: false};
+      }
+    }, {
+      cacheTime: 0
+    }
+  );
+};
+
+export const useCanAutoFix = (repository: Repository, sha?: string|null) => {
+  return useQuery(
+    "repo-can-autofix:" + repository.id + ":sha:" + sha,
+    async (): Promise<{canAutoFix: boolean}> => {
+      try {
+        if (!repository.id) {
+          return {canAutoFix: false};
+        }
+        if (!sha) {
+          return {canAutoFix: false};
+        }
+        const result = await axios.get(
+          `http://localhost:63403/repo/${repository.id}/sha/${sha}/canautofix`
+        );
+        return result?.data ?? null;
+      } catch (e) {
+        return {canAutoFix: false};
+      }
+    }, {
+      cacheTime: 0
+    }
+  );
+};
+
 export const useCurrentLicenses = () => {
   return useQuery("local-licenses:", async (): Promise<
     Array<{ value: string; label: string }>
@@ -457,6 +530,143 @@ export const useAbortMerge = (repository: Repository) => {
   });
 };
 
+export const useCherryPick = (repository: Repository) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      sha,
+    }: {
+      sha: string;
+    }): Promise<{ apiResponse: ApiResponse; sourceGraphResponse: ClientSourceGraph }> => {
+      const result = await axios.post<{ apiResponse: ApiResponse; sourceGraphResponse: SourceGraphResponse }>(
+        `http://localhost:63403/repo/${repository.id}/sha/${sha}/cherrypick`,
+      );
+      const sourcegraph = new SourceGraph(
+        result?.data?.sourceGraphResponse?.commits ?? [] as Array<SourceCommitNode>,
+        result?.data?.sourceGraphResponse?.branchesMetaState ?? [],
+        result?.data?.sourceGraphResponse?.repoState ?? [],
+      )
+      return {
+        apiResponse: result?.data?.apiResponse,
+        sourceGraphResponse: {
+          pointers: sourcegraph.getPointers(),
+          rootNodes: sourcegraph.getGraph(),
+          branches: result?.data?.sourceGraphResponse?.branches,
+          branchesMetaState: result?.data?.sourceGraphResponse?.branchesMetaState,
+        }
+      }
+    },
+    onSuccess: ({ apiResponse, sourceGraphResponse }) => {
+      queryClient.setQueryData(["repo-current:" + repository.id], apiResponse);
+      queryClient.setQueryData(["repo-sourcegraph:" + repository.id], sourceGraphResponse);
+    },
+  });
+};
+
+export const useRevert = (repository: Repository) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      sha,
+    }: {
+      sha: string;
+    }): Promise<{ apiResponse: ApiResponse; sourceGraphResponse: ClientSourceGraph }> => {
+      const result = await axios.post<{ apiResponse: ApiResponse; sourceGraphResponse: SourceGraphResponse }>(
+        `http://localhost:63403/repo/${repository.id}/sha/${sha}/revert`,
+      );
+      const sourcegraph = new SourceGraph(
+        result?.data?.sourceGraphResponse?.commits ?? [] as Array<SourceCommitNode>,
+        result?.data?.sourceGraphResponse?.branchesMetaState ?? [],
+        result?.data?.sourceGraphResponse?.repoState ?? [],
+      )
+      return {
+        apiResponse: result?.data?.apiResponse,
+        sourceGraphResponse: {
+          pointers: sourcegraph.getPointers(),
+          rootNodes: sourcegraph.getGraph(),
+          branches: result?.data?.sourceGraphResponse?.branches,
+          branchesMetaState: result?.data?.sourceGraphResponse?.branchesMetaState,
+        }
+      }
+    },
+    onSuccess: ({ apiResponse, sourceGraphResponse }) => {
+      queryClient.setQueryData(["repo-current:" + repository.id], apiResponse);
+      queryClient.setQueryData(["repo-sourcegraph:" + repository.id], sourceGraphResponse);
+    },
+  });
+};
+
+export const useAmend = (repository: Repository) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      sha,
+      message,
+    }: {
+      sha: string;
+      message: string;
+    }): Promise<{ apiResponse: ApiResponse; sourceGraphResponse: ClientSourceGraph }> => {
+      const result = await axios.post<{ apiResponse: ApiResponse; sourceGraphResponse: SourceGraphResponse }>(
+        `http://localhost:63403/repo/${repository.id}/sha/${sha}/amend`,
+        {
+          message
+        }
+      );
+      const sourcegraph = new SourceGraph(
+        result?.data?.sourceGraphResponse?.commits ?? [] as Array<SourceCommitNode>,
+        result?.data?.sourceGraphResponse?.branchesMetaState ?? [],
+        result?.data?.sourceGraphResponse?.repoState ?? [],
+      )
+      return {
+        apiResponse: result?.data?.apiResponse,
+        sourceGraphResponse: {
+          pointers: sourcegraph.getPointers(),
+          rootNodes: sourcegraph.getGraph(),
+          branches: result?.data?.sourceGraphResponse?.branches,
+          branchesMetaState: result?.data?.sourceGraphResponse?.branchesMetaState,
+        }
+      }
+    },
+    onSuccess: ({ apiResponse, sourceGraphResponse }) => {
+      queryClient.setQueryData(["repo-current:" + repository.id], apiResponse);
+      queryClient.setQueryData(["repo-sourcegraph:" + repository.id], sourceGraphResponse);
+    },
+  });
+};
+
+export const useAutoFix = (repository: Repository) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      sha,
+    }: {
+      sha: string;
+    }): Promise<{ apiResponse: ApiResponse; sourceGraphResponse: ClientSourceGraph }> => {
+      const result = await axios.post<{ apiResponse: ApiResponse; sourceGraphResponse: SourceGraphResponse }>(
+        `http://localhost:63403/repo/${repository.id}/sha/${sha}/autofix`,
+      );
+      const sourcegraph = new SourceGraph(
+        result?.data?.sourceGraphResponse?.commits ?? [] as Array<SourceCommitNode>,
+        result?.data?.sourceGraphResponse?.branchesMetaState ?? [],
+        result?.data?.sourceGraphResponse?.repoState ?? [],
+      )
+      return {
+        apiResponse: result?.data?.apiResponse,
+        sourceGraphResponse: {
+          pointers: sourcegraph.getPointers(),
+          rootNodes: sourcegraph.getGraph(),
+          branches: result?.data?.sourceGraphResponse?.branches,
+          branchesMetaState: result?.data?.sourceGraphResponse?.branchesMetaState,
+        }
+      }
+    },
+    onSuccess: ({ apiResponse, sourceGraphResponse }) => {
+      queryClient.setQueryData(["repo-current:" + repository.id], apiResponse);
+      queryClient.setQueryData(["repo-sourcegraph:" + repository.id], sourceGraphResponse);
+    },
+  });
+};
+
 export interface PluginCompatability {
   pluginName: string;
   pluginVersion: string;
@@ -777,6 +987,7 @@ export const useCommitChanges = (repository: Repository) => {
     },
   });
 };
+
 export const useChangeMergeDirection = (repository: Repository) => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -792,6 +1003,39 @@ export const useChangeMergeDirection = (repository: Repository) => {
     },
     onSuccess: (apiResponse) => {
       queryClient.setQueryData(["repo-current:" + repository.id], apiResponse);
+    },
+  });
+};
+
+export const useCheckoutCommitSha = (repository: Repository) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      sha,
+    }: {
+      sha: string
+    }): Promise<{ apiResponse: ApiResponse; sourceGraphResponse: ClientSourceGraph }> => {
+      const result = await axios.post<{ apiResponse: ApiResponse; sourceGraphResponse: SourceGraphResponse }>(
+        `http://localhost:63403/repo/${repository.id}/checkout/commit/${sha}`,
+      );
+      const sourcegraph = new SourceGraph(
+        result?.data?.sourceGraphResponse?.commits ?? [] as Array<SourceCommitNode>,
+        result?.data?.sourceGraphResponse?.branchesMetaState ?? [],
+        result?.data?.sourceGraphResponse?.repoState ?? [],
+      )
+      return {
+        apiResponse: result?.data?.apiResponse,
+        sourceGraphResponse: {
+          pointers: sourcegraph.getPointers(),
+          rootNodes: sourcegraph.getGraph(),
+          branches: result?.data?.sourceGraphResponse?.branches,
+          branchesMetaState: result?.data?.sourceGraphResponse?.branchesMetaState,
+        }
+      }
+    },
+    onSuccess: ({ apiResponse, sourceGraphResponse }) => {
+      queryClient.setQueryData(["repo-current:" + repository.id], apiResponse);
+      queryClient.setQueryData(["repo-sourcegraph:" + repository.id], sourceGraphResponse);
     },
   });
 };

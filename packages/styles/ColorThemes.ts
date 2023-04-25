@@ -101,6 +101,8 @@ export interface ColorTheme {
     addedBackground: string;
     removedText: string;
     removedBackground: string;
+    conflictText: string;
+    conflictBackground: string;
   };
   gradients: {
     backgroundNoOpacity: string;
@@ -219,6 +221,8 @@ export const LightTheme: ColorTheme = {
     addedBackground: palette.teal,
     removedText: palette.red,
     removedBackground: palette.red,
+    conflictText: palette.lightOrange,
+    conflictBackground: palette.lightOrange,
   },
   gradients: {
     backgroundNoOpacity: palette.lightModeBG.substring(0, 7) + Opacity[0],
@@ -337,6 +341,8 @@ export const DarkTheme: ColorTheme = {
         addedBackground: palette.lightTeal,
         removedText: palette.lightRed,
         removedBackground: palette.lightRed,
+        conflictText: palette.lightOrange,
+        conflictBackground: palette.lightOrange,
     },
     shadows: {
         modalContainer: palette.black.substring(0, 7) + Opacity[70],

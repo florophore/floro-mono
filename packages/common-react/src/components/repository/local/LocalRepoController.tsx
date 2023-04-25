@@ -1,6 +1,4 @@
 import React, { useRef, useEffect, useCallback, useMemo } from "react";
-import { useQuery, useMutation, useQueryClient } from "react-query";
-import axios from "axios";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
@@ -13,7 +11,6 @@ import LocalPluginController from "../plugin/LocalPluginController";
 import { useLocalVCSNavContext } from "./vcsnav/LocalVCSContext";
 import { useSourceGraphIsShown } from "../ui-state-hook";
 import SourceGraphMount from "../sourcegraph/SourceGraphMount";
-import ColorPalette from "@floro/styles/ColorPalette";
 
 const LoadingContainer = styled.div`
   display: flex;

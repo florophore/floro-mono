@@ -1,9 +1,4 @@
-import React, {
-  useMemo,
-  useState,
-  useCallback,
-  useEffect,
-} from "react";
+import React, { useMemo, useState, useCallback, useEffect } from "react";
 import { getColorForRow } from "@floro/storybook/stories/common-components/SourceGraph/color-mod";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import styled from "@emotion/styled";
@@ -12,9 +7,20 @@ import CurrentInfo from "@floro/storybook/stories/repo-components/CurrentInfo";
 import RepoActionButton from "@floro/storybook/stories/repo-components/RepoActionButton";
 import CompareSelector from "@floro/storybook/stories/repo-components/CompareSelector";
 import Button from "@floro/storybook/stories/design-system/Button";
-import { ApiResponse, Branch, SourceCommitNode } from "@floro/floro-lib/src/repo";
+import {
+  ApiResponse,
+  Branch,
+  SourceCommitNode,
+} from "@floro/floro-lib/src/repo";
 import { useLocalVCSNavContext } from "./LocalVCSContext";
-import { useCanAutoMerge, useCanMoveWIP, useMergeSha, useSourceGraph, useUpdateComparison, useUpdateCurrentCommand } from "../hooks/local-hooks";
+import {
+  useCanAutoMerge,
+  useCanMoveWIP,
+  useMergeSha,
+  useSourceGraph,
+  useUpdateComparison,
+  useUpdateCurrentCommand,
+} from "../hooks/local-hooks";
 import BranchSelector from "@floro/storybook/stories/repo-components/BranchSelector";
 import { mapSourceGraphRootsToGrid } from "@floro/storybook/stories/common-components/SourceGraph/grid";
 import SelectedShaDisplay from "@floro/storybook/stories/repo-components/SelectedShaDisplay";
@@ -77,7 +83,7 @@ const NothingToMerge = styled.p`
   font-weight: 500;
   font-size: 1.1rem;
   font-family: "MavenPro";
-  color: ${props => props.theme.colors.standardTextLight};
+  color: ${(props) => props.theme.colors.standardTextLight};
   font-style: italic;
 `;
 
@@ -87,7 +93,7 @@ const MergeOkay = styled.p`
   font-weight: 500;
   font-size: 1.1rem;
   font-family: "MavenPro";
-  color: ${props => props.theme.colors.addedText};
+  color: ${(props) => props.theme.colors.addedText};
   font-style: italic;
 `;
 
@@ -97,10 +103,9 @@ const MergeError = styled.p`
   font-weight: 500;
   font-size: 1.1rem;
   font-family: "MavenPro";
-  color: ${props => props.theme.colors.removedText};
+  color: ${(props) => props.theme.colors.removedText};
   font-style: italic;
 `;
-
 
 interface Props {
   repository: Repository;
@@ -109,7 +114,8 @@ interface Props {
 
 const LocalVCSCompareMode = (props: Props) => {
   const { subAction, setSubAction } = useLocalVCSNavContext();
-  const { data: sourceGraphResponse, isLoading: sourceGraphLoading } = useSourceGraph(props.repository);
+  const { data: sourceGraphResponse, isLoading: sourceGraphLoading } =
+    useSourceGraph(props.repository);
   const comparison = useMemo(
     () => props?.apiResponse?.repoState?.comparison,
     [props?.apiResponse?.repoState?.comparison]
@@ -129,34 +135,36 @@ const LocalVCSCompareMode = (props: Props) => {
   }, [mergeMutation.isSuccess]);
 
   const theme = useTheme();
-  const [sha, setSha] = useState(props?.apiResponse?.repoState?.comparison?.commit);
+  const [sha, setSha] = useState(
+    props?.apiResponse?.repoState?.comparison?.commit
+  );
 
   const gridData = useMemo(
     () =>
       mapSourceGraphRootsToGrid(
         sourceGraphResponse?.rootNodes ?? [],
-        sourceGraphResponse?.branches ?? [],
+        sourceGraphResponse?.branches ?? []
       ),
     [sourceGraphResponse?.rootNodes, sourceGraphResponse?.branches]
   );
 
   const branchHeadColor = useMemo(() => {
     if (!sha) {
-      return 'transparent';
+      return "transparent";
     }
     const sourceCommit = gridData.pointerMap[sha];
     if (!sourceCommit) {
-      return 'transparent';
+      return "transparent";
     }
     if (sourceCommit?.branchIds.length == 0) {
-      return 'transparent';
+      return "transparent";
     }
     return getColorForRow(theme, sourceCommit.row);
   }, [gridData.pointerMap, sha, theme]);
 
   useEffect(() => {
     setSha(props?.apiResponse?.repoState?.comparison?.commit);
-  }, [props?.apiResponse?.repoState?.comparison?.commit])
+  }, [props?.apiResponse?.repoState?.comparison?.commit]);
 
   const comparisonBranch = useMemo(
     () =>
@@ -204,14 +212,14 @@ const LocalVCSCompareMode = (props: Props) => {
       return;
     }
     updateToViewMode();
-  }, [subAction, updateToViewMode])
+  }, [subAction, updateToViewMode]);
 
   const onGoToCommitPage = useCallback(() => {
     setSubAction("write_commit");
   }, []);
 
   const onUpdateComparisonBranch = useCallback(
-    (branch: Branch|null) => {
+    (branch: Branch | null) => {
       updateComparisonMutation.mutate({
         against: "branch",
         branch: branch?.id ?? null,
@@ -226,16 +234,13 @@ const LocalVCSCompareMode = (props: Props) => {
   );
 
   const onUpdateComparisonSha = useCallback(
-    (sourceCommit: SourceCommitNode|null) => {
+    (sourceCommit: SourceCommitNode | null) => {
       updateComparisonMutation.mutate({
         against: "sha",
-        sha: sourceCommit?.sha
+        sha: sourceCommit?.sha,
       });
     },
-    [
-      sourceGraphResponse?.branches,
-      updateComparisonMutation,
-    ]
+    [sourceGraphResponse?.branches, updateComparisonMutation]
   );
 
   const onUpdateComparisonAgainst = useCallback(
@@ -287,10 +292,7 @@ const LocalVCSCompareMode = (props: Props) => {
       return comparisonBranch?.lastCommit;
     }
     return props.apiResponse?.repoState?.comparison?.commit;
-  }, [
-    comparisonBranch,
-    props.apiResponse?.repoState?.comparison,
-  ]);
+  }, [comparisonBranch, props.apiResponse?.repoState?.comparison]);
 
   const canAutoMergeQuery = useCanAutoMerge(props.repository, comparisonSha);
 
@@ -313,11 +315,7 @@ const LocalVCSCompareMode = (props: Props) => {
       }
     }
     return false;
-  }, [
-    comparisonSha,
-    props?.apiResponse?.lastCommit?.sha,
-    gridData.pointerMap
-  ]);
+  }, [comparisonSha, props?.apiResponse?.lastCommit?.sha, gridData.pointerMap]);
 
   const comparisonShaIsChildAncestor = useMemo(() => {
     if (!comparisonSha) {
@@ -338,11 +336,7 @@ const LocalVCSCompareMode = (props: Props) => {
       }
     }
     return false;
-  }, [
-    comparisonSha,
-    props?.apiResponse?.lastCommit?.sha,
-    gridData.pointerMap
-  ]);
+  }, [comparisonSha, props?.apiResponse?.lastCommit?.sha, gridData.pointerMap]);
 
   const comparisonShaIsNone = useMemo(() => {
     if (props.apiResponse?.repoState?.comparison?.against == "wip") {
@@ -352,16 +346,16 @@ const LocalVCSCompareMode = (props: Props) => {
       return true;
     }
     return false;
-  }, [
-    comparisonSha,
-    props.apiResponse?.repoState?.comparison?.against,
-  ]);
+  }, [comparisonSha, props.apiResponse?.repoState?.comparison?.against]);
 
   const canSwitchWIPQuery = useCanMoveWIP(props.repository, comparisonSha);
 
   const mergeIsDisabled = useMemo(() => {
     if (comparison?.against == "branch" || comparison?.against == "sha") {
-      if ((comparisonShaIsAncestor ||  comparisonShaIsNone) && !canAutoMergeQuery.isLoading) {
+      if (
+        (comparisonShaIsAncestor || comparisonShaIsNone) &&
+        !canAutoMergeQuery.isLoading
+      ) {
         return true;
       }
       if (comparisonShaIsChildAncestor) {
@@ -373,7 +367,8 @@ const LocalVCSCompareMode = (props: Props) => {
       }
 
       if (
-        (!canAutoMergeQuery?.data?.canAutoMergeOnTopOfCurrentState && props.apiResponse.isWIP)
+        !canAutoMergeQuery?.data?.canAutoMergeOnTopOfCurrentState &&
+        props.apiResponse.isWIP
       ) {
         return true;
       }
@@ -388,7 +383,7 @@ const LocalVCSCompareMode = (props: Props) => {
     canAutoMergeQuery?.data?.canAutoMergeOnTopOfCurrentState,
     canAutoMergeQuery?.data?.canAutoMergeOnUnStagedState,
     props.apiResponse.isWIP,
-    canSwitchWIPQuery?.data?.canSwitch
+    canSwitchWIPQuery?.data?.canSwitch,
   ]);
 
   const onMerge = useCallback(() => {
@@ -473,27 +468,33 @@ const LocalVCSCompareMode = (props: Props) => {
           {(comparison?.against == "branch" ||
             comparison?.against == "sha") && (
             <MergeInfoRow>
-              {(comparisonShaIsAncestor ||  comparisonShaIsNone) && !canAutoMergeQuery.isLoading && (
-                <NothingToMerge>{"Nothing to merge"}</NothingToMerge>
-              )}
-              {!(comparisonShaIsAncestor || comparisonShaIsNone) && !canAutoMergeQuery.isLoading && (
-                <>
-                  {(!comparisonShaIsChildAncestor && ((canAutoMergeQuery?.data?.canAutoMergeOnTopOfCurrentState) &&
-                    (canAutoMergeQuery?.data?.canAutoMergeOnUnStagedState))) && (
-                      <>
-                        {props.apiResponse.isWIP && (
-                          <MergeOkay>
-                            {
-                              "Able to auto-merge changes (Please note: uncommitted changes will merge but will not be committed)"
-                            }
-                          </MergeOkay>
-                        )}
-                        {!props.apiResponse.isWIP && (
-                          <MergeOkay>{"Able to auto-merge changes"}</MergeOkay>
-                        )}
-                      </>
-                    )}
-                  {comparisonShaIsChildAncestor && (
+              {(comparisonShaIsAncestor || comparisonShaIsNone) &&
+                !canAutoMergeQuery.isLoading && (
+                  <NothingToMerge>{"Nothing to merge"}</NothingToMerge>
+                )}
+              {!(comparisonShaIsAncestor || comparisonShaIsNone) &&
+                !canAutoMergeQuery.isLoading && (
+                  <>
+                    {!comparisonShaIsChildAncestor &&
+                      canAutoMergeQuery?.data
+                        ?.canAutoMergeOnTopOfCurrentState &&
+                      canAutoMergeQuery?.data?.canAutoMergeOnUnStagedState && (
+                        <>
+                          {props.apiResponse.isWIP && (
+                            <MergeOkay>
+                              {
+                                "Able to auto-merge changes (Please note: uncommitted changes will merge but will not be committed)"
+                              }
+                            </MergeOkay>
+                          )}
+                          {!props.apiResponse.isWIP && (
+                            <MergeOkay>
+                              {"Able to auto-merge changes"}
+                            </MergeOkay>
+                          )}
+                        </>
+                      )}
+                    {comparisonShaIsChildAncestor && (
                       <>
                         {props.apiResponse.isWIP && (
                           <MergeOkay>
@@ -504,60 +505,67 @@ const LocalVCSCompareMode = (props: Props) => {
                         )}
                         {!props.apiResponse.isWIP && (
                           <>
-                          {canSwitchWIPQuery?.data?.canSwitch && (
-                            <MergeOkay>{"Able to auto-merge changes"}</MergeOkay>
-                          )}
-                          {!canSwitchWIPQuery?.data?.canSwitch && (
-                            <MergeError>
-                              {
-                                "Unable to merge uncommitted changes (stash or commit current changes)"
-                              }
-                            </MergeError>
-                          )}
+                            {canSwitchWIPQuery?.data?.canSwitch && (
+                              <MergeOkay>
+                                {"Able to auto-merge changes"}
+                              </MergeOkay>
+                            )}
+                            {!canSwitchWIPQuery?.data?.canSwitch && (
+                              <MergeError>
+                                {
+                                  "Unable to merge uncommitted changes (stash or commit current changes)"
+                                }
+                              </MergeError>
+                            )}
                           </>
                         )}
                       </>
-
-                  )}
-                  {!comparisonShaIsChildAncestor && !canAutoMergeQuery?.data?.canAutoMergeOnTopOfCurrentState &&
-                    (canAutoMergeQuery?.data?.canAutoMergeOnUnStagedState) && (
-                      <MergeError>
-                        {
-                          "Unable to merge uncommitted changes (stash or commit current changes)"
-                        }
-                      </MergeError>
                     )}
+                    {!comparisonShaIsChildAncestor &&
+                      !canAutoMergeQuery?.data
+                        ?.canAutoMergeOnTopOfCurrentState &&
+                      canAutoMergeQuery?.data?.canAutoMergeOnUnStagedState && (
+                        <MergeError>
+                          {
+                            "Unable to merge uncommitted changes (stash or commit current changes)"
+                          }
+                        </MergeError>
+                      )}
 
-                  {!comparisonShaIsChildAncestor && canAutoMergeQuery?.data?.canAutoMergeOnTopOfCurrentState &&
-                    !canAutoMergeQuery?.data?.canAutoMergeOnUnStagedState && (
-                      <MergeError>
-                        {
-                          "Unable to merge, however, current changes can auto-merge (stash or commit current changes to merge)"
-                        }
-                      </MergeError>
-                    )}
+                    {!comparisonShaIsChildAncestor &&
+                      canAutoMergeQuery?.data
+                        ?.canAutoMergeOnTopOfCurrentState &&
+                      !canAutoMergeQuery?.data?.canAutoMergeOnUnStagedState && (
+                        <MergeError>
+                          {
+                            "Unable to merge, however, current changes can auto-merge (stash or commit current changes to merge)"
+                          }
+                        </MergeError>
+                      )}
 
-                  {!comparisonShaIsChildAncestor && !canAutoMergeQuery?.data?.canAutoMergeOnTopOfCurrentState &&
-                    !canAutoMergeQuery?.data?.canAutoMergeOnUnStagedState && (
-                      <>
-                        {props.apiResponse.isWIP && (
-                          <MergeError>
-                            {
-                              "Unable to merge (stash or commit current changes to merge)"
-                            }
-                          </MergeError>
-                        )}
-                        {!props.apiResponse.isWIP && (
-                          <MergeError>
-                            {
-                              "Unable to auto-merge (manual resolution required)"
-                            }
-                          </MergeError>
-                        )}
-                      </>
-                    )}
-                </>
-              )}
+                    {!comparisonShaIsChildAncestor &&
+                      !canAutoMergeQuery?.data
+                        ?.canAutoMergeOnTopOfCurrentState &&
+                      !canAutoMergeQuery?.data?.canAutoMergeOnUnStagedState && (
+                        <>
+                          {props.apiResponse.isWIP && (
+                            <MergeError>
+                              {
+                                "Unable to merge (stash or commit current changes to merge)"
+                              }
+                            </MergeError>
+                          )}
+                          {!props.apiResponse.isWIP && (
+                            <MergeError>
+                              {
+                                "Unable to auto-merge (manual resolution required)"
+                              }
+                            </MergeError>
+                          )}
+                        </>
+                      )}
+                  </>
+                )}
             </MergeInfoRow>
           )}
           <ButtonRow>

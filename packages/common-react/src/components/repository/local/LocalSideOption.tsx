@@ -1,6 +1,5 @@
 import React, { useMemo, useRef, useCallback } from "react";
-import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
-import { Link, useLocation, useSearchParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Plugin,
 } from "@floro/graphql-schemas/build/generated/main-graphql";
@@ -69,6 +68,17 @@ const ChangeDot = styled.div`
   height: 16px;
   width: 16px;
   border: 2px solid ${ColorPalette.white};
+  border-radius: 50%;
+`;
+
+const ConflictDot = styled.div`
+  position: absolute;
+  left: 10px;
+  bottom: 20px;
+  height: 16px;
+  width: 16px;
+  border: 2px solid ${ColorPalette.white};
+  background: ${props => props.theme.colors.conflictBackground};
   border-radius: 50%;
 `;
 
@@ -148,6 +158,19 @@ const LocalSideOption = (props: Props): React.ReactElement => {
     props?.apiResponse?.apiDiff,
     props?.apiResponse?.repoState?.commandMode,
   ]);
+
+    const hasConflicts = useMemo(() => {
+      if (!props?.apiResponse?.repoState?.isInMergeConflict) {
+        return false;
+      }
+    return (
+      (props?.apiResponse?.conflictResolution?.store?.[props?.plugin?.name ?? ""]
+        ?.length ?? 0) > 0
+    );
+    }, [
+      props?.apiResponse?.conflictResolution,
+      props?.apiResponse?.repoState?.isInMergeConflict
+    ]);
   return (
     <NavOption>
       <Link
@@ -181,6 +204,7 @@ const LocalSideOption = (props: Props): React.ReactElement => {
             }}
           />
         )}
+        {hasConflicts && <ConflictDot/>}
       </Link>
     </NavOption>
   );
