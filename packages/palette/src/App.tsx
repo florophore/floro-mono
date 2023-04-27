@@ -1,19 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { ThemeProvider, useTheme } from "@emotion/react";
+import { useCallback, useState } from 'react';
+import { ThemeProvider } from "@emotion/react";
 import styled from '@emotion/styled';
 import { useColorTheme } from "@floro/common-web/src/hooks/color-theme";
-import { Routes, Route, Link } from "react-router-dom";
-import WarningLabel from "@floro/storybook/stories/design-system/WarningLabel";
 import "./index.css";
 import {
   FloroProvider,
   useFloroContext,
-  useFloroState,
 } from "./floro-schema-api";
 import ShadeEditList from "./ShadeEditList";
 import ColorEditList from "./ColorEditList";
 import ShadeReadList from "./ShadeReadList";
 import ColorReadList from "./ColorReadList";
+import ColorPaletteMatrix from "./matrix/ColorPaletteMatrix";
 
 const Container = styled.div`
   width: 100%;
@@ -30,39 +28,59 @@ const Container = styled.div`
     border-radius: 10px;
     border: ${props => props.theme.background};
   }
-`
-
-const SectionTitle = styled.h1`
-  font-family: "MavenPro";
-  font-weight: 600;
-  font-size: 1.7rem;
-  color: ${props => props.theme.colors.pluginTitle};
-  padding: 0;
-  margin: 0;
-`
+`;
 
 const Layout = () => {
-  const commandMode = useFloroContext().commandMode;
+
+  const [showShadeEdit, setShowShadeEdit] = useState(false);
+  const [showColorEdit, setShowColorEdit] = useState(false);
+  const { commandMode } = useFloroContext();
+
+  const onShowColorList = useCallback(() => {
+    setShowColorEdit(true);
+  }, []);
+  const onHideColorList = useCallback(() => {
+    setShowColorEdit(false);
+  }, []);
+
+  const onShowShadeList = useCallback(() => {
+    setShowShadeEdit(true);
+  }, []);
+  const onHideShadeList = useCallback(() => {
+    setShowShadeEdit(false);
+  }, []);
+  if (commandMode == "edit") {
+    return (
+      <Container>
+        {showShadeEdit && (
+          <ShadeEditList/>
+        )}
+        {showColorEdit && (
+          <ColorEditList/>
+        )}
+        <ColorPaletteMatrix
+          showColorList={showColorEdit}
+          showShadeList={showShadeEdit}
+          onHideColorList={onHideColorList}
+          onShowColorList={onShowColorList}
+          onShowShadeList={onShowShadeList}
+          onHideShadeList={onHideShadeList}
+        />
+      </Container>
+    );
+  }
   return (
     <Container>
-      {true &&
-      <>
-        <div style={{marginBottom: 36}}>
-          <SectionTitle>{'Shades'}</SectionTitle>
-          {commandMode == "edit" && <ShadeEditList/>}
-          {commandMode != "edit" && <ShadeReadList/>}
-        </div>
-        <div style={{marginBottom: 36}}>
-          <SectionTitle>{'Colors'}</SectionTitle>
-          {commandMode == "edit" && <ColorEditList/>}
-          {commandMode != "edit" && <ColorReadList/>}
-        </div>
-        <div style={{marginBottom: 36}}>
-          <SectionTitle>{'Palette'}</SectionTitle>
-        </div>
-      </>
-
-      }
+      <ShadeReadList/>
+      <ColorReadList/>
+      <ColorPaletteMatrix
+        showColorList={showColorEdit}
+        showShadeList={showShadeEdit}
+        onHideColorList={onHideColorList}
+        onShowColorList={onShowColorList}
+        onShowShadeList={onShowShadeList}
+        onHideShadeList={onHideShadeList}
+      />
     </Container>
   );
 };

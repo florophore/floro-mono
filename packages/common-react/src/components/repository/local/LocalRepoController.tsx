@@ -182,7 +182,7 @@ const LocalRepoController = (props: Props) => {
       }
     }
 
-    if (!hasPlugin) {
+    if (!hasPlugin && data?.repoState?.commandMode != "compare") {
         return (
           <NoPluginContainer>
             <NoPluginTextWrapper>

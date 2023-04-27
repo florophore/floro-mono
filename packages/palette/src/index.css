@@ -83,3 +83,19 @@ body {
     width: 100%;
     display: flex;
 }
+
+input[type="color"] {
+	-webkit-appearance: none;
+	border: none;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+	padding: 0;
+  cursor: pointer;
+}
+input[type="color"]::-webkit-color-swatch {
+	border: none;
+  -webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+  -moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+  box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+}

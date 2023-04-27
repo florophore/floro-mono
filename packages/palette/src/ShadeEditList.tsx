@@ -1,11 +1,15 @@
 import React, { useMemo, useCallback, useState, useEffect } from "react";
-import { SchemaTypes, useFloroState } from "./floro-schema-api";
+import { useTheme } from "@emotion/react";
+import { SchemaTypes, useFloroState, useIsFloroInvalid } from "./floro-schema-api";
 import { AnimatePresence, Reorder } from "framer-motion";
 import styled from "@emotion/styled";
 import { css } from "@emotion/css";
 import Input from "@floro/storybook/stories/design-system/Input";
 import Button from "@floro/storybook/stories/design-system/Button";
 import ShadeEditItem from "./ShadeEditItem";
+
+import WarningLight from "@floro/common-assets/assets/images/icons/warning.light.svg";
+import WarningDark from "@floro/common-assets/assets/images/icons/warning.dark.svg";
 
 const AddShadeLayout = styled.div`
   min-width: 642px;
@@ -19,7 +23,30 @@ const AddShadeContainer = styled.div`
   width: 576px;
 `;
 
+const SectionTitle = styled.h1`
+  font-family: "MavenPro";
+  font-weight: 600;
+  font-size: 1.7rem;
+  color: ${(props) => props.theme.colors.pluginTitle};
+  padding: 0;
+  margin: 0;
+`;
+
+const TitleRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const WarningIconImg = styled.img`
+  height: 24px;
+  width: 24x;
+  margin-left: 16px;
+  margin-top: 4px;
+`;
+
 const ShadeEditList = () => {
+  const theme = useTheme();
   const [isDragging, setIsDragging] = useState(false);
   const [newShadeName, setNewShadeName] = useState("");
   const [shades, setShades, isLoading, save] = useFloroState(
@@ -39,6 +66,8 @@ const ShadeEditList = () => {
       },
     ]
   );
+
+  const isInvalid = useIsFloroInvalid("$(palette).shades");
 
   const onReOrderShades = useCallback(
     (values: SchemaTypes["$(palette).shades"]) => setShades(values, false),
@@ -98,51 +127,66 @@ const ShadeEditList = () => {
     }
   }, [isDragging]);
 
+  const warningIcon = useMemo(() => {
+    if (theme.name == "light") {
+      return WarningLight;
+    }
+    return WarningDark;
+  }, [theme.name])
+
   return (
-    <AnimatePresence>
-      <AddShadeLayout>
-        <Reorder.Group
-          axis="y"
-          values={shades ?? []}
-          onReorder={onReOrderShades}
-          className={css(`
+    <div style={{marginBottom: 36}}>
+      <TitleRow>
+        <SectionTitle>{"Shades"}</SectionTitle>
+        {isInvalid && (
+          <WarningIconImg src={warningIcon}/>
+        )}
+      </TitleRow>
+      <AnimatePresence>
+        <AddShadeLayout>
+          <Reorder.Group
+            axis="y"
+            values={shades ?? []}
+            onReorder={onReOrderShades}
+            className={css(`
             padding: 24px 0px 0px 0px;
         `)}
-        >
-          <AnimatePresence>
-            {shades?.map((shade, index) => {
-              return (
-                <ShadeEditItem
-                  key={shade.id}
-                  shade={shade}
-                  index={index}
-                  onRemove={onRemove}
-                  onDragStart={onDragStart}
-                  onDragEnd={onDragEnd}
-                />
-              );
-            })}
-          </AnimatePresence>
-        </Reorder.Group>
-        <AddShadeContainer style={{ marginLeft: 74 }}>
-          <Input
-            value={newShadeName}
-            label={"add shade"}
-            placeholder={"shade name"}
-            onTextChanged={setNewShadeName}
-            width={200}
-          />
-          <Button
-            onClick={onAppendNewShade}
-            style={{ marginTop: 14 }}
-            label={"add shade"}
-            bg={"purple"}
-            size={"small"}
-            isDisabled={!canAddNewName}
-          />
-        </AddShadeContainer>
-      </AddShadeLayout>
-    </AnimatePresence>
+          >
+            <AnimatePresence>
+              {shades?.map((shade, index) => {
+                return (
+                  <ShadeEditItem
+                    key={shade.id}
+                    shade={shade}
+                    index={index}
+                    onRemove={onRemove}
+                    onDragStart={onDragStart}
+                    onDragEnd={onDragEnd}
+                  />
+                );
+              })}
+            </AnimatePresence>
+          </Reorder.Group>
+          <AddShadeContainer style={{ marginLeft: 74 }}>
+            <Input
+              value={newShadeName}
+              label={"add shade"}
+              placeholder={"shade name"}
+              onTextChanged={setNewShadeName}
+              width={200}
+            />
+            <Button
+              onClick={onAppendNewShade}
+              style={{ marginTop: 14 }}
+              label={"add shade"}
+              bg={"purple"}
+              size={"small"}
+              isDisabled={!canAddNewName}
+            />
+          </AddShadeContainer>
+        </AddShadeLayout>
+      </AnimatePresence>
+    </div>
   );
 };
 
