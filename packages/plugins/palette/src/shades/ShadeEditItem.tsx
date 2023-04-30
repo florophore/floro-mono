@@ -1,6 +1,6 @@
 
-import React, { useMemo, useCallback, useState } from "react";
-import { SchemaTypes, useFloroState, useIsFloroInvalid, useQueryRef } from "./floro-schema-api";
+import React, { useMemo, useCallback, useState, useEffect, useRef } from "react";
+import { SchemaTypes, useFloroState, useIsFloroInvalid, useQueryRef } from "../floro-schema-api";
 import { Reorder, useDragControls } from "framer-motion";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
@@ -10,7 +10,7 @@ import XCircleDark from "@floro/common-assets/assets/images/icons/red_x_circle.d
 import DraggerLight from "@floro/common-assets/assets/images/icons/dragger.light.svg";
 import DraggerDark from "@floro/common-assets/assets/images/icons/dragger.dark.svg";
 
-const ColorContainer = styled.div`
+const ShadeContainer = styled.div`
   padding: 0px 0px 0px 0px;
   display: flex;
   flex-direction: row;
@@ -18,40 +18,39 @@ const ColorContainer = styled.div`
   height: 96px;
 `;
 
-const DeleteColorContainer = styled.div`
+const DeleteShadeContainer = styled.div`
   cursor: pointer;
-  margin-left: 24px;
+  margin-left: 16px;
   padding-top: 14px;
   display: flex;
   justify-content: center;
   align-items: center;
 `;
 
-const DeleteColor = styled.img`
+const DeleteShade = styled.img`
   height: 32px;
   width: 32px;
   pointer-events: none;
   user-select: none;
 `;
 
-const DragColorContainer = styled.div`
+const DragShadeContainer = styled.div`
   height: 50px;
-  width: 50px;
+  width: 40px;
   cursor: grab;
-  margin-right: 24px;
   margin-top: 14px;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
 `;
 const DragIcon = styled.img`
-  height: 32px;
-  width: 32px;
+  height: 24px;
+  width: 24px;
   pointer-events: none;
   user-select: none;
 `;
 
-const colorItemVariants = {
+const shadeItemVariants = {
   hidden: { opacity: 0 },
   visible: (custom: number) => ({
     opacity: 1,
@@ -61,20 +60,21 @@ const colorItemVariants = {
   }),
 };
 
-interface ColorItemProps {
-  color: SchemaTypes["$(palette).colors.id<?>"];
+interface ShadeItemProps {
+  shade: SchemaTypes["$(palette).shades.id<?>"];
   index: number;
-  onRemove: (color: SchemaTypes["$(palette).colors.id<?>"]) => void;
+  onRemove: (shade: SchemaTypes["$(palette).shades.id<?>"]) => void;
   onDragStart: () => void;
   onDragEnd: () => void;
 }
 
-const ColorEditItem = (props: ColorItemProps) => {
+const ShadeEditItem = (props: ShadeItemProps) => {
   const theme = useTheme();
-  const colorQuery = useQueryRef("$(palette).colors.id<?>", props.color.id);
-  const [color, setColor] = useFloroState(colorQuery);
+  const shadeQuery = useQueryRef("$(palette).shades.id<?>", props.shade.id);
+  const [shade, setShade] = useFloroState(shadeQuery);
   const controls = useDragControls();
-  const isInvalid = useIsFloroInvalid(colorQuery);
+  const isInvalid = useIsFloroInvalid(shadeQuery);
+  const [name, setName] = useState(shade?.name ?? "");
 
   const xIcon = useMemo(() => {
     if (theme.name == "light") {
@@ -90,26 +90,33 @@ const ColorEditItem = (props: ColorItemProps) => {
     return DraggerDark;
   }, [theme.name]);
 
-  const onUpdateName = useCallback(
-    (name: string) => {
-      if (color) {
-        setColor(
+  let nameTimeout = useRef<NodeJS.Timer>();
+  useEffect(() => {
+    if (nameTimeout?.current) {
+      clearTimeout(nameTimeout?.current);
+    }
+    nameTimeout.current = setTimeout(() => {
+      if (shade) {
+        setShade(
           {
-            id: color.id,
+            id: shade.id,
             name: name.trimStart(),
           },
           true
         );
       }
-    },
-    [color]
-  );
+    }, 100);
+
+    return () => {
+      clearTimeout(nameTimeout.current);
+    }
+  }, [name]);
 
   const onRemove = useCallback(() => {
-    if (color) {
-      props.onRemove(color);
+    if (shade) {
+      props.onRemove(shade);
     }
-  }, [color, props.onRemove]);
+  }, [shade, props.onRemove]);
 
   const onPointerDown = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
     event.preventDefault?.();
@@ -120,39 +127,39 @@ const ColorEditItem = (props: ColorItemProps) => {
     <Reorder.Item
       dragListener={false}
       dragControls={controls}
-      value={props.color}
-      variants={colorItemVariants}
+      value={props.shade}
+      variants={shadeItemVariants}
       initial={"hidden"}
       animate={"visible"}
       exit={"hidden"}
-      layoutId={props.color.id}
+      layoutId={props.shade.id}
       custom={(props.index + 1) * 0.05}
       whileHover={{ scale: 1 }}
       whileDrag={{ scale: 1.02 }}
-      key={props.color.id}
+      key={props.shade.id}
       style={{position: "relative"}}
       onDragStart={props.onDragStart}
       onDragEnd={props.onDragEnd}
     >
-      <ColorContainer>
-        <DragColorContainer
+      <ShadeContainer>
+        <DragShadeContainer
           onPointerDown={onPointerDown}
         >
             <DragIcon src={draggerIcon}/>
-        </DragColorContainer>
+        </DragShadeContainer>
         <Input
-          value={color?.name ?? ""}
-          label={"color name"}
-          placeholder={color?.id ?? ""}
-          onTextChanged={onUpdateName}
+          value={name ?? ""}
+          label={"shade name"}
+          placeholder={shade?.id ?? ""}
+          onTextChanged={setName}
           isValid={!isInvalid}
         />
-        <DeleteColorContainer onClick={onRemove}>
-          <DeleteColor src={xIcon} />
-        </DeleteColorContainer>
-      </ColorContainer>
+        <DeleteShadeContainer onClick={onRemove}>
+          <DeleteShade src={xIcon} />
+        </DeleteShadeContainer>
+      </ShadeContainer>
     </Reorder.Item>
   );
 };
 
-export default React.memo(ColorEditItem);
+export default React.memo(ShadeEditItem);

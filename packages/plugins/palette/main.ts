@@ -38,7 +38,7 @@ async function createServer() {
         app.use(`/plugins/${manifest.name}/${manifest.version}/assets`, requestHandler);
         app.use(compression())
     }
-  
+
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: 'custom'
@@ -57,5 +57,5 @@ async function createServer() {
 
     app.listen(PORT);
   }
-  
+
   createServer()

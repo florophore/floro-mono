@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback, useState, useEffect } from "react";
 import { useTheme } from "@emotion/react";
-import { SchemaTypes, useFloroState, useIsFloroInvalid } from "./floro-schema-api";
+import { SchemaTypes, useFloroState, useIsFloroInvalid } from "../floro-schema-api";
 import { AnimatePresence, Reorder } from "framer-motion";
 import styled from "@emotion/styled";
 import { css } from "@emotion/css";
@@ -18,9 +18,17 @@ const AddShadeLayout = styled.div`
 const AddShadeContainer = styled.div`
   margin-top: 12px;
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  width: 576px;
+  width: 568px;
+`;
+
+const TitleWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 650px;
 `;
 
 const SectionTitle = styled.h1`
@@ -136,12 +144,14 @@ const ShadeEditList = () => {
 
   return (
     <div style={{marginBottom: 36}}>
-      <TitleRow>
-        <SectionTitle>{"Shades"}</SectionTitle>
-        {isInvalid && (
-          <WarningIconImg src={warningIcon}/>
-        )}
-      </TitleRow>
+      <TitleWrapper>
+        <TitleRow>
+          <SectionTitle>{"Shades"}</SectionTitle>
+          {isInvalid && (
+            <WarningIconImg src={warningIcon}/>
+          )}
+        </TitleRow>
+      </TitleWrapper>
       <AnimatePresence>
         <AddShadeLayout>
           <Reorder.Group
@@ -167,10 +177,10 @@ const ShadeEditList = () => {
               })}
             </AnimatePresence>
           </Reorder.Group>
-          <AddShadeContainer style={{ marginLeft: 74 }}>
+          <AddShadeContainer style={{ marginLeft: 40 }}>
             <Input
               value={newShadeName}
-              label={"add shade"}
+              label={"new shade"}
               placeholder={"shade name"}
               onTextChanged={setNewShadeName}
               width={200}
@@ -179,7 +189,7 @@ const ShadeEditList = () => {
               onClick={onAppendNewShade}
               style={{ marginTop: 14 }}
               label={"add shade"}
-              bg={"purple"}
+              bg={"orange"}
               size={"small"}
               isDisabled={!canAddNewName}
             />

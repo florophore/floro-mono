@@ -33,10 +33,12 @@ const Navigator = styled.nav`
   margin: 0;
   position: relative;
   background: ${(props) => props.theme.background};
+  z-index: 2;
 `;
 
 const NavOptionList = styled.div`
   z-index: 0;
+  position: absolute;
   width: 72px;
   display: flex;
   flex-direction: column;

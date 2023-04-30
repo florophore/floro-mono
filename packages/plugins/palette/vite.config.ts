@@ -14,10 +14,10 @@ export default defineConfig(({ command, mode }): any => {
     mode == "production" || command == "build" ? manifest.version : "dev";
   return {
     assetsInclude: [
-      "../common-assets/assets/**/*.svg",
-      "../common-assets/assets/**/*.png",
-      "../common-assets/assets/**/*.txt",
-      "../common-assets/assets/**/*.ttf",
+      "../../common-assets/assets/**/*.svg",
+      "../../common-assets/assets/**/*.png",
+      "../../common-assets/assets/**/*.txt",
+      "../../common-assets/assets/**/*.ttf",
       "./floro/floro.manifest.json",
       "./floro/*.svg",
     ],

@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { useFloroState, useHasIndication, useIsFloroInvalid } from "./floro-schema-api";
+import { useFloroState, useHasIndication, useIsFloroInvalid } from "../floro-schema-api";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
@@ -66,6 +66,7 @@ const ShadeReadList = () => {
     return WarningDark;
   }, [theme.name])
 
+  // change this later
   if (!hasIndication) {
     return null;
   }
@@ -74,7 +75,7 @@ const ShadeReadList = () => {
     <div style={{ marginBottom: 36 }}>
       <TitleRow>
         <SectionTitle>{"Shades"}</SectionTitle>
-        <WarningIconImg src={warningIcon}/>
+        {isInvalid && <WarningIconImg src={warningIcon}/>}
       </TitleRow>
       <AnimatePresence>
         <AddShadeLayout>

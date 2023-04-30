@@ -29,6 +29,8 @@ const Container = styled.div`
   padding-right: 40px;
   box-shadow: -10px 2px 3px 4px
     ${(props) => props.theme.shadows.versionControlSideBarShadow};
+  z-index: 1;
+  position: relative;
 `;
 
 const LeftContainer = styled.div`

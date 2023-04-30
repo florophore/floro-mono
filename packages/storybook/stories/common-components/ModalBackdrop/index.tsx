@@ -48,6 +48,7 @@ const ModalBackdrop = (props: Props): React.ReactElement => {
           className={css`
             top: 0;
             left: 0;
+            z-index: 2;
             position: absolute;
             display: flex;
             flex: 1;

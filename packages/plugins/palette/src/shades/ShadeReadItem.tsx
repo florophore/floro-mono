@@ -1,6 +1,6 @@
 
 import React, { useMemo } from "react";
-import { SchemaTypes, useFloroContext, useHasConflict, useIsFloroInvalid, useQueryRef, useWasAdded, useWasRemoved } from "./floro-schema-api";
+import { SchemaTypes, useHasConflict, useIsFloroInvalid, useQueryRef, useWasAdded, useWasRemoved } from "../floro-schema-api";
 import { motion } from "framer-motion";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
@@ -8,14 +8,14 @@ import WarningLight from "@floro/common-assets/assets/images/icons/warning.light
 import WarningDark from "@floro/common-assets/assets/images/icons/warning.dark.svg";
 import ColorPalette from "@floro/styles/ColorPalette";
 
-const ColorContainer = styled.div`
+const ShadeContainer = styled.div`
   padding: 0px 0px 0px 0px;
   display: flex;
   flex-direction: row;
   align-items: center;
 `;
 
-const ColorLabel = styled.label`
+const ShadeLabel = styled.label`
   padding: 0px;
   font-family: "MavenPro";
   font-weight: 500;
@@ -23,16 +23,16 @@ const ColorLabel = styled.label`
   color: ${props => props.theme.colors.contrastText};
 `;
 
-const ColorDotContainer = styled.div`
+const ShadeDotContainer = styled.div`
   height: 56px;
-  width: 56px;
+  width: 32px;
   margin-right: 8px;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
 `;
 
-const ColorDot = styled.div`
+const ShadeDot = styled.div`
   height: 16px;
   width: 16px;
   background-color: ${props => props.theme.colors.contrastText};
@@ -44,7 +44,7 @@ const WarningIconImg = styled.img`
   width: 24x;
 `;
 
-const colorItemVariants = {
+const shadeItemVariants = {
   hidden: { opacity: 0 },
   visible: (custom: number) => ({
     opacity: 1,
@@ -54,18 +54,18 @@ const colorItemVariants = {
   }),
 };
 
-interface ColorItemProps {
-  color: SchemaTypes["$(palette).colors.id<?>"];
+interface ShadeItemProps {
+  shade: SchemaTypes["$(palette).shades.id<?>"];
   index: number;
 }
 
-const ColorReadItem = (props: ColorItemProps) => {
+const ShadeReadItem = (props: ShadeItemProps) => {
   const theme = useTheme();
-  const colorQuery = useQueryRef("$(palette).colors.id<?>", props.color.id);
-  const isInvalid = useIsFloroInvalid(colorQuery);
-  const wasRemoved = useWasRemoved(colorQuery);
-  const wasAdded = useWasAdded(colorQuery);
-  const hasConflict = useHasConflict(colorQuery);
+  const shadeQuery = useQueryRef("$(palette).shades.id<?>", props.shade.id);
+  const isInvalid = useIsFloroInvalid(shadeQuery);
+  const wasRemoved = useWasRemoved(shadeQuery);
+  const wasAdded = useWasAdded(shadeQuery);
+  const hasConflict = useHasConflict(shadeQuery);
 
   const color = useMemo(() => {
     if (hasConflict) {
@@ -89,28 +89,30 @@ const ColorReadItem = (props: ColorItemProps) => {
 
   return (
     <motion.li
-      variants={colorItemVariants}
+      variants={shadeItemVariants}
       initial={"hidden"}
       animate={"visible"}
       exit={"hidden"}
-      layoutId={props.color.id}
-      custom={0.05}
+      layoutId={props.shade.id}
+      custom={(props.index + 1) * 0.05}
       whileHover={{ scale: 1 }}
       whileDrag={{ scale: 1.02 }}
-      key={props.color.id}
-      style={{ position: "relative" }}
+      key={props.shade.id}
+      style={{position: "relative"}}
     >
-      <ColorContainer>
-        <ColorDotContainer>
-          {!isInvalid && <ColorDot style={{ background: color }} />}
-          {isInvalid && <WarningIconImg src={warningIcon} />}
-        </ColorDotContainer>
-        <ColorLabel style={{ color }}>
-          {isInvalid ? props?.color?.id : props?.color.name}
-        </ColorLabel>
-      </ColorContainer>
+      <ShadeContainer>
+        <ShadeDotContainer>
+          {!isInvalid &&
+            <ShadeDot style={{ background: color }}/>
+          }
+          {isInvalid &&
+            <WarningIconImg src={warningIcon}/>
+          }
+        </ShadeDotContainer>
+        <ShadeLabel style={{ color }}>{isInvalid ? props?.shade?.id : props?.shade.name}</ShadeLabel>
+      </ShadeContainer>
     </motion.li>
   );
 };
 
-export default React.memo(ColorReadItem);
+export default React.memo(ShadeReadItem);

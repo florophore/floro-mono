@@ -12,7 +12,6 @@ import {
 } from "../floro-schema-api";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-import { DEFAULT_PALETTE_VALUES } from "./ColorPaletteMatrix";
 import ColorPalette from "@floro/styles/ColorPalette";
 
 import EditLight from "@floro/common-assets/assets/images/icons/edit.light.svg";
@@ -24,13 +23,13 @@ import ExitDark from "@floro/common-assets/assets/images/icons/exit_icon.dark.sv
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  margin-right: 16px;
+  margin-right: 48px;
 `;
 
 const Card = styled.div`
   position: relative;
-  height: 128px;
-  width: 225px;
+  height: 136px;
+  width: 216px;
   border-radius: 8px;
   background-color: ${(props) => props.theme.colors.colorPaletteCard};
   border: 2px solid;
@@ -146,27 +145,26 @@ const ExitIndicatorImg = styled.img`
 `;
 
 interface Props {
-  color: SchemaTypes["$(palette).colors.id<?>"];
+  colorPalette: SchemaTypes["$(palette).colorPalettes.id<?>"];
   shade: SchemaTypes["$(palette).shades.id<?>"];
 }
 
 const ColorRow = (props: Props) => {
   const theme = useTheme();
   const { commandMode } = useFloroContext();
-  const colorRef = useQueryRef("$(palette).colors.id<?>", props.color.id);
   const shadeRef = useQueryRef("$(palette).shades.id<?>", props.shade.id);
   const inputRef = useRef<HTMLInputElement>(null);
   const colorCircle = useRef<HTMLDivElement>(null);
   const paletteCellRef = useQueryRef(
-    "$(palette).palette.id<?>.colors.id<?>",
-    colorRef,
+    "$(palette).colorPalettes.id<?>.colorShades.id<?>",
+    props.colorPalette.id,
     shadeRef
   );
   const [paletteColor, setPaletteColor] = useFloroState(
     paletteCellRef,
     {
       id: shadeRef,
-      hexcode: DEFAULT_PALETTE_VALUES?.[colorRef]?.[shadeRef],
+      hexcode: undefined,
       alpha: 0xff,
     },
     false

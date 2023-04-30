@@ -1,14 +1,18 @@
 {
   "version": "0.0.0",
   "name": "palette",
-  "displayName": "palette",
+  "displayName": "Palette",
   "icon": {
-    "light": "./palette-plugin-icon.svg",
-    "dark": "./palette-plugin-icon.svg"
+    "light": "./palette_icon.unselected.light.svg",
+    "dark": "./palette_icon.unselected.dark.svg",
+    "selected": {
+      "light": "./palette_icon.selected.light.svg",
+      "dark": "./palette_icon.selected.dark.svg"
+    }
   },
   "imports": {},
   "types": {
-    "Color": {
+    "Shade": {
       "id": {
         "isKey": true,
         "type": "string"
@@ -17,13 +21,33 @@
         "type": "string"
       }
     },
-    "Shade": {
+    "Color": {
       "id": {
         "isKey": true,
         "type": "string"
       },
       "name": {
         "type": "string"
+      },
+      "colorShades": {
+        "type": "set",
+        "bounded": true,
+        "values": "ColorShade"
+      }
+    },
+    "ColorShade": {
+      "id": {
+        "isKey": true,
+        "type": "ref<$.shades.values>"
+      },
+      "hexcode": {
+        "nullable": true,
+        "type": "string"
+      },
+      "alpha": {
+        "nullable": false,
+        "type": "int",
+        "default": 255
       }
     }
   },
@@ -33,36 +57,10 @@
       "emptyable": false,
       "values": "Shade"
     },
-    "colors": {
+    "colorPalettes": {
       "type": "set",
       "emptyable": false,
       "values": "Color"
-    },
-    "palette": {
-      "type": "set",
-      "values": {
-        "id": {
-          "isKey": true,
-          "type": "ref<$.colors.values>"
-        },
-        "colors": {
-          "type": "set",
-          "values": {
-            "id": {
-              "isKey": true,
-              "type": "ref<$.shades.values>"
-            },
-            "hexcode": {
-              "nullable": true,
-              "type": "string"
-            },
-            "alpha": {
-              "nullable": true,
-              "type": "int"
-            }
-          }
-        }
-      }
     }
   },
   "seed": {
@@ -80,31 +78,11 @@
         "name": "Dark"
       }
     ],
-    "colors": [
+    "colorPalettes": [
       {
         "id": "white",
-        "name": "White"
-      },
-      {
-        "id": "black",
-        "name": "Black"
-      },
-      {
-        "id": "red",
-        "name": "Red"
-      },
-      {
-        "id": "green",
-        "name": "Green"
-      },
-      {
-        "id": "blue",
-        "name": "Blue"
-      }
-    ],
-    "palette": [
-      {
-        "colors": [
+        "name": "White",
+        "colorShades": [
           {
             "alpha": 255,
             "id": "$(palette).shades.id<light>"
@@ -118,11 +96,12 @@
             "alpha": 255,
             "id": "$(palette).shades.id<dark>"
           }
-        ],
-        "id": "$(palette).colors.id<white>"
+        ]
       },
       {
-        "colors": [
+        "id": "black",
+        "name": "Black",
+        "colorShades": [
           {
             "alpha": 255,
             "id": "$(palette).shades.id<light>"
@@ -136,11 +115,12 @@
             "alpha": 255,
             "id": "$(palette).shades.id<dark>"
           }
-        ],
-        "id": "$(palette).colors.id<black>"
+        ]
       },
       {
-        "colors": [
+        "id": "red",
+        "name": "Red",
+        "colorShades": [
           {
             "alpha": 255,
             "hexcode": "#F93D44",
@@ -156,11 +136,12 @@
             "hexcode": "#AA2227",
             "id": "$(palette).shades.id<dark>"
           }
-        ],
-        "id": "$(palette).colors.id<red>"
+        ]
       },
       {
-        "colors": [
+        "id": "green",
+        "name": "Green",
+        "colorShades": [
           {
             "alpha": 255,
             "hexcode": "#77F075",
@@ -176,11 +157,12 @@
             "hexcode": "#26A324",
             "id": "$(palette).shades.id<dark>"
           }
-        ],
-        "id": "$(palette).colors.id<green>"
+        ]
       },
       {
-        "colors": [
+        "id": "blue",
+        "name": "Blue",
+        "colorShades": [
           {
             "alpha": 255,
             "hexcode": "#7E91EC",
@@ -196,8 +178,7 @@
             "hexcode": "#1F38B2",
             "id": "$(palette).shades.id<dark>"
           }
-        ],
-        "id": "$(palette).colors.id<blue>"
+        ]
       }
     ]
   }

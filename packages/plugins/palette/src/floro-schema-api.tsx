@@ -2,30 +2,25 @@ import React, { useEffect, createContext, useMemo, useCallback, useState, useCon
 
 export type FileRef = `${string}.${string}`;
 
-export type PartialDiffableQuery = `$(palette).palette.id<${QueryTypes['$(palette).colors.id<?>']}>.colors.id<${QueryTypes['$(palette).shades.id<?>']}>`|`$(palette).palette.id<${QueryTypes['$(palette).colors.id<?>']}>.colors`|`$(palette).colors.id<${string}>`|`$(palette).palette.id<${QueryTypes['$(palette).colors.id<?>']}>`|`$(palette).shades.id<${string}>`|`$(palette).colors`|`$(palette).palette`|`$(palette).shades`;
+export type PartialDiffableQuery = `$(palette).colorPalettes.id<${string}>.colorShades.id<${QueryTypes['$(palette).shades.id<?>']}>`|`$(palette).colorPalettes.id<${string}>.colorShades`|`$(palette).colorPalettes.id<${string}>`|`$(palette).shades.id<${string}>`|`$(palette).colorPalettes`|`$(palette).shades`;
 
-export type DiffableQuery = `$(palette).palette.id<${QueryTypes['$(palette).colors.id<?>']}>.colors.id<${QueryTypes['$(palette).shades.id<?>']}>`|`$(palette).colors.id<${string}>`|`$(palette).palette.id<${QueryTypes['$(palette).colors.id<?>']}>`|`$(palette).shades.id<${string}>`;
+export type DiffableQuery = `$(palette).colorPalettes.id<${string}>.colorShades.id<${QueryTypes['$(palette).shades.id<?>']}>`|`$(palette).colorPalettes.id<${string}>`|`$(palette).shades.id<${string}>`;
 
 export type QueryTypes = {
-  ['$(palette).colors.id<?>']: `$(palette).colors.id<${string}>`;
-  ['$(palette).palette.id<?>']: `$(palette).palette.id<${QueryTypes['$(palette).colors.id<?>']}>`;
-  ['$(palette).palette.id<?>.colors.id<?>']: `$(palette).palette.id<${QueryTypes['$(palette).colors.id<?>']}>.colors.id<${QueryTypes['$(palette).shades.id<?>']}>`;
+  ['$(palette).colorPalettes.id<?>']: `$(palette).colorPalettes.id<${string}>`;
+  ['$(palette).colorPalettes.id<?>.colorShades.id<?>']: `$(palette).colorPalettes.id<${string}>.colorShades.id<${QueryTypes['$(palette).shades.id<?>']}>`;
   ['$(palette).shades.id<?>']: `$(palette).shades.id<${string}>`;
 };
 
-export function makeQueryRef(query: '$(palette).colors.id<?>', arg0: string): QueryTypes['$(palette).colors.id<?>'];
-export function makeQueryRef(query: '$(palette).palette.id<?>', arg0: QueryTypes['$(palette).colors.id<?>']): QueryTypes['$(palette).palette.id<?>'];
-export function makeQueryRef(query: '$(palette).palette.id<?>.colors.id<?>', arg0: QueryTypes['$(palette).colors.id<?>'], arg1: QueryTypes['$(palette).shades.id<?>']): QueryTypes['$(palette).palette.id<?>.colors.id<?>'];
+export function makeQueryRef(query: '$(palette).colorPalettes.id<?>', arg0: string): QueryTypes['$(palette).colorPalettes.id<?>'];
+export function makeQueryRef(query: '$(palette).colorPalettes.id<?>.colorShades.id<?>', arg0: string, arg1: QueryTypes['$(palette).shades.id<?>']): QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
 export function makeQueryRef(query: '$(palette).shades.id<?>', arg0: string): QueryTypes['$(palette).shades.id<?>'];
-export function makeQueryRef(query: '$(palette).colors.id<?>'|'$(palette).palette.id<?>'|'$(palette).palette.id<?>.colors.id<?>'|'$(palette).shades.id<?>', arg0: string|QueryTypes['$(palette).colors.id<?>'], arg1?: QueryTypes['$(palette).shades.id<?>']): QueryTypes['$(palette).colors.id<?>']|QueryTypes['$(palette).palette.id<?>']|QueryTypes['$(palette).palette.id<?>.colors.id<?>']|QueryTypes['$(palette).shades.id<?>']|null {
-  if ((arg0 != null && arg0 != undefined) && query == '$(palette).colors.id<?>') {
-    return `$(palette).colors.id<${arg0 as string}>`;
+export function makeQueryRef(query: '$(palette).colorPalettes.id<?>'|'$(palette).colorPalettes.id<?>.colorShades.id<?>'|'$(palette).shades.id<?>', arg0: string, arg1?: QueryTypes['$(palette).shades.id<?>']): QueryTypes['$(palette).colorPalettes.id<?>']|QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|QueryTypes['$(palette).shades.id<?>']|null {
+  if ((arg0 != null && arg0 != undefined) && query == '$(palette).colorPalettes.id<?>') {
+    return `$(palette).colorPalettes.id<${arg0 as string}>`;
   }
-  if ((arg0 != null && arg0 != undefined) && query == '$(palette).palette.id<?>') {
-    return `$(palette).palette.id<${arg0 as QueryTypes['$(palette).colors.id<?>']}>`;
-  }
-  if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && query == '$(palette).palette.id<?>.colors.id<?>') {
-    return `$(palette).palette.id<${arg0 as QueryTypes['$(palette).colors.id<?>']}>.colors.id<${arg1 as QueryTypes['$(palette).shades.id<?>']}>`;
+  if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && query == '$(palette).colorPalettes.id<?>.colorShades.id<?>') {
+    return `$(palette).colorPalettes.id<${arg0 as string}>.colorShades.id<${arg1 as QueryTypes['$(palette).shades.id<?>']}>`;
   }
   if ((arg0 != null && arg0 != undefined) && query == '$(palette).shades.id<?>') {
     return `$(palette).shades.id<${arg0 as string}>`;
@@ -33,20 +28,16 @@ export function makeQueryRef(query: '$(palette).colors.id<?>'|'$(palette).palett
   return null;
 };
 
-export function useQueryRef(query: '$(palette).colors.id<?>', arg0: string): QueryTypes['$(palette).colors.id<?>'];
-export function useQueryRef(query: '$(palette).palette.id<?>', arg0: QueryTypes['$(palette).colors.id<?>']): QueryTypes['$(palette).palette.id<?>'];
-export function useQueryRef(query: '$(palette).palette.id<?>.colors.id<?>', arg0: QueryTypes['$(palette).colors.id<?>'], arg1: QueryTypes['$(palette).shades.id<?>']): QueryTypes['$(palette).palette.id<?>.colors.id<?>'];
+export function useQueryRef(query: '$(palette).colorPalettes.id<?>', arg0: string): QueryTypes['$(palette).colorPalettes.id<?>'];
+export function useQueryRef(query: '$(palette).colorPalettes.id<?>.colorShades.id<?>', arg0: string, arg1: QueryTypes['$(palette).shades.id<?>']): QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
 export function useQueryRef(query: '$(palette).shades.id<?>', arg0: string): QueryTypes['$(palette).shades.id<?>'];
-export function useQueryRef(query: '$(palette).colors.id<?>'|'$(palette).palette.id<?>'|'$(palette).palette.id<?>.colors.id<?>'|'$(palette).shades.id<?>', arg0: string|QueryTypes['$(palette).colors.id<?>'], arg1?: QueryTypes['$(palette).shades.id<?>']): QueryTypes['$(palette).colors.id<?>']|QueryTypes['$(palette).palette.id<?>']|QueryTypes['$(palette).palette.id<?>.colors.id<?>']|QueryTypes['$(palette).shades.id<?>']|null {
+export function useQueryRef(query: '$(palette).colorPalettes.id<?>'|'$(palette).colorPalettes.id<?>.colorShades.id<?>'|'$(palette).shades.id<?>', arg0: string, arg1?: QueryTypes['$(palette).shades.id<?>']): QueryTypes['$(palette).colorPalettes.id<?>']|QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|QueryTypes['$(palette).shades.id<?>']|null {
   return useMemo(() => {
-    if (query == '$(palette).colors.id<?>') {
+    if (query == '$(palette).colorPalettes.id<?>') {
       return makeQueryRef(query, arg0 as string);
     }
-    if (query == '$(palette).palette.id<?>') {
-      return makeQueryRef(query, arg0 as QueryTypes['$(palette).colors.id<?>']);
-    }
-    if (query == '$(palette).palette.id<?>.colors.id<?>') {
-      return makeQueryRef(query, arg0 as QueryTypes['$(palette).colors.id<?>'], arg1 as QueryTypes['$(palette).shades.id<?>']);
+    if (query == '$(palette).colorPalettes.id<?>.colorShades.id<?>') {
+      return makeQueryRef(query, arg0 as string, arg1 as QueryTypes['$(palette).shades.id<?>']);
     }
     if (query == '$(palette).shades.id<?>') {
       return makeQueryRef(query, arg0 as string);
@@ -56,43 +47,37 @@ export function useQueryRef(query: '$(palette).colors.id<?>'|'$(palette).palette
 };
 
 export type SchemaTypes = {
-  ['$(palette).palette.id<?>.colors.id<?>']: {
+  ['$(palette).colorPalettes.id<?>.colorShades.id<?>']: {
     ['alpha']?: number;
     ['hexcode']?: string;
     ['id']: QueryTypes['$(palette).shades.id<?>'];
   };
-  ['$(palette).palette.id<?>.colors']: Array<{
+  ['$(palette).colorPalettes.id<?>.colorShades']: Array<{
     ['alpha']?: number;
     ['hexcode']?: string;
     ['id']: QueryTypes['$(palette).shades.id<?>'];
   }>;
-  ['$(palette).colors.id<?>']: {
-    ['id']: string;
-    ['name']: string;
-  };
-  ['$(palette).palette.id<?>']: {
-    ['colors']: Array<{
+  ['$(palette).colorPalettes.id<?>']: {
+    ['colorShades']: Array<{
       ['alpha']?: number;
       ['hexcode']?: string;
       ['id']: QueryTypes['$(palette).shades.id<?>'];
     }>;
-    ['id']: QueryTypes['$(palette).colors.id<?>'];
+    ['id']: string;
+    ['name']: string;
   };
   ['$(palette).shades.id<?>']: {
     ['id']: string;
     ['name']: string;
   };
-  ['$(palette).colors']: Array<{
-    ['id']: string;
-    ['name']: string;
-  }>;
-  ['$(palette).palette']: Array<{
-    ['colors']: Array<{
+  ['$(palette).colorPalettes']: Array<{
+    ['colorShades']: Array<{
       ['alpha']?: number;
       ['hexcode']?: string;
       ['id']: QueryTypes['$(palette).shades.id<?>'];
     }>;
-    ['id']: QueryTypes['$(palette).colors.id<?>'];
+    ['id']: string;
+    ['name']: string;
   }>;
   ['$(palette).shades']: Array<{
     ['id']: string;
@@ -101,33 +86,28 @@ export type SchemaTypes = {
 };
 
 
-export type DiffableReturnTypes = SchemaTypes['$(palette).palette.id<?>.colors.id<?>']|SchemaTypes['$(palette).palette.id<?>.colors']|SchemaTypes['$(palette).colors.id<?>']|SchemaTypes['$(palette).palette.id<?>']|SchemaTypes['$(palette).shades.id<?>']|SchemaTypes['$(palette).colors']|SchemaTypes['$(palette).palette']|SchemaTypes['$(palette).shades'];
+export type DiffableReturnTypes = SchemaTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|SchemaTypes['$(palette).colorPalettes.id<?>.colorShades']|SchemaTypes['$(palette).colorPalettes.id<?>']|SchemaTypes['$(palette).shades.id<?>']|SchemaTypes['$(palette).colorPalettes']|SchemaTypes['$(palette).shades'];
 
 export type PointerTypes = {
-  ['$(palette).palette.id<?>.colors.id<?>']: `$(palette).palette.id<${QueryTypes['$(palette).colors.id<?>']}>.colors.id<${QueryTypes['$(palette).shades.id<?>']}>`;
-  ['$(palette).palette.id<?>.colors']: `$(palette).palette.id<${QueryTypes['$(palette).colors.id<?>']}>.colors`;
-  ['$(palette).colors.id<?>']: `$(palette).colors.id<${string}>`;
-  ['$(palette).palette.id<?>']: `$(palette).palette.id<${QueryTypes['$(palette).colors.id<?>']}>`;
+  ['$(palette).colorPalettes.id<?>.colorShades.id<?>']: `$(palette).colorPalettes.id<${string}>.colorShades.id<${QueryTypes['$(palette).shades.id<?>']}>`;
+  ['$(palette).colorPalettes.id<?>.colorShades']: `$(palette).colorPalettes.id<${string}>.colorShades`;
+  ['$(palette).colorPalettes.id<?>']: `$(palette).colorPalettes.id<${string}>`;
   ['$(palette).shades.id<?>']: `$(palette).shades.id<${string}>`;
-  ['$(palette).colors']: `$(palette).colors`;
-  ['$(palette).palette']: `$(palette).palette`;
+  ['$(palette).colorPalettes']: `$(palette).colorPalettes`;
   ['$(palette).shades']: `$(palette).shades`;
 };
 
 
 export type SchemaRoot = {
   ['palette']: {
-    ['colors']: Array<{
-      ['id']: string;
-      ['name']: string;
-    }>;
-    ['palette']: Array<{
-      ['colors']: Array<{
+    ['colorPalettes']: Array<{
+      ['colorShades']: Array<{
         ['alpha']?: number;
         ['hexcode']?: string;
         ['id']: QueryTypes['$(palette).shades.id<?>'];
       }>;
-      ['id']: QueryTypes['$(palette).colors.id<?>'];
+      ['id']: string;
+      ['name']: string;
     }>;
     ['shades']: Array<{
       ['id']: string;
@@ -138,19 +118,16 @@ export type SchemaRoot = {
 
 
 export type RefReturnTypes = {
-  ['$(palette).colors.id<?>']: {
-    ['id']: string;
-    ['name']: string;
-  };
-  ['$(palette).palette.id<?>']: {
-    ['colors']: Array<{
+  ['$(palette).colorPalettes.id<?>']: {
+    ['colorShades']: Array<{
       ['alpha']?: number;
       ['hexcode']?: string;
       ['id']: QueryTypes['$(palette).shades.id<?>'];
     }>;
-    ['id']: QueryTypes['$(palette).colors.id<?>'];
+    ['id']: string;
+    ['name']: string;
   };
-  ['$(palette).palette.id<?>.colors.id<?>']: {
+  ['$(palette).colorPalettes.id<?>.colorShades.id<?>']: {
     ['alpha']?: number;
     ['hexcode']?: string;
     ['id']: QueryTypes['$(palette).shades.id<?>'];
@@ -645,41 +622,33 @@ const updateObjectInStateMap = (
 
 
 
-export function getReferencedObject(root: SchemaRoot, query: QueryTypes['$(palette).palette.id<?>.colors.id<?>']): RefReturnTypes['$(palette).palette.id<?>.colors.id<?>'];
-export function getReferencedObject(root: SchemaRoot, query: QueryTypes['$(palette).palette.id<?>']): RefReturnTypes['$(palette).palette.id<?>'];
-export function getReferencedObject(root: SchemaRoot, query: QueryTypes['$(palette).colors.id<?>']): RefReturnTypes['$(palette).colors.id<?>'];
+export function getReferencedObject(root: SchemaRoot, query: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']): RefReturnTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+export function getReferencedObject(root: SchemaRoot, query: QueryTypes['$(palette).colorPalettes.id<?>']): RefReturnTypes['$(palette).colorPalettes.id<?>'];
 export function getReferencedObject(root: SchemaRoot, query: QueryTypes['$(palette).shades.id<?>']): RefReturnTypes['$(palette).shades.id<?>'];
-export function getReferencedObject(root: SchemaRoot, query: QueryTypes['$(palette).palette.id<?>.colors.id<?>']|QueryTypes['$(palette).palette.id<?>']|QueryTypes['$(palette).colors.id<?>']|QueryTypes['$(palette).shades.id<?>']): RefReturnTypes['$(palette).palette.id<?>.colors.id<?>']|RefReturnTypes['$(palette).palette.id<?>']|RefReturnTypes['$(palette).colors.id<?>']|RefReturnTypes['$(palette).shades.id<?>']|null {
-  if (root && query && replaceRefVarsWithWildcards(query) == '$(palette).palette.id<?>.colors.id<?>') {
-    return getObjectInStateMap(root, query) as RefReturnTypes['$(palette).palette.id<?>.colors.id<?>'];
+export function getReferencedObject(root: SchemaRoot, query: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|QueryTypes['$(palette).colorPalettes.id<?>']|QueryTypes['$(palette).shades.id<?>']): RefReturnTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|RefReturnTypes['$(palette).colorPalettes.id<?>']|RefReturnTypes['$(palette).shades.id<?>']|null {
+  if (root && query && replaceRefVarsWithWildcards(query) == '$(palette).colorPalettes.id<?>.colorShades.id<?>') {
+    return getObjectInStateMap(root, query) as RefReturnTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
   }
-  if (root && query && replaceRefVarsWithWildcards(query) == '$(palette).palette.id<?>') {
-    return getObjectInStateMap(root, query) as RefReturnTypes['$(palette).palette.id<?>'];
-  }
-  if (root && query && replaceRefVarsWithWildcards(query) == '$(palette).colors.id<?>') {
-    return getObjectInStateMap(root, query) as RefReturnTypes['$(palette).colors.id<?>'];
+  if (root && query && replaceRefVarsWithWildcards(query) == '$(palette).colorPalettes.id<?>') {
+    return getObjectInStateMap(root, query) as RefReturnTypes['$(palette).colorPalettes.id<?>'];
   }
   if (root && query && replaceRefVarsWithWildcards(query) == '$(palette).shades.id<?>') {
     return getObjectInStateMap(root, query) as RefReturnTypes['$(palette).shades.id<?>'];
   }
   return null;
 }
-export function useReferencedObject(query: QueryTypes['$(palette).palette.id<?>.colors.id<?>']): RefReturnTypes['$(palette).palette.id<?>.colors.id<?>'];
-export function useReferencedObject(query: QueryTypes['$(palette).palette.id<?>']): RefReturnTypes['$(palette).palette.id<?>'];
-export function useReferencedObject(query: QueryTypes['$(palette).colors.id<?>']): RefReturnTypes['$(palette).colors.id<?>'];
+export function useReferencedObject(query: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']): RefReturnTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+export function useReferencedObject(query: QueryTypes['$(palette).colorPalettes.id<?>']): RefReturnTypes['$(palette).colorPalettes.id<?>'];
 export function useReferencedObject(query: QueryTypes['$(palette).shades.id<?>']): RefReturnTypes['$(palette).shades.id<?>'];
-export function useReferencedObject(query: QueryTypes['$(palette).palette.id<?>.colors.id<?>']|QueryTypes['$(palette).palette.id<?>']|QueryTypes['$(palette).colors.id<?>']|QueryTypes['$(palette).shades.id<?>']): RefReturnTypes['$(palette).palette.id<?>.colors.id<?>']|RefReturnTypes['$(palette).palette.id<?>']|RefReturnTypes['$(palette).colors.id<?>']|RefReturnTypes['$(palette).shades.id<?>']|null {
+export function useReferencedObject(query: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|QueryTypes['$(palette).colorPalettes.id<?>']|QueryTypes['$(palette).shades.id<?>']): RefReturnTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|RefReturnTypes['$(palette).colorPalettes.id<?>']|RefReturnTypes['$(palette).shades.id<?>']|null {
   const ctx = useFloroContext();
   const root = ctx.applicationState;
   return useMemo(() => {
-    if (root && query && replaceRefVarsWithWildcards(query) == '$(palette).palette.id<?>.colors.id<?>') {
-      return getObjectInStateMap(root, query) as RefReturnTypes['$(palette).palette.id<?>.colors.id<?>'];
+    if (root && query && replaceRefVarsWithWildcards(query) == '$(palette).colorPalettes.id<?>.colorShades.id<?>') {
+      return getObjectInStateMap(root, query) as RefReturnTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
     }
-    if (root && query && replaceRefVarsWithWildcards(query) == '$(palette).palette.id<?>') {
-      return getObjectInStateMap(root, query) as RefReturnTypes['$(palette).palette.id<?>'];
-    }
-    if (root && query && replaceRefVarsWithWildcards(query) == '$(palette).colors.id<?>') {
-      return getObjectInStateMap(root, query) as RefReturnTypes['$(palette).colors.id<?>'];
+    if (root && query && replaceRefVarsWithWildcards(query) == '$(palette).colorPalettes.id<?>') {
+      return getObjectInStateMap(root, query) as RefReturnTypes['$(palette).colorPalettes.id<?>'];
     }
     if (root && query && replaceRefVarsWithWildcards(query) == '$(palette).shades.id<?>') {
       return getObjectInStateMap(root, query) as RefReturnTypes['$(palette).shades.id<?>'];
@@ -708,13 +677,11 @@ export function usePluginStore(plugin: 'palette'): SchemaRoot['palette'] {
     return root[plugin];
   }, [root, plugin]);
 }
-export function useFloroState(query: PointerTypes['$(palette).palette.id<?>.colors.id<?>'], defaultData?: SchemaTypes['$(palette).palette.id<?>.colors.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(palette).palette.id<?>.colors.id<?>']|null, (t: SchemaTypes['$(palette).palette.id<?>.colors.id<?>'], doSave?: boolean) => void, boolean, () => void];
-export function useFloroState(query: PointerTypes['$(palette).palette.id<?>.colors'], defaultData?: SchemaTypes['$(palette).palette.id<?>.colors'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(palette).palette.id<?>.colors']|null, (t: SchemaTypes['$(palette).palette.id<?>.colors'], doSave?: boolean) => void, boolean, () => void];
-export function useFloroState(query: PointerTypes['$(palette).colors.id<?>'], defaultData?: SchemaTypes['$(palette).colors.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(palette).colors.id<?>']|null, (t: SchemaTypes['$(palette).colors.id<?>'], doSave?: boolean) => void, boolean, () => void];
-export function useFloroState(query: PointerTypes['$(palette).palette.id<?>'], defaultData?: SchemaTypes['$(palette).palette.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(palette).palette.id<?>']|null, (t: SchemaTypes['$(palette).palette.id<?>'], doSave?: boolean) => void, boolean, () => void];
+export function useFloroState(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], defaultData?: SchemaTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|null, (t: SchemaTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], doSave?: boolean) => void, boolean, () => void];
+export function useFloroState(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades'], defaultData?: SchemaTypes['$(palette).colorPalettes.id<?>.colorShades'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(palette).colorPalettes.id<?>.colorShades']|null, (t: SchemaTypes['$(palette).colorPalettes.id<?>.colorShades'], doSave?: boolean) => void, boolean, () => void];
+export function useFloroState(query: PointerTypes['$(palette).colorPalettes.id<?>'], defaultData?: SchemaTypes['$(palette).colorPalettes.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(palette).colorPalettes.id<?>']|null, (t: SchemaTypes['$(palette).colorPalettes.id<?>'], doSave?: boolean) => void, boolean, () => void];
 export function useFloroState(query: PointerTypes['$(palette).shades.id<?>'], defaultData?: SchemaTypes['$(palette).shades.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(palette).shades.id<?>']|null, (t: SchemaTypes['$(palette).shades.id<?>'], doSave?: boolean) => void, boolean, () => void];
-export function useFloroState(query: PointerTypes['$(palette).colors'], defaultData?: SchemaTypes['$(palette).colors'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(palette).colors']|null, (t: SchemaTypes['$(palette).colors'], doSave?: boolean) => void, boolean, () => void];
-export function useFloroState(query: PointerTypes['$(palette).palette'], defaultData?: SchemaTypes['$(palette).palette'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(palette).palette']|null, (t: SchemaTypes['$(palette).palette'], doSave?: boolean) => void, boolean, () => void];
+export function useFloroState(query: PointerTypes['$(palette).colorPalettes'], defaultData?: SchemaTypes['$(palette).colorPalettes'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(palette).colorPalettes']|null, (t: SchemaTypes['$(palette).colorPalettes'], doSave?: boolean) => void, boolean, () => void];
 export function useFloroState(query: PointerTypes['$(palette).shades'], defaultData?: SchemaTypes['$(palette).shades'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(palette).shades']|null, (t: SchemaTypes['$(palette).shades'], doSave?: boolean) => void, boolean, () => void];
 
 export function useFloroState<T>(query: string, defaultData?: T, mutateStoreWithDefault = true): [T|null, (t: T, doSave?: boolean) => void, boolean, () => void] {
@@ -799,13 +766,11 @@ export function useFloroState<T>(query: string, defaultData?: T, mutateStoreWith
   }, [query, pluginName, ctx.pluginState, ctx.applicationState, ctx.commandMode])
   return [getter, set, isLoading, save];
 };
-export function useIsFloroInvalid(query: PointerTypes['$(palette).palette.id<?>.colors.id<?>'], fuzzy?: boolean): boolean;
-export function useIsFloroInvalid(query: PointerTypes['$(palette).palette.id<?>.colors'], fuzzy?: boolean): boolean;
-export function useIsFloroInvalid(query: PointerTypes['$(palette).colors.id<?>'], fuzzy?: boolean): boolean;
-export function useIsFloroInvalid(query: PointerTypes['$(palette).palette.id<?>'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(palette).colorPalettes.id<?>'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(palette).shades.id<?>'], fuzzy?: boolean): boolean;
-export function useIsFloroInvalid(query: PointerTypes['$(palette).colors'], fuzzy?: boolean): boolean;
-export function useIsFloroInvalid(query: PointerTypes['$(palette).palette'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(palette).colorPalettes'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(palette).shades'], fuzzy?: boolean): boolean;
 
 export function useIsFloroInvalid(query: PartialDiffableQuery|DiffableQuery, fuzzy = true): boolean {
@@ -827,13 +792,11 @@ export function useIsFloroInvalid(query: PartialDiffableQuery|DiffableQuery, fuz
     return containsDiffable(invalidQueriesSet, query, false);
   }, [invalidQueriesSet, query, fuzzy])
 };
-export function useWasAdded(query: PointerTypes['$(palette).palette.id<?>.colors.id<?>'], fuzzy?: boolean): boolean;
-export function useWasAdded(query: PointerTypes['$(palette).palette.id<?>.colors'], fuzzy?: boolean): boolean;
-export function useWasAdded(query: PointerTypes['$(palette).colors.id<?>'], fuzzy?: boolean): boolean;
-export function useWasAdded(query: PointerTypes['$(palette).palette.id<?>'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(palette).colorPalettes.id<?>'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(palette).shades.id<?>'], fuzzy?: boolean): boolean;
-export function useWasAdded(query: PointerTypes['$(palette).colors'], fuzzy?: boolean): boolean;
-export function useWasAdded(query: PointerTypes['$(palette).palette'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(palette).colorPalettes'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(palette).shades'], fuzzy?: boolean): boolean;
 
 export function useWasAdded(query: PartialDiffableQuery|DiffableQuery, fuzzy = true): boolean {
@@ -848,13 +811,11 @@ export function useWasAdded(query: PartialDiffableQuery|DiffableQuery, fuzzy = t
     return containsDiffable(ctx.changeset, query, false);
   }, [ctx.changeset, query, fuzzy, ctx.compareFrom, ctx.commandMode])
 };
-export function useWasRemoved(query: PointerTypes['$(palette).palette.id<?>.colors.id<?>'], fuzzy?: boolean): boolean;
-export function useWasRemoved(query: PointerTypes['$(palette).palette.id<?>.colors'], fuzzy?: boolean): boolean;
-export function useWasRemoved(query: PointerTypes['$(palette).colors.id<?>'], fuzzy?: boolean): boolean;
-export function useWasRemoved(query: PointerTypes['$(palette).palette.id<?>'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(palette).colorPalettes.id<?>'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(palette).shades.id<?>'], fuzzy?: boolean): boolean;
-export function useWasRemoved(query: PointerTypes['$(palette).colors'], fuzzy?: boolean): boolean;
-export function useWasRemoved(query: PointerTypes['$(palette).palette'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(palette).colorPalettes'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(palette).shades'], fuzzy?: boolean): boolean;
 
 export function useWasRemoved(query: PartialDiffableQuery|DiffableQuery, fuzzy = true): boolean {
@@ -869,13 +830,11 @@ export function useWasRemoved(query: PartialDiffableQuery|DiffableQuery, fuzzy =
     return containsDiffable(ctx.changeset, query, false);
   }, [ctx.changeset, query, fuzzy, ctx.compareFrom, ctx.commandMode])
 };
-export function useHasConflict(query: PointerTypes['$(palette).palette.id<?>.colors.id<?>'], fuzzy?: boolean): boolean;
-export function useHasConflict(query: PointerTypes['$(palette).palette.id<?>.colors'], fuzzy?: boolean): boolean;
-export function useHasConflict(query: PointerTypes['$(palette).colors.id<?>'], fuzzy?: boolean): boolean;
-export function useHasConflict(query: PointerTypes['$(palette).palette.id<?>'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(palette).colorPalettes.id<?>'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(palette).shades.id<?>'], fuzzy?: boolean): boolean;
-export function useHasConflict(query: PointerTypes['$(palette).colors'], fuzzy?: boolean): boolean;
-export function useHasConflict(query: PointerTypes['$(palette).palette'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(palette).colorPalettes'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(palette).shades'], fuzzy?: boolean): boolean;
 
 export function useHasConflict(query: PartialDiffableQuery|DiffableQuery, fuzzy = true): boolean {
@@ -890,13 +849,11 @@ export function useHasConflict(query: PartialDiffableQuery|DiffableQuery, fuzzy 
     return containsDiffable(ctx.conflictSet, query, false);
   }, [ctx.conflictSet, query, fuzzy, ctx.commandMode])
 };
-export function useWasChanged(query: PointerTypes['$(palette).palette.id<?>.colors.id<?>'], fuzzy?: boolean): boolean;
-export function useWasChanged(query: PointerTypes['$(palette).palette.id<?>.colors'], fuzzy?: boolean): boolean;
-export function useWasChanged(query: PointerTypes['$(palette).colors.id<?>'], fuzzy?: boolean): boolean;
-export function useWasChanged(query: PointerTypes['$(palette).palette.id<?>'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(palette).colorPalettes.id<?>'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(palette).shades.id<?>'], fuzzy?: boolean): boolean;
-export function useWasChanged(query: PointerTypes['$(palette).colors'], fuzzy?: boolean): boolean;
-export function useWasChanged(query: PointerTypes['$(palette).palette'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(palette).colorPalettes'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(palette).shades'], fuzzy?: boolean): boolean;
 
 export function useWasChanged(query: PartialDiffableQuery|DiffableQuery, fuzzy = true): boolean {
@@ -922,13 +879,11 @@ export function useWasChanged(query: PartialDiffableQuery|DiffableQuery, fuzzy =
   }, [ctx.changeset, query, fuzzy, ctx.compareFrom, ctx.commandMode])
   return wasAdded || wasRemoved;
 };
-export function useHasIndication(query: PointerTypes['$(palette).palette.id<?>.colors.id<?>'], fuzzy?: boolean): boolean;
-export function useHasIndication(query: PointerTypes['$(palette).palette.id<?>.colors'], fuzzy?: boolean): boolean;
-export function useHasIndication(query: PointerTypes['$(palette).colors.id<?>'], fuzzy?: boolean): boolean;
-export function useHasIndication(query: PointerTypes['$(palette).palette.id<?>'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(palette).colorPalettes.id<?>'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(palette).shades.id<?>'], fuzzy?: boolean): boolean;
-export function useHasIndication(query: PointerTypes['$(palette).colors'], fuzzy?: boolean): boolean;
-export function useHasIndication(query: PointerTypes['$(palette).palette'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(palette).colorPalettes'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(palette).shades'], fuzzy?: boolean): boolean;
 
 export function useHasIndication(query: PartialDiffableQuery|DiffableQuery, fuzzy = true): boolean {
