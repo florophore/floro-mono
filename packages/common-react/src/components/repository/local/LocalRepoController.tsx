@@ -191,20 +191,58 @@ const LocalRepoController = (props: Props) => {
           </NoPluginContainer>
         );
     }
-    return (
-      <LocalPluginController
-        pluginName={props.plugin}
-        repository={props.repository}
-        apiResponse={data}
-        isExpanded={props.isExpanded}
-        onSetIsExpanded={props.onSetIsExpanded}
-        onToggleCommandMode={onToggleCommandMode}
-        onToggleCompareMode={onToggleCompare}
-        onToggleAfter={onGoToAfter}
-        onToggleBefore={onGoToBefore}
-        onToggleBranches={onToggleBranches}
-      />
-    );
+
+    if (data?.repoState?.commandMode == "compare" && compareFrom == "before") {
+
+      return (
+        <>
+          {data?.beforeState?.plugins?.map((plugin) => {
+            return (
+              <React.Fragment key={plugin.key + ":" + plugin.value}>
+                {plugin.key == props.plugin && (
+                  <LocalPluginController
+                    pluginName={props.plugin}
+                    repository={props.repository}
+                    apiResponse={data}
+                    isExpanded={props.isExpanded}
+                    onSetIsExpanded={props.onSetIsExpanded}
+                    onToggleCommandMode={onToggleCommandMode}
+                    onToggleCompareMode={onToggleCompare}
+                    onToggleAfter={onGoToAfter}
+                    onToggleBefore={onGoToBefore}
+                    onToggleBranches={onToggleBranches}
+                  />
+                )}
+              </React.Fragment>
+            )
+          })}
+        </>
+      )
+    }
+      return (
+        <>
+          {data?.applicationState?.plugins?.map((plugin) => {
+            return (
+              <React.Fragment key={plugin.key + ":" + plugin.value}>
+                {plugin.key == props.plugin && (
+                  <LocalPluginController
+                    pluginName={props.plugin}
+                    repository={props.repository}
+                    apiResponse={data}
+                    isExpanded={props.isExpanded}
+                    onSetIsExpanded={props.onSetIsExpanded}
+                    onToggleCommandMode={onToggleCommandMode}
+                    onToggleCompareMode={onToggleCompare}
+                    onToggleAfter={onGoToAfter}
+                    onToggleBefore={onGoToBefore}
+                    onToggleBranches={onToggleBranches}
+                  />
+                )}
+              </React.Fragment>
+            )
+          })}
+        </>
+      );
   }, [
     onToggleCommandMode,
     props.onSetIsExpanded,
