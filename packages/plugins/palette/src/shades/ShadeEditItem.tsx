@@ -5,10 +5,15 @@ import { Reorder, useDragControls } from "framer-motion";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import Input from "@floro/storybook/stories/design-system/Input";
+
 import XCircleLight from "@floro/common-assets/assets/images/icons/red_x_circle.light.svg";
 import XCircleDark from "@floro/common-assets/assets/images/icons/red_x_circle.dark.svg";
+
 import DraggerLight from "@floro/common-assets/assets/images/icons/dragger.light.svg";
 import DraggerDark from "@floro/common-assets/assets/images/icons/dragger.dark.svg";
+
+import WarningLight from "@floro/common-assets/assets/images/icons/warning.light.svg";
+import WarningDark from "@floro/common-assets/assets/images/icons/warning.dark.svg";
 
 const ShadeContainer = styled.div`
   padding: 0px 0px 0px 0px;
@@ -49,6 +54,22 @@ const DragIcon = styled.img`
   pointer-events: none;
   user-select: none;
 `;
+
+const RowTitle = styled.h1`
+  font-family: "MavenPro";
+  font-weight: 600;
+  font-size: 1.7rem;
+  color: ${(props) => props.theme.colors.contrastText};
+  padding: 0;
+  margin: 0;
+`;
+
+const WarningIconImg = styled.img`
+  height: 24px;
+  width: 24x;
+  margin-left: 16px;
+`;
+
 
 const shadeItemVariants = {
   hidden: { opacity: 0 },
@@ -123,6 +144,18 @@ const ShadeEditItem = (props: ShadeItemProps) => {
     controls.start(event);
   }, [controls]);
 
+  const warningIcon = useMemo(() => {
+    if (theme.name == "light") {
+      return WarningLight;
+    }
+    return WarningDark;
+  }, [theme.name]);
+
+  const title = useMemo(
+    () => (isInvalid ? props.shade.id : props.shade.name),
+    [isInvalid, props.shade]
+  );
+
   return (
     <Reorder.Item
       dragListener={false}
@@ -147,6 +180,8 @@ const ShadeEditItem = (props: ShadeItemProps) => {
         >
             <DragIcon src={draggerIcon}/>
         </DragShadeContainer>
+
+        {false && (
         <Input
           value={name ?? ""}
           label={"shade name"}
@@ -154,9 +189,13 @@ const ShadeEditItem = (props: ShadeItemProps) => {
           onTextChanged={setName}
           isValid={!isInvalid}
         />
+        )}
+
+        <RowTitle style={{ color: theme.colors.contrastText, marginTop: 12, width: 168 }}>{title}</RowTitle>
         <DeleteShadeContainer onClick={onRemove}>
           <DeleteShade src={xIcon} />
         </DeleteShadeContainer>
+        {isInvalid && <WarningIconImg style={{marginTop: 14}} src={warningIcon} />}
       </ShadeContainer>
     </Reorder.Item>
   );

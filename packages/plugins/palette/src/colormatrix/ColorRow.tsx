@@ -278,6 +278,9 @@ const ColorRow = (props: Props) => {
       <TitleRow>
         {commandMode != "edit" && (
           <>
+            <DragShadeContainer style={{cursor: "default"}}>
+              <IndicatorCircle style={{backgroundColor: color, marginTop: -12}} />
+            </DragShadeContainer>
             <RowTitle style={{ color }}>{title}</RowTitle>
             {isInvalid && <WarningIconImg src={warningIcon} />}
           </>
@@ -298,13 +301,16 @@ const ColorRow = (props: Props) => {
               <DragShadeContainer style={{cursor: "default"}}>
                 <IndicatorCircle style={{backgroundColor: color}} />
               </DragShadeContainer>
-              <Input
-                value={name ?? ""}
-                label={"color name"}
-                placeholder={colorPalette?.id ?? ""}
-                onTextChanged={setName}
-                isValid={!isInvalid}
-              />
+              {false && (
+                <Input
+                  value={name ?? ""}
+                  label={"color name"}
+                  placeholder={colorPalette?.id ?? ""}
+                  onTextChanged={setName}
+                  isValid={!isInvalid}
+                />
+              )}
+              <RowTitle style={{ color, marginTop: 12, width: 168 }}>{title}</RowTitle>
               <DeleteShadeContainer onClick={onRemove}>
                 <DeleteShade src={xIcon} />
               </DeleteShadeContainer>
@@ -327,6 +333,7 @@ const ColorRow = (props: Props) => {
                   key={shade.id}
                   shade={shade}
                   colorPalette={props.colorPalette}
+                  isReOrderMode={props.isReOrderMode}
                 />
               );
             })}

@@ -146,11 +146,12 @@ const PluginEditor = (props: Props) => {
     props?.apiResponse?.conflictResolution
   ]);
 
+
   return (
     <div>
-      {(props.apiResponse?.applicationState?.plugins?.length ?? 0) > 0 && (
+      {(plugins?.length ?? 0) > 0 && (
         <PluginContainer>
-          {props.apiResponse.applicationState.plugins.map((pluginKV, index) => {
+          {plugins.map((pluginKV, index) => {
             return (
               <PluginEditorRow
                 key={index}

@@ -28,6 +28,11 @@ export default defineConfig(({ command, mode }): any => {
       FLORO_MANIFEST_NAME: JSON.stringify(manifest.name),
       FLORO_MANIFEST_VERSION: JSON.stringify(manifest.version),
     },
+    server: {
+      hmr: {
+        port: 5174
+      }
+    },
     build: {
       rollupOptions: {
         output: {

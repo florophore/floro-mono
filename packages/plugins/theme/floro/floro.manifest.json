@@ -1,0 +1,119 @@
+{
+  "version": "0.0.0",
+  "name": "theme",
+  "displayName": "Theme",
+  "icon": {
+    "light": "./theme.unselected.light.svg",
+    "dark": "./theme.unselected.dark.svg",
+    "selected": {
+      "light": "./theme.selected.light.svg",
+      "dark": "./theme.selected.dark.svg"
+    }
+  },
+  "imports": {
+    "palette": "dev@0.0.0"
+  },
+  "types": {
+    "Theme": {
+      "id": {
+        "type": "string",
+        "isKey": true
+      },
+      "name": {
+        "type": "string"
+      },
+      "backgroundColor": {
+        "hexcode": {
+          "nullable": false,
+          "type": "string"
+        },
+        "alpha": {
+          "nullable": false,
+          "type": "int",
+          "default": 255
+        }
+      }
+    },
+    "ThemeColor": {
+      "id": {
+        "type": "string",
+        "isKey": true
+      },
+      "name": {
+        "type": "string"
+      },
+      "themeDefinitions": {
+        "type": "set",
+        "bounded": true,
+        "values": {
+          "id": {
+            "type": "ref<$.themes.values>",
+            "isKey": true
+          },
+          "paletteColorShade": {
+            "type": "ref<palette.ColorShade>",
+            "nullable": false,
+            "onDelete": "nullify"
+          },
+          "paletteColor": {
+            "type": "ref<palette.Color>",
+            "nullable": false,
+            "onDelete": "nullify"
+          }
+        }
+      }
+    }
+  },
+  "store": {
+    "themes": {
+      "type": "set",
+      "values": "Theme"
+    },
+    "themeColors": {
+      "type": "set",
+      "values": "ThemeColor"
+    }
+  },
+  "seed": {
+    "themes": [
+      {
+        "id": "light",
+        "name": "Light",
+        "backgroundColor": {
+          "hexcode": "#FFFFFF",
+          "alpha": 255
+        }
+      },
+      {
+        "id": "dark",
+        "name": "Dark",
+        "backgroundColor": {
+          "hexcode": "#000000",
+          "alpha": 255
+        }
+      }
+    ],
+    "themeColors": [
+      {
+        "id": "primary-font-color",
+        "name": "Primary Font Color",
+        "themeDefinitions": []
+      },
+      {
+        "id": "secondary-font-color",
+        "name": "Secondary Font Color",
+        "themeDefinitions": []
+      },
+      {
+        "id": "primary-background-color",
+        "name": "Primary Background Color",
+        "themeDefinitions": []
+      },
+      {
+        "id": "secondary-background-color",
+        "name": "Secondary Background Color",
+        "themeDefinitions": []
+      }
+    ]
+  }
+}

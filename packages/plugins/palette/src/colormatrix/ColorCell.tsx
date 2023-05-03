@@ -147,11 +147,12 @@ const ExitIndicatorImg = styled.img`
 interface Props {
   colorPalette: SchemaTypes["$(palette).colorPalettes.id<?>"];
   shade: SchemaTypes["$(palette).shades.id<?>"];
+  isReOrderMode: boolean;
 }
 
 const ColorRow = (props: Props) => {
   const theme = useTheme();
-  const { commandMode } = useFloroContext();
+  const { commandMode, changeset } = useFloroContext();
   const shadeRef = useQueryRef("$(palette).shades.id<?>", props.shade.id);
   const inputRef = useRef<HTMLInputElement>(null);
   const colorCircle = useRef<HTMLDivElement>(null);
@@ -281,13 +282,13 @@ const ColorRow = (props: Props) => {
             </>
           )}
         </CardInterior>
-        {showEditor && (
+        {showEditor && !props.isReOrderMode && (
             <EditIndicatorWrapper onClick={onShowEditor}>
                 <EditIndicatorImg src={editIcon} />
                 <HiddenColorInput ref={inputRef} onChange={onChange} onBlur={onBlurHiddenInput} type={'color'} defaultValue={paletteColor?.hexcode ?? '#000000'}/>
             </EditIndicatorWrapper>
         )}
-        {isEditting && commandMode == "edit" && (
+        {isEditting && commandMode == "edit" && !props.isReOrderMode && (
             <ExitIndicatorWrapper onClick={onUnsetColor}>
                 <ExitIndicatorImg src={exitIcon}/>
             </ExitIndicatorWrapper>

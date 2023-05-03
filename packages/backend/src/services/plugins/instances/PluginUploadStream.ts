@@ -4,7 +4,7 @@ import path from "path";
 import isSvg from "is-svg";
 import semver from "semver";
 import { init as CJSInit, parse as CJSParser } from "cjs-module-lexer";
-import * as fastXML from "fast-xml-parser";
+import { XMLValidator }from "fast-xml-parser";
 import { Manifest } from "@floro/floro-lib/src/plugins";
 import { v4 as uuidv4} from 'uuid';
 import os from 'os';
@@ -344,7 +344,7 @@ export class PluginUploadStream {
       this.originalIndexHTML = this.entryMap["index.html"]?.toString();
       delete this.entryMap["index.html"];
       try {
-        fastXML.validate(this.originalIndexHTML);
+        XMLValidator.validate(this.originalIndexHTML)
       } catch (e) {
         this.hasErrors = true;
         this.errorMessage = `Failed to parse index.html.`;
