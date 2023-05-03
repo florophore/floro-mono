@@ -770,19 +770,17 @@ export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(th
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(theme).themes']): SchemaTypes['$(theme).themes'];
 
 export function getReferencedObject<T>(root: SchemaRoot, query?: string): T|null {
-  return useMemo(() => {
-    if (!query) {
-      return null;
-    }
-    const existingObj = getObjectInStateMap(
-      root,
-      query
-    );
-    if (existingObj) {
-      return existingObj as T;
-    }
+  if (!query) {
     return null;
-  }, [query, root]);
+  }
+  const existingObj = getObjectInStateMap(
+    root,
+    query
+  );
+  if (existingObj) {
+    return existingObj as T;
+  }
+  return null;
 };
 
 export function useReferencedObject(query?: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']): SchemaTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];

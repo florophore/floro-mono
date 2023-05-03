@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useCallback, useState, useRef } from "react";
 import {
+  getReferencedObject,
+  makeQueryRef,
   useFloroContext,
   useFloroState,
   useIsFloroInvalid,
@@ -72,15 +74,24 @@ const ThemeDefMatrix = (props: Props) => {
   const input = useRef<HTMLInputElement>(null);
 
   const [themeColors, setThemeColors, isLoading, save] = useFloroState("$(theme).themeColors");
-  const themeColorsIsInvalid = useIsFloroInvalid("$(theme).themeColors");
 
   const [isDragging, setIsDragging] = useState(false);
   const [newColorName, setNewColorName] = useState("");
   const [isReOrderMode, setIsReOrderMode] = useState(false);
 
-  const onReOrderColors = useCallback(
-    (values: SchemaTypes["$(theme).themeColors"]) => setThemeColors(values, false),
-    []
+  const onReOrderThemeColors = useCallback(
+    (values: SchemaTypes["$(theme).themeColors"]) => {
+      if (applicationState) {
+        const remap = values.map((v) => {
+            return getReferencedObject(
+              applicationState,
+              makeQueryRef("$(theme).themeColors.id<?>", v.id)
+            );
+          });
+        setThemeColors(remap, false);
+      }
+    },
+    [applicationState]
   );
 
   const onRemove = useCallback(
@@ -201,7 +212,7 @@ const ThemeDefMatrix = (props: Props) => {
           <Reorder.Group
             axis="y"
             values={themeColors ?? []}
-            onReorder={onReOrderColors}
+            onReorder={onReOrderThemeColors}
             className={css(`
             padding: 24px 0px 0px 0px;
         `)}

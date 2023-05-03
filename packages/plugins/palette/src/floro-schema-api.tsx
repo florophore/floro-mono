@@ -6,60 +6,20 @@ export type PartialDiffableQuery = `$(palette).colorPalettes.id<${string}>.color
 
 export type DiffableQuery = `$(palette).colorPalettes.id<${string}>.colorShades.id<${QueryTypes['$(palette).shades.id<?>']}>`|`$(palette).colorPalettes.id<${string}>`|`$(palette).shades.id<${string}>`;
 
-export type QueryTypes = {
-  ['$(palette).colorPalettes.id<?>']: `$(palette).colorPalettes.id<${string}>`;
-  ['$(palette).colorPalettes.id<?>.colorShades.id<?>']: `$(palette).colorPalettes.id<${string}>.colorShades.id<${QueryTypes['$(palette).shades.id<?>']}>`;
-  ['$(palette).shades.id<?>']: `$(palette).shades.id<${string}>`;
-};
-
-export function makeQueryRef(query: '$(palette).colorPalettes.id<?>', arg0: string): QueryTypes['$(palette).colorPalettes.id<?>'];
-export function makeQueryRef(query: '$(palette).colorPalettes.id<?>.colorShades.id<?>', arg0: string, arg1: QueryTypes['$(palette).shades.id<?>']): QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
-export function makeQueryRef(query: '$(palette).shades.id<?>', arg0: string): QueryTypes['$(palette).shades.id<?>'];
-export function makeQueryRef(query: '$(palette).colorPalettes.id<?>'|'$(palette).colorPalettes.id<?>.colorShades.id<?>'|'$(palette).shades.id<?>', arg0: string, arg1?: QueryTypes['$(palette).shades.id<?>']): QueryTypes['$(palette).colorPalettes.id<?>']|QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|QueryTypes['$(palette).shades.id<?>']|null {
-  if ((arg0 != null && arg0 != undefined) && query == '$(palette).colorPalettes.id<?>') {
-    return `$(palette).colorPalettes.id<${arg0 as string}>`;
-  }
-  if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && query == '$(palette).colorPalettes.id<?>.colorShades.id<?>') {
-    return `$(palette).colorPalettes.id<${arg0 as string}>.colorShades.id<${arg1 as QueryTypes['$(palette).shades.id<?>']}>`;
-  }
-  if ((arg0 != null && arg0 != undefined) && query == '$(palette).shades.id<?>') {
-    return `$(palette).shades.id<${arg0 as string}>`;
-  }
-  return null;
-};
-
-export function useQueryRef(query: '$(palette).colorPalettes.id<?>', arg0: string): QueryTypes['$(palette).colorPalettes.id<?>'];
-export function useQueryRef(query: '$(palette).colorPalettes.id<?>.colorShades.id<?>', arg0: string, arg1: QueryTypes['$(palette).shades.id<?>']): QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
-export function useQueryRef(query: '$(palette).shades.id<?>', arg0: string): QueryTypes['$(palette).shades.id<?>'];
-export function useQueryRef(query: '$(palette).colorPalettes.id<?>'|'$(palette).colorPalettes.id<?>.colorShades.id<?>'|'$(palette).shades.id<?>', arg0: string, arg1?: QueryTypes['$(palette).shades.id<?>']): QueryTypes['$(palette).colorPalettes.id<?>']|QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|QueryTypes['$(palette).shades.id<?>']|null {
-  return useMemo(() => {
-    if (query == '$(palette).colorPalettes.id<?>') {
-      return makeQueryRef(query, arg0 as string);
-    }
-    if (query == '$(palette).colorPalettes.id<?>.colorShades.id<?>') {
-      return makeQueryRef(query, arg0 as string, arg1 as QueryTypes['$(palette).shades.id<?>']);
-    }
-    if (query == '$(palette).shades.id<?>') {
-      return makeQueryRef(query, arg0 as string);
-    }
-    return null;
-  }, [query, arg0, arg1]);
-};
-
 export type SchemaTypes = {
   ['$(palette).colorPalettes.id<?>.colorShades.id<?>']: {
-    ['alpha']?: number;
+    ['alpha']: number;
     ['hexcode']?: string;
     ['id']: QueryTypes['$(palette).shades.id<?>'];
   };
   ['$(palette).colorPalettes.id<?>.colorShades']: Array<{
-    ['alpha']?: number;
+    ['alpha']: number;
     ['hexcode']?: string;
     ['id']: QueryTypes['$(palette).shades.id<?>'];
   }>;
   ['$(palette).colorPalettes.id<?>']: {
     ['colorShades']: Array<{
-      ['alpha']?: number;
+      ['alpha']: number;
       ['hexcode']?: string;
       ['id']: QueryTypes['$(palette).shades.id<?>'];
     }>;
@@ -72,7 +32,7 @@ export type SchemaTypes = {
   };
   ['$(palette).colorPalettes']: Array<{
     ['colorShades']: Array<{
-      ['alpha']?: number;
+      ['alpha']: number;
       ['hexcode']?: string;
       ['id']: QueryTypes['$(palette).shades.id<?>'];
     }>;
@@ -85,8 +45,6 @@ export type SchemaTypes = {
   }>;
 };
 
-
-export type DiffableReturnTypes = SchemaTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|SchemaTypes['$(palette).colorPalettes.id<?>.colorShades']|SchemaTypes['$(palette).colorPalettes.id<?>']|SchemaTypes['$(palette).shades.id<?>']|SchemaTypes['$(palette).colorPalettes']|SchemaTypes['$(palette).shades'];
 
 export type PointerTypes = {
   ['$(palette).colorPalettes.id<?>.colorShades.id<?>']: `$(palette).colorPalettes.id<${string}>.colorShades.id<${QueryTypes['$(palette).shades.id<?>']}>`;
@@ -102,7 +60,7 @@ export type SchemaRoot = {
   ['palette']: {
     ['colorPalettes']: Array<{
       ['colorShades']: Array<{
-        ['alpha']?: number;
+        ['alpha']: number;
         ['hexcode']?: string;
         ['id']: QueryTypes['$(palette).shades.id<?>'];
       }>;
@@ -117,26 +75,6 @@ export type SchemaRoot = {
 };
 
 
-export type RefReturnTypes = {
-  ['$(palette).colorPalettes.id<?>']: {
-    ['colorShades']: Array<{
-      ['alpha']?: number;
-      ['hexcode']?: string;
-      ['id']: QueryTypes['$(palette).shades.id<?>'];
-    }>;
-    ['id']: string;
-    ['name']: string;
-  };
-  ['$(palette).colorPalettes.id<?>.colorShades.id<?>']: {
-    ['alpha']?: number;
-    ['hexcode']?: string;
-    ['id']: QueryTypes['$(palette).shades.id<?>'];
-  };
-  ['$(palette).shades.id<?>']: {
-    ['id']: string;
-    ['name']: string;
-  };
-};
 
 interface Packet {
   id: string;
@@ -621,41 +559,76 @@ const updateObjectInStateMap = (
 };
 
 
+export type QueryTypes = {
+  ['$(palette).colorPalettes.id<?>']: `$(palette).colorPalettes.id<${string}>`;
+  ['$(palette).colorPalettes.id<?>.colorShades.id<?>']: `$(palette).colorPalettes.id<${string}>.colorShades.id<${QueryTypes['$(palette).shades.id<?>']}>`;
+  ['$(palette).shades.id<?>']: `$(palette).shades.id<${string}>`;
+};
 
-export function getReferencedObject(root: SchemaRoot, query: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']): RefReturnTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
-export function getReferencedObject(root: SchemaRoot, query: QueryTypes['$(palette).colorPalettes.id<?>']): RefReturnTypes['$(palette).colorPalettes.id<?>'];
-export function getReferencedObject(root: SchemaRoot, query: QueryTypes['$(palette).shades.id<?>']): RefReturnTypes['$(palette).shades.id<?>'];
-export function getReferencedObject(root: SchemaRoot, query: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|QueryTypes['$(palette).colorPalettes.id<?>']|QueryTypes['$(palette).shades.id<?>']): RefReturnTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|RefReturnTypes['$(palette).colorPalettes.id<?>']|RefReturnTypes['$(palette).shades.id<?>']|null {
-  if (root && query && replaceRefVarsWithWildcards(query) == '$(palette).colorPalettes.id<?>.colorShades.id<?>') {
-    return getObjectInStateMap(root, query) as RefReturnTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+export function makeQueryRef(query: '$(palette).colorPalettes.id<?>.colorShades.id<?>', arg0: string, arg1: QueryTypes['$(palette).shades.id<?>']): QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+export function makeQueryRef(query: '$(palette).colorPalettes.id<?>', arg0: string): QueryTypes['$(palette).colorPalettes.id<?>'];
+export function makeQueryRef(query: '$(palette).shades.id<?>', arg0: string): QueryTypes['$(palette).shades.id<?>'];
+export function makeQueryRef(query: '$(palette).colorPalettes.id<?>'|'$(palette).colorPalettes.id<?>.colorShades.id<?>'|'$(palette).shades.id<?>', arg0: string, arg1?: QueryTypes['$(palette).shades.id<?>']): QueryTypes['$(palette).colorPalettes.id<?>']|QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|QueryTypes['$(palette).shades.id<?>']|null {
+  if ((arg0 != null && arg0 != undefined) && query == '$(palette).colorPalettes.id<?>') {
+    return `$(palette).colorPalettes.id<${arg0 as string}>`;
   }
-  if (root && query && replaceRefVarsWithWildcards(query) == '$(palette).colorPalettes.id<?>') {
-    return getObjectInStateMap(root, query) as RefReturnTypes['$(palette).colorPalettes.id<?>'];
+  if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && query == '$(palette).colorPalettes.id<?>.colorShades.id<?>') {
+    return `$(palette).colorPalettes.id<${arg0 as string}>.colorShades.id<${arg1 as QueryTypes['$(palette).shades.id<?>']}>`;
   }
-  if (root && query && replaceRefVarsWithWildcards(query) == '$(palette).shades.id<?>') {
-    return getObjectInStateMap(root, query) as RefReturnTypes['$(palette).shades.id<?>'];
+  if ((arg0 != null && arg0 != undefined) && query == '$(palette).shades.id<?>') {
+    return `$(palette).shades.id<${arg0 as string}>`;
   }
   return null;
-}
-export function useReferencedObject(query: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']): RefReturnTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
-export function useReferencedObject(query: QueryTypes['$(palette).colorPalettes.id<?>']): RefReturnTypes['$(palette).colorPalettes.id<?>'];
-export function useReferencedObject(query: QueryTypes['$(palette).shades.id<?>']): RefReturnTypes['$(palette).shades.id<?>'];
-export function useReferencedObject(query: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|QueryTypes['$(palette).colorPalettes.id<?>']|QueryTypes['$(palette).shades.id<?>']): RefReturnTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|RefReturnTypes['$(palette).colorPalettes.id<?>']|RefReturnTypes['$(palette).shades.id<?>']|null {
-  const ctx = useFloroContext();
-  const root = ctx.applicationState;
+};
+
+export function useQueryRef(query: '$(palette).colorPalettes.id<?>.colorShades.id<?>', arg0: string, arg1: QueryTypes['$(palette).shades.id<?>']): QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+export function useQueryRef(query: '$(palette).colorPalettes.id<?>', arg0: string): QueryTypes['$(palette).colorPalettes.id<?>'];
+export function useQueryRef(query: '$(palette).shades.id<?>', arg0: string): QueryTypes['$(palette).shades.id<?>'];
+export function useQueryRef(query: '$(palette).colorPalettes.id<?>'|'$(palette).colorPalettes.id<?>.colorShades.id<?>'|'$(palette).shades.id<?>', arg0: string, arg1?: QueryTypes['$(palette).shades.id<?>']): QueryTypes['$(palette).colorPalettes.id<?>']|QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|QueryTypes['$(palette).shades.id<?>']|null {
   return useMemo(() => {
-    if (root && query && replaceRefVarsWithWildcards(query) == '$(palette).colorPalettes.id<?>.colorShades.id<?>') {
-      return getObjectInStateMap(root, query) as RefReturnTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+    if (query == '$(palette).colorPalettes.id<?>') {
+      return makeQueryRef(query, arg0 as string);
     }
-    if (root && query && replaceRefVarsWithWildcards(query) == '$(palette).colorPalettes.id<?>') {
-      return getObjectInStateMap(root, query) as RefReturnTypes['$(palette).colorPalettes.id<?>'];
+    if (query == '$(palette).colorPalettes.id<?>.colorShades.id<?>') {
+      return makeQueryRef(query, arg0 as string, arg1 as QueryTypes['$(palette).shades.id<?>']);
     }
-    if (root && query && replaceRefVarsWithWildcards(query) == '$(palette).shades.id<?>') {
-      return getObjectInStateMap(root, query) as RefReturnTypes['$(palette).shades.id<?>'];
+    if (query == '$(palette).shades.id<?>') {
+      return makeQueryRef(query, arg0 as string);
     }
     return null;
-  }, [root, query]);
-}
+  }, [query, arg0, arg1]);
+};
+
+export function extractQueryArgs(query?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']): [string, QueryTypes['$(palette).shades.id<?>']];
+export function extractQueryArgs(query?: QueryTypes['$(palette).colorPalettes.id<?>']): [string];
+export function extractQueryArgs(query?: QueryTypes['$(palette).shades.id<?>']): [string];
+export function extractQueryArgs(query?: string): Array<string> {
+  if (!query) {
+    return [];
+  }
+  return (
+    decodeSchemaPathWithArrays(query)
+      ?.filter((v) => typeof v != "string")
+      ?.map((v) => (v as { key: string; value: string }).value as string) ?? []
+  );
+};
+
+export function useExtractQueryArgs(query?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']): [string, QueryTypes['$(palette).shades.id<?>']];
+export function useExtractQueryArgs(query?: QueryTypes['$(palette).colorPalettes.id<?>']): [string];
+export function useExtractQueryArgs(query?: QueryTypes['$(palette).shades.id<?>']): [string];
+export function useExtractQueryArgs(query?: string): Array<string> {
+  return useMemo(() => {
+    if (!query) {
+      return [];
+    }
+    return (
+      decodeSchemaPathWithArrays(query)
+        ?.filter((v) => typeof v != "string")
+        ?.map((v) => (v as { key: string; value: string }).value as string) ?? []
+    );
+  }, [query]);
+};
+
 export function getPluginStore(plugin: 'palette'): SchemaRoot['palette'];
 export function getPluginStore(plugin: 'palette'): SchemaRoot['palette'] {
   const ctx = useFloroContext();
@@ -677,6 +650,52 @@ export function usePluginStore(plugin: 'palette'): SchemaRoot['palette'] {
     return root[plugin];
   }, [root, plugin]);
 }
+
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']): SchemaTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(palette).colorPalettes.id<?>.colorShades']): SchemaTypes['$(palette).colorPalettes.id<?>.colorShades'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(palette).colorPalettes.id<?>']): SchemaTypes['$(palette).colorPalettes.id<?>'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(palette).shades.id<?>']): SchemaTypes['$(palette).shades.id<?>'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(palette).colorPalettes']): SchemaTypes['$(palette).colorPalettes'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(palette).shades']): SchemaTypes['$(palette).shades'];
+
+export function getReferencedObject<T>(root: SchemaRoot, query?: string): T|null {
+  if (!query) {
+    return null;
+  }
+  const existingObj = getObjectInStateMap(
+    root,
+    query
+  );
+  if (existingObj) {
+    return existingObj as T;
+  }
+  return null;
+};
+
+export function useReferencedObject(query?: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']): SchemaTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+export function useReferencedObject(query?: PointerTypes['$(palette).colorPalettes.id<?>.colorShades']): SchemaTypes['$(palette).colorPalettes.id<?>.colorShades'];
+export function useReferencedObject(query?: PointerTypes['$(palette).colorPalettes.id<?>']): SchemaTypes['$(palette).colorPalettes.id<?>'];
+export function useReferencedObject(query?: PointerTypes['$(palette).shades.id<?>']): SchemaTypes['$(palette).shades.id<?>'];
+export function useReferencedObject(query?: PointerTypes['$(palette).colorPalettes']): SchemaTypes['$(palette).colorPalettes'];
+export function useReferencedObject(query?: PointerTypes['$(palette).shades']): SchemaTypes['$(palette).shades'];
+
+export function useReferencedObject<T>(query?: string): T|null {
+  const ctx = useFloroContext();
+  return useMemo(() => {
+    if (!query) {
+      return null;
+    }
+    const existingObj = getObjectInStateMap(
+      ctx.applicationState as SchemaRoot,
+      query
+    );
+    if (existingObj) {
+      return existingObj as T;
+    }
+    return null;
+  }, [query, ctx.applicationState]);
+};
+
 export function useFloroState(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], defaultData?: SchemaTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|null, (t: SchemaTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], doSave?: boolean) => void, boolean, () => void];
 export function useFloroState(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades'], defaultData?: SchemaTypes['$(palette).colorPalettes.id<?>.colorShades'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(palette).colorPalettes.id<?>.colorShades']|null, (t: SchemaTypes['$(palette).colorPalettes.id<?>.colorShades'], doSave?: boolean) => void, boolean, () => void];
 export function useFloroState(query: PointerTypes['$(palette).colorPalettes.id<?>'], defaultData?: SchemaTypes['$(palette).colorPalettes.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(palette).colorPalettes.id<?>']|null, (t: SchemaTypes['$(palette).colorPalettes.id<?>'], doSave?: boolean) => void, boolean, () => void];

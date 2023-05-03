@@ -71,19 +71,28 @@ interface Props {
 }
 
 const ColorPaletteMatrix = (props: Props) => {
-  const { commandMode } = useFloroContext();
+  const { commandMode, applicationState } = useFloroContext();
   const input = useRef<HTMLInputElement>(null);
 
   const [colorPalettes, setColorPalettes, isLoading, save] = useFloroState("$(palette).colorPalettes")
-  const colorPalettesIsInvalid = useIsFloroInvalid("$(palette).colorPalettes");
 
   const [isDragging, setIsDragging] = useState(false);
   const [newColorName, setNewColorName] = useState("");
   const [isReOrderMode, setIsReOrderMode] = useState(false);
 
   const onReOrderColors = useCallback(
-    (values: SchemaTypes["$(palette).colorPalettes"]) => setColorPalettes(values, false),
-    []
+    (values: SchemaTypes["$(palette).colorPalettes"]) => {
+      if (applicationState) {
+        const remap = values.map((v) => {
+            return getReferencedObject(
+              applicationState,
+              makeQueryRef("$(palette).colorPalettes.id<?>", v.id)
+            );
+          });
+        setColorPalettes(remap, false);
+      }
+    },
+    [applicationState]
   );
 
   const onRemove = useCallback(

@@ -7,6 +7,7 @@ import {
   useHasIndication,
   useIsFloroInvalid,
   useQueryRef,
+  useReferencedObject,
   useWasAdded,
   useWasRemoved,
 } from "../floro-schema-api";
@@ -159,7 +160,7 @@ const ColorRow = (props: Props) => {
     "$(palette).colorPalettes.id<?>",
     props.colorPalette.id
   );
-  const [colorPalette, setColorPalette, , save] = useFloroState(colorPaletteRef);
+  const [colorPalette, setColorPalette] = useFloroState(colorPaletteRef);
   const isInvalid = useIsFloroInvalid(colorPaletteRef, false);
   const wasRemoved = useWasRemoved(colorPaletteRef, false);
   const wasAdded = useWasAdded(colorPaletteRef, false);
@@ -200,7 +201,7 @@ const ColorRow = (props: Props) => {
     [isInvalid, props.colorPalette]
   );
 
-  const [shades] = useFloroState("$(palette).shades", [], false);
+  const shades = useReferencedObject("$(palette).shades");
 
   const xIcon = useMemo(() => {
     if (theme.name == "light") {
