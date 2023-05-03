@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback, useState, useEffect } from "react";
 import { useTheme } from "@emotion/react";
-import { SchemaTypes, useFloroState, useIsFloroInvalid } from "../floro-schema-api";
+import { SchemaTypes, getReferencedObject, makeQueryRef, useFloroContext, useFloroState, useIsFloroInvalid } from "../floro-schema-api";
 import { AnimatePresence, Reorder } from "framer-motion";
 import styled from "@emotion/styled";
 import { css } from "@emotion/css";
@@ -55,6 +55,7 @@ const WarningIconImg = styled.img`
 
 const ShadeEditList = () => {
   const theme = useTheme();
+  const { applicationState } = useFloroContext();
   const [isDragging, setIsDragging] = useState(false);
   const [newShadeName, setNewShadeName] = useState("");
   const [shades, setShades, isLoading, save] = useFloroState(
@@ -78,8 +79,18 @@ const ShadeEditList = () => {
   const isInvalid = useIsFloroInvalid("$(palette).shades");
 
   const onReOrderShades = useCallback(
-    (values: SchemaTypes["$(palette).shades"]) => setShades(values, false),
-    []
+    (values: SchemaTypes["$(palette).shades"]) => {
+      if (applicationState) {
+        const remap = values.map((v) => {
+          return getReferencedObject(
+            applicationState,
+            makeQueryRef("$(palette).shades.id<?>", v.id)
+          );
+        });
+        setShades(remap, false);
+      }
+    },
+    [applicationState]
   );
 
   const onRemove = useCallback(

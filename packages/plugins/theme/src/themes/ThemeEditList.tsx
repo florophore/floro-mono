@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback, useState, useEffect } from "react";
 import { useTheme } from "@emotion/react";
-import { SchemaTypes, useFloroState, useIsFloroInvalid } from "../floro-schema-api";
+import { SchemaTypes, getReferencedObject, makeQueryRef, useFloroContext, useFloroState, useIsFloroInvalid } from "../floro-schema-api";
 import { AnimatePresence, Reorder } from "framer-motion";
 import styled from "@emotion/styled";
 import { css } from "@emotion/css";
@@ -66,6 +66,7 @@ const WarningIconImg = styled.img`
 
 const ThemeEditList = () => {
   const theme = useTheme();
+  const { applicationState } = useFloroContext();
   const [isDragging, setIsDragging] = useState(false);
   const [newThemeName, setNewThemeName] = useState("");
   const [newThemeColor, setNewThemeColor] = useState("#FFFFFF");
@@ -76,9 +77,17 @@ const ThemeEditList = () => {
 
   const onReOrderThemes = useCallback(
     (values: SchemaTypes["$(theme).themes"]) => {
-      setThemes(values, false)
+      if (applicationState) {
+        const remap = values.map((v) => {
+          return getReferencedObject(
+            applicationState,
+            makeQueryRef("$(theme).themes.id<?>", v.id)
+          );
+        });
+        setThemes(remap, false);
+      }
     },
-    []
+    [applicationState]
   );
 
   const onRemove = useCallback(

@@ -2,6 +2,7 @@ import React from "react";
 import {
   PointerTypes,
   useFloroState,
+  useReferencedObject,
 } from "../floro-schema-api";
 import styled from "@emotion/styled";
 import ColorRow from "./ColorRow";
@@ -20,7 +21,7 @@ interface Props {
 }
 
 const ColorPaletteMatrix = (props: Props) => {
-  const [colorPalettes] = useFloroState("$(palette).colorPalettes");
+  const colorPalettes = useReferencedObject("$(palette).colorPalettes");
   return (
     <Container>
       <div style={{padding: 16}}>

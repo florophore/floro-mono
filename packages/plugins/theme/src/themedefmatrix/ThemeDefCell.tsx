@@ -20,7 +20,7 @@ import ColorPalette from "@floro/styles/ColorPalette";
 import EditLight from "@floro/common-assets/assets/images/icons/edit.light.svg";
 import EditDark from "@floro/common-assets/assets/images/icons/edit.dark.svg";
 
-import PalettePicker from "../colormatrix/PalettePicker";
+import PalettePicker from "../palettecolormatrix/PalettePicker";
 
 import WarningLight from "@floro/common-assets/assets/images/icons/warning.light.svg";
 import WarningDark from "@floro/common-assets/assets/images/icons/warning.dark.svg";

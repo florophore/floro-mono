@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback, useState, useEffect, useRef } from "react";
-import { SchemaTypes, useFloroState, useHasConflict, useIsFloroInvalid, useQueryRef, useWasAdded, useWasRemoved } from "../floro-schema-api";
+import { SchemaTypes, useFloroState, useHasConflict, useIsFloroInvalid, useQueryRef, useReferencedObject, useWasAdded, useWasRemoved } from "../floro-schema-api";
 import { Reorder, useDragControls } from "framer-motion";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
@@ -136,7 +136,7 @@ interface ShadeItemProps {
 const ThemeReadItem = (props: ShadeItemProps) => {
   const theme = useTheme();
   const themeQuery = useQueryRef("$(theme).themes.id<?>", props.themeObject.id);
-  const [themeObject, setTheme] = useFloroState(themeQuery);
+  const themeObject = useReferencedObject(themeQuery);
 
   const isInvalid = useIsFloroInvalid(themeQuery, true);
   const wasRemoved = useWasRemoved(themeQuery, true);

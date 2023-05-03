@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { useFloroState, useHasIndication, useIsFloroInvalid } from "../floro-schema-api";
+import { useFloroState, useHasIndication, useIsFloroInvalid, useReferencedObject } from "../floro-schema-api";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
@@ -37,24 +37,7 @@ const WarningIconImg = styled.img`
 
 const ShadeReadList = () => {
   const theme = useTheme();
-  const [shades] = useFloroState(
-    "$(palette).shades",
-    [
-      {
-        id: "light",
-        name: "Light",
-      },
-      {
-        id: "regular",
-        name: "Regular",
-      },
-      {
-        id: "dark",
-        name: "Dark",
-      },
-    ],
-    false
-  );
+  const shades = useReferencedObject("$(palette).shades");
 
   const hasIndication = useHasIndication("$(palette).shades");
   const isInvalid = useIsFloroInvalid("$(palette).shades");

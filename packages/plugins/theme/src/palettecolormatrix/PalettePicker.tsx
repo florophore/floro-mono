@@ -9,7 +9,7 @@ import { css } from "@emotion/css";
 import { useTheme } from "@emotion/react";
 import ToolTipArrowLight from "@floro/common-assets/assets/images/icons/tooltip_arrow.light.svg";
 import ToolTipArrowDark from "@floro/common-assets/assets/images/icons/tooltip_arrow.dark.svg";
-import ColorPaletteMatrix from "../colormatrix/ColorPaletteMatrix";
+import ColorPaletteMatrix from "./ColorPaletteMatrix";
 
 
 interface Props {

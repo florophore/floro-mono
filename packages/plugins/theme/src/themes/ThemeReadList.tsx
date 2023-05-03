@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback, useState, useEffect } from "react";
 import { useTheme } from "@emotion/react";
-import { SchemaTypes, useFloroState, useHasIndication, useIsFloroInvalid } from "../floro-schema-api";
+import { SchemaTypes, useFloroState, useHasIndication, useIsFloroInvalid, useReferencedObject } from "../floro-schema-api";
 import { AnimatePresence, Reorder } from "framer-motion";
 import styled from "@emotion/styled";
 import { css } from "@emotion/css";
@@ -68,7 +68,7 @@ const WarningIconImg = styled.img`
 
 const ThemeReadList = () => {
   const theme = useTheme();
-  const [themes, setThemes, isLoading, save] = useFloroState("$(theme).themes", [], false);
+  const themes = useReferencedObject("$(theme).themes");
   const isInvalid = useIsFloroInvalid("$(theme).themes");
 
   const warningIcon = useMemo(() => {
@@ -77,7 +77,6 @@ const ThemeReadList = () => {
     }
     return WarningDark;
   }, [theme.name])
-  const hasIndication = useHasIndication("$(theme).themes");
 
   return (
     <div style={{marginBottom: 36}}>

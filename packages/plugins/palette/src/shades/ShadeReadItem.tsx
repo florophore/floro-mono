@@ -6,7 +6,6 @@ import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import WarningLight from "@floro/common-assets/assets/images/icons/warning.light.svg";
 import WarningDark from "@floro/common-assets/assets/images/icons/warning.dark.svg";
-import ColorPalette from "@floro/styles/ColorPalette";
 
 const ShadeContainer = styled.div`
   padding: 0px 0px 0px 0px;

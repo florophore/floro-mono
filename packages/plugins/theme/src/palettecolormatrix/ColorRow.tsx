@@ -5,6 +5,7 @@ import {
   useFloroState,
   useIsFloroInvalid,
   useQueryRef,
+  useReferencedObject,
 } from "../floro-schema-api";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
@@ -62,7 +63,7 @@ const ColorRow = (props: Props) => {
     [isInvalid, props.colorPalette]
   );
 
-  const [shades] = useFloroState("$(palette).shades", [], false);
+  const shades = useReferencedObject("$(palette).shades");
 
   return (
     <Container>
