@@ -93,15 +93,13 @@ interface Props {
   colorPalette: SchemaTypes["$(palette).colorPalettes.id<?>"];
   shade: SchemaTypes["$(palette).shades.id<?>"];
   onSelect: (
-    colorPaletteColorShadeRef: PointerTypes["$(palette).colorPalettes.id<?>.colorShades.id<?>"],
-    colorPaletteColorRef: PointerTypes["$(palette).colorPalettes.id<?>"],
+    colorPaletteColorShadeRef: PointerTypes["$(palette).colorPalettes.id<?>.colorShades.id<?>"]
   ) => void;
 }
 
 const ColorRow = (props: Props) => {
   const theme = useTheme();
   const shadeRef = useQueryRef("$(palette).shades.id<?>", props.shade.id);
-  const colorRef = useQueryRef("$(palette).colorPalettes.id<?>", props.colorPalette.id);
   const paletteCellRef = useQueryRef(
     "$(palette).colorPalettes.id<?>.colorShades.id<?>",
     props.colorPalette.id,
@@ -110,9 +108,9 @@ const ColorRow = (props: Props) => {
   const paletteColor = useReferencedObject(paletteCellRef);
   const onSelect = useCallback(() => {
     if (paletteCellRef) {
-      props.onSelect(paletteCellRef, colorRef);
+      props.onSelect(paletteCellRef);
     }
-  }, [paletteCellRef, colorRef, props.onSelect]);
+  }, [paletteCellRef, props.onSelect]);
   return (
     <Container style={{marginRight: 16}}>
       <Card onClick={onSelect}>

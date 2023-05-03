@@ -16,8 +16,7 @@ interface Props {
   show: boolean;
   onDismiss: () => void;
   onSelect: (
-    colorPaletteColorShadeRef: PointerTypes["$(palette).colorPalettes.id<?>.colorShades.id<?>"],
-    colorPaletteColorRef: PointerTypes["$(palette).colorPalettes.id<?>"],
+    colorPaletteColorShadeRef: PointerTypes["$(palette).colorPalettes.id<?>.colorShades.id<?>"]
   ) => void;
 }
 
@@ -54,11 +53,10 @@ const PalettePicker = (props: Props) => {
 
   const onSelect = useCallback(
     (
-      colorPaletteColorShade: PointerTypes["$(palette).colorPalettes.id<?>.colorShades.id<?>"],
-      colorPaletteColorRef: PointerTypes["$(palette).colorPalettes.id<?>"]
+      colorPaletteColorShade: PointerTypes["$(palette).colorPalettes.id<?>.colorShades.id<?>"]
     ) => {
       props.onDismiss();
-      props.onSelect(colorPaletteColorShade, colorPaletteColorRef);
+      props.onSelect(colorPaletteColorShade);
     },
     [props.onSelect, props.onDismiss]
   );

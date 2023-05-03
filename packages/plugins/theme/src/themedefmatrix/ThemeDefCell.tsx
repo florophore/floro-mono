@@ -2,6 +2,9 @@ import React, { useCallback, useRef, useMemo, useState } from "react";
 import {
   PointerTypes,
   SchemaTypes,
+  extractQueryArgs,
+  makeQueryRef,
+  useExtractQueryArgs,
   useFloroContext,
   useFloroState,
   useHasConflict,
@@ -59,6 +62,15 @@ const Title = styled.h4`
   text-align: center;
   padding: 0;
   margin: 16px 0 0 0;
+`;
+
+const SubTitle = styled.h4`
+  font-family: "MavenPro";
+  font-weight: 500;
+  font-size: 1.1rem;
+  text-align: left;
+  padding: 0;
+  margin: 0px 0 8px 0;
 `;
 
 const ColorDisplayCircle = styled.div`
@@ -176,10 +188,12 @@ const ThemeDefCell = (props: Props) => {
     false
   );
 
-  const paletteColor = useReferencedObject(themeDefinition?.paletteColor);
   const paletteColorShade = useReferencedObject(themeDefinition?.paletteColorShade);
-  const shade = useReferencedObject(paletteColorShade?.id);
-  const [themeDefinitions] = useFloroState("$(theme).themeColors");
+  const [paletteColorId, paletteShadeRef] = useExtractQueryArgs(themeDefinition?.paletteColorShade);
+  const paletteColorRef = useQueryRef("$(palette).colorPalettes.id<?>", paletteColorId);
+  const paletteColor = useReferencedObject(paletteColorRef);
+  const shade = useReferencedObject(paletteShadeRef);
+  const themeDefinitions = useReferencedObject("$(theme).themeColors");
 
   const wasRemoved = useWasRemoved(themeDefinitionRef, false);
   const wasAdded = useWasAdded(themeDefinitionRef, false);
@@ -244,6 +258,19 @@ const ThemeDefCell = (props: Props) => {
     return theme.colors.pluginTitle;
   }, [wasAdded, wasRemoved, wasRemoved, hasConflict, theme, commandMode]);
 
+  const subTitleColor = useMemo(() => {
+    if (hasConflict) {
+      return theme.colors.conflictBackground;
+    }
+    if (wasRemoved) {
+      return theme.colors.removedBackground;
+    }
+    if (wasAdded) {
+      return theme.colors.addedBackground;
+    }
+    return theme.colors.contrastText;
+  }, [wasAdded, wasRemoved, wasRemoved, hasConflict, theme, commandMode]);
+
   const editIcon = useMemo(() => {
     if (!props.themeObject.backgroundColor) {
       if (theme.name == 'dark') {
@@ -268,14 +295,11 @@ const ThemeDefCell = (props: Props) => {
   }, [theme.name, props.themeObject.backgroundColor.hexcode]);
 
   const onSelect = useCallback((
-    colorPaletteColorShadeRef: PointerTypes["$(palette).colorPalettes.id<?>.colorShades.id<?>"],
-    colorPaletteColorRef: PointerTypes["$(palette).colorPalettes.id<?>"],
-
+    colorPaletteColorShadeRef: PointerTypes["$(palette).colorPalettes.id<?>.colorShades.id<?>"]
     ) => {
     if (themeDefinition) {
       setThemeDefinition({
         ...themeDefinition,
-        paletteColor: colorPaletteColorRef,
         paletteColorShade: colorPaletteColorShadeRef,
       }, true)
     }
@@ -298,6 +322,7 @@ const ThemeDefCell = (props: Props) => {
   return (
     <Wrapper>
       <Container>
+        <SubTitle style={{color: subTitleColor}}>{props.themeObject.name}</SubTitle>
         <Card
           style={{
             borderColor: cardBorderColor,

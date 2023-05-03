@@ -46,8 +46,7 @@ interface Props {
   colorPalette: SchemaTypes["$(palette).colorPalettes.id<?>"];
   index: number;
   onSelect: (
-    colorPaletteColorShadeRef: PointerTypes["$(palette).colorPalettes.id<?>.colorShades.id<?>"],
-    colorPaletteColorRef: PointerTypes["$(palette).colorPalettes.id<?>"],
+    colorPaletteColorShadeRef: PointerTypes["$(palette).colorPalettes.id<?>.colorShades.id<?>"]
   ) => void;
 }
 

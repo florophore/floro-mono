@@ -54,11 +54,6 @@
             "type": "ref<palette.ColorShade>",
             "nullable": false,
             "onDelete": "nullify"
-          },
-          "paletteColor": {
-            "type": "ref<palette.Color>",
-            "nullable": false,
-            "onDelete": "nullify"
           }
         }
       }

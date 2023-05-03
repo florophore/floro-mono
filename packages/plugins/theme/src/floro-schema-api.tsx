@@ -14,7 +14,6 @@ export type SchemaTypes = {
   };
   ['$(theme).themeColors.id<?>.themeDefinitions.id<?>']: {
     ['id']: QueryTypes['$(theme).themes.id<?>'];
-    ['paletteColor']: QueryTypes['$(palette).colorPalettes.id<?>'];
     ['paletteColorShade']: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
   };
   ['$(palette).colorPalettes.id<?>.colorShades']: Array<{
@@ -24,7 +23,6 @@ export type SchemaTypes = {
   }>;
   ['$(theme).themeColors.id<?>.themeDefinitions']: Array<{
     ['id']: QueryTypes['$(theme).themes.id<?>'];
-    ['paletteColor']: QueryTypes['$(palette).colorPalettes.id<?>'];
     ['paletteColorShade']: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
   }>;
   ['$(theme).themes.id<?>.backgroundColor']: {
@@ -49,7 +47,6 @@ export type SchemaTypes = {
     ['name']: string;
     ['themeDefinitions']: Array<{
       ['id']: QueryTypes['$(theme).themes.id<?>'];
-      ['paletteColor']: QueryTypes['$(palette).colorPalettes.id<?>'];
       ['paletteColorShade']: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
     }>;
   };
@@ -79,7 +76,6 @@ export type SchemaTypes = {
     ['name']: string;
     ['themeDefinitions']: Array<{
       ['id']: QueryTypes['$(theme).themes.id<?>'];
-      ['paletteColor']: QueryTypes['$(palette).colorPalettes.id<?>'];
       ['paletteColorShade']: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
     }>;
   }>;
@@ -133,7 +129,6 @@ export type SchemaRoot = {
       ['name']: string;
       ['themeDefinitions']: Array<{
         ['id']: QueryTypes['$(theme).themes.id<?>'];
-        ['paletteColor']: QueryTypes['$(palette).colorPalettes.id<?>'];
         ['paletteColorShade']: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
       }>;
     }>;
@@ -642,11 +637,11 @@ export type QueryTypes = {
   ['$(theme).themes.id<?>']: `$(theme).themes.id<${string}>`;
 };
 
-export function makeQueryRef(query: '$(palette).colorPalettes.id<?>', arg0: string): QueryTypes['$(palette).colorPalettes.id<?>'];
-export function makeQueryRef(query: '$(palette).colorPalettes.id<?>.colorShades.id<?>', arg0: string, arg1: QueryTypes['$(palette).shades.id<?>']): QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
-export function makeQueryRef(query: '$(palette).shades.id<?>', arg0: string): QueryTypes['$(palette).shades.id<?>'];
-export function makeQueryRef(query: '$(theme).themeColors.id<?>', arg0: string): QueryTypes['$(theme).themeColors.id<?>'];
 export function makeQueryRef(query: '$(theme).themeColors.id<?>.themeDefinitions.id<?>', arg0: string, arg1: QueryTypes['$(theme).themes.id<?>']): QueryTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'];
+export function makeQueryRef(query: '$(palette).colorPalettes.id<?>.colorShades.id<?>', arg0: string, arg1: QueryTypes['$(palette).shades.id<?>']): QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+export function makeQueryRef(query: '$(palette).colorPalettes.id<?>', arg0: string): QueryTypes['$(palette).colorPalettes.id<?>'];
+export function makeQueryRef(query: '$(theme).themeColors.id<?>', arg0: string): QueryTypes['$(theme).themeColors.id<?>'];
+export function makeQueryRef(query: '$(palette).shades.id<?>', arg0: string): QueryTypes['$(palette).shades.id<?>'];
 export function makeQueryRef(query: '$(theme).themes.id<?>', arg0: string): QueryTypes['$(theme).themes.id<?>'];
 export function makeQueryRef(query: '$(palette).colorPalettes.id<?>'|'$(palette).colorPalettes.id<?>.colorShades.id<?>'|'$(palette).shades.id<?>'|'$(theme).themeColors.id<?>'|'$(theme).themeColors.id<?>.themeDefinitions.id<?>'|'$(theme).themes.id<?>', arg0: string, arg1?: QueryTypes['$(palette).shades.id<?>']|QueryTypes['$(theme).themes.id<?>']): QueryTypes['$(palette).colorPalettes.id<?>']|QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|QueryTypes['$(palette).shades.id<?>']|QueryTypes['$(theme).themeColors.id<?>']|QueryTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>']|QueryTypes['$(theme).themes.id<?>']|null {
   if ((arg0 != null && arg0 != undefined) && query == '$(palette).colorPalettes.id<?>') {
@@ -670,11 +665,11 @@ export function makeQueryRef(query: '$(palette).colorPalettes.id<?>'|'$(palette)
   return null;
 };
 
-export function useQueryRef(query: '$(palette).colorPalettes.id<?>', arg0: string): QueryTypes['$(palette).colorPalettes.id<?>'];
-export function useQueryRef(query: '$(palette).colorPalettes.id<?>.colorShades.id<?>', arg0: string, arg1: QueryTypes['$(palette).shades.id<?>']): QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
-export function useQueryRef(query: '$(palette).shades.id<?>', arg0: string): QueryTypes['$(palette).shades.id<?>'];
-export function useQueryRef(query: '$(theme).themeColors.id<?>', arg0: string): QueryTypes['$(theme).themeColors.id<?>'];
 export function useQueryRef(query: '$(theme).themeColors.id<?>.themeDefinitions.id<?>', arg0: string, arg1: QueryTypes['$(theme).themes.id<?>']): QueryTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'];
+export function useQueryRef(query: '$(palette).colorPalettes.id<?>.colorShades.id<?>', arg0: string, arg1: QueryTypes['$(palette).shades.id<?>']): QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+export function useQueryRef(query: '$(palette).colorPalettes.id<?>', arg0: string): QueryTypes['$(palette).colorPalettes.id<?>'];
+export function useQueryRef(query: '$(theme).themeColors.id<?>', arg0: string): QueryTypes['$(theme).themeColors.id<?>'];
+export function useQueryRef(query: '$(palette).shades.id<?>', arg0: string): QueryTypes['$(palette).shades.id<?>'];
 export function useQueryRef(query: '$(theme).themes.id<?>', arg0: string): QueryTypes['$(theme).themes.id<?>'];
 export function useQueryRef(query: '$(palette).colorPalettes.id<?>'|'$(palette).colorPalettes.id<?>.colorShades.id<?>'|'$(palette).shades.id<?>'|'$(theme).themeColors.id<?>'|'$(theme).themeColors.id<?>.themeDefinitions.id<?>'|'$(theme).themes.id<?>', arg0: string, arg1?: QueryTypes['$(palette).shades.id<?>']|QueryTypes['$(theme).themes.id<?>']): QueryTypes['$(palette).colorPalettes.id<?>']|QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|QueryTypes['$(palette).shades.id<?>']|QueryTypes['$(theme).themeColors.id<?>']|QueryTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>']|QueryTypes['$(theme).themes.id<?>']|null {
   return useMemo(() => {
@@ -698,6 +693,42 @@ export function useQueryRef(query: '$(palette).colorPalettes.id<?>'|'$(palette).
     }
     return null;
   }, [query, arg0, arg1]);
+};
+
+export function extractQueryArgs(query?: QueryTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>']): [string, QueryTypes['$(theme).themes.id<?>']];
+export function extractQueryArgs(query?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']): [string, QueryTypes['$(palette).shades.id<?>']];
+export function extractQueryArgs(query?: QueryTypes['$(palette).colorPalettes.id<?>']): [string];
+export function extractQueryArgs(query?: QueryTypes['$(theme).themeColors.id<?>']): [string];
+export function extractQueryArgs(query?: QueryTypes['$(palette).shades.id<?>']): [string];
+export function extractQueryArgs(query?: QueryTypes['$(theme).themes.id<?>']): [string];
+export function extractQueryArgs(query?: string): Array<string> {
+  if (!query) {
+    return [];
+  }
+  return (
+    decodeSchemaPathWithArrays(query)
+      ?.filter((v) => typeof v != "string")
+      ?.map((v) => (v as { key: string; value: string }).value as string) ?? []
+  );
+};
+
+export function useExtractQueryArgs(query?: QueryTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>']): [string, QueryTypes['$(theme).themes.id<?>']];
+export function useExtractQueryArgs(query?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']): [string, QueryTypes['$(palette).shades.id<?>']];
+export function useExtractQueryArgs(query?: QueryTypes['$(palette).colorPalettes.id<?>']): [string];
+export function useExtractQueryArgs(query?: QueryTypes['$(theme).themeColors.id<?>']): [string];
+export function useExtractQueryArgs(query?: QueryTypes['$(palette).shades.id<?>']): [string];
+export function useExtractQueryArgs(query?: QueryTypes['$(theme).themes.id<?>']): [string];
+export function useExtractQueryArgs(query?: string): Array<string> {
+  return useMemo(() => {
+    if (!query) {
+      return [];
+    }
+    return (
+      decodeSchemaPathWithArrays(query)
+        ?.filter((v) => typeof v != "string")
+        ?.map((v) => (v as { key: string; value: string }).value as string) ?? []
+    );
+  }, [query]);
 };
 
 export function getPluginStore(plugin: 'palette'): SchemaRoot['palette'];

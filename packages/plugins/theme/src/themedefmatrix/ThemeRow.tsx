@@ -43,7 +43,6 @@ const RowTitle = styled.h1`
 const Row = styled.div`
   display: flex;
   flex-direction: row;
-  margin-top: 36px;
 `;
 
 const RowWrapper = styled.div`
@@ -105,9 +104,10 @@ const DragIcon = styled.img`
   user-select: none;
 `;
 
-const IndicatorCircle = styled.img`
+const IndicatorCircle = styled.div`
   height: 16px;
   width: 16px;
+  margin-top: -12px;
   border-radius: 50%;
   pointer-events: none;
   user-select: none;

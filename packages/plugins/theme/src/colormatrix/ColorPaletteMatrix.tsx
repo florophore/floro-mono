@@ -15,8 +15,7 @@ const Container = styled.h1`
 
 interface Props {
   onSelect: (
-    colorPaletteColorShadeRef: PointerTypes["$(palette).colorPalettes.id<?>.colorShades.id<?>"],
-    colorPaletteColorRef: PointerTypes["$(palette).colorPalettes.id<?>"],
+    colorPaletteColorShadeRef: PointerTypes["$(palette).colorPalettes.id<?>.colorShades.id<?>"]
   ) => void;
 }
 
