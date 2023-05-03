@@ -54,7 +54,7 @@ const ButtonContainer = styled.div`
   width: 256px;
 `;
 const AddColorContainer = styled.div`
-  margin-top: 12px;
+  margin-top: 24px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -129,7 +129,7 @@ const ThemeDefMatrix = (props: Props) => {
     if (!newId || !newColorName || !canAddNewName || !themeColors) {
       return;
     }
-    setThemeColors([...themeColors, { id: newId, name: newColorName, themeDefinitions: [] }], true);
+    setThemeColors([{ id: newId, name: newColorName, themeDefinitions: [] }, ...themeColors], true);
     setNewColorName("");
   }, [newColorName, newId, canAddNewName, isLoading, themeColors]);
 
@@ -184,16 +184,6 @@ const ThemeDefMatrix = (props: Props) => {
                 onClick={props.onShowThemeList}
               />
             )}
-            <Button
-              label={"new def"}
-              bg={"orange"}
-              size={"small"}
-              onClick={onClickNewColor}
-              isDisabled={isReOrderMode}
-              style={{
-                marginLeft: 16,
-              }}
-            />
           </ButtonContainer>
         )}
       </TitleRow>
@@ -207,15 +197,32 @@ const ThemeDefMatrix = (props: Props) => {
           )}
         </SubTitleRow>
       )}
+      {!isReOrderMode && commandMode == "edit" && (
+        <AddColorContainer style={{ marginLeft: 40 }}>
+          <Input
+            value={newColorName}
+            label={"new theme definition"}
+            placeholder={"definition name"}
+            onTextChanged={setNewColorName}
+            width={200}
+            ref={input}
+          />
+          <Button
+            onClick={onAppendNewColor}
+            style={{ marginTop: 14 }}
+            label={"add def"}
+            bg={"orange"}
+            size={"small"}
+            isDisabled={!canAddNewName}
+          />
+        </AddColorContainer>
+      )}
       <div style={{ marginBottom: 120 }}>
         <AnimatePresence>
           <Reorder.Group
             axis="y"
             values={themeColors ?? []}
             onReorder={onReOrderThemeColors}
-            className={css(`
-            padding: 24px 0px 0px 0px;
-        `)}
           >
             {themeColors?.filter?.(v => !!v?.id)?.map?.((themeColor, index) => {
               return (
@@ -233,26 +240,6 @@ const ThemeDefMatrix = (props: Props) => {
             })}
           </Reorder.Group>
           </AnimatePresence>
-          {!isReOrderMode && commandMode == "edit" && (
-            <AddColorContainer style={{ marginLeft: 40, marginTop: 48 }}>
-              <Input
-                value={newColorName}
-                label={"new theme definition"}
-                placeholder={"definition name"}
-                onTextChanged={setNewColorName}
-                width={200}
-                ref={input}
-              />
-              <Button
-                onClick={onAppendNewColor}
-                style={{ marginTop: 14 }}
-                label={"add def"}
-                bg={"orange"}
-                size={"small"}
-                isDisabled={!canAddNewName}
-              />
-            </AddColorContainer>
-          )}
       </div>
     </div>
   );

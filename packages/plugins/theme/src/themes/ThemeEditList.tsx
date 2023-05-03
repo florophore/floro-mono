@@ -186,8 +186,8 @@ const ThemeEditList = () => {
           <AddShadeContainer style={{ marginLeft: 40 }}>
             <Input
               value={newThemeName}
-              label={"new shade"}
-              placeholder={"shade name"}
+              label={"new theme"}
+              placeholder={"theme name"}
               onTextChanged={setNewThemeName}
               width={200}
             />

@@ -107,7 +107,6 @@ const DragIcon = styled.img`
 const IndicatorCircle = styled.div`
   height: 16px;
   width: 16px;
-  margin-top: -12px;
   border-radius: 50%;
   pointer-events: none;
   user-select: none;
@@ -280,7 +279,7 @@ const ThemeRow = (props: Props) => {
             <DragShadeContainer style={{cursor: "default"}}>
               <IndicatorCircle style={{backgroundColor: color}} />
             </DragShadeContainer>
-            <RowTitle style={{ color }}>{title}</RowTitle>
+            <RowTitle style={{ color, marginTop: 12 }}>{title}</RowTitle>
             {isInvalid && <WarningIconImg src={warningIcon} />}
           </>
         )}

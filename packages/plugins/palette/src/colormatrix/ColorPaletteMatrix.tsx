@@ -55,7 +55,7 @@ const ButtonContainer = styled.div`
   width: 256px;
 `;
 const AddColorContainer = styled.div`
-  margin-top: 12px;
+  margin: 24px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -130,7 +130,10 @@ const ColorPaletteMatrix = (props: Props) => {
     if (!newId || !newColorName || !canAddNewName || !colorPalettes) {
       return;
     }
-    setColorPalettes([...colorPalettes, { id: newId, name: newColorName, colorShades: [] }], true);
+    setColorPalettes(
+      [{ id: newId, name: newColorName, colorShades: [] }, ...colorPalettes],
+      true
+    );
     setNewColorName("");
   }, [newColorName, newId, canAddNewName, isLoading, colorPalettes]);
 
@@ -185,16 +188,6 @@ const ColorPaletteMatrix = (props: Props) => {
                 onClick={props.onShowShadeList}
               />
             )}
-            <Button
-              label={"new color"}
-              bg={"orange"}
-              size={"small"}
-              onClick={onClickNewColor}
-              isDisabled={isReOrderMode}
-              style={{
-                marginLeft: 16,
-              }}
-            />
           </ButtonContainer>
         )}
       </TitleRow>
@@ -208,15 +201,32 @@ const ColorPaletteMatrix = (props: Props) => {
           )}
         </SubTitleRow>
       )}
+      {!isReOrderMode && commandMode == "edit" && (
+        <AddColorContainer style={{ marginLeft: 40 }}>
+          <Input
+            value={newColorName}
+            label={"new color"}
+            placeholder={"color name"}
+            onTextChanged={setNewColorName}
+            width={200}
+            ref={input}
+          />
+          <Button
+            onClick={onAppendNewColor}
+            style={{ marginTop: 14 }}
+            label={"add color"}
+            bg={"orange"}
+            size={"small"}
+            isDisabled={!canAddNewName}
+          />
+        </AddColorContainer>
+      )}
       <div style={{ marginBottom: 120 }}>
         <AnimatePresence>
           <Reorder.Group
             axis="y"
             values={colorPalettes ?? []}
             onReorder={onReOrderColors}
-            className={css(`
-            padding: 24px 0px 0px 0px;
-        `)}
           >
             {colorPalettes?.filter?.(v => !!v?.id)?.map?.((colorPalette, index) => {
               return (
@@ -234,26 +244,6 @@ const ColorPaletteMatrix = (props: Props) => {
             })}
           </Reorder.Group>
           </AnimatePresence>
-          {!isReOrderMode && commandMode == "edit" && (
-            <AddColorContainer style={{ marginLeft: 40 }}>
-              <Input
-                value={newColorName}
-                label={"new color"}
-                placeholder={"color name"}
-                onTextChanged={setNewColorName}
-                width={200}
-                ref={input}
-              />
-              <Button
-                onClick={onAppendNewColor}
-                style={{ marginTop: 14 }}
-                label={"add color"}
-                bg={"orange"}
-                size={"small"}
-                isDisabled={!canAddNewName}
-              />
-            </AddColorContainer>
-          )}
       </div>
     </div>
   );

@@ -385,7 +385,10 @@ const PluginInstaller = (props: Props) => {
       return;
     }
     const nextPlugins = props.apiReponse.applicationState.plugins?.filter(p => {
-      return p.key != pluginVersion.name && p.value != pluginVersion.version;
+      if(p.key == pluginVersion.name && p.value == pluginVersion.version) {
+        return false;
+      }
+      return true;
     });
     updatePlugins.mutate(nextPlugins);
   }, [props.apiReponse, props.repository, plugin, pluginVersion, updatePlugins, isInstalled]);
