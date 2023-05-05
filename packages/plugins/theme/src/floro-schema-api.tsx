@@ -2,11 +2,19 @@ import React, { useEffect, createContext, useMemo, useCallback, useState, useCon
 
 export type FileRef = `${string}.${string}`;
 
-export type PartialDiffableQuery = `$(palette).colorPalettes.id<${string}>.colorShades.id<${QueryTypes['$(palette).shades.id<?>']}>`|`$(theme).themeColors.id<${string}>.themeDefinitions.id<${QueryTypes['$(theme).themes.id<?>']}>`|`$(palette).colorPalettes.id<${string}>.colorShades`|`$(theme).themeColors.id<${string}>.themeDefinitions`|`$(theme).themes.id<${string}>.backgroundColor`|`$(palette).colorPalettes.id<${string}>`|`$(palette).shades.id<${string}>`|`$(theme).themeColors.id<${string}>`|`$(theme).themes.id<${string}>`|`$(palette).colorPalettes`|`$(palette).shades`|`$(theme).themeColors`|`$(theme).themes`;
+export type PartialDiffableQuery = `$(theme).themeColors.id<${string}>.variants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>.variantDefinitions.id<${QueryTypes['$(theme).themes.id<?>']}>`|`$(theme).themeColors.id<${string}>.variants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>.variantDefinitions`|`$(palette).colorPalettes.id<${string}>.colorShades.id<${QueryTypes['$(palette).shades.id<?>']}>`|`$(theme).themeColors.id<${string}>.themeDefinitions.id<${QueryTypes['$(theme).themes.id<?>']}>`|`$(theme).themeColors.id<${string}>.variants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>`|`$(palette).colorPalettes.id<${string}>.colorShades`|`$(theme).themeColors.id<${string}>.themeDefinitions`|`$(theme).themeColors.id<${string}>.variants`|`$(theme).themes.id<${string}>.backgroundColor`|`$(palette).colorPalettes.id<${string}>`|`$(palette).shades.id<${string}>`|`$(theme).stateVariants.id<${string}>`|`$(theme).themeColors.id<${string}>`|`$(theme).themes.id<${string}>`|`$(palette).colorPalettes`|`$(palette).shades`|`$(theme).stateVariants`|`$(theme).themeColors`|`$(theme).themes`;
 
-export type DiffableQuery = `$(palette).colorPalettes.id<${string}>.colorShades.id<${QueryTypes['$(palette).shades.id<?>']}>`|`$(theme).themeColors.id<${string}>.themeDefinitions.id<${QueryTypes['$(theme).themes.id<?>']}>`|`$(theme).themes.id<${string}>.backgroundColor`|`$(palette).colorPalettes.id<${string}>`|`$(palette).shades.id<${string}>`|`$(theme).themeColors.id<${string}>`|`$(theme).themes.id<${string}>`;
+export type DiffableQuery = `$(theme).themeColors.id<${string}>.variants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>.variantDefinitions.id<${QueryTypes['$(theme).themes.id<?>']}>`|`$(palette).colorPalettes.id<${string}>.colorShades.id<${QueryTypes['$(palette).shades.id<?>']}>`|`$(theme).themeColors.id<${string}>.themeDefinitions.id<${QueryTypes['$(theme).themes.id<?>']}>`|`$(theme).themeColors.id<${string}>.variants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>`|`$(theme).themes.id<${string}>.backgroundColor`|`$(palette).colorPalettes.id<${string}>`|`$(palette).shades.id<${string}>`|`$(theme).stateVariants.id<${string}>`|`$(theme).themeColors.id<${string}>`|`$(theme).themes.id<${string}>`;
 
 export type SchemaTypes = {
+  ['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']: {
+    ['id']: QueryTypes['$(theme).themes.id<?>'];
+    ['paletteColorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+  };
+  ['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions']: Array<{
+    ['id']: QueryTypes['$(theme).themes.id<?>'];
+    ['paletteColorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+  }>;
   ['$(palette).colorPalettes.id<?>.colorShades.id<?>']: {
     ['alpha']: number;
     ['hexcode']?: string;
@@ -16,6 +24,13 @@ export type SchemaTypes = {
     ['id']: QueryTypes['$(theme).themes.id<?>'];
     ['paletteColorShade']: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
   };
+  ['$(theme).themeColors.id<?>.variants.id<?>']: {
+    ['id']: QueryTypes['$(theme).stateVariants.id<?>'];
+    ['variantDefinitions']: Array<{
+      ['id']: QueryTypes['$(theme).themes.id<?>'];
+      ['paletteColorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+    }>;
+  };
   ['$(palette).colorPalettes.id<?>.colorShades']: Array<{
     ['alpha']: number;
     ['hexcode']?: string;
@@ -24,6 +39,13 @@ export type SchemaTypes = {
   ['$(theme).themeColors.id<?>.themeDefinitions']: Array<{
     ['id']: QueryTypes['$(theme).themes.id<?>'];
     ['paletteColorShade']: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+  }>;
+  ['$(theme).themeColors.id<?>.variants']: Array<{
+    ['id']: QueryTypes['$(theme).stateVariants.id<?>'];
+    ['variantDefinitions']: Array<{
+      ['id']: QueryTypes['$(theme).themes.id<?>'];
+      ['paletteColorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+    }>;
   }>;
   ['$(theme).themes.id<?>.backgroundColor']: {
     ['alpha']: number;
@@ -42,12 +64,24 @@ export type SchemaTypes = {
     ['id']: string;
     ['name']: string;
   };
+  ['$(theme).stateVariants.id<?>']: {
+    ['id']: string;
+    ['name']: string;
+  };
   ['$(theme).themeColors.id<?>']: {
     ['id']: string;
+    ['includeVariants']: boolean;
     ['name']: string;
     ['themeDefinitions']: Array<{
       ['id']: QueryTypes['$(theme).themes.id<?>'];
       ['paletteColorShade']: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+    }>;
+    ['variants']: Array<{
+      ['id']: QueryTypes['$(theme).stateVariants.id<?>'];
+      ['variantDefinitions']: Array<{
+        ['id']: QueryTypes['$(theme).themes.id<?>'];
+        ['paletteColorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+      }>;
     }>;
   };
   ['$(theme).themes.id<?>']: {
@@ -71,12 +105,24 @@ export type SchemaTypes = {
     ['id']: string;
     ['name']: string;
   }>;
+  ['$(theme).stateVariants']: Array<{
+    ['id']: string;
+    ['name']: string;
+  }>;
   ['$(theme).themeColors']: Array<{
     ['id']: string;
+    ['includeVariants']: boolean;
     ['name']: string;
     ['themeDefinitions']: Array<{
       ['id']: QueryTypes['$(theme).themes.id<?>'];
       ['paletteColorShade']: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+    }>;
+    ['variants']: Array<{
+      ['id']: QueryTypes['$(theme).stateVariants.id<?>'];
+      ['variantDefinitions']: Array<{
+        ['id']: QueryTypes['$(theme).themes.id<?>'];
+        ['paletteColorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+      }>;
     }>;
   }>;
   ['$(theme).themes']: Array<{
@@ -91,17 +137,23 @@ export type SchemaTypes = {
 
 
 export type PointerTypes = {
+  ['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']: `$(theme).themeColors.id<${string}>.variants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>.variantDefinitions.id<${QueryTypes['$(theme).themes.id<?>']}>`;
+  ['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions']: `$(theme).themeColors.id<${string}>.variants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>.variantDefinitions`;
   ['$(palette).colorPalettes.id<?>.colorShades.id<?>']: `$(palette).colorPalettes.id<${string}>.colorShades.id<${QueryTypes['$(palette).shades.id<?>']}>`;
   ['$(theme).themeColors.id<?>.themeDefinitions.id<?>']: `$(theme).themeColors.id<${string}>.themeDefinitions.id<${QueryTypes['$(theme).themes.id<?>']}>`;
+  ['$(theme).themeColors.id<?>.variants.id<?>']: `$(theme).themeColors.id<${string}>.variants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>`;
   ['$(palette).colorPalettes.id<?>.colorShades']: `$(palette).colorPalettes.id<${string}>.colorShades`;
   ['$(theme).themeColors.id<?>.themeDefinitions']: `$(theme).themeColors.id<${string}>.themeDefinitions`;
+  ['$(theme).themeColors.id<?>.variants']: `$(theme).themeColors.id<${string}>.variants`;
   ['$(theme).themes.id<?>.backgroundColor']: `$(theme).themes.id<${string}>.backgroundColor`;
   ['$(palette).colorPalettes.id<?>']: `$(palette).colorPalettes.id<${string}>`;
   ['$(palette).shades.id<?>']: `$(palette).shades.id<${string}>`;
+  ['$(theme).stateVariants.id<?>']: `$(theme).stateVariants.id<${string}>`;
   ['$(theme).themeColors.id<?>']: `$(theme).themeColors.id<${string}>`;
   ['$(theme).themes.id<?>']: `$(theme).themes.id<${string}>`;
   ['$(palette).colorPalettes']: `$(palette).colorPalettes`;
   ['$(palette).shades']: `$(palette).shades`;
+  ['$(theme).stateVariants']: `$(theme).stateVariants`;
   ['$(theme).themeColors']: `$(theme).themeColors`;
   ['$(theme).themes']: `$(theme).themes`;
 };
@@ -124,12 +176,24 @@ export type SchemaRoot = {
     }>;
   };
   ['theme']: {
+    ['stateVariants']: Array<{
+      ['id']: string;
+      ['name']: string;
+    }>;
     ['themeColors']: Array<{
       ['id']: string;
+      ['includeVariants']: boolean;
       ['name']: string;
       ['themeDefinitions']: Array<{
         ['id']: QueryTypes['$(theme).themes.id<?>'];
         ['paletteColorShade']: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+      }>;
+      ['variants']: Array<{
+        ['id']: QueryTypes['$(theme).stateVariants.id<?>'];
+        ['variantDefinitions']: Array<{
+          ['id']: QueryTypes['$(theme).themes.id<?>'];
+          ['paletteColorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+        }>;
       }>;
     }>;
     ['themes']: Array<{
@@ -632,18 +696,24 @@ export type QueryTypes = {
   ['$(palette).colorPalettes.id<?>']: `$(palette).colorPalettes.id<${string}>`;
   ['$(palette).colorPalettes.id<?>.colorShades.id<?>']: `$(palette).colorPalettes.id<${string}>.colorShades.id<${QueryTypes['$(palette).shades.id<?>']}>`;
   ['$(palette).shades.id<?>']: `$(palette).shades.id<${string}>`;
+  ['$(theme).stateVariants.id<?>']: `$(theme).stateVariants.id<${string}>`;
   ['$(theme).themeColors.id<?>']: `$(theme).themeColors.id<${string}>`;
   ['$(theme).themeColors.id<?>.themeDefinitions.id<?>']: `$(theme).themeColors.id<${string}>.themeDefinitions.id<${QueryTypes['$(theme).themes.id<?>']}>`;
+  ['$(theme).themeColors.id<?>.variants.id<?>']: `$(theme).themeColors.id<${string}>.variants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>`;
+  ['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']: `$(theme).themeColors.id<${string}>.variants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>.variantDefinitions.id<${QueryTypes['$(theme).themes.id<?>']}>`;
   ['$(theme).themes.id<?>']: `$(theme).themes.id<${string}>`;
 };
 
+export function makeQueryRef(query: '$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>', arg0: string, arg1: QueryTypes['$(theme).stateVariants.id<?>'], arg2: QueryTypes['$(theme).themes.id<?>']): QueryTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'];
 export function makeQueryRef(query: '$(theme).themeColors.id<?>.themeDefinitions.id<?>', arg0: string, arg1: QueryTypes['$(theme).themes.id<?>']): QueryTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'];
 export function makeQueryRef(query: '$(palette).colorPalettes.id<?>.colorShades.id<?>', arg0: string, arg1: QueryTypes['$(palette).shades.id<?>']): QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+export function makeQueryRef(query: '$(theme).themeColors.id<?>.variants.id<?>', arg0: string, arg1: QueryTypes['$(theme).stateVariants.id<?>']): QueryTypes['$(theme).themeColors.id<?>.variants.id<?>'];
 export function makeQueryRef(query: '$(palette).colorPalettes.id<?>', arg0: string): QueryTypes['$(palette).colorPalettes.id<?>'];
+export function makeQueryRef(query: '$(theme).stateVariants.id<?>', arg0: string): QueryTypes['$(theme).stateVariants.id<?>'];
 export function makeQueryRef(query: '$(theme).themeColors.id<?>', arg0: string): QueryTypes['$(theme).themeColors.id<?>'];
 export function makeQueryRef(query: '$(palette).shades.id<?>', arg0: string): QueryTypes['$(palette).shades.id<?>'];
 export function makeQueryRef(query: '$(theme).themes.id<?>', arg0: string): QueryTypes['$(theme).themes.id<?>'];
-export function makeQueryRef(query: '$(palette).colorPalettes.id<?>'|'$(palette).colorPalettes.id<?>.colorShades.id<?>'|'$(palette).shades.id<?>'|'$(theme).themeColors.id<?>'|'$(theme).themeColors.id<?>.themeDefinitions.id<?>'|'$(theme).themes.id<?>', arg0: string, arg1?: QueryTypes['$(palette).shades.id<?>']|QueryTypes['$(theme).themes.id<?>']): QueryTypes['$(palette).colorPalettes.id<?>']|QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|QueryTypes['$(palette).shades.id<?>']|QueryTypes['$(theme).themeColors.id<?>']|QueryTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>']|QueryTypes['$(theme).themes.id<?>']|null {
+export function makeQueryRef(query: '$(palette).colorPalettes.id<?>'|'$(palette).colorPalettes.id<?>.colorShades.id<?>'|'$(palette).shades.id<?>'|'$(theme).stateVariants.id<?>'|'$(theme).themeColors.id<?>'|'$(theme).themeColors.id<?>.themeDefinitions.id<?>'|'$(theme).themeColors.id<?>.variants.id<?>'|'$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'|'$(theme).themes.id<?>', arg0: string, arg1?: QueryTypes['$(palette).shades.id<?>']|QueryTypes['$(theme).themes.id<?>']|QueryTypes['$(theme).stateVariants.id<?>'], arg2?: QueryTypes['$(theme).themes.id<?>']): QueryTypes['$(palette).colorPalettes.id<?>']|QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|QueryTypes['$(palette).shades.id<?>']|QueryTypes['$(theme).stateVariants.id<?>']|QueryTypes['$(theme).themeColors.id<?>']|QueryTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>']|QueryTypes['$(theme).themeColors.id<?>.variants.id<?>']|QueryTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']|QueryTypes['$(theme).themes.id<?>']|null {
   if ((arg0 != null && arg0 != undefined) && query == '$(palette).colorPalettes.id<?>') {
     return `$(palette).colorPalettes.id<${arg0 as string}>`;
   }
@@ -653,11 +723,20 @@ export function makeQueryRef(query: '$(palette).colorPalettes.id<?>'|'$(palette)
   if ((arg0 != null && arg0 != undefined) && query == '$(palette).shades.id<?>') {
     return `$(palette).shades.id<${arg0 as string}>`;
   }
+  if ((arg0 != null && arg0 != undefined) && query == '$(theme).stateVariants.id<?>') {
+    return `$(theme).stateVariants.id<${arg0 as string}>`;
+  }
   if ((arg0 != null && arg0 != undefined) && query == '$(theme).themeColors.id<?>') {
     return `$(theme).themeColors.id<${arg0 as string}>`;
   }
   if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && query == '$(theme).themeColors.id<?>.themeDefinitions.id<?>') {
     return `$(theme).themeColors.id<${arg0 as string}>.themeDefinitions.id<${arg1 as QueryTypes['$(theme).themes.id<?>']}>`;
+  }
+  if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && query == '$(theme).themeColors.id<?>.variants.id<?>') {
+    return `$(theme).themeColors.id<${arg0 as string}>.variants.id<${arg1 as QueryTypes['$(theme).stateVariants.id<?>']}>`;
+  }
+  if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && (arg2 != null && arg2 != undefined) && query == '$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>') {
+    return `$(theme).themeColors.id<${arg0 as string}>.variants.id<${arg1 as QueryTypes['$(theme).stateVariants.id<?>']}>.variantDefinitions.id<${arg2 as QueryTypes['$(theme).themes.id<?>']}>`;
   }
   if ((arg0 != null && arg0 != undefined) && query == '$(theme).themes.id<?>') {
     return `$(theme).themes.id<${arg0 as string}>`;
@@ -665,13 +744,16 @@ export function makeQueryRef(query: '$(palette).colorPalettes.id<?>'|'$(palette)
   return null;
 };
 
+export function useQueryRef(query: '$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>', arg0: string, arg1: QueryTypes['$(theme).stateVariants.id<?>'], arg2: QueryTypes['$(theme).themes.id<?>']): QueryTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'];
 export function useQueryRef(query: '$(theme).themeColors.id<?>.themeDefinitions.id<?>', arg0: string, arg1: QueryTypes['$(theme).themes.id<?>']): QueryTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'];
 export function useQueryRef(query: '$(palette).colorPalettes.id<?>.colorShades.id<?>', arg0: string, arg1: QueryTypes['$(palette).shades.id<?>']): QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+export function useQueryRef(query: '$(theme).themeColors.id<?>.variants.id<?>', arg0: string, arg1: QueryTypes['$(theme).stateVariants.id<?>']): QueryTypes['$(theme).themeColors.id<?>.variants.id<?>'];
 export function useQueryRef(query: '$(palette).colorPalettes.id<?>', arg0: string): QueryTypes['$(palette).colorPalettes.id<?>'];
+export function useQueryRef(query: '$(theme).stateVariants.id<?>', arg0: string): QueryTypes['$(theme).stateVariants.id<?>'];
 export function useQueryRef(query: '$(theme).themeColors.id<?>', arg0: string): QueryTypes['$(theme).themeColors.id<?>'];
 export function useQueryRef(query: '$(palette).shades.id<?>', arg0: string): QueryTypes['$(palette).shades.id<?>'];
 export function useQueryRef(query: '$(theme).themes.id<?>', arg0: string): QueryTypes['$(theme).themes.id<?>'];
-export function useQueryRef(query: '$(palette).colorPalettes.id<?>'|'$(palette).colorPalettes.id<?>.colorShades.id<?>'|'$(palette).shades.id<?>'|'$(theme).themeColors.id<?>'|'$(theme).themeColors.id<?>.themeDefinitions.id<?>'|'$(theme).themes.id<?>', arg0: string, arg1?: QueryTypes['$(palette).shades.id<?>']|QueryTypes['$(theme).themes.id<?>']): QueryTypes['$(palette).colorPalettes.id<?>']|QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|QueryTypes['$(palette).shades.id<?>']|QueryTypes['$(theme).themeColors.id<?>']|QueryTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>']|QueryTypes['$(theme).themes.id<?>']|null {
+export function useQueryRef(query: '$(palette).colorPalettes.id<?>'|'$(palette).colorPalettes.id<?>.colorShades.id<?>'|'$(palette).shades.id<?>'|'$(theme).stateVariants.id<?>'|'$(theme).themeColors.id<?>'|'$(theme).themeColors.id<?>.themeDefinitions.id<?>'|'$(theme).themeColors.id<?>.variants.id<?>'|'$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'|'$(theme).themes.id<?>', arg0: string, arg1?: QueryTypes['$(palette).shades.id<?>']|QueryTypes['$(theme).themes.id<?>']|QueryTypes['$(theme).stateVariants.id<?>'], arg2?: QueryTypes['$(theme).themes.id<?>']): QueryTypes['$(palette).colorPalettes.id<?>']|QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|QueryTypes['$(palette).shades.id<?>']|QueryTypes['$(theme).stateVariants.id<?>']|QueryTypes['$(theme).themeColors.id<?>']|QueryTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>']|QueryTypes['$(theme).themeColors.id<?>.variants.id<?>']|QueryTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']|QueryTypes['$(theme).themes.id<?>']|null {
   return useMemo(() => {
     if (query == '$(palette).colorPalettes.id<?>') {
       return makeQueryRef(query, arg0 as string);
@@ -682,22 +764,34 @@ export function useQueryRef(query: '$(palette).colorPalettes.id<?>'|'$(palette).
     if (query == '$(palette).shades.id<?>') {
       return makeQueryRef(query, arg0 as string);
     }
+    if (query == '$(theme).stateVariants.id<?>') {
+      return makeQueryRef(query, arg0 as string);
+    }
     if (query == '$(theme).themeColors.id<?>') {
       return makeQueryRef(query, arg0 as string);
     }
     if (query == '$(theme).themeColors.id<?>.themeDefinitions.id<?>') {
       return makeQueryRef(query, arg0 as string, arg1 as QueryTypes['$(theme).themes.id<?>']);
     }
+    if (query == '$(theme).themeColors.id<?>.variants.id<?>') {
+      return makeQueryRef(query, arg0 as string, arg1 as QueryTypes['$(theme).stateVariants.id<?>']);
+    }
+    if (query == '$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>') {
+      return makeQueryRef(query, arg0 as string, arg1 as QueryTypes['$(theme).stateVariants.id<?>'], arg2 as QueryTypes['$(theme).themes.id<?>']);
+    }
     if (query == '$(theme).themes.id<?>') {
       return makeQueryRef(query, arg0 as string);
     }
     return null;
-  }, [query, arg0, arg1]);
+  }, [query, arg0, arg1, arg2]);
 };
 
+export function extractQueryArgs(query?: QueryTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']): [string, QueryTypes['$(theme).stateVariants.id<?>'], QueryTypes['$(theme).themes.id<?>']];
 export function extractQueryArgs(query?: QueryTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>']): [string, QueryTypes['$(theme).themes.id<?>']];
 export function extractQueryArgs(query?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']): [string, QueryTypes['$(palette).shades.id<?>']];
+export function extractQueryArgs(query?: QueryTypes['$(theme).themeColors.id<?>.variants.id<?>']): [string, QueryTypes['$(theme).stateVariants.id<?>']];
 export function extractQueryArgs(query?: QueryTypes['$(palette).colorPalettes.id<?>']): [string];
+export function extractQueryArgs(query?: QueryTypes['$(theme).stateVariants.id<?>']): [string];
 export function extractQueryArgs(query?: QueryTypes['$(theme).themeColors.id<?>']): [string];
 export function extractQueryArgs(query?: QueryTypes['$(palette).shades.id<?>']): [string];
 export function extractQueryArgs(query?: QueryTypes['$(theme).themes.id<?>']): [string];
@@ -712,9 +806,12 @@ export function extractQueryArgs(query?: string): Array<string> {
   );
 };
 
+export function useExtractQueryArgs(query?: QueryTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']): [string, QueryTypes['$(theme).stateVariants.id<?>'], QueryTypes['$(theme).themes.id<?>']];
 export function useExtractQueryArgs(query?: QueryTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>']): [string, QueryTypes['$(theme).themes.id<?>']];
 export function useExtractQueryArgs(query?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']): [string, QueryTypes['$(palette).shades.id<?>']];
+export function useExtractQueryArgs(query?: QueryTypes['$(theme).themeColors.id<?>.variants.id<?>']): [string, QueryTypes['$(theme).stateVariants.id<?>']];
 export function useExtractQueryArgs(query?: QueryTypes['$(palette).colorPalettes.id<?>']): [string];
+export function useExtractQueryArgs(query?: QueryTypes['$(theme).stateVariants.id<?>']): [string];
 export function useExtractQueryArgs(query?: QueryTypes['$(theme).themeColors.id<?>']): [string];
 export function useExtractQueryArgs(query?: QueryTypes['$(palette).shades.id<?>']): [string];
 export function useExtractQueryArgs(query?: QueryTypes['$(theme).themes.id<?>']): [string];
@@ -755,17 +852,23 @@ export function usePluginStore(plugin: 'palette'|'theme'): SchemaRoot['palette']
   }, [root, plugin]);
 }
 
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']): SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions']): SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']): SchemaTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>']): SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>']): SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(palette).colorPalettes.id<?>.colorShades']): SchemaTypes['$(palette).colorPalettes.id<?>.colorShades'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions']): SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(theme).themeColors.id<?>.variants']): SchemaTypes['$(theme).themeColors.id<?>.variants'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(theme).themes.id<?>.backgroundColor']): SchemaTypes['$(theme).themes.id<?>.backgroundColor'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(palette).colorPalettes.id<?>']): SchemaTypes['$(palette).colorPalettes.id<?>'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(palette).shades.id<?>']): SchemaTypes['$(palette).shades.id<?>'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(theme).stateVariants.id<?>']): SchemaTypes['$(theme).stateVariants.id<?>'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(theme).themeColors.id<?>']): SchemaTypes['$(theme).themeColors.id<?>'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(theme).themes.id<?>']): SchemaTypes['$(theme).themes.id<?>'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(palette).colorPalettes']): SchemaTypes['$(palette).colorPalettes'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(palette).shades']): SchemaTypes['$(palette).shades'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(theme).stateVariants']): SchemaTypes['$(theme).stateVariants'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(theme).themeColors']): SchemaTypes['$(theme).themeColors'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(theme).themes']): SchemaTypes['$(theme).themes'];
 
@@ -783,17 +886,23 @@ export function getReferencedObject<T>(root: SchemaRoot, query?: string): T|null
   return null;
 };
 
+export function useReferencedObject(query?: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']): SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'];
+export function useReferencedObject(query?: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions']): SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'];
 export function useReferencedObject(query?: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']): SchemaTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
 export function useReferencedObject(query?: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>']): SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'];
+export function useReferencedObject(query?: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>']): SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>'];
 export function useReferencedObject(query?: PointerTypes['$(palette).colorPalettes.id<?>.colorShades']): SchemaTypes['$(palette).colorPalettes.id<?>.colorShades'];
 export function useReferencedObject(query?: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions']): SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions'];
+export function useReferencedObject(query?: PointerTypes['$(theme).themeColors.id<?>.variants']): SchemaTypes['$(theme).themeColors.id<?>.variants'];
 export function useReferencedObject(query?: PointerTypes['$(theme).themes.id<?>.backgroundColor']): SchemaTypes['$(theme).themes.id<?>.backgroundColor'];
 export function useReferencedObject(query?: PointerTypes['$(palette).colorPalettes.id<?>']): SchemaTypes['$(palette).colorPalettes.id<?>'];
 export function useReferencedObject(query?: PointerTypes['$(palette).shades.id<?>']): SchemaTypes['$(palette).shades.id<?>'];
+export function useReferencedObject(query?: PointerTypes['$(theme).stateVariants.id<?>']): SchemaTypes['$(theme).stateVariants.id<?>'];
 export function useReferencedObject(query?: PointerTypes['$(theme).themeColors.id<?>']): SchemaTypes['$(theme).themeColors.id<?>'];
 export function useReferencedObject(query?: PointerTypes['$(theme).themes.id<?>']): SchemaTypes['$(theme).themes.id<?>'];
 export function useReferencedObject(query?: PointerTypes['$(palette).colorPalettes']): SchemaTypes['$(palette).colorPalettes'];
 export function useReferencedObject(query?: PointerTypes['$(palette).shades']): SchemaTypes['$(palette).shades'];
+export function useReferencedObject(query?: PointerTypes['$(theme).stateVariants']): SchemaTypes['$(theme).stateVariants'];
 export function useReferencedObject(query?: PointerTypes['$(theme).themeColors']): SchemaTypes['$(theme).themeColors'];
 export function useReferencedObject(query?: PointerTypes['$(theme).themes']): SchemaTypes['$(theme).themes'];
 
@@ -814,17 +923,23 @@ export function useReferencedObject<T>(query?: string): T|null {
   }, [query, ctx.applicationState]);
 };
 
+export function useFloroState(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'], defaultData?: SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']|null, (t: SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'], doSave?: boolean) => void, boolean, () => void];
+export function useFloroState(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'], defaultData?: SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions']|null, (t: SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'], doSave?: boolean) => void, boolean, () => void];
 export function useFloroState(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], defaultData?: SchemaTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|null, (t: SchemaTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], doSave?: boolean) => void, boolean, () => void];
 export function useFloroState(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'], defaultData?: SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>']|null, (t: SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'], doSave?: boolean) => void, boolean, () => void];
+export function useFloroState(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>'], defaultData?: SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>']|null, (t: SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>'], doSave?: boolean) => void, boolean, () => void];
 export function useFloroState(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades'], defaultData?: SchemaTypes['$(palette).colorPalettes.id<?>.colorShades'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(palette).colorPalettes.id<?>.colorShades']|null, (t: SchemaTypes['$(palette).colorPalettes.id<?>.colorShades'], doSave?: boolean) => void, boolean, () => void];
 export function useFloroState(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions'], defaultData?: SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions']|null, (t: SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions'], doSave?: boolean) => void, boolean, () => void];
+export function useFloroState(query: PointerTypes['$(theme).themeColors.id<?>.variants'], defaultData?: SchemaTypes['$(theme).themeColors.id<?>.variants'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(theme).themeColors.id<?>.variants']|null, (t: SchemaTypes['$(theme).themeColors.id<?>.variants'], doSave?: boolean) => void, boolean, () => void];
 export function useFloroState(query: PointerTypes['$(theme).themes.id<?>.backgroundColor'], defaultData?: SchemaTypes['$(theme).themes.id<?>.backgroundColor'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(theme).themes.id<?>.backgroundColor']|null, (t: SchemaTypes['$(theme).themes.id<?>.backgroundColor'], doSave?: boolean) => void, boolean, () => void];
 export function useFloroState(query: PointerTypes['$(palette).colorPalettes.id<?>'], defaultData?: SchemaTypes['$(palette).colorPalettes.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(palette).colorPalettes.id<?>']|null, (t: SchemaTypes['$(palette).colorPalettes.id<?>'], doSave?: boolean) => void, boolean, () => void];
 export function useFloroState(query: PointerTypes['$(palette).shades.id<?>'], defaultData?: SchemaTypes['$(palette).shades.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(palette).shades.id<?>']|null, (t: SchemaTypes['$(palette).shades.id<?>'], doSave?: boolean) => void, boolean, () => void];
+export function useFloroState(query: PointerTypes['$(theme).stateVariants.id<?>'], defaultData?: SchemaTypes['$(theme).stateVariants.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(theme).stateVariants.id<?>']|null, (t: SchemaTypes['$(theme).stateVariants.id<?>'], doSave?: boolean) => void, boolean, () => void];
 export function useFloroState(query: PointerTypes['$(theme).themeColors.id<?>'], defaultData?: SchemaTypes['$(theme).themeColors.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(theme).themeColors.id<?>']|null, (t: SchemaTypes['$(theme).themeColors.id<?>'], doSave?: boolean) => void, boolean, () => void];
 export function useFloroState(query: PointerTypes['$(theme).themes.id<?>'], defaultData?: SchemaTypes['$(theme).themes.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(theme).themes.id<?>']|null, (t: SchemaTypes['$(theme).themes.id<?>'], doSave?: boolean) => void, boolean, () => void];
 export function useFloroState(query: PointerTypes['$(palette).colorPalettes'], defaultData?: SchemaTypes['$(palette).colorPalettes'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(palette).colorPalettes']|null, (t: SchemaTypes['$(palette).colorPalettes'], doSave?: boolean) => void, boolean, () => void];
 export function useFloroState(query: PointerTypes['$(palette).shades'], defaultData?: SchemaTypes['$(palette).shades'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(palette).shades']|null, (t: SchemaTypes['$(palette).shades'], doSave?: boolean) => void, boolean, () => void];
+export function useFloroState(query: PointerTypes['$(theme).stateVariants'], defaultData?: SchemaTypes['$(theme).stateVariants'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(theme).stateVariants']|null, (t: SchemaTypes['$(theme).stateVariants'], doSave?: boolean) => void, boolean, () => void];
 export function useFloroState(query: PointerTypes['$(theme).themeColors'], defaultData?: SchemaTypes['$(theme).themeColors'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(theme).themeColors']|null, (t: SchemaTypes['$(theme).themeColors'], doSave?: boolean) => void, boolean, () => void];
 export function useFloroState(query: PointerTypes['$(theme).themes'], defaultData?: SchemaTypes['$(theme).themes'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(theme).themes']|null, (t: SchemaTypes['$(theme).themes'], doSave?: boolean) => void, boolean, () => void];
 
@@ -910,17 +1025,23 @@ export function useFloroState<T>(query: string, defaultData?: T, mutateStoreWith
   }, [query, pluginName, ctx.pluginState, ctx.applicationState, ctx.commandMode])
   return [getter, set, isLoading, save];
 };
+export function useIsFloroInvalid(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(theme).themeColors.id<?>.variants'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(theme).themes.id<?>.backgroundColor'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(palette).colorPalettes.id<?>'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(palette).shades.id<?>'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(theme).stateVariants.id<?>'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(theme).themeColors.id<?>'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(theme).themes.id<?>'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(palette).colorPalettes'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(palette).shades'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(theme).stateVariants'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(theme).themeColors'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(theme).themes'], fuzzy?: boolean): boolean;
 
@@ -943,17 +1064,23 @@ export function useIsFloroInvalid(query: PartialDiffableQuery|DiffableQuery, fuz
     return containsDiffable(invalidQueriesSet, query, false);
   }, [invalidQueriesSet, query, fuzzy])
 };
+export function useWasAdded(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(theme).themeColors.id<?>.variants'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(theme).themes.id<?>.backgroundColor'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(palette).colorPalettes.id<?>'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(palette).shades.id<?>'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(theme).stateVariants.id<?>'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(theme).themeColors.id<?>'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(theme).themes.id<?>'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(palette).colorPalettes'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(palette).shades'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(theme).stateVariants'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(theme).themeColors'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(theme).themes'], fuzzy?: boolean): boolean;
 
@@ -969,17 +1096,23 @@ export function useWasAdded(query: PartialDiffableQuery|DiffableQuery, fuzzy = t
     return containsDiffable(ctx.changeset, query, false);
   }, [ctx.changeset, query, fuzzy, ctx.compareFrom, ctx.commandMode])
 };
+export function useWasRemoved(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(theme).themeColors.id<?>.variants'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(theme).themes.id<?>.backgroundColor'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(palette).colorPalettes.id<?>'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(palette).shades.id<?>'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(theme).stateVariants.id<?>'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(theme).themeColors.id<?>'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(theme).themes.id<?>'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(palette).colorPalettes'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(palette).shades'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(theme).stateVariants'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(theme).themeColors'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(theme).themes'], fuzzy?: boolean): boolean;
 
@@ -995,17 +1128,23 @@ export function useWasRemoved(query: PartialDiffableQuery|DiffableQuery, fuzzy =
     return containsDiffable(ctx.changeset, query, false);
   }, [ctx.changeset, query, fuzzy, ctx.compareFrom, ctx.commandMode])
 };
+export function useHasConflict(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(theme).themeColors.id<?>.variants'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(theme).themes.id<?>.backgroundColor'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(palette).colorPalettes.id<?>'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(palette).shades.id<?>'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(theme).stateVariants.id<?>'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(theme).themeColors.id<?>'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(theme).themes.id<?>'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(palette).colorPalettes'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(palette).shades'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(theme).stateVariants'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(theme).themeColors'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(theme).themes'], fuzzy?: boolean): boolean;
 
@@ -1021,17 +1160,23 @@ export function useHasConflict(query: PartialDiffableQuery|DiffableQuery, fuzzy 
     return containsDiffable(ctx.conflictSet, query, false);
   }, [ctx.conflictSet, query, fuzzy, ctx.commandMode])
 };
+export function useWasChanged(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(theme).themeColors.id<?>.variants'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(theme).themes.id<?>.backgroundColor'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(palette).colorPalettes.id<?>'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(palette).shades.id<?>'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(theme).stateVariants.id<?>'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(theme).themeColors.id<?>'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(theme).themes.id<?>'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(palette).colorPalettes'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(palette).shades'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(theme).stateVariants'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(theme).themeColors'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(theme).themes'], fuzzy?: boolean): boolean;
 
@@ -1058,17 +1203,23 @@ export function useWasChanged(query: PartialDiffableQuery|DiffableQuery, fuzzy =
   }, [ctx.changeset, query, fuzzy, ctx.compareFrom, ctx.commandMode])
   return wasAdded || wasRemoved;
 };
+export function useHasIndication(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(theme).themeColors.id<?>.variants'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(theme).themes.id<?>.backgroundColor'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(palette).colorPalettes.id<?>'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(palette).shades.id<?>'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(theme).stateVariants.id<?>'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(theme).themeColors.id<?>'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(theme).themes.id<?>'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(palette).colorPalettes'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(palette).shades'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(theme).stateVariants'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(theme).themeColors'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(theme).themes'], fuzzy?: boolean): boolean;
 

@@ -70,7 +70,7 @@ const ColorControlsContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  height: 96px;
+  height: 72px;
 `;
 
 const DeleteShadeContainer = styled.div`

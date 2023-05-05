@@ -10,8 +10,6 @@ import {
 import ThemeEditList from './themes/ThemeEditList';
 import ThemeReadList from './themes/ThemeReadList';
 import ThemeDefMatrix from './themedefmatrix/ThemeDefMatrix';
-import StateVariantEditList from './statevariants/StateVariantEditList';
-import StateVariantReadList from './statevariants/StateVariantReadList';
 
 const Container = styled.div`
   width: 100%;
@@ -35,7 +33,6 @@ const Layout = () => {
 
   const container = useRef<HTMLDivElement>(null);
   const [showThemeEdit, setShowThemeEdit] = useState(false);
-  const [showStateVariantEdit, setShowStateVariantEdit] = useState(false);
   const { commandMode } = useFloroContext();
 
   const onShowThemeList = useCallback(() => {
@@ -48,16 +45,6 @@ const Layout = () => {
     setShowThemeEdit(false);
   }, []);
 
-  const onShowStateVariantList = useCallback(() => {
-    if (container?.current) {
-      container?.current?.scrollTo({top: 0, behavior: "smooth"});
-    }
-    setShowStateVariantEdit(true);
-  }, []);
-  const onHideStateVariantList = useCallback(() => {
-    setShowStateVariantEdit(false);
-  }, []);
-
   const onScrollToBottom = useCallback(() => {
       container?.current?.scrollTo({top: container?.current?.scrollHeight, behavior: "smooth"})
   }, []);
@@ -67,15 +54,10 @@ const Layout = () => {
     <Container ref={container}>
       {commandMode == "edit" && showThemeEdit && <ThemeEditList />}
       {commandMode != "edit" && <ThemeReadList />}
-      {commandMode == "edit" && showStateVariantEdit && <StateVariantEditList />}
-      {commandMode != "edit" && <StateVariantReadList />}
       <ThemeDefMatrix
-        showThemeList={showThemeEdit}
+        showShadeList={showThemeEdit}
         onHideThemeList={onHideThemeList}
         onShowThemeList={onShowThemeList}
-        showVariantList={showStateVariantEdit}
-        onHideVariantList={onHideStateVariantList}
-        onShowVariantList={onShowStateVariantList}
         onScrollToBottom={onScrollToBottom}
       />
     </Container>

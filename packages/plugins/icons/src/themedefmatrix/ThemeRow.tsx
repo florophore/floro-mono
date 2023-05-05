@@ -1,14 +1,12 @@
 import React, { useMemo, useCallback, useState, useEffect, useRef } from "react";
 import {
   SchemaTypes,
-  makeQueryRef,
   useFloroContext,
   useFloroState,
   useHasConflict,
   useHasIndication,
   useIsFloroInvalid,
   useQueryRef,
-  useReferencedObject,
   useWasAdded,
   useWasRemoved,
 } from "../floro-schema-api";
@@ -20,14 +18,12 @@ import { css } from "@emotion/css";
 import WarningLight from "@floro/common-assets/assets/images/icons/warning.light.svg";
 import WarningDark from "@floro/common-assets/assets/images/icons/warning.dark.svg";
 import Input from "@floro/storybook/stories/design-system/Input";
-import Checkbox from "@floro/storybook/stories/design-system/Checkbox";
 
 import XCircleLight from "@floro/common-assets/assets/images/icons/red_x_circle.light.svg";
 import XCircleDark from "@floro/common-assets/assets/images/icons/red_x_circle.dark.svg";
 import DraggerLight from "@floro/common-assets/assets/images/icons/dragger.light.svg";
 import DraggerDark from "@floro/common-assets/assets/images/icons/dragger.dark.svg";
 import ThemeDefCell from "./ThemeDefCell";
-import ThemeDefVariantCell from "./ThemeDefVariantCell";
 
 const Container = styled.div`
   padding: 0;
@@ -44,33 +40,9 @@ const RowTitle = styled.h1`
   margin: 0;
 `;
 
-const IncludeVariantsWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  margin-bottom: 16px;
-  margin-left: 40px;
-`;
-
-const IncludeVariantsText = styled.p`
-  font-family: "MavenPro";
-  font-weight: 600;
-  font-size: 1.2rem;
-  color: ${(props) => props.theme.colors.contrastTextLight};
-  padding: 0;
-  margin: 0;
-  margin-right: 8px;
-`;
-
 const Row = styled.div`
   display: flex;
   flex-direction: row;
-`;
-
-const Col = styled.div`
-  display: flex;
-  flex-direction: column;
 `;
 
 const RowWrapper = styled.div`
@@ -96,7 +68,7 @@ const ColorControlsContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  height: 72px;
+  height: 96px;
 `;
 
 const DeleteShadeContainer = styled.div`
@@ -154,16 +126,15 @@ const colorPaletteItemVariants = {
 
 const paletteCellVariants =  {
   active: {
+      marginTop: 0,
       height: 20,
       width: 104,
       y: -30,
       scale: 0.35,
-      marginTop: 12
   },
   inactive: {
     scale: 1,
     marginTop: 0,
-    height: 'auto',
     transition: { duration: 0.3 }
   }
 };
@@ -254,9 +225,7 @@ const ThemeRow = (props: Props) => {
           {
             id: themeColor.id,
             name: name.trimStart(),
-            includeVariants: themeColor?.includeVariants,
-            themeDefinitions: themeColor.themeDefinitions,
-            variants: themeColor?.variants ?? []
+            themeDefinitions: themeColor.themeDefinitions
           },
           true
         );
@@ -269,10 +238,10 @@ const ThemeRow = (props: Props) => {
   }, [name]);
 
   const onRemove = useCallback(() => {
-    if (props.themeColor) {
-      props.onRemove(props.themeColor);
+    if (themeColor) {
+      props.onRemove(themeColor);
     }
-  }, [props.themeColor, props.onRemove]);
+  }, [themeColor, props.onRemove]);
 
   const onPointerDown = useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
@@ -284,18 +253,8 @@ const ThemeRow = (props: Props) => {
     [controls]
   );
 
-  const onTogleVariants = useCallback((includeVariants: boolean) => {
-    if (themeColor) {
-      setThemeColor({
-        ...themeColor,
-        includeVariants
-      }, true);
-    }
-  }, [props.themeColor, themeColor]);
-
-  const stateVariants = useReferencedObject("$(theme).stateVariants");
-
   return (
+
     <Reorder.Item
       dragListener={false}
       dragControls={controls}
@@ -309,138 +268,77 @@ const ThemeRow = (props: Props) => {
       whileHover={{ scale: 1 }}
       whileDrag={{ scale: 1.02 }}
       key={props.themeColor.id}
-      style={{ position: "relative" }}
+      style={{position: "relative"}}
       onDragStart={props.onDragStart}
       onDragEnd={props.onDragEnd}
     >
-      <Container>
-        <TitleRow>
-          {commandMode != "edit" && (
-            <>
-              <DragShadeContainer style={{ cursor: "default" }}>
-                <IndicatorCircle style={{ backgroundColor: color }} />
+    <Container>
+      <TitleRow>
+        {commandMode != "edit" && (
+          <>
+            <DragShadeContainer style={{cursor: "default"}}>
+              <IndicatorCircle style={{backgroundColor: color}} />
+            </DragShadeContainer>
+            <RowTitle style={{ color, marginTop: 12 }}>{title}</RowTitle>
+            {isInvalid && <WarningIconImg src={warningIcon} />}
+          </>
+        )}
+        {commandMode == "edit" && (
+          <>
+          {props.isReOrderMode && (
+            <ColorControlsContainer>
+              <DragShadeContainer onPointerDown={onPointerDown}>
+                <DragIcon src={draggerIcon} />
               </DragShadeContainer>
               <RowTitle style={{ color, marginTop: 12 }}>{title}</RowTitle>
-              {isInvalid && <WarningIconImg src={warningIcon} />}
-            </>
+              {isInvalid && <WarningIconImg style={{marginTop: 14}} src={warningIcon} />}
+            </ColorControlsContainer>
           )}
-          {commandMode == "edit" && (
-            <>
-              {props.isReOrderMode && (
-                <ColorControlsContainer>
-                  <DragShadeContainer onPointerDown={onPointerDown}>
-                    <DragIcon src={draggerIcon} />
-                  </DragShadeContainer>
-                  <RowTitle style={{ color, marginTop: 12 }}>{title}</RowTitle>
-                  {isInvalid && (
-                    <WarningIconImg
-                      style={{ marginTop: 14 }}
-                      src={warningIcon}
-                    />
-                  )}
-                </ColorControlsContainer>
+          {!props.isReOrderMode && (
+            <ColorControlsContainer>
+              <DragShadeContainer style={{cursor: "default"}}>
+                <IndicatorCircle style={{backgroundColor: color}} />
+              </DragShadeContainer>
+              {false && (
+                <Input
+                  value={name ?? ""}
+                  label={"definition name"}
+                  placeholder={themeColor?.id ?? ""}
+                  onTextChanged={setName}
+                  isValid={!isInvalid}
+                />
               )}
-              {!props.isReOrderMode && (
-                <ColorControlsContainer>
-                  <DragShadeContainer style={{ cursor: "default" }}>
-                    <IndicatorCircle style={{ backgroundColor: color }} />
-                  </DragShadeContainer>
-                  {false && (
-                    <Input
-                      value={name ?? ""}
-                      label={"definition name"}
-                      placeholder={themeColor?.id ?? ""}
-                      onTextChanged={setName}
-                      isValid={!isInvalid}
-                    />
-                  )}
-                  <RowTitle style={{ color, marginTop: 12, width: 448 }}>
-                    {title}
-                  </RowTitle>
-                  <DeleteShadeContainer onClick={onRemove}>
-                    <DeleteShade src={xIcon} />
-                  </DeleteShadeContainer>
-                  {isInvalid && (
-                    <WarningIconImg
-                      style={{ marginTop: 14 }}
-                      src={warningIcon}
-                    />
-                  )}
-                </ColorControlsContainer>
-              )}
-            </>
+              <RowTitle style={{ color, marginTop: 12, width: 448 }}>{title}</RowTitle>
+              <DeleteShadeContainer onClick={onRemove}>
+                <DeleteShade src={xIcon} />
+              </DeleteShadeContainer>
+              {isInvalid && <WarningIconImg style={{marginTop: 14}} src={warningIcon} />}
+            </ColorControlsContainer>
           )}
-        </TitleRow>
-        {commandMode == "edit" && !props.isReOrderMode && (
-          <IncludeVariantsWrapper>
-            <IncludeVariantsText>
-              {'Include variants'}
-            </IncludeVariantsText>
-            <Checkbox disabled={commandMode != "edit"} isChecked={themeColor?.includeVariants ??  false} onChange={onTogleVariants} />
-          </IncludeVariantsWrapper>
+          </>
         )}
-        <motion.div
+      </TitleRow>
+      <motion.div
           variants={paletteCellVariants}
           animate={motionState}
-          style={{ zIndex: 0 }}
-        >
-          <RowWrapper>
-            <Row>
-              {(!themeColor?.includeVariants || props.isReOrderMode) && (
-                <>
-                  {themes?.map((themeObject) => {
-                    return (
-                      <ThemeDefCell
-                        key={`${themeObject.id}-${props.themeColor.id}`}
-                        themeObject={themeObject}
-                        themeColor={props.themeColor}
-                        isReOrderMode={props.isReOrderMode}
-                      />
-                    );
-                  })}
-                </>
-              )}
-              {themeColor?.includeVariants && !props.isReOrderMode && (
-                <>
-                  <Col>
-                    {themes?.map((themeObject) => {
-                      return (
-                        <ThemeDefCell
-                          key={`${themeObject.id}-${props.themeColor.id}`}
-                          themeObject={themeObject}
-                          themeColor={props.themeColor}
-                          isReOrderMode={props.isReOrderMode}
-                        />
-                      );
-                    })}
-                  </Col>
-                  {stateVariants?.map((variant) => {
-                    return (
-                      <Col key={variant.id}>
-                        {themes?.map((themeObject) => {
-                          const variantDefinitionRef = makeQueryRef(
-                            "$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>",
-                            props.themeColor.id,
-                            makeQueryRef("$(theme).stateVariants.id<?>", variant.id),
-                            makeQueryRef("$(theme).themes.id<?>", themeObject.id)
-                          )
-                          return (
-                            <ThemeDefVariantCell
-                              key={`${variantDefinitionRef}`}
-                              variantDefinitionRef={variantDefinitionRef}
-                              isReOrderMode={props.isReOrderMode}
-                            />
-                          );
-                        })}
-                      </Col>
-                    );
-                  })}
-                </>
-              )}
-            </Row>
-          </RowWrapper>
-        </motion.div>
-      </Container>
+          style={{zIndex: 0}}
+      >
+        <RowWrapper>
+          <Row>
+            {themes?.map((themeObject) => {
+              return (
+                <ThemeDefCell
+                  key={`${themeObject.id}-${props.themeColor.id}`}
+                  themeObject={themeObject}
+                  themeColor={props.themeColor}
+                  isReOrderMode={props.isReOrderMode}
+                />
+              );
+            })}
+          </Row>
+        </RowWrapper>
+      </motion.div>
+    </Container>
     </Reorder.Item>
   );
 };

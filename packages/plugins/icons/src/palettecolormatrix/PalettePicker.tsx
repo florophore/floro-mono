@@ -73,7 +73,7 @@ const PalettePicker = (props: Props) => {
         position: absolute;
         position: absolute;
         left: calc(100% - 56px);
-        top: -300px;
+        top: -240px;
         border-radius: 8px;
         z-index: 1;
       `}
@@ -81,7 +81,7 @@ const PalettePicker = (props: Props) => {
       <img
         className={css`
           position: absolute;
-          top: 330px;
+          top: 250px;
           left: 1px;
         `}
         src={tooltipArrow}

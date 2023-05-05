@@ -72,14 +72,6 @@ const SubTitle = styled.h4`
   padding: 0;
   margin: 0px 0 8px 0;
 `;
-const ColorTitle = styled.h6`
-  font-family: "MavenPro";
-  font-weight: 500;
-  font-size: 1.1rem;
-  text-align: left;
-  padding: 0;
-  margin: 8px 0 -8px 0;
-`;
 
 const ColorDisplayCircle = styled.div`
   border: 2px solid;
@@ -254,39 +246,17 @@ const ThemeDefCell = (props: Props) => {
   }, [contrastColor, wasAdded, wasRemoved, wasRemoved, hasConflict, theme, commandMode]);
 
   const titleColor = useMemo(() => {
-    const lightDistance = getColorDistance(
-      ColorPalette.white,
-      props.themeObject.backgroundColor.hexcode
-    );
-
-    const darkDistance = getColorDistance(
-      ColorPalette.mediumGray,
-      props.themeObject.backgroundColor.hexcode
-    );
     if (hasConflict) {
-
-      if (lightDistance <= darkDistance) {
-        return ColorPalette.orange;
-      }
-      return ColorPalette.lightOrange;
+      return theme.colors.conflictBackground;
     }
     if (wasRemoved) {
-      if (lightDistance <= darkDistance) {
-        return ColorPalette.red;
-      }
-      return ColorPalette.lightRed;
+      return theme.colors.removedBackground;
     }
     if (wasAdded) {
-      if (lightDistance <= darkDistance) {
-        return ColorPalette.teal;
-      }
-      return ColorPalette.lightTeal;
+      return theme.colors.addedBackground;
     }
-      if (lightDistance <= darkDistance) {
-        return ColorPalette.mediumGray;
-      }
-      return ColorPalette.white
-  }, [wasAdded, wasRemoved, wasRemoved, hasConflict, theme, commandMode, props.themeObject.backgroundColor.hexcode]);
+    return theme.colors.pluginTitle;
+  }, [wasAdded, wasRemoved, wasRemoved, hasConflict, theme, commandMode]);
 
   const subTitleColor = useMemo(() => {
     if (hasConflict) {
@@ -373,14 +343,7 @@ const ThemeDefCell = (props: Props) => {
                       <AlphaColorCircle />
                     )}
                 </ColorDisplayCircle>
-
               </>
-            )}
-            {title && (
-              <ColorTitle style={{ color: titleColor }}>{title}</ColorTitle>
-            )}
-            {!title && (
-              <ColorTitle style={{ color: theme.colors.warningTextColor }}>{"missing color!"}</ColorTitle>
             )}
             {!paletteColorShade && (
               <WarningCircle>
@@ -396,7 +359,12 @@ const ThemeDefCell = (props: Props) => {
             </EditIndicatorWrapper>
           )}
         </Card>
-        <Title style={{ color: theme.colors.pluginTitle }}>{'Default'}</Title>
+        {title && (
+          <Title style={{ color: titleColor }}>{title}</Title>
+        )}
+        {!title && (
+          <Title style={{ color: theme.colors.warningTextColor }}>{"missing color!"}</Title>
+        )}
       </Container>
       <PalettePicker
         show={showPicker && commandMode == "edit" && !props.isReOrderMode}

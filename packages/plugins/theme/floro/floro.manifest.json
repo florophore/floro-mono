@@ -42,7 +42,36 @@
       "name": {
         "type": "string"
       },
+      "includeVariants": {
+        "type": "boolean",
+        "default": false
+      },
       "themeDefinitions": {
+        "type": "set",
+        "bounded": true,
+        "values": "ThemeDef"
+      },
+      "variants": {
+        "type": "set",
+        "bounded": true,
+        "values": "ThemeColorStateVariant"
+      }
+    },
+    "StateVariant": {
+      "id": {
+        "type": "string",
+        "isKey": true
+      },
+      "name": {
+        "type": "string"
+      }
+    },
+    "ThemeColorStateVariant": {
+      "id": {
+        "type": "ref<$.stateVariants.values>",
+        "isKey": true
+      },
+      "variantDefinitions": {
         "type": "set",
         "bounded": true,
         "values": {
@@ -52,10 +81,21 @@
           },
           "paletteColorShade": {
             "type": "ref<palette.ColorShade>",
-            "nullable": false,
+            "nullable": true,
             "onDelete": "nullify"
           }
         }
+      }
+    },
+    "ThemeDef": {
+      "id": {
+        "type": "ref<$.themes.values>",
+        "isKey": true
+      },
+      "paletteColorShade": {
+        "type": "ref<palette.ColorShade>",
+        "nullable": false,
+        "onDelete": "nullify"
       }
     }
   },
@@ -67,6 +107,10 @@
     "themeColors": {
       "type": "set",
       "values": "ThemeColor"
+    },
+    "stateVariants": {
+      "type": "set",
+      "values": "StateVariant"
     }
   },
   "seed": {
@@ -90,24 +134,46 @@
     ],
     "themeColors": [
       {
+        "id": "primary-color",
+        "name": "Primary Color",
+        "includeVariants": true,
+        "themeDefinitions": [],
+        "variants": []
+      },
+      {
         "id": "primary-font-color",
         "name": "Primary Font Color",
-        "themeDefinitions": []
+        "includeVariants": true,
+        "themeDefinitions": [],
+        "variants": []
+      },
+      {
+        "id": "secondary-color",
+        "name": "Secondary Color",
+        "includeVariants": true,
+        "themeDefinitions": [],
+        "variants": []
       },
       {
         "id": "secondary-font-color",
         "name": "Secondary Font Color",
-        "themeDefinitions": []
+        "includeVariants": true,
+        "themeDefinitions": [],
+        "variants": []
+      }
+    ],
+    "stateVariants": [
+      {
+        "id": "hovered",
+        "name": "Hovered"
       },
       {
-        "id": "primary-background-color",
-        "name": "Primary Background Color",
-        "themeDefinitions": []
+        "id": "selected",
+        "name": "Selected"
       },
       {
-        "id": "secondary-background-color",
-        "name": "Secondary Background Color",
-        "themeDefinitions": []
+        "id": "focused",
+        "name": "Focused"
       }
     ]
   }

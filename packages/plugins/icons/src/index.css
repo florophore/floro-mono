@@ -1,0 +1,101 @@
+/****** CSS RESET *******/
+*,
+*::before,
+*::after{box-sizing:border-box;}
+a {
+    text-decoration:none;
+     color:inherit;
+      cursor:pointer;
+}
+
+button {
+  background-color: transparent;
+  color: inherit;
+  border-width: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+figure {
+  margin: 0;
+}
+
+input::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+ul,
+ol,
+dd {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+  font-family: 'MavenPro';
+}
+
+p{
+    margin:0;
+}
+cite {
+    font-style:normal;
+}
+fieldset {
+  border-width: 0;
+  padding: 0;
+  margin: 0;
+}
+
+/****** CSS RESET DONE *******/
+
+@font-face {
+    font-family: 'MavenPro';
+    src: url(@floro/common-assets/assets/fonts/MavenPro-VariableFont_wght.ttf) format("truetype-variations");
+    font-weight: 100 900;
+}
+
+p {
+  font-family: 'MavenPro';
+}
+
+body {
+    padding: 0px;
+    margin: 0px;
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+}
+
+#app {
+    height: 100%;
+    width: 100%;
+    display: flex;
+}
+
+input[type="color"] {
+	-webkit-appearance: none;
+	border: none;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+	padding: 0;
+  cursor: pointer;
+}
+input[type="color"]::-webkit-color-swatch {
+	border: none;
+  -webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+  -moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+  box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+}

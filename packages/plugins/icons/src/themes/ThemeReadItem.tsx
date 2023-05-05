@@ -28,7 +28,7 @@ const ThemeContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  height: 72px;
+  height: 96px;
 `;
 
 const DragShadeContainer = styled.div`

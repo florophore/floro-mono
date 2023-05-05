@@ -22,11 +22,12 @@ import EditDark from "@floro/common-assets/assets/images/icons/edit.dark.svg";
 
 import PalettePicker from "../palettecolormatrix/PalettePicker";
 
-import WarningLight from "@floro/common-assets/assets/images/icons/warning.light.svg";
-import WarningDark from "@floro/common-assets/assets/images/icons/warning.dark.svg";
+import XCircleLight from "@floro/common-assets/assets/images/icons/x_circle.light.svg";
+import XCircleDark from "@floro/common-assets/assets/images/icons/x_circle.dark.svg";
 
 const Wrapper = styled.div`
   position: relative;
+  margin-top: 29px;
 `;
 
 const Container = styled.div`
@@ -153,6 +154,35 @@ const EditIndicatorImg = styled.img`
   width: 20px;
   cursor: pointer;
 `;
+const NoneText = styled.p`
+  font-family: "MavenPro";
+  font-weight: 500;
+  font-size: 1.4rem;
+  color: ${ColorPalette.black};
+  text-align: center;
+  padding: 0;
+  margin: 0 0 0 0;
+`;
+
+const ExitIndicatorWrapper = styled.div`
+  height: 32px;
+  width: 32px;
+  position: absolute;
+  top: 4px;
+  left: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  cursor: pointer;
+`;
+
+const ExitIndicatorImg = styled.img`
+  height: 20px;
+  width: 20px;
+  cursor: pointer;
+`;
 
 const getColorDistance = (staticHex: string, comparedHex: string) => {
   try {
@@ -172,40 +202,36 @@ const getColorDistance = (staticHex: string, comparedHex: string) => {
 }
 
 interface Props {
-  themeColor: SchemaTypes["$(theme).themeColors.id<?>"];
-  themeObject: SchemaTypes["$(theme).themes.id<?>"];
+  variantDefinitionRef: PointerTypes["$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>"];
   isReOrderMode: boolean;
 }
 
-const ThemeDefCell = (props: Props) => {
+const ThemeDefVariantCell = (props: Props) => {
   const theme = useTheme();
   const { commandMode } = useFloroContext();
-  const themeRef = useQueryRef("$(theme).themes.id<?>", props.themeObject.id);
+  const [themeColorId, stateVariantRef, themeRef] = useExtractQueryArgs(props.variantDefinitionRef);
+  const themeObject = useReferencedObject(themeRef);
+  const stateVariant = useReferencedObject(stateVariantRef);
   const colorCircle = useRef<HTMLDivElement>(null);
 
-  const themeDefinitionRef = useQueryRef(
-    "$(theme).themeColors.id<?>.themeDefinitions.id<?>",
-    props.themeColor.id,
-    themeRef
-  );
-  const [themeDefinition, setThemeDefinition] = useFloroState(
-    themeDefinitionRef,
+  const [variantDefinition, setVariantDefinition] = useFloroState(
+    props.variantDefinitionRef,
     {
-      id: themeRef
-    } as  SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'],
+      id: stateVariant.id,
+    } as  SchemaTypes["$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>"],
     false
   );
 
-  const paletteColorShade = useReferencedObject(themeDefinition?.paletteColorShade);
-  const [paletteColorId, paletteShadeRef] = useExtractQueryArgs(themeDefinition?.paletteColorShade);
+  const paletteColorShade = useReferencedObject(variantDefinition?.paletteColorShade);
+  const [paletteColorId, paletteShadeRef] = useExtractQueryArgs(variantDefinition?.paletteColorShade);
   const paletteColorRef = useQueryRef("$(palette).colorPalettes.id<?>", paletteColorId);
   const paletteColor = useReferencedObject(paletteColorRef);
   const shade = useReferencedObject(paletteShadeRef);
   const themeDefinitions = useReferencedObject("$(theme).themeColors");
 
-  const wasRemoved = useWasRemoved(themeDefinitionRef, false);
-  const wasAdded = useWasAdded(themeDefinitionRef, false);
-  const hasConflict = useHasConflict(themeDefinitionRef, false);
+  const wasRemoved = useWasRemoved(props.variantDefinitionRef, false);
+  const wasAdded = useWasAdded(props.variantDefinitionRef, false);
+  const hasConflict = useHasConflict(props.variantDefinitionRef, false);
   const [showPicker, setShowPicker] = useState(false);
 
   const onShowPicker = useCallback(() => {
@@ -217,7 +243,7 @@ const ThemeDefCell = (props: Props) => {
   }, []);
 
   const contrastColor = useMemo(() => {
-    if (!props.themeObject.backgroundColor) {
+    if (!themeObject?.backgroundColor) {
       if (theme.name == 'dark') {
         return ColorPalette.white;
       }
@@ -225,19 +251,19 @@ const ThemeDefCell = (props: Props) => {
     }
     const lightDistance = getColorDistance(
       ColorPalette.white,
-      props.themeObject.backgroundColor.hexcode
+      themeObject?.backgroundColor?.hexcode
     );
 
     const darkDistance = getColorDistance(
       ColorPalette.mediumGray,
-      props.themeObject.backgroundColor.hexcode
+      themeObject.backgroundColor.hexcode
     );
 
     if (lightDistance <= darkDistance) {
       return ColorPalette.mediumGray;
     }
     return ColorPalette.white;
-  }, [props.themeObject.backgroundColor, theme])
+  }, [themeObject.backgroundColor, theme])
 
   const cardBorderColor = useMemo(() => {
     if (hasConflict) {
@@ -256,12 +282,12 @@ const ThemeDefCell = (props: Props) => {
   const titleColor = useMemo(() => {
     const lightDistance = getColorDistance(
       ColorPalette.white,
-      props.themeObject.backgroundColor.hexcode
+      themeObject.backgroundColor.hexcode
     );
 
     const darkDistance = getColorDistance(
       ColorPalette.mediumGray,
-      props.themeObject.backgroundColor.hexcode
+      themeObject.backgroundColor.hexcode
     );
     if (hasConflict) {
 
@@ -286,23 +312,11 @@ const ThemeDefCell = (props: Props) => {
         return ColorPalette.mediumGray;
       }
       return ColorPalette.white
-  }, [wasAdded, wasRemoved, wasRemoved, hasConflict, theme, commandMode, props.themeObject.backgroundColor.hexcode]);
+  }, [wasAdded, wasRemoved, wasRemoved, hasConflict, theme, commandMode, themeObject.backgroundColor.hexcode]);
 
-  const subTitleColor = useMemo(() => {
-    if (hasConflict) {
-      return theme.colors.conflictBackground;
-    }
-    if (wasRemoved) {
-      return theme.colors.removedBackground;
-    }
-    if (wasAdded) {
-      return theme.colors.addedBackground;
-    }
-    return theme.colors.contrastText;
-  }, [wasAdded, wasRemoved, wasRemoved, hasConflict, theme, commandMode]);
 
   const editIcon = useMemo(() => {
-    if (!props.themeObject.backgroundColor) {
+    if (!themeObject.backgroundColor) {
       if (theme.name == 'dark') {
         return EditDark;
       }
@@ -310,36 +324,56 @@ const ThemeDefCell = (props: Props) => {
     }
     const lightDistance = getColorDistance(
       ColorPalette.white,
-      props.themeObject.backgroundColor.hexcode
+      themeObject.backgroundColor.hexcode
     );
 
     const darkDistance = getColorDistance(
       ColorPalette.mediumGray,
-      props.themeObject.backgroundColor.hexcode
+      themeObject.backgroundColor.hexcode
     );
 
     if (lightDistance <= darkDistance) {
       return EditLight;
     }
     return EditDark;
-  }, [theme.name, props.themeObject.backgroundColor.hexcode]);
+  }, [theme.name, themeObject.backgroundColor.hexcode]);
 
   const onSelect = useCallback((
     colorPaletteColorShadeRef: PointerTypes["$(palette).colorPalettes.id<?>.colorShades.id<?>"]
     ) => {
-    if (themeDefinition) {
-      setThemeDefinition({
-        ...themeDefinition,
+    if (variantDefinition) {
+      setVariantDefinition({
+        ...variantDefinition,
         paletteColorShade: colorPaletteColorShadeRef,
       }, true)
     }
-  }, [themeDefinition, themeDefinitions]);
+  }, [variantDefinition]);
 
-  const warningIcon = useMemo(() => {
-    if (theme.name == "light") {
-      return WarningLight;
+  const onUnsetColor = useCallback((
+    ) => {
+    if (variantDefinition) {
+      setVariantDefinition({
+        ...variantDefinition,
+        paletteColorShade: undefined,
+      }, true)
     }
-    return WarningDark;
+  }, [variantDefinition]);
+
+  const xIcon = useMemo(() => {
+    const lightDistance = getColorDistance(
+      ColorPalette.white,
+      themeObject.backgroundColor.hexcode
+    );
+
+    const darkDistance = getColorDistance(
+      ColorPalette.mediumGray,
+      themeObject.backgroundColor.hexcode
+    );
+
+    if (lightDistance <= darkDistance) {
+      return XCircleLight;
+    }
+    return XCircleDark;
   }, [theme.name]);
 
   const title = useMemo(() => {
@@ -352,11 +386,10 @@ const ThemeDefCell = (props: Props) => {
   return (
     <Wrapper>
       <Container>
-        <SubTitle style={{color: subTitleColor}}>{props.themeObject.name}</SubTitle>
         <Card
           style={{
             borderColor: cardBorderColor,
-            background: props.themeObject.backgroundColor.hexcode,
+            background: themeObject.backgroundColor.hexcode,
           }}
         >
           <CardInterior>
@@ -376,17 +409,14 @@ const ThemeDefCell = (props: Props) => {
 
               </>
             )}
+            {!paletteColorShade && (
+              <NoneText style={{color: contrastColor}}>{
+                'none'
+
+              }</NoneText>
+            )}
             {title && (
               <ColorTitle style={{ color: titleColor }}>{title}</ColorTitle>
-            )}
-            {!title && (
-              <ColorTitle style={{ color: theme.colors.warningTextColor }}>{"missing color!"}</ColorTitle>
-            )}
-            {!paletteColorShade && (
-              <WarningCircle>
-                <WarningIcon src={warningIcon}/>
-
-              </WarningCircle>
             )}
           </CardInterior>
 
@@ -395,8 +425,14 @@ const ThemeDefCell = (props: Props) => {
               <EditIndicatorImg src={editIcon} />
             </EditIndicatorWrapper>
           )}
+
+        {commandMode == "edit" && !props.isReOrderMode && !!paletteColorShade && (
+            <ExitIndicatorWrapper onClick={onUnsetColor}>
+                <ExitIndicatorImg src={xIcon}/>
+            </ExitIndicatorWrapper>
+        )}
         </Card>
-        <Title style={{ color: theme.colors.pluginTitle }}>{'Default'}</Title>
+        <Title style={{ color: theme.colors.pluginTitle }}>{stateVariant?.name}</Title>
       </Container>
       <PalettePicker
         show={showPicker && commandMode == "edit" && !props.isReOrderMode}
@@ -407,4 +443,4 @@ const ThemeDefCell = (props: Props) => {
   );
 };
 
-export default React.memo(ThemeDefCell);
+export default React.memo(ThemeDefVariantCell);

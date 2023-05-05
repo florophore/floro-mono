@@ -63,12 +63,9 @@ const AddColorContainer = styled.div`
 `;
 
 interface Props {
-  showThemeList: boolean;
+  showShadeList: boolean;
   onHideThemeList: () => void;
   onShowThemeList: () => void;
-  showVariantList: boolean;
-  onHideVariantList: () => void;
-  onShowVariantList: () => void;
   onScrollToBottom: () => void;
 }
 
@@ -80,7 +77,6 @@ const ThemeDefMatrix = (props: Props) => {
 
   const [isDragging, setIsDragging] = useState(false);
   const [newColorName, setNewColorName] = useState("");
-  const [newIncludeVariant, setNewIncludeVariants] = useState(false);
   const [isReOrderMode, setIsReOrderMode] = useState(false);
 
   const onReOrderThemeColors = useCallback(
@@ -133,19 +129,7 @@ const ThemeDefMatrix = (props: Props) => {
     if (!newId || !newColorName || !canAddNewName || !themeColors) {
       return;
     }
-    setThemeColors(
-      [
-        {
-          id: newId,
-          name: newColorName,
-          includeVariants: false,
-          themeDefinitions: [],
-          variants: [],
-        },
-        ...themeColors,
-      ],
-      true
-    );
+    setThemeColors([{ id: newId, name: newColorName, themeDefinitions: [] }, ...themeColors], true);
     setNewColorName("");
   }, [newColorName, newId, canAddNewName, isLoading, themeColors]);
 
@@ -184,48 +168,20 @@ const ThemeDefMatrix = (props: Props) => {
         <SectionTitle>{"Theme Color Definitions"}</SectionTitle>
         {commandMode == "edit" && (
           <ButtonContainer>
-            {props.showThemeList && (
+            {props.showShadeList && (
               <Button
                 label={"hide themes"}
                 bg={"purple"}
                 size={"small"}
-                textSize="small"
                 onClick={props.onHideThemeList}
               />
             )}
-            {!props.showThemeList && (
+            {!props.showShadeList && (
               <Button
                 label={"edit themes"}
                 bg={"purple"}
                 size={"small"}
-                textSize="small"
                 onClick={props.onShowThemeList}
-                isDisabled={props.showVariantList}
-              />
-            )}
-            {!props.showVariantList && (
-              <Button
-                style={{
-                  marginLeft: 16
-                }}
-                label={"edit variants"}
-                bg={"teal"}
-                size={"small"}
-                textSize="small"
-                onClick={props.onShowVariantList}
-                isDisabled={props.showThemeList}
-              />
-            )}
-            {props.showVariantList && (
-              <Button
-                style={{
-                  marginLeft: 16
-                }}
-                label={"hide variants"}
-                bg={"teal"}
-                size={"small"}
-                textSize="small"
-                onClick={props.onHideVariantList}
               />
             )}
           </ButtonContainer>
