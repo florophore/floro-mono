@@ -2,167 +2,75 @@ import React, { useEffect, createContext, useMemo, useCallback, useState, useCon
 
 export type FileRef = `${string}.${string}`;
 
-export type PartialDiffableQuery = `$(icons).iconGroups.id<${string}>.icons.id<${string}>.themeVariants.id<${QueryTypes['$(theme).themes.id<?>']}>.stateVariants.id<${QueryTypes['$(icons).stateVariants.id<?>']}>.disabledColorVariants.id<${QueryTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>']}>`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.themeVariants.id<${QueryTypes['$(theme).themes.id<?>']}>.stateVariants.id<${QueryTypes['$(icons).stateVariants.id<?>']}>.variantOverrides.mapFromHexcode<${string}>`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.themeVariants.id<${QueryTypes['$(theme).themes.id<?>']}>.stateVariants.id<${QueryTypes['$(icons).stateVariants.id<?>']}>.disabledColorVariants`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.themeVariants.id<${QueryTypes['$(theme).themes.id<?>']}>.stateVariants.id<${QueryTypes['$(icons).stateVariants.id<?>']}>.variantOverrides`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.themeVariants.id<${QueryTypes['$(theme).themes.id<?>']}>.stateVariants.id<${QueryTypes['$(icons).stateVariants.id<?>']}>`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.themeVariants.id<${QueryTypes['$(theme).themes.id<?>']}>.stateVariants`|`$(icons).colorStateVariants.id<${QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']}>.themedStateVariants.id<${QueryTypes['$(theme).themes.id<?>']}>.variants.id<${QueryTypes['$(icons).stateVariants.id<?>']}>`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.colorHexcodes.hexcode<${string}>`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.disabledStateVariants.id<${QueryTypes['$(icons).stateVariants.id<?>']}>`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.disabledThemeVariants.id<${QueryTypes['$(theme).themes.id<?>']}>`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.themeVariants.id<${QueryTypes['$(theme).themes.id<?>']}>`|`$(icons).colorStateVariants.id<${QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']}>.themedStateVariants.id<${QueryTypes['$(theme).themes.id<?>']}>.variants`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.colorHexcodes`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.disabledStateVariants`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.disabledThemeVariants`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.themeVariants`|`$(theme).themeColors.id<${string}>.themeDefinitions.id<${QueryTypes['$(theme).themes.id<?>']}>`|`$(palette).colorPalettes.id<${string}>.colorShades.id<${QueryTypes['$(palette).shades.id<?>']}>`|`$(icons).colorStateVariants.id<${QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']}>.themedStateVariants.id<${QueryTypes['$(theme).themes.id<?>']}>`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>`|`$(theme).themeColors.id<${string}>.themeDefinitions`|`$(theme).themes.id<${string}>.backgroundColor`|`$(palette).colorPalettes.id<${string}>.colorShades`|`$(icons).colorStateVariants.id<${QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']}>.themedStateVariants`|`$(icons).iconGroups.id<${string}>.icons`|`$(theme).themeColors.id<${string}>`|`$(theme).themes.id<${string}>`|`$(palette).colorPalettes.id<${string}>`|`$(palette).shades.id<${string}>`|`$(icons).colorStateVariants.id<${QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']}>`|`$(icons).iconGroups.id<${string}>`|`$(icons).stateVariants.id<${string}>`|`$(theme).themeColors`|`$(theme).themes`|`$(palette).colorPalettes`|`$(palette).shades`|`$(icons).colorStateVariants`|`$(icons).iconGroups`|`$(icons).stateVariants`;
+export type PartialDiffableQuery = `$(theme).themeColors.id<${string}>.variants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>.variantDefinitions.id<${QueryTypes['$(theme).themes.id<?>']}>`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.appliedThemes.hexcode<${string}>`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.enabledVariants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>`|`$(theme).themeColors.id<${string}>.variants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>.variantDefinitions`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.appliedThemes`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.enabledVariants`|`$(theme).themeColors.id<${string}>.themeDefinitions.id<${QueryTypes['$(theme).themes.id<?>']}>`|`$(theme).themeColors.id<${string}>.variants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>`|`$(palette).colorPalettes.id<${string}>.colorShades.id<${QueryTypes['$(palette).shades.id<?>']}>`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>`|`$(theme).themeColors.id<${string}>.themeDefinitions`|`$(theme).themeColors.id<${string}>.variants`|`$(theme).themes.id<${string}>.backgroundColor`|`$(palette).colorPalettes.id<${string}>.colorShades`|`$(icons).iconGroups.id<${string}>.icons`|`$(theme).stateVariants.id<${string}>`|`$(theme).themeColors.id<${string}>`|`$(theme).themes.id<${string}>`|`$(palette).colorPalettes.id<${string}>`|`$(palette).shades.id<${string}>`|`$(icons).iconGroups.id<${string}>`|`$(theme).stateVariants`|`$(theme).themeColors`|`$(theme).themes`|`$(palette).colorPalettes`|`$(palette).shades`|`$(icons).iconGroups`;
 
-export type DiffableQuery = `$(icons).iconGroups.id<${string}>.icons.id<${string}>.themeVariants.id<${QueryTypes['$(theme).themes.id<?>']}>.stateVariants.id<${QueryTypes['$(icons).stateVariants.id<?>']}>.disabledColorVariants.id<${QueryTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>']}>`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.themeVariants.id<${QueryTypes['$(theme).themes.id<?>']}>.stateVariants.id<${QueryTypes['$(icons).stateVariants.id<?>']}>.variantOverrides.mapFromHexcode<${string}>`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.themeVariants.id<${QueryTypes['$(theme).themes.id<?>']}>.stateVariants.id<${QueryTypes['$(icons).stateVariants.id<?>']}>`|`$(icons).colorStateVariants.id<${QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']}>.themedStateVariants.id<${QueryTypes['$(theme).themes.id<?>']}>.variants.id<${QueryTypes['$(icons).stateVariants.id<?>']}>`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.colorHexcodes.hexcode<${string}>`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.disabledStateVariants.id<${QueryTypes['$(icons).stateVariants.id<?>']}>`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.disabledThemeVariants.id<${QueryTypes['$(theme).themes.id<?>']}>`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.themeVariants.id<${QueryTypes['$(theme).themes.id<?>']}>`|`$(theme).themeColors.id<${string}>.themeDefinitions.id<${QueryTypes['$(theme).themes.id<?>']}>`|`$(palette).colorPalettes.id<${string}>.colorShades.id<${QueryTypes['$(palette).shades.id<?>']}>`|`$(icons).colorStateVariants.id<${QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']}>.themedStateVariants.id<${QueryTypes['$(theme).themes.id<?>']}>`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>`|`$(theme).themes.id<${string}>.backgroundColor`|`$(theme).themeColors.id<${string}>`|`$(theme).themes.id<${string}>`|`$(palette).colorPalettes.id<${string}>`|`$(palette).shades.id<${string}>`|`$(icons).colorStateVariants.id<${QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']}>`|`$(icons).iconGroups.id<${string}>`|`$(icons).stateVariants.id<${string}>`;
+export type DiffableQuery = `$(theme).themeColors.id<${string}>.variants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>.variantDefinitions.id<${QueryTypes['$(theme).themes.id<?>']}>`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.appliedThemes.hexcode<${string}>`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.enabledVariants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>`|`$(theme).themeColors.id<${string}>.themeDefinitions.id<${QueryTypes['$(theme).themes.id<?>']}>`|`$(theme).themeColors.id<${string}>.variants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>`|`$(palette).colorPalettes.id<${string}>.colorShades.id<${QueryTypes['$(palette).shades.id<?>']}>`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>`|`$(theme).themes.id<${string}>.backgroundColor`|`$(theme).stateVariants.id<${string}>`|`$(theme).themeColors.id<${string}>`|`$(theme).themes.id<${string}>`|`$(palette).colorPalettes.id<${string}>`|`$(palette).shades.id<${string}>`|`$(icons).iconGroups.id<${string}>`;
 
 export type SchemaTypes = {
-  ['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants.id<?>']: {
-    ['id']: QueryTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>'];
+  ['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']: {
+    ['id']: QueryTypes['$(theme).themes.id<?>'];
+    ['paletteColorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
   };
-  ['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides.mapFromHexcode<?>']: {
-    ['mapFromHexcode']: string;
-    ['mapToHexcode']: string;
-  };
-  ['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants']: Array<{
-    ['id']: QueryTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>'];
-  }>;
-  ['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides']: Array<{
-    ['mapFromHexcode']: string;
-    ['mapToHexcode']: string;
-  }>;
-  ['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>']: {
-    ['disabledColorVariants']: Array<{
-      ['id']: QueryTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>'];
-    }>;
-    ['id']: QueryTypes['$(icons).stateVariants.id<?>'];
-    ['manualSvg']?: FileRef;
-    ['overrideAutoColoring']: boolean;
-    ['useManualSvg']: boolean;
-    ['variantOverrides']: Array<{
-      ['mapFromHexcode']: string;
-      ['mapToHexcode']: string;
-    }>;
-  };
-  ['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants']: Array<{
-    ['disabledColorVariants']: Array<{
-      ['id']: QueryTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>'];
-    }>;
-    ['id']: QueryTypes['$(icons).stateVariants.id<?>'];
-    ['manualSvg']?: FileRef;
-    ['overrideAutoColoring']: boolean;
-    ['useManualSvg']: boolean;
-    ['variantOverrides']: Array<{
-      ['mapFromHexcode']: string;
-      ['mapToHexcode']: string;
-    }>;
-  }>;
-  ['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>']: {
-    ['colorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
-    ['id']: QueryTypes['$(icons).stateVariants.id<?>'];
-  };
-  ['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes.hexcode<?>']: {
-    ['correspondingShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+  ['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>']: {
     ['hexcode']: string;
+    ['themeDefinition']: QueryTypes['$(theme).themeColors.id<?>'];
   };
-  ['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants.id<?>']: {
+  ['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>']: {
     ['enabled']: boolean;
-    ['id']: QueryTypes['$(icons).stateVariants.id<?>'];
+    ['id']: QueryTypes['$(theme).stateVariants.id<?>'];
   };
-  ['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants.id<?>']: {
-    ['enabled']: boolean;
+  ['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions']: Array<{
     ['id']: QueryTypes['$(theme).themes.id<?>'];
-  };
-  ['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>']: {
-    ['id']: QueryTypes['$(theme).themes.id<?>'];
-    ['stateVariants']: Array<{
-      ['disabledColorVariants']: Array<{
-        ['id']: QueryTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>'];
-      }>;
-      ['id']: QueryTypes['$(icons).stateVariants.id<?>'];
-      ['manualSvg']?: FileRef;
-      ['overrideAutoColoring']: boolean;
-      ['useManualSvg']: boolean;
-      ['variantOverrides']: Array<{
-        ['mapFromHexcode']: string;
-        ['mapToHexcode']: string;
-      }>;
-    }>;
-  };
-  ['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants']: Array<{
-    ['colorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
-    ['id']: QueryTypes['$(icons).stateVariants.id<?>'];
+    ['paletteColorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
   }>;
-  ['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes']: Array<{
-    ['correspondingShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+  ['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes']: Array<{
     ['hexcode']: string;
+    ['themeDefinition']: QueryTypes['$(theme).themeColors.id<?>'];
   }>;
-  ['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants']: Array<{
+  ['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants']: Array<{
     ['enabled']: boolean;
-    ['id']: QueryTypes['$(icons).stateVariants.id<?>'];
-  }>;
-  ['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants']: Array<{
-    ['enabled']: boolean;
-    ['id']: QueryTypes['$(theme).themes.id<?>'];
-  }>;
-  ['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants']: Array<{
-    ['id']: QueryTypes['$(theme).themes.id<?>'];
-    ['stateVariants']: Array<{
-      ['disabledColorVariants']: Array<{
-        ['id']: QueryTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>'];
-      }>;
-      ['id']: QueryTypes['$(icons).stateVariants.id<?>'];
-      ['manualSvg']?: FileRef;
-      ['overrideAutoColoring']: boolean;
-      ['useManualSvg']: boolean;
-      ['variantOverrides']: Array<{
-        ['mapFromHexcode']: string;
-        ['mapToHexcode']: string;
-      }>;
-    }>;
+    ['id']: QueryTypes['$(theme).stateVariants.id<?>'];
   }>;
   ['$(theme).themeColors.id<?>.themeDefinitions.id<?>']: {
     ['id']: QueryTypes['$(theme).themes.id<?>'];
     ['paletteColorShade']: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+  };
+  ['$(theme).themeColors.id<?>.variants.id<?>']: {
+    ['id']: QueryTypes['$(theme).stateVariants.id<?>'];
+    ['variantDefinitions']: Array<{
+      ['id']: QueryTypes['$(theme).themes.id<?>'];
+      ['paletteColorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+    }>;
   };
   ['$(palette).colorPalettes.id<?>.colorShades.id<?>']: {
     ['alpha']: number;
     ['hexcode']?: string;
     ['id']: QueryTypes['$(palette).shades.id<?>'];
   };
-  ['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>']: {
-    ['id']: QueryTypes['$(theme).themes.id<?>'];
-    ['variants']: Array<{
-      ['colorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
-      ['id']: QueryTypes['$(icons).stateVariants.id<?>'];
-    }>;
-  };
   ['$(icons).iconGroups.id<?>.icons.id<?>']: {
-    ['colorHexcodes']: Array<{
-      ['correspondingShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+    ['appliedThemes']: Array<{
       ['hexcode']: string;
+      ['themeDefinition']: QueryTypes['$(theme).themeColors.id<?>'];
     }>;
-    ['disabledStateVariants']: Array<{
+    ['defaultIconTheme']: QueryTypes['$(theme).themes.id<?>'];
+    ['enabledVariants']: Array<{
       ['enabled']: boolean;
-      ['id']: QueryTypes['$(icons).stateVariants.id<?>'];
-    }>;
-    ['disabledThemeVariants']: Array<{
-      ['enabled']: boolean;
-      ['id']: QueryTypes['$(theme).themes.id<?>'];
+      ['id']: QueryTypes['$(theme).stateVariants.id<?>'];
     }>;
     ['id']: string;
     ['name']: string;
     ['svg']: FileRef;
-    ['themeVariants']: Array<{
-      ['id']: QueryTypes['$(theme).themes.id<?>'];
-      ['stateVariants']: Array<{
-        ['disabledColorVariants']: Array<{
-          ['id']: QueryTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>'];
-        }>;
-        ['id']: QueryTypes['$(icons).stateVariants.id<?>'];
-        ['manualSvg']?: FileRef;
-        ['overrideAutoColoring']: boolean;
-        ['useManualSvg']: boolean;
-        ['variantOverrides']: Array<{
-          ['mapFromHexcode']: string;
-          ['mapToHexcode']: string;
-        }>;
-      }>;
-    }>;
   };
   ['$(theme).themeColors.id<?>.themeDefinitions']: Array<{
     ['id']: QueryTypes['$(theme).themes.id<?>'];
     ['paletteColorShade']: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+  }>;
+  ['$(theme).themeColors.id<?>.variants']: Array<{
+    ['id']: QueryTypes['$(theme).stateVariants.id<?>'];
+    ['variantDefinitions']: Array<{
+      ['id']: QueryTypes['$(theme).themes.id<?>'];
+      ['paletteColorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+    }>;
   }>;
   ['$(theme).themes.id<?>.backgroundColor']: {
     ['alpha']: number;
@@ -173,52 +81,38 @@ export type SchemaTypes = {
     ['hexcode']?: string;
     ['id']: QueryTypes['$(palette).shades.id<?>'];
   }>;
-  ['$(icons).colorStateVariants.id<?>.themedStateVariants']: Array<{
-    ['id']: QueryTypes['$(theme).themes.id<?>'];
-    ['variants']: Array<{
-      ['colorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
-      ['id']: QueryTypes['$(icons).stateVariants.id<?>'];
-    }>;
-  }>;
   ['$(icons).iconGroups.id<?>.icons']: Array<{
-    ['colorHexcodes']: Array<{
-      ['correspondingShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+    ['appliedThemes']: Array<{
       ['hexcode']: string;
+      ['themeDefinition']: QueryTypes['$(theme).themeColors.id<?>'];
     }>;
-    ['disabledStateVariants']: Array<{
+    ['defaultIconTheme']: QueryTypes['$(theme).themes.id<?>'];
+    ['enabledVariants']: Array<{
       ['enabled']: boolean;
-      ['id']: QueryTypes['$(icons).stateVariants.id<?>'];
-    }>;
-    ['disabledThemeVariants']: Array<{
-      ['enabled']: boolean;
-      ['id']: QueryTypes['$(theme).themes.id<?>'];
+      ['id']: QueryTypes['$(theme).stateVariants.id<?>'];
     }>;
     ['id']: string;
     ['name']: string;
     ['svg']: FileRef;
-    ['themeVariants']: Array<{
-      ['id']: QueryTypes['$(theme).themes.id<?>'];
-      ['stateVariants']: Array<{
-        ['disabledColorVariants']: Array<{
-          ['id']: QueryTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>'];
-        }>;
-        ['id']: QueryTypes['$(icons).stateVariants.id<?>'];
-        ['manualSvg']?: FileRef;
-        ['overrideAutoColoring']: boolean;
-        ['useManualSvg']: boolean;
-        ['variantOverrides']: Array<{
-          ['mapFromHexcode']: string;
-          ['mapToHexcode']: string;
-        }>;
-      }>;
-    }>;
   }>;
+  ['$(theme).stateVariants.id<?>']: {
+    ['id']: string;
+    ['name']: string;
+  };
   ['$(theme).themeColors.id<?>']: {
     ['id']: string;
+    ['includeVariants']: boolean;
     ['name']: string;
     ['themeDefinitions']: Array<{
       ['id']: QueryTypes['$(theme).themes.id<?>'];
       ['paletteColorShade']: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+    }>;
+    ['variants']: Array<{
+      ['id']: QueryTypes['$(theme).stateVariants.id<?>'];
+      ['variantDefinitions']: Array<{
+        ['id']: QueryTypes['$(theme).themes.id<?>'];
+        ['paletteColorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+      }>;
     }>;
   };
   ['$(theme).themes.id<?>']: {
@@ -242,64 +136,42 @@ export type SchemaTypes = {
     ['id']: string;
     ['name']: string;
   };
-  ['$(icons).colorStateVariants.id<?>']: {
-    ['id']: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
-    ['name']: string;
-    ['themedStateVariants']: Array<{
-      ['id']: QueryTypes['$(theme).themes.id<?>'];
-      ['variants']: Array<{
-        ['colorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
-        ['id']: QueryTypes['$(icons).stateVariants.id<?>'];
-      }>;
-    }>;
-  };
   ['$(icons).iconGroups.id<?>']: {
     ['icons']: Array<{
-      ['colorHexcodes']: Array<{
-        ['correspondingShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+      ['appliedThemes']: Array<{
         ['hexcode']: string;
+        ['themeDefinition']: QueryTypes['$(theme).themeColors.id<?>'];
       }>;
-      ['disabledStateVariants']: Array<{
+      ['defaultIconTheme']: QueryTypes['$(theme).themes.id<?>'];
+      ['enabledVariants']: Array<{
         ['enabled']: boolean;
-        ['id']: QueryTypes['$(icons).stateVariants.id<?>'];
-      }>;
-      ['disabledThemeVariants']: Array<{
-        ['enabled']: boolean;
-        ['id']: QueryTypes['$(theme).themes.id<?>'];
+        ['id']: QueryTypes['$(theme).stateVariants.id<?>'];
       }>;
       ['id']: string;
       ['name']: string;
       ['svg']: FileRef;
-      ['themeVariants']: Array<{
-        ['id']: QueryTypes['$(theme).themes.id<?>'];
-        ['stateVariants']: Array<{
-          ['disabledColorVariants']: Array<{
-            ['id']: QueryTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>'];
-          }>;
-          ['id']: QueryTypes['$(icons).stateVariants.id<?>'];
-          ['manualSvg']?: FileRef;
-          ['overrideAutoColoring']: boolean;
-          ['useManualSvg']: boolean;
-          ['variantOverrides']: Array<{
-            ['mapFromHexcode']: string;
-            ['mapToHexcode']: string;
-          }>;
-        }>;
-      }>;
     }>;
     ['id']: string;
     ['name']: string;
   };
-  ['$(icons).stateVariants.id<?>']: {
+  ['$(theme).stateVariants']: Array<{
     ['id']: string;
     ['name']: string;
-  };
+  }>;
   ['$(theme).themeColors']: Array<{
     ['id']: string;
+    ['includeVariants']: boolean;
     ['name']: string;
     ['themeDefinitions']: Array<{
       ['id']: QueryTypes['$(theme).themes.id<?>'];
       ['paletteColorShade']: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+    }>;
+    ['variants']: Array<{
+      ['id']: QueryTypes['$(theme).stateVariants.id<?>'];
+      ['variantDefinitions']: Array<{
+        ['id']: QueryTypes['$(theme).themes.id<?>'];
+        ['paletteColorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+      }>;
     }>;
   }>;
   ['$(theme).themes']: Array<{
@@ -323,55 +195,21 @@ export type SchemaTypes = {
     ['id']: string;
     ['name']: string;
   }>;
-  ['$(icons).colorStateVariants']: Array<{
-    ['id']: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
-    ['name']: string;
-    ['themedStateVariants']: Array<{
-      ['id']: QueryTypes['$(theme).themes.id<?>'];
-      ['variants']: Array<{
-        ['colorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
-        ['id']: QueryTypes['$(icons).stateVariants.id<?>'];
-      }>;
-    }>;
-  }>;
   ['$(icons).iconGroups']: Array<{
     ['icons']: Array<{
-      ['colorHexcodes']: Array<{
-        ['correspondingShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+      ['appliedThemes']: Array<{
         ['hexcode']: string;
+        ['themeDefinition']: QueryTypes['$(theme).themeColors.id<?>'];
       }>;
-      ['disabledStateVariants']: Array<{
+      ['defaultIconTheme']: QueryTypes['$(theme).themes.id<?>'];
+      ['enabledVariants']: Array<{
         ['enabled']: boolean;
-        ['id']: QueryTypes['$(icons).stateVariants.id<?>'];
-      }>;
-      ['disabledThemeVariants']: Array<{
-        ['enabled']: boolean;
-        ['id']: QueryTypes['$(theme).themes.id<?>'];
+        ['id']: QueryTypes['$(theme).stateVariants.id<?>'];
       }>;
       ['id']: string;
       ['name']: string;
       ['svg']: FileRef;
-      ['themeVariants']: Array<{
-        ['id']: QueryTypes['$(theme).themes.id<?>'];
-        ['stateVariants']: Array<{
-          ['disabledColorVariants']: Array<{
-            ['id']: QueryTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>'];
-          }>;
-          ['id']: QueryTypes['$(icons).stateVariants.id<?>'];
-          ['manualSvg']?: FileRef;
-          ['overrideAutoColoring']: boolean;
-          ['useManualSvg']: boolean;
-          ['variantOverrides']: Array<{
-            ['mapFromHexcode']: string;
-            ['mapToHexcode']: string;
-          }>;
-        }>;
-      }>;
     }>;
-    ['id']: string;
-    ['name']: string;
-  }>;
-  ['$(icons).stateVariants']: Array<{
     ['id']: string;
     ['name']: string;
   }>;
@@ -379,56 +217,56 @@ export type SchemaTypes = {
 
 
 export type PointerTypes = {
-  ['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants.id<?>']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.themeVariants.id<${QueryTypes['$(theme).themes.id<?>']}>.stateVariants.id<${QueryTypes['$(icons).stateVariants.id<?>']}>.disabledColorVariants.id<${QueryTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>']}>`;
-  ['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides.mapFromHexcode<?>']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.themeVariants.id<${QueryTypes['$(theme).themes.id<?>']}>.stateVariants.id<${QueryTypes['$(icons).stateVariants.id<?>']}>.variantOverrides.mapFromHexcode<${string}>`;
-  ['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.themeVariants.id<${QueryTypes['$(theme).themes.id<?>']}>.stateVariants.id<${QueryTypes['$(icons).stateVariants.id<?>']}>.disabledColorVariants`;
-  ['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.themeVariants.id<${QueryTypes['$(theme).themes.id<?>']}>.stateVariants.id<${QueryTypes['$(icons).stateVariants.id<?>']}>.variantOverrides`;
-  ['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.themeVariants.id<${QueryTypes['$(theme).themes.id<?>']}>.stateVariants.id<${QueryTypes['$(icons).stateVariants.id<?>']}>`;
-  ['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.themeVariants.id<${QueryTypes['$(theme).themes.id<?>']}>.stateVariants`;
-  ['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>']: `$(icons).colorStateVariants.id<${QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']}>.themedStateVariants.id<${QueryTypes['$(theme).themes.id<?>']}>.variants.id<${QueryTypes['$(icons).stateVariants.id<?>']}>`;
-  ['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes.hexcode<?>']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.colorHexcodes.hexcode<${string}>`;
-  ['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants.id<?>']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.disabledStateVariants.id<${QueryTypes['$(icons).stateVariants.id<?>']}>`;
-  ['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants.id<?>']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.disabledThemeVariants.id<${QueryTypes['$(theme).themes.id<?>']}>`;
-  ['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.themeVariants.id<${QueryTypes['$(theme).themes.id<?>']}>`;
-  ['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants']: `$(icons).colorStateVariants.id<${QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']}>.themedStateVariants.id<${QueryTypes['$(theme).themes.id<?>']}>.variants`;
-  ['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.colorHexcodes`;
-  ['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.disabledStateVariants`;
-  ['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.disabledThemeVariants`;
-  ['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.themeVariants`;
+  ['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']: `$(theme).themeColors.id<${string}>.variants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>.variantDefinitions.id<${QueryTypes['$(theme).themes.id<?>']}>`;
+  ['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.appliedThemes.hexcode<${string}>`;
+  ['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.enabledVariants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>`;
+  ['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions']: `$(theme).themeColors.id<${string}>.variants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>.variantDefinitions`;
+  ['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.appliedThemes`;
+  ['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.enabledVariants`;
   ['$(theme).themeColors.id<?>.themeDefinitions.id<?>']: `$(theme).themeColors.id<${string}>.themeDefinitions.id<${QueryTypes['$(theme).themes.id<?>']}>`;
+  ['$(theme).themeColors.id<?>.variants.id<?>']: `$(theme).themeColors.id<${string}>.variants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>`;
   ['$(palette).colorPalettes.id<?>.colorShades.id<?>']: `$(palette).colorPalettes.id<${string}>.colorShades.id<${QueryTypes['$(palette).shades.id<?>']}>`;
-  ['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>']: `$(icons).colorStateVariants.id<${QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']}>.themedStateVariants.id<${QueryTypes['$(theme).themes.id<?>']}>`;
   ['$(icons).iconGroups.id<?>.icons.id<?>']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>`;
   ['$(theme).themeColors.id<?>.themeDefinitions']: `$(theme).themeColors.id<${string}>.themeDefinitions`;
+  ['$(theme).themeColors.id<?>.variants']: `$(theme).themeColors.id<${string}>.variants`;
   ['$(theme).themes.id<?>.backgroundColor']: `$(theme).themes.id<${string}>.backgroundColor`;
   ['$(palette).colorPalettes.id<?>.colorShades']: `$(palette).colorPalettes.id<${string}>.colorShades`;
-  ['$(icons).colorStateVariants.id<?>.themedStateVariants']: `$(icons).colorStateVariants.id<${QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']}>.themedStateVariants`;
   ['$(icons).iconGroups.id<?>.icons']: `$(icons).iconGroups.id<${string}>.icons`;
+  ['$(theme).stateVariants.id<?>']: `$(theme).stateVariants.id<${string}>`;
   ['$(theme).themeColors.id<?>']: `$(theme).themeColors.id<${string}>`;
   ['$(theme).themes.id<?>']: `$(theme).themes.id<${string}>`;
   ['$(palette).colorPalettes.id<?>']: `$(palette).colorPalettes.id<${string}>`;
   ['$(palette).shades.id<?>']: `$(palette).shades.id<${string}>`;
-  ['$(icons).colorStateVariants.id<?>']: `$(icons).colorStateVariants.id<${QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']}>`;
   ['$(icons).iconGroups.id<?>']: `$(icons).iconGroups.id<${string}>`;
-  ['$(icons).stateVariants.id<?>']: `$(icons).stateVariants.id<${string}>`;
+  ['$(theme).stateVariants']: `$(theme).stateVariants`;
   ['$(theme).themeColors']: `$(theme).themeColors`;
   ['$(theme).themes']: `$(theme).themes`;
   ['$(palette).colorPalettes']: `$(palette).colorPalettes`;
   ['$(palette).shades']: `$(palette).shades`;
-  ['$(icons).colorStateVariants']: `$(icons).colorStateVariants`;
   ['$(icons).iconGroups']: `$(icons).iconGroups`;
-  ['$(icons).stateVariants']: `$(icons).stateVariants`;
 };
 
 
 export type SchemaRoot = {
   ['theme']: {
+    ['stateVariants']: Array<{
+      ['id']: string;
+      ['name']: string;
+    }>;
     ['themeColors']: Array<{
       ['id']: string;
+      ['includeVariants']: boolean;
       ['name']: string;
       ['themeDefinitions']: Array<{
         ['id']: QueryTypes['$(theme).themes.id<?>'];
         ['paletteColorShade']: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+      }>;
+      ['variants']: Array<{
+        ['id']: QueryTypes['$(theme).stateVariants.id<?>'];
+        ['variantDefinitions']: Array<{
+          ['id']: QueryTypes['$(theme).themes.id<?>'];
+          ['paletteColorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+        }>;
       }>;
     }>;
     ['themes']: Array<{
@@ -456,55 +294,21 @@ export type SchemaRoot = {
     }>;
   };
   ['icons']: {
-    ['colorStateVariants']: Array<{
-      ['id']: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
-      ['name']: string;
-      ['themedStateVariants']: Array<{
-        ['id']: QueryTypes['$(theme).themes.id<?>'];
-        ['variants']: Array<{
-          ['colorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
-          ['id']: QueryTypes['$(icons).stateVariants.id<?>'];
-        }>;
-      }>;
-    }>;
     ['iconGroups']: Array<{
       ['icons']: Array<{
-        ['colorHexcodes']: Array<{
-          ['correspondingShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+        ['appliedThemes']: Array<{
           ['hexcode']: string;
+          ['themeDefinition']: QueryTypes['$(theme).themeColors.id<?>'];
         }>;
-        ['disabledStateVariants']: Array<{
+        ['defaultIconTheme']: QueryTypes['$(theme).themes.id<?>'];
+        ['enabledVariants']: Array<{
           ['enabled']: boolean;
-          ['id']: QueryTypes['$(icons).stateVariants.id<?>'];
-        }>;
-        ['disabledThemeVariants']: Array<{
-          ['enabled']: boolean;
-          ['id']: QueryTypes['$(theme).themes.id<?>'];
+          ['id']: QueryTypes['$(theme).stateVariants.id<?>'];
         }>;
         ['id']: string;
         ['name']: string;
         ['svg']: FileRef;
-        ['themeVariants']: Array<{
-          ['id']: QueryTypes['$(theme).themes.id<?>'];
-          ['stateVariants']: Array<{
-            ['disabledColorVariants']: Array<{
-              ['id']: QueryTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>'];
-            }>;
-            ['id']: QueryTypes['$(icons).stateVariants.id<?>'];
-            ['manualSvg']?: FileRef;
-            ['overrideAutoColoring']: boolean;
-            ['useManualSvg']: boolean;
-            ['variantOverrides']: Array<{
-              ['mapFromHexcode']: string;
-              ['mapToHexcode']: string;
-            }>;
-          }>;
-        }>;
       }>;
-      ['id']: string;
-      ['name']: string;
-    }>;
-    ['stateVariants']: Array<{
       ['id']: string;
       ['name']: string;
     }>;
@@ -528,6 +332,10 @@ interface PluginState {
   apiStoreInvalidity: {[key: string]: Array<string>};
   conflictList: Array<string>;
   changeset: Array<string>;
+  binaryUrls: {
+    upload: null|string,
+    download: null|string,
+  };
 }
 
 interface IFloroContext {
@@ -563,6 +371,10 @@ const FloroContext = createContext({
     apiStoreInvalidity: {},
     conflictList: [],
     changeset: [],
+    binaryUrls: {
+      upload: null,
+      download: null,
+    },
   },
   loadingIds: new Set([]),
 } as IFloroContext);
@@ -603,6 +415,10 @@ export const FloroProvider = (props: Props) => {
     apiStoreInvalidity: {},
     conflictList: [],
     changeset: [],
+    binaryUrls: {
+      upload: null,
+      download: null,
+    },
   });
   const [hasLoaded, setHasLoaded] = useState(false);
   const [loadingIds, setLoadingIds] = useState<Set<string>>(new Set());
@@ -997,52 +813,49 @@ const updateObjectInStateMap = (
 
 
 export type QueryTypes = {
+  ['$(theme).stateVariants.id<?>']: `$(theme).stateVariants.id<${string}>`;
   ['$(theme).themeColors.id<?>']: `$(theme).themeColors.id<${string}>`;
   ['$(theme).themeColors.id<?>.themeDefinitions.id<?>']: `$(theme).themeColors.id<${string}>.themeDefinitions.id<${QueryTypes['$(theme).themes.id<?>']}>`;
+  ['$(theme).themeColors.id<?>.variants.id<?>']: `$(theme).themeColors.id<${string}>.variants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>`;
+  ['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']: `$(theme).themeColors.id<${string}>.variants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>.variantDefinitions.id<${QueryTypes['$(theme).themes.id<?>']}>`;
   ['$(theme).themes.id<?>']: `$(theme).themes.id<${string}>`;
   ['$(palette).colorPalettes.id<?>']: `$(palette).colorPalettes.id<${string}>`;
   ['$(palette).colorPalettes.id<?>.colorShades.id<?>']: `$(palette).colorPalettes.id<${string}>.colorShades.id<${QueryTypes['$(palette).shades.id<?>']}>`;
   ['$(palette).shades.id<?>']: `$(palette).shades.id<${string}>`;
-  ['$(icons).colorStateVariants.id<?>']: `$(icons).colorStateVariants.id<${QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']}>`;
-  ['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>']: `$(icons).colorStateVariants.id<${QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']}>.themedStateVariants.id<${QueryTypes['$(theme).themes.id<?>']}>`;
-  ['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>']: `$(icons).colorStateVariants.id<${QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']}>.themedStateVariants.id<${QueryTypes['$(theme).themes.id<?>']}>.variants.id<${QueryTypes['$(icons).stateVariants.id<?>']}>`;
   ['$(icons).iconGroups.id<?>']: `$(icons).iconGroups.id<${string}>`;
   ['$(icons).iconGroups.id<?>.icons.id<?>']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>`;
-  ['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes.hexcode<?>']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.colorHexcodes.hexcode<${string}>`;
-  ['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants.id<?>']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.disabledStateVariants.id<${QueryTypes['$(icons).stateVariants.id<?>']}>`;
-  ['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants.id<?>']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.disabledThemeVariants.id<${QueryTypes['$(theme).themes.id<?>']}>`;
-  ['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.themeVariants.id<${QueryTypes['$(theme).themes.id<?>']}>`;
-  ['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.themeVariants.id<${QueryTypes['$(theme).themes.id<?>']}>.stateVariants.id<${QueryTypes['$(icons).stateVariants.id<?>']}>`;
-  ['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants.id<?>']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.themeVariants.id<${QueryTypes['$(theme).themes.id<?>']}>.stateVariants.id<${QueryTypes['$(icons).stateVariants.id<?>']}>.disabledColorVariants.id<${QueryTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>']}>`;
-  ['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides.mapFromHexcode<?>']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.themeVariants.id<${QueryTypes['$(theme).themes.id<?>']}>.stateVariants.id<${QueryTypes['$(icons).stateVariants.id<?>']}>.variantOverrides.mapFromHexcode<${string}>`;
-  ['$(icons).stateVariants.id<?>']: `$(icons).stateVariants.id<${string}>`;
+  ['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.appliedThemes.hexcode<${string}>`;
+  ['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.enabledVariants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>`;
 };
 
-export function makeQueryRef(query: '$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides.mapFromHexcode<?>', arg0: string, arg1: string, arg2: QueryTypes['$(theme).themes.id<?>'], arg3: QueryTypes['$(icons).stateVariants.id<?>'], arg4: string): QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides.mapFromHexcode<?>'];
-export function makeQueryRef(query: '$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants.id<?>', arg0: string, arg1: string, arg2: QueryTypes['$(theme).themes.id<?>'], arg3: QueryTypes['$(icons).stateVariants.id<?>'], arg4: QueryTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>']): QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants.id<?>'];
-export function makeQueryRef(query: '$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>', arg0: string, arg1: string, arg2: QueryTypes['$(theme).themes.id<?>'], arg3: QueryTypes['$(icons).stateVariants.id<?>']): QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>'];
-export function makeQueryRef(query: '$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>', arg0: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], arg1: QueryTypes['$(theme).themes.id<?>'], arg2: QueryTypes['$(icons).stateVariants.id<?>']): QueryTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>'];
-export function makeQueryRef(query: '$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants.id<?>', arg0: string, arg1: string, arg2: QueryTypes['$(icons).stateVariants.id<?>']): QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants.id<?>'];
-export function makeQueryRef(query: '$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants.id<?>', arg0: string, arg1: string, arg2: QueryTypes['$(theme).themes.id<?>']): QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants.id<?>'];
-export function makeQueryRef(query: '$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes.hexcode<?>', arg0: string, arg1: string, arg2: string): QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes.hexcode<?>'];
-export function makeQueryRef(query: '$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>', arg0: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], arg1: QueryTypes['$(theme).themes.id<?>']): QueryTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>'];
-export function makeQueryRef(query: '$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>', arg0: string, arg1: string, arg2: QueryTypes['$(theme).themes.id<?>']): QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>'];
+export function makeQueryRef(query: '$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>', arg0: string, arg1: QueryTypes['$(theme).stateVariants.id<?>'], arg2: QueryTypes['$(theme).themes.id<?>']): QueryTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'];
+export function makeQueryRef(query: '$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>', arg0: string, arg1: string, arg2: string): QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>'];
+export function makeQueryRef(query: '$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>', arg0: string, arg1: string, arg2: QueryTypes['$(theme).stateVariants.id<?>']): QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>'];
 export function makeQueryRef(query: '$(theme).themeColors.id<?>.themeDefinitions.id<?>', arg0: string, arg1: QueryTypes['$(theme).themes.id<?>']): QueryTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'];
 export function makeQueryRef(query: '$(palette).colorPalettes.id<?>.colorShades.id<?>', arg0: string, arg1: QueryTypes['$(palette).shades.id<?>']): QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+export function makeQueryRef(query: '$(theme).themeColors.id<?>.variants.id<?>', arg0: string, arg1: QueryTypes['$(theme).stateVariants.id<?>']): QueryTypes['$(theme).themeColors.id<?>.variants.id<?>'];
 export function makeQueryRef(query: '$(icons).iconGroups.id<?>.icons.id<?>', arg0: string, arg1: string): QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>'];
-export function makeQueryRef(query: '$(icons).colorStateVariants.id<?>', arg0: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']): QueryTypes['$(icons).colorStateVariants.id<?>'];
 export function makeQueryRef(query: '$(palette).colorPalettes.id<?>', arg0: string): QueryTypes['$(palette).colorPalettes.id<?>'];
-export function makeQueryRef(query: '$(icons).stateVariants.id<?>', arg0: string): QueryTypes['$(icons).stateVariants.id<?>'];
+export function makeQueryRef(query: '$(theme).stateVariants.id<?>', arg0: string): QueryTypes['$(theme).stateVariants.id<?>'];
 export function makeQueryRef(query: '$(theme).themeColors.id<?>', arg0: string): QueryTypes['$(theme).themeColors.id<?>'];
 export function makeQueryRef(query: '$(icons).iconGroups.id<?>', arg0: string): QueryTypes['$(icons).iconGroups.id<?>'];
 export function makeQueryRef(query: '$(palette).shades.id<?>', arg0: string): QueryTypes['$(palette).shades.id<?>'];
 export function makeQueryRef(query: '$(theme).themes.id<?>', arg0: string): QueryTypes['$(theme).themes.id<?>'];
-export function makeQueryRef(query: '$(theme).themeColors.id<?>'|'$(theme).themeColors.id<?>.themeDefinitions.id<?>'|'$(theme).themes.id<?>'|'$(palette).colorPalettes.id<?>'|'$(palette).colorPalettes.id<?>.colorShades.id<?>'|'$(palette).shades.id<?>'|'$(icons).colorStateVariants.id<?>'|'$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>'|'$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>'|'$(icons).iconGroups.id<?>'|'$(icons).iconGroups.id<?>.icons.id<?>'|'$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes.hexcode<?>'|'$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants.id<?>'|'$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants.id<?>'|'$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>'|'$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>'|'$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants.id<?>'|'$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides.mapFromHexcode<?>'|'$(icons).stateVariants.id<?>', arg0: string|QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], arg1?: QueryTypes['$(theme).themes.id<?>']|QueryTypes['$(palette).shades.id<?>']|string, arg2?: QueryTypes['$(icons).stateVariants.id<?>']|string|QueryTypes['$(theme).themes.id<?>'], arg3?: QueryTypes['$(icons).stateVariants.id<?>'], arg4?: QueryTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>']|string): QueryTypes['$(theme).themeColors.id<?>']|QueryTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>']|QueryTypes['$(theme).themes.id<?>']|QueryTypes['$(palette).colorPalettes.id<?>']|QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|QueryTypes['$(palette).shades.id<?>']|QueryTypes['$(icons).colorStateVariants.id<?>']|QueryTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>']|QueryTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>']|QueryTypes['$(icons).iconGroups.id<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes.hexcode<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants.id<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants.id<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants.id<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides.mapFromHexcode<?>']|QueryTypes['$(icons).stateVariants.id<?>']|null {
+export function makeQueryRef(query: '$(theme).stateVariants.id<?>'|'$(theme).themeColors.id<?>'|'$(theme).themeColors.id<?>.themeDefinitions.id<?>'|'$(theme).themeColors.id<?>.variants.id<?>'|'$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'|'$(theme).themes.id<?>'|'$(palette).colorPalettes.id<?>'|'$(palette).colorPalettes.id<?>.colorShades.id<?>'|'$(palette).shades.id<?>'|'$(icons).iconGroups.id<?>'|'$(icons).iconGroups.id<?>.icons.id<?>'|'$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>'|'$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>', arg0: string, arg1?: QueryTypes['$(theme).themes.id<?>']|QueryTypes['$(theme).stateVariants.id<?>']|QueryTypes['$(palette).shades.id<?>']|string, arg2?: QueryTypes['$(theme).themes.id<?>']|string|QueryTypes['$(theme).stateVariants.id<?>']): QueryTypes['$(theme).stateVariants.id<?>']|QueryTypes['$(theme).themeColors.id<?>']|QueryTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>']|QueryTypes['$(theme).themeColors.id<?>.variants.id<?>']|QueryTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']|QueryTypes['$(theme).themes.id<?>']|QueryTypes['$(palette).colorPalettes.id<?>']|QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|QueryTypes['$(palette).shades.id<?>']|QueryTypes['$(icons).iconGroups.id<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>']|null {
+  if ((arg0 != null && arg0 != undefined) && query == '$(theme).stateVariants.id<?>') {
+    return `$(theme).stateVariants.id<${arg0 as string}>`;
+  }
   if ((arg0 != null && arg0 != undefined) && query == '$(theme).themeColors.id<?>') {
     return `$(theme).themeColors.id<${arg0 as string}>`;
   }
   if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && query == '$(theme).themeColors.id<?>.themeDefinitions.id<?>') {
     return `$(theme).themeColors.id<${arg0 as string}>.themeDefinitions.id<${arg1 as QueryTypes['$(theme).themes.id<?>']}>`;
+  }
+  if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && query == '$(theme).themeColors.id<?>.variants.id<?>') {
+    return `$(theme).themeColors.id<${arg0 as string}>.variants.id<${arg1 as QueryTypes['$(theme).stateVariants.id<?>']}>`;
+  }
+  if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && (arg2 != null && arg2 != undefined) && query == '$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>') {
+    return `$(theme).themeColors.id<${arg0 as string}>.variants.id<${arg1 as QueryTypes['$(theme).stateVariants.id<?>']}>.variantDefinitions.id<${arg2 as QueryTypes['$(theme).themes.id<?>']}>`;
   }
   if ((arg0 != null && arg0 != undefined) && query == '$(theme).themes.id<?>') {
     return `$(theme).themes.id<${arg0 as string}>`;
@@ -1056,74 +869,50 @@ export function makeQueryRef(query: '$(theme).themeColors.id<?>'|'$(theme).theme
   if ((arg0 != null && arg0 != undefined) && query == '$(palette).shades.id<?>') {
     return `$(palette).shades.id<${arg0 as string}>`;
   }
-  if ((arg0 != null && arg0 != undefined) && query == '$(icons).colorStateVariants.id<?>') {
-    return `$(icons).colorStateVariants.id<${arg0 as QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']}>`;
-  }
-  if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && query == '$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>') {
-    return `$(icons).colorStateVariants.id<${arg0 as QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']}>.themedStateVariants.id<${arg1 as QueryTypes['$(theme).themes.id<?>']}>`;
-  }
-  if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && (arg2 != null && arg2 != undefined) && query == '$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>') {
-    return `$(icons).colorStateVariants.id<${arg0 as QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']}>.themedStateVariants.id<${arg1 as QueryTypes['$(theme).themes.id<?>']}>.variants.id<${arg2 as QueryTypes['$(icons).stateVariants.id<?>']}>`;
-  }
   if ((arg0 != null && arg0 != undefined) && query == '$(icons).iconGroups.id<?>') {
     return `$(icons).iconGroups.id<${arg0 as string}>`;
   }
   if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && query == '$(icons).iconGroups.id<?>.icons.id<?>') {
     return `$(icons).iconGroups.id<${arg0 as string}>.icons.id<${arg1 as string}>`;
   }
-  if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && (arg2 != null && arg2 != undefined) && query == '$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes.hexcode<?>') {
-    return `$(icons).iconGroups.id<${arg0 as string}>.icons.id<${arg1 as string}>.colorHexcodes.hexcode<${arg2 as string}>`;
+  if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && (arg2 != null && arg2 != undefined) && query == '$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>') {
+    return `$(icons).iconGroups.id<${arg0 as string}>.icons.id<${arg1 as string}>.appliedThemes.hexcode<${arg2 as string}>`;
   }
-  if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && (arg2 != null && arg2 != undefined) && query == '$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants.id<?>') {
-    return `$(icons).iconGroups.id<${arg0 as string}>.icons.id<${arg1 as string}>.disabledStateVariants.id<${arg2 as QueryTypes['$(icons).stateVariants.id<?>']}>`;
-  }
-  if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && (arg2 != null && arg2 != undefined) && query == '$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants.id<?>') {
-    return `$(icons).iconGroups.id<${arg0 as string}>.icons.id<${arg1 as string}>.disabledThemeVariants.id<${arg2 as QueryTypes['$(theme).themes.id<?>']}>`;
-  }
-  if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && (arg2 != null && arg2 != undefined) && query == '$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>') {
-    return `$(icons).iconGroups.id<${arg0 as string}>.icons.id<${arg1 as string}>.themeVariants.id<${arg2 as QueryTypes['$(theme).themes.id<?>']}>`;
-  }
-  if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && (arg2 != null && arg2 != undefined) && (arg3 != null && arg3 != undefined) && query == '$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>') {
-    return `$(icons).iconGroups.id<${arg0 as string}>.icons.id<${arg1 as string}>.themeVariants.id<${arg2 as QueryTypes['$(theme).themes.id<?>']}>.stateVariants.id<${arg3 as QueryTypes['$(icons).stateVariants.id<?>']}>`;
-  }
-  if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && (arg2 != null && arg2 != undefined) && (arg3 != null && arg3 != undefined) && (arg4 != null && arg4 != undefined) && query == '$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants.id<?>') {
-    return `$(icons).iconGroups.id<${arg0 as string}>.icons.id<${arg1 as string}>.themeVariants.id<${arg2 as QueryTypes['$(theme).themes.id<?>']}>.stateVariants.id<${arg3 as QueryTypes['$(icons).stateVariants.id<?>']}>.disabledColorVariants.id<${arg4 as QueryTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>']}>`;
-  }
-  if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && (arg2 != null && arg2 != undefined) && (arg3 != null && arg3 != undefined) && (arg4 != null && arg4 != undefined) && query == '$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides.mapFromHexcode<?>') {
-    return `$(icons).iconGroups.id<${arg0 as string}>.icons.id<${arg1 as string}>.themeVariants.id<${arg2 as QueryTypes['$(theme).themes.id<?>']}>.stateVariants.id<${arg3 as QueryTypes['$(icons).stateVariants.id<?>']}>.variantOverrides.mapFromHexcode<${arg4 as string}>`;
-  }
-  if ((arg0 != null && arg0 != undefined) && query == '$(icons).stateVariants.id<?>') {
-    return `$(icons).stateVariants.id<${arg0 as string}>`;
+  if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && (arg2 != null && arg2 != undefined) && query == '$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>') {
+    return `$(icons).iconGroups.id<${arg0 as string}>.icons.id<${arg1 as string}>.enabledVariants.id<${arg2 as QueryTypes['$(theme).stateVariants.id<?>']}>`;
   }
   return null;
 };
 
-export function useQueryRef(query: '$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides.mapFromHexcode<?>', arg0: string, arg1: string, arg2: QueryTypes['$(theme).themes.id<?>'], arg3: QueryTypes['$(icons).stateVariants.id<?>'], arg4: string): QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides.mapFromHexcode<?>'];
-export function useQueryRef(query: '$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants.id<?>', arg0: string, arg1: string, arg2: QueryTypes['$(theme).themes.id<?>'], arg3: QueryTypes['$(icons).stateVariants.id<?>'], arg4: QueryTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>']): QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants.id<?>'];
-export function useQueryRef(query: '$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>', arg0: string, arg1: string, arg2: QueryTypes['$(theme).themes.id<?>'], arg3: QueryTypes['$(icons).stateVariants.id<?>']): QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>'];
-export function useQueryRef(query: '$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>', arg0: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], arg1: QueryTypes['$(theme).themes.id<?>'], arg2: QueryTypes['$(icons).stateVariants.id<?>']): QueryTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>'];
-export function useQueryRef(query: '$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants.id<?>', arg0: string, arg1: string, arg2: QueryTypes['$(icons).stateVariants.id<?>']): QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants.id<?>'];
-export function useQueryRef(query: '$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants.id<?>', arg0: string, arg1: string, arg2: QueryTypes['$(theme).themes.id<?>']): QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants.id<?>'];
-export function useQueryRef(query: '$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes.hexcode<?>', arg0: string, arg1: string, arg2: string): QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes.hexcode<?>'];
-export function useQueryRef(query: '$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>', arg0: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], arg1: QueryTypes['$(theme).themes.id<?>']): QueryTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>'];
-export function useQueryRef(query: '$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>', arg0: string, arg1: string, arg2: QueryTypes['$(theme).themes.id<?>']): QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>'];
+export function useQueryRef(query: '$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>', arg0: string, arg1: QueryTypes['$(theme).stateVariants.id<?>'], arg2: QueryTypes['$(theme).themes.id<?>']): QueryTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'];
+export function useQueryRef(query: '$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>', arg0: string, arg1: string, arg2: string): QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>'];
+export function useQueryRef(query: '$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>', arg0: string, arg1: string, arg2: QueryTypes['$(theme).stateVariants.id<?>']): QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>'];
 export function useQueryRef(query: '$(theme).themeColors.id<?>.themeDefinitions.id<?>', arg0: string, arg1: QueryTypes['$(theme).themes.id<?>']): QueryTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'];
 export function useQueryRef(query: '$(palette).colorPalettes.id<?>.colorShades.id<?>', arg0: string, arg1: QueryTypes['$(palette).shades.id<?>']): QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+export function useQueryRef(query: '$(theme).themeColors.id<?>.variants.id<?>', arg0: string, arg1: QueryTypes['$(theme).stateVariants.id<?>']): QueryTypes['$(theme).themeColors.id<?>.variants.id<?>'];
 export function useQueryRef(query: '$(icons).iconGroups.id<?>.icons.id<?>', arg0: string, arg1: string): QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>'];
-export function useQueryRef(query: '$(icons).colorStateVariants.id<?>', arg0: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']): QueryTypes['$(icons).colorStateVariants.id<?>'];
 export function useQueryRef(query: '$(palette).colorPalettes.id<?>', arg0: string): QueryTypes['$(palette).colorPalettes.id<?>'];
-export function useQueryRef(query: '$(icons).stateVariants.id<?>', arg0: string): QueryTypes['$(icons).stateVariants.id<?>'];
+export function useQueryRef(query: '$(theme).stateVariants.id<?>', arg0: string): QueryTypes['$(theme).stateVariants.id<?>'];
 export function useQueryRef(query: '$(theme).themeColors.id<?>', arg0: string): QueryTypes['$(theme).themeColors.id<?>'];
 export function useQueryRef(query: '$(icons).iconGroups.id<?>', arg0: string): QueryTypes['$(icons).iconGroups.id<?>'];
 export function useQueryRef(query: '$(palette).shades.id<?>', arg0: string): QueryTypes['$(palette).shades.id<?>'];
 export function useQueryRef(query: '$(theme).themes.id<?>', arg0: string): QueryTypes['$(theme).themes.id<?>'];
-export function useQueryRef(query: '$(theme).themeColors.id<?>'|'$(theme).themeColors.id<?>.themeDefinitions.id<?>'|'$(theme).themes.id<?>'|'$(palette).colorPalettes.id<?>'|'$(palette).colorPalettes.id<?>.colorShades.id<?>'|'$(palette).shades.id<?>'|'$(icons).colorStateVariants.id<?>'|'$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>'|'$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>'|'$(icons).iconGroups.id<?>'|'$(icons).iconGroups.id<?>.icons.id<?>'|'$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes.hexcode<?>'|'$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants.id<?>'|'$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants.id<?>'|'$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>'|'$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>'|'$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants.id<?>'|'$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides.mapFromHexcode<?>'|'$(icons).stateVariants.id<?>', arg0: string|QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], arg1?: QueryTypes['$(theme).themes.id<?>']|QueryTypes['$(palette).shades.id<?>']|string, arg2?: QueryTypes['$(icons).stateVariants.id<?>']|string|QueryTypes['$(theme).themes.id<?>'], arg3?: QueryTypes['$(icons).stateVariants.id<?>'], arg4?: QueryTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>']|string): QueryTypes['$(theme).themeColors.id<?>']|QueryTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>']|QueryTypes['$(theme).themes.id<?>']|QueryTypes['$(palette).colorPalettes.id<?>']|QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|QueryTypes['$(palette).shades.id<?>']|QueryTypes['$(icons).colorStateVariants.id<?>']|QueryTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>']|QueryTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>']|QueryTypes['$(icons).iconGroups.id<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes.hexcode<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants.id<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants.id<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants.id<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides.mapFromHexcode<?>']|QueryTypes['$(icons).stateVariants.id<?>']|null {
+export function useQueryRef(query: '$(theme).stateVariants.id<?>'|'$(theme).themeColors.id<?>'|'$(theme).themeColors.id<?>.themeDefinitions.id<?>'|'$(theme).themeColors.id<?>.variants.id<?>'|'$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'|'$(theme).themes.id<?>'|'$(palette).colorPalettes.id<?>'|'$(palette).colorPalettes.id<?>.colorShades.id<?>'|'$(palette).shades.id<?>'|'$(icons).iconGroups.id<?>'|'$(icons).iconGroups.id<?>.icons.id<?>'|'$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>'|'$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>', arg0: string, arg1?: QueryTypes['$(theme).themes.id<?>']|QueryTypes['$(theme).stateVariants.id<?>']|QueryTypes['$(palette).shades.id<?>']|string, arg2?: QueryTypes['$(theme).themes.id<?>']|string|QueryTypes['$(theme).stateVariants.id<?>']): QueryTypes['$(theme).stateVariants.id<?>']|QueryTypes['$(theme).themeColors.id<?>']|QueryTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>']|QueryTypes['$(theme).themeColors.id<?>.variants.id<?>']|QueryTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']|QueryTypes['$(theme).themes.id<?>']|QueryTypes['$(palette).colorPalettes.id<?>']|QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|QueryTypes['$(palette).shades.id<?>']|QueryTypes['$(icons).iconGroups.id<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>']|null {
   return useMemo(() => {
+    if (query == '$(theme).stateVariants.id<?>') {
+      return makeQueryRef(query, arg0 as string);
+    }
     if (query == '$(theme).themeColors.id<?>') {
       return makeQueryRef(query, arg0 as string);
     }
     if (query == '$(theme).themeColors.id<?>.themeDefinitions.id<?>') {
       return makeQueryRef(query, arg0 as string, arg1 as QueryTypes['$(theme).themes.id<?>']);
+    }
+    if (query == '$(theme).themeColors.id<?>.variants.id<?>') {
+      return makeQueryRef(query, arg0 as string, arg1 as QueryTypes['$(theme).stateVariants.id<?>']);
+    }
+    if (query == '$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>') {
+      return makeQueryRef(query, arg0 as string, arg1 as QueryTypes['$(theme).stateVariants.id<?>'], arg2 as QueryTypes['$(theme).themes.id<?>']);
     }
     if (query == '$(theme).themes.id<?>') {
       return makeQueryRef(query, arg0 as string);
@@ -1137,64 +926,31 @@ export function useQueryRef(query: '$(theme).themeColors.id<?>'|'$(theme).themeC
     if (query == '$(palette).shades.id<?>') {
       return makeQueryRef(query, arg0 as string);
     }
-    if (query == '$(icons).colorStateVariants.id<?>') {
-      return makeQueryRef(query, arg0 as QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']);
-    }
-    if (query == '$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>') {
-      return makeQueryRef(query, arg0 as QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], arg1 as QueryTypes['$(theme).themes.id<?>']);
-    }
-    if (query == '$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>') {
-      return makeQueryRef(query, arg0 as QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], arg1 as QueryTypes['$(theme).themes.id<?>'], arg2 as QueryTypes['$(icons).stateVariants.id<?>']);
-    }
     if (query == '$(icons).iconGroups.id<?>') {
       return makeQueryRef(query, arg0 as string);
     }
     if (query == '$(icons).iconGroups.id<?>.icons.id<?>') {
       return makeQueryRef(query, arg0 as string, arg1 as string);
     }
-    if (query == '$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes.hexcode<?>') {
+    if (query == '$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>') {
       return makeQueryRef(query, arg0 as string, arg1 as string, arg2 as string);
     }
-    if (query == '$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants.id<?>') {
-      return makeQueryRef(query, arg0 as string, arg1 as string, arg2 as QueryTypes['$(icons).stateVariants.id<?>']);
-    }
-    if (query == '$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants.id<?>') {
-      return makeQueryRef(query, arg0 as string, arg1 as string, arg2 as QueryTypes['$(theme).themes.id<?>']);
-    }
-    if (query == '$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>') {
-      return makeQueryRef(query, arg0 as string, arg1 as string, arg2 as QueryTypes['$(theme).themes.id<?>']);
-    }
-    if (query == '$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>') {
-      return makeQueryRef(query, arg0 as string, arg1 as string, arg2 as QueryTypes['$(theme).themes.id<?>'], arg3 as QueryTypes['$(icons).stateVariants.id<?>']);
-    }
-    if (query == '$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants.id<?>') {
-      return makeQueryRef(query, arg0 as string, arg1 as string, arg2 as QueryTypes['$(theme).themes.id<?>'], arg3 as QueryTypes['$(icons).stateVariants.id<?>'], arg4 as QueryTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>']);
-    }
-    if (query == '$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides.mapFromHexcode<?>') {
-      return makeQueryRef(query, arg0 as string, arg1 as string, arg2 as QueryTypes['$(theme).themes.id<?>'], arg3 as QueryTypes['$(icons).stateVariants.id<?>'], arg4 as string);
-    }
-    if (query == '$(icons).stateVariants.id<?>') {
-      return makeQueryRef(query, arg0 as string);
+    if (query == '$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>') {
+      return makeQueryRef(query, arg0 as string, arg1 as string, arg2 as QueryTypes['$(theme).stateVariants.id<?>']);
     }
     return null;
-  }, [query, arg0, arg1, arg2, arg3, arg4]);
+  }, [query, arg0, arg1, arg2]);
 };
 
-export function extractQueryArgs(query?: QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides.mapFromHexcode<?>']): [string, string, QueryTypes['$(theme).themes.id<?>'], QueryTypes['$(icons).stateVariants.id<?>'], string];
-export function extractQueryArgs(query?: QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants.id<?>']): [string, string, QueryTypes['$(theme).themes.id<?>'], QueryTypes['$(icons).stateVariants.id<?>'], QueryTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>']];
-export function extractQueryArgs(query?: QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>']): [string, string, QueryTypes['$(theme).themes.id<?>'], QueryTypes['$(icons).stateVariants.id<?>']];
-export function extractQueryArgs(query?: QueryTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>']): [QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], QueryTypes['$(theme).themes.id<?>'], QueryTypes['$(icons).stateVariants.id<?>']];
-export function extractQueryArgs(query?: QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants.id<?>']): [string, string, QueryTypes['$(icons).stateVariants.id<?>']];
-export function extractQueryArgs(query?: QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants.id<?>']): [string, string, QueryTypes['$(theme).themes.id<?>']];
-export function extractQueryArgs(query?: QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes.hexcode<?>']): [string, string, string];
-export function extractQueryArgs(query?: QueryTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>']): [QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], QueryTypes['$(theme).themes.id<?>']];
-export function extractQueryArgs(query?: QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>']): [string, string, QueryTypes['$(theme).themes.id<?>']];
+export function extractQueryArgs(query?: QueryTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']): [string, QueryTypes['$(theme).stateVariants.id<?>'], QueryTypes['$(theme).themes.id<?>']];
+export function extractQueryArgs(query?: QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>']): [string, string, string];
+export function extractQueryArgs(query?: QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>']): [string, string, QueryTypes['$(theme).stateVariants.id<?>']];
 export function extractQueryArgs(query?: QueryTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>']): [string, QueryTypes['$(theme).themes.id<?>']];
 export function extractQueryArgs(query?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']): [string, QueryTypes['$(palette).shades.id<?>']];
+export function extractQueryArgs(query?: QueryTypes['$(theme).themeColors.id<?>.variants.id<?>']): [string, QueryTypes['$(theme).stateVariants.id<?>']];
 export function extractQueryArgs(query?: QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>']): [string, string];
-export function extractQueryArgs(query?: QueryTypes['$(icons).colorStateVariants.id<?>']): [QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']];
 export function extractQueryArgs(query?: QueryTypes['$(palette).colorPalettes.id<?>']): [string];
-export function extractQueryArgs(query?: QueryTypes['$(icons).stateVariants.id<?>']): [string];
+export function extractQueryArgs(query?: QueryTypes['$(theme).stateVariants.id<?>']): [string];
 export function extractQueryArgs(query?: QueryTypes['$(theme).themeColors.id<?>']): [string];
 export function extractQueryArgs(query?: QueryTypes['$(icons).iconGroups.id<?>']): [string];
 export function extractQueryArgs(query?: QueryTypes['$(palette).shades.id<?>']): [string];
@@ -1210,21 +966,15 @@ export function extractQueryArgs(query?: string): Array<string> {
   );
 };
 
-export function useExtractQueryArgs(query?: QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides.mapFromHexcode<?>']): [string, string, QueryTypes['$(theme).themes.id<?>'], QueryTypes['$(icons).stateVariants.id<?>'], string];
-export function useExtractQueryArgs(query?: QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants.id<?>']): [string, string, QueryTypes['$(theme).themes.id<?>'], QueryTypes['$(icons).stateVariants.id<?>'], QueryTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>']];
-export function useExtractQueryArgs(query?: QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>']): [string, string, QueryTypes['$(theme).themes.id<?>'], QueryTypes['$(icons).stateVariants.id<?>']];
-export function useExtractQueryArgs(query?: QueryTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>']): [QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], QueryTypes['$(theme).themes.id<?>'], QueryTypes['$(icons).stateVariants.id<?>']];
-export function useExtractQueryArgs(query?: QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants.id<?>']): [string, string, QueryTypes['$(icons).stateVariants.id<?>']];
-export function useExtractQueryArgs(query?: QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants.id<?>']): [string, string, QueryTypes['$(theme).themes.id<?>']];
-export function useExtractQueryArgs(query?: QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes.hexcode<?>']): [string, string, string];
-export function useExtractQueryArgs(query?: QueryTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>']): [QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], QueryTypes['$(theme).themes.id<?>']];
-export function useExtractQueryArgs(query?: QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>']): [string, string, QueryTypes['$(theme).themes.id<?>']];
+export function useExtractQueryArgs(query?: QueryTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']): [string, QueryTypes['$(theme).stateVariants.id<?>'], QueryTypes['$(theme).themes.id<?>']];
+export function useExtractQueryArgs(query?: QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>']): [string, string, string];
+export function useExtractQueryArgs(query?: QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>']): [string, string, QueryTypes['$(theme).stateVariants.id<?>']];
 export function useExtractQueryArgs(query?: QueryTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>']): [string, QueryTypes['$(theme).themes.id<?>']];
 export function useExtractQueryArgs(query?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']): [string, QueryTypes['$(palette).shades.id<?>']];
+export function useExtractQueryArgs(query?: QueryTypes['$(theme).themeColors.id<?>.variants.id<?>']): [string, QueryTypes['$(theme).stateVariants.id<?>']];
 export function useExtractQueryArgs(query?: QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>']): [string, string];
-export function useExtractQueryArgs(query?: QueryTypes['$(icons).colorStateVariants.id<?>']): [QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']];
 export function useExtractQueryArgs(query?: QueryTypes['$(palette).colorPalettes.id<?>']): [string];
-export function useExtractQueryArgs(query?: QueryTypes['$(icons).stateVariants.id<?>']): [string];
+export function useExtractQueryArgs(query?: QueryTypes['$(theme).stateVariants.id<?>']): [string];
 export function useExtractQueryArgs(query?: QueryTypes['$(theme).themeColors.id<?>']): [string];
 export function useExtractQueryArgs(query?: QueryTypes['$(icons).iconGroups.id<?>']): [string];
 export function useExtractQueryArgs(query?: QueryTypes['$(palette).shades.id<?>']): [string];
@@ -1268,45 +1018,33 @@ export function usePluginStore(plugin: 'theme'|'palette'|'icons'): SchemaRoot['t
   }, [root, plugin]);
 }
 
-export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants.id<?>']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants.id<?>'];
-export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides.mapFromHexcode<?>']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides.mapFromHexcode<?>'];
-export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants'];
-export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides'];
-export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>'];
-export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants'];
-export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>']): SchemaTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>'];
-export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes.hexcode<?>']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes.hexcode<?>'];
-export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants.id<?>']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants.id<?>'];
-export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants.id<?>']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants.id<?>'];
-export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>'];
-export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants']): SchemaTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants'];
-export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes'];
-export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants'];
-export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants'];
-export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']): SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions']): SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>']): SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>']): SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']): SchemaTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
-export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>']): SchemaTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions']): SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(theme).themeColors.id<?>.variants']): SchemaTypes['$(theme).themeColors.id<?>.variants'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(theme).themes.id<?>.backgroundColor']): SchemaTypes['$(theme).themes.id<?>.backgroundColor'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(palette).colorPalettes.id<?>.colorShades']): SchemaTypes['$(palette).colorPalettes.id<?>.colorShades'];
-export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants']): SchemaTypes['$(icons).colorStateVariants.id<?>.themedStateVariants'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).iconGroups.id<?>.icons']): SchemaTypes['$(icons).iconGroups.id<?>.icons'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(theme).stateVariants.id<?>']): SchemaTypes['$(theme).stateVariants.id<?>'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(theme).themeColors.id<?>']): SchemaTypes['$(theme).themeColors.id<?>'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(theme).themes.id<?>']): SchemaTypes['$(theme).themes.id<?>'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(palette).colorPalettes.id<?>']): SchemaTypes['$(palette).colorPalettes.id<?>'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(palette).shades.id<?>']): SchemaTypes['$(palette).shades.id<?>'];
-export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).colorStateVariants.id<?>']): SchemaTypes['$(icons).colorStateVariants.id<?>'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).iconGroups.id<?>']): SchemaTypes['$(icons).iconGroups.id<?>'];
-export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).stateVariants.id<?>']): SchemaTypes['$(icons).stateVariants.id<?>'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(theme).stateVariants']): SchemaTypes['$(theme).stateVariants'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(theme).themeColors']): SchemaTypes['$(theme).themeColors'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(theme).themes']): SchemaTypes['$(theme).themes'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(palette).colorPalettes']): SchemaTypes['$(palette).colorPalettes'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(palette).shades']): SchemaTypes['$(palette).shades'];
-export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).colorStateVariants']): SchemaTypes['$(icons).colorStateVariants'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).iconGroups']): SchemaTypes['$(icons).iconGroups'];
-export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).stateVariants']): SchemaTypes['$(icons).stateVariants'];
 
 export function getReferencedObject<T>(root: SchemaRoot, query?: string): T|null {
   if (!query) {
@@ -1322,45 +1060,33 @@ export function getReferencedObject<T>(root: SchemaRoot, query?: string): T|null
   return null;
 };
 
-export function useReferencedObject(query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants.id<?>']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants.id<?>'];
-export function useReferencedObject(query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides.mapFromHexcode<?>']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides.mapFromHexcode<?>'];
-export function useReferencedObject(query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants'];
-export function useReferencedObject(query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides'];
-export function useReferencedObject(query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>'];
-export function useReferencedObject(query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants'];
-export function useReferencedObject(query?: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>']): SchemaTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>'];
-export function useReferencedObject(query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes.hexcode<?>']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes.hexcode<?>'];
-export function useReferencedObject(query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants.id<?>']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants.id<?>'];
-export function useReferencedObject(query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants.id<?>']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants.id<?>'];
-export function useReferencedObject(query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>'];
-export function useReferencedObject(query?: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants']): SchemaTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants'];
-export function useReferencedObject(query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes'];
-export function useReferencedObject(query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants'];
-export function useReferencedObject(query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants'];
-export function useReferencedObject(query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants'];
+export function useReferencedObject(query?: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']): SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'];
+export function useReferencedObject(query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>'];
+export function useReferencedObject(query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>'];
+export function useReferencedObject(query?: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions']): SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'];
+export function useReferencedObject(query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes'];
+export function useReferencedObject(query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants'];
 export function useReferencedObject(query?: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>']): SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'];
+export function useReferencedObject(query?: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>']): SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>'];
 export function useReferencedObject(query?: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']): SchemaTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
-export function useReferencedObject(query?: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>']): SchemaTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>'];
 export function useReferencedObject(query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>'];
 export function useReferencedObject(query?: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions']): SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions'];
+export function useReferencedObject(query?: PointerTypes['$(theme).themeColors.id<?>.variants']): SchemaTypes['$(theme).themeColors.id<?>.variants'];
 export function useReferencedObject(query?: PointerTypes['$(theme).themes.id<?>.backgroundColor']): SchemaTypes['$(theme).themes.id<?>.backgroundColor'];
 export function useReferencedObject(query?: PointerTypes['$(palette).colorPalettes.id<?>.colorShades']): SchemaTypes['$(palette).colorPalettes.id<?>.colorShades'];
-export function useReferencedObject(query?: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants']): SchemaTypes['$(icons).colorStateVariants.id<?>.themedStateVariants'];
 export function useReferencedObject(query?: PointerTypes['$(icons).iconGroups.id<?>.icons']): SchemaTypes['$(icons).iconGroups.id<?>.icons'];
+export function useReferencedObject(query?: PointerTypes['$(theme).stateVariants.id<?>']): SchemaTypes['$(theme).stateVariants.id<?>'];
 export function useReferencedObject(query?: PointerTypes['$(theme).themeColors.id<?>']): SchemaTypes['$(theme).themeColors.id<?>'];
 export function useReferencedObject(query?: PointerTypes['$(theme).themes.id<?>']): SchemaTypes['$(theme).themes.id<?>'];
 export function useReferencedObject(query?: PointerTypes['$(palette).colorPalettes.id<?>']): SchemaTypes['$(palette).colorPalettes.id<?>'];
 export function useReferencedObject(query?: PointerTypes['$(palette).shades.id<?>']): SchemaTypes['$(palette).shades.id<?>'];
-export function useReferencedObject(query?: PointerTypes['$(icons).colorStateVariants.id<?>']): SchemaTypes['$(icons).colorStateVariants.id<?>'];
 export function useReferencedObject(query?: PointerTypes['$(icons).iconGroups.id<?>']): SchemaTypes['$(icons).iconGroups.id<?>'];
-export function useReferencedObject(query?: PointerTypes['$(icons).stateVariants.id<?>']): SchemaTypes['$(icons).stateVariants.id<?>'];
+export function useReferencedObject(query?: PointerTypes['$(theme).stateVariants']): SchemaTypes['$(theme).stateVariants'];
 export function useReferencedObject(query?: PointerTypes['$(theme).themeColors']): SchemaTypes['$(theme).themeColors'];
 export function useReferencedObject(query?: PointerTypes['$(theme).themes']): SchemaTypes['$(theme).themes'];
 export function useReferencedObject(query?: PointerTypes['$(palette).colorPalettes']): SchemaTypes['$(palette).colorPalettes'];
 export function useReferencedObject(query?: PointerTypes['$(palette).shades']): SchemaTypes['$(palette).shades'];
-export function useReferencedObject(query?: PointerTypes['$(icons).colorStateVariants']): SchemaTypes['$(icons).colorStateVariants'];
 export function useReferencedObject(query?: PointerTypes['$(icons).iconGroups']): SchemaTypes['$(icons).iconGroups'];
-export function useReferencedObject(query?: PointerTypes['$(icons).stateVariants']): SchemaTypes['$(icons).stateVariants'];
 
 export function useReferencedObject<T>(query?: string): T|null {
   const ctx = useFloroContext();
@@ -1379,45 +1105,33 @@ export function useReferencedObject<T>(query?: string): T|null {
   }, [query, ctx.applicationState]);
 };
 
-export function useFloroState(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants.id<?>'], defaultData?: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants.id<?>']|null, (t: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants.id<?>'], doSave?: boolean) => void, boolean, () => void];
-export function useFloroState(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides.mapFromHexcode<?>'], defaultData?: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides.mapFromHexcode<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides.mapFromHexcode<?>']|null, (t: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides.mapFromHexcode<?>'], doSave?: boolean) => void, boolean, () => void];
-export function useFloroState(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants'], defaultData?: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants']|null, (t: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants'], doSave?: boolean) => void, boolean, () => void];
-export function useFloroState(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides'], defaultData?: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides']|null, (t: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides'], doSave?: boolean) => void, boolean, () => void];
-export function useFloroState(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>'], defaultData?: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>']|null, (t: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>'], doSave?: boolean) => void, boolean, () => void];
-export function useFloroState(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants'], defaultData?: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants']|null, (t: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants'], doSave?: boolean) => void, boolean, () => void];
-export function useFloroState(query: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>'], defaultData?: SchemaTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>']|null, (t: SchemaTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>'], doSave?: boolean) => void, boolean, () => void];
-export function useFloroState(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes.hexcode<?>'], defaultData?: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes.hexcode<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes.hexcode<?>']|null, (t: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes.hexcode<?>'], doSave?: boolean) => void, boolean, () => void];
-export function useFloroState(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants.id<?>'], defaultData?: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants.id<?>']|null, (t: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants.id<?>'], doSave?: boolean) => void, boolean, () => void];
-export function useFloroState(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants.id<?>'], defaultData?: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants.id<?>']|null, (t: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants.id<?>'], doSave?: boolean) => void, boolean, () => void];
-export function useFloroState(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>'], defaultData?: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>']|null, (t: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>'], doSave?: boolean) => void, boolean, () => void];
-export function useFloroState(query: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants'], defaultData?: SchemaTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants']|null, (t: SchemaTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants'], doSave?: boolean) => void, boolean, () => void];
-export function useFloroState(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes'], defaultData?: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes']|null, (t: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes'], doSave?: boolean) => void, boolean, () => void];
-export function useFloroState(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants'], defaultData?: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants']|null, (t: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants'], doSave?: boolean) => void, boolean, () => void];
-export function useFloroState(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants'], defaultData?: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants']|null, (t: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants'], doSave?: boolean) => void, boolean, () => void];
-export function useFloroState(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants'], defaultData?: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants']|null, (t: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants'], doSave?: boolean) => void, boolean, () => void];
+export function useFloroState(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'], defaultData?: SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']|null, (t: SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'], doSave?: boolean) => void, boolean, () => void];
+export function useFloroState(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>'], defaultData?: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>']|null, (t: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>'], doSave?: boolean) => void, boolean, () => void];
+export function useFloroState(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>'], defaultData?: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>']|null, (t: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>'], doSave?: boolean) => void, boolean, () => void];
+export function useFloroState(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'], defaultData?: SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions']|null, (t: SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'], doSave?: boolean) => void, boolean, () => void];
+export function useFloroState(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes'], defaultData?: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes']|null, (t: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes'], doSave?: boolean) => void, boolean, () => void];
+export function useFloroState(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants'], defaultData?: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants']|null, (t: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants'], doSave?: boolean) => void, boolean, () => void];
 export function useFloroState(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'], defaultData?: SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>']|null, (t: SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'], doSave?: boolean) => void, boolean, () => void];
+export function useFloroState(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>'], defaultData?: SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>']|null, (t: SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>'], doSave?: boolean) => void, boolean, () => void];
 export function useFloroState(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], defaultData?: SchemaTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|null, (t: SchemaTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], doSave?: boolean) => void, boolean, () => void];
-export function useFloroState(query: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>'], defaultData?: SchemaTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>']|null, (t: SchemaTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>'], doSave?: boolean) => void, boolean, () => void];
 export function useFloroState(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>'], defaultData?: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>']|null, (t: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>'], doSave?: boolean) => void, boolean, () => void];
 export function useFloroState(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions'], defaultData?: SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions']|null, (t: SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions'], doSave?: boolean) => void, boolean, () => void];
+export function useFloroState(query: PointerTypes['$(theme).themeColors.id<?>.variants'], defaultData?: SchemaTypes['$(theme).themeColors.id<?>.variants'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(theme).themeColors.id<?>.variants']|null, (t: SchemaTypes['$(theme).themeColors.id<?>.variants'], doSave?: boolean) => void, boolean, () => void];
 export function useFloroState(query: PointerTypes['$(theme).themes.id<?>.backgroundColor'], defaultData?: SchemaTypes['$(theme).themes.id<?>.backgroundColor'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(theme).themes.id<?>.backgroundColor']|null, (t: SchemaTypes['$(theme).themes.id<?>.backgroundColor'], doSave?: boolean) => void, boolean, () => void];
 export function useFloroState(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades'], defaultData?: SchemaTypes['$(palette).colorPalettes.id<?>.colorShades'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(palette).colorPalettes.id<?>.colorShades']|null, (t: SchemaTypes['$(palette).colorPalettes.id<?>.colorShades'], doSave?: boolean) => void, boolean, () => void];
-export function useFloroState(query: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants'], defaultData?: SchemaTypes['$(icons).colorStateVariants.id<?>.themedStateVariants'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(icons).colorStateVariants.id<?>.themedStateVariants']|null, (t: SchemaTypes['$(icons).colorStateVariants.id<?>.themedStateVariants'], doSave?: boolean) => void, boolean, () => void];
 export function useFloroState(query: PointerTypes['$(icons).iconGroups.id<?>.icons'], defaultData?: SchemaTypes['$(icons).iconGroups.id<?>.icons'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(icons).iconGroups.id<?>.icons']|null, (t: SchemaTypes['$(icons).iconGroups.id<?>.icons'], doSave?: boolean) => void, boolean, () => void];
+export function useFloroState(query: PointerTypes['$(theme).stateVariants.id<?>'], defaultData?: SchemaTypes['$(theme).stateVariants.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(theme).stateVariants.id<?>']|null, (t: SchemaTypes['$(theme).stateVariants.id<?>'], doSave?: boolean) => void, boolean, () => void];
 export function useFloroState(query: PointerTypes['$(theme).themeColors.id<?>'], defaultData?: SchemaTypes['$(theme).themeColors.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(theme).themeColors.id<?>']|null, (t: SchemaTypes['$(theme).themeColors.id<?>'], doSave?: boolean) => void, boolean, () => void];
 export function useFloroState(query: PointerTypes['$(theme).themes.id<?>'], defaultData?: SchemaTypes['$(theme).themes.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(theme).themes.id<?>']|null, (t: SchemaTypes['$(theme).themes.id<?>'], doSave?: boolean) => void, boolean, () => void];
 export function useFloroState(query: PointerTypes['$(palette).colorPalettes.id<?>'], defaultData?: SchemaTypes['$(palette).colorPalettes.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(palette).colorPalettes.id<?>']|null, (t: SchemaTypes['$(palette).colorPalettes.id<?>'], doSave?: boolean) => void, boolean, () => void];
 export function useFloroState(query: PointerTypes['$(palette).shades.id<?>'], defaultData?: SchemaTypes['$(palette).shades.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(palette).shades.id<?>']|null, (t: SchemaTypes['$(palette).shades.id<?>'], doSave?: boolean) => void, boolean, () => void];
-export function useFloroState(query: PointerTypes['$(icons).colorStateVariants.id<?>'], defaultData?: SchemaTypes['$(icons).colorStateVariants.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(icons).colorStateVariants.id<?>']|null, (t: SchemaTypes['$(icons).colorStateVariants.id<?>'], doSave?: boolean) => void, boolean, () => void];
 export function useFloroState(query: PointerTypes['$(icons).iconGroups.id<?>'], defaultData?: SchemaTypes['$(icons).iconGroups.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(icons).iconGroups.id<?>']|null, (t: SchemaTypes['$(icons).iconGroups.id<?>'], doSave?: boolean) => void, boolean, () => void];
-export function useFloroState(query: PointerTypes['$(icons).stateVariants.id<?>'], defaultData?: SchemaTypes['$(icons).stateVariants.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(icons).stateVariants.id<?>']|null, (t: SchemaTypes['$(icons).stateVariants.id<?>'], doSave?: boolean) => void, boolean, () => void];
+export function useFloroState(query: PointerTypes['$(theme).stateVariants'], defaultData?: SchemaTypes['$(theme).stateVariants'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(theme).stateVariants']|null, (t: SchemaTypes['$(theme).stateVariants'], doSave?: boolean) => void, boolean, () => void];
 export function useFloroState(query: PointerTypes['$(theme).themeColors'], defaultData?: SchemaTypes['$(theme).themeColors'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(theme).themeColors']|null, (t: SchemaTypes['$(theme).themeColors'], doSave?: boolean) => void, boolean, () => void];
 export function useFloroState(query: PointerTypes['$(theme).themes'], defaultData?: SchemaTypes['$(theme).themes'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(theme).themes']|null, (t: SchemaTypes['$(theme).themes'], doSave?: boolean) => void, boolean, () => void];
 export function useFloroState(query: PointerTypes['$(palette).colorPalettes'], defaultData?: SchemaTypes['$(palette).colorPalettes'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(palette).colorPalettes']|null, (t: SchemaTypes['$(palette).colorPalettes'], doSave?: boolean) => void, boolean, () => void];
 export function useFloroState(query: PointerTypes['$(palette).shades'], defaultData?: SchemaTypes['$(palette).shades'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(palette).shades']|null, (t: SchemaTypes['$(palette).shades'], doSave?: boolean) => void, boolean, () => void];
-export function useFloroState(query: PointerTypes['$(icons).colorStateVariants'], defaultData?: SchemaTypes['$(icons).colorStateVariants'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(icons).colorStateVariants']|null, (t: SchemaTypes['$(icons).colorStateVariants'], doSave?: boolean) => void, boolean, () => void];
 export function useFloroState(query: PointerTypes['$(icons).iconGroups'], defaultData?: SchemaTypes['$(icons).iconGroups'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(icons).iconGroups']|null, (t: SchemaTypes['$(icons).iconGroups'], doSave?: boolean) => void, boolean, () => void];
-export function useFloroState(query: PointerTypes['$(icons).stateVariants'], defaultData?: SchemaTypes['$(icons).stateVariants'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(icons).stateVariants']|null, (t: SchemaTypes['$(icons).stateVariants'], doSave?: boolean) => void, boolean, () => void];
 
 export function useFloroState<T>(query: string, defaultData?: T, mutateStoreWithDefault = true): [T|null, (t: T, doSave?: boolean) => void, boolean, () => void] {
   const ctx = useFloroContext();
@@ -1501,45 +1215,33 @@ export function useFloroState<T>(query: string, defaultData?: T, mutateStoreWith
   }, [query, pluginName, ctx.pluginState, ctx.applicationState, ctx.commandMode])
   return [getter, set, isLoading, save];
 };
-export function useIsFloroInvalid(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants.id<?>'], fuzzy?: boolean): boolean;
-export function useIsFloroInvalid(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides.mapFromHexcode<?>'], fuzzy?: boolean): boolean;
-export function useIsFloroInvalid(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants'], fuzzy?: boolean): boolean;
-export function useIsFloroInvalid(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides'], fuzzy?: boolean): boolean;
-export function useIsFloroInvalid(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>'], fuzzy?: boolean): boolean;
-export function useIsFloroInvalid(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants'], fuzzy?: boolean): boolean;
-export function useIsFloroInvalid(query: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>'], fuzzy?: boolean): boolean;
-export function useIsFloroInvalid(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes.hexcode<?>'], fuzzy?: boolean): boolean;
-export function useIsFloroInvalid(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants.id<?>'], fuzzy?: boolean): boolean;
-export function useIsFloroInvalid(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants.id<?>'], fuzzy?: boolean): boolean;
-export function useIsFloroInvalid(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>'], fuzzy?: boolean): boolean;
-export function useIsFloroInvalid(query: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants'], fuzzy?: boolean): boolean;
-export function useIsFloroInvalid(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes'], fuzzy?: boolean): boolean;
-export function useIsFloroInvalid(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants'], fuzzy?: boolean): boolean;
-export function useIsFloroInvalid(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants'], fuzzy?: boolean): boolean;
-export function useIsFloroInvalid(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], fuzzy?: boolean): boolean;
-export function useIsFloroInvalid(query: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(theme).themeColors.id<?>.variants'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(theme).themes.id<?>.backgroundColor'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades'], fuzzy?: boolean): boolean;
-export function useIsFloroInvalid(query: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(icons).iconGroups.id<?>.icons'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(theme).stateVariants.id<?>'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(theme).themeColors.id<?>'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(theme).themes.id<?>'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(palette).colorPalettes.id<?>'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(palette).shades.id<?>'], fuzzy?: boolean): boolean;
-export function useIsFloroInvalid(query: PointerTypes['$(icons).colorStateVariants.id<?>'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(icons).iconGroups.id<?>'], fuzzy?: boolean): boolean;
-export function useIsFloroInvalid(query: PointerTypes['$(icons).stateVariants.id<?>'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(theme).stateVariants'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(theme).themeColors'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(theme).themes'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(palette).colorPalettes'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(palette).shades'], fuzzy?: boolean): boolean;
-export function useIsFloroInvalid(query: PointerTypes['$(icons).colorStateVariants'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(icons).iconGroups'], fuzzy?: boolean): boolean;
-export function useIsFloroInvalid(query: PointerTypes['$(icons).stateVariants'], fuzzy?: boolean): boolean;
 
 export function useIsFloroInvalid(query: PartialDiffableQuery|DiffableQuery, fuzzy = true): boolean {
   const ctx = useFloroContext();
@@ -1560,45 +1262,33 @@ export function useIsFloroInvalid(query: PartialDiffableQuery|DiffableQuery, fuz
     return containsDiffable(invalidQueriesSet, query, false);
   }, [invalidQueriesSet, query, fuzzy])
 };
-export function useWasAdded(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants.id<?>'], fuzzy?: boolean): boolean;
-export function useWasAdded(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides.mapFromHexcode<?>'], fuzzy?: boolean): boolean;
-export function useWasAdded(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants'], fuzzy?: boolean): boolean;
-export function useWasAdded(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides'], fuzzy?: boolean): boolean;
-export function useWasAdded(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>'], fuzzy?: boolean): boolean;
-export function useWasAdded(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants'], fuzzy?: boolean): boolean;
-export function useWasAdded(query: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>'], fuzzy?: boolean): boolean;
-export function useWasAdded(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes.hexcode<?>'], fuzzy?: boolean): boolean;
-export function useWasAdded(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants.id<?>'], fuzzy?: boolean): boolean;
-export function useWasAdded(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants.id<?>'], fuzzy?: boolean): boolean;
-export function useWasAdded(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>'], fuzzy?: boolean): boolean;
-export function useWasAdded(query: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants'], fuzzy?: boolean): boolean;
-export function useWasAdded(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes'], fuzzy?: boolean): boolean;
-export function useWasAdded(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants'], fuzzy?: boolean): boolean;
-export function useWasAdded(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants'], fuzzy?: boolean): boolean;
-export function useWasAdded(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], fuzzy?: boolean): boolean;
-export function useWasAdded(query: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(theme).themeColors.id<?>.variants'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(theme).themes.id<?>.backgroundColor'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades'], fuzzy?: boolean): boolean;
-export function useWasAdded(query: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(icons).iconGroups.id<?>.icons'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(theme).stateVariants.id<?>'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(theme).themeColors.id<?>'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(theme).themes.id<?>'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(palette).colorPalettes.id<?>'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(palette).shades.id<?>'], fuzzy?: boolean): boolean;
-export function useWasAdded(query: PointerTypes['$(icons).colorStateVariants.id<?>'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(icons).iconGroups.id<?>'], fuzzy?: boolean): boolean;
-export function useWasAdded(query: PointerTypes['$(icons).stateVariants.id<?>'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(theme).stateVariants'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(theme).themeColors'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(theme).themes'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(palette).colorPalettes'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(palette).shades'], fuzzy?: boolean): boolean;
-export function useWasAdded(query: PointerTypes['$(icons).colorStateVariants'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(icons).iconGroups'], fuzzy?: boolean): boolean;
-export function useWasAdded(query: PointerTypes['$(icons).stateVariants'], fuzzy?: boolean): boolean;
 
 export function useWasAdded(query: PartialDiffableQuery|DiffableQuery, fuzzy = true): boolean {
   const ctx = useFloroContext();
@@ -1612,45 +1302,33 @@ export function useWasAdded(query: PartialDiffableQuery|DiffableQuery, fuzzy = t
     return containsDiffable(ctx.changeset, query, false);
   }, [ctx.changeset, query, fuzzy, ctx.compareFrom, ctx.commandMode])
 };
-export function useWasRemoved(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants.id<?>'], fuzzy?: boolean): boolean;
-export function useWasRemoved(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides.mapFromHexcode<?>'], fuzzy?: boolean): boolean;
-export function useWasRemoved(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants'], fuzzy?: boolean): boolean;
-export function useWasRemoved(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides'], fuzzy?: boolean): boolean;
-export function useWasRemoved(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>'], fuzzy?: boolean): boolean;
-export function useWasRemoved(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants'], fuzzy?: boolean): boolean;
-export function useWasRemoved(query: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>'], fuzzy?: boolean): boolean;
-export function useWasRemoved(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes.hexcode<?>'], fuzzy?: boolean): boolean;
-export function useWasRemoved(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants.id<?>'], fuzzy?: boolean): boolean;
-export function useWasRemoved(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants.id<?>'], fuzzy?: boolean): boolean;
-export function useWasRemoved(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>'], fuzzy?: boolean): boolean;
-export function useWasRemoved(query: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants'], fuzzy?: boolean): boolean;
-export function useWasRemoved(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes'], fuzzy?: boolean): boolean;
-export function useWasRemoved(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants'], fuzzy?: boolean): boolean;
-export function useWasRemoved(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants'], fuzzy?: boolean): boolean;
-export function useWasRemoved(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], fuzzy?: boolean): boolean;
-export function useWasRemoved(query: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(theme).themeColors.id<?>.variants'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(theme).themes.id<?>.backgroundColor'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades'], fuzzy?: boolean): boolean;
-export function useWasRemoved(query: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(icons).iconGroups.id<?>.icons'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(theme).stateVariants.id<?>'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(theme).themeColors.id<?>'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(theme).themes.id<?>'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(palette).colorPalettes.id<?>'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(palette).shades.id<?>'], fuzzy?: boolean): boolean;
-export function useWasRemoved(query: PointerTypes['$(icons).colorStateVariants.id<?>'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(icons).iconGroups.id<?>'], fuzzy?: boolean): boolean;
-export function useWasRemoved(query: PointerTypes['$(icons).stateVariants.id<?>'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(theme).stateVariants'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(theme).themeColors'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(theme).themes'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(palette).colorPalettes'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(palette).shades'], fuzzy?: boolean): boolean;
-export function useWasRemoved(query: PointerTypes['$(icons).colorStateVariants'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(icons).iconGroups'], fuzzy?: boolean): boolean;
-export function useWasRemoved(query: PointerTypes['$(icons).stateVariants'], fuzzy?: boolean): boolean;
 
 export function useWasRemoved(query: PartialDiffableQuery|DiffableQuery, fuzzy = true): boolean {
   const ctx = useFloroContext();
@@ -1664,45 +1342,33 @@ export function useWasRemoved(query: PartialDiffableQuery|DiffableQuery, fuzzy =
     return containsDiffable(ctx.changeset, query, false);
   }, [ctx.changeset, query, fuzzy, ctx.compareFrom, ctx.commandMode])
 };
-export function useHasConflict(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants.id<?>'], fuzzy?: boolean): boolean;
-export function useHasConflict(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides.mapFromHexcode<?>'], fuzzy?: boolean): boolean;
-export function useHasConflict(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants'], fuzzy?: boolean): boolean;
-export function useHasConflict(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides'], fuzzy?: boolean): boolean;
-export function useHasConflict(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>'], fuzzy?: boolean): boolean;
-export function useHasConflict(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants'], fuzzy?: boolean): boolean;
-export function useHasConflict(query: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>'], fuzzy?: boolean): boolean;
-export function useHasConflict(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes.hexcode<?>'], fuzzy?: boolean): boolean;
-export function useHasConflict(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants.id<?>'], fuzzy?: boolean): boolean;
-export function useHasConflict(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants.id<?>'], fuzzy?: boolean): boolean;
-export function useHasConflict(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>'], fuzzy?: boolean): boolean;
-export function useHasConflict(query: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants'], fuzzy?: boolean): boolean;
-export function useHasConflict(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes'], fuzzy?: boolean): boolean;
-export function useHasConflict(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants'], fuzzy?: boolean): boolean;
-export function useHasConflict(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants'], fuzzy?: boolean): boolean;
-export function useHasConflict(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], fuzzy?: boolean): boolean;
-export function useHasConflict(query: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(theme).themeColors.id<?>.variants'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(theme).themes.id<?>.backgroundColor'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades'], fuzzy?: boolean): boolean;
-export function useHasConflict(query: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(icons).iconGroups.id<?>.icons'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(theme).stateVariants.id<?>'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(theme).themeColors.id<?>'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(theme).themes.id<?>'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(palette).colorPalettes.id<?>'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(palette).shades.id<?>'], fuzzy?: boolean): boolean;
-export function useHasConflict(query: PointerTypes['$(icons).colorStateVariants.id<?>'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(icons).iconGroups.id<?>'], fuzzy?: boolean): boolean;
-export function useHasConflict(query: PointerTypes['$(icons).stateVariants.id<?>'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(theme).stateVariants'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(theme).themeColors'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(theme).themes'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(palette).colorPalettes'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(palette).shades'], fuzzy?: boolean): boolean;
-export function useHasConflict(query: PointerTypes['$(icons).colorStateVariants'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(icons).iconGroups'], fuzzy?: boolean): boolean;
-export function useHasConflict(query: PointerTypes['$(icons).stateVariants'], fuzzy?: boolean): boolean;
 
 export function useHasConflict(query: PartialDiffableQuery|DiffableQuery, fuzzy = true): boolean {
   const ctx = useFloroContext();
@@ -1716,45 +1382,33 @@ export function useHasConflict(query: PartialDiffableQuery|DiffableQuery, fuzzy 
     return containsDiffable(ctx.conflictSet, query, false);
   }, [ctx.conflictSet, query, fuzzy, ctx.commandMode])
 };
-export function useWasChanged(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants.id<?>'], fuzzy?: boolean): boolean;
-export function useWasChanged(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides.mapFromHexcode<?>'], fuzzy?: boolean): boolean;
-export function useWasChanged(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants'], fuzzy?: boolean): boolean;
-export function useWasChanged(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides'], fuzzy?: boolean): boolean;
-export function useWasChanged(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>'], fuzzy?: boolean): boolean;
-export function useWasChanged(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants'], fuzzy?: boolean): boolean;
-export function useWasChanged(query: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>'], fuzzy?: boolean): boolean;
-export function useWasChanged(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes.hexcode<?>'], fuzzy?: boolean): boolean;
-export function useWasChanged(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants.id<?>'], fuzzy?: boolean): boolean;
-export function useWasChanged(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants.id<?>'], fuzzy?: boolean): boolean;
-export function useWasChanged(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>'], fuzzy?: boolean): boolean;
-export function useWasChanged(query: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants'], fuzzy?: boolean): boolean;
-export function useWasChanged(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes'], fuzzy?: boolean): boolean;
-export function useWasChanged(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants'], fuzzy?: boolean): boolean;
-export function useWasChanged(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants'], fuzzy?: boolean): boolean;
-export function useWasChanged(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], fuzzy?: boolean): boolean;
-export function useWasChanged(query: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(theme).themeColors.id<?>.variants'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(theme).themes.id<?>.backgroundColor'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades'], fuzzy?: boolean): boolean;
-export function useWasChanged(query: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(icons).iconGroups.id<?>.icons'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(theme).stateVariants.id<?>'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(theme).themeColors.id<?>'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(theme).themes.id<?>'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(palette).colorPalettes.id<?>'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(palette).shades.id<?>'], fuzzy?: boolean): boolean;
-export function useWasChanged(query: PointerTypes['$(icons).colorStateVariants.id<?>'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(icons).iconGroups.id<?>'], fuzzy?: boolean): boolean;
-export function useWasChanged(query: PointerTypes['$(icons).stateVariants.id<?>'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(theme).stateVariants'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(theme).themeColors'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(theme).themes'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(palette).colorPalettes'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(palette).shades'], fuzzy?: boolean): boolean;
-export function useWasChanged(query: PointerTypes['$(icons).colorStateVariants'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(icons).iconGroups'], fuzzy?: boolean): boolean;
-export function useWasChanged(query: PointerTypes['$(icons).stateVariants'], fuzzy?: boolean): boolean;
 
 export function useWasChanged(query: PartialDiffableQuery|DiffableQuery, fuzzy = true): boolean {
   const ctx = useFloroContext();
@@ -1779,45 +1433,33 @@ export function useWasChanged(query: PartialDiffableQuery|DiffableQuery, fuzzy =
   }, [ctx.changeset, query, fuzzy, ctx.compareFrom, ctx.commandMode])
   return wasAdded || wasRemoved;
 };
-export function useHasIndication(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants.id<?>'], fuzzy?: boolean): boolean;
-export function useHasIndication(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides.mapFromHexcode<?>'], fuzzy?: boolean): boolean;
-export function useHasIndication(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.disabledColorVariants'], fuzzy?: boolean): boolean;
-export function useHasIndication(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>.variantOverrides'], fuzzy?: boolean): boolean;
-export function useHasIndication(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants.id<?>'], fuzzy?: boolean): boolean;
-export function useHasIndication(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>.stateVariants'], fuzzy?: boolean): boolean;
-export function useHasIndication(query: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants.id<?>'], fuzzy?: boolean): boolean;
-export function useHasIndication(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes.hexcode<?>'], fuzzy?: boolean): boolean;
-export function useHasIndication(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants.id<?>'], fuzzy?: boolean): boolean;
-export function useHasIndication(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants.id<?>'], fuzzy?: boolean): boolean;
-export function useHasIndication(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants.id<?>'], fuzzy?: boolean): boolean;
-export function useHasIndication(query: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>.variants'], fuzzy?: boolean): boolean;
-export function useHasIndication(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.colorHexcodes'], fuzzy?: boolean): boolean;
-export function useHasIndication(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledStateVariants'], fuzzy?: boolean): boolean;
-export function useHasIndication(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.disabledThemeVariants'], fuzzy?: boolean): boolean;
-export function useHasIndication(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.themeVariants'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], fuzzy?: boolean): boolean;
-export function useHasIndication(query: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants.id<?>'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(theme).themeColors.id<?>.variants'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(theme).themes.id<?>.backgroundColor'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades'], fuzzy?: boolean): boolean;
-export function useHasIndication(query: PointerTypes['$(icons).colorStateVariants.id<?>.themedStateVariants'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(icons).iconGroups.id<?>.icons'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(theme).stateVariants.id<?>'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(theme).themeColors.id<?>'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(theme).themes.id<?>'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(palette).colorPalettes.id<?>'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(palette).shades.id<?>'], fuzzy?: boolean): boolean;
-export function useHasIndication(query: PointerTypes['$(icons).colorStateVariants.id<?>'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(icons).iconGroups.id<?>'], fuzzy?: boolean): boolean;
-export function useHasIndication(query: PointerTypes['$(icons).stateVariants.id<?>'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(theme).stateVariants'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(theme).themeColors'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(theme).themes'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(palette).colorPalettes'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(palette).shades'], fuzzy?: boolean): boolean;
-export function useHasIndication(query: PointerTypes['$(icons).colorStateVariants'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(icons).iconGroups'], fuzzy?: boolean): boolean;
-export function useHasIndication(query: PointerTypes['$(icons).stateVariants'], fuzzy?: boolean): boolean;
 
 export function useHasIndication(query: PartialDiffableQuery|DiffableQuery, fuzzy = true): boolean {
   const ctx = useFloroContext();
@@ -1869,4 +1511,407 @@ export function useHasIndication(query: PartialDiffableQuery|DiffableQuery, fuzz
     return containsDiffable(ctx.conflictSet, query, false);
   }, [ctx.conflictSet, query, fuzzy, ctx.commandMode])
   return isInvalid || wasAdded || wasRemoved || hasConflict;
+};
+
+type MimeTypes =
+  | "audio/aac"
+  | "application/x-abiword"
+  | "application/x-freearc"
+  | "video/x-msvideo"
+  | "application/vnd.amazon.ebook"
+  | "application/octet-stream"
+  | "image/bmp"
+  | "application/x-bzip"
+  | "application/x-bzip2"
+  | "application/x-csh"
+  | "text/css"
+  | "text/csv"
+  | "application/msword"
+  | "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  | "application/vnd.ms-fontobject"
+  | "application/epub+zip"
+  | "application/gzip"
+  | "image/gif"
+  | "text/html"
+  | "image/vnd.microsoft.icon"
+  | "text/calendar"
+  | "application/java-archive"
+  | "text/javascript"
+  | "application/json"
+  | "application/ld+json"
+  | "text/javascript"
+  | "audio/mpeg"
+  | "video/mpeg"
+  | "application/vnd.apple.installer+xml"
+  | "application/vnd.oasis.opendocument.presentation"
+  | "application/vnd.oasis.opendocument.spreadsheet"
+  | "application/vnd.oasis.opendocument.text"
+  | "audio/ogg"
+  | "video/ogg"
+  | "application/ogg"
+  | "audio/opus"
+  | "font/otf"
+  | "image/png"
+  | "application/pdf"
+  | "application/php"
+  | "application/vnd.ms-powerpoint"
+  | "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+  | "application/vnd.rar"
+  | "application/rtf"
+  | "application/x-sh"
+  | "image/svg+xml"
+  | "application/x-shockwave-flash"
+  | "application/x-tar"
+  | "image/tiff"
+  | "image/tiff"
+  | "video/mp2t"
+  | "font/ttf"
+  | "text/plain"
+  | "application/vnd.visio"
+  | "audio/wav"
+  | "audio/webm"
+  | "video/webm"
+  | "image/webp"
+  | "font/woff"
+  | "font/woff2"
+  | "application/xhtml+xml"
+  | "application/vnd.ms-excel"
+  | "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  | "application/vnd.mozilla.xul+xml"
+  | "application/zip"
+  | "video/3gpp"
+  | "video/3gpp2"
+  | "application/x-7z-compressed"
+  | ".jpg"
+  | ".midi"
+  | "XML";
+
+const mimeMap: { [Property in MimeTypes]: `.${string}` } = {
+  "audio/aac": ".aac",
+  "application/x-abiword": ".abw",
+  "application/x-freearc": ".arc",
+  "video/x-msvideo": ".avi",
+  "application/vnd.amazon.ebook": ".azw",
+  "application/octet-stream": ".bin",
+  "image/bmp": ".bmp",
+  "application/x-bzip": ".bz",
+  "application/x-bzip2": ".bz2",
+  "application/x-csh": ".csh",
+  "text/css": ".css",
+  "text/csv": ".csv",
+  "application/msword": ".doc",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": ".docx",
+  "application/vnd.ms-fontobject": ".eot",
+  "application/epub+zip": ".epub",
+  "application/gzip": ".gz",
+  "image/gif": ".gif",
+  "text/html": ".html",
+  "image/vnd.microsoft.icon": ".ico",
+  "text/calendar": ".ics",
+  "application/java-archive": ".jar",
+  ".jpg": ".jpeg",
+  "XML": ".xml",
+  "text/javascript": ".mjs",
+  "application/json": ".json",
+  "application/ld+json": ".jsonld",
+  ".midi": ".mid",
+  "audio/mpeg": ".mp3",
+  "video/mpeg": ".mpeg",
+  "application/vnd.apple.installer+xml": ".mpkg",
+  "application/vnd.oasis.opendocument.presentation": ".odp",
+  "application/vnd.oasis.opendocument.spreadsheet": ".ods",
+  "application/vnd.oasis.opendocument.text": ".odt",
+  "audio/ogg": ".oga",
+  "video/ogg": ".ogv",
+  "application/ogg": ".ogx",
+  "audio/opus": ".opus",
+  "font/otf": ".otf",
+  "image/png": ".png",
+  "application/pdf": ".pdf",
+  "application/php": ".php",
+  "application/vnd.ms-powerpoint": ".ppt",
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation": ".pptx",
+  "application/vnd.rar": ".rar",
+  "application/rtf": ".rtf",
+  "application/x-sh": ".sh",
+  "image/svg+xml": ".svg",
+  "application/x-shockwave-flash": ".swf",
+  "application/x-tar": ".tar",
+  "image/tiff": ".tiff",
+  "video/mp2t": ".ts",
+  "font/ttf": ".ttf",
+  "text/plain": ".txt",
+  "application/vnd.visio": ".vsd",
+  "audio/wav": ".wav",
+  "audio/webm": ".weba",
+  "video/webm": ".webm",
+  "image/webp": ".webp",
+  "font/woff": ".woff",
+  "font/woff2": ".woff2",
+  "application/xhtml+xml": ".xhtml",
+  "application/vnd.ms-excel": ".xls",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": ".xlsx",
+  "application/vnd.mozilla.xul+xml": ".xul",
+  "application/zip": ".zip",
+  "video/3gpp": ".3gp",
+  "video/3gpp2": ".3g2",
+  "application/x-7z-compressed": ".7z",
+};
+
+const startUploadBlob = (
+  data: BlobPart[],
+  type: MimeTypes,
+  url: string,
+  progressCallback: (loaded: number, total: number) => void
+) => {
+  const blob = new Blob(data, { type });
+  const ext = mimeMap[type];
+  const fileName = `upload.${ext}`;
+
+  const formData = new FormData();
+  formData.append("file", blob, fileName);
+  return upload(formData, url, progressCallback);
+};
+
+const startUploadFile = (
+  file: File,
+  url: string,
+  progressCallback: (loaded: number, total: number) => void
+) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  return upload(formData, url, progressCallback);
+};
+
+const upload = (
+  formData: FormData,
+  url: string,
+  progressCallback: (loaded: number, total: number) => void
+) => {
+  const xhr = new XMLHttpRequest();
+  let promise: Promise<FileRef> | null = new Promise<FileRef>(
+    (resolve, reject) => {
+      xhr.responseType = "json";
+      xhr.open("POST", url);
+      xhr.onprogress = function (e) {
+        progressCallback(e.loaded, e.total);
+      };
+      xhr.onerror = function (e) {
+        reject(e);
+      };
+      xhr.onreadystatechange = function (e) {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+          const status = xhr.status;
+          if (status === 0 || (status >= 200 && status < 400)) {
+            resolve(xhr.response["fileRef"]);
+          } else {
+            reject(e);
+          }
+        }
+      };
+      xhr.send(formData);
+    }
+  );
+
+  return {
+    promise,
+    abort: () => {
+      xhr.abort();
+      promise = null;
+    },
+  };
+};
+
+export const useUploadFile = () => {
+  const { pluginState } = useFloroContext();
+  const [status, setStatus] =
+    useState<"none" | "in_progress" | "success" | "error">("none");
+  const [progress, setProgress] = useState<number>(0);
+  const [fileRef, setFileRef] = useState<FileRef | null>(null);
+  const [uploadObject, setUploadObject] =
+    useState<null | { promise: Promise<FileRef> | null; abort: () => void }>(
+      null
+    );
+
+  const reset = useCallback(() => {
+    setStatus("none");
+    setProgress(0);
+    setFileRef(null);
+    setUploadObject(null)
+  }, []);
+
+  const isLoading = useMemo(() => status == "in_progress", [status]);
+
+  const onProgress = useCallback((loaded: number, total: number) => {
+    setProgress(loaded / total);
+  }, []);
+
+  const uploadFile = useCallback(
+    (file: File) => {
+      if (status == "in_progress") {
+        return;
+      }
+      if (!pluginState.binaryUrls.upload) {
+        return;
+      }
+      setStatus("in_progress");
+      setProgress(0);
+      setUploadObject(
+        startUploadFile(file, pluginState.binaryUrls.upload, onProgress)
+      );
+    },
+    [status, pluginState.binaryUrls.upload, onProgress]
+  );
+
+  const uploadBlob = useCallback(
+    (data: BlobPart[], type: MimeTypes) => {
+      if (status == "in_progress") {
+        return;
+      }
+      if (!pluginState.binaryUrls.upload) {
+        return;
+      }
+      setUploadObject(
+        startUploadBlob(data, type, pluginState.binaryUrls.upload, onProgress)
+      );
+      setStatus("in_progress");
+      setProgress(0);
+    },
+    [status, pluginState.binaryUrls.upload, onProgress]
+  );
+
+  useEffect(() => {
+    if (!uploadObject) {
+      return;
+    }
+    let aborted = false;
+    uploadObject.promise
+      ?.then((fileRef) => {
+        if (!aborted) {
+          setStatus("success");
+          setProgress(1);
+          setFileRef(fileRef);
+        }
+      })
+      .catch((e) => {
+        if (!aborted) {
+          setStatus("error");
+          setProgress(0);
+        }
+      });
+    return () => {
+      uploadObject.abort();
+      aborted = true;
+    };
+  }, [uploadObject]);
+
+  return {
+    uploadBlob,
+    uploadFile,
+    reset,
+    status,
+    progress,
+    fileRef,
+    isLoading,
+  };
+};
+
+export const useBinaryRef = (fileRef?: FileRef|null) => {
+    const { pluginState } = useFloroContext();
+    if (!fileRef) {
+        return null;
+    }
+    if (!pluginState.binaryUrls.download) {
+        return null;
+    }
+    return `${pluginState.binaryUrls.download}/${fileRef}`;
+}
+
+interface BinaryReturn {
+  "arraybuffer": ArrayBuffer,
+  "blob": Blob,
+  "document": Document|XMLDocument,
+  "json": object,
+  "text": string,
+};
+
+const download = (
+  url: string,
+  responseType: keyof BinaryReturn
+) => {
+  const xhr = new XMLHttpRequest();
+  let promise: Promise<FileRef> | null = new Promise<FileRef>(
+    (resolve, reject) => {
+      xhr.responseType = responseType;
+      xhr.open("GET", url);
+      xhr.onerror = function (e) {
+        reject(e);
+      };
+      xhr.onreadystatechange = function (e) {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+          const status = xhr.status;
+          if (status === 0 || (status >= 200 && status < 400)) {
+            resolve(xhr.response);
+          } else {
+            reject(e);
+          }
+        }
+      };
+      xhr.send();
+    }
+  );
+
+  return {
+    promise,
+    abort: () => {
+      xhr.abort();
+      promise = null;
+    },
+  };
+};
+
+export const useBinaryData = <K extends keyof BinaryReturn>(
+  fileRef: FileRef | null,
+  responseType: K
+) => {
+  const binRef = useBinaryRef(fileRef);
+  const [data, setData] = useState<BinaryReturn[K] | null>(null);
+  const [status, setStatus] =
+    useState<"none" | "in_progress" | "success" | "error">("none");
+  const isLoading = useMemo(() => status == "in_progress", [status]);
+
+  useEffect(() => {
+    if (binRef) {
+      setStatus("none");
+    }
+  }, [binRef]);
+
+  useEffect(() => {
+    if (status != "none") {
+      return;
+    }
+    if (!binRef) {
+      return;
+    }
+    let aborted = false;
+    const downloadObject = download(binRef, responseType);
+    downloadObject.promise
+      .then((result: unknown) => {
+        if (!aborted) {
+          setData(result as BinaryReturn[K]);
+          setStatus("success");
+        }
+      })
+      .catch(() => {
+        if (!aborted) {
+          setStatus("error");
+        }
+      });
+    return () => {
+      aborted = true;
+      downloadObject?.abort();
+    };
+  }, [status, binRef, responseType]);
+
+  return { isLoading, status, data };
 };

@@ -105,6 +105,16 @@ export interface ColorTheme {
     conflictBackground: string;
     colorPaletteCard: string;
     colorPaletteEditBackground: string;
+    dropzoneBackground: string;
+    dropzoneContentColor: string;
+    dropzoneValidBackground: string;
+    dropzoneValidContentColor: string;
+    dropzoneInvalidBackground: string;
+    dropzoneInvalidContentColor: string;
+    checkeredGradient: string;
+    checkeredGradientContrast: string;
+    inPaletteText: string;
+    notInPaletteText: string;
   };
   gradients: {
     backgroundNoOpacity: string;
@@ -227,6 +237,16 @@ export const LightTheme: ColorTheme = {
     conflictBackground: palette.lightOrange,
     colorPaletteCard: palette.lightGray,
     colorPaletteEditBackground: palette.lightGray,
+    dropzoneBackground: palette.lightPurple.substring(0, 7) + Opacity[20],
+    dropzoneContentColor: palette.purple,
+    dropzoneValidBackground: palette.lightTeal.substring(0, 7) + Opacity[20],
+    dropzoneValidContentColor: palette.teal,
+    dropzoneInvalidBackground: palette.lightRed.substring(0, 7) + Opacity[20],
+    dropzoneInvalidContentColor: palette.red,
+    checkeredGradient: palette.gray,
+    checkeredGradientContrast: palette.lightGray,
+    inPaletteText: palette.purple,
+    notInPaletteText: palette.red,
   },
   gradients: {
     backgroundNoOpacity: palette.lightModeBG.substring(0, 7) + Opacity[0],
@@ -349,6 +369,16 @@ export const DarkTheme: ColorTheme = {
         conflictBackground: palette.lightOrange,
         colorPaletteCard: palette.mediumGray,
         colorPaletteEditBackground: palette.darkGray,
+        dropzoneBackground: palette.darkPurple,
+        dropzoneContentColor: palette.lightPurple,
+        dropzoneValidBackground: palette.darkTeal,
+        dropzoneValidContentColor: palette.lightTeal,
+        dropzoneInvalidBackground: palette.darkRed,
+        dropzoneInvalidContentColor: palette.lightRed,
+        checkeredGradient: palette.gray,
+        checkeredGradientContrast: palette.lightGray,
+        inPaletteText: palette.lightPurple,
+        notInPaletteText: palette.lightRed,
     },
     shadows: {
         modalContainer: palette.black.substring(0, 7) + Opacity[70],

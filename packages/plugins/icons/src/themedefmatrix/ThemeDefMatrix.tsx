@@ -1,10 +1,18 @@
-import React, { useEffect, useMemo, useCallback, useState, useRef } from "react";
+import React, {
+  useEffect,
+  useMemo,
+  useCallback,
+  useState,
+  useRef,
+} from "react";
 import {
+  PointerTypes,
   getReferencedObject,
   makeQueryRef,
   useFloroContext,
   useFloroState,
   useIsFloroInvalid,
+  useReferencedObject,
 } from "../floro-schema-api";
 import styled from "@emotion/styled";
 import { css } from "@emotion/css";
@@ -14,6 +22,13 @@ import { AnimatePresence, Reorder } from "framer-motion";
 import ColorPalette from "@floro/styles/ColorPalette";
 import Input from "@floro/storybook/stories/design-system/Input";
 import ThemeRow from "./ThemeRow";
+
+const Container = styled.div`
+  padding: 0px;
+  position: relative;
+  max-height: 100%;
+  overflow-y: scroll;
+`;
 
 const SectionTitle = styled.h1`
   font-family: "MavenPro";
@@ -63,185 +78,54 @@ const AddColorContainer = styled.div`
 `;
 
 interface Props {
-  showShadeList: boolean;
-  onHideThemeList: () => void;
-  onShowThemeList: () => void;
-  onScrollToBottom: () => void;
+  show: boolean;
+  remappedSVG?: string;
+  themingHex?: string;
+  defaultIconTheme: string;
+  selectedVariants?: {[key: string]: boolean};
+  appliedThemes?: {[key: string]: PointerTypes['$(theme).themeColors.id<?>']};
+  onSelect?: (themeColorRef: PointerTypes['$(theme).themeColors.id<?>']) => void;
+  onNoTheme?: (hex: string) => void;
 }
 
 const ThemeDefMatrix = (props: Props) => {
-  const { commandMode, applicationState } = useFloroContext();
-  const input = useRef<HTMLInputElement>(null);
 
-  const [themeColors, setThemeColors, isLoading, save] = useFloroState("$(theme).themeColors");
-
-  const [isDragging, setIsDragging] = useState(false);
-  const [newColorName, setNewColorName] = useState("");
-  const [isReOrderMode, setIsReOrderMode] = useState(false);
-
-  const onReOrderThemeColors = useCallback(
-    (values: SchemaTypes["$(theme).themeColors"]) => {
-      if (applicationState) {
-        const remap = values.map((v) => {
-            return getReferencedObject(
-              applicationState,
-              makeQueryRef("$(theme).themeColors.id<?>", v.id)
-            );
-          });
-        setThemeColors(remap, false);
-      }
-    },
-    [applicationState]
-  );
-
-  const onRemove = useCallback(
-    (shade: SchemaTypes["$(theme).themeColors.id<?>"]) => {
-      const values = applicationState?.theme?.themeColors?.filter((s) => s.id != shade.id);
-      if (values) {
-        setThemeColors(values, true);
-      }
-    },
-    [applicationState?.theme?.themeColors]
-  );
-
-  const newId = useMemo((): string | null => {
-    if (!newColorName || (newColorName?.trim?.() ?? "") == "") {
-      return null;
-    }
-    return (
-      newColorName?.trim?.()?.replaceAll?.(/ +/g, "-")?.toLowerCase?.() ?? null
-    );
-  }, [newColorName]);
-
-  const canAddNewName = useMemo(() => {
-    if (!newId) {
-      return false;
-    }
-    for (const { id } of themeColors ?? []) {
-      if (id == newId) {
-        return false;
-      }
-    }
-    return true;
-  }, [newId, themeColors]);
-
-  const onAppendNewColor = useCallback(() => {
-    if (!newId || !newColorName || !canAddNewName || !themeColors) {
-      return;
-    }
-    setThemeColors([{ id: newId, name: newColorName, themeDefinitions: [] }, ...themeColors], true);
-    setNewColorName("");
-  }, [newColorName, newId, canAddNewName, isLoading, themeColors]);
-
-  const onDragStart = useCallback(() => {
-    setIsDragging(true);
-  }, []);
-
-  const onDragEnd = useCallback(() => {
-    setIsDragging(false);
-  }, []);
-
-  const onOrganize = useCallback(() => {
-    setIsReOrderMode(true);
-  }, []);
-
-  const onEdit = useCallback(() => {
-    setIsReOrderMode(false);
-  }, []);
-
-  const onClickNewColor = useCallback(() => {
-    props.onScrollToBottom?.();
-    setTimeout(() => {
-      input?.current?.focus?.();
-    }, 600);
-  }, [props.onScrollToBottom]);
+  const container = useRef<HTMLDivElement>(null);
+  const themeColors = useReferencedObject("$(theme).themeColors")
 
   useEffect(() => {
-    if (!isDragging) {
-      save();
+    if (props.show) {
+      if (container.current) {
+        container.current.scrollTo(0, 0);
+      }
     }
-  }, [isDragging]);
+  }, [props.show])
 
   return (
-    <div style={{ marginBottom: 36, marginRight: 72 }}>
-      <TitleRow>
-        <SectionTitle>{"Theme Color Definitions"}</SectionTitle>
-        {commandMode == "edit" && (
-          <ButtonContainer>
-            {props.showShadeList && (
-              <Button
-                label={"hide themes"}
-                bg={"purple"}
-                size={"small"}
-                onClick={props.onHideThemeList}
-              />
-            )}
-            {!props.showShadeList && (
-              <Button
-                label={"edit themes"}
-                bg={"purple"}
-                size={"small"}
-                onClick={props.onShowThemeList}
-              />
-            )}
-          </ButtonContainer>
-        )}
-      </TitleRow>
-      {commandMode == "edit" && (
-        <SubTitleRow>
-          {isReOrderMode && (
-            <SubTitle onClick={onEdit}>{"done organizing"}</SubTitle>
-          )}
-          {!isReOrderMode && (
-            <SubTitle onClick={onOrganize}>{"organize definitions"}</SubTitle>
-          )}
-        </SubTitleRow>
-      )}
-      {!isReOrderMode && commandMode == "edit" && (
-        <AddColorContainer style={{ marginLeft: 40 }}>
-          <Input
-            value={newColorName}
-            label={"new theme definition"}
-            placeholder={"definition name"}
-            onTextChanged={setNewColorName}
-            width={200}
-            ref={input}
-          />
-          <Button
-            onClick={onAppendNewColor}
-            style={{ marginTop: 14 }}
-            label={"add def"}
-            bg={"orange"}
-            size={"small"}
-            isDisabled={!canAddNewName}
-          />
-        </AddColorContainer>
-      )}
-      <div style={{ marginBottom: 120 }}>
-        <AnimatePresence>
-          <Reorder.Group
-            axis="y"
-            values={themeColors ?? []}
-            onReorder={onReOrderThemeColors}
-          >
-            {themeColors?.filter?.(v => !!v?.id)?.map?.((themeColor, index) => {
+    <Container ref={container}>
+      <div>
+        <div style={{ marginBottom: 120}}>
+          {themeColors
+            ?.filter?.((v) => !!v?.id)
+            ?.map?.((themeColor, index) => {
               return (
                 <ThemeRow
-                  onDragStart={onDragStart}
-                  onDragEnd={onDragEnd}
-                  onRemove={onRemove}
                   key={themeColor?.id as string}
                   themeColor={themeColor}
                   index={index}
-                  isDragging={isDragging}
-                  isReOrderMode={isReOrderMode}
+                  selectedVariants={props.selectedVariants}
+                  themingHex={props.themingHex}
+                  defaultIconTheme={props.defaultIconTheme}
+                  remappedSVG={props.remappedSVG}
+                  onSelect={props.onSelect}
+                  onNoTheme={props.onNoTheme}
+                  appliedThemes={props.appliedThemes}
                 />
               );
             })}
-          </Reorder.Group>
-          </AnimatePresence>
+        </div>
       </div>
-    </div>
+    </Container>
   );
 };
 

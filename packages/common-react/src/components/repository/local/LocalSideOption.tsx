@@ -16,6 +16,7 @@ const NavOption = styled.div`
   height: 72px;
   width: 72px;
   position: relative;
+  padding-top: 2px;
 `;
 
 const NavIcon = styled.img`

@@ -3,14 +3,10 @@ import { Repository } from "@floro/graphql-schemas/src/generated/main-client-gra
 import { Link, useLocation, useSearchParams } from "react-router-dom";
 import {
   Plugin,
-  PluginVersion,
 } from "@floro/graphql-schemas/build/generated/main-graphql";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import ColorPalette from "@floro/styles/ColorPalette";
-import PluginDefaultSelected from "@floro/common-assets/assets/images/icons/plugin_default.selected.svg";
-import PluginDefaultUnSelectedLight from "@floro/common-assets/assets/images/icons/plugin_default.unselected.light.svg";
-import PluginDefaultUnSelectedDark from "@floro/common-assets/assets/images/icons/plugin_default.unselected.dark.svg";
 import PluginHomeSelectedLight from "@floro/common-assets/assets/images/icons/plugin_home.selected.light.svg";
 import PluginHomeSelectedDark from "@floro/common-assets/assets/images/icons/plugin_home.selected.dark.svg";
 import PluginHomeUnSelectedLight from "@floro/common-assets/assets/images/icons/plugin_home.unselected.light.svg";
@@ -19,7 +15,6 @@ import PluginSettingsSelectedLight from "@floro/common-assets/assets/images/icon
 import PluginSettingsSelectedDark from "@floro/common-assets/assets/images/icons/plugin_settings.selected.dark.svg";
 import PluginSettingsUnSelectedLight from "@floro/common-assets/assets/images/icons/plugin_settings.unselected.light.svg";
 import PluginSettingsUnSelectedDark from "@floro/common-assets/assets/images/icons/plugin_settings.unselected.dark.svg";
-import { useQueryClient } from "react-query";
 import { useCurrentRepoState, useRepoDevPlugins, useRepoManifestList } from "./hooks/local-hooks";
 import { Manifest } from "@floro/floro-lib/src/plugins";
 import { transformLocalManifestToPartialPlugin } from "./hooks/manifest-transforms";
@@ -29,7 +24,7 @@ import { useLocalVCSNavContext } from "./vcsnav/LocalVCSContext";
 const Navigator = styled.nav`
   width: 72px;
   border-right: 1px solid ${ColorPalette.lightPurple};
-  padding: 0;
+  padding: 2px 0 0 0;
   margin: 0;
   position: relative;
   background: ${(props) => props.theme.background};

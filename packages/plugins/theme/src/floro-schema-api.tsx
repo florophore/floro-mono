@@ -353,6 +353,13 @@ export const FloroProvider = (props: Props) => {
     };
   }, []);
 
+  const applicationState = useMemo(() => {
+    if (!hasLoaded) {
+      return {} as SchemaRoot;
+    }
+    return pluginState.applicationState;
+  }, [pluginState.applicationState, hasLoaded]);
+
   const saveState = useCallback(
     <T extends keyof SchemaRoot>(pluginName: T, state: SchemaRoot|null): string | null => {
       if (commandMode != "edit") {
@@ -389,15 +396,8 @@ export const FloroProvider = (props: Props) => {
       }
       return null;
     },
-    [commandMode, loadingIds]
+    [commandMode, loadingIds, applicationState]
   );
-
-  const applicationState = useMemo(() => {
-    if (!hasLoaded) {
-      return {} as SchemaRoot;
-    }
-    return pluginState.applicationState;
-  }, [pluginState.applicationState, hasLoaded]);
 
   const apiStoreInvalidity = useMemo(() => {
     if (!hasLoaded) {

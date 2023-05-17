@@ -24,6 +24,7 @@ import PalettePicker from "../palettecolormatrix/PalettePicker";
 
 import WarningLight from "@floro/common-assets/assets/images/icons/warning.light.svg";
 import WarningDark from "@floro/common-assets/assets/images/icons/warning.dark.svg";
+import { rethemeSvg } from "../colorhooks";
 
 const Wrapper = styled.div`
   position: relative;
@@ -32,14 +33,14 @@ const Wrapper = styled.div`
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  margin-right: 40px;
-  margin-left: 24px;
+  margin-right: 16px;
+  margin-bottom: 8px;
 `;
 
 const Card = styled.div`
   position: relative;
-  height: 136px;
-  width: 216px;
+  height: 96px;
+  width: 136px;
   border-radius: 8px;
   background-color: ${(props) => props.theme.colors.colorPaletteCard};
   border: 2px solid;
@@ -57,11 +58,11 @@ const CardInterior = styled.div`
 const Title = styled.h4`
   font-family: "MavenPro";
   font-weight: 600;
-  font-size: 1.4rem;
+  font-size: 1rem;
   color: ${(props) => props.theme.colors.pluginTitle};
   text-align: center;
   padding: 0;
-  margin: 16px 0 0 0;
+  margin: 0px;
 `;
 
 const SubTitle = styled.h4`
@@ -78,7 +79,6 @@ const ColorDisplayCircle = styled.div`
   height: 72px;
   width: 72px;
   border-radius: 50%;
-  margin-top: 8px;
   background: ${ColorPalette.white};
   position: relative;
   overflow: hidden;
@@ -145,6 +145,19 @@ const EditIndicatorImg = styled.img`
   width: 20px;
   cursor: pointer;
 `;
+const IconWrapper = styled.div`
+  height: 72px;
+  width: 72px;
+`;
+
+const Icon = styled.img`
+  max-height: 72px;
+  max-width: 72px;
+  width: 100%;
+  height: 100%;
+`;
+
+
 
 const getColorDistance = (staticHex: string, comparedHex: string) => {
   try {
@@ -166,13 +179,18 @@ const getColorDistance = (staticHex: string, comparedHex: string) => {
 interface Props {
   themeColor: SchemaTypes["$(theme).themeColors.id<?>"];
   themeObject: SchemaTypes["$(theme).themes.id<?>"];
-  isReOrderMode: boolean;
+  themingHex?: string;
+  defaultIconTheme: string;
+  selectedVariants?: {[key: string]: boolean};
+  appliedThemes?: {[key: string]: PointerTypes['$(theme).themeColors.id<?>']};
+  remappedSVG?: string;
 }
 
 const ThemeDefCell = (props: Props) => {
   const theme = useTheme();
-  const { commandMode } = useFloroContext();
+  const { commandMode, applicationState } = useFloroContext();
   const themeRef = useQueryRef("$(theme).themes.id<?>", props.themeObject.id);
+  const themeColorRef = useQueryRef("$(theme).themeColors.id<?>", props.themeColor.id);
   const colorCircle = useRef<HTMLDivElement>(null);
 
   const themeDefinitionRef = useQueryRef(
@@ -319,6 +337,31 @@ const ThemeDefCell = (props: Props) => {
     return shade?.name + " " + paletteColor?.name;
   }, [paletteColor?.name, shade?.name])
 
+  const themedSvg = useMemo(() => {
+    if (!applicationState || !props.remappedSVG) {
+      return props.remappedSVG ?? "";
+    }
+    return rethemeSvg(
+      applicationState,
+      props.remappedSVG,
+      props.appliedThemes ?? {},
+      themeRef,
+      themeColorRef,
+      props.themingHex,
+    ) ?? "";
+  }, [
+    applicationState,
+    props.remappedSVG,
+    props.appliedThemes,
+    themeRef,
+    themeColorRef,
+    props.themingHex,
+  ]);
+
+  const remappedSVGUrl = useMemo(() => {
+    return `data:image/svg+xml,${encodeURIComponent(themedSvg ?? "")}`;
+  }, [themedSvg]);
+
   return (
     <Wrapper>
       <Container>
@@ -330,34 +373,11 @@ const ThemeDefCell = (props: Props) => {
           }}
         >
           <CardInterior>
-            {!!paletteColorShade && (
-              <>
-                <ColorDisplayCircle style={{ borderColor: contrastColor }}>
-                    {paletteColorShade?.hexcode && (
-                      <ColorCircle
-                        ref={colorCircle}
-                        style={{ background: paletteColorShade?.hexcode }}
-                      />
-                    )}
-                    {!paletteColorShade?.hexcode && (
-                      <AlphaColorCircle />
-                    )}
-                </ColorDisplayCircle>
-              </>
-            )}
-            {!paletteColorShade && (
-              <WarningCircle>
-                <WarningIcon src={warningIcon}/>
-
-              </WarningCircle>
-            )}
+            <IconWrapper>
+              <Icon src={remappedSVGUrl}/>
+            </IconWrapper>
           </CardInterior>
 
-          {commandMode == "edit" && !props.isReOrderMode && (
-            <EditIndicatorWrapper onClick={onShowPicker}>
-              <EditIndicatorImg src={editIcon} />
-            </EditIndicatorWrapper>
-          )}
         </Card>
         {title && (
           <Title style={{ color: titleColor }}>{title}</Title>
@@ -366,11 +386,6 @@ const ThemeDefCell = (props: Props) => {
           <Title style={{ color: theme.colors.warningTextColor }}>{"missing color!"}</Title>
         )}
       </Container>
-      <PalettePicker
-        show={showPicker && commandMode == "edit" && !props.isReOrderMode}
-        onDismiss={onHidePicker}
-        onSelect={onSelect}
-      />
     </Wrapper>
   );
 };

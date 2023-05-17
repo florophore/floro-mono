@@ -9,6 +9,7 @@ export interface ColorPalette {
   darkGray: string;
   lightRed: string;
   red: string;
+  darkRed: string;
   lightOrange: string;
   orange: string;
   lightBrown: string;
@@ -31,6 +32,7 @@ const ColorPalette = {
     darkGray: '#222222FF',
     lightRed: '#FF3D44FF',
     red: '#CC2E34FF',
+    darkRed: '#602A2CFF',
     darkBrown: '#602A2CFF',
     lightOrange: '#FEB76CFF',
     orange: '#FD8C16FF',
@@ -54,4 +56,4 @@ export const Opacity = {
   70: 'B2',
   80: 'CC',
   100: 'FF'
-}; 
+};

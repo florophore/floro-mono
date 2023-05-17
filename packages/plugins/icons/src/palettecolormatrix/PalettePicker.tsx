@@ -18,6 +18,7 @@ interface Props {
   onSelect: (
     colorPaletteColorShadeRef: PointerTypes["$(palette).colorPalettes.id<?>.colorShades.id<?>"]
   ) => void;
+  filterNullHexes?: boolean;
 }
 
 const PalettePicker = (props: Props) => {
@@ -36,16 +37,22 @@ const PalettePicker = (props: Props) => {
     }
 
     const onWindowClick = (e: Event) => {
-        props.onDismiss?.()
+      if (container.current && !container.current.contains(e.target as Node)) {
+          props.onDismiss?.()
+      }
     }
+
     const timeout = setTimeout(() => {
-        window.addEventListener("click", onWindowClick);
+      document.addEventListener("click", onWindowClick, {
+        passive: true,
+        capture: true
+      });
     }, 0);
     return () => {
         clearTimeout(timeout);
-        window.removeEventListener("click", onWindowClick);
+        document.removeEventListener("click", onWindowClick);
     }
-  }, [props.show]);
+  }, [props.show, props.onDismiss]);
 
   const onStopPropagation = useCallback((event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.stopPropagation();
@@ -71,9 +78,8 @@ const PalettePicker = (props: Props) => {
       ref={container}
       className={css`
         position: absolute;
-        position: absolute;
-        left: calc(100% - 56px);
-        top: -240px;
+        left: -279px;
+        top: 48px;
         border-radius: 8px;
         z-index: 1;
       `}
@@ -81,16 +87,17 @@ const PalettePicker = (props: Props) => {
       <img
         className={css`
           position: absolute;
-          top: 250px;
-          left: 1px;
+          top: -14px;
+          left: 336px;
+          transform: rotate(90deg);
         `}
         src={tooltipArrow}
       />
       <div
         className={css`
           height: 100%;
-          margin-left: 8px;
-          width: calc(100% - 8px);
+          margin-left: 3px;
+          width: 646px;
           border-radius: 8px;
           box-sizing: border-box;
           box-shadow: 0 0 20px 1px ${theme.colors.tooltipOuterShadowColor};
@@ -107,7 +114,7 @@ const PalettePicker = (props: Props) => {
             className={css`
             `}
           >
-            <ColorPaletteMatrix onSelect={onSelect} />
+            <ColorPaletteMatrix onSelect={onSelect} filterNullHexes={props.filterNullHexes}/>
           </div>
           <div />
         </div>

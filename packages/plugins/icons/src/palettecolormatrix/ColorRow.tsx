@@ -41,6 +41,9 @@ const TitleRow = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  position: sticky;
+  width: 484px;
+  left: 24px;
 `;
 
 interface Props {
@@ -49,9 +52,12 @@ interface Props {
   onSelect: (
     colorPaletteColorShadeRef: PointerTypes["$(palette).colorPalettes.id<?>.colorShades.id<?>"]
   ) => void;
+  filterNullHexes?: boolean;
+  disabledNonNull?: boolean;
 }
 
 const ColorRow = (props: Props) => {
+
   const theme = useTheme();
   const colorPaletteRef = useQueryRef(
     "$(palette).colorPalettes.id<?>",
@@ -80,6 +86,8 @@ const ColorRow = (props: Props) => {
                   shade={shade}
                   colorPalette={props.colorPalette}
                   onSelect={props.onSelect}
+                  filterNullHexes={props.filterNullHexes}
+                  disabledNonNull={props.disabledNonNull}
                 />
               );
             })}

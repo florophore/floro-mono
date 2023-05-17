@@ -1,12 +1,15 @@
 import React, { useMemo, useCallback, useState, useEffect, useRef } from "react";
 import {
+  PointerTypes,
   SchemaTypes,
+  makeQueryRef,
   useFloroContext,
   useFloroState,
   useHasConflict,
   useHasIndication,
   useIsFloroInvalid,
   useQueryRef,
+  useReferencedObject,
   useWasAdded,
   useWasRemoved,
 } from "../floro-schema-api";
@@ -18,17 +21,21 @@ import { css } from "@emotion/css";
 import WarningLight from "@floro/common-assets/assets/images/icons/warning.light.svg";
 import WarningDark from "@floro/common-assets/assets/images/icons/warning.dark.svg";
 import Input from "@floro/storybook/stories/design-system/Input";
+import Checkbox from "@floro/storybook/stories/design-system/Checkbox";
 
 import XCircleLight from "@floro/common-assets/assets/images/icons/red_x_circle.light.svg";
 import XCircleDark from "@floro/common-assets/assets/images/icons/red_x_circle.dark.svg";
 import DraggerLight from "@floro/common-assets/assets/images/icons/dragger.light.svg";
 import DraggerDark from "@floro/common-assets/assets/images/icons/dragger.dark.svg";
 import ThemeDefCell from "./ThemeDefCell";
+import ThemeDefVariantCell from "./ThemeDefVariantCell";
+import Button from "@floro/storybook/stories/design-system/Button";
 
 const Container = styled.div`
   padding: 0;
   margin-bottom: 8px;
-  margin-right: 36px;
+  margin-right: 20px;
+  margin-left: 16px;
 `;
 
 const RowTitle = styled.h1`
@@ -45,110 +52,34 @@ const Row = styled.div`
   flex-direction: row;
 `;
 
+const Col = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 const RowWrapper = styled.div`
   display: flex;
   flex-direction: row;
-  margin-left: 16px;
 `;
 
 const TitleRow = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: space-between;
 `;
 
-const WarningIconImg = styled.img`
-  height: 24px;
-  width: 24x;
-  margin-left: 16px;
-`;
-
-const ColorControlsContainer = styled.div`
-  padding: 0px 0px 0px 0px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  height: 96px;
-`;
-
-const DeleteShadeContainer = styled.div`
-  cursor: pointer;
-  margin-left: 16px;
-  padding-top: 14px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const DeleteShade = styled.img`
-  height: 32px;
-  width: 32px;
-  pointer-events: none;
-  user-select: none;
-`;
-
-const DragShadeContainer = styled.div`
-  height: 50px;
-  cursor: grab;
-  margin-right: 24px;
-  margin-top: 14px;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-`;
-
-const DragIcon = styled.img`
-  height: 24px;
-  width: 24px;
-  pointer-events: none;
-  user-select: none;
-`;
-
-const IndicatorCircle = styled.div`
-  height: 16px;
-  width: 16px;
-  border-radius: 50%;
-  pointer-events: none;
-  user-select: none;
-  background: ${(props) => props.theme.colors.contrastText};
-`;
-
-
-const colorPaletteItemVariants = {
-  hidden: { opacity: 0 },
-  visible: (custom: number) => ({
-    opacity: 1,
-    transition: {
-      delay: custom,
-    },
-  }),
-};
-
-const paletteCellVariants =  {
-  active: {
-      marginTop: 0,
-      height: 20,
-      width: 104,
-      y: -30,
-      scale: 0.35,
-  },
-  inactive: {
-    scale: 1,
-    marginTop: 0,
-    transition: { duration: 0.3 }
-  }
-};
 
 interface Props {
   themeColor: SchemaTypes["$(theme).themeColors.id<?>"];
   index: number;
-  onRemove: (
-    colorPalette: SchemaTypes["$(theme).themeColors.id<?>"]
-  ) => void;
-  onDragStart: () => void;
-  onDragEnd: () => void;
-  isDragging: boolean;
-  isReOrderMode: boolean;
+  remappedSVG?: string;
+  themingHex?: string;
+  defaultIconTheme: string;
+  selectedVariants?: {[key: string]: boolean};
+  appliedThemes?: {[key: string]: PointerTypes['$(theme).themeColors.id<?>']};
+  onSelect?: (themeColorRef: PointerTypes['$(theme).themeColors.id<?>']) => void;
+  onNoTheme?: (hex: string) => void;
 }
 
 const ThemeRow = (props: Props) => {
@@ -157,21 +88,33 @@ const ThemeRow = (props: Props) => {
     "$(theme).themeColors.id<?>",
     props.themeColor.id
   );
-  const [themeColor, setThemeColor, , save] = useFloroState(themeColorRef);
+
+  const onSelect = useCallback(() => {
+    if (themeColorRef) {
+      props?.onSelect?.(themeColorRef);
+    }
+  }, [props.onSelect, themeColorRef]);
+
+  const onNoTheme = useCallback(() => {
+    if (props.themingHex) {
+      props?.onNoTheme?.(props.themingHex);
+    }
+  }, [props.onNoTheme, props.themingHex])
+
+  const themeColor = useReferencedObject(themeColorRef);
+  const defaultThemeRef = makeQueryRef("$(theme).themes.id<?>", props.defaultIconTheme);
+  const defaultThemeColorDefRef = makeQueryRef(
+    "$(theme).themeColors.id<?>.themeDefinitions.id<?>",
+    props.themeColor.id,
+    defaultThemeRef
+  );
+  const defaultThemeColorDef = useReferencedObject(defaultThemeColorDefRef);
+  const paletteColor = useReferencedObject(defaultThemeColorDef?.paletteColorShade);
+
   const isInvalid = useIsFloroInvalid(themeColorRef, false);
   const wasRemoved = useWasRemoved(themeColorRef, false);
   const wasAdded = useWasAdded(themeColorRef, false);
   const hasConflict = useHasConflict(themeColorRef, false);
-  const { commandMode } = useFloroContext();
-  const controls = useDragControls();
-  const [name, setName] = useState(props.themeColor.name ?? "");
-
-  const motionState = useMemo(() => {
-    if (props.isReOrderMode && commandMode == "edit") {
-      return "active";
-    }
-    return "inactive";
-  }, [props.isReOrderMode, commandMode]);
 
   const color = useMemo(() => {
     if (hasConflict) {
@@ -186,160 +129,133 @@ const ThemeRow = (props: Props) => {
     return theme.colors.contrastText;
   }, [theme, wasRemoved, wasAdded, hasConflict]);
 
-  const warningIcon = useMemo(() => {
-    if (theme.name == "light") {
-      return WarningLight;
-    }
-    return WarningDark;
-  }, [theme.name]);
-
   const title = useMemo(
     () => (isInvalid ? props.themeColor.id : props.themeColor.name),
     [isInvalid, props.themeColor]
   );
 
-  const [themes] = useFloroState("$(theme).themes", [], false);
-
-  const xIcon = useMemo(() => {
-    if (theme.name == "light") {
-      return XCircleLight;
+  const themes = useReferencedObject("$(theme).themes");
+  const stateVariants = useReferencedObject("$(theme).stateVariants");
+  const includeVariants = useMemo(() => Object.keys(props.selectedVariants ?? {}).reduce((hasVariant, k) => {
+    if (hasVariant || props.selectedVariants?.[k]) {
+      return true;
     }
-    return XCircleDark;
-  }, [theme.name]);
+    return false;
 
-  const draggerIcon = useMemo(() => {
-    if (theme.name == "light") {
-      return DraggerLight;
+  }, false), [props.selectedVariants]);
+
+  const isApplied = useMemo(() => {
+    if (!props.themingHex || !props?.appliedThemes?.[props.themingHex]) {
+      return false;
     }
-    return DraggerDark;
-  }, [theme.name]);
+    return themeColorRef == props.appliedThemes[props.themingHex]
+  }, [props.appliedThemes, props.themingHex, themeColorRef])
 
-  let nameTimeout = useRef<NodeJS.Timer>();
-  useEffect(() => {
-    if (nameTimeout?.current) {
-      clearTimeout(nameTimeout?.current);
-    }
-    nameTimeout.current = setTimeout(() => {
-      if (themeColor) {
-        setThemeColor(
-          {
-            id: themeColor.id,
-            name: name.trimStart(),
-            themeDefinitions: themeColor.themeDefinitions
-          },
-          true
-        );
-      }
-    }, 100);
-
-    return () => {
-      clearTimeout(nameTimeout.current);
-    }
-  }, [name]);
-
-  const onRemove = useCallback(() => {
-    if (themeColor) {
-      props.onRemove(themeColor);
-    }
-  }, [themeColor, props.onRemove]);
-
-  const onPointerDown = useCallback(
-    (event: React.PointerEvent<HTMLDivElement>) => {
-      event.preventDefault?.();
-      controls.start(event, {
-        snapToCursor: false
-      });
-    },
-    [controls]
-  );
+  if (!paletteColor?.hexcode || paletteColor?.hexcode != props.themingHex?.substring(0, 7)) {
+    return null;
+  }
 
   return (
-
-    <Reorder.Item
-      dragListener={false}
-      dragControls={controls}
-      value={props.themeColor}
-      variants={colorPaletteItemVariants}
-      initial={"hidden"}
-      animate={"visible"}
-      exit={"hidden"}
-      layoutId={props.themeColor.id}
-      custom={(props.index + 1) * 0.005}
-      whileHover={{ scale: 1 }}
-      whileDrag={{ scale: 1.02 }}
-      key={props.themeColor.id}
-      style={{position: "relative"}}
-      onDragStart={props.onDragStart}
-      onDragEnd={props.onDragEnd}
-    >
     <Container>
       <TitleRow>
-        {commandMode != "edit" && (
-          <>
-            <DragShadeContainer style={{cursor: "default"}}>
-              <IndicatorCircle style={{backgroundColor: color}} />
-            </DragShadeContainer>
-            <RowTitle style={{ color, marginTop: 12 }}>{title}</RowTitle>
-            {isInvalid && <WarningIconImg src={warningIcon} />}
-          </>
+        <RowTitle style={{ color, marginTop: 12 }}>{title}</RowTitle>
+        {isApplied && (
+          <Button
+            label={"undo apply"}
+            bg={"gray"}
+            size={"small"}
+            style={{ marginTop: 16, marginLeft: 16 }}
+            onClick={onNoTheme}
+          />
         )}
-        {commandMode == "edit" && (
-          <>
-          {props.isReOrderMode && (
-            <ColorControlsContainer>
-              <DragShadeContainer onPointerDown={onPointerDown}>
-                <DragIcon src={draggerIcon} />
-              </DragShadeContainer>
-              <RowTitle style={{ color, marginTop: 12 }}>{title}</RowTitle>
-              {isInvalid && <WarningIconImg style={{marginTop: 14}} src={warningIcon} />}
-            </ColorControlsContainer>
-          )}
-          {!props.isReOrderMode && (
-            <ColorControlsContainer>
-              <DragShadeContainer style={{cursor: "default"}}>
-                <IndicatorCircle style={{backgroundColor: color}} />
-              </DragShadeContainer>
-              {false && (
-                <Input
-                  value={name ?? ""}
-                  label={"definition name"}
-                  placeholder={themeColor?.id ?? ""}
-                  onTextChanged={setName}
-                  isValid={!isInvalid}
-                />
-              )}
-              <RowTitle style={{ color, marginTop: 12, width: 448 }}>{title}</RowTitle>
-              <DeleteShadeContainer onClick={onRemove}>
-                <DeleteShade src={xIcon} />
-              </DeleteShadeContainer>
-              {isInvalid && <WarningIconImg style={{marginTop: 14}} src={warningIcon} />}
-            </ColorControlsContainer>
-          )}
-          </>
+        {!isApplied && (
+          <Button
+            label={"apply"}
+            bg={"orange"}
+            size={"small"}
+            style={{ marginTop: 16, marginLeft: 16 }}
+            onClick={onSelect}
+          />
         )}
       </TitleRow>
-      <motion.div
-          variants={paletteCellVariants}
-          animate={motionState}
-          style={{zIndex: 0}}
-      >
+      <div>
         <RowWrapper>
           <Row>
-            {themes?.map((themeObject) => {
-              return (
-                <ThemeDefCell
-                  key={`${themeObject.id}-${props.themeColor.id}`}
-                  themeObject={themeObject}
-                  themeColor={props.themeColor}
-                  isReOrderMode={props.isReOrderMode}
-                />
-              );
-            })}
+            {!includeVariants && (
+              <>
+                {themes?.map((themeObject) => {
+                  return (
+                    <ThemeDefCell
+                      key={`${themeObject.id}-${props.themeColor.id}`}
+                      themeObject={themeObject}
+                      themeColor={props.themeColor}
+                      themingHex={props.themingHex}
+                      defaultIconTheme={props.defaultIconTheme}
+                      remappedSVG={props.remappedSVG}
+                      appliedThemes={props.appliedThemes}
+                    />
+                  );
+                })}
+              </>
+            )}
+            {includeVariants && (
+              <>
+                <Col>
+                  {themes?.map((themeObject) => {
+                    return (
+                      <ThemeDefCell
+                        key={`${themeObject.id}-${props.themeColor.id}`}
+                        themeObject={themeObject}
+                        themeColor={props.themeColor}
+                        themingHex={props.themingHex}
+                        defaultIconTheme={props.defaultIconTheme}
+                        remappedSVG={props.remappedSVG}
+                        appliedThemes={props.appliedThemes}
+                      />
+                    );
+                  })}
+                </Col>
+                {stateVariants
+                  ?.filter((s) => {
+                    return !!props?.selectedVariants?.[s.id];
+                  })
+                  ?.map((variant) => {
+                    return (
+                      <Col key={variant.id}>
+                        {themes?.map((themeObject) => {
+                          const variantDefinitionRef = makeQueryRef(
+                            "$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>",
+                            props.themeColor.id,
+                            makeQueryRef(
+                              "$(theme).stateVariants.id<?>",
+                              variant.id
+                            ),
+                            makeQueryRef(
+                              "$(theme).themes.id<?>",
+                              themeObject.id
+                            )
+                          );
+                          return (
+                            <ThemeDefVariantCell
+                              key={`${variantDefinitionRef}`}
+                              variantDefinitionRef={variantDefinitionRef}
+                              selectedVariants={props.selectedVariants}
+                              themingHex={props.themingHex}
+                              defaultIconTheme={props.defaultIconTheme}
+                              remappedSVG={props.remappedSVG}
+                              appliedThemes={props.appliedThemes}
+                            />
+                          );
+                        })}
+                      </Col>
+                    );
+                  })}
+              </>
+            )}
           </Row>
         </RowWrapper>
-      </motion.div>
+      </div>
     </Container>
-    </Reorder.Item>
   );
 };
 

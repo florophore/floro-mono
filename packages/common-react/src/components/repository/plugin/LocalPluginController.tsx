@@ -190,7 +190,23 @@ const LocalPluginController = (props: Props) => {
     props?.apiResponse?.repoState?.isInMergeConflict,
     props?.apiResponse?.conflictResolution,
     props?.pluginName,
-  ])
+  ]);
+
+  const binaryUrls = useMemo(() => {
+    if (props?.apiResponse?.repoState?.commandMode == "edit") {
+      return {
+        upload: "http://localhost:63403/binary/upload",
+        download: "http://localhost:63403/binary",
+      }
+    }
+    return {
+      upload: null,
+      download: "http://localhost:63403/binary",
+    }
+  }, [
+    props?.apiResponse?.repoState?.commandMode,
+    props?.apiResponse?.repoState?.comparison,
+  ]);
 
   const pluginState = useMemo(() => {
     return {
@@ -198,6 +214,7 @@ const LocalPluginController = (props: Props) => {
       applicationState,
       apiStoreInvalidity,
       conflictList,
+      binaryUrls,
       compareFrom: props?.apiResponse?.repoState?.commandMode == "compare" ? compareFrom : "none",
       commandMode: props?.apiResponse?.repoState?.commandMode ?? "view",
     };
@@ -206,6 +223,7 @@ const LocalPluginController = (props: Props) => {
     applicationState,
     apiStoreInvalidity,
     conflictList,
+    binaryUrls,
     props?.apiResponse?.repoState?.commandMode,
     props?.apiResponse?.repoState?.comparison,
   ]);

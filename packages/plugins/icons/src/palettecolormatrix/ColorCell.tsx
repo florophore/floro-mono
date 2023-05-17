@@ -1,4 +1,10 @@
-import React, { useCallback, useRef, useMemo, useState, useEffect } from "react";
+import React, {
+  useCallback,
+  useRef,
+  useMemo,
+  useState,
+  useEffect,
+} from "react";
 import {
   PointerTypes,
   SchemaTypes,
@@ -8,7 +14,6 @@ import {
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import ColorPalette from "@floro/styles/ColorPalette";
-
 
 const Container = styled.div`
   display: flex;
@@ -21,12 +26,21 @@ const Card = styled.div`
   width: 136px;
   border-radius: 6px;
   background-color: ${(props) => props.theme.colors.colorPaletteCard};
-  border: 2px solid ${props => props.theme.colors.colorPaletteCard};
+  border: 2px solid ${(props) => props.theme.colors.colorPaletteCard};
   cursor: pointer;
   &:hover {
     border: 2px solid ${ColorPalette.linkBlue};
-
   }
+`;
+
+const CardWithoutHover = styled.div`
+  position: relative;
+  height: 96px;
+  width: 136px;
+  border-radius: 6px;
+  background-color: ${(props) => props.theme.colors.colorPaletteCard};
+  border: 2px solid ${(props) => props.theme.colors.colorPaletteCard};
+  cursor: not-allowed;
 `;
 
 const CardInterior = styled.div`
@@ -95,6 +109,8 @@ interface Props {
   onSelect: (
     colorPaletteColorShadeRef: PointerTypes["$(palette).colorPalettes.id<?>.colorShades.id<?>"]
   ) => void;
+  filterNullHexes?: boolean;
+  disabledNonNull?: boolean;
 }
 
 const ColorRow = (props: Props) => {
@@ -112,21 +128,77 @@ const ColorRow = (props: Props) => {
     }
   }, [paletteCellRef, props.onSelect]);
   return (
-    <Container style={{marginRight: 16}}>
-      <Card onClick={onSelect}>
-        <CardInterior>
-          {!paletteColor?.hexcode && <NoneText>{"none"}</NoneText>}
-          {paletteColor?.hexcode && (
-            <>
-              <ColorDisplayCircle>
-                <ColorCircle style={{background: paletteColor?.hexcode ?? 'transparent'}} />
-              </ColorDisplayCircle>
-              <ColorTitle>{`${paletteColor?.hexcode}`}</ColorTitle>
-            </>
+    <Container style={{ marginRight: 16 }}>
+      {props.filterNullHexes && !paletteColor?.hexcode && (
+        <CardWithoutHover>
+          <CardInterior>
+            <NoneText>{"none"}</NoneText>
+          </CardInterior>
+        </CardWithoutHover>
+      )}
+      {(!props.filterNullHexes || !!paletteColor?.hexcode) && (
+        <>
+          {!props.disabledNonNull && (
+            <Card onClick={onSelect}>
+              <CardInterior>
+                {!paletteColor?.hexcode && !props.filterNullHexes && (
+                  <NoneText>{"none"}</NoneText>
+                )}
+                {paletteColor?.hexcode && (
+                  <>
+                    <ColorDisplayCircle>
+                      <ColorCircle
+                        style={{
+                          background: paletteColor?.hexcode ?? "transparent",
+                        }}
+                      />
+                    </ColorDisplayCircle>
+                    <ColorTitle>{`${paletteColor?.hexcode}`}</ColorTitle>
+                  </>
+                )}
+              </CardInterior>
+            </Card>
           )}
-        </CardInterior>
-      </Card>
-      <Title style={{ color: theme.colors.pluginTitle }}>{props.shade.name}</Title>
+          {props.disabledNonNull && !!paletteColor?.hexcode && (
+            <CardWithoutHover>
+              <CardInterior>
+                <ColorDisplayCircle>
+                  <ColorCircle
+                    style={{
+                      background: paletteColor?.hexcode ?? "transparent",
+                    }}
+                  />
+                </ColorDisplayCircle>
+                <ColorTitle>{`${paletteColor?.hexcode}`}</ColorTitle>
+              </CardInterior>
+            </CardWithoutHover>
+          )}
+          {props.disabledNonNull && !paletteColor?.hexcode && (
+            <Card onClick={onSelect}>
+              <CardInterior>
+                {!paletteColor?.hexcode && !props.filterNullHexes && (
+                  <NoneText>{"none"}</NoneText>
+                )}
+                {paletteColor?.hexcode && (
+                  <>
+                    <ColorDisplayCircle>
+                      <ColorCircle
+                        style={{
+                          background: paletteColor?.hexcode ?? "transparent",
+                        }}
+                      />
+                    </ColorDisplayCircle>
+                    <ColorTitle>{`${paletteColor?.hexcode}`}</ColorTitle>
+                  </>
+                )}
+              </CardInterior>
+            </Card>
+          )}
+        </>
+      )}
+      <Title style={{ color: theme.colors.pluginTitle }}>
+        {props.shade.name}
+      </Title>
     </Container>
   );
 };

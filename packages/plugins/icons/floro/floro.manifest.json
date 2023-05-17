@@ -3,11 +3,11 @@
   "name": "icons",
   "displayName": "Icons",
   "icon": {
-    "light": "./theme.unselected.light.svg",
-    "dark": "./theme.unselected.dark.svg",
+    "light": "./icons_icon.unselected.light.svg",
+    "dark": "./icons_icon.unselected.dark.svg",
     "selected": {
-      "light": "./theme.selected.light.svg",
-      "dark": "./theme.selected.dark.svg"
+      "light": "./icons_icon.selected.light.svg",
+      "dark": "./icons_icon.selected.dark.svg"
     }
   },
   "imports": {
@@ -15,15 +15,6 @@
     "palette": "dev@0.0.0"
   },
   "types": {
-    "StateVariant": {
-      "id": {
-        "type": "string",
-        "isKey": true
-      },
-      "name": {
-        "type": "string"
-      }
-    },
     "Icon": {
       "id": {
         "type": "string",
@@ -35,99 +26,35 @@
       "svg": {
         "type": "file"
       },
-      "colorHexcodes": {
+      "defaultIconTheme": {
+        "type": "ref<$(theme).themes.values>",
+        "onDelete": "nullify",
+        "nullable": false
+      },
+      "enabledVariants": {
+        "type": "set",
+        "bounded": true,
+        "values": {
+          "id": {
+            "isKey": true,
+            "type": "ref<$(theme).stateVariants.values>"
+          },
+          "enabled": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      },
+      "appliedThemes": {
         "type": "set",
         "values": {
           "hexcode": {
             "isKey": true,
             "type": "string"
           },
-          "correspondingColorShade": {
-            "type": "ref<palette.ColorShade>",
-            "onDelete": "nullify",
-            "nullable": true
-          }
-        }
-      },
-      "disabledThemeVariants": {
-        "type": "set",
-        "bounded": true,
-        "values": {
-          "id": {
-            "type": "ref<$(theme).themes.values>",
-            "isKey": true
-          },
-          "enabled": {
-            "type": "boolean",
-            "default": false
-          }
-        }
-      },
-      "disabledStateVariants": {
-        "type": "set",
-        "bounded": true,
-        "values": {
-          "id": {
-            "type": "ref<$.stateVariants.values>",
-            "isKey": true
-          },
-          "enabled": {
-            "type": "boolean",
-            "default": false
-          }
-        }
-      },
-      "themeVariants": {
-        "type": "set",
-        "bounded": true,
-        "values": {
-          "id": {
-            "type": "ref<$(theme).themes.values>",
-            "isKey": true
-          },
-          "stateVariants": {
-            "type": "set",
-            "bounded": true,
-            "values": {
-              "id": {
-                "type": "ref<$.stateVariants.values>",
-                "isKey": true
-              },
-              "useManualSvg": {
-                "type": "boolean",
-                "default": false
-              },
-              "manualSvg": {
-                "type": "file",
-                "nullable": true
-              },
-              "overrideAutoColoring": {
-                "type": "boolean",
-                "default": false
-              },
-              "disabledColorVariants": {
-                "type": "set",
-                "values": {
-                  "id": {
-                    "type": "ref<$.colorStateVariants.values.themedStateVariants.values.variants.values>",
-                    "isKey": true
-                  }
-                }
-              },
-              "variantOverrides": {
-                "type": "set",
-                "values": {
-                  "mapFromHexcode": {
-                    "type": "string",
-                    "isKey": true
-                  },
-                  "mapToHexcode": {
-                    "type": "string",
-                    "nullable": false
-                  }
-                }
-              }
-            }
+          "themeDefinition": {
+            "type": "ref<$(theme).themeColors.values>",
+            "onDelete": "delete"
           }
         }
       }
@@ -144,65 +71,15 @@
         "type": "set",
         "values": "Icon"
       }
-    },
-    "ColorStateVariant": {
-      "id": {
-        "type": "ref<palette.ColorShade>",
-        "isKey": true
-      },
-      "name": {
-        "type": "string"
-      },
-      "themedStateVariants": {
-        "type": "set",
-        "bounded": true,
-        "values": "ThemedStateVariant"
-      }
-    },
-    "ThemedStateVariant": {
-      "id": {
-        "type": "ref<$(theme).themes.values>",
-        "isKey": true
-      },
-      "variants": {
-        "type": "set",
-        "bounded": true,
-        "values": {
-          "id": {
-            "type": "ref<$.stateVariants.values>",
-            "isKey": true
-          },
-          "colorShade": {
-            "type": "ref<palette.ColorShade>",
-            "nullable": true,
-            "onDelete": "nullify"
-          }
-        }
-      }
     }
   },
   "store": {
-    "stateVariants": {
-      "type": "set",
-      "values": "StateVariant"
-    },
-    "colorStateVariants": {
-      "type": "set",
-      "values": "ColorStateVariant"
-    },
     "iconGroups": {
       "type": "set",
       "values": "IconGroup"
     }
   },
   "seed": {
-    "stateVariants": [
-      {
-        "id": "default",
-        "name": "Default"
-      }
-    ],
-    "colorStateVariants": [],
     "iconGroups": [
       {
         "id": "main",

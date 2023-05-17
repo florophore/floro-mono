@@ -24,6 +24,7 @@ import PalettePicker from "../palettecolormatrix/PalettePicker";
 
 import XCircleLight from "@floro/common-assets/assets/images/icons/x_circle.light.svg";
 import XCircleDark from "@floro/common-assets/assets/images/icons/x_circle.dark.svg";
+import { replaceHexIndicesInSvg, rethemeSvg } from "../colorhooks";
 
 const Wrapper = styled.div`
   position: relative;
@@ -33,14 +34,15 @@ const Wrapper = styled.div`
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  margin-right: 40px;
-  margin-left: 24px;
+  margin-left: 8px;
+  margin-bottom: 8px;
+  margin-right: 16px;
 `;
 
 const Card = styled.div`
   position: relative;
-  height: 136px;
-  width: 216px;
+  height: 96px;
+  width: 136px;
   border-radius: 8px;
   background-color: ${(props) => props.theme.colors.colorPaletteCard};
   border: 2px solid;
@@ -58,11 +60,11 @@ const CardInterior = styled.div`
 const Title = styled.h4`
   font-family: "MavenPro";
   font-weight: 600;
-  font-size: 1.4rem;
+  font-size: 1rem;
   color: ${(props) => props.theme.colors.pluginTitle};
   text-align: center;
   padding: 0;
-  margin: 16px 0 0 0;
+  margin: 0 0 0 0;
 `;
 
 const SubTitle = styled.h4`
@@ -92,6 +94,17 @@ const ColorDisplayCircle = styled.div`
   position: relative;
   overflow: hidden;
   position: relative;
+`;
+const IconWrapper = styled.div`
+  height: 72px;
+  width: 72px;
+`;
+
+const Icon = styled.img`
+  max-height: 72px;
+  max-width: 72px;
+  width: 100%;
+  height: 100%;
 `;
 
 const ColorCircle = styled.div`
@@ -189,38 +202,64 @@ const getColorDistance = (staticHex: string, comparedHex: string) => {
     if (staticHex[0] != "#" || comparedHex[0] != "#") {
       return 0;
     }
-    const r1 = parseInt((staticHex?.[1] ?? 'F') + (staticHex?.[2] ?? 'F'), 16);
-    const r2 = parseInt((comparedHex?.[1] ?? 'F') + (comparedHex?.[2] ?? 'F'), 16);
-    const g1 = parseInt((staticHex?.[3] ?? 'F') + (staticHex?.[4] ?? 'F'), 16);
-    const g2 = parseInt((comparedHex?.[3] ?? 'F') + (comparedHex?.[4] ?? 'F'), 16);
-    const b1 = parseInt((staticHex?.[5] ?? 'F') + (staticHex?.[6] ?? 'F'), 16);
-    const b2 = parseInt((comparedHex?.[5] ?? 'F') + (comparedHex?.[6] ?? 'F'), 16);
-    return Math.sqrt(Math.pow(r1 - r2, 2) + Math.pow(g1 - g2, 2) + Math.pow(b1 - b2, 2))
+    const r1 = parseInt((staticHex?.[1] ?? "F") + (staticHex?.[2] ?? "F"), 16);
+    const r2 = parseInt(
+      (comparedHex?.[1] ?? "F") + (comparedHex?.[2] ?? "F"),
+      16
+    );
+    const g1 = parseInt((staticHex?.[3] ?? "F") + (staticHex?.[4] ?? "F"), 16);
+    const g2 = parseInt(
+      (comparedHex?.[3] ?? "F") + (comparedHex?.[4] ?? "F"),
+      16
+    );
+    const b1 = parseInt((staticHex?.[5] ?? "F") + (staticHex?.[6] ?? "F"), 16);
+    const b2 = parseInt(
+      (comparedHex?.[5] ?? "F") + (comparedHex?.[6] ?? "F"),
+      16
+    );
+    return Math.sqrt(
+      Math.pow(r1 - r2, 2) + Math.pow(g1 - g2, 2) + Math.pow(b1 - b2, 2)
+    );
   } catch (e) {
     return 0;
   }
-}
+};
 
 interface Props {
   variantDefinitionRef: PointerTypes["$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>"];
-  isReOrderMode: boolean;
+  remappedSVG?: string;
+  themingHex?: string;
+  defaultIconTheme: string;
+  selectedVariants?: { [key: string]: boolean };
+  appliedThemes?: { [key: string]: PointerTypes["$(theme).themeColors.id<?>"] };
 }
 
 const ThemeDefVariantCell = (props: Props) => {
   const theme = useTheme();
   const { commandMode, applicationState } = useFloroContext();
-  const [themeColorId, stateVariantRef, themeRef] = useExtractQueryArgs(props.variantDefinitionRef);
+  const [themeColorId, stateVariantRef, themeRef] = useExtractQueryArgs(
+    props.variantDefinitionRef
+  );
+
+  const themeColorRef = useQueryRef("$(theme).themeColors.id<?>", themeColorId);
   const themeObject = useReferencedObject(themeRef);
   const stateVariant = useReferencedObject(stateVariantRef);
   const colorCircle = useRef<HTMLDivElement>(null);
 
   const [variantDefinition, setVariantDefinition] = useFloroState(
-    props.variantDefinitionRef,
+    props.variantDefinitionRef
   );
 
-  const paletteColorShade = useReferencedObject(variantDefinition?.paletteColorShade);
-  const [paletteColorId, paletteShadeRef] = useExtractQueryArgs(variantDefinition?.paletteColorShade);
-  const paletteColorRef = useQueryRef("$(palette).colorPalettes.id<?>", paletteColorId);
+  const paletteColorShade = useReferencedObject(
+    variantDefinition?.paletteColorShade
+  );
+  const [paletteColorId, paletteShadeRef] = useExtractQueryArgs(
+    variantDefinition?.paletteColorShade
+  );
+  const paletteColorRef = useQueryRef(
+    "$(palette).colorPalettes.id<?>",
+    paletteColorId
+  );
   const paletteColor = useReferencedObject(paletteColorRef);
   const shade = useReferencedObject(paletteShadeRef);
   const themeDefinitions = useReferencedObject("$(theme).themeColors");
@@ -240,7 +279,7 @@ const ThemeDefVariantCell = (props: Props) => {
 
   const contrastColor = useMemo(() => {
     if (!themeObject?.backgroundColor) {
-      if (theme.name == 'dark') {
+      if (theme.name == "dark") {
         return ColorPalette.white;
       }
       return ColorPalette.mediumGray;
@@ -259,7 +298,7 @@ const ThemeDefVariantCell = (props: Props) => {
       return ColorPalette.mediumGray;
     }
     return ColorPalette.white;
-  }, [themeObject.backgroundColor, theme])
+  }, [themeObject.backgroundColor, theme]);
 
   const cardBorderColor = useMemo(() => {
     if (hasConflict) {
@@ -273,7 +312,15 @@ const ThemeDefVariantCell = (props: Props) => {
     }
     return contrastColor;
     //return theme.colors.colorPaletteCard;
-  }, [contrastColor, wasAdded, wasRemoved, wasRemoved, hasConflict, theme, commandMode]);
+  }, [
+    contrastColor,
+    wasAdded,
+    wasRemoved,
+    wasRemoved,
+    hasConflict,
+    theme,
+    commandMode,
+  ]);
 
   const titleColor = useMemo(() => {
     const lightDistance = getColorDistance(
@@ -286,7 +333,6 @@ const ThemeDefVariantCell = (props: Props) => {
       themeObject.backgroundColor.hexcode
     );
     if (hasConflict) {
-
       if (lightDistance <= darkDistance) {
         return ColorPalette.orange;
       }
@@ -304,16 +350,23 @@ const ThemeDefVariantCell = (props: Props) => {
       }
       return ColorPalette.lightTeal;
     }
-      if (lightDistance <= darkDistance) {
-        return ColorPalette.mediumGray;
-      }
-      return ColorPalette.white
-  }, [wasAdded, wasRemoved, wasRemoved, hasConflict, theme, commandMode, themeObject.backgroundColor.hexcode]);
-
+    if (lightDistance <= darkDistance) {
+      return ColorPalette.mediumGray;
+    }
+    return ColorPalette.white;
+  }, [
+    wasAdded,
+    wasRemoved,
+    wasRemoved,
+    hasConflict,
+    theme,
+    commandMode,
+    themeObject.backgroundColor.hexcode,
+  ]);
 
   const editIcon = useMemo(() => {
     if (!themeObject.backgroundColor) {
-      if (theme.name == 'dark') {
+      if (theme.name == "dark") {
         return EditDark;
       }
       return EditLight;
@@ -334,24 +387,32 @@ const ThemeDefVariantCell = (props: Props) => {
     return EditDark;
   }, [theme.name, themeObject.backgroundColor.hexcode]);
 
-  const onSelect = useCallback((
-    colorPaletteColorShadeRef: PointerTypes["$(palette).colorPalettes.id<?>.colorShades.id<?>"]
+  const onSelect = useCallback(
+    (
+      colorPaletteColorShadeRef: PointerTypes["$(palette).colorPalettes.id<?>.colorShades.id<?>"]
     ) => {
-    if (variantDefinition) {
-      setVariantDefinition({
-        ...variantDefinition,
-        paletteColorShade: colorPaletteColorShadeRef,
-      }, true)
-    }
-  }, [variantDefinition, setVariantDefinition]);
+      if (variantDefinition) {
+        setVariantDefinition(
+          {
+            ...variantDefinition,
+            paletteColorShade: colorPaletteColorShadeRef,
+          },
+          true
+        );
+      }
+    },
+    [variantDefinition, setVariantDefinition]
+  );
 
-  const onUnsetColor = useCallback((
-    ) => {
+  const onUnsetColor = useCallback(() => {
     if (variantDefinition) {
-      setVariantDefinition({
-        ...variantDefinition,
-        paletteColorShade: undefined,
-      }, true)
+      setVariantDefinition(
+        {
+          ...variantDefinition,
+          paletteColorShade: undefined,
+        },
+        true
+      );
     }
   }, [setVariantDefinition, applicationState]);
 
@@ -377,7 +438,34 @@ const ThemeDefVariantCell = (props: Props) => {
       return null;
     }
     return shade?.name + " " + paletteColor?.name;
-  }, [paletteColor?.name, shade?.name])
+  }, [paletteColor?.name, shade?.name]);
+
+  const variantSvg = useMemo(() => {
+    if (!applicationState || !props.remappedSVG) {
+      return props.remappedSVG ?? "";
+    }
+    return rethemeSvg(
+      applicationState,
+      props.remappedSVG,
+      props.appliedThemes ?? {},
+      themeRef,
+      themeColorRef,
+      props.themingHex,
+      stateVariantRef
+    ) ?? "";
+  }, [
+    applicationState,
+    props.remappedSVG,
+    props.appliedThemes,
+    themeRef,
+    themeColorRef,
+    stateVariantRef,
+    props.themingHex,
+  ]);
+
+  const remappedSVGUrl = useMemo(() => {
+    return `data:image/svg+xml,${encodeURIComponent(variantSvg ?? "")}`;
+  }, [variantSvg]);
 
   return (
     <Wrapper>
@@ -389,52 +477,15 @@ const ThemeDefVariantCell = (props: Props) => {
           }}
         >
           <CardInterior>
-            {!!paletteColorShade && (
-              <>
-                <ColorDisplayCircle style={{ borderColor: contrastColor }}>
-                    {paletteColorShade?.hexcode && (
-                      <ColorCircle
-                        ref={colorCircle}
-                        style={{ background: paletteColorShade?.hexcode }}
-                      />
-                    )}
-                    {!paletteColorShade?.hexcode && (
-                      <AlphaColorCircle />
-                    )}
-                </ColorDisplayCircle>
-
-              </>
-            )}
-            {!paletteColorShade && (
-              <NoneText style={{color: contrastColor}}>{
-                'none'
-
-              }</NoneText>
-            )}
-            {title && (
-              <ColorTitle style={{ color: titleColor }}>{title}</ColorTitle>
-            )}
+            <IconWrapper>
+              <Icon src={remappedSVGUrl} />
+            </IconWrapper>
           </CardInterior>
-
-          {commandMode == "edit" && !props.isReOrderMode && (
-            <EditIndicatorWrapper onClick={onShowPicker}>
-              <EditIndicatorImg src={editIcon} />
-            </EditIndicatorWrapper>
-          )}
-
-        {commandMode == "edit" && !props.isReOrderMode && !!paletteColorShade && (
-            <ExitIndicatorWrapper onClick={onUnsetColor}>
-                <ExitIndicatorImg src={xIcon}/>
-            </ExitIndicatorWrapper>
-        )}
         </Card>
-        <Title style={{ color: theme.colors.pluginTitle }}>{stateVariant?.name}</Title>
+        <Title style={{ color: theme.colors.pluginTitle }}>
+          {stateVariant?.name}
+        </Title>
       </Container>
-      <PalettePicker
-        show={showPicker && commandMode == "edit" && !props.isReOrderMode}
-        onDismiss={onHidePicker}
-        onSelect={onSelect}
-      />
     </Wrapper>
   );
 };

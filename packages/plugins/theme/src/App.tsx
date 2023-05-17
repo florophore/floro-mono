@@ -62,7 +62,6 @@ const Layout = () => {
       container?.current?.scrollTo({top: container?.current?.scrollHeight, behavior: "smooth"})
   }, []);
 
-
   return (
     <Container ref={container}>
       {commandMode == "edit" && showThemeEdit && <ThemeEditList />}

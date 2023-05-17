@@ -179,7 +179,7 @@ interface Props {
 
 const ThemeDefCell = (props: Props) => {
   const theme = useTheme();
-  const { commandMode } = useFloroContext();
+  const { commandMode, applicationState } = useFloroContext();
   const themeRef = useQueryRef("$(theme).themes.id<?>", props.themeObject.id);
   const colorCircle = useRef<HTMLDivElement>(null);
 
@@ -333,7 +333,7 @@ const ThemeDefCell = (props: Props) => {
         paletteColorShade: colorPaletteColorShadeRef,
       }, true)
     }
-  }, [themeDefinition, themeDefinitions]);
+  }, [themeDefinition, themeDefinitions, setThemeDefinition]);
 
   const warningIcon = useMemo(() => {
     if (theme.name == "light") {
