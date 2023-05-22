@@ -13,6 +13,10 @@ import SearchIconPlaceholderDark from '@floro/common-assets/assets/images/icons/
 import SearchIconActiveLight from '@floro/common-assets/assets/images/icons/search_glass_active.light.svg';
 import SearchIconActiveDark from '@floro/common-assets/assets/images/icons/search_glass_active.dark.svg';
 
+
+import XCircleLight from '@floro/common-assets/assets/images/icons/x_circle.light.svg';
+import XCircleDark from '@floro/common-assets/assets/images/icons/x_circle.dark.svg';
+
 export interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   value: string;
   borderColor?: string;
@@ -21,6 +25,7 @@ export interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   onFocus?: (event: React.FocusEvent<HTMLInputElement, Element>) => void;
   onBlur?: (event: React.FocusEvent<HTMLInputElement, Element>) => void;
   tabIndex?: number;
+  showClear?: boolean;
 }
 
 const Container = styled.div`
@@ -46,6 +51,18 @@ const IconContainer =styled.div`
 const Icon = styled.img`
   width: 24px;
 `;
+const ClearIconContainer =styled.div`
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 48px;
+    width: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`;
+
+
 
 const InputElement = styled.input`
   position: relative;
@@ -60,7 +77,7 @@ const InputElement = styled.input`
   font-family: "MavenPro";
   font-weight: 500;
   font-size: 1.4rem;
-  padding: 0 16px 0 0;
+  padding: 0 48px 0 0;
   color: ${(props) => props.theme.colors.inputEntryTextColor};
   ::placeholder {
     color: ${(props) => props.theme.colors.inputPlaceholderTextColor};
@@ -94,6 +111,7 @@ const SearchInput = React.forwardRef(
       onFocus,
       onBlur,
       placeholder,
+      showClear = false,
       ...rest
     }: Props,
     ref: React.ForwardedRef<HTMLInputElement | null>
@@ -109,6 +127,13 @@ const SearchInput = React.forwardRef(
         }
 
         return isActive ? SearchIconActiveDark : SearchIconPlaceholderDark;
+    }, [isActive, theme.name])
+
+    const clearIcon = useMemo(() => {
+        if (theme.name == 'light') {
+          return XCircleLight;
+        }
+        return XCircleDark;
     }, [isActive, theme.name])
 
     useImperativeHandle<HTMLInputElement | null, HTMLInputElement | null>(
@@ -143,6 +168,10 @@ const SearchInput = React.forwardRef(
       [onBlur]
     );
 
+    const onClear = useCallback(() => {
+      onTextChanged('');
+    }, [onTextChanged]);
+
     return (
       <Container
         onClick={onClickContainer}
@@ -162,6 +191,11 @@ const SearchInput = React.forwardRef(
           type={'search'}
           {...rest}
         />
+        {isActive && showClear && (
+          <ClearIconContainer onClick={onClear}>
+            <Icon src={clearIcon}/>
+          </ClearIconContainer>
+        )}
       </Container>
     );
   }

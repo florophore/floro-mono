@@ -379,12 +379,7 @@ const ThemeDefCell = (props: Props) => {
           </CardInterior>
 
         </Card>
-        {title && (
-          <Title style={{ color: titleColor }}>{title}</Title>
-        )}
-        {!title && (
-          <Title style={{ color: theme.colors.warningTextColor }}>{"missing color!"}</Title>
-        )}
+        <Title style={{ color: titleColor }}>{'Default'}</Title>
       </Container>
     </Wrapper>
   );

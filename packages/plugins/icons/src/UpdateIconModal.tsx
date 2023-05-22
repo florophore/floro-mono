@@ -7,18 +7,17 @@ import React, {
 } from "react";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
-import { css } from "@emotion/css";
 import RootModal from "./RootModal";
 import {
-  FileRef,
   PointerTypes,
   SchemaTypes,
+  extractQueryArgs,
   getReferencedObject,
   makeQueryRef,
   useBinaryData,
   useBinaryRef,
+  useExtractQueryArgs,
   useFloroContext,
-  useFloroState,
   useReferencedObject,
   useUploadFile,
 } from "./floro-schema-api";
@@ -26,7 +25,6 @@ import Input from "@floro/storybook/stories/design-system/Input";
 import InputSelector from "@floro/storybook/stories/design-system/InputSelector";
 import {
   extractHexvalue,
-  getAverageHex,
   getColorDistance,
   useAvgColorSVGOut,
   useSVGRemap,
@@ -219,19 +217,20 @@ const VariantName = styled.p`
 interface Props {
   show: boolean;
   onDismiss: () => void;
-  fileRef: FileRef | null;
-  svgFileName: string;
+  iconRef?: PointerTypes["$(icons).iconGroups.id<?>.icons.id<?>"];
+  originalIcon?: SchemaTypes["$(icons).iconGroups.id<?>.icons.id<?>"];
 }
 
-const AddIconModal = (props: Props) => {
+const UpdateIconModal = (props: Props) => {
   const { applicationState, saveState} = useFloroContext();
+  const [groupId] = useExtractQueryArgs(props.iconRef);
   const iconGroups = useReferencedObject("$(icons).iconGroups");
   const stateVariants = useReferencedObject("$(theme).stateVariants");
   const themeDefinitions = useReferencedObject("$(theme).themeColors");
   const themes = useReferencedObject("$(theme).themes") ?? [];
   const theme = useTheme();
   const container = useRef<HTMLDivElement>(null);
-  const [fileRef, setFileRef] = useState(props.fileRef);
+  const [fileRef, setFileRef] = useState(props.originalIcon?.svg ?? null);
   const binaryRef = useBinaryRef(fileRef);
   const [name, setName] = useState("");
   const [showPaletteHexSelect, setShowPaletteHexSelect] = useState(false);
@@ -261,13 +260,10 @@ const AddIconModal = (props: Props) => {
     iconOptions[0]?.value ?? null
   );
 
-  useEffect(() => {
-    setGroup(iconOptions[0]?.value ?? null);
-  }, [iconGroups]);
-
   const onChangeGroups = useCallback((option) => {
     setGroup(option.value);
   }, []);
+
 
   const id = useMemo((): string | null => {
     if (!name || (name?.trim?.() ?? "") == "") {
@@ -290,20 +286,28 @@ const AddIconModal = (props: Props) => {
     if (!id) {
       return false;
     }
-    for (const icon of icons ?? []) {
-      if (id == icon.id) {
-        return false;
-      }
+
+      for (const icon of icons ?? []) {
+        if (group == groupId && icon.id == props?.originalIcon?.id) {
+          continue;
+        }
+        if (id == icon.id) {
+          return false;
+        }
     }
     return true;
-  }, [id, icons]);
+  }, [id, icons, props.originalIcon, groupId]);
 
-  const createIcon = useCallback(() => {
+  const updateIcon = useCallback(() => {
     const defaultIconTheme = makeQueryRef("$(theme).themes.id<?>", iconTheme);
     if (!id || !nextRef) {
       return;
     }
     if (!isNameAvailable) {
+      return;
+    }
+
+    if (!props.originalIcon?.id) {
       return;
     }
 
@@ -335,17 +339,38 @@ const AddIconModal = (props: Props) => {
       return;
     }
 
-    const iconsGroupRef = makeQueryRef("$(icons).iconGroups.id<?>", group);
-    const iconGroup = getReferencedObject(
-      applicationState,
-      iconsGroupRef
-    );
+    if (groupId != group) {
+      const originalIconsGroupRef = makeQueryRef(
+        "$(icons).iconGroups.id<?>",
+        groupId
+      );
+      const originalIconGroup = getReferencedObject(
+        applicationState,
+        originalIconsGroupRef
+      );
 
-    iconGroup.icons = [icon, ...(iconGroup?.icons ?? [])];
+      originalIconGroup.icons = originalIconGroup.icons.filter(
+        (v) => v.id != props?.originalIcon?.id
+      );
+      const iconsGroupRef = makeQueryRef("$(icons).iconGroups.id<?>", group);
+      const iconGroup = getReferencedObject(applicationState, iconsGroupRef);
+      iconGroup.icons = [icon, ...(iconGroup?.icons ?? [])];
+    } else {
+      const iconsGroupRef = makeQueryRef("$(icons).iconGroups.id<?>", group);
+      const iconGroup = getReferencedObject(applicationState, iconsGroupRef);
+      iconGroup.icons = iconGroup?.icons.map((i) => {
+        if (i.id == props?.originalIcon?.id) {
+          return icon;
+        }
+        return i;
+      });
+    }
+
     saveState("icons", applicationState);
     reset();
     props.onDismiss?.();
   }, [
+    props.originalIcon,
     applicationState,
     selectedVariants,
     appliedThemes,
@@ -355,18 +380,15 @@ const AddIconModal = (props: Props) => {
     group,
     nextRef,
     isNameAvailable,
+    groupId,
     props?.onDismiss
   ]);
 
   useEffect(() => {
     if (status == "success") {
-      createIcon();
+      updateIcon();
     }
-  }, [status, nextRef, createIcon])
-
-  useEffect(() => {
-    setIconTheme(themes?.[0]?.id);
-  }, [themes]);
+  }, [status, nextRef, updateIcon])
 
   const onHideSelectColor = useCallback(() => {
     setShowPaletteHexSelect(false);
@@ -384,20 +406,43 @@ const AddIconModal = (props: Props) => {
       setShowPaletteHexSelect(false);
       setShowAddHexToPalette(false);
       setShowReThemeModal(false);
-      setFileRef(null);
       reset();
       setRemappedColors({});
       setSelectedVariants({});
     } else {
-      const selectedVariants = stateVariants.reduce((acc, stateVariant) => {
-        return {
-          ...acc,
-          [stateVariant.id]: true
-        }
-      }, {});
-      setSelectedVariants(selectedVariants);
+      if (props.originalIcon) {
+        const selectedVariantsMap =
+          props.originalIcon?.enabledVariants?.reduce?.((acc, iconStateVariant) => {
+            const [svId] = extractQueryArgs(iconStateVariant.id);
+            return {
+              ...acc,
+              [svId]: iconStateVariant.enabled,
+            };
+          }, {}) ?? {};
+
+        const appliedThemesMap =
+          props.originalIcon?.appliedThemes?.reduce?.((acc, appliedTheme) => {
+            return {
+              ...acc,
+              [appliedTheme.hexcode]: appliedTheme.themeDefinition,
+            };
+          }, {}) ?? {};
+        setSelectedVariants(selectedVariantsMap);
+        setAppliedThemes(appliedThemesMap);
+        const [defaultThemeId] = extractQueryArgs(
+          props.originalIcon?.defaultIconTheme
+        );
+        setIconTheme(defaultThemeId ?? themes?.[0]?.id);
+        setName(props?.originalIcon.name ?? "");
+        setGroup(
+          iconOptions?.find?.((g) => groupId == g.value)?.value ??
+            iconOptions[0]?.value ??
+            null
+        );
+      }
     }
-  }, [props.show]);
+  }, [props.show, themes, props.originalIcon]);
+
 
   const { data: svgData } = useBinaryData(fileRef, "text");
   const [remappedColors, setRemappedColors] = useState({});
@@ -418,9 +463,12 @@ const AddIconModal = (props: Props) => {
     [standardizedData]
   );
 
-  useEffect(() => {
-    setName(props.svgFileName.split(".").slice(0, -1).join(" "));
-  }, [props.svgFileName]);
+  const remappedSVG = useSVGRemap(standardizedData, remappedColors);
+  const onAddIcon = useCallback(() => {
+    if (remappedSVG) {
+      uploadBlob([remappedSVG], "image/svg+xml");
+    }
+  }, [remappedSVG])
 
   useEffect(() => {
     setRemappedColors(
@@ -431,16 +479,21 @@ const AddIconModal = (props: Props) => {
         };
       }, {})
     );
-  }, [hexValues, props.fileRef]);
+  }, [hexValues, props.iconRef]);
 
-  const remappedSVG = useSVGRemap(standardizedData, remappedColors);
-
-
-  const onAddIcon = useCallback(() => {
-    if (remappedSVG) {
-      uploadBlob([remappedSVG], "image/svg+xml");
+  useEffect(() => {
+    if (props.originalIcon) {
+        const appliedThemesMap =
+          props.originalIcon?.appliedThemes?.reduce?.((acc, appliedTheme) => {
+            return {
+              ...acc,
+              [appliedTheme.hexcode]: appliedTheme.themeDefinition,
+            };
+          }, {}) ?? {};
+        setAppliedThemes(appliedThemesMap);
     }
-  }, [remappedSVG])
+
+  }, [remappedColors, props.originalIcon, iconTheme]);
 
   const avgColor = useAvgColorSVGOut(remappedSVG);
   const avgOriginalColor = useAvgColorSVGOut(standardizedData);
@@ -464,13 +517,13 @@ const AddIconModal = (props: Props) => {
   }, [avgOriginalColor]);
 
   useEffect(() => {
-    if (props.fileRef) {
-      setFileRef(props.fileRef);
+    if (props?.originalIcon?.svg) {
+      setFileRef(props?.originalIcon?.svg);
     }
-  }, [props.fileRef]);
+  }, [props?.originalIcon?.svg]);
 
   useEffect(() => {
-    if (status == "success") {
+    if (status == "success" && nextRef) {
       setFileRef(nextRef);
     }
   }, [status]);
@@ -726,7 +779,7 @@ const AddIconModal = (props: Props) => {
     <RootModal
       show={props.show}
       onDismiss={props.onDismiss}
-      title={"add new icon"}
+      title={"update icon"}
       left={
         <div
           style={{
@@ -736,8 +789,8 @@ const AddIconModal = (props: Props) => {
         >
           <Button
             size="small"
-            label={"add icon"}
-            bg={"teal"}
+            label={"update icon"}
+            bg={"orange"}
             onClick={onAddIcon}
             isDisabled={!isNameAvailable}
           />
@@ -1027,4 +1080,4 @@ const AddIconModal = (props: Props) => {
   );
 };
 
-export default React.memo(AddIconModal);
+export default React.memo(UpdateIconModal);

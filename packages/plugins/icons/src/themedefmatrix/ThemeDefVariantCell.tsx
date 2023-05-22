@@ -44,8 +44,6 @@ const Card = styled.div`
   height: 96px;
   width: 136px;
   border-radius: 8px;
-  background-color: ${(props) => props.theme.colors.colorPaletteCard};
-  border: 2px solid;
 `;
 
 const CardInterior = styled.div`
@@ -321,124 +319,6 @@ const ThemeDefVariantCell = (props: Props) => {
     theme,
     commandMode,
   ]);
-
-  const titleColor = useMemo(() => {
-    const lightDistance = getColorDistance(
-      ColorPalette.white,
-      themeObject.backgroundColor.hexcode
-    );
-
-    const darkDistance = getColorDistance(
-      ColorPalette.mediumGray,
-      themeObject.backgroundColor.hexcode
-    );
-    if (hasConflict) {
-      if (lightDistance <= darkDistance) {
-        return ColorPalette.orange;
-      }
-      return ColorPalette.lightOrange;
-    }
-    if (wasRemoved) {
-      if (lightDistance <= darkDistance) {
-        return ColorPalette.red;
-      }
-      return ColorPalette.lightRed;
-    }
-    if (wasAdded) {
-      if (lightDistance <= darkDistance) {
-        return ColorPalette.teal;
-      }
-      return ColorPalette.lightTeal;
-    }
-    if (lightDistance <= darkDistance) {
-      return ColorPalette.mediumGray;
-    }
-    return ColorPalette.white;
-  }, [
-    wasAdded,
-    wasRemoved,
-    wasRemoved,
-    hasConflict,
-    theme,
-    commandMode,
-    themeObject.backgroundColor.hexcode,
-  ]);
-
-  const editIcon = useMemo(() => {
-    if (!themeObject.backgroundColor) {
-      if (theme.name == "dark") {
-        return EditDark;
-      }
-      return EditLight;
-    }
-    const lightDistance = getColorDistance(
-      ColorPalette.white,
-      themeObject.backgroundColor.hexcode
-    );
-
-    const darkDistance = getColorDistance(
-      ColorPalette.mediumGray,
-      themeObject.backgroundColor.hexcode
-    );
-
-    if (lightDistance <= darkDistance) {
-      return EditLight;
-    }
-    return EditDark;
-  }, [theme.name, themeObject.backgroundColor.hexcode]);
-
-  const onSelect = useCallback(
-    (
-      colorPaletteColorShadeRef: PointerTypes["$(palette).colorPalettes.id<?>.colorShades.id<?>"]
-    ) => {
-      if (variantDefinition) {
-        setVariantDefinition(
-          {
-            ...variantDefinition,
-            paletteColorShade: colorPaletteColorShadeRef,
-          },
-          true
-        );
-      }
-    },
-    [variantDefinition, setVariantDefinition]
-  );
-
-  const onUnsetColor = useCallback(() => {
-    if (variantDefinition) {
-      setVariantDefinition(
-        {
-          ...variantDefinition,
-          paletteColorShade: undefined,
-        },
-        true
-      );
-    }
-  }, [setVariantDefinition, applicationState]);
-
-  const xIcon = useMemo(() => {
-    const lightDistance = getColorDistance(
-      ColorPalette.white,
-      themeObject.backgroundColor.hexcode
-    );
-
-    const darkDistance = getColorDistance(
-      ColorPalette.mediumGray,
-      themeObject.backgroundColor.hexcode
-    );
-
-    if (lightDistance <= darkDistance) {
-      return XCircleLight;
-    }
-    return XCircleDark;
-  }, [theme.name]);
-
-  const title = useMemo(() => {
-    if (!paletteColor?.name || !shade?.name) {
-      return null;
-    }
-    return shade?.name + " " + paletteColor?.name;
-  }, [paletteColor?.name, shade?.name]);
 
   const variantSvg = useMemo(() => {
     if (!applicationState || !props.remappedSVG) {

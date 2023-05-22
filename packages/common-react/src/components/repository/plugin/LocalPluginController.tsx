@@ -357,6 +357,7 @@ const LocalPluginController = (props: Props) => {
     >
       <iframe
         sandbox="allow-scripts"
+        allow="clipboard-read *; clipboard-write *;"
         ref={iframeRef}
         style={{
           width: "100%",

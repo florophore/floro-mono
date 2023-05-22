@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="30px" viewBox="0 0 32 30" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>file.light 2</title>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="5-Icons/2-State-Icons/5-File/1-Light" transform="translate(0.000000, -1.000000)" fill="#FF3D44FF">
+            <path d="M13,1 C14.3656103,1 15.6113442,2.14638042 16.7372017,4.43914127 C16.9029639,4.78202697 17.2502586,4.99913835 17.6311035,5 L28,5 C30.209139,5 32,6.790861 32,9 L32,27 C32,29.209139 30.209139,31 28,31 L4,31 C1.790861,31 0,29.209139 0,27 L0,5 C0,2.790861 1.790861,1 4,1 L13,1 Z M28,10 L4,10 C3.44771525,10 3,10.4477153 3,11 L3,27 C3,27.5522847 3.44771525,28 4,28 L28,28 C28.5522847,28 29,27.5522847 29,27 L29,11 C29,10.4477153 28.5522847,10 28,10 Z" id="file.light"></path>
+        </g>
+    </g>
+</svg>

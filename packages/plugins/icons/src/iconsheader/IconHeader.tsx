@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
+import { css } from "@emotion/css";
+import Input from "@floro/storybook/stories/design-system/Input";
 import SearchInput from "@floro/storybook/stories/design-system/SearchInput";
 import ColorPalette from "@floro/styles/ColorPalette";
 import Button from "@floro/storybook/stories/design-system/Button";
@@ -13,7 +15,7 @@ import DropIconLightRed from "@floro/common-assets/assets/images/icons/drop_icon
 
 import DropIconTeal from "@floro/common-assets/assets/images/icons/drop_icon.teal.svg";
 import DropIconLightTeal from "@floro/common-assets/assets/images/icons/drop_icon.light_teal.svg";
-import { FileRef, useBinaryData, useUploadFile } from "../floro-schema-api";
+import { FileRef, useBinaryData, useFloroContext, useFloroState, useUploadFile } from "../floro-schema-api";
 import { optimize } from "svgo";
 import { parse } from "svg-parser";
 
@@ -26,6 +28,7 @@ const dropzoneDash = (color: string) => {
 const Container = styled.div`
   display: inline-flex;
   flex-direction: column;
+  margin-bottom: 24px;
 `;
 
 const SectionTitle = styled.h1`
@@ -96,6 +99,20 @@ const DropIcon = styled.img`
   margin-top: 24px;
   margin-bottom: -48px;
 `;
+const AddGroupLayout = styled.div`
+  min-width: 642px;
+`;
+
+const AddGroupContainer = styled.div`
+  margin-top: -12px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 492px;
+`;
+
+
 
 const getSVGTextBlob = (svgUrl: string) => {
   const xhr = new XMLHttpRequest();
@@ -125,15 +142,23 @@ const getSVGTextBlob = (svgUrl: string) => {
 
 interface Props {
     onUploaded: (fileRef: FileRef, fileName: string) => void;
+    onSetSearchText: (str: string) => void;
+    searchText: string;
+    isEditGroups: boolean;
+    onShowEditGroups: () => void;
+    onHideEditGroups: () => void;
 }
 
 const IconHeader = (props: Props) => {
   const theme = useTheme();
-  const [searchText, setSearchText] = useState("");
   const [fileName, setFileName] = useState("");
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const [isDragOverValid, setIsDragOverValid] = useState(false);
   const input = useRef<HTMLInputElement>(null);
+  const { commandMode} = useFloroContext();
+  const isSearching = useMemo(() => props.searchText.trim() != "", [props.searchText]);
+  const [newGroupName, setNewGroupName] = useState("");
+  const [iconGroups, setIconGroups, isLoading, save] = useFloroState("$(icons).iconGroups", [], false);
 
   const { fileRef, status, uploadFile, uploadBlob } = useUploadFile();
 
@@ -274,55 +299,130 @@ const IconHeader = (props: Props) => {
     [uploadFile]
   );
 
+  const newId = useMemo((): string | null => {
+    if (!newGroupName || (newGroupName?.trim?.() ?? "") == "") {
+      return null;
+    }
+    return (
+      newGroupName?.trim?.()?.replaceAll?.(/ +/g, "-")?.toLowerCase?.() ?? null
+    );
+  }, [newGroupName]);
+
+  const canAddNewName = useMemo(() => {
+    if (!newId) {
+      return false;
+    }
+    for (const { id } of iconGroups ?? []) {
+      if (id == newId) {
+        return false;
+      }
+    }
+    return true;
+  }, [newId, iconGroups]);
+
+  const onAppendNewGroup = useCallback(() => {
+    if (!newId || !newGroupName || !canAddNewName || !iconGroups) {
+      return;
+    }
+    setIconGroups(
+      [...iconGroups, { id: newId, name: newGroupName, icons: [] }, ],
+      true
+    );
+    setNewGroupName("");
+  }, [newGroupName, newId, canAddNewName, isLoading, iconGroups]);
+
   return (
     <div>
       <Container>
         <TitleRow>
+        {(commandMode != "edit" || !props.isEditGroups) && (
+          <>
           <SectionTitle>{"Icons"}</SectionTitle>
           <div style={{ marginLeft: 24 }}>
             <SearchInput
-              value={searchText}
+              showClear
+              value={props.searchText}
               placeholder={"search icons"}
-              onTextChanged={setSearchText}
+              onTextChanged={props.onSetSearchText}
               borderColor={searchBorderColor}
+              disabled={props.isEditGroups}
             />
           </div>
+          </>
+        )}
+
+        {(commandMode == "edit" && props.isEditGroups) && (
+        <AddGroupContainer style={{marginLeft: 0}}>
+          <Input
+            value={newGroupName}
+            label={"new group"}
+            placeholder={"group name"}
+            onTextChanged={setNewGroupName}
+          />
+          <Button
+            onClick={onAppendNewGroup}
+            style={{ marginTop: 14, marginLeft: 24 }}
+            label={"add group"}
+            bg={"orange"}
+            size={"small"}
+            isDisabled={!canAddNewName}
+          />
+        </AddGroupContainer>
+        )}
+
+        {commandMode == "edit" && (
           <div style={{ marginLeft: 24, display: "flex", width: 120 }}>
-            <Button
-              label={"edit groups"}
-              bg={"purple"}
-              size={"small"}
-              textSize={"small"}
-            />
+            {props.isEditGroups && (
+              <Button
+                onClick={props.onHideEditGroups}
+                label={"done editting"}
+                bg={"purple"}
+                size={"small"}
+                textSize={"small"}
+              />
+            )}
+            {!props.isEditGroups && (
+              <Button
+                onClick={props.onShowEditGroups}
+                label={"edit groups"}
+                bg={"purple"}
+                size={"small"}
+                textSize={"small"}
+                isDisabled={isSearching}
+              />
+            )}
           </div>
+        )}
         </TitleRow>
-        <DropzoneSection style={{ background: dropzoneBackgroundColor }}>
-          <InnerDropzone
-            style={{
-              backgroundImage: dropzoneBackgroundImage,
-              cursor: dropzoneCursor,
-            }}
-          >
-            <DropMarkup style={{ cursor: dropzoneCursor }}>
-              <DropSvgTitle style={{ color: dropzoneContentColor }}>
-                {"drag & drop SVG files"}
-              </DropSvgTitle>
-              <DropIcon src={dropIcon} />
-            </DropMarkup>
-            <DropFile
-              ref={input}
-              style={{ cursor: dropzoneCursor }}
-              onDrop={onDrop}
-              onChange={onChange}
-              onDragEnter={onDragEnter}
-              onDragLeave={onDragLeave}
-              onDragOver={onDragOver}
-              onDragEnd={onDragOver}
-              type="file"
-              accept="image/svg+xml"
-            />
-          </InnerDropzone>
-        </DropzoneSection>
+        {commandMode == "edit" && !isSearching && !props.isEditGroups && (
+          <DropzoneSection style={{ background: dropzoneBackgroundColor }}>
+            <InnerDropzone
+              style={{
+                backgroundImage: dropzoneBackgroundImage,
+                cursor: dropzoneCursor,
+              }}
+            >
+              <DropMarkup style={{ cursor: dropzoneCursor }}>
+                <DropSvgTitle style={{ color: dropzoneContentColor }}>
+                  {"drag & drop SVG files"}
+                </DropSvgTitle>
+                <DropIcon src={dropIcon} />
+              </DropMarkup>
+              <DropFile
+                ref={input}
+                style={{ cursor: dropzoneCursor }}
+                onDrop={onDrop}
+                onChange={onChange}
+                onDragEnter={onDragEnter}
+                onDragLeave={onDragLeave}
+                onDragOver={onDragOver}
+                onDragEnd={onDragOver}
+                type="file"
+                accept="image/svg+xml"
+              />
+            </InnerDropzone>
+          </DropzoneSection>
+        )}
       </Container>
     </div>
   );

@@ -506,8 +506,8 @@ export const rethemeSvg = (
   svg: string,
   appliedThemes: { [key: string]: PointerTypes["$(theme).themeColors.id<?>"] },
   themeRef: PointerTypes["$(theme).themes.id<?>"],
-  themeColorRef: PointerTypes["$(theme).themeColors.id<?>"],
-  themingHex?: string,
+  themeColorRef?: PointerTypes["$(theme).themeColors.id<?>"]|null,
+  themingHex?: string|null,
   stateVariantRef?: PointerTypes["$(theme).stateVariants.id<?>"],
   alpha: number = 255
 ): string => {
@@ -520,7 +520,11 @@ export const rethemeSvg = (
       applicationState,
       appliedThemes[hexcode]
     );
-    if (stateVariantRef) {
+
+    if (!appliedTheme) {
+      return s;
+    }
+    if (stateVariantRef && appliedTheme.includeVariants) {
       const themedVariantRef = makeQueryRef(
         "$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>",
         appliedTheme.id,
@@ -567,12 +571,18 @@ export const rethemeSvg = (
     );
     if (appliedTheme) {
       if (stateVariantRef) {
+        if (!appliedTheme) {
+          return rethemedSvg
+        }
         const themedVariantRef = makeQueryRef(
           "$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>",
-          appliedTheme.id,
+          appliedTheme?.id,
           stateVariantRef,
           themeRef
         );
+        if (!appliedTheme.includeVariants) {
+          return rethemedSvg;
+        }
         const themedVariant = getReferencedObject(
           applicationState,
           themedVariantRef

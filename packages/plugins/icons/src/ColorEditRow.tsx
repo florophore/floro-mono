@@ -88,7 +88,7 @@ interface Props {
 
 const ColorEditRow = (props: Props) => {
   const theme = useTheme();
-  const colorPalettes = useReferencedObject("$(palette).colorPalettes");
+  const colorPalettes = useReferencedObject("$(palette).colorPalettes") ?? [];
 
   const paletteHexes = useMemo(() => {
     return colorPalettes

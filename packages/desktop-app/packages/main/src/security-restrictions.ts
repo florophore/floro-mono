@@ -3,6 +3,7 @@ import {URL} from 'url';
 
 type Permissions =
   | 'clipboard-read'
+  | 'clipboard-sanitized-write'
   | 'media'
   | 'display-capture'
   | 'mediaKeySystem'
@@ -15,6 +16,14 @@ type Permissions =
   | 'openExternal'
   | 'unknown';
 
+const IFRAME_PERMISSIONS = new Set<Permissions>([
+  'clipboard-read',
+  'clipboard-sanitized-write',
+  'media',
+  'pointerLock',
+  'fullscreen',
+])
+
 /**
  * A list of origins that you allow open INSIDE the application and permissions for them.
  *
@@ -22,7 +31,7 @@ type Permissions =
  */
 const ALLOWED_ORIGINS_AND_PERMISSIONS = new Map<string, Set<Permissions>>(
   import.meta.env.DEV && import.meta.env.VITE_DEV_SERVER_URL
-    ? [[new URL(import.meta.env.VITE_DEV_SERVER_URL).origin, new Set()]]
+    ? [[new URL(import.meta.env.VITE_DEV_SERVER_URL).origin, IFRAME_PERMISSIONS]]
     : [],
 );
 
@@ -41,7 +50,7 @@ ALLOWED_ORIGINS_AND_PERMISSIONS.set(
 if (import.meta.env.DEV) {
   ALLOWED_ORIGINS_AND_PERMISSIONS.set(
     'http://localhost:9000',
-    new Set(),
+    IFRAME_PERMISSIONS,
   );
 }
 
@@ -92,7 +101,7 @@ app.on('web-contents-created', (_, contents) => {
   contents.session.setPermissionRequestHandler((webContents, permission, callback) => {
     const {origin} = new URL(webContents.getURL());
 
-    const permissionGranted = !!ALLOWED_ORIGINS_AND_PERMISSIONS.get(origin)?.has(permission);
+    const permissionGranted = !!ALLOWED_ORIGINS_AND_PERMISSIONS.get(origin)?.has(permission as Permissions);
     callback(permissionGranted);
 
     if (!permissionGranted && import.meta.env.DEV) {

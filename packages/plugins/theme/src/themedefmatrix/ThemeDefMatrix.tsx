@@ -206,7 +206,7 @@ const ThemeDefMatrix = (props: Props) => {
             {!props.showVariantList && (
               <Button
                 style={{
-                  marginLeft: 16
+                  marginLeft: 16,
                 }}
                 label={"edit variants"}
                 bg={"teal"}
@@ -219,7 +219,7 @@ const ThemeDefMatrix = (props: Props) => {
             {props.showVariantList && (
               <Button
                 style={{
-                  marginLeft: 16
+                  marginLeft: 16,
                 }}
                 label={"hide variants"}
                 bg={"teal"}
@@ -268,22 +268,24 @@ const ThemeDefMatrix = (props: Props) => {
             values={themeColors ?? []}
             onReorder={onReOrderThemeColors}
           >
-            {themeColors?.filter?.(v => !!v?.id)?.map?.((themeColor, index) => {
-              return (
-                <ThemeRow
-                  onDragStart={onDragStart}
-                  onDragEnd={onDragEnd}
-                  onRemove={onRemove}
-                  key={themeColor?.id as string}
-                  themeColor={themeColor}
-                  index={index}
-                  isDragging={isDragging}
-                  isReOrderMode={isReOrderMode}
-                />
-              );
-            })}
+            {themeColors
+              ?.filter?.((v) => !!v?.id)
+              ?.map?.((themeColor, index) => {
+                return (
+                  <ThemeRow
+                    onDragStart={onDragStart}
+                    onDragEnd={onDragEnd}
+                    onRemove={onRemove}
+                    key={themeColor?.id as string}
+                    themeColor={themeColor}
+                    index={index}
+                    isDragging={isDragging}
+                    isReOrderMode={isReOrderMode}
+                  />
+                );
+              })}
           </Reorder.Group>
-          </AnimatePresence>
+        </AnimatePresence>
       </div>
     </div>
   );
