@@ -43,11 +43,6 @@
       "hexcode": {
         "nullable": true,
         "type": "string"
-      },
-      "alpha": {
-        "nullable": false,
-        "type": "int",
-        "default": 255
       }
     }
   },
@@ -84,16 +79,13 @@
         "name": "White",
         "colorShades": [
           {
-            "alpha": 255,
             "id": "$(palette).shades.id<light>"
           },
           {
-            "alpha": 255,
             "hexcode": "#FFFFFF",
             "id": "$(palette).shades.id<regular>"
           },
           {
-            "alpha": 255,
             "id": "$(palette).shades.id<dark>"
           }
         ]
@@ -103,16 +95,13 @@
         "name": "Black",
         "colorShades": [
           {
-            "alpha": 255,
             "id": "$(palette).shades.id<light>"
           },
           {
-            "alpha": 255,
             "hexcode": "#000000",
             "id": "$(palette).shades.id<regular>"
           },
           {
-            "alpha": 255,
             "id": "$(palette).shades.id<dark>"
           }
         ]
@@ -122,17 +111,14 @@
         "name": "Red",
         "colorShades": [
           {
-            "alpha": 255,
             "hexcode": "#F93D44",
             "id": "$(palette).shades.id<light>"
           },
           {
-            "alpha": 255,
             "hexcode": "#CC2F35",
             "id": "$(palette).shades.id<regular>"
           },
           {
-            "alpha": 255,
             "hexcode": "#AA2227",
             "id": "$(palette).shades.id<dark>"
           }
@@ -143,17 +129,14 @@
         "name": "Green",
         "colorShades": [
           {
-            "alpha": 255,
             "hexcode": "#77F075",
             "id": "$(palette).shades.id<light>"
           },
           {
-            "alpha": 255,
             "hexcode": "#3DD43A",
             "id": "$(palette).shades.id<regular>"
           },
           {
-            "alpha": 255,
             "hexcode": "#26A324",
             "id": "$(palette).shades.id<dark>"
           }
@@ -164,17 +147,14 @@
         "name": "Blue",
         "colorShades": [
           {
-            "alpha": 255,
             "hexcode": "#7E91EC",
             "id": "$(palette).shades.id<light>"
           },
           {
-            "alpha": 255,
             "hexcode": "#3D65DB",
             "id": "$(palette).shades.id<regular>"
           },
           {
-            "alpha": 255,
             "hexcode": "#1F38B2",
             "id": "$(palette).shades.id<dark>"
           }

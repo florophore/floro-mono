@@ -26,11 +26,6 @@
         "hexcode": {
           "nullable": false,
           "type": "string"
-        },
-        "alpha": {
-          "nullable": false,
-          "type": "int",
-          "default": 255
         }
       }
     },
@@ -129,16 +124,14 @@
         "id": "light",
         "name": "Light",
         "backgroundColor": {
-          "hexcode": "#FFFFFF",
-          "alpha": 255
+          "hexcode": "#FFFFFF"
         }
       },
       {
         "id": "dark",
         "name": "Dark",
         "backgroundColor": {
-          "hexcode": "#000000",
-          "alpha": 255
+          "hexcode": "#000000"
         }
       }
     ],

@@ -342,11 +342,15 @@ const IconRow = (props: Props) => {
     return false;
   }, [props.searchText, props.icon, isSearching]);
 
+
+  const hasAnyRemovals = useWasRemoved("$(icons).iconGroups", true);
+  const hasAnyAdditions = useWasAdded("$(icons).iconGroups", true);
+
   if (isSearching && !hasSearchMatches) {
     return null;
   }
 
-  if (!isSearching && commandMode == "compare") {
+  if (!isSearching && commandMode == "compare" && (hasAnyRemovals || hasAnyAdditions)) {
     if (!wasRemoved && compareFrom == "before") {
       return null;
     }

@@ -194,7 +194,7 @@ const Group = (props: Props) => {
   const theme = useTheme();
   const controls = useDragControls();
 
-  const { applicationState, commandMode, saveState } = useFloroContext();
+  const { applicationState, commandMode, compareFrom, saveState } = useFloroContext();
   const [isReOrderIconsMode, setIsReOrderIconsMode] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const iconGroupRef = useQueryRef(
@@ -471,11 +471,19 @@ const Group = (props: Props) => {
     return DraggerDark;
   }, [theme.name]);
 
+  const hasAnyRemovals = useWasRemoved("$(icons).iconGroups", true);
+  const hasAnyAdditions = useWasAdded("$(icons).iconGroups", true);
+
   if (isSearching && !hasSearchMatches) {
     return null;
   }
-  if (!isSearching && commandMode == "compare" && !wasAdded && !wasRemoved) {
-    return null;
+  if (!isSearching && commandMode == "compare" && (hasAnyRemovals || hasAnyAdditions)) {
+    if (!wasRemoved && compareFrom == "before") {
+      return null;
+    }
+    if (!wasAdded && compareFrom == "after") {
+      return null;
+    }
   }
   if (isSearching && iconsToRender.length == 0) {
     return null;

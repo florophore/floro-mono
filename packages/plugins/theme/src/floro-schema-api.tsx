@@ -8,58 +8,54 @@ export type DiffableQuery = `$(theme).themeColors.id<${string}>.variants.id<${Qu
 
 export type SchemaTypes = {
   ['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']: {
-    ['alpha']: number;
+    ['alpha']?: number;
     ['id']: QueryTypes['$(theme).themes.id<?>'];
     ['paletteColorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
   };
   ['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions']: Array<{
-    ['alpha']: number;
+    ['alpha']?: number;
     ['id']: QueryTypes['$(theme).themes.id<?>'];
     ['paletteColorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
   }>;
   ['$(palette).colorPalettes.id<?>.colorShades.id<?>']: {
-    ['alpha']: number;
     ['hexcode']?: string;
     ['id']: QueryTypes['$(palette).shades.id<?>'];
   };
   ['$(theme).themeColors.id<?>.themeDefinitions.id<?>']: {
-    ['alpha']: number;
+    ['alpha']?: number;
     ['id']: QueryTypes['$(theme).themes.id<?>'];
     ['paletteColorShade']: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
   };
   ['$(theme).themeColors.id<?>.variants.id<?>']: {
     ['id']: QueryTypes['$(theme).stateVariants.id<?>'];
     ['variantDefinitions']: Array<{
-      ['alpha']: number;
+      ['alpha']?: number;
       ['id']: QueryTypes['$(theme).themes.id<?>'];
       ['paletteColorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
     }>;
   };
   ['$(palette).colorPalettes.id<?>.colorShades']: Array<{
-    ['alpha']: number;
     ['hexcode']?: string;
     ['id']: QueryTypes['$(palette).shades.id<?>'];
   }>;
   ['$(theme).themeColors.id<?>.themeDefinitions']: Array<{
-    ['alpha']: number;
+    ['alpha']?: number;
     ['id']: QueryTypes['$(theme).themes.id<?>'];
     ['paletteColorShade']: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
   }>;
   ['$(theme).themeColors.id<?>.variants']: Array<{
     ['id']: QueryTypes['$(theme).stateVariants.id<?>'];
     ['variantDefinitions']: Array<{
-      ['alpha']: number;
+      ['alpha']?: number;
       ['id']: QueryTypes['$(theme).themes.id<?>'];
       ['paletteColorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
     }>;
   }>;
   ['$(theme).themes.id<?>.backgroundColor']: {
-    ['alpha']: number;
     ['hexcode']: string;
   };
   ['$(palette).colorPalettes.id<?>']: {
     ['colorShades']: Array<{
-      ['alpha']: number;
       ['hexcode']?: string;
       ['id']: QueryTypes['$(palette).shades.id<?>'];
     }>;
@@ -79,14 +75,14 @@ export type SchemaTypes = {
     ['includeVariants']: boolean;
     ['name']: string;
     ['themeDefinitions']: Array<{
-      ['alpha']: number;
+      ['alpha']?: number;
       ['id']: QueryTypes['$(theme).themes.id<?>'];
       ['paletteColorShade']: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
     }>;
     ['variants']: Array<{
       ['id']: QueryTypes['$(theme).stateVariants.id<?>'];
       ['variantDefinitions']: Array<{
-        ['alpha']: number;
+        ['alpha']?: number;
         ['id']: QueryTypes['$(theme).themes.id<?>'];
         ['paletteColorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
       }>;
@@ -94,7 +90,6 @@ export type SchemaTypes = {
   };
   ['$(theme).themes.id<?>']: {
     ['backgroundColor']: {
-      ['alpha']: number;
       ['hexcode']: string;
     };
     ['id']: string;
@@ -102,7 +97,6 @@ export type SchemaTypes = {
   };
   ['$(palette).colorPalettes']: Array<{
     ['colorShades']: Array<{
-      ['alpha']: number;
       ['hexcode']?: string;
       ['id']: QueryTypes['$(palette).shades.id<?>'];
     }>;
@@ -122,14 +116,14 @@ export type SchemaTypes = {
     ['includeVariants']: boolean;
     ['name']: string;
     ['themeDefinitions']: Array<{
-      ['alpha']: number;
+      ['alpha']?: number;
       ['id']: QueryTypes['$(theme).themes.id<?>'];
       ['paletteColorShade']: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
     }>;
     ['variants']: Array<{
       ['id']: QueryTypes['$(theme).stateVariants.id<?>'];
       ['variantDefinitions']: Array<{
-        ['alpha']: number;
+        ['alpha']?: number;
         ['id']: QueryTypes['$(theme).themes.id<?>'];
         ['paletteColorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
       }>;
@@ -137,7 +131,6 @@ export type SchemaTypes = {
   }>;
   ['$(theme).themes']: Array<{
     ['backgroundColor']: {
-      ['alpha']: number;
       ['hexcode']: string;
     };
     ['id']: string;
@@ -173,7 +166,6 @@ export type SchemaRoot = {
   ['palette']: {
     ['colorPalettes']: Array<{
       ['colorShades']: Array<{
-        ['alpha']: number;
         ['hexcode']?: string;
         ['id']: QueryTypes['$(palette).shades.id<?>'];
       }>;
@@ -195,14 +187,14 @@ export type SchemaRoot = {
       ['includeVariants']: boolean;
       ['name']: string;
       ['themeDefinitions']: Array<{
-        ['alpha']: number;
+        ['alpha']?: number;
         ['id']: QueryTypes['$(theme).themes.id<?>'];
         ['paletteColorShade']: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
       }>;
       ['variants']: Array<{
         ['id']: QueryTypes['$(theme).stateVariants.id<?>'];
         ['variantDefinitions']: Array<{
-          ['alpha']: number;
+          ['alpha']?: number;
           ['id']: QueryTypes['$(theme).themes.id<?>'];
           ['paletteColorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
         }>;
@@ -210,7 +202,6 @@ export type SchemaRoot = {
     }>;
     ['themes']: Array<{
       ['backgroundColor']: {
-        ['alpha']: number;
         ['hexcode']: string;
       };
       ['id']: string;

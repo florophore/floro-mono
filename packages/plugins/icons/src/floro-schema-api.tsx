@@ -47,7 +47,6 @@ export type SchemaTypes = {
     }>;
   };
   ['$(palette).colorPalettes.id<?>.colorShades.id<?>']: {
-    ['alpha']: number;
     ['hexcode']?: string;
     ['id']: QueryTypes['$(palette).shades.id<?>'];
   };
@@ -79,11 +78,9 @@ export type SchemaTypes = {
     }>;
   }>;
   ['$(theme).themes.id<?>.backgroundColor']: {
-    ['alpha']: number;
     ['hexcode']: string;
   };
   ['$(palette).colorPalettes.id<?>.colorShades']: Array<{
-    ['alpha']: number;
     ['hexcode']?: string;
     ['id']: QueryTypes['$(palette).shades.id<?>'];
   }>;
@@ -125,7 +122,6 @@ export type SchemaTypes = {
   };
   ['$(theme).themes.id<?>']: {
     ['backgroundColor']: {
-      ['alpha']: number;
       ['hexcode']: string;
     };
     ['id']: string;
@@ -133,7 +129,6 @@ export type SchemaTypes = {
   };
   ['$(palette).colorPalettes.id<?>']: {
     ['colorShades']: Array<{
-      ['alpha']: number;
       ['hexcode']?: string;
       ['id']: QueryTypes['$(palette).shades.id<?>'];
     }>;
@@ -186,7 +181,6 @@ export type SchemaTypes = {
   }>;
   ['$(theme).themes']: Array<{
     ['backgroundColor']: {
-      ['alpha']: number;
       ['hexcode']: string;
     };
     ['id']: string;
@@ -194,7 +188,6 @@ export type SchemaTypes = {
   }>;
   ['$(palette).colorPalettes']: Array<{
     ['colorShades']: Array<{
-      ['alpha']: number;
       ['hexcode']?: string;
       ['id']: QueryTypes['$(palette).shades.id<?>'];
     }>;
@@ -283,7 +276,6 @@ export type SchemaRoot = {
     }>;
     ['themes']: Array<{
       ['backgroundColor']: {
-        ['alpha']: number;
         ['hexcode']: string;
       };
       ['id']: string;
@@ -293,7 +285,6 @@ export type SchemaRoot = {
   ['palette']: {
     ['colorPalettes']: Array<{
       ['colorShades']: Array<{
-        ['alpha']: number;
         ['hexcode']?: string;
         ['id']: QueryTypes['$(palette).shades.id<?>'];
       }>;

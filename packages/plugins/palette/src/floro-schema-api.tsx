@@ -8,18 +8,15 @@ export type DiffableQuery = `$(palette).colorPalettes.id<${string}>.colorShades.
 
 export type SchemaTypes = {
   ['$(palette).colorPalettes.id<?>.colorShades.id<?>']: {
-    ['alpha']: number;
     ['hexcode']?: string;
     ['id']: QueryTypes['$(palette).shades.id<?>'];
   };
   ['$(palette).colorPalettes.id<?>.colorShades']: Array<{
-    ['alpha']: number;
     ['hexcode']?: string;
     ['id']: QueryTypes['$(palette).shades.id<?>'];
   }>;
   ['$(palette).colorPalettes.id<?>']: {
     ['colorShades']: Array<{
-      ['alpha']: number;
       ['hexcode']?: string;
       ['id']: QueryTypes['$(palette).shades.id<?>'];
     }>;
@@ -32,7 +29,6 @@ export type SchemaTypes = {
   };
   ['$(palette).colorPalettes']: Array<{
     ['colorShades']: Array<{
-      ['alpha']: number;
       ['hexcode']?: string;
       ['id']: QueryTypes['$(palette).shades.id<?>'];
     }>;
@@ -60,7 +56,6 @@ export type SchemaRoot = {
   ['palette']: {
     ['colorPalettes']: Array<{
       ['colorShades']: Array<{
-        ['alpha']: number;
         ['hexcode']?: string;
         ['id']: QueryTypes['$(palette).shades.id<?>'];
       }>;
@@ -91,6 +86,10 @@ interface PluginState {
   apiStoreInvalidity: {[key: string]: Array<string>};
   conflictList: Array<string>;
   changeset: Array<string>;
+  binaryUrls: {
+    upload: null|string,
+    download: null|string,
+  };
 }
 
 interface IFloroContext {
@@ -126,6 +125,10 @@ const FloroContext = createContext({
     apiStoreInvalidity: {},
     conflictList: [],
     changeset: [],
+    binaryUrls: {
+      upload: null,
+      download: null,
+    },
   },
   loadingIds: new Set([]),
 } as IFloroContext);
@@ -166,6 +169,10 @@ export const FloroProvider = (props: Props) => {
     apiStoreInvalidity: {},
     conflictList: [],
     changeset: [],
+    binaryUrls: {
+      upload: null,
+      download: null,
+    },
   });
   const [hasLoaded, setHasLoaded] = useState(false);
   const [loadingIds, setLoadingIds] = useState<Set<string>>(new Set());
@@ -955,4 +962,407 @@ export function useHasIndication(query: PartialDiffableQuery|DiffableQuery, fuzz
     return containsDiffable(ctx.conflictSet, query, false);
   }, [ctx.conflictSet, query, fuzzy, ctx.commandMode])
   return isInvalid || wasAdded || wasRemoved || hasConflict;
+};
+
+type MimeTypes =
+  | "audio/aac"
+  | "application/x-abiword"
+  | "application/x-freearc"
+  | "video/x-msvideo"
+  | "application/vnd.amazon.ebook"
+  | "application/octet-stream"
+  | "image/bmp"
+  | "application/x-bzip"
+  | "application/x-bzip2"
+  | "application/x-csh"
+  | "text/css"
+  | "text/csv"
+  | "application/msword"
+  | "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  | "application/vnd.ms-fontobject"
+  | "application/epub+zip"
+  | "application/gzip"
+  | "image/gif"
+  | "text/html"
+  | "image/vnd.microsoft.icon"
+  | "text/calendar"
+  | "application/java-archive"
+  | "text/javascript"
+  | "application/json"
+  | "application/ld+json"
+  | "text/javascript"
+  | "audio/mpeg"
+  | "video/mpeg"
+  | "application/vnd.apple.installer+xml"
+  | "application/vnd.oasis.opendocument.presentation"
+  | "application/vnd.oasis.opendocument.spreadsheet"
+  | "application/vnd.oasis.opendocument.text"
+  | "audio/ogg"
+  | "video/ogg"
+  | "application/ogg"
+  | "audio/opus"
+  | "font/otf"
+  | "image/png"
+  | "application/pdf"
+  | "application/php"
+  | "application/vnd.ms-powerpoint"
+  | "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+  | "application/vnd.rar"
+  | "application/rtf"
+  | "application/x-sh"
+  | "image/svg+xml"
+  | "application/x-shockwave-flash"
+  | "application/x-tar"
+  | "image/tiff"
+  | "image/tiff"
+  | "video/mp2t"
+  | "font/ttf"
+  | "text/plain"
+  | "application/vnd.visio"
+  | "audio/wav"
+  | "audio/webm"
+  | "video/webm"
+  | "image/webp"
+  | "font/woff"
+  | "font/woff2"
+  | "application/xhtml+xml"
+  | "application/vnd.ms-excel"
+  | "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  | "application/vnd.mozilla.xul+xml"
+  | "application/zip"
+  | "video/3gpp"
+  | "video/3gpp2"
+  | "application/x-7z-compressed"
+  | ".jpg"
+  | ".midi"
+  | "XML";
+
+const mimeMap: { [Property in MimeTypes]: `.${string}` } = {
+  "audio/aac": ".aac",
+  "application/x-abiword": ".abw",
+  "application/x-freearc": ".arc",
+  "video/x-msvideo": ".avi",
+  "application/vnd.amazon.ebook": ".azw",
+  "application/octet-stream": ".bin",
+  "image/bmp": ".bmp",
+  "application/x-bzip": ".bz",
+  "application/x-bzip2": ".bz2",
+  "application/x-csh": ".csh",
+  "text/css": ".css",
+  "text/csv": ".csv",
+  "application/msword": ".doc",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": ".docx",
+  "application/vnd.ms-fontobject": ".eot",
+  "application/epub+zip": ".epub",
+  "application/gzip": ".gz",
+  "image/gif": ".gif",
+  "text/html": ".html",
+  "image/vnd.microsoft.icon": ".ico",
+  "text/calendar": ".ics",
+  "application/java-archive": ".jar",
+  ".jpg": ".jpeg",
+  "XML": ".xml",
+  "text/javascript": ".mjs",
+  "application/json": ".json",
+  "application/ld+json": ".jsonld",
+  ".midi": ".mid",
+  "audio/mpeg": ".mp3",
+  "video/mpeg": ".mpeg",
+  "application/vnd.apple.installer+xml": ".mpkg",
+  "application/vnd.oasis.opendocument.presentation": ".odp",
+  "application/vnd.oasis.opendocument.spreadsheet": ".ods",
+  "application/vnd.oasis.opendocument.text": ".odt",
+  "audio/ogg": ".oga",
+  "video/ogg": ".ogv",
+  "application/ogg": ".ogx",
+  "audio/opus": ".opus",
+  "font/otf": ".otf",
+  "image/png": ".png",
+  "application/pdf": ".pdf",
+  "application/php": ".php",
+  "application/vnd.ms-powerpoint": ".ppt",
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation": ".pptx",
+  "application/vnd.rar": ".rar",
+  "application/rtf": ".rtf",
+  "application/x-sh": ".sh",
+  "image/svg+xml": ".svg",
+  "application/x-shockwave-flash": ".swf",
+  "application/x-tar": ".tar",
+  "image/tiff": ".tiff",
+  "video/mp2t": ".ts",
+  "font/ttf": ".ttf",
+  "text/plain": ".txt",
+  "application/vnd.visio": ".vsd",
+  "audio/wav": ".wav",
+  "audio/webm": ".weba",
+  "video/webm": ".webm",
+  "image/webp": ".webp",
+  "font/woff": ".woff",
+  "font/woff2": ".woff2",
+  "application/xhtml+xml": ".xhtml",
+  "application/vnd.ms-excel": ".xls",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": ".xlsx",
+  "application/vnd.mozilla.xul+xml": ".xul",
+  "application/zip": ".zip",
+  "video/3gpp": ".3gp",
+  "video/3gpp2": ".3g2",
+  "application/x-7z-compressed": ".7z",
+};
+
+const startUploadBlob = (
+  data: BlobPart[],
+  type: MimeTypes,
+  url: string,
+  progressCallback: (loaded: number, total: number) => void
+) => {
+  const blob = new Blob(data, { type });
+  const ext = mimeMap[type];
+  const fileName = `upload.${ext}`;
+
+  const formData = new FormData();
+  formData.append("file", blob, fileName);
+  return upload(formData, url, progressCallback);
+};
+
+const startUploadFile = (
+  file: File,
+  url: string,
+  progressCallback: (loaded: number, total: number) => void
+) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  return upload(formData, url, progressCallback);
+};
+
+const upload = (
+  formData: FormData,
+  url: string,
+  progressCallback: (loaded: number, total: number) => void
+) => {
+  const xhr = new XMLHttpRequest();
+  let promise: Promise<FileRef> | null = new Promise<FileRef>(
+    (resolve, reject) => {
+      xhr.responseType = "json";
+      xhr.open("POST", url);
+      xhr.onprogress = function (e) {
+        progressCallback(e.loaded, e.total);
+      };
+      xhr.onerror = function (e) {
+        reject(e);
+      };
+      xhr.onreadystatechange = function (e) {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+          const status = xhr.status;
+          if (status === 0 || (status >= 200 && status < 400)) {
+            resolve(xhr.response["fileRef"]);
+          } else {
+            reject(e);
+          }
+        }
+      };
+      xhr.send(formData);
+    }
+  );
+
+  return {
+    promise,
+    abort: () => {
+      xhr.abort();
+      promise = null;
+    },
+  };
+};
+
+export const useUploadFile = () => {
+  const { pluginState } = useFloroContext();
+  const [status, setStatus] =
+    useState<"none" | "in_progress" | "success" | "error">("none");
+  const [progress, setProgress] = useState<number>(0);
+  const [fileRef, setFileRef] = useState<FileRef | null>(null);
+  const [uploadObject, setUploadObject] =
+    useState<null | { promise: Promise<FileRef> | null; abort: () => void }>(
+      null
+    );
+
+  const reset = useCallback(() => {
+    setStatus("none");
+    setProgress(0);
+    setFileRef(null);
+    setUploadObject(null)
+  }, []);
+
+  const isLoading = useMemo(() => status == "in_progress", [status]);
+
+  const onProgress = useCallback((loaded: number, total: number) => {
+    setProgress(loaded / total);
+  }, []);
+
+  const uploadFile = useCallback(
+    (file: File) => {
+      if (status == "in_progress") {
+        return;
+      }
+      if (!pluginState.binaryUrls.upload) {
+        return;
+      }
+      setStatus("in_progress");
+      setProgress(0);
+      setUploadObject(
+        startUploadFile(file, pluginState.binaryUrls.upload, onProgress)
+      );
+    },
+    [status, pluginState.binaryUrls.upload, onProgress]
+  );
+
+  const uploadBlob = useCallback(
+    (data: BlobPart[], type: MimeTypes) => {
+      if (status == "in_progress") {
+        return;
+      }
+      if (!pluginState.binaryUrls.upload) {
+        return;
+      }
+      setUploadObject(
+        startUploadBlob(data, type, pluginState.binaryUrls.upload, onProgress)
+      );
+      setStatus("in_progress");
+      setProgress(0);
+    },
+    [status, pluginState.binaryUrls.upload, onProgress]
+  );
+
+  useEffect(() => {
+    if (!uploadObject) {
+      return;
+    }
+    let aborted = false;
+    uploadObject.promise
+      ?.then((fileRef) => {
+        if (!aborted) {
+          setStatus("success");
+          setProgress(1);
+          setFileRef(fileRef);
+        }
+      })
+      .catch((e) => {
+        if (!aborted) {
+          setStatus("error");
+          setProgress(0);
+        }
+      });
+    return () => {
+      uploadObject.abort();
+      aborted = true;
+    };
+  }, [uploadObject]);
+
+  return {
+    uploadBlob,
+    uploadFile,
+    reset,
+    status,
+    progress,
+    fileRef,
+    isLoading,
+  };
+};
+
+export const useBinaryRef = (fileRef?: FileRef|null) => {
+    const { pluginState } = useFloroContext();
+    if (!fileRef) {
+        return null;
+    }
+    if (!pluginState.binaryUrls.download) {
+        return null;
+    }
+    return `${pluginState.binaryUrls.download}/${fileRef}`;
+}
+
+interface BinaryReturn {
+  "arraybuffer": ArrayBuffer,
+  "blob": Blob,
+  "document": Document|XMLDocument,
+  "json": object,
+  "text": string,
+};
+
+const download = (
+  url: string,
+  responseType: keyof BinaryReturn
+) => {
+  const xhr = new XMLHttpRequest();
+  let promise: Promise<FileRef> | null = new Promise<FileRef>(
+    (resolve, reject) => {
+      xhr.responseType = responseType;
+      xhr.open("GET", url);
+      xhr.onerror = function (e) {
+        reject(e);
+      };
+      xhr.onreadystatechange = function (e) {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+          const status = xhr.status;
+          if (status === 0 || (status >= 200 && status < 400)) {
+            resolve(xhr.response);
+          } else {
+            reject(e);
+          }
+        }
+      };
+      xhr.send();
+    }
+  );
+
+  return {
+    promise,
+    abort: () => {
+      xhr.abort();
+      promise = null;
+    },
+  };
+};
+
+export const useBinaryData = <K extends keyof BinaryReturn>(
+  fileRef: FileRef | null,
+  responseType: K
+) => {
+  const binRef = useBinaryRef(fileRef);
+  const [data, setData] = useState<BinaryReturn[K] | null>(null);
+  const [status, setStatus] =
+    useState<"none" | "in_progress" | "success" | "error">("none");
+  const isLoading = useMemo(() => status == "in_progress", [status]);
+
+  useEffect(() => {
+    if (binRef) {
+      setStatus("none");
+    }
+  }, [binRef]);
+
+  useEffect(() => {
+    if (status != "none") {
+      return;
+    }
+    if (!binRef) {
+      return;
+    }
+    let aborted = false;
+    const downloadObject = download(binRef, responseType);
+    downloadObject.promise
+      .then((result: unknown) => {
+        if (!aborted) {
+          setData(result as BinaryReturn[K]);
+          setStatus("success");
+        }
+      })
+      .catch(() => {
+        if (!aborted) {
+          setStatus("error");
+        }
+      });
+    return () => {
+      aborted = true;
+      downloadObject?.abort();
+    };
+  }, [status, binRef, responseType]);
+
+  return { isLoading, status, data };
 };
