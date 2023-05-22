@@ -8,6 +8,7 @@ export type DiffableQuery = `$(theme).themeColors.id<${string}>.variants.id<${Qu
 
 export type SchemaTypes = {
   ['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']: {
+    ['alpha']?: number;
     ['id']: QueryTypes['$(theme).themes.id<?>'];
     ['paletteColorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
   };
@@ -20,6 +21,7 @@ export type SchemaTypes = {
     ['id']: QueryTypes['$(theme).stateVariants.id<?>'];
   };
   ['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions']: Array<{
+    ['alpha']?: number;
     ['id']: QueryTypes['$(theme).themes.id<?>'];
     ['paletteColorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
   }>;
@@ -32,12 +34,14 @@ export type SchemaTypes = {
     ['id']: QueryTypes['$(theme).stateVariants.id<?>'];
   }>;
   ['$(theme).themeColors.id<?>.themeDefinitions.id<?>']: {
+    ['alpha']?: number;
     ['id']: QueryTypes['$(theme).themes.id<?>'];
     ['paletteColorShade']: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
   };
   ['$(theme).themeColors.id<?>.variants.id<?>']: {
     ['id']: QueryTypes['$(theme).stateVariants.id<?>'];
     ['variantDefinitions']: Array<{
+      ['alpha']?: number;
       ['id']: QueryTypes['$(theme).themes.id<?>'];
       ['paletteColorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
     }>;
@@ -62,12 +66,14 @@ export type SchemaTypes = {
     ['svg']: FileRef;
   };
   ['$(theme).themeColors.id<?>.themeDefinitions']: Array<{
+    ['alpha']?: number;
     ['id']: QueryTypes['$(theme).themes.id<?>'];
     ['paletteColorShade']: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
   }>;
   ['$(theme).themeColors.id<?>.variants']: Array<{
     ['id']: QueryTypes['$(theme).stateVariants.id<?>'];
     ['variantDefinitions']: Array<{
+      ['alpha']?: number;
       ['id']: QueryTypes['$(theme).themes.id<?>'];
       ['paletteColorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
     }>;
@@ -104,12 +110,14 @@ export type SchemaTypes = {
     ['includeVariants']: boolean;
     ['name']: string;
     ['themeDefinitions']: Array<{
+      ['alpha']?: number;
       ['id']: QueryTypes['$(theme).themes.id<?>'];
       ['paletteColorShade']: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
     }>;
     ['variants']: Array<{
       ['id']: QueryTypes['$(theme).stateVariants.id<?>'];
       ['variantDefinitions']: Array<{
+        ['alpha']?: number;
         ['id']: QueryTypes['$(theme).themes.id<?>'];
         ['paletteColorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
       }>;
@@ -163,12 +171,14 @@ export type SchemaTypes = {
     ['includeVariants']: boolean;
     ['name']: string;
     ['themeDefinitions']: Array<{
+      ['alpha']?: number;
       ['id']: QueryTypes['$(theme).themes.id<?>'];
       ['paletteColorShade']: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
     }>;
     ['variants']: Array<{
       ['id']: QueryTypes['$(theme).stateVariants.id<?>'];
       ['variantDefinitions']: Array<{
+        ['alpha']?: number;
         ['id']: QueryTypes['$(theme).themes.id<?>'];
         ['paletteColorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
       }>;
@@ -258,12 +268,14 @@ export type SchemaRoot = {
       ['includeVariants']: boolean;
       ['name']: string;
       ['themeDefinitions']: Array<{
+        ['alpha']?: number;
         ['id']: QueryTypes['$(theme).themes.id<?>'];
         ['paletteColorShade']: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
       }>;
       ['variants']: Array<{
         ['id']: QueryTypes['$(theme).stateVariants.id<?>'];
         ['variantDefinitions']: Array<{
+          ['alpha']?: number;
           ['id']: QueryTypes['$(theme).themes.id<?>'];
           ['paletteColorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
         }>;

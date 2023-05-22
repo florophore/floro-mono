@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useMemo, useState } from "react";
+import React, { useCallback, useRef, useMemo, useState, useEffect } from "react";
 import {
   PointerTypes,
   SchemaTypes,
@@ -24,6 +24,7 @@ import PalettePicker from "../palettecolormatrix/PalettePicker";
 
 import XCircleLight from "@floro/common-assets/assets/images/icons/x_circle.light.svg";
 import XCircleDark from "@floro/common-assets/assets/images/icons/x_circle.dark.svg";
+import OpacityPicker from "../OpacityPicker";
 
 const Wrapper = styled.div`
   position: relative;
@@ -76,7 +77,7 @@ const SubTitle = styled.h4`
 const ColorTitle = styled.h6`
   font-family: "MavenPro";
   font-weight: 500;
-  font-size: 1.1rem;
+  font-size: 1rem;
   text-align: left;
   padding: 0;
   margin: 8px 0 -8px 0;
@@ -184,6 +185,18 @@ const ExitIndicatorImg = styled.img`
   cursor: pointer;
 `;
 
+const AlphaWrapper = styled.div`
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+`;
+
+const AlphaTitle = styled.span`
+  font-family: "MavenPro";
+  font-weight: 400;
+  font-size: 0.8rem;
+`;
+
 const getColorDistance = (staticHex: string, comparedHex: string) => {
   try {
     if (staticHex[0] != "#" || comparedHex[0] != "#") {
@@ -229,6 +242,15 @@ const ThemeDefVariantCell = (props: Props) => {
   const wasAdded = useWasAdded(props.variantDefinitionRef, false);
   const hasConflict = useHasConflict(props.variantDefinitionRef, false);
   const [showPicker, setShowPicker] = useState(false);
+  const [showOpacityPicker, setShowOpacityPicker] = useState(false);
+
+  useEffect(() => {
+    if (commandMode == "edit") {
+      setShowPicker(false);
+      setShowOpacityPicker(false);
+    }
+
+  }, [commandMode])
 
   const onShowPicker = useCallback(() => {
     setShowPicker(true);
@@ -237,6 +259,17 @@ const ThemeDefVariantCell = (props: Props) => {
   const onHidePicker = useCallback(() => {
     setShowPicker(false);
   }, []);
+
+  const onShowOpacityPicker = useCallback(() => {
+    if (commandMode != "edit") {
+      return;
+    }
+    setShowOpacityPicker(true);
+  }, [commandMode]);
+
+  const onHideOpacityPicker = useCallback(() => {
+    setShowOpacityPicker(false);
+  }, [])
 
   const contrastColor = useMemo(() => {
     if (!themeObject?.backgroundColor) {
@@ -379,6 +412,39 @@ const ThemeDefVariantCell = (props: Props) => {
     return shade?.name + " " + paletteColor?.name;
   }, [paletteColor?.name, shade?.name])
 
+  const alphaPct = useMemo(() => {
+    if (variantDefinition?.alpha !== null && variantDefinition?.alpha !== undefined) {
+      return ((variantDefinition.alpha/255) * 100).toFixed(0) + '%';
+    }
+    return null;
+  }, [variantDefinition?.alpha])
+
+  const onChangeOpacity = useCallback(
+    (alpha: number) => {
+      if (variantDefinition) {
+        setVariantDefinition(
+          {
+            ...variantDefinition,
+            alpha,
+          },
+          true
+        );
+      }
+    },
+    [variantDefinition, setVariantDefinition]
+  );
+  const hex = useMemo(() => {
+    if (!paletteColorShade?.hexcode) {
+      return '';
+    }
+    return (
+      paletteColorShade?.hexcode +
+      Math.round(variantDefinition?.alpha ?? 100)
+        .toString(16)
+        .padStart(2, "0")
+    );
+  }, [paletteColorShade?.hexcode, variantDefinition?.alpha]);
+
   return (
     <Wrapper>
       <Container>
@@ -391,11 +457,13 @@ const ThemeDefVariantCell = (props: Props) => {
           <CardInterior>
             {!!paletteColorShade && (
               <>
-                <ColorDisplayCircle style={{ borderColor: contrastColor }}>
+                <ColorDisplayCircle style={{ borderColor: contrastColor,
+                  background: themeObject.backgroundColor.hexcode,
+                 }}>
                     {paletteColorShade?.hexcode && (
                       <ColorCircle
                         ref={colorCircle}
-                        style={{ background: paletteColorShade?.hexcode }}
+                        style={{ background: hex }}
                       />
                     )}
                     {!paletteColorShade?.hexcode && (
@@ -427,6 +495,16 @@ const ThemeDefVariantCell = (props: Props) => {
                 <ExitIndicatorImg src={xIcon}/>
             </ExitIndicatorWrapper>
         )}
+          {!!paletteColorShade?.hexcode && (
+            <AlphaWrapper
+              style={{ cursor: commandMode == "edit" ? "pointer" : "default" }}
+              onClick={onShowOpacityPicker}
+            >
+              <AlphaTitle style={{ color: contrastColor }}>
+                {alphaPct}
+              </AlphaTitle>
+            </AlphaWrapper>
+          )}
         </Card>
         <Title style={{ color: theme.colors.pluginTitle }}>{stateVariant?.name}</Title>
       </Container>
@@ -434,7 +512,18 @@ const ThemeDefVariantCell = (props: Props) => {
         show={showPicker && commandMode == "edit" && !props.isReOrderMode}
         onDismiss={onHidePicker}
         onSelect={onSelect}
+        isVariant
       />
+      {!!paletteColorShade?.hexcode && themeObject.backgroundColor.hexcode && commandMode == "edit" && (
+        <OpacityPicker
+          show={showOpacityPicker}
+          onDismiss={onHideOpacityPicker}
+          alpha={variantDefinition?.alpha ?? 0}
+          hexcode={paletteColorShade.hexcode}
+          themeHex={themeObject.backgroundColor.hexcode}
+          onChange={onChangeOpacity}
+        />
+      )}
     </Wrapper>
   );
 };

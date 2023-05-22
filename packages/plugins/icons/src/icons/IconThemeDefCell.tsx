@@ -263,7 +263,7 @@ const IconThemeDefCell = (props: Props) => {
         </SubTitle>
         <Card
           style={{
-            //borderColor: cardBorderColor,
+            borderColor: contrastColor,
             background: props.themeObject.backgroundColor.hexcode,
           }}
         >

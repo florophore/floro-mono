@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useMemo, useState } from "react";
+import React, { useCallback, useRef, useMemo, useState, useEffect } from "react";
 import {
   PointerTypes,
   SchemaTypes,
@@ -24,6 +24,7 @@ import PalettePicker from "../palettecolormatrix/PalettePicker";
 
 import WarningLight from "@floro/common-assets/assets/images/icons/warning.light.svg";
 import WarningDark from "@floro/common-assets/assets/images/icons/warning.dark.svg";
+import OpacityPicker from "../OpacityPicker";
 
 const Wrapper = styled.div`
   position: relative;
@@ -72,10 +73,11 @@ const SubTitle = styled.h4`
   padding: 0;
   margin: 0px 0 8px 0;
 `;
+
 const ColorTitle = styled.h6`
   font-family: "MavenPro";
   font-weight: 500;
-  font-size: 1.1rem;
+  font-size: 1rem;
   text-align: left;
   padding: 0;
   margin: 8px 0 -8px 0;
@@ -154,6 +156,18 @@ const EditIndicatorImg = styled.img`
   cursor: pointer;
 `;
 
+const AlphaWrapper = styled.div`
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+`;
+
+const AlphaTitle = styled.span`
+  font-family: "MavenPro";
+  font-weight: 400;
+  font-size: 0.8rem;
+`;
+
 const getColorDistance = (staticHex: string, comparedHex: string) => {
   try {
     if (staticHex[0] != "#" || comparedHex[0] != "#") {
@@ -207,6 +221,15 @@ const ThemeDefCell = (props: Props) => {
   const wasAdded = useWasAdded(themeDefinitionRef, false);
   const hasConflict = useHasConflict(themeDefinitionRef, false);
   const [showPicker, setShowPicker] = useState(false);
+  const [showOpacityPicker, setShowOpacityPicker] = useState(false);
+
+  useEffect(() => {
+    if (commandMode == "edit") {
+      setShowPicker(false);
+      setShowOpacityPicker(false);
+    }
+
+  }, [commandMode])
 
   const onShowPicker = useCallback(() => {
     setShowPicker(true);
@@ -214,6 +237,17 @@ const ThemeDefCell = (props: Props) => {
 
   const onHidePicker = useCallback(() => {
     setShowPicker(false);
+  }, []);
+
+  const onShowOpacityPicker = useCallback(() => {
+    if (commandMode != "edit") {
+      return;
+    }
+    setShowOpacityPicker(true);
+  }, [commandMode]);
+
+  const onHideOpacityPicker = useCallback(() => {
+    setShowOpacityPicker(false);
   }, []);
 
   const contrastColor = useMemo(() => {
@@ -349,10 +383,46 @@ const ThemeDefCell = (props: Props) => {
     return shade?.name + " " + paletteColor?.name;
   }, [paletteColor?.name, shade?.name])
 
+  const alphaPct = useMemo(() => {
+    if (themeDefinition?.alpha !== null && themeDefinition?.alpha !== undefined) {
+      return ((themeDefinition.alpha/255) * 100).toFixed(0) + '%';
+    }
+    return null;
+  }, [themeDefinition?.alpha])
+
+  const onChangeOpacity = useCallback(
+    (alpha: number) => {
+      if (themeDefinition) {
+        setThemeDefinition(
+          {
+            ...themeDefinition,
+            alpha,
+          },
+          true
+        );
+      }
+    },
+    [themeDefinition, setThemeDefinition]
+  );
+
+  const hex = useMemo(() => {
+    if (!paletteColorShade?.hexcode) {
+      return '';
+    }
+    return (
+      paletteColorShade?.hexcode +
+      Math.round(themeDefinition?.alpha ?? 100)
+        .toString(16)
+        .padStart(2, "0")
+    );
+  }, [paletteColorShade?.hexcode, themeDefinition?.alpha]);
+
   return (
     <Wrapper>
       <Container>
-        <SubTitle style={{color: subTitleColor}}>{props.themeObject.name}</SubTitle>
+        <SubTitle style={{ color: subTitleColor }}>
+          {props.themeObject.name}
+        </SubTitle>
         <Card
           style={{
             borderColor: cardBorderColor,
@@ -362,30 +432,30 @@ const ThemeDefCell = (props: Props) => {
           <CardInterior>
             {!!paletteColorShade && (
               <>
-                <ColorDisplayCircle style={{ borderColor: contrastColor }}>
-                    {paletteColorShade?.hexcode && (
-                      <ColorCircle
-                        ref={colorCircle}
-                        style={{ background: paletteColorShade?.hexcode }}
-                      />
-                    )}
-                    {!paletteColorShade?.hexcode && (
-                      <AlphaColorCircle />
-                    )}
+                <ColorDisplayCircle style={{ borderColor: contrastColor,
+                  background: props.themeObject.backgroundColor.hexcode,
+                }}>
+                  {paletteColorShade?.hexcode && (
+                    <ColorCircle
+                      ref={colorCircle}
+                      style={{ background: hex }}
+                    />
+                  )}
+                  {!paletteColorShade?.hexcode && <AlphaColorCircle />}
                 </ColorDisplayCircle>
-
               </>
             )}
             {title && (
               <ColorTitle style={{ color: titleColor }}>{title}</ColorTitle>
             )}
             {!title && (
-              <ColorTitle style={{ color: theme.colors.warningTextColor }}>{"missing color!"}</ColorTitle>
+              <ColorTitle style={{ color: theme.colors.warningTextColor }}>
+                {"missing color!"}
+              </ColorTitle>
             )}
             {!paletteColorShade && (
               <WarningCircle>
-                <WarningIcon src={warningIcon}/>
-
+                <WarningIcon src={warningIcon} />
               </WarningCircle>
             )}
           </CardInterior>
@@ -395,14 +465,34 @@ const ThemeDefCell = (props: Props) => {
               <EditIndicatorImg src={editIcon} />
             </EditIndicatorWrapper>
           )}
+          {!!paletteColorShade?.hexcode && (
+            <AlphaWrapper
+              style={{ cursor: commandMode == "edit" ? "pointer" : "default" }}
+              onClick={onShowOpacityPicker}
+            >
+              <AlphaTitle style={{ color: contrastColor }}>
+                {alphaPct}
+              </AlphaTitle>
+            </AlphaWrapper>
+          )}
         </Card>
-        <Title style={{ color: theme.colors.pluginTitle }}>{'Default'}</Title>
+        <Title style={{ color: theme.colors.pluginTitle }}>{"Default"}</Title>
       </Container>
       <PalettePicker
         show={showPicker && commandMode == "edit" && !props.isReOrderMode}
         onDismiss={onHidePicker}
         onSelect={onSelect}
       />
+      {!!paletteColorShade?.hexcode && props.themeObject.backgroundColor.hexcode && commandMode == "edit" && (
+        <OpacityPicker
+          show={showOpacityPicker}
+          onDismiss={onHideOpacityPicker}
+          alpha={themeDefinition?.alpha ?? 0}
+          hexcode={paletteColorShade.hexcode}
+          themeHex={props.themeObject.backgroundColor.hexcode}
+          onChange={onChangeOpacity}
+        />
+      )}
     </Wrapper>
   );
 };

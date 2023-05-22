@@ -83,6 +83,11 @@
             "type": "ref<palette.ColorShade>",
             "nullable": true,
             "onDelete": "nullify"
+          },
+          "alpha": {
+            "nullable": true,
+            "type": "int",
+            "default": 255
           }
         }
       }
@@ -96,6 +101,11 @@
         "type": "ref<palette.ColorShade>",
         "nullable": false,
         "onDelete": "nullify"
+      },
+      "alpha": {
+        "nullable": true,
+        "type": "int",
+        "default": 255
       }
     }
   },

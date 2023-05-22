@@ -14,6 +14,7 @@ import { AnimatePresence, Reorder } from "framer-motion";
 import ColorPalette from "@floro/styles/ColorPalette";
 import Input from "@floro/storybook/stories/design-system/Input";
 import ThemeRow from "./ThemeRow";
+import ThemeDefCell from "./ThemeDefCell";
 
 const SectionTitle = styled.h1`
   font-family: "MavenPro";
@@ -177,6 +178,7 @@ const ThemeDefMatrix = (props: Props) => {
       save();
     }
   }, [isDragging]);
+
 
   return (
     <div style={{ marginBottom: 36, marginRight: 72 }}>

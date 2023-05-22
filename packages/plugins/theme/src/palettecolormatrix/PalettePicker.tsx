@@ -18,6 +18,7 @@ interface Props {
   onSelect: (
     colorPaletteColorShadeRef: PointerTypes["$(palette).colorPalettes.id<?>.colorShades.id<?>"]
   ) => void;
+  isVariant?: boolean;
 }
 
 const PalettePicker = (props: Props) => {
@@ -73,7 +74,7 @@ const PalettePicker = (props: Props) => {
         position: absolute;
         position: absolute;
         left: calc(100% - 56px);
-        top: -300px;
+        top: -${props.isVariant ? 328 : 300}px;
         border-radius: 8px;
         z-index: 1;
       `}

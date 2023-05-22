@@ -331,7 +331,8 @@ const ThemeDefVariantCell = (props: Props) => {
       themeRef,
       themeColorRef,
       props.themingHex,
-      stateVariantRef
+      stateVariantRef,
+      variantDefinition?.alpha ?? 255
     ) ?? "";
   }, [
     applicationState,
@@ -341,6 +342,7 @@ const ThemeDefVariantCell = (props: Props) => {
     themeColorRef,
     stateVariantRef,
     props.themingHex,
+    variantDefinition?.alpha
   ]);
 
   const remappedSVGUrl = useMemo(() => {

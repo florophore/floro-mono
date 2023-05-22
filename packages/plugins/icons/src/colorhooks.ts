@@ -540,9 +540,11 @@ export const rethemeSvg = (
         themedVariant?.paletteColorShade
       );
       if (paletteColor?.hexcode) {
-        // TODO: should address hexcodes here
+        const alphaHex = Math.round(themedVariant?.alpha ?? 255)
+          .toString(16)
+          .padStart(2, "0");
         const indices = findHexIndicesInSvg(svg, hexcode);
-        return replaceHexIndicesInSvg(s, indices, paletteColor?.hexcode + "FF");
+        return replaceHexIndicesInSvg(s, indices, paletteColor?.hexcode + alphaHex);
       }
       return s;
     }
@@ -557,9 +559,16 @@ export const rethemeSvg = (
       themeDef?.paletteColorShade
     );
     if (paletteColor?.hexcode) {
-      // TODO: should address hexcodes here
-      const indices = findHexIndicesInSvg(svg, hexcode);
-      return replaceHexIndicesInSvg(s, indices, paletteColor?.hexcode + "FF");
+        const alphaHex = Math.round(themeDef?.alpha ?? 255)
+          .toString(16)
+          .padStart(2, "0");
+
+        const indices = findHexIndicesInSvg(svg, hexcode);
+        return replaceHexIndicesInSvg(
+          s,
+          indices,
+          paletteColor?.hexcode + alphaHex
+        );
     }
     return s;
   }, svg);

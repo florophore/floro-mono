@@ -262,7 +262,9 @@ const AddIconModal = (props: Props) => {
   );
 
   useEffect(() => {
-    setGroup(iconOptions[0]?.value ?? null);
+    if (!group) {
+      setGroup(iconOptions[0]?.value ?? null);
+    }
   }, [iconGroups]);
 
   const onChangeGroups = useCallback((option) => {

@@ -115,6 +115,7 @@ export interface ColorTheme {
     checkeredGradientContrast: string;
     inPaletteText: string;
     notInPaletteText: string;
+    draggerBackground: string;
   };
   gradients: {
     backgroundNoOpacity: string;
@@ -247,6 +248,7 @@ export const LightTheme: ColorTheme = {
     checkeredGradientContrast: palette.lightGray,
     inPaletteText: palette.purple,
     notInPaletteText: palette.red,
+    draggerBackground: palette.lightGray,
   },
   gradients: {
     backgroundNoOpacity: palette.lightModeBG.substring(0, 7) + Opacity[0],
@@ -379,6 +381,7 @@ export const DarkTheme: ColorTheme = {
         checkeredGradientContrast: palette.lightGray,
         inPaletteText: palette.lightPurple,
         notInPaletteText: palette.lightRed,
+        draggerBackground: palette.darkGray,
     },
     shadows: {
         modalContainer: palette.black.substring(0, 7) + Opacity[70],

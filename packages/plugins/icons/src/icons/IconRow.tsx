@@ -290,6 +290,7 @@ const IconRow = (props: Props) => {
     [controls]
   );
 
+
   const selectedVariantsMap = useMemo(() => {
     return props.icon.enabledVariants?.reduce((acc, enabledVariant) => {
       return {

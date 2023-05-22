@@ -265,6 +265,7 @@ const IconThemeDefVariantCell = (props: Props) => {
       <Container>
         <Card
           style={{
+            borderColor: contrastColor,
             background: themeObject.backgroundColor.hexcode,
           }}
         >
