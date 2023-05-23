@@ -5,7 +5,7 @@ import isSvg from "is-svg";
 import semver from "semver";
 import { init as CJSInit, parse as CJSParser } from "cjs-module-lexer";
 import { XMLValidator }from "fast-xml-parser";
-import { Manifest } from "@floro/floro-lib/src/plugins";
+import { Manifest } from "floro/dist/src/plugins";
 import { v4 as uuidv4} from 'uuid';
 import os from 'os';
 import fs, { ReadStream } from 'fs';

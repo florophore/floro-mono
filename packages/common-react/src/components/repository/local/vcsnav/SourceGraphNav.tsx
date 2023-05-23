@@ -3,14 +3,15 @@ import { Repository } from "@floro/graphql-schemas/src/generated/main-client-gra
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import Button from "@floro/storybook/stories/design-system/Button";
-import { ApiResponse, SourceCommitNode } from "@floro/floro-lib/src/repo";
+import { ApiResponse } from "floro/dist/src/repo";
+import {  SourceCommitNode } from "floro/dist/src/sourcegraph";
 import { useLocalVCSNavContext } from "./LocalVCSContext";
 import { useSourceGraphPortal } from "../../sourcegraph/SourceGraphUIContext";
 import SourceGraph from "@floro/storybook/stories/common-components/SourceGraph";
 import {
   SourceCommitNodeWithGridDimensions,
-  Branch,
 } from "@floro/storybook/stories/common-components/SourceGraph/grid";
+import { Branch } from "floro/dist/src/repo";
 import {
   useAmend,
   useAutoFix,

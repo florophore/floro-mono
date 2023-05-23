@@ -6,7 +6,7 @@ import WarningLabel from "@floro/storybook/stories/design-system/WarningLabel";
 import WarningIconLight from '@floro/common-assets/assets/images/icons/warning.light.svg';
 import WarningIconDark from '@floro/common-assets/assets/images/icons/warning.dark.svg';
 import { usePluginManifestList } from "../../local/hooks/local-hooks";
-import { Manifest } from "@floro/floro-lib/src/plugins";
+import { Manifest } from "floro/dist/src/plugins";
 import { transformLocalManifestToPartialPlugin } from "../../local/hooks/manifest-transforms";
 
 const SectionContainer = styled.div`

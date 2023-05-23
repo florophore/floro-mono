@@ -51,12 +51,12 @@ export default class OrganizationPermissionService {
   }
 
   public async getUserMembership(organization: Organization, user: User) {
-    const organizationMembersContext = await this.contextFactory.createContext(OrganizationMembersContext); 
+    const organizationMembersContext = await this.contextFactory.createContext(OrganizationMembersContext);
     return await organizationMembersContext.getByOrgAndUser(organization, user);
   }
-  
+
   public async calculateMemberOrgPermissions(organizationMember: OrganizationMember) {
-    const organizationMemberRolesContext = await this.contextFactory.createContext(OrganizationMemberRolesContext); 
+    const organizationMemberRolesContext = await this.contextFactory.createContext(OrganizationMemberRolesContext);
     const roles = await organizationMemberRolesContext.getRolesByMember(organizationMember);
     return await this.calculatePermissions(roles);
   }

@@ -10,13 +10,13 @@ import { Organization } from "@floro/database/src/entities/Organization";
 import { User } from "@floro/database/src/entities/User";
 import { Plugin } from "@floro/database/src/entities/Plugin";
 import { PluginVersion } from "@floro/database/src/entities/PluginVersion";
-import {
+import { Manifest,
   coalesceDependencyVersions,
   getUpstreamDependencyManifests,
-  Manifest,
   pluginManifestsAreCompatibleForUpdate,
   validatePluginManifest,
-} from "@floro/floro-lib/src/plugins";
+} from "floro/dist/src/plugins";
+import { makeMemoizedDataSource, makeDataSource } from "floro/dist/src/datasource";
 import { PluginUploadStream } from "./instances/PluginUploadStream";
 import semver from "semver";
 import PluginTarAccessor from "@floro/storage/src/accessors/PluginTarAccessor";
@@ -238,13 +238,14 @@ export default class PluginRegistryService {
       const pluginVersionsContext = await this.contextFactory.createContext(
         PluginVersionsContext
       );
-      const pluginFetch = this.makePluginFetch(pluginVersionsContext);
+      //const pluginFetch = this.makePluginFetch(pluginVersionsContext);
+      const datasource = this.makeMemoizedDatasource(pluginVersionsContext);
       const existingVersions = await pluginVersionsContext.getByPlugin(
         plugin.id
       );
       const pluginIsValid = await validatePluginManifest(
+        datasource,
         pluginUploadStream.originalManifest as Manifest,
-        pluginFetch
       );
       if (pluginIsValid.status == "error") {
         return {
@@ -256,8 +257,9 @@ export default class PluginRegistryService {
         };
       }
       const dependencyManifests = await getUpstreamDependencyManifests(
+        datasource,
         pluginUploadStream.originalManifest as Manifest,
-        pluginFetch
+        true
       );
       if (!dependencyManifests) {
         return {
@@ -381,9 +383,9 @@ export default class PluginRegistryService {
         }
         const lastManifest: Manifest = JSON.parse(lastReleaseVersion.manifest);
         isCompatible = await pluginManifestsAreCompatibleForUpdate(
+          datasource,
           lastManifest,
           pluginUploadStream.originalManifest as Manifest,
-          pluginFetch
         );
         if (isCompatible === null) {
           return {
@@ -619,30 +621,22 @@ export default class PluginRegistryService {
       });
   }
 
-  private makePluginFetch = (
-    pluginVersionsContext: PluginVersionsContext
-  ): ((name: string, version: string) => Promise<Manifest | null>) => {
-    const manifestMemo = {};
-    return async (name: string, version: string): Promise<Manifest | null> => {
-      if (manifestMemo[name + "-" + version]) {
-        return manifestMemo[name + "-" + version];
-      }
-      try {
+  private makeMemoizedDatasource = (pluginVersionsContext: PluginVersionsContext) => {
+    const datasource = makeDataSource({
+      getPluginManifest: async (name: string, version: string): Promise<Manifest> => {
         const pluginVersion = await pluginVersionsContext.getByNameAndVersion(
           name,
           version
         );
         if (!pluginVersion) {
-          return null;
+          throw new Error("missing manifest");
         }
         const manifest: Manifest = JSON.parse(pluginVersion.manifest);
-        manifestMemo[name + "-" + version] = JSON.parse(pluginVersion.manifest);
         return manifest;
-      } catch (e) {
-        return null;
       }
-    };
-  };
+    });
+    return makeMemoizedDataSource(datasource);
+  }
 
   public async releasePlugin(
     pluginVersionId: string,

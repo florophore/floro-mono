@@ -4,7 +4,7 @@ import InputSelector, { Option } from "../../design-system/InputSelector";
 import BranchIconLight from "@floro/common-assets/assets/images/icons/branch_icon.light.svg";
 import BranchIconDark from "@floro/common-assets/assets/images/icons/branch_icon.dark.svg";
 import { useTheme } from "@emotion/react";
-import { Branch } from "@floro/floro-lib/src/repo";
+import { Branch } from "floro/dist/src/repo";
 
 const IconWrapper = styled.div`
   height: 100%;
@@ -21,7 +21,7 @@ const Icon = styled.img`
 
 export interface Props {
     size?: 'regular'|'wide';
-    branches?: Array<Branch>;
+    branches?: Array<Branch|null>;
     branch?: Branch|null;
     label?: string;
     placeholder?: string;
@@ -38,9 +38,9 @@ const BranchSelector = (props: Props) => {
     const branchOptions = useMemo(() => {
         const branchOpts = props.branches?.map?.(branch => {
             return {
-                value: branch.id,
-                label: branch.name,
-                searchValue: branch.name
+                value: branch?.id as string,
+                label: branch?.name as string,
+                searchValue: branch?.name as string
             }
         }, []) ?? [];
         if (!props.allowNone) {
@@ -57,7 +57,7 @@ const BranchSelector = (props: Props) => {
     }, [props.branch, branchOptions]);
 
     const onChange = useCallback((option: Option<unknown>|null) => {
-        const branch = props?.branches?.find?.(b => b.id == option?.value) ?? null;
+        const branch = props?.branches?.find?.(b => b?.id == option?.value) ?? null;
         props.onChangeBranch(branch);
     }, [props.branches, props.allowNone, props.branch, props.onChangeBranch]);
 

@@ -10,8 +10,10 @@ import Button from "@floro/storybook/stories/design-system/Button";
 import {
   ApiResponse,
   Branch,
+} from "floro/dist/src/repo";
+import {
   SourceCommitNode,
-} from "@floro/floro-lib/src/repo";
+} from "floro/dist/src/sourcegraph";
 import { useLocalVCSNavContext } from "./LocalVCSContext";
 import {
   useCanAutoMerge,
@@ -156,7 +158,7 @@ const LocalVCSCompareMode = (props: Props) => {
     if (!sourceCommit) {
       return "transparent";
     }
-    if (sourceCommit?.branchIds.length == 0) {
+    if (sourceCommit?.branchIds?.length == 0) {
       return "transparent";
     }
     return getColorForRow(theme, sourceCommit.row);

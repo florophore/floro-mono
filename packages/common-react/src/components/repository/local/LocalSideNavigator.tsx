@@ -16,7 +16,7 @@ import PluginSettingsSelectedDark from "@floro/common-assets/assets/images/icons
 import PluginSettingsUnSelectedLight from "@floro/common-assets/assets/images/icons/plugin_settings.unselected.light.svg";
 import PluginSettingsUnSelectedDark from "@floro/common-assets/assets/images/icons/plugin_settings.unselected.dark.svg";
 import { useCurrentRepoState, useRepoDevPlugins, useRepoManifestList } from "./hooks/local-hooks";
-import { Manifest } from "@floro/floro-lib/src/plugins";
+import { Manifest } from "floro/dist/src/plugins";
 import { transformLocalManifestToPartialPlugin } from "./hooks/manifest-transforms";
 import LocalSideOption from "./LocalSideOption";
 import { useLocalVCSNavContext } from "./vcsnav/LocalVCSContext";

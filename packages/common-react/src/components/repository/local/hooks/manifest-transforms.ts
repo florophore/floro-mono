@@ -1,4 +1,4 @@
-import { Manifest } from "@floro/floro-lib/src/plugins";
+import { Manifest } from "floro/dist/src/plugins";
 import PluginDefaultSelectedLight from "@floro/common-assets/assets/images/icons/plugin_default.selected.light.svg";
 import PluginDefaultSelectedDark from "@floro/common-assets/assets/images/icons/plugin_default.selected.dark.svg";
 import PluginDefaultLight from "@floro/common-assets/assets/images/icons/plugin_default.unselected.light.svg";

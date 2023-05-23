@@ -10,7 +10,7 @@ import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import ColorPalette from "@floro/styles/ColorPalette";
 import Button from "@floro/storybook/stories/design-system/Button";
-import { ApiResponse } from "@floro/floro-lib/src/repo";
+import { ApiResponse } from "floro/dist/src/repo";
 import { useLocalVCSNavContext } from "./LocalVCSContext";
 import {  useCommitChanges } from "../hooks/local-hooks";
 

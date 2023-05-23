@@ -1,5 +1,6 @@
 
-import { BranchesMetaState, SourceCommitNode, RepoState } from "@floro/floro-lib/src/repo";
+import { BranchesMetaState, RepoState } from "floro/dist/src/repo";
+import { SourceCommitNode } from "floro/dist/src/sourcegraph";
 
 export class SourceGraph {
 

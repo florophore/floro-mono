@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect } from "react";
 import styled from "@emotion/styled";
+import { Branch } from "floro/dist/src/repo";
 import {
-  Branch,
   SourceCommitNodeWithGridDimensions,
   getBranchMap,
   getEdges,
@@ -12,7 +12,7 @@ import {
 } from "./grid";
 import ZoomableSVG from "./ZoomableSVG";
 import CommitChart from "./CommitChart";
-import { SourceCommitNode } from "@floro/floro-lib/src/repo";
+import { SourceCommitNode } from "floro/dist/src/sourcegraph";
 
 const Container = styled.div`
   position: relative;

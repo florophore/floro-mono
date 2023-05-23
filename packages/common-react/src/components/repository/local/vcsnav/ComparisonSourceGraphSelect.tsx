@@ -3,8 +3,10 @@ import styled from "@emotion/styled";
 import {
   ApiResponse,
   Branch,
+} from "floro/dist/src/repo";
+import {
   SourceCommitNode,
-} from "@floro/floro-lib/src/repo";
+} from "floro/dist/src/sourcegraph";
 import { ClientSourceGraph } from "../hooks/local-hooks";
 import { SourceCommitNodeWithGridDimensions } from "@floro/storybook/stories/common-components/SourceGraph/grid";
 import { useSourceGraphPortal } from "../../sourcegraph/SourceGraphUIContext";

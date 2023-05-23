@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
-import { ApiResponse } from "@floro/floro-lib/src/repo";
+import { ApiResponse } from "floro/dist/src/repo";
 import {
   Repository,
   Plugin,

@@ -100,6 +100,9 @@ describe("OrganizationInvitationService", () => {
           canModifyBilling: true,
           canModifyOrganizationRoles: true,
           canAssignRoles: true,
+          canRegisterPlugins: true,
+          canUploadPlugins: true,
+          canReleasePlugins: true
         };
       });
 
@@ -346,6 +349,9 @@ describe("OrganizationInvitationService", () => {
           canModifyBilling: true,
           canModifyOrganizationRoles: true,
           canAssignRoles: true,
+          canRegisterPlugins: true,
+          canUploadPlugins: true,
+          canReleasePlugins: true
         };
       });
 

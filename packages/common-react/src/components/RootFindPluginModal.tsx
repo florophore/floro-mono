@@ -1,5 +1,5 @@
-import { Manifest } from "@floro/floro-lib/src/plugins";
-import { ApiResponse } from "@floro/floro-lib/src/repo";
+import { Manifest } from "floro/dist/src/plugins";
+import { ApiResponse } from "floro/dist/src/repo";
 import { Repository, Plugin, PluginVersion } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import React from "react";
 import ReactDOM from "react-dom";

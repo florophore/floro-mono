@@ -13,11 +13,11 @@ import {
   Repository,
   useGetPluginQuery,
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
-import { ApiResponse } from "@floro/floro-lib/src/repo";
+import { ApiResponse } from "floro/dist/src/repo";
 import PluginDependencyList from "./PluginDependencyList";
 import PluginVersionNavigator from "./PluginVersionNavigator";
 import WarningLabel from "@floro/storybook/stories/design-system/WarningLabel";
-import { Manifest } from "@floro/floro-lib/src/plugins";
+import { Manifest } from "floro/dist/src/plugins";
 import { sortPluginVersions, transformLocalManifestToPartialPlugin } from "../../local/hooks/manifest-transforms";
 import DownstreamDependentsList from "./DownstreamDependentsList";
 

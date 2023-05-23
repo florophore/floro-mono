@@ -13,7 +13,7 @@ import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import ColorPalette from "@floro/styles/ColorPalette";
 import { Repository, useFetchSuggestedPluginsQuery } from "@floro/graphql-schemas/src/generated/main-client-graphql";
-import { ApiResponse } from "@floro/floro-lib/src/repo";
+import { ApiResponse } from "floro/dist/src/repo";
 import DotsLoader from "@floro/storybook/stories/design-system/DotsLoader";
 import { usePossibleDevPlugins, useRepoDevPlugins, useRepoManifestList, useUpdateDescription, useUpdateLicenses } from "../local/hooks/local-hooks";
 import EditIconLight from "@floro/common-assets/assets/images/icons/edit.light.svg";
@@ -25,7 +25,7 @@ import AddLicenseModal from "./AddLicenseModal";
 import RootFindPluginModal from "../../RootFindPluginModal";
 import { useQueryClient } from "react-query";
 import { transformLocalManifestToPartialPlugin } from "../local/hooks/manifest-transforms";
-import { Manifest } from "@floro/floro-lib/src/plugins";
+import { Manifest } from "floro/dist/src/plugins";
 import PluginEditor from "./plugin_editor/PluginEditor";
 
 const Container = styled.div`

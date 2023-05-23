@@ -9,7 +9,7 @@ import ColorPalette from "@floro/styles/ColorPalette";
 import WarningLight from "@floro/common-assets/assets/images/icons/warning.light.svg";
 import WarningDark from "@floro/common-assets/assets/images/icons/warning.dark.svg";
 
-import { ApiResponse } from "@floro/floro-lib/src/repo";
+import { ApiResponse } from "floro/dist/src/repo";
 import { useLocalVCSNavContext } from "./vcsnav/LocalVCSContext";
 
 const NavOption = styled.div`

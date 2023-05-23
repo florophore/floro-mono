@@ -8,16 +8,16 @@ import { Repository } from "@floro/graphql-schemas/src/generated/main-client-gra
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import Button from "@floro/storybook/stories/design-system/Button";
-import { ApiResponse } from "@floro/floro-lib/src/repo";
+import { ApiResponse } from "floro/dist/src/repo";
 import { useLocalVCSNavContext } from "./LocalVCSContext";
 import { useSourceGraphPortal } from "../../sourcegraph/SourceGraphUIContext";
 import SourceGraph from "@floro/storybook/stories/common-components/SourceGraph";
 import {
   SourceCommitNodeWithGridDimensions,
-  Branch,
   mapSourceGraphRootsToGrid,
   getPotentialBaseBranchesForSha,
 } from "@floro/storybook/stories/common-components/SourceGraph/grid";
+import { Branch } from "floro/dist/src/repo";
 import BranchSelector from "@floro/storybook/stories/repo-components/BranchSelector";
 import SelectedShaDisplay from "@floro/storybook/stories/repo-components/SelectedShaDisplay";
 import {
@@ -207,7 +207,7 @@ const EditBranchNavPage = (props: Props) => {
     if (!sourceCommit) {
       return "transparent";
     }
-    if (sourceCommit?.branchIds.length == 0) {
+    if (sourceCommit?.branchIds?.length == 0) {
       return "transparent";
     }
     return getColorForRow(theme, sourceCommit.row);
@@ -493,7 +493,7 @@ const EditBranchNavPage = (props: Props) => {
                 <BranchSelector
                   size="wide"
                   branches={baseBranches ?? []}
-                  branch={baseBranch}
+                  branch={baseBranch ?? null}
                   onChangeBranch={setBaseBranch}
                   label={"base branch"}
                   placeholder={"select base branch"}

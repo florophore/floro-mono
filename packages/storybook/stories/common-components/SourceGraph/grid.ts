@@ -1,19 +1,11 @@
-import { SourceCommitNode } from "@floro/floro-lib/src/repo";
+import { SourceCommitNode } from "floro/dist/src/sourcegraph";
+import { Branch } from "floro/dist/src/repo";
 
 export interface SourceCommitNodeWithGridDimensions extends SourceCommitNode {
   row: number;
   column: number;
   maxChainLength?: number;
   isInCurrentLineage?: boolean;
-}
-
-export interface Branch {
-  id: string;
-  name: string;
-  lastCommit: null | string;
-  baseBranchId: null | string;
-  createdBy: string;
-  createdAt: string;
 }
 
 const getSubGraphWidth = (node: SourceCommitNode): number => {
@@ -166,7 +158,7 @@ const getTargetCommitLeaf = (
   branches: Array<Branch>,
   branchRankMap: {[k: string]: number}
 ): SourceCommitNode => {
-  const topBranch = getTargetBranchId(branches, rootNode.branchIds);
+  const topBranch = getTargetBranchId(branches, rootNode?.branchIds ?? []);
   const topCommit = branches?.find(b => b.id == topBranch)?.lastCommit;
   if (topCommit && pointerMap[topCommit]) {
     return pointerMap[topCommit];
@@ -177,7 +169,7 @@ const getTargetCommitLeaf = (
       const scoreA = getNodeBranchRank(a, branchRankMap);
       const scoreB = getNodeBranchRank(b, branchRankMap);
       if (scoreA == scoreB) {
-        if (a.branchIds.length == b.branchIds.length) {
+        if (a?.branchIds?.length == b?.branchIds?.length) {
           if (a.idx == b.idx) {
             if (new Date(a.timestamp) == new Date(b.timestamp)) {
               return 0;
@@ -186,7 +178,7 @@ const getTargetCommitLeaf = (
           }
           return a.idx > b.idx ? -1 : 1;
         }
-        return a.branchIds.length > b.branchIds.length ? -1 : 1;
+        return (a?.branchIds?.length  ?? 0) > (b?.branchIds?.length ?? 0) ? -1 : 1;
       }
       return scoreA > scoreB ? 1 : -1;
     })?.[0] ?? rootNode
@@ -221,11 +213,11 @@ const buildNullGrid = (
 };
 
 const getNodeBranchRank = (node: SourceCommitNode, branchRankMap: {[k: string]: number}) => {
-  if (node.branchIds.length == 0) {
+  if (node?.branchIds?.length == 0) {
     return Number.MAX_SAFE_INTEGER;
   }
   let score = 0;
-  for (const branchId of node.branchIds) {
+  for (const branchId of (node?.branchIds ?? [])) {
     score += branchRankMap?.[branchId] ?? 0;
   }
   return score;
@@ -255,7 +247,7 @@ function insertNodeIntoGrid(
         const scoreA = getNodeBranchRank(a, branchRankMap);
         const scoreB = getNodeBranchRank(b, branchRankMap);
         if (scoreA == scoreB) {
-          if (a.branchIds.length == b.branchIds.length) {
+          if (a?.branchIds?.length == b?.branchIds?.length) {
             if (a.maxChainLength == b.maxChainLength) {
               if (new Date(a.timestamp) == new Date(b.timestamp)) {
                 return 0;
@@ -264,7 +256,7 @@ function insertNodeIntoGrid(
             }
             return (a?.maxChainLength ?? 0) > (b?.maxChainLength ?? 0) ? -1 : 1;
           }
-          return a.branchIds.length > b.branchIds.length ? -1 : 1;
+          return (a?.branchIds?.length ?? 0) > (b?.branchIds?.length ?? 0) ? -1 : 1;
         }
         return scoreA > scoreB ? 1 : -1;
       }) ?? [];
@@ -287,10 +279,10 @@ function insertNodeIntoGrid(
 
     if (
       childRow == node.row &&
-      child.branchIds.length != node.branchIds?.length &&
+      child?.branchIds?.length != node.branchIds?.length &&
       !targetNodes.has(child.sha as string)
     ) {
-      if (child.branchIds.length != node.branchIds?.length) {
+      if (child?.branchIds?.length != node.branchIds?.length) {
         childRow++;
       }
       while (
@@ -399,13 +391,13 @@ export const mapSourceGraphRootsToGrid = (
   }
   const pointerMap = buildPointerMap(rootNodes);
   const orderedRootNodes = rootNodes.sort((a, b) => {
-    if (a.branchIds.length == b.branchIds.length) {
+    if (a?.branchIds?.length == b?.branchIds?.length) {
       if (new Date(a.timestamp) == new Date(b.timestamp)) {
         return 0;
       }
       return new Date(a.timestamp) > new Date(b.timestamp) ? -1 : 1;
     }
-    return a.branchIds.length > b.branchIds.length ? -1 : 1;
+    return (a?.branchIds?.length ?? 0) > (b?.branchIds?.length ?? 0) ? -1 : 1;
   });
 
   const subgraphs: Array<SourceCommitNode> = [];
@@ -426,7 +418,7 @@ export const mapSourceGraphRootsToGrid = (
     const subgraph = assignMaxSizeToRoot(subgraphs[n] as SourceCommitNodeWithGridDimensions);
     const branchRankMap = sortBranchIdsIntoTopologicalOrder(
       branches,
-      subgraph.branchIds
+      subgraph?.branchIds ?? []
     );
     let current: SourceCommitNode | SourceCommitNodeWithGridDimensions | null =
       getTargetCommitLeaf(subgraph, pointerMap, branches, branchRankMap);
@@ -571,7 +563,7 @@ export const getInitNode = (
 };
 
 const filterNode = (node: SourceCommitNode, filterBranchlessNodes: boolean) => {
-  if (filterBranchlessNodes && node.branchIds.length == 0) {
+  if (filterBranchlessNodes && (node?.branchIds?.length ?? 0) == 0) {
     return null;
   }
   const children = getNodes(node.children ?? [], filterBranchlessNodes);

@@ -11,7 +11,7 @@ import RedXDark from "@floro/common-assets/assets/images/icons/red_x_circle.dark
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { usePluginCompatabilityCheck } from "../../local/hooks/local-hooks";
 import DotsLoader from "@floro/storybook/stories/design-system/DotsLoader";
-import { ApiResponse } from "@floro/floro-lib/src/repo";
+import { ApiResponse } from "floro/dist/src/repo";
 
 const RowContainer = styled.div`
   width: 100%;

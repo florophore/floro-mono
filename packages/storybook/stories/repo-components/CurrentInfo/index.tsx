@@ -14,7 +14,8 @@ import MergeIconDark from "@floro/common-assets/assets/images/repo_icons/merge.w
 import ChangeDirectionIcon from "@floro/common-assets/assets/images/repo_icons/change_direction.dark.svg";
 
 import Button from "../../design-system/Button";
-import { Branch, CommitData } from "@floro/floro-lib/src/repo";
+import { Branch } from "floro/dist/src/repo";
+import { CommitData } from "floro/dist/src/sequenceoperations";
 import { Repository } from "@floro/graphql-schemas/build/generated/main-graphql";
 
 import BackArrowIconLight from "@floro/common-assets/assets/images/icons/back_arrow.light.svg";

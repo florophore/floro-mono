@@ -8,7 +8,7 @@ import Button from "@floro/storybook/stories/design-system/Button";
 import RedHexagonWarningLight from "@floro/common-assets/assets/images/icons/red_hexagon_warning.light.svg";
 import RedHexagonWarningDark from "@floro/common-assets/assets/images/icons/red_hexagon_warning.dark.svg";
 import { Repository } from "@floro/graphql-schemas/build/generated/main-client-graphql";
-import { ApiResponse } from "@floro/floro-lib/src/repo";
+import { ApiResponse } from "floro/dist/src/repo";
 import { useCheckoutCommitSha } from "../hooks/local-hooks";
 
 const HeaderContainer = styled.div`

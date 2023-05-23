@@ -3,7 +3,7 @@ import { Repository } from "@floro/graphql-schemas/src/generated/main-client-gra
 import styled from "@emotion/styled";
 import CurrentInfo from "@floro/storybook/stories/repo-components/CurrentInfo";
 import RepoActionButton from "@floro/storybook/stories/repo-components/RepoActionButton";
-import { ApiResponse } from "@floro/floro-lib/src/repo";
+import { ApiResponse } from "floro/dist/src/repo";
 import { useLocalVCSNavContext } from "./LocalVCSContext";
 import {
   useAbortMerge,

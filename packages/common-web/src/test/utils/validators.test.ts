@@ -5,7 +5,7 @@ describe("regexes", () => {
     describe("PLUGIN_REGEX",  () => {
         test("matches following", () => {
             expect(PLUGIN_REGEX.test("regex-with-hyphens")).toEqual(true);
-            expect(PLUGIN_REGEX.test("regex_with_underscores")).toEqual(true);
+            expect(PLUGIN_REGEX.test("regex_with_underscore")).toEqual(true);
         });
 
         test("does not match following", () => {

@@ -5,7 +5,7 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-import { ApiResponse } from "@floro/floro-lib/src/repo";
+import { ApiResponse } from "floro/dist/src/repo";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { useUpdatePluginState } from "../local/hooks/local-hooks";
 import { useLocalVCSNavContext } from "../local/vcsnav/LocalVCSContext";

@@ -2,8 +2,9 @@ import { useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import axios from "axios";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
-import { ApiResponse, Branch, BranchesMetaState, SourceCommitNode, SourceGraphResponse } from "@floro/floro-lib/src/repo";
-import { Manifest } from "@floro/floro-lib/src/plugins";
+import { ApiResponse, Branch, BranchesMetaState, SourceGraphResponse } from "floro/dist/src/repo";
+import { SourceCommitNode } from "floro/dist/src/sourcegraph";
+import { Manifest } from "floro/dist/src/plugins";
 import { useSession } from "../../../../session/session-context";
 import { SourceGraph } from './SourceGraph';
 
@@ -49,7 +50,7 @@ export const useSourceGraph = (repository: Repository) => {
           const sourcegraph = new SourceGraph(
             result?.data?.commits ?? [] as Array<SourceCommitNode>,
             result?.data?.branchesMetaState ?? [],
-            result?.data?.repoState ?? [],
+            result?.data?.repoState,
           )
           return {
             pointers: sourcegraph.getPointers(),
@@ -317,7 +318,7 @@ export const useCreateBranch = (repository: Repository) => {
       const sourcegraph = new SourceGraph(
         result?.data?.sourceGraphResponse?.commits ?? [] as Array<SourceCommitNode>,
         result?.data?.sourceGraphResponse?.branchesMetaState ?? [],
-        result?.data?.sourceGraphResponse?.repoState ?? [],
+        result?.data?.sourceGraphResponse?.repoState,
       )
       return {
         apiResponse: result?.data?.apiResponse,
@@ -359,7 +360,7 @@ export const useUpdateBranch = (repository: Repository) => {
       const sourcegraph = new SourceGraph(
         result?.data?.sourceGraphResponse?.commits ?? [] as Array<SourceCommitNode>,
         result?.data?.sourceGraphResponse?.branchesMetaState ?? [],
-        result?.data?.sourceGraphResponse?.repoState ?? [],
+        result?.data?.sourceGraphResponse?.repoState,
       )
       return {
         apiResponse: result?.data?.apiResponse,
@@ -395,7 +396,7 @@ export const useSwitchBranch = (repository: Repository) => {
       const sourcegraph = new SourceGraph(
         result?.data?.sourceGraphResponse?.commits ?? [] as Array<SourceCommitNode>,
         result?.data?.sourceGraphResponse?.branchesMetaState ?? [],
-        result?.data?.sourceGraphResponse?.repoState ?? [],
+        result?.data?.sourceGraphResponse?.repoState,
       )
       return {
         apiResponse: result?.data?.apiResponse,
@@ -434,7 +435,7 @@ export const useDeleteBranch = (repository: Repository) => {
       const sourcegraph = new SourceGraph(
         result?.data?.sourceGraphResponse?.commits ?? [] as Array<SourceCommitNode>,
         result?.data?.sourceGraphResponse?.branchesMetaState ?? [],
-        result?.data?.sourceGraphResponse?.repoState ?? [],
+        result?.data?.sourceGraphResponse?.repoState,
       )
       return {
         apiResponse: result?.data?.apiResponse,
@@ -467,7 +468,7 @@ export const useMergeSha = (repository: Repository) => {
       const sourcegraph = new SourceGraph(
         result?.data?.sourceGraphResponse?.commits ?? [] as Array<SourceCommitNode>,
         result?.data?.sourceGraphResponse?.branchesMetaState ?? [],
-        result?.data?.sourceGraphResponse?.repoState ?? [],
+        result?.data?.sourceGraphResponse?.repoState,
       )
       return {
         apiResponse: result?.data?.apiResponse,
@@ -496,7 +497,7 @@ export const useResolveMerge = (repository: Repository) => {
       const sourcegraph = new SourceGraph(
         result?.data?.sourceGraphResponse?.commits ?? [] as Array<SourceCommitNode>,
         result?.data?.sourceGraphResponse?.branchesMetaState ?? [],
-        result?.data?.sourceGraphResponse?.repoState ?? [],
+        result?.data?.sourceGraphResponse?.repoState,
       )
       return {
         apiResponse: result?.data?.apiResponse,
@@ -544,7 +545,7 @@ export const useCherryPick = (repository: Repository) => {
       const sourcegraph = new SourceGraph(
         result?.data?.sourceGraphResponse?.commits ?? [] as Array<SourceCommitNode>,
         result?.data?.sourceGraphResponse?.branchesMetaState ?? [],
-        result?.data?.sourceGraphResponse?.repoState ?? [],
+        result?.data?.sourceGraphResponse?.repoState,
       )
       return {
         apiResponse: result?.data?.apiResponse,
@@ -577,7 +578,7 @@ export const useRevert = (repository: Repository) => {
       const sourcegraph = new SourceGraph(
         result?.data?.sourceGraphResponse?.commits ?? [] as Array<SourceCommitNode>,
         result?.data?.sourceGraphResponse?.branchesMetaState ?? [],
-        result?.data?.sourceGraphResponse?.repoState ?? [],
+        result?.data?.sourceGraphResponse?.repoState,
       )
       return {
         apiResponse: result?.data?.apiResponse,
@@ -615,7 +616,7 @@ export const useAmend = (repository: Repository) => {
       const sourcegraph = new SourceGraph(
         result?.data?.sourceGraphResponse?.commits ?? [] as Array<SourceCommitNode>,
         result?.data?.sourceGraphResponse?.branchesMetaState ?? [],
-        result?.data?.sourceGraphResponse?.repoState ?? [],
+        result?.data?.sourceGraphResponse?.repoState,
       )
       return {
         apiResponse: result?.data?.apiResponse,
@@ -648,7 +649,7 @@ export const useAutoFix = (repository: Repository) => {
       const sourcegraph = new SourceGraph(
         result?.data?.sourceGraphResponse?.commits ?? [] as Array<SourceCommitNode>,
         result?.data?.sourceGraphResponse?.branchesMetaState ?? [],
-        result?.data?.sourceGraphResponse?.repoState ?? [],
+        result?.data?.sourceGraphResponse?.repoState,
       )
       return {
         apiResponse: result?.data?.apiResponse,
@@ -1021,7 +1022,7 @@ export const useCheckoutCommitSha = (repository: Repository) => {
       const sourcegraph = new SourceGraph(
         result?.data?.sourceGraphResponse?.commits ?? [] as Array<SourceCommitNode>,
         result?.data?.sourceGraphResponse?.branchesMetaState ?? [],
-        result?.data?.sourceGraphResponse?.repoState ?? [],
+        result?.data?.sourceGraphResponse?.repoState,
       )
       return {
         apiResponse: result?.data?.apiResponse,

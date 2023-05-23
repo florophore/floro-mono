@@ -15,6 +15,9 @@ items:
     canModifyBilling: true
     canModifyOrganizationRoles: true
     canAssignRoles: true
+    canRegisterPlugins: true
+    canUploadPlugins: true
+    canReleasePlugins: true
     organization: '@org_0'
     createdByUser: '@user_0'
     createdByOrganizationMember: '@org_member_0'
@@ -33,6 +36,9 @@ items:
     canModifyBilling: false
     canModifyOrganizationRoles: false
     canAssignRoles: false
+    canRegisterPlugins: true
+    canUploadPlugins: true
+    canReleasePlugins: true
     organization: '@org_0'
     createdByUser: '@user_0'
     createdByOrganizationMember: '@org_member_0'
@@ -51,6 +57,9 @@ items:
     canModifyBilling: true
     canModifyOrganizationRoles: false
     canAssignRoles: false
+    canRegisterPlugins: true
+    canUploadPlugins: true
+    canReleasePlugins: true
     organization: '@org_0'
     createdByUser: '@user_0'
     createdByOrganizationMember: '@org_member_0'
@@ -69,6 +78,9 @@ items:
     canModifyBilling: false
     canModifyOrganizationRoles: true
     canAssignRoles: true
+    canRegisterPlugins: true
+    canUploadPlugins: true
+    canReleasePlugins: true
     organization: '@org_0'
     createdByUser: '@user_0'
     createdByOrganizationMember: '@org_member_0'
