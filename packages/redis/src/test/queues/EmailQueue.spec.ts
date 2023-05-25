@@ -1,8 +1,8 @@
-import container from '../test_utils/testContainer';
 import '../test_utils/setGlobals';
+import container from '../test_utils/testContainer';
 
 import EmailQueue from '../../queues/EmailQueue';
-import { describe, it } from 'mocha';
+import { describe, test } from 'mocha';
 import { expect } from 'chai';
 
 describe('EmailQueue', () => {
@@ -13,7 +13,7 @@ describe('EmailQueue', () => {
         emailQueue = container.get(EmailQueue);
     })
 
-    it('add works', () => {
+    test('add works', () => {
         expect(true).to.be.true;
         //emailQueue.makeMailWorker(async (job) => {
         //    expect((job.data as { foo: string}).foo).to.be.eq("bar")

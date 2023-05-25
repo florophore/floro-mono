@@ -10,8 +10,8 @@ import RedisPubsubFactory from './RedisPubsubFactory';
 import SignupExchangStore from './stores/SignUpExchangeStore';
 
 export default new ContainerModule((bind): void => {
-    bind<RedisClientConfig>(RedisClientConfig).toSelf();
-    bind<RedisClient>(RedisClient).toSelf();
+    bind<RedisClientConfig>(RedisClientConfig).toSelf().inSingletonScope();;
+    bind<RedisClient>(RedisClient).toSelf().inSingletonScope();;
     bind<SessionStore>(SessionStore).toSelf();
 
     // stores

@@ -20,7 +20,7 @@ export default class RedisClient {
         return this.redisClientConfig.url();
     }
 
-    public startRedis(): void {
+    public async startRedis(): Promise<void> {
         this.redis = new IORedis(this.redisClientConfig.url());
         this.redis.options.maxRetriesPerRequest = null;
     }

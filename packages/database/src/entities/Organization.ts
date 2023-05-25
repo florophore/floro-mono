@@ -15,7 +15,8 @@ import {
   JoinColumn,
   Relation,
   OneToMany,
-  OneToOne
+  OneToOne,
+  Binary
 } from "typeorm";
 import { BinaryPKBaseEntity } from "./BinaryPKBaseEntity";
 import { OrganizationDailyActivatedMember } from "./OrganizationDailyActivatedMember";
@@ -29,6 +30,8 @@ import { Repository } from "./Repository";
 import { Photo } from "./Photo";
 import { Plugin } from "./Plugin";
 import { PluginVersion } from "./PluginVersion";
+import { Branch } from "./Branch";
+import { Commit } from "./Commit";
 
 @Entity("organizations")
 export class Organization extends BinaryPKBaseEntity {
@@ -127,7 +130,7 @@ export class Organization extends BinaryPKBaseEntity {
 
   @OneToMany("OrganizationInvitationRole", "organization")
   organizationDailyActivatedMembers?: Relation<OrganizationDailyActivatedMember>[];
-  
+
   @OneToMany("Repository", "organization")
   privateRepositories?: Relation<Repository>[];
 
@@ -149,4 +152,16 @@ export class Organization extends BinaryPKBaseEntity {
   @OneToOne("Photo", "organization")
   @JoinColumn()
   profilePhoto?: Relation<Photo>|null;
+
+  @OneToMany("Binary", "organization")
+  @JoinColumn()
+  createdBinaries?: Relation<Binary>[];
+
+  @OneToMany("Branch", "organization")
+  @JoinColumn()
+  branches?: Relation<Branch>[];
+
+  @OneToMany("Commit", "organization")
+  @JoinColumn()
+  commits?: Relation<Commit>[];
 }

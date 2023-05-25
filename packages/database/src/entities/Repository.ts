@@ -1,8 +1,11 @@
 import { IsBoolean, IsDefined, IsIn, IsString, IsUUID, ValidateIf } from "class-validator";
-import { Entity, Column, OneToOne, Relation, JoinColumn } from "typeorm";
+import { Entity, Column, OneToOne, Relation, JoinColumn, OneToMany, ManyToOne } from "typeorm";
 import { BinaryPKBaseEntity } from "./BinaryPKBaseEntity";
 import { Organization } from "./Organization";
 import { User } from "./User";
+import { Branch } from "./Branch";
+import { Binary } from "./Binary";
+import { Commit } from "./Commit";
 
 @Entity("repositories")
 export class Repository extends BinaryPKBaseEntity {
@@ -69,7 +72,19 @@ export class Repository extends BinaryPKBaseEntity {
   @Column("uuid")
   organizationId!: string;
 
-  @OneToOne("Organization", "repositories")
+  @ManyToOne("Organization", "repositories")
   @JoinColumn()
   organization?: Relation<Organization>;
+
+  @OneToMany("Binary", "repository")
+  @JoinColumn()
+  binaries?: Relation<Binary>[];
+
+  @OneToMany("Branch", "repository")
+  @JoinColumn()
+  branches?: Relation<Branch>[];
+
+  @OneToOne("Commit", "repository")
+  @JoinColumn()
+  commits?: Relation<Commit>[];
 }

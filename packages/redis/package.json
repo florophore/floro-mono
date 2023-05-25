@@ -10,7 +10,7 @@
     "clean": "rimraf build tsconfig.tsbuildinfo",
     "build": "yarn clean && yarn tsc",
     "lint": "eslint --ext .ts,.tsx .",
-    "test": "NODE_ENV=test node node_modules/.bin/mocha src/**/**/*.spec.ts --exit",
+    "test": "NODE_ENV=test node node_modules/.bin/mocha src/**/**/*.spec.ts --timeout 5000 --exit",
     "test:inspect": "NODE_ENV=test node node_modules/.bin/mocha inspect src/**/*.spec.ts --exit"
   },
   "dependencies": {

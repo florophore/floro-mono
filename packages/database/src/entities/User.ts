@@ -11,6 +11,9 @@ import { Plugin } from "./Plugin";
 import { UserAuthCredential } from "./UserAuthCredential";
 import { UserServiceAgreement } from "./UserServiceAgreement";
 import { PluginVersion } from "./PluginVersion";
+import { Binary } from "./Binary";
+import { Branch } from "./Branch";
+import { Commit } from "./Commit";
 
 @Entity("users")
 export class User extends BinaryPKBaseEntity {
@@ -43,7 +46,7 @@ export class User extends BinaryPKBaseEntity {
   @IsDefined()
   @ValidateIf((_, value) => value != undefined)
   utilizedDiskSpaceBytes?: number;
- 
+
   @OneToOne("UserServiceAgreement", "user")
   userServiceAgreement?: Relation<UserServiceAgreement>;
 
@@ -92,4 +95,20 @@ export class User extends BinaryPKBaseEntity {
   @OneToOne("Photo", "user")
   @JoinColumn()
   profilePhoto?: Relation<Photo>|null;
+
+  @OneToMany("Binary", "createdBy")
+  @JoinColumn()
+  createdBinaries?: Relation<Binary>[];
+
+  @OneToMany("Branch", "createdBy")
+  @JoinColumn()
+  createdBranches?: Relation<Branch>[];
+
+  @OneToMany("Commit", "user")
+  @JoinColumn()
+  commits?: Relation<Commit>[];
+
+  @OneToMany("Commit", "authorUser")
+  @JoinColumn()
+  authoredCommits?: Relation<Commit>[];
 }

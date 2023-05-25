@@ -1,8 +1,8 @@
+import './test_utils/setGlobals';
 import container from './test_utils/testContainer';
-import './test_utils/setupTests';
 
 import RedisClient from '../RedisClient';
-import { describe, it } from 'mocha';
+import { describe, test } from 'mocha';
 import { expect } from 'chai';
 
 describe('RedisClient', () => {
@@ -11,9 +11,10 @@ describe('RedisClient', () => {
 
     beforeEach(() => {
         redisClient = container.get(RedisClient);
+        console.log("BRO", redisClient);
     })
 
-    it('connects', async () => {
+    test('connects', async () => {
         await redisClient.redis?.set('key', 'value');
         const value = await redisClient.redis?.get('key');
         expect(value).to.equal('value');
