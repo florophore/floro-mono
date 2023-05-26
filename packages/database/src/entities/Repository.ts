@@ -6,6 +6,8 @@ import { User } from "./User";
 import { Branch } from "./Branch";
 import { Binary } from "./Binary";
 import { Commit } from "./Commit";
+import { RepoEnabledRoleSetting } from "./RepoEnabledRoleSetting";
+import { RepoEnabledUserSetting } from "./RepoEnabledUserSetting";
 
 @Entity("repositories")
 export class Repository extends BinaryPKBaseEntity {
@@ -58,9 +60,25 @@ export class Repository extends BinaryPKBaseEntity {
   })
   lastRepoUpdateAt!: any;
 
+  @Column("varchar")
+  @IsString()
+  defaultBranchId!: any;
+
   @Column("uuid")
   @IsDefined()
   createdByUserId!: string;
+
+  @Column("boolean")
+  @IsBoolean()
+  anyoneCanPushBranches!: boolean;
+
+  @Column("boolean")
+  @IsBoolean()
+  anyoneCanDeleteBranches!: boolean;
+
+  @Column("boolean")
+  @IsBoolean()
+  anyoneCanChangeSettings!: boolean;
 
   @Column("uuid")
   userId!: string;
@@ -87,4 +105,10 @@ export class Repository extends BinaryPKBaseEntity {
   @OneToOne("Commit", "repository")
   @JoinColumn()
   commits?: Relation<Commit>[];
+
+  @OneToMany("RepoEnabledUserSetting", "user")
+  enabledRepoUserSettings?: Relation<RepoEnabledUserSetting>[];
+
+  @OneToMany("RepoEnabledRoleSetting", "role")
+  enabledRepoRoleSettings?: Relation<RepoEnabledRoleSetting>[];
 }
