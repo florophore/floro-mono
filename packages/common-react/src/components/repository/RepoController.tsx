@@ -22,7 +22,7 @@ interface Props {
 }
 
 const RepoController = (props: Props) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
 
   const onTogglePanel = useCallback(() => {
     setIsExpanded(!isExpanded);

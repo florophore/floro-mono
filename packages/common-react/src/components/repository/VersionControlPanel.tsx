@@ -26,11 +26,12 @@ import Button from "@floro/storybook/stories/design-system/Button";
 import LocalRemoteToggle from "@floro/storybook/stories/common-components/LocalRemoteToggle";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import axios from 'axios';
-import { useDaemonIsConnected } from "../../pubsub/socket";
+import { useDaemonIsConnected, useFloroSocket, useSocketEvent } from "../../pubsub/socket";
 import RemoteVCSNavHome from "./home/vcsnav/RemoteVCSNavHome";
 import LocalVCSNavController from "./local/vcsnav/LocalVCSNavController";
 import { LocalVCSNavProvider, useLocalVCSNavContext } from "./local/vcsnav/LocalVCSContext";
 import { useSourceGraphIsShown } from "./ui-state-hook";
+import { useCloneRepo, useCloneState, useRepoExistsLocally } from "./local/hooks/local-hooks";
 
 const Container = styled.nav`
   display: flex;
@@ -127,52 +128,23 @@ interface Props {
   onSetIsExpanded: (isExpanded: boolean) => void;
 }
 
-const useRepoExistsLocally = (repository: Repository) => {
-    return useQuery("repo-exists:" + repository.id, async () => {
-        try {
-            if (!repository.id) {
-                return false;
-            }
-            const result = await axios.get(`http://localhost:63403/repo/${repository.id}/exists`)
-            return result?.data?.exists ?? false;
-        } catch(e) {
-            return false;
-        }
-    }, { cacheTime: 0});
-}
-
-const useCloneRepo = (repository: Repository) => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: () => {
-        return axios.get(
-          `http://localhost:63403/repo/${repository.id}/clone`
-        );
-    },
-    onSuccess: (result) => {
-      if (result?.data?.status == "success") {
-        queryClient.invalidateQueries("repo-exists:" + repository.id);
-        queryClient.invalidateQueries("local-repos");
-      }
-    }
-  });
-};
 
 const VersionControlPanel = (props: Props) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const from: "remote"|"local" = searchParams.get?.('from') as "remote"|"local" ?? "remote";
   const { data: repoExistsLocally, isLoading } = useRepoExistsLocally(props.repository);
-  const cloneRepoMutation = useCloneRepo(props.repository);
   const sourceGraphIsShown = useSourceGraphIsShown();
   const isFullShadow = useMemo(() => {
+    if (!repoExistsLocally) {
+      return true;
+    }
     if (sourceGraphIsShown) {
       return true;
     }
     return false;
-  }, [sourceGraphIsShown]);
-  const cloneRepo = useCallback(() => {
-    cloneRepoMutation.mutate();
-  }, [props.repository?.id]);
+  }, [sourceGraphIsShown, repoExistsLocally]);
+  const { data: cloneState } = useCloneState(props.repository);
+
   const theme = useTheme();
   const isDaemonConnected = useDaemonIsConnected();
   const adjustIcon = useMemo(
@@ -180,15 +152,15 @@ const VersionControlPanel = (props: Props) => {
     [props.isExpanded]
   );
 
-  useEffect(() => {
-    // open expansion on load
-    const timeout = setTimeout(() => {
-      props.onSetIsExpanded(true);
-    }, 150);
-    return () => {
-      clearTimeout(timeout);
-    }
-  }, []);
+  //useEffect(() => {
+  //  // open expansion on load
+  //  const timeout = setTimeout(() => {
+  //    props.onSetIsExpanded(true);
+  //  }, 150);
+  //  return () => {
+  //    clearTimeout(timeout);
+  //  }
+  //}, []);
 
   useEffect(() => {
     if (!isDaemonConnected) {
@@ -321,7 +293,7 @@ const VersionControlPanel = (props: Props) => {
     <Container style={panelStyle}>
       <InnerContainer style={innerStyle}>
         <InnerContainerContent>
-          {repoExistsLocally && isDaemonConnected && (
+          {repoExistsLocally && isDaemonConnected && cloneState?.state == "none" && (
             <div style={{ height: 73 }}>
               <LocalRemoteToggle tab={from} onChange={onToggleFrom} />
             </div>
@@ -346,7 +318,7 @@ const VersionControlPanel = (props: Props) => {
       <AdjustIconWrapper onClick={onTogglePanel} style={iconOffset}>
         <AdjustIcon src={adjustIcon} />
       </AdjustIconWrapper>
-      {repoExistsLocally && isDaemonConnected && (
+      {repoExistsLocally && isDaemonConnected && cloneState?.state == "none" && (
         <>
           <RemoteToggleIconWrapper
             style={{

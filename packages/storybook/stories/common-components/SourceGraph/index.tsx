@@ -46,6 +46,7 @@ export interface Props {
   htmlContentHeight?: number;
   filterBranches?: boolean;
   filteredBranches?: Array<Branch>;
+  filteredBranchIds?: Array<string>;
   disableZoomToHighlightedBranchOnLoad?: boolean;
 }
 
@@ -61,8 +62,8 @@ const SourceGraph = (props: Props): React.ReactElement => {
   );
 
   const nodes = useMemo(() => {
-    return getNodes(props.rootNodes, props.filterBranchlessNodes ?? false);
-  }, [props.rootNodes, props.filterBranchlessNodes]);
+    return getNodes(props.rootNodes, props.filterBranchlessNodes ?? false, props?.filteredBranchIds ?? []);
+  }, [props.rootNodes, props.filterBranchlessNodes, props.filteredBranchIds]);
 
   const gridData = useMemo(
     () =>
@@ -84,8 +85,8 @@ const SourceGraph = (props: Props): React.ReactElement => {
   const rows = gridData.gridRowSize;
 
   const edges = useMemo(
-    () => getEdges(gridData.roots, columnDistance, rowDistance),
-    [gridData.roots, columnDistance, rowDistance]
+    () => getEdges(gridData.roots, props.filteredBranchIds ?? [], columnDistance, rowDistance),
+    [gridData.roots, columnDistance, rowDistance, props.filteredBranchIds]
   );
 
   const vertices = useMemo(

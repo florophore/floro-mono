@@ -29,7 +29,7 @@ export class Binary extends BaseEntity {
     this.id = UUIDHelper.getUUIDFromString(this.repositoryId + ":" + this.sha) as string;
   }
 
-  @CreateDateColumn({ name: "created_at", type: "timestamp", default: () => "CURRENT_TIMESTAMP(6)" })
+  @CreateDateColumn({ name: "inserted_at", type: "timestamp", default: () => "CURRENT_TIMESTAMP(6)" })
   public insertedAt!: any;
 
   @UpdateDateColumn({ name: "updated_at", type: "timestamp", default: () => "CURRENT_TIMESTAMP(6)", onUpdate: "CURRENT_TIMESTAMP(6)" })

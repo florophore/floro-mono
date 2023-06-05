@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import styled from "@emotion/styled";
 import CurrentInfo from "@floro/storybook/stories/repo-components/CurrentInfo";
@@ -6,7 +6,22 @@ import RepoActionButton from "@floro/storybook/stories/repo-components/RepoActio
 import Button from "@floro/storybook/stories/design-system/Button";
 import { ApiResponse } from "floro/dist/src/repo";
 import { useLocalVCSNavContext } from "./LocalVCSContext";
-import { useUpdateCurrentCommand } from "../hooks/local-hooks";
+import {
+  useFetchInfo,
+  usePullBranch,
+  usePushBranch,
+  useUpdateCurrentCommand,
+} from "../hooks/local-hooks";
+import {
+  usePullButtonEnabled,
+  usePullButtonSubTitle,
+  usePushButtonEnabled,
+  usePushButtonSubTitle,
+} from "../hooks/push-pull-state";
+import UpdateBillingModal from "../modals/UpdateBillingModal";
+import ConfirmMergeWIPModal from "../modals/ConfirmMergeWIPModal";
+import ConfirmForcePullModal from "../modals/ConfirmForcePullModal";
+import ConfirmForcePushModal from "../modals/ConfirmForcePushModal";
 
 const InnerContent = styled.div`
   display: flex;
@@ -49,7 +64,28 @@ interface Props {
 }
 
 const LocalVCSViewMode = (props: Props) => {
+  const [showBillingModal, setShowBillingModal] = useState(false);
+  const [showConfirmMergePullModal, setShowConfirmMergePullModal] =
+    useState(false);
+  const [showConfirmForcePull, setShowConfirmForcePull] = useState(false);
+  const [showConfirmForcePush, setShowConfirmForcePush] = useState(false);
   const { setSubAction } = useLocalVCSNavContext();
+  const onCloseBillingModal = useCallback(() => {
+    setShowBillingModal(false);
+  }, []);
+
+  const onCloseConfirmMergePullModal = useCallback(() => {
+    setShowConfirmMergePullModal(false);
+  }, []);
+
+  const onCloseForcePull = useCallback(() => {
+    setShowConfirmForcePull(false);
+  }, []);
+
+  const onCloseForcePush = useCallback(() => {
+    setShowConfirmForcePush(false);
+  }, []);
+
   const onShowBranches = useCallback(() => {
     setSubAction("branches");
   }, []);
@@ -79,6 +115,82 @@ const LocalVCSViewMode = (props: Props) => {
   const updateToCompareMode = useCallback(() => {
     updateCommand.mutate("compare");
   }, [updateCommand]);
+
+  const { data: fetchInfo, isLoading: pushInfoLoading } = useFetchInfo(
+    props.repository
+  );
+
+  const isPushEnabled = usePushButtonEnabled(fetchInfo, pushInfoLoading);
+  const isPullEnabled = usePullButtonEnabled(fetchInfo, pushInfoLoading);
+  const pushSubTitle = usePushButtonSubTitle(
+    fetchInfo,
+    pushInfoLoading,
+    props.apiResponse.repoState
+  );
+  const pullSubTitle = usePullButtonSubTitle(
+    fetchInfo,
+    props.apiResponse.isWIP ?? false,
+    pushInfoLoading,
+    props.apiResponse.repoState
+  );
+
+  const pushMutation = usePushBranch(props.repository);
+  const pullMutation = usePullBranch(props.repository);
+
+  const onPush = useCallback(() => {
+    if (!fetchInfo?.canPushBranch) {
+      return;
+    }
+    if (fetchInfo?.hasConflict) {
+      setShowConfirmForcePush(true);
+      return;
+    }
+    if (!fetchInfo?.accountInGoodStanding) {
+      setShowBillingModal(true);
+      return;
+    }
+    pushMutation.mutate();
+  }, [
+    fetchInfo?.accountInGoodStanding,
+    fetchInfo?.canPushBranch,
+    fetchInfo?.hasConflict,
+  ]);
+
+  const onConfirmPull = useCallback(() => {
+    if (!fetchInfo?.canPull) {
+      return;
+    }
+    pullMutation.mutate();
+  }, [fetchInfo?.canPull]);
+
+  const onConfirmPush = useCallback(() => {
+    if (!fetchInfo?.canPushBranch) {
+      return;
+    }
+    pushMutation.mutate();
+  }, [fetchInfo?.canPushBranch]);
+
+  const onPull = useCallback(() => {
+    if (!fetchInfo?.canPull) {
+      return;
+    }
+    if (fetchInfo?.hasConflict) {
+      setShowConfirmForcePull(true);
+      return;
+    }
+    if (fetchInfo?.pullCanMergeWip && props.apiResponse.isWIP) {
+      setShowConfirmMergePullModal(true);
+      return;
+    }
+    pullMutation.mutate();
+  }, [
+    fetchInfo?.hasConflict,
+    fetchInfo?.pullCanMergeWip,
+    fetchInfo?.canPull,
+    fetchInfo?.hasConflict,
+    props.apiResponse.isWIP,
+  ]);
+
   return (
     <InnerContent>
       <TopContainer>
@@ -95,6 +207,9 @@ const LocalVCSViewMode = (props: Props) => {
           lastCommit={props.apiResponse.lastCommit}
           onShowBranches={onShowBranches}
           onShowEditBranch={onShowEditBranch}
+          isEditBranchDisabled={
+            fetchInfo?.branchPushDisabled || pushInfoLoading
+          }
         />
         {!props.apiResponse?.repoState?.isInMergeConflict && (
           <>
@@ -135,10 +250,48 @@ const LocalVCSViewMode = (props: Props) => {
       <BottomContainer>
         {!props.apiResponse?.repoState?.isInMergeConflict && (
           <ButtonRow>
-            <Button label={"pull remote"} bg={"purple"} size={"extra-big"} />
+            <RepoActionButton
+              label={"pull remote"}
+              icon={"pull"}
+              subTitle={pullSubTitle ?? ""}
+              isDisabled={!isPullEnabled}
+              isLoading={pushInfoLoading || pullMutation.isLoading}
+              onClick={onPull}
+            />
+            <RepoActionButton
+              label={"push local"}
+              icon={"push"}
+              subTitle={pushSubTitle ?? ""}
+              isDisabled={!isPushEnabled}
+              isLoading={pushInfoLoading || pushMutation.isLoading}
+              onClick={onPush}
+            />
           </ButtonRow>
         )}
       </BottomContainer>
+      <UpdateBillingModal
+        show={showBillingModal}
+        onDismiss={onCloseBillingModal}
+        repository={props.repository}
+      />
+      <ConfirmMergeWIPModal
+        show={showConfirmMergePullModal}
+        onDismiss={onCloseConfirmMergePullModal}
+        onConfirm={onConfirmPull}
+        repository={props.repository}
+      />
+      <ConfirmForcePullModal
+        show={showConfirmForcePull}
+        onDismiss={onCloseForcePull}
+        onConfirm={onConfirmPull}
+        repository={props.repository}
+      />
+      <ConfirmForcePushModal
+        show={showConfirmForcePush}
+        onDismiss={onCloseForcePush}
+        onConfirm={onConfirmPush}
+        repository={props.repository}
+      />
     </InnerContent>
   );
 };

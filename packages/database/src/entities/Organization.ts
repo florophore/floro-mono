@@ -74,14 +74,14 @@ export class Organization extends BinaryPKBaseEntity {
 
   @Column("varchar", { default: "free"})
   @IsDefined()
-  @IsIn(["free"])
+  @IsIn(["free", "paid"])
   @IsString()
   @ValidateIf((_options, value) => !!value)
   billingPlan?: string;
 
-  @Column("varchar", { default: "free"})
+  @Column("varchar", { default: "none"})
   @IsDefined()
-  @IsIn(["none"])
+  @IsIn(["none", "okay", "delinquent"])
   @IsString()
   @ValidateIf((_options, value) => !!value)
   billingStatus?: string;

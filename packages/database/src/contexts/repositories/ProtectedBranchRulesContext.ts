@@ -23,9 +23,18 @@ export default class ProtectedBranchRulesContext extends BaseContext {
     return await this.queryRunner.manager.save(entity);
   }
 
-  public async getById(id: string): Promise<ProtectedBranchRule | null> {
+  public async getByRepoAndBranchId(repositoryId: string, branchId: string): Promise<ProtectedBranchRule | null> {
     return await this.queryRunner.manager.findOneBy(ProtectedBranchRule, {
-      id,
+      repositoryId,
+      branchId,
+    });
+  }
+
+  public async getProtectedBranchesForRepo(repositoryId: string): Promise<ProtectedBranchRule[]> {
+    return await this.queryRunner.manager.find(ProtectedBranchRule, {
+      where: {
+        repositoryId
+      }
     });
   }
 }

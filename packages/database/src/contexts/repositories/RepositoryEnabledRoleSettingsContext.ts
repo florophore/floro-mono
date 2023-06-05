@@ -1,9 +1,9 @@
-import { DeepPartial, QueryRunner, Repository } from "typeorm";
+import { DeepPartial, In, QueryRunner, Repository } from "typeorm";
 import { RepoEnabledRoleSetting } from "../../entities/RepoEnabledRoleSetting";
 import BaseContext from "../BaseContext";
 import ContextFactory from "../ContextFactory";
 
-export default class ProtectedBranchRuleEnabledRoleSettingsContext extends BaseContext {
+export default class RepositoryEnabledRoleSettingsContext extends BaseContext {
   private repoEnabledRoleSettingRepo!: Repository<RepoEnabledRoleSetting>;
 
   public async init(
@@ -27,5 +27,16 @@ export default class ProtectedBranchRuleEnabledRoleSettingsContext extends BaseC
     return await this.queryRunner.manager.findOneBy(RepoEnabledRoleSetting, {
       id,
     });
+  }
+
+  public async hasRepoRoleIds(repositoryId: string, roleIds: string[], settingName: string): Promise<boolean> {
+    const [, count] = await this.queryRunner.manager.findAndCount(RepoEnabledRoleSetting, {
+        where: {
+            repositoryId,
+            roleId: In(roleIds),
+            settingName
+        }
+    });
+    return count > 0;
   }
 }

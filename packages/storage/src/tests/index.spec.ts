@@ -8,7 +8,7 @@ describe("testing", () => {
     test("it", () => {
         const auth = container.get(StorageAuthenticator);
         const url = "http://localhost:9000/private-cdn/testing/this/out.tar.gz"
-        const signed = auth.signURL(url, 60);
+        const signed = auth.signURL(url, 'testing/this/out.tar.gz', 60);
         console.log(signed);
     })
 })

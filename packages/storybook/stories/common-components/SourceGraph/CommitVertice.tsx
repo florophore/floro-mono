@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { SourceCommitNodeWithGridDimensions } from "./grid";
 import { useTheme } from "@emotion/react";
-import { Branch } from "./grid";
+import { Branch } from "floro/dist/src/repo";
 import { useSvgSourceGraphPortal } from "./SVGPortalContext";
 import { useSvgScale } from "./SVGScaleContext";
 import CommitContent from "./CommitContent";
@@ -82,10 +82,10 @@ const CommitVertice = (props: Props) => {
       props?.vertice?.children?.flatMap((c) => c?.branchIds ?? []) ?? []
     );
     let branches: Array<Branch> = [];
-    for (const branchId of props.vertice.branchIds) {
+    for (const branchId of (props?.vertice?.branchIds ?? [])) {
       if (!childrenBrancheSet.has(branchId)) {
         const branch = props.branchMap[branchId];
-        if (branch.lastCommit == props.vertice.sha) {
+        if (branch?.lastCommit == props?.vertice?.sha) {
           branches.push(branch);
         }
       }
@@ -192,21 +192,21 @@ const CommitVertice = (props: Props) => {
   }, [showHovered, shouldStickHTML, props.renderPopup, nodeHtml]);
 
   const fill = useMemo(() => {
-    if (props.vertice.branchIds.length == 0) {
+    if (props?.vertice?.branchIds?.length == 0) {
       return theme.background;
     }
     return getColorForRow(theme, props.vertice.row);
   }, [theme.name, props.vertice.row, props.vertice.branchIds]);
 
   const selectedFill = useMemo(() => {
-    if (props.vertice.branchIds.length == 0) {
+    if (props?.vertice?.branchIds?.length == 0) {
       return theme.colors.sourceGraphNodeOutline;
     }
     return fill;
   }, [fill, theme, props.vertice.row, props.vertice.branchIds]);
 
   const stroke = useMemo(() => {
-    if (props.vertice.branchIds.length == 0) {
+    if (props?.vertice?.branchIds?.length == 0) {
       if (
         props.currentSha == props.vertice.sha ||
         props.vertice.isInCurrentLineage

@@ -473,6 +473,7 @@ export interface Edge {
 
 export const getEdges = (
   rootNodes: Array<SourceCommitNodeWithGridDimensions>,
+  filteredBranchIds: Array<string>,
   columnDistance: number,
   rowDistance: number
 ): Array<Edge> => {
@@ -562,11 +563,12 @@ export const getInitNode = (
   return null;
 };
 
-const filterNode = (node: SourceCommitNode, filterBranchlessNodes: boolean) => {
-  if (filterBranchlessNodes && (node?.branchIds?.length ?? 0) == 0) {
+const filterNode = (node: SourceCommitNode, filterBranchlessNodes: boolean, filteredBranchIds: Array<string>) => {
+  const branchIds = node?.branchIds?.filter(id => filteredBranchIds.includes(id));
+  if (filterBranchlessNodes && (branchIds?.length ?? 0) == 0) {
     return null;
   }
-  const children = getNodes(node.children ?? [], filterBranchlessNodes);
+  const children = getNodes(node.children ?? [], filterBranchlessNodes, filteredBranchIds);
   return {
     ...node,
     children
@@ -575,10 +577,11 @@ const filterNode = (node: SourceCommitNode, filterBranchlessNodes: boolean) => {
 
 export const getNodes = (
   rootNodes: Array<SourceCommitNode>,
-  filterBranchlessNodes = false
+  filterBranchlessNodes = false,
+  filteredBranchIds: Array<string>
 ) => {
   return rootNodes?.map(node => {
-    return filterNode(node, filterBranchlessNodes);
+    return filterNode(node, filterBranchlessNodes, filteredBranchIds);
   })?.filter(n => n != null);
 }
 

@@ -14,6 +14,7 @@ import { OrganizationMember } from "./OrganizationMember";
 import { OrganizationMemberRole } from "./OrganizationMemberRole";
 import { User } from "./User";
 import { ProtectedBranchRuleEnabledRoleSetting } from "./ProtectedBranchRuleEnabledRoleSetting";
+import { RepoEnabledRoleSetting } from "./RepoEnabledRoleSetting";
 
 @Entity("organization_roles")
 export class OrganizationRole extends BinaryPKBaseEntity {
@@ -129,6 +130,9 @@ export class OrganizationRole extends BinaryPKBaseEntity {
 
   @OneToMany("OrganizationInvitationRole", "organizationRole")
   organizationInvitationRoles?: Relation<OrganizationInvitationRole>[];
+
+  @OneToMany("RepoEnabledRoleSetting", "role")
+  enabledRepoRoleSettings?: Relation<RepoEnabledRoleSetting>[];
 
   @OneToMany("ProtectedBranchRuleEnabledRoleSetting", "role")
   enabledBranchRoleSettings?: Relation<ProtectedBranchRuleEnabledRoleSetting>[];

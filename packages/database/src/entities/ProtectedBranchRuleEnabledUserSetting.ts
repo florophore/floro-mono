@@ -17,9 +17,6 @@ export class ProtectedBranchRuleEnabledUserSetting extends BinaryPKBaseEntity {
   settingName?: string;
 
   @Column("uuid")
-  uploadedByUserId!: string;
-
-  @Column("uuid")
   userId!: string;
 
   @ManyToOne("User", "enabledUserSettings")

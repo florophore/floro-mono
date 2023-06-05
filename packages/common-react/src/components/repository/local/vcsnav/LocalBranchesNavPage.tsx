@@ -15,8 +15,9 @@ import SourceGraph from "@floro/storybook/stories/common-components/SourceGraph"
 import { SourceCommitNodeWithGridDimensions } from "@floro/storybook/stories/common-components/SourceGraph/grid";
 import { Branch } from "floro/dist/src/repo";
 import BranchSelector from "@floro/storybook/stories/repo-components/BranchSelector";
-import { useCanMoveWIP, useDeleteBranch, useSourceGraph, useSwitchBranch } from "../hooks/local-hooks";
+import { useCanMoveWIP, useDeleteBranch, useIsBranchProtected, useSourceGraph, useSwitchBranch } from "../hooks/local-hooks";
 import SGPlainModal from "../../sourcegraph/sourgraphmodals/SGPlainModal";
+import Checkbox from "@floro/storybook/stories/design-system/Checkbox";
 
 const InnerContent = styled.div`
   display: flex;
@@ -76,6 +77,14 @@ const WarningText = styled.p`
     color: ${props => props.theme.colors.warningTextColor};
 `;
 
+const OnlyDisplayMyBranchesText = styled.p`
+    font-size: 1.2rem;
+    font-family: "MavenPro";
+    font-weight: 500;
+    margin-left: 16px;
+    color: ${props => props.theme.colors.connectionTextColor};
+`;
+
 interface Props {
   repository: Repository;
   apiResponse: ApiResponse;
@@ -85,29 +94,48 @@ const LocalBranchesNavPage = (props: Props) => {
   const { setSubAction } = useLocalVCSNavContext();
 
   const { data: sourceGraphResponse, isLoading: sourceGraphLoading } = useSourceGraph(props.repository);
+  const [onlyShowMyBranches, setOnlyShowMyBranches] = useState(true);
   const [selectedBranch, setSelectedBranch] = useState<Branch|null>(props.apiResponse?.branch ?? null);
+
+  const onToggleOnlyShowMyBranches = useCallback(() => {
+    setOnlyShowMyBranches(!onlyShowMyBranches);
+  }, [onlyShowMyBranches]);
+
+  const { data: isBranchProtected, isLoading: isBranchProtectedLoading } =
+    useIsBranchProtected(props.repository, selectedBranch?.id);
 
   const switchBranchMutation = useSwitchBranch(props.repository);
   const deleteBranchMutation = useDeleteBranch(props.repository);
 
   const { data: canMoveWIPQuery } = useCanMoveWIP(props.repository, selectedBranch?.lastCommit ?? null);
+
+  const filteredBranches = useMemo(() => {
+    if (onlyShowMyBranches && props?.apiResponse?.checkedOutBranchIds) {
+      return sourceGraphResponse?.branches?.filter(b => {
+        return props.apiResponse.checkedOutBranchIds?.includes(b.id);
+      });
+    }
+    return sourceGraphResponse?.branches;
+  }, [onlyShowMyBranches, sourceGraphResponse?.branches, props?.apiResponse?.checkedOutBranchIds])
+
   const selectedBaseBranch = useMemo(() => {
     if (!selectedBranch?.baseBranchId) {
       return null;
     }
-    return sourceGraphResponse?.branches?.find(b => b.id == selectedBranch?.baseBranchId) ?? null;
-  }, [sourceGraphResponse, selectedBranch])
+    return filteredBranches?.find(b => b.id == selectedBranch?.baseBranchId) ?? null;
+  }, [filteredBranches, selectedBranch])
+
   const { data: canMoveToBaseBranchWIPQuery } = useCanMoveWIP(
     props.repository,
     selectedBaseBranch?.lastCommit ?? null
   );
 
   useEffect(() => {
-    const selectedBranchExists = !!sourceGraphResponse?.branches?.find(b => b.id == selectedBranch?.id);
+    const selectedBranchExists = !!filteredBranches?.find(b => b.id == selectedBranch?.id);
     if (selectedBranch?.id != props?.apiResponse?.branch?.id && !selectedBranchExists && props.apiResponse.branch) {
       setSelectedBranch(props.apiResponse.branch);
     }
-  }, [selectedBranch, props.apiResponse.branch, sourceGraphResponse?.branches])
+  }, [selectedBranch, props.apiResponse.branch, filteredBranches])
 
   const onGoBack = useCallback(() => {
     setSubAction(null);
@@ -130,11 +158,11 @@ const LocalBranchesNavPage = (props: Props) => {
   }, [])
 
   const onChangeBranchIdFromGraph = useCallback((id: string) => {
-    const branch = sourceGraphResponse?.branches?.find(v => v.id == id);
+    const branch = filteredBranches?.find(v => v.id == id);
     if (branch) {
       setSelectedBranch(branch)
     }
-  }, [sourceGraphResponse?.branches])
+  }, [filteredBranches])
 
   const onDeleteBranch = useCallback(() => {
     if (!selectedBranch?.id) {
@@ -207,7 +235,7 @@ const LocalBranchesNavPage = (props: Props) => {
         >
           <SourceGraph
             rootNodes={sourceGraphResponse?.rootNodes ?? []}
-            branches={sourceGraphResponse?.branches ?? []}
+            branches={filteredBranches ?? []}
             height={height}
             width={width}
             currentSha={props?.apiResponse?.repoState?.commit ?? null}
@@ -217,6 +245,7 @@ const LocalBranchesNavPage = (props: Props) => {
             onSelectBranch={onChangeBranch}
             currentBranchId={props?.apiResponse?.repoState?.branch ?? undefined}
             filterBranchlessNodes
+            filteredBranchIds={filteredBranches?.map(b => b.id)}
           />
         </div>
       );
@@ -225,6 +254,7 @@ const LocalBranchesNavPage = (props: Props) => {
       renderPopup,
       sourceGraphLoading,
       sourceGraphResponse,
+      filteredBranches,
       props?.apiResponse?.repoState?.commit,
       props?.apiResponse?.repoState?.branch,
       selectedBranch,
@@ -255,10 +285,22 @@ const LocalBranchesNavPage = (props: Props) => {
           >
             <BranchSelector
               size="wide"
-              branches={sourceGraphResponse?.branches ?? []}
+              branches={filteredBranches ?? []}
               branch={selectedBranch}
               onChangeBranch={onChangeBranch}
             />
+          </div>
+          <div
+            style={{
+              marginTop: 16,
+              width: "100%",
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
+            <Checkbox isChecked={onlyShowMyBranches} onChange={onToggleOnlyShowMyBranches}/>
+            <OnlyDisplayMyBranchesText>{'Only display my checked out branches'}</OnlyDisplayMyBranchesText>
           </div>
           <div
             style={{
@@ -287,8 +329,9 @@ const LocalBranchesNavPage = (props: Props) => {
             </div>
             <Button
               isDisabled={
-                selectedBranch?.id == props.apiResponse.repoState.branch &&
-                !canMoveToBaseBranchWIPQuery?.canSwitch
+                isBranchProtectedLoading || isBranchProtected ||
+                (selectedBranch?.id == props.apiResponse.repoState.branch &&
+                !canMoveToBaseBranchWIPQuery?.canSwitch)
               }
               label={"delete local branch"}
               bg={"gray"}

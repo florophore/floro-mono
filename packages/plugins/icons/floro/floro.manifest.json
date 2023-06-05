@@ -1,7 +1,8 @@
 {
-  "version": "0.0.0",
+  "version": "0.0.11",
   "name": "icons",
   "displayName": "Icons",
+  "description": "A plugin for mapping colors to icons.",
   "icon": {
     "light": "./icons_icon.unselected.light.svg",
     "dark": "./icons_icon.unselected.dark.svg",
@@ -11,8 +12,8 @@
     }
   },
   "imports": {
-    "theme": "dev@0.0.0",
-    "palette": "dev@0.0.0"
+    "theme": "0.0.10",
+    "palette": "0.0.10"
   },
   "types": {
     "Icon": {

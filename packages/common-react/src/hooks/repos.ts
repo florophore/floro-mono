@@ -50,11 +50,11 @@ export const useCurrentUserRepos = () => {
 export const useLocalRepos = () => {
   const daemonIsRunning = useDaemonIsConnected();
   const queryClient = useQueryClient();
-  useEffect(() => {
-    if (!daemonIsRunning) {
-      queryClient.invalidateQueries("local-repos");
-    }
-  }, [daemonIsRunning, queryClient]);
+  //useEffect(() => {
+  //  //if (daemonIsRunning) {
+  //  //}
+  //  queryClient.invalidateQueries("local-repos");
+  //}, [daemonIsRunning]);
 
   const response = useQuery("local-repos", async () => {
     try {

@@ -3,7 +3,7 @@ import { RepoEnabledUserSetting } from "../../entities/RepoEnabledUserSetting";
 import BaseContext from "../BaseContext";
 import ContextFactory from "../ContextFactory";
 
-export default class ProtectedBranchRuleEnabledUserSettingsContext extends BaseContext {
+export default class RepositoryEnabledUserSettingsContext extends BaseContext {
   private repoEnabledUserSetggingRepo!: Repository<RepoEnabledUserSetting>;
 
   public async init(
@@ -27,5 +27,16 @@ export default class ProtectedBranchRuleEnabledUserSettingsContext extends BaseC
     return await this.queryRunner.manager.findOneBy(RepoEnabledUserSetting, {
       id,
     });
+  }
+
+  public async hasRepoUserId(repositoryId: string, userId: string, settingName: string): Promise<boolean> {
+    const [, count] = await this.queryRunner.manager.findAndCount(RepoEnabledUserSetting, {
+        where: {
+            repositoryId,
+            userId,
+            settingName
+        }
+    });
+    return count > 0;
   }
 }

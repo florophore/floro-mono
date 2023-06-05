@@ -18,6 +18,7 @@ import { useLocalVCSNavContext } from "./LocalVCSContext";
 import {
   useCanAutoMerge,
   useCanMoveWIP,
+  useFetchInfo,
   useMergeSha,
   useSourceGraph,
   useUpdateComparison,
@@ -27,6 +28,7 @@ import BranchSelector from "@floro/storybook/stories/repo-components/BranchSelec
 import { mapSourceGraphRootsToGrid } from "@floro/storybook/stories/common-components/SourceGraph/grid";
 import SelectedShaDisplay from "@floro/storybook/stories/repo-components/SelectedShaDisplay";
 import ComparisonSourceGraphSelect from "./ComparisonSourceGraphSelect";
+import { usePushButtonEnabled } from "../hooks/push-pull-state";
 
 const InnerContent = styled.div`
   display: flex;
@@ -127,6 +129,10 @@ const LocalVCSCompareMode = (props: Props) => {
   );
 
   const mergeMutation = useMergeSha(props.repository);
+
+  const { data: fetchInfo, isLoading: pushInfoLoading } = useFetchInfo(
+    props.repository
+  );
 
   useEffect(() => {
     setSubAction(null);
@@ -353,6 +359,9 @@ const LocalVCSCompareMode = (props: Props) => {
   const canSwitchWIPQuery = useCanMoveWIP(props.repository, comparisonSha);
 
   const mergeIsDisabled = useMemo(() => {
+    if (fetchInfo?.branchPushDisabled || pushInfoLoading) {
+      return true;
+    }
     if (comparison?.against == "branch" || comparison?.against == "sha") {
       if (
         (comparisonShaIsAncestor || comparisonShaIsNone) &&
@@ -378,6 +387,8 @@ const LocalVCSCompareMode = (props: Props) => {
     }
     return true;
   }, [
+    fetchInfo?.branchPushDisabled,
+    pushInfoLoading,
     comparison?.against,
     comparisonShaIsAncestor,
     comparisonShaIsChildAncestor,
@@ -467,114 +478,135 @@ const LocalVCSCompareMode = (props: Props) => {
           </div>
         </TopContainer>
         <BottomContainer>
-          {(comparison?.against == "branch" ||
-            comparison?.against == "sha") && (
-            <MergeInfoRow>
-              {(comparisonShaIsAncestor || comparisonShaIsNone) &&
-                !canAutoMergeQuery.isLoading && (
-                  <NothingToMerge>{"Nothing to merge"}</NothingToMerge>
-                )}
-              {!(comparisonShaIsAncestor || comparisonShaIsNone) &&
-                !canAutoMergeQuery.isLoading && (
-                  <>
-                    {!comparisonShaIsChildAncestor &&
-                      canAutoMergeQuery?.data
-                        ?.canAutoMergeOnTopOfCurrentState &&
-                      canAutoMergeQuery?.data?.canAutoMergeOnUnStagedState && (
-                        <>
-                          {props.apiResponse.isWIP && (
-                            <MergeOkay>
-                              {
-                                "Able to auto-merge changes (Please note: uncommitted changes will merge but will not be committed)"
-                              }
-                            </MergeOkay>
-                          )}
-                          {!props.apiResponse.isWIP && (
-                            <MergeOkay>
-                              {"Able to auto-merge changes"}
-                            </MergeOkay>
-                          )}
-                        </>
-                      )}
-                    {comparisonShaIsChildAncestor && (
+          {fetchInfo?.branchPushDisabled && (
+            <>
+              <MergeInfoRow>
+                <MergeError>
+                  {
+                    "Unable to merge or commit on a protected branch"
+                  }
+                </MergeError>
+              </MergeInfoRow>
+            </>
+          )}
+          {!fetchInfo?.branchPushDisabled && (
+            <>
+              {(comparison?.against == "branch" ||
+                comparison?.against == "sha") && (
+                <MergeInfoRow>
+                  {(comparisonShaIsAncestor || comparisonShaIsNone) &&
+                    !canAutoMergeQuery.isLoading && (
+                      <NothingToMerge>{"Nothing to merge"}</NothingToMerge>
+                    )}
+                  {!(comparisonShaIsAncestor || comparisonShaIsNone) &&
+                    !canAutoMergeQuery.isLoading && (
                       <>
-                        {props.apiResponse.isWIP && (
-                          <MergeOkay>
-                            {
-                              "Able to auto-merge changes (Please note: uncommitted changes will merge but will not be committed)"
-                            }
-                          </MergeOkay>
-                        )}
-                        {!props.apiResponse.isWIP && (
+                        {!comparisonShaIsChildAncestor &&
+                          canAutoMergeQuery?.data
+                            ?.canAutoMergeOnTopOfCurrentState &&
+                          canAutoMergeQuery?.data
+                            ?.canAutoMergeOnUnStagedState && (
+                            <>
+                              {props.apiResponse.isWIP && (
+                                <MergeOkay>
+                                  {
+                                    "Able to auto-merge changes (Please note: uncommitted changes will merge but will not be committed)"
+                                  }
+                                </MergeOkay>
+                              )}
+                              {!props.apiResponse.isWIP && (
+                                <MergeOkay>
+                                  {"Able to auto-merge changes"}
+                                </MergeOkay>
+                              )}
+                            </>
+                          )}
+                        {comparisonShaIsChildAncestor && (
                           <>
-                            {canSwitchWIPQuery?.data?.canSwitch && (
+                            {props.apiResponse.isWIP && (
                               <MergeOkay>
-                                {"Able to auto-merge changes"}
+                                {
+                                  "Able to auto-merge changes (Please note: uncommitted changes will merge but will not be committed)"
+                                }
                               </MergeOkay>
                             )}
-                            {!canSwitchWIPQuery?.data?.canSwitch && (
-                              <MergeError>
-                                {
-                                  "Unable to merge uncommitted changes (stash or commit current changes)"
-                                }
-                              </MergeError>
+                            {!props.apiResponse.isWIP && (
+                              <>
+                                {canSwitchWIPQuery?.data?.canSwitch && (
+                                  <MergeOkay>
+                                    {"Able to auto-merge changes"}
+                                  </MergeOkay>
+                                )}
+                                {!canSwitchWIPQuery?.data?.canSwitch && (
+                                  <MergeError>
+                                    {
+                                      "Unable to merge uncommitted changes (stash or commit current changes)"
+                                    }
+                                  </MergeError>
+                                )}
+                              </>
                             )}
                           </>
                         )}
+                        {!comparisonShaIsChildAncestor &&
+                          !canAutoMergeQuery?.data
+                            ?.canAutoMergeOnTopOfCurrentState &&
+                          canAutoMergeQuery?.data
+                            ?.canAutoMergeOnUnStagedState && (
+                            <MergeError>
+                              {
+                                "Unable to merge uncommitted changes (stash or commit current changes)"
+                              }
+                            </MergeError>
+                          )}
+
+                        {!comparisonShaIsChildAncestor &&
+                          canAutoMergeQuery?.data
+                            ?.canAutoMergeOnTopOfCurrentState &&
+                          !canAutoMergeQuery?.data
+                            ?.canAutoMergeOnUnStagedState && (
+                            <MergeError>
+                              {
+                                "Unable to merge, however, current changes can auto-merge (stash or commit current changes to merge)"
+                              }
+                            </MergeError>
+                          )}
+
+                        {!comparisonShaIsChildAncestor &&
+                          !canAutoMergeQuery?.data
+                            ?.canAutoMergeOnTopOfCurrentState &&
+                          !canAutoMergeQuery?.data
+                            ?.canAutoMergeOnUnStagedState && (
+                            <>
+                              {props.apiResponse.isWIP && (
+                                <MergeError>
+                                  {
+                                    "Unable to merge (stash or commit current changes to merge)"
+                                  }
+                                </MergeError>
+                              )}
+                              {!props.apiResponse.isWIP && (
+                                <MergeError>
+                                  {
+                                    "Unable to auto-merge (manual resolution required)"
+                                  }
+                                </MergeError>
+                              )}
+                            </>
+                          )}
                       </>
                     )}
-                    {!comparisonShaIsChildAncestor &&
-                      !canAutoMergeQuery?.data
-                        ?.canAutoMergeOnTopOfCurrentState &&
-                      canAutoMergeQuery?.data?.canAutoMergeOnUnStagedState && (
-                        <MergeError>
-                          {
-                            "Unable to merge uncommitted changes (stash or commit current changes)"
-                          }
-                        </MergeError>
-                      )}
-
-                    {!comparisonShaIsChildAncestor &&
-                      canAutoMergeQuery?.data
-                        ?.canAutoMergeOnTopOfCurrentState &&
-                      !canAutoMergeQuery?.data?.canAutoMergeOnUnStagedState && (
-                        <MergeError>
-                          {
-                            "Unable to merge, however, current changes can auto-merge (stash or commit current changes to merge)"
-                          }
-                        </MergeError>
-                      )}
-
-                    {!comparisonShaIsChildAncestor &&
-                      !canAutoMergeQuery?.data
-                        ?.canAutoMergeOnTopOfCurrentState &&
-                      !canAutoMergeQuery?.data?.canAutoMergeOnUnStagedState && (
-                        <>
-                          {props.apiResponse.isWIP && (
-                            <MergeError>
-                              {
-                                "Unable to merge (stash or commit current changes to merge)"
-                              }
-                            </MergeError>
-                          )}
-                          {!props.apiResponse.isWIP && (
-                            <MergeError>
-                              {
-                                "Unable to auto-merge (manual resolution required)"
-                              }
-                            </MergeError>
-                          )}
-                        </>
-                      )}
-                  </>
-                )}
-            </MergeInfoRow>
+                </MergeInfoRow>
+              )}
+            </>
           )}
           <ButtonRow>
             <RepoActionButton
               onClick={onGoToCommitPage}
               isDisabled={
-                !props.apiResponse?.isWIP || comparison?.against != "wip"
+                !props.apiResponse?.isWIP ||
+                comparison?.against != "wip" ||
+                fetchInfo?.branchPushDisabled
               }
               label={"commit"}
               icon={"commit"}
@@ -585,14 +617,6 @@ const LocalVCSCompareMode = (props: Props) => {
               icon={"merge"}
               isLoading={mergeMutation.isLoading}
               onClick={onMerge}
-            />
-          </ButtonRow>
-          <ButtonRow style={{ marginTop: 24 }}>
-            <Button
-              isDisabled
-              label={"push to remote"}
-              bg={"purple"}
-              size={"extra-big"}
             />
           </ButtonRow>
         </BottomContainer>

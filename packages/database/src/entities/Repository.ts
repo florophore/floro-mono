@@ -1,4 +1,4 @@
-import { IsBoolean, IsDefined, IsIn, IsString, IsUUID, ValidateIf } from "class-validator";
+import { IsBoolean, IsDefined, IsIn, IsOptional, IsString, IsUUID, ValidateIf } from "class-validator";
 import { Entity, Column, OneToOne, Relation, JoinColumn, OneToMany, ManyToOne } from "typeorm";
 import { BinaryPKBaseEntity } from "./BinaryPKBaseEntity";
 import { Organization } from "./Organization";
@@ -61,6 +61,7 @@ export class Repository extends BinaryPKBaseEntity {
   lastRepoUpdateAt!: any;
 
   @Column("varchar")
+  @IsOptional()
   @IsString()
   defaultBranchId!: any;
 
@@ -69,14 +70,17 @@ export class Repository extends BinaryPKBaseEntity {
   createdByUserId!: string;
 
   @Column("boolean")
+  @IsOptional()
   @IsBoolean()
   anyoneCanPushBranches!: boolean;
 
   @Column("boolean")
+  @IsOptional()
   @IsBoolean()
   anyoneCanDeleteBranches!: boolean;
 
   @Column("boolean")
+  @IsOptional()
   @IsBoolean()
   anyoneCanChangeSettings!: boolean;
 
@@ -102,7 +106,7 @@ export class Repository extends BinaryPKBaseEntity {
   @JoinColumn()
   branches?: Relation<Branch>[];
 
-  @OneToOne("Commit", "repository")
+  @OneToMany("Commit", "repository")
   @JoinColumn()
   commits?: Relation<Commit>[];
 

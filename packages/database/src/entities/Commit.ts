@@ -32,7 +32,7 @@ export class Commit extends BaseEntity {
     this.id = UUIDHelper.getUUIDFromSha(this.sha + "" + this.repository) as string;
   }
 
-  @CreateDateColumn({ name: "created_at", type: "timestamp", default: () => "CURRENT_TIMESTAMP(6)" })
+  @CreateDateColumn({ name: "inserted_at", type: "timestamp", default: () => "CURRENT_TIMESTAMP(6)" })
   public insertedAt!: any;
 
   @UpdateDateColumn({ name: "updated_at", type: "timestamp", default: () => "CURRENT_TIMESTAMP(6)", onUpdate: "CURRENT_TIMESTAMP(6)" })
@@ -55,17 +55,17 @@ export class Commit extends BaseEntity {
   parent!: string;
 
   @Column("uuid")
-  parentId!: string;
+  parentId?: string;
 
   @Column("varchar")
   @IsOptional()
   @IsString()
-  historicalParent!: string;
+  historicalParent?: string;
 
   @Column("integer")
   @IsInt()
   @IsDefined()
-  idx?: number;
+  idx!: number;
 
   @Column("varchar")
   @IsOptional()
@@ -82,6 +82,21 @@ export class Commit extends BaseEntity {
   @IsDefined()
   byteSize?: number;
 
+  @Column("integer")
+  @IsInt()
+  @IsDefined()
+  diffByteSize?: number;
+
+  @Column("integer")
+  @IsInt()
+  @IsDefined()
+  kvByteSize?: number;
+
+  @Column("integer")
+  @IsInt()
+  @IsDefined()
+  stateByteSize?: number;
+
   @Column("text")
   @IsString()
   @IsDefined()
@@ -94,7 +109,7 @@ export class Commit extends BaseEntity {
 
   @Column("varchar")
   @IsString()
-  @IsDefined()
+  @IsOptional()
   authorUsername?: string;
 
   @Column("varchar")
@@ -104,6 +119,7 @@ export class Commit extends BaseEntity {
 
   @Column("uuid")
   @IsOptional()
+  @IsString()
   authorUserId!: string;
 
   @ManyToOne("User", "authoredCommits")

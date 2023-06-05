@@ -66,8 +66,17 @@ import CherryPickWhite from '@floro/common-assets/assets/images/repo_icons/cherr
 import CherryPickGray from '@floro/common-assets/assets/images/repo_icons/cherry_pick.gray.svg';
 import CherryPickMediumGray from '@floro/common-assets/assets/images/repo_icons/cherry_pick.medium_gray.svg';
 
+import PullWhite from '@floro/common-assets/assets/images/repo_icons/pull.white.svg';
+import PullGray from '@floro/common-assets/assets/images/repo_icons/pull.gray.svg';
+import PullMediumGray from '@floro/common-assets/assets/images/repo_icons/pull.medium_gray.svg';
+
+import PushWhite from '@floro/common-assets/assets/images/repo_icons/push.white.svg';
+import PushGray from '@floro/common-assets/assets/images/repo_icons/push.gray.svg';
+import PushMediumGray from '@floro/common-assets/assets/images/repo_icons/push.medium_gray.svg';
+
 export interface ButtonProps {
   label: string;
+  subTitle?: string;
   isLoading?: boolean;
   isDisabled?: boolean;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
@@ -88,7 +97,9 @@ export interface ButtonProps {
     | "amend"
     | "auto-fix"
     | "revert"
-    | "cherry-pick";
+    | "cherry-pick"
+    | "push"
+    | "pull";
 }
 
 const IconWrapper = styled.div`
@@ -105,6 +116,11 @@ const LabelTag = styled.p`
   font-family: "MavenPro";
   font-weight: 500;
 `;
+const SubTitleTag = styled.p`
+  font-family: "MavenPro";
+  font-weight: 600;
+  font-size: 0.85rem;
+`;
 
 const RepoActionButton = ({
     label,
@@ -113,6 +129,7 @@ const RepoActionButton = ({
     isDisabled=false,
     size = "medium",
     icon,
+    subTitle,
     ...rest
 }: ButtonProps): React.ReactElement => {
     const theme = useTheme();
@@ -223,6 +240,20 @@ const RepoActionButton = ({
         return theme.name == "light" ? CherryPickGray : CherryPickWhite;
       }
 
+      if (icon == "pull") {
+        if (isDisabled && !isLoading) {
+          return theme.name == "light" ? PullGray : PullMediumGray;
+        }
+        return theme.name == "light" ? PullGray : PullWhite;
+      }
+
+      if (icon == "push") {
+        if (isDisabled && !isLoading) {
+          return theme.name == "light" ? PushGray : PushMediumGray;
+        }
+        return theme.name == "light" ? PushGray : PushWhite;
+      }
+
     }, [[size, isDisabled, isLoading, theme.name, icon]]);
 
     const onClickCB = useCallback((event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -300,6 +331,7 @@ const RepoActionButton = ({
               align-items: center;
               color: ${theme.colors.contrastTextLight};
               margin-right: 24px;
+              flex-direction: column;
             `}
           >
             <LabelTag
@@ -308,6 +340,13 @@ const RepoActionButton = ({
             }}
 
             >{label}</LabelTag>
+            {subTitle && (
+              <SubTitleTag style={{
+                color: isDisabled ? (theme.name == "light" ? ColorPalette.gray : ColorPalette.mediumGray) : theme.colors.contrastTextLight
+              }}>
+                {subTitle}
+              </SubTitleTag>
+            )}
           </div>
         )}
         {isLoading && (

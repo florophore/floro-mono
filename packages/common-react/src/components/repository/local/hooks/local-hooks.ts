@@ -1,12 +1,13 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import axios from "axios";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
-import { ApiResponse, Branch, BranchesMetaState, SourceGraphResponse } from "floro/dist/src/repo";
+import { ApiResponse, Branch, BranchesMetaState, CloneFile, FetchInfo, SourceGraphResponse } from "floro/dist/src/repo";
 import { SourceCommitNode } from "floro/dist/src/sourcegraph";
 import { Manifest } from "floro/dist/src/plugins";
 import { useSession } from "../../../../session/session-context";
 import { SourceGraph } from './SourceGraph';
+import { useSocketEvent } from '../../../../pubsub/socket';
 
 
 export interface ClientSourceGraph {
@@ -1039,4 +1040,155 @@ export const useCheckoutCommitSha = (repository: Repository) => {
       queryClient.setQueryData(["repo-sourcegraph:" + repository.id], sourceGraphResponse);
     },
   });
+};
+
+export const useFetchInfo = (repository: Repository) => {
+  return useQuery(
+    "repo-fetch-info:" + repository.id,
+    async (): Promise< FetchInfo | null> => {
+      try {
+        if (!repository.id) {
+          return null;
+        }
+        const result = await axios.get<FetchInfo>(
+          `http://localhost:63403/repo/${repository.id}/fetchinfo`
+        );
+        return result?.data ?? null;
+      } catch (e) {
+        return null;
+      }
+    },
+    {
+      cacheTime: 0,
+    }
+  );
+};
+
+export const usePushBranch = (repository: Repository) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (): Promise<FetchInfo> => {
+      const result = await axios.post<FetchInfo>(
+        `http://localhost:63403/repo/${repository.id}/push`,
+      );
+      return result?.data ?? null;
+    },
+    onSuccess: (fetchInfo: FetchInfo) => {
+      if (fetchInfo) {
+        queryClient.setQueryData(["repo-fetch-info:" + repository.id], fetchInfo);
+      }
+    }
+  });
+};
+
+export const usePullBranch = (repository: Repository) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (): Promise<FetchInfo> => {
+      const result = await axios.post<FetchInfo>(
+        `http://localhost:63403/repo/${repository.id}/pull`,
+      );
+      return result?.data ?? null;
+    },
+    onSuccess: (fetchInfo: FetchInfo) => {
+      if (fetchInfo) {
+        queryClient.setQueryData(["repo-fetch-info:" + repository.id], fetchInfo);
+      }
+    }
+  });
+};
+
+export const useRepoExistsLocally = (repository: Repository) => {
+    return useQuery("repo-exists:" + repository.id, async () => {
+        try {
+            if (!repository.id) {
+                return false;
+            }
+            const result = await axios.get(`http://localhost:63403/repo/${repository.id}/exists`)
+            return result?.data?.exists ?? false;
+        } catch(e) {
+            return false;
+        }
+    }, { cacheTime: 0});
+}
+
+export const useIsBranchProtected = (repository: Repository, branchId?: string) => {
+    return useQuery("repo-branch:" + repository.id + ":protected:" + branchId, async () => {
+        try {
+            if (!repository.id) {
+                return false;
+            }
+            if (!branchId) {
+                return false;
+            }
+            const result = await axios.get(`http://localhost:63403/repo/${repository.id}/branch/${branchId}/is_protected`)
+            return result?.data?.isProtected ?? false;
+        } catch(e) {
+            return false;
+        }
+    }, { cacheTime: 0});
+}
+
+export const useCloneRepo = (repository: Repository) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => {
+        return axios.get(
+          `http://localhost:63403/repo/${repository.id}/clone`
+        );
+    },
+    onSuccess: (result) => {
+      if (result?.data?.status == "success") {
+        queryClient.invalidateQueries("repo-exists:" + repository.id);
+        queryClient.invalidateQueries("local-repos");
+      }
+    }
+  });
+};
+
+export const useCloneState = (repository: Repository) => {
+  const queryClient = useQueryClient();
+  useSocketEvent(
+    "clone-progress:" + repository.id,
+    () => {
+      queryClient.refetchQueries("clone-state:" + repository.id);
+    },
+    [repository.id]
+  );
+  return useQuery(
+    "clone-state:" + repository.id,
+    async (): Promise<{
+    state: "in_progress" | "done" | "paused" | "none";
+    downloadedCommits: number;
+    totalCommits: number;
+  }> => {
+      try {
+        if (!repository.id) {
+          return {
+            state: "none",
+            downloadedCommits: 0,
+            totalCommits: 1,
+          };
+        }
+        const result = await axios.get<{
+          state: "in_progress" | "done" | "paused" | "none";
+          downloadedCommits: number;
+          totalCommits: number;
+        }>(`http://localhost:63403/repo/${repository.id}/clone/state`);
+        return (
+          result?.data ?? {
+            state: "none",
+            downloadedCommits: 0,
+            totalCommits: 1,
+          }
+        );
+      } catch (e) {
+        return {
+          state: "none",
+          downloadedCommits: 0,
+          totalCommits: 1,
+        };
+      }
+    }
+  );
 };

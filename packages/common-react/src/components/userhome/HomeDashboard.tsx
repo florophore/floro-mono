@@ -144,7 +144,8 @@ const HomeDashboard = () => {
       return new Set();
     }
     return new Set(localRepos ?? []);
-  }, [localRepos])
+  }, [localRepos]);
+
 
   return (
     <Container>

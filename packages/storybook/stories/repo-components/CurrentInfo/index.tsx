@@ -1,6 +1,5 @@
 import React, { useMemo } from "react";
 import styled from "@emotion/styled";
-import ColorPalette from "@floro/styles/ColorPalette";
 import { useTheme } from "@emotion/react";
 import BranchIconLight from "@floro/common-assets/assets/images/icons/branch_icon.light.svg";
 import BranchIconDark from "@floro/common-assets/assets/images/icons/branch_icon.dark.svg";
@@ -129,6 +128,7 @@ export interface Props {
   showMergeButton?: boolean;
   isWIP?: boolean;
   isMerge?: boolean;
+  isEditBranchDisabled?: boolean;
   mergeDirection?: "yours" | "theirs";
   branch?: Branch;
   baseBranch?: Branch;
@@ -199,11 +199,25 @@ const CurrentInfo = (props: Props): React.ReactElement => {
   return (
     <Container>
       <Row style={{ marginBottom: 16, height: 40 }}>
-        <span>
+        <span
+          style={{
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
           <TitleSpan style={{ color: theme.colors.contrastTextLight }}>
             {"Repository: "}
           </TitleSpan>
-          <TitleSpan style={{ fontWeight: 500 }}>
+          <TitleSpan
+            style={{
+              fontWeight: 500,
+              maxWidth: 260,
+              wordWrap: "break-word",
+              display: "block",
+              whiteSpace: "normal",
+              fontSize: (props.respository?.name?.length ?? 0) > 15 ? '1.5rem' : '1.7rem'
+            }}
+          >
             {props.respository.name}
           </TitleSpan>
         </span>
@@ -219,7 +233,7 @@ const CurrentInfo = (props: Props): React.ReactElement => {
         <RightRow>
           {props.branch && <ValueSpan>{props.branch.name}</ValueSpan>}
           {!props.branch && <ValueSpan>{"None"}</ValueSpan>}
-          {!props.branch && <WarningImg src={warningIcon}/>}
+          {!props.branch && <WarningImg src={warningIcon} />}
         </RightRow>
       </Row>
       {props.branch && (
@@ -299,12 +313,16 @@ const CurrentInfo = (props: Props): React.ReactElement => {
             </LeftRow>
             <RightRow>
               {props.mergeDirection == "yours" && (
-                <ValueSpan style={{ color: theme.colors.titleText, fontWeight: 800 }}>
+                <ValueSpan
+                  style={{ color: theme.colors.titleText, fontWeight: 800 }}
+                >
                   {"Yours"}
                 </ValueSpan>
               )}
               {props.mergeDirection == "theirs" && (
-                <ValueSpan style={{ color: theme.colors.titleText, fontWeight: 800 }}>
+                <ValueSpan
+                  style={{ color: theme.colors.titleText, fontWeight: 800 }}
+                >
                   {"Theirs"}
                 </ValueSpan>
               )}
@@ -325,7 +343,7 @@ const CurrentInfo = (props: Props): React.ReactElement => {
             bg={"orange"}
             size={"medium"}
             onClick={props.onShowEditBranch}
-            isDisabled={!props.branch}
+            isDisabled={!props.branch || props.isEditBranchDisabled}
           />
         </ButtonRow>
       )}
@@ -334,28 +352,29 @@ const CurrentInfo = (props: Props): React.ReactElement => {
         <ButtonRow style={{ marginTop: 16 }}>
           {props.mergeDirection == "yours" && (
             <Button
-            style={{
-
-            }}
-              label={(
-                <div style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  paddingLeft: 24,
-                  paddingRight: 36,
-                }}>
-                  <img style={{
-                    height: 32,
-                    width: 32,
-                    marginRight: 16
-                  }} src={ChangeDirectionIcon}/>
-                  <span>
-                    {"switch merge direction to theirs"}
-                  </span>
+              style={{}}
+              label={
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    paddingLeft: 24,
+                    paddingRight: 36,
+                  }}
+                >
+                  <img
+                    style={{
+                      height: 32,
+                      width: 32,
+                      marginRight: 16,
+                    }}
+                    src={ChangeDirectionIcon}
+                  />
+                  <span>{"switch merge direction to theirs"}</span>
                 </div>
-              )}
+              }
               bg={"purple"}
               size={"extra-big"}
               textSize="small"
@@ -365,25 +384,28 @@ const CurrentInfo = (props: Props): React.ReactElement => {
           )}
           {props.mergeDirection == "theirs" && (
             <Button
-              label={(
-                <div style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  paddingLeft: 24,
-                  paddingRight: 36,
-                }}>
-                  <img style={{
-                    height: 32,
-                    width: 32,
-                    marginRight: 16
-                  }} src={ChangeDirectionIcon}/>
-                  <span>
-                    {"switch merge direction to yours"}
-                  </span>
+              label={
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    paddingLeft: 24,
+                    paddingRight: 36,
+                  }}
+                >
+                  <img
+                    style={{
+                      height: 32,
+                      width: 32,
+                      marginRight: 16,
+                    }}
+                    src={ChangeDirectionIcon}
+                  />
+                  <span>{"switch merge direction to yours"}</span>
                 </div>
-              )}
+              }
               bg={"purple"}
               size={"extra-big"}
               textSize="small"

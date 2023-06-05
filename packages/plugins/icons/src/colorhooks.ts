@@ -546,7 +546,6 @@ export const rethemeSvg = (
         const indices = findHexIndicesInSvg(svg, hexcode);
         return replaceHexIndicesInSvg(s, indices, paletteColor?.hexcode + alphaHex);
       }
-      return s;
     }
     const themeDefRef = makeQueryRef(
       "$(theme).themeColors.id<?>.themeDefinitions.id<?>",
@@ -608,7 +607,6 @@ export const rethemeSvg = (
             paletteColor?.hexcode + alphaHex
           );
         }
-        return rethemedSvg;
       }
 
       const themeDefRef = makeQueryRef(

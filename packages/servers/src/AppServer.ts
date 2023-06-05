@@ -18,7 +18,7 @@ import { fileURLToPath } from "url";
 import { createServer as createViteServer } from "vite";
 
 import { SchemaLink } from "@apollo/client/link/schema";
-// eslint-disable-next-line 
+// eslint-disable-next-line
 import ApolloPkg from '@apollo/client';
 const { ApolloClient, InMemoryCache } = ApolloPkg;
 
@@ -61,7 +61,11 @@ export default class AppServer {
     this.backend.startRedis();
 
     this.app.use(cookieParser());
-    this.app.use(busboy());
+    this.app.use(busboy({
+      limits: {
+        fileSize: 1024 * 1024 * 20, //20MB limit
+      },
+    }));
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
 

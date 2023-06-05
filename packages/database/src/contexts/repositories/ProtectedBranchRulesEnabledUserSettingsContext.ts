@@ -3,7 +3,7 @@ import { ProtectedBranchRuleEnabledUserSetting } from "../../entities/ProtectedB
 import BaseContext from "../BaseContext";
 import ContextFactory from "../ContextFactory";
 
-export default class ProtectedBranchRuleEnabledUserSettingsContext extends BaseContext {
+export default class ProtectedBranchRulesEnabledUserSettingsContext extends BaseContext {
   private protectedBranchRuleEnabledUserSettingRepo!: Repository<ProtectedBranchRuleEnabledUserSetting>;
 
   public async init(
@@ -29,5 +29,16 @@ export default class ProtectedBranchRuleEnabledUserSettingsContext extends BaseC
       ProtectedBranchRuleEnabledUserSetting,
       { id }
     );
+  }
+
+  public async hasUserId(protectedBranchRuleId: string, userId: string, settingName: string): Promise<boolean> {
+    const [, count] = await this.queryRunner.manager.findAndCount(ProtectedBranchRuleEnabledUserSetting, {
+        where: {
+            protectedBranchRuleId,
+            userId,
+            settingName
+        }
+    });
+    return count > 0;
   }
 }

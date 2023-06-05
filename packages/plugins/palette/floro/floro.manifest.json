@@ -1,7 +1,8 @@
 {
-  "version": "0.0.0",
+  "version": "0.0.11",
   "name": "palette",
   "displayName": "Palette",
+  "description": "A plugin for managing color constants.",
   "icon": {
     "light": "./palette_icon.unselected.light.svg",
     "dark": "./palette_icon.unselected.dark.svg",

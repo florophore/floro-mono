@@ -17,9 +17,6 @@ export class ProtectedBranchRuleEnabledRoleSetting extends BinaryPKBaseEntity {
   settingName?: string;
 
   @Column("uuid")
-  uploadedByUserId!: string;
-
-  @Column("uuid")
   roleId!: string;
 
   @ManyToOne("OrganizationRole", "enabledBranchRoleSettings")

@@ -7,6 +7,7 @@ import UserAccessor from './accessors/UserAccessor';
 import DiskStorageDriver from './drivers/DiskStorageDriver';
 import StorageAuthenticator from './StorageAuthenticator';
 import StorageClient from './StorageClient';
+import BinaryAccessor from './accessors/BinaryAccessor';
 
 export default new ContainerModule((bind): void => {
     bind<DiskStorageDriver>("PublicDiskStorageDriver").toConstantValue(new DiskStorageDriver("public"));
@@ -19,4 +20,5 @@ export default new ContainerModule((bind): void => {
     bind(OrganizationAccessor).toSelf();
     bind(PluginAccessor).toSelf();
     bind(PluginTarAccessor).toSelf();
+    bind(BinaryAccessor).toSelf();
 });

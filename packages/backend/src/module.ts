@@ -38,6 +38,7 @@ import OrganizationRoleResolverModule from './resolvers/organization/Organizatio
 import ReferralResolverModule from './resolvers/referral/ReferralResolverModule';
 import ReferralService from './services/referrals/ReferralService';
 import RepositoryService from './services/repositories/RepositoryService';
+import RepoRBACService from './services/repositories/RepoRBACService';
 import RepositoryResolverModule from './resolvers/repository/RepositoryResolverModule';
 import PhotoUploadService from './services/photos/PhotoUploadService';
 import PhotoResolverModule from './resolvers/photo/PhotoResolverModule';
@@ -50,6 +51,7 @@ import PrivateCDNTestController from './controllers/PrivateCDNTestController';
 import PluginPermissionService from './services/plugins/PluginPermissionService';
 import PluginVersionResolverModule from './resolvers/plugin/PluginVersionResolverModule';
 import PluginSearchService from './services/plugins/PluginSearchService';
+import BranchService from './services/repositories/BranchService';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -109,6 +111,9 @@ export default new ContainerModule((bind): void => {
 
     // REPOS
     bind(RepositoryService).toSelf();
+    bind(RepoRBACService).toSelf();
+    bind(BranchService).toSelf();
+
     // REFERRALS
     bind(ReferralService).toSelf()
 

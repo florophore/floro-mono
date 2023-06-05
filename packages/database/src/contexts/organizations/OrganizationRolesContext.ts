@@ -38,6 +38,13 @@ export default class OrganizationRolesContext extends BaseContext {
     });
   }
 
+  public async getRoleForOrgByPresetName(organizationId: string, presetCode: string): Promise<OrganizationRole> {
+    return await this.queryRunner.manager.findOneBy(OrganizationRole, {
+      organizationId: organizationId,
+      presetCode
+    }) as OrganizationRole;
+  }
+
   public async updateRole(
     orgRole: OrganizationRole,
     orgRoleArgs: DeepPartial<OrganizationRole>

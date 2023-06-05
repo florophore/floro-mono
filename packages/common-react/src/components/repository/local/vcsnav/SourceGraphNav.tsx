@@ -21,6 +21,7 @@ import {
   useCanMoveWIP,
   useCheckoutCommitSha,
   useCherryPick,
+  useFetchInfo,
   useRevert,
   useSourceGraph,
   useUpdateBranch,
@@ -305,6 +306,8 @@ const SourceGraphNav = (props: Props) => {
   }, [selectedSha, sourceGraphResponse]);
 
   const [amendMessage, setAmendMessage] = useState(selectedCommit?.message ?? "")
+
+  const { data: fetchInfo, isLoading: pushInfoLoading } = useFetchInfo(props.repository);
 
   useEffect(() => {
     setAmendMessage(selectedCommit?.message ?? "");
@@ -707,7 +710,7 @@ const SourceGraphNav = (props: Props) => {
             <>
               <ButtonRow style={{ marginTop: 24 }}>
                 <RepoActionButton
-                  isDisabled={props.apiResponse.isWIP || !selectedShaIsAncestor}
+                  isDisabled={props.apiResponse.isWIP || !selectedShaIsAncestor || (pushInfoLoading || fetchInfo?.branchPushDisabled)}
                   label={"revert sha"}
                   icon={"revert"}
                   onClick={onRevert}
@@ -716,7 +719,7 @@ const SourceGraphNav = (props: Props) => {
                 <RepoActionButton
                   label={"fix forward"}
                   icon={"auto-fix"}
-                  isDisabled={!canAutoFixQuery.data?.canAutoFix}
+                  isDisabled={!canAutoFixQuery.data?.canAutoFix || (pushInfoLoading || fetchInfo?.branchPushDisabled)}
                   onClick={onAutoFix}
                   isLoading={autofixMutation?.isLoading}
                 />
@@ -732,7 +735,7 @@ const SourceGraphNav = (props: Props) => {
                 <RepoActionButton
                   label={"amend sha"}
                   icon={"amend"}
-                  isDisabled={!canAmendQuery.data?.canAmend}
+                  isDisabled={!canAmendQuery.data?.canAmend || (pushInfoLoading || fetchInfo?.branchPushDisabled)}
                   onClick={onSelectAmend}
                 />
               </ButtonRow>

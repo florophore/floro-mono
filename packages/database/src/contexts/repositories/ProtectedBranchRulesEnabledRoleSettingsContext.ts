@@ -1,4 +1,4 @@
-import { DeepPartial, QueryRunner, Repository } from "typeorm";
+import { DeepPartial, In, QueryRunner, Repository } from "typeorm";
 import { ProtectedBranchRuleEnabledRoleSetting } from "../../entities/ProtectedBranchRuleEnabledRoleSetting";
 import BaseContext from "../BaseContext";
 import ContextFactory from "../ContextFactory";
@@ -29,5 +29,16 @@ export default class ProtectedBranchRuleEnabledRoleSettingsContext extends BaseC
       ProtectedBranchRuleEnabledRoleSetting,
       { id }
     );
+  }
+
+  public async hasOrgRoleIds(protectedBranchRuleId: string, roleIds: string[], settingName: string): Promise<boolean> {
+    const [, count] = await this.queryRunner.manager.findAndCount(ProtectedBranchRuleEnabledRoleSetting, {
+        where: {
+            protectedBranchRuleId,
+            roleId: In(roleIds),
+            settingName
+        }
+    });
+    return count > 0;
   }
 }

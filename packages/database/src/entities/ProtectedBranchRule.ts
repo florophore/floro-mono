@@ -36,7 +36,7 @@ export class ProtectedBranchRule extends BinaryPKBaseEntity {
   @Column("boolean")
   @IsDefined()
   @IsBoolean()
-  automaticallDeleteMergedFeatureBranches?: boolean;
+  automaticallyDeleteMergedFeatureBranches?: boolean;
 
   @Column("boolean")
   @IsDefined()

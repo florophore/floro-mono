@@ -1,7 +1,8 @@
 {
-  "version": "0.0.0",
+  "version": "0.0.10",
   "name": "theme",
   "displayName": "Theme",
+  "description": "A plugin for mapping color constants to themes.",
   "icon": {
     "light": "./theme.unselected.light.svg",
     "dark": "./theme.unselected.dark.svg",
@@ -11,7 +12,7 @@
     }
   },
   "imports": {
-    "palette": "dev@0.0.0"
+    "palette": "0.0.10"
   },
   "types": {
     "Theme": {

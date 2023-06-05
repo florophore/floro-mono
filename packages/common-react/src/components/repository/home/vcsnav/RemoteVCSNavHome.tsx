@@ -26,6 +26,7 @@ import LocalRemoteToggle from "@floro/storybook/stories/common-components/LocalR
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import axios from 'axios';
 import { useDaemonIsConnected } from "../../../../pubsub/socket";
+import { useCloneRepo, useCloneState, useRepoExistsLocally } from "../../local/hooks/local-hooks";
 
 const Container = styled.nav`
   display: flex;
@@ -76,38 +77,6 @@ const BottomContainer = styled.div`
   align-items: center;
   padding: 24px;
 `;
-
-const useRepoExistsLocally = (repository: Repository) => {
-    return useQuery("repo-exists:" + repository.id, async () => {
-        try {
-            if (!repository.id) {
-                return false;
-            }
-            const result = await axios.get(`http://localhost:63403/repo/${repository.id}/exists`)
-            return result?.data?.exists ?? false;
-        } catch(e) {
-            return false;
-        }
-    }, { cacheTime: 0});
-}
-
-const useCloneRepo = (repository: Repository) => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: () => {
-        return axios.get(
-          `http://localhost:63403/repo/${repository.id}/clone`
-        );
-    },
-    onSuccess: (result) => {
-      if (result?.data?.status == "success") {
-        queryClient.invalidateQueries("repo-exists:" + repository.id);
-        queryClient.invalidateQueries("local-repos");
-      }
-    }
-  });
-};
-
 interface Props {
   repository: Repository;
 }
@@ -117,21 +86,25 @@ const RemoteVCSNavHome = (props: Props) => {
     props.repository
   );
   const cloneRepoMutation = useCloneRepo(props.repository);
+  const isDaemonConnected = useDaemonIsConnected();
   const cloneRepo = useCallback(() => {
     cloneRepoMutation.mutate();
   }, [props.repository?.id]);
+
+  const { data: cloneState, isLoading: cloneStateLoading} = useCloneState(props.repository);
 
   return (
     <InnerContent>
       <TopContainer></TopContainer>
       <BottomContainer>
-        {!repoExistsLocally && !isLoading && (
+        {(cloneState?.state != "none" || !repoExistsLocally) && !isLoading && !cloneStateLoading &&  (
           <Button
             label="clone repo"
             bg={"orange"}
-            size={"big"}
+            size={"extra-big"}
             onClick={cloneRepo}
             isLoading={cloneRepoMutation.isLoading}
+            isDisabled={!isDaemonConnected}
           />
         )}
       </BottomContainer>

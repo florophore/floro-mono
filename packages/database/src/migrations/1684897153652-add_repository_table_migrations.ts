@@ -221,7 +221,7 @@ export class AddRepositoryTableMigrations1684897153652
           {
             name: "base_branch_id",
             type: "varchar",
-            isNullable: false,
+            isNullable: true,
           },
           {
             name: "created_by_id",

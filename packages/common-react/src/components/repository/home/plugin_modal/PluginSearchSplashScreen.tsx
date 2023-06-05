@@ -71,21 +71,23 @@ const PluginSearchSplashScreen = (props: Props) => {
             </SuggestedPluginsList>
         </SuggestedPluginsContainer>
       }
-      <SuggestedPluginsContainer>
-        <SuggestedPluginsTitle>{"Development Plugins"}</SuggestedPluginsTitle>
-        <DevelopmentPluginsList>
-          {props.developerPlugins?.map((suggestedPlugin, index) => {
-            return (
-              <PreviewPluginRow
-                plugin={suggestedPlugin}
-                onChangePluginVersion={props.onChangePluginVersion}
-                key={index}
-                isEven={index % 2 == 0}
-              />
-            );
-          })}
-        </DevelopmentPluginsList>
-      </SuggestedPluginsContainer>
+      {props.developerPlugins?.length > 0 && (
+        <SuggestedPluginsContainer>
+          <SuggestedPluginsTitle>{"Development Plugins"}</SuggestedPluginsTitle>
+          <DevelopmentPluginsList>
+            {props.developerPlugins?.map((suggestedPlugin, index) => {
+              return (
+                <PreviewPluginRow
+                  plugin={suggestedPlugin}
+                  onChangePluginVersion={props.onChangePluginVersion}
+                  key={index}
+                  isEven={index % 2 == 0}
+                />
+              );
+            })}
+          </DevelopmentPluginsList>
+        </SuggestedPluginsContainer>
+      )}
     </div>
   );
 };
