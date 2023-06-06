@@ -16,7 +16,7 @@ import {
   EMPTY_COMMIT_STATE,
   Branch as FloroBranch,
   applyStateDiffToCommitState,
-  convertCommitStateToRenderedState
+  convertCommitStateToRenderedState,
 } from "floro/dist/src/repo";
 import { commitDataContainsDevPlugins } from "floro/dist/src/repoapi";
 import RepoRBACService from "../services/repositories/RepoRBACService";
@@ -31,9 +31,11 @@ import PluginVersionsContext from "@floro/database/src/contexts/plugins/PluginVe
 import PluginsContext from "@floro/database/src/contexts/plugins/PluginsContext";
 import OrganizationMembersContext from "@floro/database/src/contexts/organizations/OrganizationMembersContext";
 import CommitsContext from "@floro/database/src/contexts/repositories/CommitsContext";
+import PluginCommitUtilizationsContext from "@floro/database/src/contexts/repositories/PluginCommitUtilizationsContext";
 import DatabaseConnection from "@floro/database/src/connection/DatabaseConnection";
 import { Manifest, manifestListToSchemaMap } from "floro/dist/src/plugins";
 import { makeDataSource } from "floro/dist/src/datasource";
+import OrganizationsContext from "@floro/database/src/contexts/organizations/OrganizationsContext";
 
 @injectable()
 export default class RepoController extends BaseController {
@@ -330,7 +332,10 @@ export default class RepoController extends BaseController {
         if (commit) {
           const privateCdnUrl = this.mainConfig.privateRoot();
           //const expiration = new Date().getTime() + (3600*1000);
-          const urlPath = this.repoAccessor.getRelativeCommitStatePath(repo, sha);
+          const urlPath = this.repoAccessor.getRelativeCommitStatePath(
+            repo,
+            sha
+          );
           const url = privateCdnUrl + urlPath;
           const signedUrl = this.storageAuthenticator.signURL(
             url,
@@ -640,6 +645,38 @@ export default class RepoController extends BaseController {
               }
 
               const byteSize = sizeof(fileData);
+
+              if (repo?.isPrivate) {
+                if (repo.repoType == "org_repo") {
+                  const organizationsContext =
+                    await this.contextFactory.createContext(
+                      OrganizationsContext
+                    );
+                  const organization = await organizationsContext.getById(
+                    repo.organizationId
+                  );
+                  const utilizedDiskSpaceBytes = parseInt(
+                    organization?.utilizedDiskSpaceBytes as unknown as string
+                  );
+                  await organizationsContext.updateOrganizationById(
+                    organization?.id as string,
+                    {
+                      utilizedDiskSpaceBytes: utilizedDiskSpaceBytes + byteSize,
+                    }
+                  );
+                } else {
+                  const usersContext = await this.contextFactory.createContext(
+                    UsersContext
+                  );
+                  const utilizedDiskSpaceBytes = parseInt(
+                    session.user?.utilizedDiskSpaceBytes as unknown as string
+                  );
+
+                  await usersContext.updateUserById(session?.userId as string, {
+                    utilizedDiskSpaceBytes: utilizedDiskSpaceBytes + byteSize,
+                  });
+                }
+              }
               const insertedBinary = await binariesContext.create({
                 sha,
                 fileName: filename,
@@ -675,6 +712,7 @@ export default class RepoController extends BaseController {
         });
       }
     } catch (e) {
+      console.log("E", e);
       response.sendStatus(400);
       return;
     }
@@ -730,7 +768,7 @@ export default class RepoController extends BaseController {
       if (repoHasCommit) {
         response.send({
           ack: true,
-        })
+        });
         return;
       }
       if (typeof commitData?.idx != "number") {
@@ -739,7 +777,7 @@ export default class RepoController extends BaseController {
       }
 
       let parentIdx: number = -1;
-      let parentId: string|undefined;
+      let parentId: string | undefined;
       if (commitData.parent) {
         const parentCommit = await this.repositoryService.getCommit(
           repoId,
@@ -783,21 +821,23 @@ export default class RepoController extends BaseController {
         return;
       }
 
-      const usersContext = await this.contextFactory.createContext(UsersContext);
+      const usersContext = await this.contextFactory.createContext(
+        UsersContext
+      );
       const commitUser = await usersContext.getById(commitData?.userId);
       if (!commitUser || commitUser.username != commitData.username) {
         response.sendStatus(400);
         return;
       }
       if (repo.repoType == "org_repo" && repo?.isPrivate) {
-        const organizationsMembersContext = await this.contextFactory.createContext(
-          OrganizationMembersContext
-        );
+        const organizationsMembersContext =
+          await this.contextFactory.createContext(OrganizationMembersContext);
 
-        const membership = await organizationsMembersContext.getByOrgIdAndUserId(
-          repo.organizationId,
-          commitUser.id
-        );
+        const membership =
+          await organizationsMembersContext.getByOrgIdAndUserId(
+            repo.organizationId,
+            commitUser.id
+          );
         // should test if org_repo if user if member (does not need to be active)
         if (!membership) {
           response.sendStatus(400);
@@ -820,14 +860,14 @@ export default class RepoController extends BaseController {
           return;
         }
         if (repo.repoType == "org_repo" && repo?.isPrivate) {
-          const organizationsMembersContext = await this.contextFactory.createContext(
-            OrganizationMembersContext
-          );
+          const organizationsMembersContext =
+            await this.contextFactory.createContext(OrganizationMembersContext);
 
-          const authorMembership = await organizationsMembersContext.getByOrgIdAndUserId(
-            repo.organizationId,
-            authorUser.id
-          );
+          const authorMembership =
+            await organizationsMembersContext.getByOrgIdAndUserId(
+              repo.organizationId,
+              authorUser.id
+            );
           // should test if org_repo if user if member (does not need to be active)
           if (!authorMembership) {
             response.sendStatus(400);
@@ -873,8 +913,14 @@ export default class RepoController extends BaseController {
       const pluginsContext = await this.contextFactory.createContext(
         PluginsContext
       );
+
+      const pluginCommitUtilizationsContext =
+        await this.contextFactory.createContext(PluginCommitUtilizationsContext);
+      const pluginIdMappings: {
+        [key: string]: { pluginId: string; pluginVersionId: string };
+      } = {};
       const pluginList = Object.values(commitData?.diff?.plugins?.add);
-      for (const { key: pluginName, value: pluginSemVer} of pluginList) {
+      for (const { key: pluginName, value: pluginSemVer } of pluginList) {
         const pluginVersion = await pluginVersionsContext.getByNameAndVersion(
           pluginName,
           pluginSemVer
@@ -894,6 +940,10 @@ export default class RepoController extends BaseController {
           response.sendStatus(400);
           return;
         }
+        pluginIdMappings[pluginName] = {
+          pluginId: plugin.id,
+          pluginVersionId: pluginVersion.id,
+        };
 
         if (pluginVersion.isPrivate) {
           if (
@@ -933,7 +983,7 @@ export default class RepoController extends BaseController {
       if (repoHasCommitSecondCheck) {
         response.send({
           ack: true,
-        })
+        });
         return;
       }
       const previousCommitKV = !commitData?.parent
@@ -943,37 +993,56 @@ export default class RepoController extends BaseController {
         response.sendStatus(400);
         return;
       }
-      const kvState = applyStateDiffToCommitState(previousCommitKV, commitData.diff);
-      const manifests: Array<Manifest> = await Promise.all(kvState.plugins.map(async ({key, value}) => {
-        const pluginVersion = await pluginVersionsContext.getByNameAndVersion(
-          key,
-          value
-        );
-        return JSON.parse(pluginVersion?.manifest ?? '') as Manifest;
-      }));
+      const kvState = applyStateDiffToCommitState(
+        previousCommitKV,
+        commitData.diff
+      );
+      const manifests: Array<Manifest> = await Promise.all(
+        kvState.plugins.map(async ({ key, value }) => {
+          const pluginVersion = await pluginVersionsContext.getByNameAndVersion(
+            key,
+            value
+          );
+          return JSON.parse(pluginVersion?.manifest ?? "") as Manifest;
+        })
+      );
 
       const schemaMap = manifestListToSchemaMap(manifests);
       const datasource = makeDataSource({
         getPluginManifest: async (pluginName: string) => {
           return schemaMap[pluginName];
-        }
-      })
+        },
+      });
 
-      const state = await convertCommitStateToRenderedState(datasource, kvState);
+      const state = await convertCommitStateToRenderedState(
+        datasource,
+        kvState
+      );
 
-      const didWriteCommit = await this.repoAccessor.writeCommit(repo, commitData);
+      const didWriteCommit = await this.repoAccessor.writeCommit(
+        repo,
+        commitData
+      );
       if (!didWriteCommit) {
         response.sendStatus(400);
         return;
       }
 
-      const didWriteKV = await this.repoAccessor.writeCommitKV(repo, commitData.sha, kvState);
+      const didWriteKV = await this.repoAccessor.writeCommitKV(
+        repo,
+        commitData.sha,
+        kvState
+      );
       if (!didWriteKV) {
         response.sendStatus(400);
         return;
       }
 
-      const didWriteState = await this.repoAccessor.writeCommitState(repo, commitData.sha, state);
+      const didWriteState = await this.repoAccessor.writeCommitState(
+        repo,
+        commitData.sha,
+        state
+      );
       if (!didWriteState) {
         response.sendStatus(400);
         return;
@@ -990,6 +1059,36 @@ export default class RepoController extends BaseController {
         return;
       }
       const byteSize = sizeof(commitData) + sizeof(kvState) + sizeof(state);
+      if (repo?.isPrivate) {
+        if (repo.repoType == "org_repo") {
+          const organizationsContext = await this.contextFactory.createContext(
+            OrganizationsContext
+          );
+          const organization = await organizationsContext.getById(
+            repo.organizationId
+          );
+          const utilizedDiskSpaceBytes = parseInt(
+            organization?.utilizedDiskSpaceBytes as unknown as string
+          );
+          await organizationsContext.updateOrganizationById(
+            organization?.id as string,
+            {
+              utilizedDiskSpaceBytes: utilizedDiskSpaceBytes + byteSize,
+            }
+          );
+        } else {
+          const usersContext = await this.contextFactory.createContext(
+            UsersContext
+          );
+          const utilizedDiskSpaceBytes = parseInt(
+            session.user?.utilizedDiskSpaceBytes as unknown as string
+          );
+          await usersContext.updateUserById(session?.userId as string, {
+            utilizedDiskSpaceBytes: utilizedDiskSpaceBytes + byteSize,
+          });
+        }
+      }
+
       const diffByteSize = sizeof(commitData);
       const kvByteSize = sizeof(kvState);
       const stateByteSize = sizeof(state);
@@ -1019,12 +1118,58 @@ export default class RepoController extends BaseController {
         response.sendStatus(400);
         return;
       }
+      for (const {
+        key: pluginName,
+        value: pluginVersionNumber,
+         } of state.plugins) {
+        const pluginVersion = await pluginVersionsContext.getByNameAndVersion(
+          pluginName,
+          pluginVersionNumber
+        );
 
+        if (!pluginVersion) {
+          response.sendStatus(400);
+          return;
+        }
+
+        if (pluginVersion.state != "released") {
+          response.sendStatus(400);
+          return;
+        }
+        const plugin = await pluginsContext.getByNameKey(pluginVersion.nameKey);
+        if (!plugin) {
+          response.sendStatus(400);
+          return;
+        }
+        const pluginId = plugin.id;
+        const pluginVersionId = pluginVersion.id;
+        const additions = Object.keys(
+          commitData?.diff?.store?.[pluginName]?.add ?? {}
+        ).length;
+        const removals = Object.keys(
+          commitData?.diff?.store?.[pluginName]?.remove ?? {}
+        ).length;
+        const byteSize = sizeof(state.store[pluginName]);
+        await pluginCommitUtilizationsContext.create({
+          commitSha: commitData.sha,
+          commitId: insertedCommit.id,
+          userId: commitData.userId,
+          organizationId: repo?.organizationId ?? undefined,
+          repositoryId: repo?.id,
+          pluginId,
+          pluginVersionId,
+          pluginName,
+          pluginVersionNumber,
+          additions,
+          removals,
+          byteSize,
+        });
+      }
       response.send({
         ack: true,
       });
-
     } catch (e) {
+      console.log("E", e);
       response.sendStatus(400);
       return;
     }
@@ -1078,6 +1223,46 @@ export default class RepoController extends BaseController {
         session.user,
         []
       );
+
+      if (repo?.isPrivate) {
+        if (repo.repoType == "org_repo") {
+          const organizationsContext = await this.contextFactory.createContext(
+            OrganizationsContext
+          );
+          const organization = await organizationsContext.getById(
+            repo.organizationId
+          );
+          const diskSpaceLimitBytes = parseInt(
+            organization?.diskSpaceLimitBytes as unknown as string
+          );
+          const utilizedDiskSpaceBytes = parseInt(
+            organization?.utilizedDiskSpaceBytes as unknown as string
+          );
+
+          if (utilizedDiskSpaceBytes > diskSpaceLimitBytes) {
+            await organizationsContext.updateOrganizationById(
+              organization?.id as string,
+              {
+                billingStatus: "delinquent"
+              }
+            );
+          }
+        }
+        // MAYBE ADD ONE DAY
+        //else {
+        //  const usersContext = await this.contextFactory.createContext(
+        //    UsersContext
+        //  );
+        //  const diskSpaceLimitBytes = parseInt(
+        //    session.user?.diskSpaceLimitBytes as unknown as string
+        //  );
+        //  const utilizedDiskSpaceBytes = parseInt(
+        //    session.user?.utilizedDiskSpaceBytes as unknown as string
+        //  );
+        //  if (utilizedDiskSpaceBytes > diskSpaceLimitBytes) {
+        //  }
+        //}
+      }
 
       // send webhook notification here
       // should pub sub here as well as update repo state

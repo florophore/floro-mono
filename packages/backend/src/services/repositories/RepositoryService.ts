@@ -31,6 +31,7 @@ import {
 import OrganizationsContext from "@floro/database/src/contexts/organizations/OrganizationsContext";
 import MainConfig from "@floro/config/src/MainConfig";
 import StorageAuthenticator from "@floro/storage/src/StorageAuthenticator";
+import UsersContext from "@floro/database/src/contexts/users/UsersContext";
 
 export const LICENSE_CODE_LIST = new Set([
   "apache_2",
@@ -677,20 +678,20 @@ export default class RepositoryService {
       })
       ?.filter((c) => branchShas.has(c.sha));
 
-    const branchHeadLinks = branchExchange.map(branch => {
+    const branchHeadLinks = branchExchange.map((branch) => {
       return {
         id: branch.id,
         lastCommit: branch.lastCommit,
         kvLink: this.getKVLink(repository, branch),
         stateLink: this.getStateLink(repository, branch),
-      }
-    })
+      };
+    });
 
     return {
       settings,
       commits: commitExchange,
       branches: branchExchange,
-      branchHeadLinks
+      branchHeadLinks,
     };
   }
 
@@ -756,6 +757,22 @@ export default class RepositoryService {
         return false;
       }
     }
+    // MAYBE ADD ONE DAY, for now don't worry about utilization by users
+    //else {
+    //  const usersContext = await this.contextFactory.createContext(
+    //    UsersContext
+    //  );
+    //  const user = await usersContext.getById(repository.userId);
+    //  const diskSpaceLimitBytes = parseInt(
+    //    user?.diskSpaceLimitBytes as unknown as string
+    //  );
+    //  const utilizedDiskSpaceBytes = parseInt(
+    //    user?.utilizedDiskSpaceBytes as unknown as string
+    //  );
+    //  if (utilizedDiskSpaceBytes > diskSpaceLimitBytes) {
+    //    return false;
+    //  }
+    //}
     return true;
   }
 
