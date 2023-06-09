@@ -54,13 +54,14 @@ export default class PrivateCDNTestController extends BaseController {
         });
         const readStream = createReadStream(assetPath);
         readStream.pipe(res);
+        return;
       } else {
-        res.writeHead(200, {
-            'Content-Type': contentType,
-        });
+        res.set('Content-Type', contentType);
         res.send(file);
+        return;
       }
     } catch (e) {
+      console.log("Mock CDN Error", e);
       res.status(404).json({
         message: "Not Found.",
       });

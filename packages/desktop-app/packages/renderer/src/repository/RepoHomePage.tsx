@@ -8,18 +8,26 @@ import {useSession} from '@floro/common-react/src/session/session-context';
 import {useUserOrganizations} from '@floro/common-react/src/hooks/offline';
 import RepoController from '@floro/common-react/src/components/repository/RepoController';
 
-const RepoHomePage = () => {
+interface Props {
+  page: "history"|"home"|"settings"|"branch-rules"|"merge-requests"|"merge-request"|"merge-request-review";
+}
+
+const RepoHomePage = (props: Props) => {
   const params = useParams();
   const [searchParams] = useSearchParams();
   const {currentUser} = useSession();
   const ownerHandle = params?.['ownerHandle'] ?? '';
   const repoName = params?.['repoName'] ?? '';
   const plugin = searchParams.get('plugin');
+  const branchId = searchParams.get('branch');
+  const sha = searchParams.get('sha');
   const userOrganizations = useUserOrganizations();
   const {data} = useFetchRepositoryByNameQuery({
     variables: {
       ownerHandle,
       repoName,
+      branchId,
+      sha
     },
   });
 
@@ -136,9 +144,14 @@ const RepoHomePage = () => {
       organizationId={repository?.organization?.id ?? null}
     >
       <>
-        {repository &&
-          <RepoController from={from} repository={repository} plugin={plugin ?? 'home'}/>
-        }
+        {repository && (
+          <RepoController
+            from={from}
+            repository={repository}
+            plugin={plugin ?? 'home'}
+            page={props.page}
+          />
+        )}
         {!repository && <div />}
       </>
     </OuterNavigator>

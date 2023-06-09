@@ -60,7 +60,7 @@ export default class RepoAccessor {
 
   public getRelativeCommitPath(repo: Repository, sha: string) {
     return path.join(
-      this.getRelativeParentRootDirectory(repo),
+      this.getRelativeRepoPath(repo),
       "commits",
       sha + ".json"
     );
@@ -68,14 +68,14 @@ export default class RepoAccessor {
 
   public getRelativeCommitKVPath(repo: Repository, sha: string) {
     return path.join(
-      this.getRelativeParentRootDirectory(repo),
+      this.getRelativeRepoPath(repo),
       "kvs",
       sha + ".json"
     );
   }
   public getRelativeCommitStatePath(repo: Repository, sha: string) {
     return path.join(
-      this.getRelativeParentRootDirectory(repo),
+      this.getRelativeRepoPath(repo),
       "states",
       sha + ".json"
     );

@@ -13,10 +13,14 @@ import {
   hashBinary,
 } from "floro/dist/src/sequenceoperations";
 import {
+  collectFileRefs
+} from "floro/dist/src/plugins";
+import {
   EMPTY_COMMIT_STATE,
   Branch as FloroBranch,
   applyStateDiffToCommitState,
   convertCommitStateToRenderedState,
+  getInvalidStates
 } from "floro/dist/src/repo";
 import { commitDataContainsDevPlugins } from "floro/dist/src/repoapi";
 import RepoRBACService from "../services/repositories/RepoRBACService";
@@ -32,6 +36,7 @@ import PluginsContext from "@floro/database/src/contexts/plugins/PluginsContext"
 import OrganizationMembersContext from "@floro/database/src/contexts/organizations/OrganizationMembersContext";
 import CommitsContext from "@floro/database/src/contexts/repositories/CommitsContext";
 import PluginCommitUtilizationsContext from "@floro/database/src/contexts/repositories/PluginCommitUtilizationsContext";
+import BinaryCommitUtilizationsContext from "@floro/database/src/contexts/repositories/BinaryCommitUtilizationsContext";
 import DatabaseConnection from "@floro/database/src/connection/DatabaseConnection";
 import { Manifest, manifestListToSchemaMap } from "floro/dist/src/plugins";
 import { makeDataSource } from "floro/dist/src/datasource";
@@ -278,7 +283,7 @@ export default class RepoController extends BaseController {
         if (commit) {
           const privateCdnUrl = this.mainConfig.privateRoot();
           //const expiration = new Date().getTime() + (3600*1000);
-          const urlPath = this.repoAccessor.getRelativeCommitPath(repo, sha);
+          const urlPath = "/" + this.repoAccessor.getRelativeCommitPath(repo, sha);
           const url = privateCdnUrl + urlPath;
           const signedUrl = this.storageAuthenticator.signURL(
             url,
@@ -332,7 +337,7 @@ export default class RepoController extends BaseController {
         if (commit) {
           const privateCdnUrl = this.mainConfig.privateRoot();
           //const expiration = new Date().getTime() + (3600*1000);
-          const urlPath = this.repoAccessor.getRelativeCommitStatePath(
+          const urlPath = "/" + this.repoAccessor.getRelativeCommitStatePath(
             repo,
             sha
           );
@@ -389,7 +394,7 @@ export default class RepoController extends BaseController {
         if (commit) {
           const privateCdnUrl = this.mainConfig.privateRoot();
           //const expiration = new Date().getTime() + (3600*1000);
-          const urlPath = this.repoAccessor.getRelativeCommitKVPath(repo, sha);
+          const urlPath = "/" + this.repoAccessor.getRelativeCommitKVPath(repo, sha);
           const url = privateCdnUrl + urlPath;
           const signedUrl = this.storageAuthenticator.signURL(
             url,
@@ -455,7 +460,7 @@ export default class RepoController extends BaseController {
 
           const privateCdnUrl = this.mainConfig.privateRoot();
           //const expiration = new Date().getTime() + (3600*1000);
-          const urlPath = this.binaryAccessor.getRelativeBinaryPath(fileName);
+          const urlPath = "/" + this.binaryAccessor.getRelativeBinaryPath(fileName);
           const url = privateCdnUrl + urlPath;
           const signedUrl = this.storageAuthenticator.signURL(
             url,
@@ -513,7 +518,7 @@ export default class RepoController extends BaseController {
         if (binary) {
           const privateCdnUrl = this.mainConfig.privateRoot();
           //const expiration = new Date().getTime() + (3600*1000);
-          const urlPath = this.binaryAccessor.getRelativeBinaryPath(fileName);
+          const urlPath = "/" + this.binaryAccessor.getRelativeBinaryPath(fileName);
           const url = privateCdnUrl + urlPath;
           const signedUrl = this.storageAuthenticator.signURL(
             url,
@@ -723,6 +728,7 @@ export default class RepoController extends BaseController {
     const repoId = request?.params?.repoId;
     const branchId: string | undefined = request?.query?.branch;
     const commitData: CommitData = request?.body?.commitData;
+
     if (!repoId) {
       response.sendStatus(404);
       return;
@@ -734,6 +740,7 @@ export default class RepoController extends BaseController {
 
     const sessionKey = request.headers["session_key"];
     const session = await this.sessionStore.fetchSession(sessionKey);
+
     if (!session?.user) {
       response.sendStatus(403);
       return;
@@ -1013,11 +1020,25 @@ export default class RepoController extends BaseController {
           return schemaMap[pluginName];
         },
       });
+      const apiStoreInvalidity = await getInvalidStates(
+        datasource,
+        kvState
+      );
+
+
+      let isValid = true;
+      for (const plugin in apiStoreInvalidity) {
+        if (apiStoreInvalidity[plugin]?.length > 0) {
+          isValid = false;
+          break;
+        }
+      }
 
       const state = await convertCommitStateToRenderedState(
         datasource,
         kvState
       );
+      const binaries = await collectFileRefs(datasource, schemaMap, state.store);
 
       const didWriteCommit = await this.repoAccessor.writeCommit(
         repo,
@@ -1105,6 +1126,7 @@ export default class RepoController extends BaseController {
         diffByteSize,
         kvByteSize,
         stateByteSize,
+        isValid,
         username: commitData.username,
         userId: commitData.userId,
         authorUsername: commitData.authorUsername ?? commitData?.username,
@@ -1113,6 +1135,31 @@ export default class RepoController extends BaseController {
         organizationId: repo?.organizationId,
         repositoryId: repo?.id,
       });
+
+      const binaryCommitUtilizationsContext = await this.contextFactory.createContext(BinaryCommitUtilizationsContext);
+
+      const seenBinaries = new Set<string>();
+      for(const binary of binaries) {
+        if (!seenBinaries.has(binary)) {
+          // insert binary_utilizations
+          const bin = await binariesContext.getRepoBinaryByFilename(repo.id, binary);
+          // if not, this will blow up the world
+          if (bin) {
+            await binaryCommitUtilizationsContext.create({
+              commitSha: commitData.sha,
+              commitId: insertedCommit.id,
+              userId: commitData.userId,
+              organizationId: repo?.organizationId ?? undefined,
+              repositoryId: repo?.id,
+              binaryId: bin.id,
+              binaryHash: bin.sha,
+              binaryFileName: bin.fileName,
+            });
+          }
+          seenBinaries.add(binary);
+        }
+      }
+
 
       if (!insertedCommit) {
         response.sendStatus(400);
@@ -1223,7 +1270,6 @@ export default class RepoController extends BaseController {
         session.user,
         []
       );
-
       if (repo?.isPrivate) {
         if (repo.repoType == "org_repo") {
           const organizationsContext = await this.contextFactory.createContext(
@@ -1248,21 +1294,32 @@ export default class RepoController extends BaseController {
             );
           }
         }
-        // MAYBE ADD ONE DAY
-        //else {
-        //  const usersContext = await this.contextFactory.createContext(
-        //    UsersContext
-        //  );
-        //  const diskSpaceLimitBytes = parseInt(
-        //    session.user?.diskSpaceLimitBytes as unknown as string
-        //  );
-        //  const utilizedDiskSpaceBytes = parseInt(
-        //    session.user?.utilizedDiskSpaceBytes as unknown as string
-        //  );
-        //  if (utilizedDiskSpaceBytes > diskSpaceLimitBytes) {
-        //  }
-        //}
+        else {
+          const usersContext = await this.contextFactory.createContext(
+            UsersContext
+          );
+          const user = await usersContext.getById(session?.userId)
+          if (user) {
+            const diskSpaceLimitBytes = parseInt(
+              session.user?.diskSpaceLimitBytes as unknown as string
+            );
+            const utilizedDiskSpaceBytes = parseInt(
+              session.user?.utilizedDiskSpaceBytes as unknown as string
+            );
+            if (utilizedDiskSpaceBytes > diskSpaceLimitBytes) {
+              // MAYBE ADD ONE DAY DO SOMETHING HERE
+            }
+            await usersContext.updateUser(user, {
+              diskSpaceLimitBytes,
+              utilizedDiskSpaceBytes,
+            });
+          }
+        }
       }
+
+      await repositoriesContext.updateRepo(repo,  {
+        lastRepoUpdateAt: (new Date()).toISOString()
+      });
 
       // send webhook notification here
       // should pub sub here as well as update repo state

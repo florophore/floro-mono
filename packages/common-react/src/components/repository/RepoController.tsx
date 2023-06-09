@@ -2,7 +2,12 @@ import React, { useMemo, useState, useEffect, useCallback } from "react";
 import OuterNavigator from "@floro/common-react/src/components/outer-navigator/OuterNavigator";
 import { useNavigationAnimator } from "@floro/common-react/src/navigation/navigation-animator";
 import { useLinkTitle } from "@floro/common-react/src/components/header_links/HeaderLink";
-import { useParams, useSearchParams } from "react-router-dom";
+import {
+  useLocation,
+  useParams,
+  useSearchParams,
+  Link,
+} from "react-router-dom";
 import {
   Repository,
   useFetchRepositoryByNameQuery,
@@ -14,15 +19,39 @@ import LocalRepoController from "@floro/common-react/src/components/repository/l
 import RepoNavigator from "@floro/common-react/src/components/repository/RepoNavigator";
 import { LocalVCSNavProvider } from "./local/vcsnav/LocalVCSContext";
 import { SourceGraphUIProvider } from "./sourcegraph/SourceGraphUIContext";
+import RemoteRepoController from "./remote/RemoteRepoController";
 
 interface Props {
   from: "local" | "remote";
   repository: Repository;
   plugin?: string;
+  page:
+    | "history"
+    | "home"
+    | "settings"
+    | "branch-rules"
+    | "merge-requests"
+    | "merge-request"
+    | "merge-request-review";
 }
 
 const RepoController = (props: Props) => {
   const [isExpanded, setIsExpanded] = useState(true);
+
+  const s = useLocation();
+
+  const params = useParams();
+  const ownerHandle = params?.["ownerHandle"] ?? "";
+  const repoName = params?.["repoName"] ?? "";
+  const repoValue = useMemo(() => {
+    if (!props.repository?.name) {
+      return `/repo/@/${ownerHandle}/${repoName}`;
+    }
+    if (props.repository.repoType == "user_repo") {
+      return `/repo/@/${props.repository?.user?.username}/${props.repository?.name}`;
+    }
+    return `/repo/@/${props.repository?.organization?.handle}/${props.repository?.name}`;
+  }, [props.repository, ownerHandle]);
 
   const onTogglePanel = useCallback(() => {
     setIsExpanded(!isExpanded);
@@ -38,32 +67,38 @@ const RepoController = (props: Props) => {
     return () => {
       window.removeEventListener("keydown", commandPToggleListener);
     };
-
   }, [onTogglePanel]);
 
   return (
-      <SourceGraphUIProvider isExpanded={isExpanded}>
-        <LocalVCSNavProvider>
-            <RepoNavigator
-              repository={props.repository}
-              plugin={props.plugin ?? "home"}
-              isExpanded={isExpanded}
-              onSetIsExpanded={setIsExpanded}
-            >
-              <>
-                {props.from == "local" && (
-                  <LocalRepoController
-                    repository={props.repository}
-                    plugin={props.plugin ?? "home"}
-                    isExpanded={isExpanded}
-                    onSetIsExpanded={setIsExpanded}
-                  />
-                )}
-                {props.from == "remote" && <div>{"fill in later"}</div>}
-              </>
-            </RepoNavigator>
-        </LocalVCSNavProvider>
-      </SourceGraphUIProvider>
+    <SourceGraphUIProvider isExpanded={isExpanded}>
+      <LocalVCSNavProvider>
+        <RepoNavigator
+          repository={props.repository}
+          plugin={props.plugin ?? "home"}
+          isExpanded={isExpanded}
+          onSetIsExpanded={setIsExpanded}
+        >
+          <>
+            {props.from == "local" && (
+              <LocalRepoController
+                repository={props.repository}
+                plugin={props.plugin ?? "home"}
+                isExpanded={isExpanded}
+                onSetIsExpanded={setIsExpanded}
+              />
+            )}
+            {props.from == "remote" && props.page == "home" && (
+              <RemoteRepoController
+                repository={props.repository}
+                plugin={props.plugin ?? "home"}
+                isExpanded={isExpanded}
+                onSetIsExpanded={setIsExpanded}
+              />
+            )}
+          </>
+        </RepoNavigator>
+      </LocalVCSNavProvider>
+    </SourceGraphUIProvider>
   );
 };
 

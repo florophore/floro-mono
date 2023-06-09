@@ -9,6 +9,10 @@ import { OrganizationPermissions } from "../services/organizations/OrganizationP
 import sizeof from "object-sizeof";
 import { OrganizationInvitation } from "@floro/database/src/entities/OrganizationInvitation";
 import { Repository } from "@floro/database/src/entities/Repository";
+import { Branch as FloroBranch, RemoteSettings} from "floro/dist/src/repo";
+import { PluginVersion, RepositoryBranchStateArgs } from "@floro/graphql-schemas/build/generated/main-graphql";
+import { Commit } from "@floro/database/src/entities/Commit";
+import { DataSource } from "floro/dist/src/datasource";
 
 @injectable()
 export default class RequestCache {
@@ -442,5 +446,135 @@ export default class RequestCache {
   public getOrgPluginCount(cacheKey: string, organizationId: string): number {
     const cache = this.getCache(cacheKey);
     return cache[`org-plugin-count:${organizationId}`] as number;
+  }
+  public setRepo(
+    cacheKey: string,
+    repository: Repository
+  ) {
+    if (repository?.id) {
+      const cache = this.getCache(cacheKey);
+      cache[`repo:${repository?.id}`] = repository;
+    }
+  }
+
+  public getRepo(cacheKey: string, repoId: string): Repository {
+    const cache = this.getCache(cacheKey);
+    return cache[`repo:${repoId}`] as Repository;
+  }
+
+  public setRepoBranches(
+    cacheKey: string,
+    repoId: string,
+    branches: Array<FloroBranch & {updatedAt: string, dbId: string}>
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`repo-branches:${repoId}`] = branches;
+  }
+
+  public getRepoBranches(cacheKey: string, repoId: string): Array<FloroBranch & {updatedAt: string, dbId: string}> {
+    const cache = this.getCache(cacheKey);
+    return cache[`repo-branches:${repoId}`] as Array<FloroBranch & {updatedAt: string, dbId: string}>;
+  }
+
+  public setRepoCommits(
+    cacheKey: string,
+    repoId: string,
+    commits: Array<Commit>
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`repo-commits:${repoId}`] = commits;
+  }
+
+  public getRepoCommits(cacheKey: string, repoId: string): Array<Commit> {
+    const cache = this.getCache(cacheKey);
+    return cache[`repo-commits:${repoId}`] as Array<Commit>;
+  }
+
+  public setRepoCommitHistory(
+    cacheKey: string,
+    repoId: string,
+    sha: string,
+    commits: Array<Commit>
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`repo-commit-history:${repoId}:${sha}`] = commits;
+  }
+
+  public getRepoCommitHistory(cacheKey: string, repoId: string, sha: string): Array<Commit> {
+    const cache = this.getCache(cacheKey);
+    return cache[`repo-commit-history:${repoId}:${sha}`] as Array<Commit>;
+  }
+
+  public setRepoRemoteSettings(
+    cacheKey: string,
+    repoId: string,
+    remoteSettings: RemoteSettings
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`repo-remote-settings:${repoId}`] = remoteSettings;
+  }
+
+  public getRepoRemoteSettings(cacheKey: string, repoId: string): RemoteSettings {
+    const cache = this.getCache(cacheKey);
+    return cache[`repo-remote-settings:${repoId}`] as RemoteSettings;
+  }
+
+  public getRepoRevertRanges(cacheKey: string, repoId: string, sha: string): Array<{fromIdx: number, toIdx: number}> {
+    const cache = this.getCache(cacheKey);
+    return cache[`repo-revert-ranges:${repoId}:${sha}`] as Array<{fromIdx: number, toIdx: number}>;
+  }
+
+  public setRepoRevertRanges(
+    cacheKey: string,
+    repoId: string,
+    sha: string,
+    ranges: Array<{fromIdx: number, toIdx: number}>
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`repo-revert-ranges:${repoId}:${sha}`] = ranges;
+  }
+
+  public getCommitStateDatasource(cacheKey: string, repoId: string, sha: string): DataSource {
+    const cache = this.getCache(cacheKey);
+    return cache[`commit-state-datasource:${repoId}:${sha}`] as DataSource;
+  }
+
+  public setCommitStateDatasource(
+    cacheKey: string,
+    repoId: string,
+    sha: string,
+    datasource: DataSource
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`commit-state-datasource:${repoId}:${sha}`] = datasource;
+  }
+  public getCommitStatePluginVersions(cacheKey: string, repoId: string, sha: string): PluginVersion[] {
+    const cache = this.getCache(cacheKey);
+    return cache[`commit-state-plugin-versions:${repoId}:${sha}`] as PluginVersion[];
+  }
+
+  public setCommitStatePluginVersions(
+    cacheKey: string,
+    repoId: string,
+    sha: string,
+    pluginVersions: PluginVersion[]
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`commit-state-plugin-versions:${repoId}:${sha}`] = pluginVersions;
+  }
+
+  public getCommitStateBinaryRefs(cacheKey: string, repoId: string, sha: string): string[] {
+    const cache = this.getCache(cacheKey);
+    return cache[`commit-state-binary-refs:${repoId}:${sha}`] as string[];
+  }
+
+  public setCommitStateBinaryRefs(
+    cacheKey: string,
+    repoId: string,
+    sha: string,
+    binaryRefs: string[]
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`commit-state-binary-refs:${repoId}:${sha}`] = binaryRefs;
   }
 }

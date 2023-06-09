@@ -1,4 +1,8 @@
-import { DeepPartial, QueryRunner, Repository as TypeormRepository } from "typeorm";
+import {
+  DeepPartial,
+  QueryRunner,
+  Repository as TypeormRepository,
+} from "typeorm";
 import BaseContext from "../BaseContext";
 import ContextFactory from "../ContextFactory";
 import { Repository } from "../../entities/Repository";
@@ -27,7 +31,7 @@ export default class RepositoriesContext extends BaseContext {
       relations: {
         user: true,
         organization: true,
-      }
+      },
     });
   }
 
@@ -37,7 +41,7 @@ export default class RepositoriesContext extends BaseContext {
       relations: {
         user: true,
         organization: true,
-      }
+      },
     });
   }
 
@@ -47,19 +51,22 @@ export default class RepositoriesContext extends BaseContext {
       relations: {
         user: true,
         organization: true,
-      }
+      },
     });
   }
 
-  public async getUserReposByType(userId: string, isPrivate: boolean): Promise<Repository[]> {
+  public async getUserReposByType(
+    userId: string,
+    isPrivate: boolean
+  ): Promise<Repository[]> {
     return await this.queryRunner.manager.find(Repository, {
       where: { userId, isPrivate },
       relations: {
         user: true,
       },
       order: {
-        createdAt: 'DESC'
-      }
+        createdAt: "DESC",
+      },
     });
   }
 
@@ -68,19 +75,42 @@ export default class RepositoriesContext extends BaseContext {
       where: { organizationId },
       relations: {
         organization: true,
-      }
+      },
     });
   }
 
-  public async getOrgReposByType(organizationId: string, isPrivate: boolean): Promise<Repository[]> {
+  public async getOrgReposByType(
+    organizationId: string,
+    isPrivate: boolean
+  ): Promise<Repository[]> {
     return await this.queryRunner.manager.find(Repository, {
       where: { organizationId, isPrivate },
       relations: {
         organization: true,
       },
       order: {
-        createdAt: 'DESC'
-      }
+        createdAt: "DESC",
+      },
     });
+  }
+  public async updateRepo(
+    repo: Repository,
+    repoArgs: DeepPartial<Repository>
+  ): Promise<Repository> {
+    return (await this.updateRepoById(repo.id, repoArgs)) ?? repo;
+  }
+
+  public async updateRepoById(
+    id: string,
+    repoArgs: DeepPartial<Repository>
+  ): Promise<Repository | null> {
+    const repo = await this.getById(id);
+    if (repo === null) {
+      throw new Error("Invalid ID to update for Repository.id: " + id);
+    }
+    for (const prop in repoArgs) {
+      repo[prop] = repoArgs[prop];
+    }
+    return await this.queryRunner.manager.save(Repository, repo);
   }
 }

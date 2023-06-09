@@ -3,7 +3,7 @@ import { PluginCommitUtilization } from "../../entities/PluginCommitUtilization"
 import BaseContext from "../BaseContext";
 import ContextFactory from "../ContextFactory";
 
-export default class PluginRepoUtilizationsContext extends BaseContext {
+export default class PluginCommitUtilizationsContext extends BaseContext {
   private pluginCommitUtilization!: Repository<PluginCommitUtilization>;
 
   public async init(
@@ -21,5 +21,14 @@ export default class PluginRepoUtilizationsContext extends BaseContext {
 
   public async getById(id: string): Promise<PluginCommitUtilization | null> {
     return await this.queryRunner.manager.findOneBy(PluginCommitUtilization, { id });
+  }
+
+  public async getAllByRepoAndSha(repositoryId: string, commitSha: string): Promise<Array<PluginCommitUtilization>> {
+    return await this.queryRunner.manager.find(PluginCommitUtilization, {
+      where: {
+        commitSha,
+        repositoryId
+      }
+    });
   }
 }

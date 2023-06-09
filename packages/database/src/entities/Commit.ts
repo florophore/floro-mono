@@ -77,6 +77,16 @@ export class Commit extends BaseEntity {
   @IsString()
   mergeRevertSha!: string;
 
+  @Column("varchar")
+  @IsOptional()
+  @IsString()
+  revertFromSha!: string;
+
+  @Column("varchar")
+  @IsOptional()
+  @IsString()
+  revertToSha!: string;
+
   @Column("integer")
   @IsInt()
   @IsDefined()
@@ -96,6 +106,11 @@ export class Commit extends BaseEntity {
   @IsInt()
   @IsDefined()
   stateByteSize?: number;
+
+  @Column("boolean")
+  @IsBoolean()
+  @IsDefined()
+  isValid?: boolean;
 
   @Column("text")
   @IsString()

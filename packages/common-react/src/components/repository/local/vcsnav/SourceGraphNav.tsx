@@ -19,6 +19,7 @@ import {
   useCanAutoFix,
   useCanCherryPick,
   useCanMoveWIP,
+  useCanRevert,
   useCheckoutCommitSha,
   useCherryPick,
   useFetchInfo,
@@ -295,6 +296,7 @@ const SourceGraphNav = (props: Props) => {
   const canCherryPickQuery = useCanCherryPick(props.repository, selectedSha);
   const canAmendQuery = useCanAmend(props.repository, selectedSha);
   const canAutoFixQuery = useCanAutoFix(props.repository, selectedSha);
+  const canRevertQuery = useCanRevert(props.repository, selectedSha);
 
   const cherryPickMutation = useCherryPick(props.repository);
   const revertMutation = useRevert(props.repository);
@@ -710,7 +712,7 @@ const SourceGraphNav = (props: Props) => {
             <>
               <ButtonRow style={{ marginTop: 24 }}>
                 <RepoActionButton
-                  isDisabled={props.apiResponse.isWIP || !selectedShaIsAncestor || (pushInfoLoading || fetchInfo?.branchPushDisabled)}
+                  isDisabled={props.apiResponse.isWIP || !canRevertQuery?.data?.canRevert || !selectedShaIsAncestor || (pushInfoLoading || fetchInfo?.branchPushDisabled)}
                   label={"revert sha"}
                   icon={"revert"}
                   onClick={onRevert}
@@ -719,7 +721,7 @@ const SourceGraphNav = (props: Props) => {
                 <RepoActionButton
                   label={"fix forward"}
                   icon={"auto-fix"}
-                  isDisabled={!canAutoFixQuery.data?.canAutoFix || (pushInfoLoading || fetchInfo?.branchPushDisabled)}
+                  isDisabled={!canAutoFixQuery.data?.canAutoFix || !canRevertQuery?.data?.canRevert || (pushInfoLoading || fetchInfo?.branchPushDisabled)}
                   onClick={onAutoFix}
                   isLoading={autofixMutation?.isLoading}
                 />

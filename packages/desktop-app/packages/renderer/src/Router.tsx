@@ -28,7 +28,13 @@ const Router = (): React.ReactElement => {
           <Route path="/home/plugins" element={<UserPluginsPage />} />
           <Route path="/org/@/:handle" element={<OrganizationPage />} />
           <Route path="/org/@/:handle/create-repo" element={<CreateOrgRepoPage/>} />
-          <Route path="/repo/@/:ownerHandle/:repoName" element={<RepoHomePage/>} />
+          <Route path="/repo/@/:ownerHandle/:repoName/history" element={<RepoHomePage page={'history'}/>} />
+          <Route path="/repo/@/:ownerHandle/:repoName/settings" element={<RepoHomePage page={'settings'}/>} />
+          <Route path="/repo/@/:ownerHandle/:repoName/settings/branchrules/:branchRuleId" element={<RepoHomePage page={'branch-rules'}/>} />
+          <Route path="/repo/@/:ownerHandle/:repoName/mergerequests/:mergeRequestId/review" element={<RepoHomePage page={'merge-request-review'}/>} />
+          <Route path="/repo/@/:ownerHandle/:repoName/mergerequests/:mergeRequestId" element={<RepoHomePage page={'merge-request'}/>} />
+          <Route path="/repo/@/:ownerHandle/:repoName/mergerequests" element={<RepoHomePage page={'merge-requests'}/>} />
+          <Route path="/repo/@/:ownerHandle/:repoName" element={<RepoHomePage page={'home'}/>} />
         </Routes>
       </AnimatePresence>
     );

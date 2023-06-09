@@ -10,7 +10,6 @@ import RepositoryEnabledRoleSettingsContext from "@floro/database/src/contexts/r
 import RepositoryEnabledUserSettingsContext from "@floro/database/src/contexts/repositories/RepositoryEnabledUserSettingsContext";
 import OrganizationMemberRolesContext from "@floro/database/src/contexts/organizations/OrganizationMemberRolesContext";
 import { ProtectedBranchRule } from "@floro/database/src/entities/ProtectedBranchRule";
-import { ProtectedBranchRuleEnabledUserSetting } from "@floro/database/src/entities/ProtectedBranchRuleEnabledUserSetting";
 import ProtectedBranchRuleEnabledUserSettingsContext from "@floro/database/src/contexts/repositories/RepositoryEnabledUserSettingsContext";
 import ProtectedBranchRuleEnabledRoleSettingsContext from "@floro/database/src/contexts/repositories/RepositoryEnabledRoleSettingsContext";
 
@@ -148,7 +147,7 @@ export default class RepoRBACService {
   public async calculateUserProtectedBranchRuleSettingPermission (
     protectedBranchRule: ProtectedBranchRule,
     repository: Repository,
-    user: User,
+    user: User|null|undefined,
     settingName:
       | "anyoneCanCreateMergeRequests"
       | "anyoneWithApprovalCanMerge"
@@ -157,6 +156,9 @@ export default class RepoRBACService {
       | "anyoneCanRevert"
       | "anyoneCanAutofix"
   ) {
+    if (!user) {
+      return false;
+    }
     if (repository.repoType == "user_repo") {
       if (repository.isPrivate) {
         return user.id == repository.createdByUserId;
@@ -262,12 +264,15 @@ export default class RepoRBACService {
 
   public async calculateUserRepositorySettingPermission(
     repository: Repository,
-    user: User,
+    user: User|null|undefined,
     settingName:
       | "anyoneCanPushBranches"
       | "anyoneCanDeleteBranches"
       | "anyoneCanChangeSettings"
   ) {
+    if (!user) {
+      return false;
+    }
     if (repository.repoType == "user_repo") {
       if (repository.isPrivate || settingName == "anyoneCanChangeSettings") {
         return user.id == repository.createdByUserId;

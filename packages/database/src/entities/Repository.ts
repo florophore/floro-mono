@@ -89,14 +89,14 @@ export class Repository extends BinaryPKBaseEntity {
 
   @OneToOne("User", "repositories")
   @JoinColumn()
-  user?: Relation<User>;
+  user!: Relation<User>;
 
   @Column("uuid")
   organizationId!: string;
 
   @ManyToOne("Organization", "repositories")
   @JoinColumn()
-  organization?: Relation<Organization>;
+  organization!: Relation<Organization>;
 
   @OneToMany("Binary", "repository")
   @JoinColumn()

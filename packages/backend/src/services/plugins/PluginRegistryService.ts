@@ -115,7 +115,7 @@ export default class PluginRegistryService {
     user: User,
     organization?: Organization
   ): Promise<RegisterPluginReponse> {
-    if (!PLUGIN_REGEX.test(name)) {
+    if (!PLUGIN_REGEX.test(name) || name.toLowerCase().trim() == "home") {
       return {
         action: "INVALID_PARAMS_ERROR",
         error: {

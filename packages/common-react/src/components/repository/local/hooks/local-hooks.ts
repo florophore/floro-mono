@@ -164,6 +164,29 @@ export const useCanAmend = (repository: Repository, sha?: string|null) => {
     }
   );
 };
+export const useCanRevert = (repository: Repository, sha?: string|null) => {
+  return useQuery(
+    "repo-can-revert:" + repository.id + ":sha:" + sha,
+    async (): Promise<{canRevert: boolean}> => {
+      try {
+        if (!repository.id) {
+          return {canRevert: false};
+        }
+        if (!sha) {
+          return {canRevert: false};
+        }
+        const result = await axios.get(
+          `http://localhost:63403/repo/${repository.id}/sha/${sha}/canrevert`
+        );
+        return result?.data ?? null;
+      } catch (e) {
+        return {canRevert: false};
+      }
+    }, {
+      cacheTime: 0
+    }
+  );
+};
 
 export const useCanAutoFix = (repository: Repository, sha?: string|null) => {
   return useQuery(

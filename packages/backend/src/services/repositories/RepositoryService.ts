@@ -32,6 +32,23 @@ import OrganizationsContext from "@floro/database/src/contexts/organizations/Org
 import MainConfig from "@floro/config/src/MainConfig";
 import StorageAuthenticator from "@floro/storage/src/StorageAuthenticator";
 import UsersContext from "@floro/database/src/contexts/users/UsersContext";
+import RepositoryDatasourceFactoryService from "./RepoDatasourceFactoryService";
+import BinaryCommitUtilizationsContext from "@floro/database/src/contexts/repositories/BinaryCommitUtilizationsContext";
+import BinaryAccessor from "@floro/storage/src/accessors/BinaryAccessor";
+
+interface BranchRuleUserPermission {
+  branchId: string;
+  branchName: string;
+  directPushingDisabled: boolean;
+  requiresApprovalToMerge: boolean;
+  automaticallyDeletesMergedFeatureBranches: boolean;
+  canCreateMergeRequests: boolean;
+  canMergeWithApproval: boolean;
+  canMergeMergeRequests: boolean;
+  canApproveMergeRequests: boolean;
+  canRevert: boolean;
+  canAutofix: boolean;
+}
 
 export const LICENSE_CODE_LIST = new Set([
   "apache_2",
@@ -72,6 +89,8 @@ export default class RepositoryService {
   private repoRBAC!: RepoRBACService;
   private mainConfig!: MainConfig;
   private storageAuthenticator!: StorageAuthenticator;
+  private repositoryDatasourceFactoryService!: RepositoryDatasourceFactoryService;
+  private binaryAccessor!: BinaryAccessor;
 
   constructor(
     @inject(DatabaseConnection) databaseConnection: DatabaseConnection,
@@ -80,7 +99,10 @@ export default class RepositoryService {
     @inject(BranchService) branchService: BranchService,
     @inject(RepoRBACService) repoRBAC: RepoRBACService,
     @inject(MainConfig) mainConfig: MainConfig,
-    @inject(StorageAuthenticator) storageAuthenticator: StorageAuthenticator
+    @inject(StorageAuthenticator) storageAuthenticator: StorageAuthenticator,
+    @inject(RepositoryDatasourceFactoryService)
+    repositoryDatasourceFactoryService: RepositoryDatasourceFactoryService,
+    @inject(BinaryAccessor) binaryAccessor: BinaryAccessor
   ) {
     this.databaseConnection = databaseConnection;
     this.contextFactory = contextFactory;
@@ -89,6 +111,16 @@ export default class RepositoryService {
     this.repoRBAC = repoRBAC;
     this.mainConfig = mainConfig;
     this.storageAuthenticator = storageAuthenticator;
+    this.repositoryDatasourceFactoryService =
+      repositoryDatasourceFactoryService;
+    this.binaryAccessor = binaryAccessor;
+  }
+
+  public async getRepository(id: string) {
+    const repositoriesContext = await this.contextFactory.createContext(
+      RepositoriesContext
+    );
+    return await repositoriesContext.getById(id);
   }
 
   public async createUserRepository(
@@ -396,8 +428,8 @@ export default class RepositoryService {
   public async fetchProtectedBranchSettingsForUser(
     repository: Repository,
     protectedBranchRule: ProtectedBranchRule,
-    user: User
-  ) {
+    user: User | null | undefined
+  ): Promise<BranchRuleUserPermission> {
     const canCreateMergeRequests =
       await this.repoRBAC.calculateUserProtectedBranchRuleSettingPermission(
         protectedBranchRule,
@@ -464,7 +496,7 @@ export default class RepositoryService {
 
   public async fetchRepoSettingsForUser(
     repoId: string,
-    user: User
+    user?: User | null | undefined
   ): Promise<RemoteSettings | null> {
     const repository = await this.fetchRepoById(repoId);
     if (!repository) {
@@ -512,6 +544,76 @@ export default class RepositoryService {
       branchRules,
       accountInGoodStanding,
     };
+  }
+
+  public async getBranches(
+    repoId: string
+  ): Promise<Array<FloroBranch & { updatedAt: string; dbId: string }>> {
+    const branchesContext = await this.contextFactory.createContext(
+      BranchesContext
+    );
+    const branches = await branchesContext.getAllByRepoId(repoId);
+    return branches?.map((b) => {
+      return {
+        id: b.branchId as string,
+        name: b.name as string,
+        lastCommit: b.lastCommit as string,
+        createdBy: b.createdById as string,
+        createdByUsername: b.createdByUsername as string,
+        createdAt: b.createdAt as string,
+        baseBranchId: b?.baseBranchId as string,
+        updatedAt: b.updatedAt.toISOString(),
+        dbId: b.id,
+      };
+    });
+  }
+
+  public async getCommits(repoId: string): Promise<Array<Commit>> {
+    const commitsContext = await this.contextFactory.createContext(
+      CommitsContext
+    );
+    const commits = await commitsContext.getAllByRepoId(repoId);
+    return commits ?? [];
+  }
+
+  public getCommitHistory(commits: Array<Commit>, sha: string) {
+    return this.repositoryDatasourceFactoryService.getCommitHistory(
+      commits,
+      sha
+    );
+  }
+
+  public getRevertRanges(commitHistory: Array<Commit>) {
+    const out: Array<{ fromIdx: number; toIdx: number }> = [];
+    const commitMap = {};
+    for (const commit of commitHistory) {
+      if (commit.sha) {
+        commitMap[commit.sha] = commit;
+      }
+    }
+    for (const commit of commitHistory) {
+      if (commit?.revertFromSha && commit?.revertToSha) {
+        const commitFrom = commitMap[commit?.revertFromSha];
+        const commitTo = commitMap[commit?.revertToSha];
+        out.push({
+          fromIdx: commitFrom.idx,
+          toIdx: commitTo.idx,
+        });
+      }
+    }
+    return out;
+  }
+
+  public isReverted(
+    ranges: Array<{ fromIdx: number; toIdx: number }>,
+    idx: number
+  ): boolean {
+    for (const { fromIdx, toIdx } of ranges) {
+      if (idx >= fromIdx && idx <= toIdx) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public async fetchCloneInfo(
@@ -682,8 +784,8 @@ export default class RepositoryService {
       return {
         id: branch.id,
         lastCommit: branch.lastCommit,
-        kvLink: this.getKVLink(repository, branch),
-        stateLink: this.getStateLink(repository, branch),
+        kvLink: this.getKVLinkForBranch(repository, branch),
+        stateLink: this.getKVLinkForBranch(repository, branch),
       };
     });
 
@@ -756,23 +858,21 @@ export default class RepositoryService {
       if (organization?.billingStatus == "delinquent") {
         return false;
       }
+    } else {
+      const usersContext = await this.contextFactory.createContext(
+        UsersContext
+      );
+      const user = await usersContext.getById(repository.userId);
+      const diskSpaceLimitBytes = parseInt(
+        user?.diskSpaceLimitBytes as unknown as string
+      );
+      const utilizedDiskSpaceBytes = parseInt(
+        user?.utilizedDiskSpaceBytes as unknown as string
+      );
+      if (utilizedDiskSpaceBytes > diskSpaceLimitBytes) {
+        return false;
+      }
     }
-    // MAYBE ADD ONE DAY, for now don't worry about utilization by users
-    //else {
-    //  const usersContext = await this.contextFactory.createContext(
-    //    UsersContext
-    //  );
-    //  const user = await usersContext.getById(repository.userId);
-    //  const diskSpaceLimitBytes = parseInt(
-    //    user?.diskSpaceLimitBytes as unknown as string
-    //  );
-    //  const utilizedDiskSpaceBytes = parseInt(
-    //    user?.utilizedDiskSpaceBytes as unknown as string
-    //  );
-    //  if (utilizedDiskSpaceBytes > diskSpaceLimitBytes) {
-    //    return false;
-    //  }
-    //}
     return true;
   }
 
@@ -852,31 +952,77 @@ export default class RepositoryService {
     }
   }
 
-  public getKVLink(repository: Repository, branch: FloroBranch) {
+  public getKVLinkForBranch(repository: Repository, branch: FloroBranch) {
     if (!branch?.lastCommit) {
       return null;
     }
     const privateCdnUrl = this.mainConfig.privateRoot();
     //const expiration = new Date().getTime() + (3600*1000);
-    const urlPath = this.repoAccessor.getRelativeCommitKVPath(
-      repository,
-      branch?.lastCommit
-    );
+    const urlPath =
+      "/" +
+      this.repoAccessor.getRelativeCommitKVPath(repository, branch?.lastCommit);
     const url = privateCdnUrl + urlPath;
     return this.storageAuthenticator.signURL(url, urlPath, 3600);
   }
 
-  public getStateLink(repository: Repository, branch: FloroBranch) {
+  public getStateLinkForBranch(repository: Repository, branch: FloroBranch) {
     if (!branch?.lastCommit) {
       return null;
     }
     const privateCdnUrl = this.mainConfig.privateRoot();
     //const expiration = new Date().getTime() + (3600*1000);
-    const urlPath = this.repoAccessor.getRelativeCommitStatePath(
-      repository,
-      branch?.lastCommit
-    );
+    const urlPath =
+      "/" +
+      this.repoAccessor.getRelativeCommitStatePath(
+        repository,
+        branch?.lastCommit
+      );
     const url = privateCdnUrl + urlPath;
     return this.storageAuthenticator.signURL(url, urlPath, 3600);
+  }
+
+  public getKVLinkForCommit(repository: Repository, commit: Commit) {
+    if (!commit?.sha) {
+      return null;
+    }
+    const privateCdnUrl = this.mainConfig.privateRoot();
+    //const expiration = new Date().getTime() + (3600*1000);
+    const urlPath =
+      "/" + this.repoAccessor.getRelativeCommitKVPath(repository, commit?.sha);
+    const url = privateCdnUrl + urlPath;
+    return this.storageAuthenticator.signURL(url, urlPath, 3600);
+  }
+
+  public getStateLinkForCommit(repository: Repository, commit: Commit) {
+    if (!commit?.sha) {
+      return null;
+    }
+    const privateCdnUrl = this.mainConfig.privateRoot();
+    //const expiration = new Date().getTime() + (3600*1000);
+    const urlPath =
+      "/" +
+      this.repoAccessor.getRelativeCommitStatePath(repository, commit?.sha);
+    const url = privateCdnUrl + urlPath;
+    return this.storageAuthenticator.signURL(url, urlPath, 3600);
+  }
+
+  public async getBinaryLinksForCommit(repoId: string, sha: string): Promise<Array<string>> {
+    if (!sha) {
+      return [];
+    }
+    const binaryCommitUtilizationsContext =
+      await this.contextFactory.createContext(BinaryCommitUtilizationsContext);
+    const binaryUtilizations =
+      await binaryCommitUtilizationsContext.getAllByRepoAndSha(repoId, sha);
+    const out: Array<string> = [];
+    const privateCdnUrl = this.mainConfig.privateRoot();
+    for (const { binaryFileName } of binaryUtilizations) {
+      const urlPath =
+        "/" + this.binaryAccessor.getRelativeBinaryPath(binaryFileName);
+      const url = privateCdnUrl + urlPath;
+      const signedUrl = this.storageAuthenticator.signURL(url, urlPath, 3600);
+      out.push(signedUrl);
+    }
+    return out;
   }
 }

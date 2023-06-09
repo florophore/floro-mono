@@ -10,6 +10,74 @@ type Repository {
   lastRepoUpdateAt: DateTime
   createdAt: DateTime
   updatedAt: DateTime
+  branchState(branchId: ID): BranchState
+  repoBranches: [RepoBranch]
+}
+
+type RepoBranch {
+  id: ID
+  name: String
+  lastCommit: String
+  baseBranchId: String
+  createdBy: String
+  createdByUsername: String
+  createdAt: String
+  updatedAt: String
+}
+
+type CommitInfo {
+  sha: ID
+  parent: String
+  historicalParent: ID
+  idx: Int
+  message: String
+  userId: String
+  username: String
+  authorUserId: String
+  authorUsername: String
+  timestamp: DateTime
+  kvLink: String
+  stateLink: String
+  repositoryId: String
+  isReverted: Boolean
+  isValid: Boolean
+}
+
+type BranchState {
+  branchId: ID
+  repositoryId: ID
+  defaultBranchId: ID
+  name: String
+  branchHead: String
+  updatedAt: String
+  commitState(sha: ID): CommitState
+  commits(idx: Int): [CommitInfo]
+  commitSearch(searchQuery: String): [CommitInfo]
+  commitsSize: Int
+}
+
+type CommitState {
+  sha: ID
+  message: String
+  username: String
+  userId: String
+  authorUsername: String
+  authorUserId: String
+  idx: Int
+  repositoryId: String
+  branchHead: String
+  branchId: ID
+
+  kvLink: String
+  stateLink: String
+  isReverted: Boolean
+  isValid: Boolean
+
+  canRevert: Boolean
+  canAutoFix: Boolean
+
+  pluginVersions: [PluginVersion]
+  binaryRefs: [String]
 }
 
 type CreateUserRepositorySuccess {

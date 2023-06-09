@@ -31,6 +31,11 @@ import OrganizationInvitationOrganizationMemberRolesLoader from './resolvers/hoo
 import OrganizationInvitationMemberPermissionsLoader from './resolvers/hooks/loaders/OrganizationInvitation/OrganizationInvitationMemberPermissionLoader';
 import OrganizationActiveMemberCountLoader from './resolvers/hooks/loaders/Organization/OrganizationActiveMemberCountLoader';
 import OrganizationSentInvitationsCountLoader from './resolvers/hooks/loaders/Organization/OrganizationSentInvitationsCountLoader';
+import RepositoryBranchesLoader from './resolvers/hooks/loaders/Repository/RepositoryBranchesLoader';
+import RepositoryCommitsLoader from './resolvers/hooks/loaders/Repository/RepositoryCommitsLoader';
+import RepositoryCommitHistoryLoader from './resolvers/hooks/loaders/Repository/RepositoryCommitHistoryLoader';
+import RepositoryRemoteSettingsLoader from './resolvers/hooks/loaders/Repository/RepositoryRemoteSettingsLoader';
+import RepositoryRevertRangesLoader from "./resolvers/hooks/loaders/Repository/RepositoryRevertRangesLoader";
 import CreateUserEventHandler from './services/events/CreateUserEventHandler';
 import OrganizationMemberService from './services/organizations/OrganizationMemberService';
 import OrganizationRoleService from './services/organizations/OrganizationRoleService';
@@ -52,6 +57,10 @@ import PluginPermissionService from './services/plugins/PluginPermissionService'
 import PluginVersionResolverModule from './resolvers/plugin/PluginVersionResolverModule';
 import PluginSearchService from './services/plugins/PluginSearchService';
 import BranchService from './services/repositories/BranchService';
+import RepositoryLoader from './resolvers/hooks/loaders/Repository/RepositoryLoader';
+import RepositoryDatasourceFactoryService from './services/repositories/RepoDatasourceFactoryService';
+import CommitStateDatasourceLoader from './resolvers/hooks/loaders/Repository/CommitStateDatasourceLoader';
+import CommitStatePluginVersionsLoader from './resolvers/hooks/loaders/Repository/CommitStatePluginVersionsLoader';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -91,6 +100,16 @@ export default new ContainerModule((bind): void => {
     bind(MembershipPermissionsLoader).toSelf();
     bind(MembershipRolesLoader).toSelf();
 
+    //REPOSITORY LOADERS
+    bind(RepositoryLoader).toSelf();
+    bind(RepositoryBranchesLoader).toSelf();
+    bind(RepositoryRemoteSettingsLoader).toSelf();
+    bind(RepositoryCommitsLoader).toSelf();
+    bind(RepositoryCommitHistoryLoader).toSelf();
+    bind(RepositoryRevertRangesLoader).toSelf();
+    bind(CommitStateDatasourceLoader).toSelf();
+    bind(CommitStatePluginVersionsLoader).toSelf()
+
     // SERVICES
     bind(AuthenticationService).toSelf();
     bind(UsersService).toSelf();
@@ -113,6 +132,7 @@ export default new ContainerModule((bind): void => {
     bind(RepositoryService).toSelf();
     bind(RepoRBACService).toSelf();
     bind(BranchService).toSelf();
+    bind(RepositoryDatasourceFactoryService).toSelf();
 
     // REFERRALS
     bind(ReferralService).toSelf()
