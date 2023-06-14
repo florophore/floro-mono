@@ -43,7 +43,8 @@ const ColorPalette = {
     lightPurple: '#9B8FF7FF',
     purple: '#5445C4FF',
     darkPurple: '#251F51FF',
-    linkBlue: '#56A4FAFF'
+    linkBlue: '#56A4FAFF',
+    //babyBlue: '#1D83F4FF'
 } as ColorPalette;
 
 export default ColorPalette;

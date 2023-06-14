@@ -1006,7 +1006,7 @@ export default class RepositoryService {
     return this.storageAuthenticator.signURL(url, urlPath, 3600);
   }
 
-  public async getBinaryLinksForCommit(repoId: string, sha: string): Promise<Array<string>> {
+  public async getBinaryLinksForCommit(repoId: string, sha: string): Promise<Array<{fileName: string, url: string}>> {
     if (!sha) {
       return [];
     }
@@ -1014,14 +1014,18 @@ export default class RepositoryService {
       await this.contextFactory.createContext(BinaryCommitUtilizationsContext);
     const binaryUtilizations =
       await binaryCommitUtilizationsContext.getAllByRepoAndSha(repoId, sha);
-    const out: Array<string> = [];
+    const out: Array<{fileName: string, url: string}> = [];
     const privateCdnUrl = this.mainConfig.privateRoot();
     for (const { binaryFileName } of binaryUtilizations) {
       const urlPath =
         "/" + this.binaryAccessor.getRelativeBinaryPath(binaryFileName);
       const url = privateCdnUrl + urlPath;
       const signedUrl = this.storageAuthenticator.signURL(url, urlPath, 3600);
-      out.push(signedUrl);
+      out.push({
+        url: signedUrl,
+        fileName: binaryFileName
+      });
+
     }
     return out;
   }

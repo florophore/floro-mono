@@ -339,6 +339,7 @@ interface PluginState {
     upload: null|string,
     download: null|string,
   };
+  binaryMap: {[key: string]: string};
 }
 
 interface IFloroContext {
@@ -378,6 +379,7 @@ const FloroContext = createContext({
       upload: null,
       download: null,
     },
+    binaryMap: {},
   },
   loadingIds: new Set([]),
 } as IFloroContext);
@@ -422,6 +424,7 @@ export const FloroProvider = (props: Props) => {
       upload: null,
       download: null,
     },
+    binaryMap: {},
   });
   const [hasLoaded, setHasLoaded] = useState(false);
   const [loadingIds, setLoadingIds] = useState<Set<string>>(new Set());
@@ -1824,8 +1827,8 @@ export const useBinaryRef = (fileRef?: FileRef|null) => {
     if (!fileRef) {
         return null;
     }
-    if (!pluginState.binaryUrls.download) {
-        return null;
+    if (pluginState.binaryMap[fileRef]) {
+        return pluginState.binaryMap[fileRef];
     }
     return `${pluginState.binaryUrls.download}/${fileRef}`;
 }

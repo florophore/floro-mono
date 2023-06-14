@@ -116,6 +116,13 @@ export interface ColorTheme {
     inPaletteText: string;
     notInPaletteText: string;
     draggerBackground: string;
+    linkColor: string;
+    revertedBackground: string;
+    paginationBorder: string;
+    paginationBackground: string;
+    paginationText: string;
+    paginationDisabledBackground: string;
+    paginationDisabledText: string;
   };
   gradients: {
     backgroundNoOpacity: string;
@@ -249,6 +256,13 @@ export const LightTheme: ColorTheme = {
     inPaletteText: palette.purple,
     notInPaletteText: palette.red,
     draggerBackground: palette.lightGray,
+    linkColor: palette.linkBlue,
+    revertedBackground: palette.red,
+    paginationBorder: palette.purple,
+    paginationBackground: palette.white,
+    paginationText: palette.purple,
+    paginationDisabledBackground: palette.lightGray,
+    paginationDisabledText: palette.lightPurple,
   },
   gradients: {
     backgroundNoOpacity: palette.lightModeBG.substring(0, 7) + Opacity[0],
@@ -382,6 +396,13 @@ export const DarkTheme: ColorTheme = {
         inPaletteText: palette.lightPurple,
         notInPaletteText: palette.lightRed,
         draggerBackground: palette.darkGray,
+        linkColor: palette.linkBlue,
+        revertedBackground: palette.lightRed,
+        paginationBorder: palette.lightPurple,
+        paginationBackground: palette.darkPurple,
+        paginationText: palette.purple,
+        paginationDisabledBackground: palette.darkPurple.substring(0, 7) + Opacity[30],
+        paginationDisabledText: palette.mediumGray,
     },
     shadows: {
         modalContainer: palette.black.substring(0, 7) + Opacity[70],

@@ -1,37 +1,24 @@
 import React, {
   useMemo,
-  useState,
   useCallback,
-  useRef,
   useEffect,
 } from "react";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
-import { Link, useSearchParams } from "react-router-dom";
+import {  useSearchParams } from "react-router-dom";
 import styled from "@emotion/styled";
-import { css } from "@emotion/css";
 import { useTheme } from "@emotion/react";
 import ColorPalette from "@floro/styles/ColorPalette";
-import { useSession } from "../../session/session-context";
-import CommitSelector from "@floro/storybook/stories/repo-components/CommitSelector";
-import {
-  useOfflinePhoto,
-  useOfflinePhotoMap,
-} from "../../offline/OfflinePhotoContext";
-import { useUserOrganizations } from "../../hooks/offline";
 import AdjustExtend from "@floro/common-assets/assets/images/icons/adjust.extend.svg";
 import AdjustShrink from "@floro/common-assets/assets/images/icons/adjust.shrink.svg";
 import LaptopWhite from "@floro/common-assets/assets/images/icons/laptop.white.svg";
 import GlobeWhite from "@floro/common-assets/assets/images/icons/globe.white.svg";
-import Button from "@floro/storybook/stories/design-system/Button";
 import LocalRemoteToggle from "@floro/storybook/stories/common-components/LocalRemoteToggle";
-import { useQuery, useMutation, useQueryClient } from "react-query";
-import axios from 'axios';
 import { useDaemonIsConnected, useFloroSocket, useSocketEvent } from "../../pubsub/socket";
-import RemoteVCSNavHome from "./home/vcsnav/RemoteVCSNavHome";
 import LocalVCSNavController from "./local/vcsnav/LocalVCSNavController";
-import { LocalVCSNavProvider, useLocalVCSNavContext } from "./local/vcsnav/LocalVCSContext";
 import { useSourceGraphIsShown } from "./ui-state-hook";
-import { useCloneRepo, useCloneState, useRepoExistsLocally } from "./local/hooks/local-hooks";
+import {  useCloneState, useRepoExistsLocally } from "./local/hooks/local-hooks";
+import { RemoteCommitState } from "./remote/hooks/remote-state";
+import RemoteVCSNavController from "./remote/vcsnav/RemoteVCSNavController";
 
 const Container = styled.nav`
   display: flex;
@@ -124,8 +111,18 @@ const OuterShadow = styled.div`
 
 interface Props {
   repository: Repository;
+  remoteCommitState: RemoteCommitState;
   isExpanded: boolean;
   onSetIsExpanded: (isExpanded: boolean) => void;
+  plugin: string;
+  page:
+    | "history"
+    | "home"
+    | "settings"
+    | "branch-rules"
+    | "merge-requests"
+    | "merge-request"
+    | "merge-request-review";
 }
 
 
@@ -151,16 +148,6 @@ const VersionControlPanel = (props: Props) => {
     () => (props.isExpanded ? AdjustShrink : AdjustExtend),
     [props.isExpanded]
   );
-
-  //useEffect(() => {
-  //  // open expansion on load
-  //  const timeout = setTimeout(() => {
-  //    props.onSetIsExpanded(true);
-  //  }, 150);
-  //  return () => {
-  //    clearTimeout(timeout);
-  //  }
-  //}, []);
 
   useEffect(() => {
     if (!isDaemonConnected) {
@@ -300,7 +287,7 @@ const VersionControlPanel = (props: Props) => {
           )}
           <NavigationWrapper>
             {from == "remote" && (
-              <RemoteVCSNavHome repository={props.repository} />
+              <RemoteVCSNavController plugin={props.plugin} page={props.page} repository={props.repository} remoteCommitState={props.remoteCommitState} />
             )}
             {from == "local" && (
               <LocalVCSNavController repository={props.repository} />
@@ -328,6 +315,7 @@ const VersionControlPanel = (props: Props) => {
                 from == "remote" ? ColorPalette.teal : ColorPalette.gray,
             }}
             onClick={onGoToRemote}
+
           >
             <ToggleIcon src={GlobeWhite} />
           </RemoteToggleIconWrapper>

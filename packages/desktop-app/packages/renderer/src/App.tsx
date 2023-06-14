@@ -77,6 +77,20 @@ const splitLink = split(
 //};
 
 const cache = new InMemoryCache({
+  typePolicies: {
+    Repository: {
+      fields: {
+        branchState: {
+          merge(existing, incoming) {
+            return {
+              ...existing,
+              ...incoming,
+            }
+          }
+        }
+      }
+    }
+  }
   //typePolicies: {
   //  User: {
   //    merge: mergeFunction,

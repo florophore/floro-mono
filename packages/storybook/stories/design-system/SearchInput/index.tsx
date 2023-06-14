@@ -25,13 +25,13 @@ export interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   onFocus?: (event: React.FocusEvent<HTMLInputElement, Element>) => void;
   onBlur?: (event: React.FocusEvent<HTMLInputElement, Element>) => void;
   tabIndex?: number;
+  width?: number;
   showClear?: boolean;
 }
 
 const Container = styled.div`
   position: relative;
   height: 48px;
-  width: 400px;
   background: ${(props) => props.theme.background};
   border-radius: 8px;
   transition: 500ms border-color;
@@ -175,7 +175,7 @@ const SearchInput = React.forwardRef(
     return (
       <Container
         onClick={onClickContainer}
-        style={{ border: `2px solid ${borderColor}` }}
+        style={{ border: `2px solid ${borderColor}`, width: rest?.width ?? 400 }}
       >
         <IconContainer>
             <Icon src={icon}/>

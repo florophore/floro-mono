@@ -215,6 +215,7 @@ const CurrentInfo = (props: Props): React.ReactElement => {
               wordWrap: "break-word",
               display: "block",
               whiteSpace: "normal",
+              marginLeft: 8,
               fontSize: (props.respository?.name?.length ?? 0) > 15 ? '1.5rem' : '1.7rem'
             }}
           >

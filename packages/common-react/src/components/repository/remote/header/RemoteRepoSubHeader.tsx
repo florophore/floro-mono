@@ -4,11 +4,17 @@ import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import Button from "@floro/storybook/stories/design-system/Button";
+import { Link } from "react-router-dom";
 
 import WarningLight from "@floro/common-assets/assets/images/icons/warning.light.svg";
 import WarningDark from "@floro/common-assets/assets/images/icons/warning.dark.svg";
 import DualToggle from "@floro/storybook/stories/design-system/DualToggle";
 import ColorPalette from "@floro/styles/ColorPalette";
+import { RemoteCommitState } from "../hooks/remote-state";
+import BranchSelector from "@floro/storybook/stories/repo-components/BranchSelector";
+import { Branch } from "floro/dist/src/repo";
+import HistoryBlue from "@floro/common-assets/assets/images/repo_icons/history.blue.svg";
+import { useRepoLinkBase } from "../hooks/remote-hooks";
 
 const Container = styled.div`
   display: flex;
@@ -37,6 +43,14 @@ const LeftContainer = styled.div`
   height: 72px;
 `;
 
+const RightContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  height: 72px;
+`;
+
 const InvalidState = styled.img`
   height: 32px;
   width: 32px;
@@ -60,17 +74,50 @@ const ChangeDot = styled.div`
   border-radius: 50%;
 `;
 
+const CommitHistoryWrapper =styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+`;
+
+const CommitText = styled.span`
+  color: ${(props) => props.theme.colors.linkColor};
+  font-weight: 600;
+  font-size: 1.2rem;
+  font-family: "MavenPro";
+  margin-left: 16px;
+`;
+
+const CommitHistoryIcon = styled.img`
+  height: 24px;
+  width: 24px;
+`;
+
 interface Props {
   repository: Repository;
   plugin?: string;
+  remoteCommitState: RemoteCommitState;
 }
 
-const LocalRepoSubHeader = (props: Props) => {
+const RemoteRepoSubHeader = (props: Props) => {
   const theme = useTheme();
   const loaderColor = useMemo(
     () => (theme.name == "light" ? "purple" : "lightPurple"),
     [theme.name]
   );
+
+  const linkBase = useRepoLinkBase(props.repository, "home");
+
+  const historyLink = useMemo(() => {
+    if (!props.repository?.branchState?.branchId) {
+
+      return `${linkBase}/history?from=remote&plugin=${props?.plugin ?? 'home'}`
+    }
+    return `${linkBase}/history?from=remote&branch=${props.repository?.branchState?.branchId}&plugin=${props.plugin ?? 'home'}`
+
+  }, [props.repository?.branchState, linkBase, props.plugin])
 
   const warning = useMemo(() => {
     if (theme.name == "light") {
@@ -96,51 +143,18 @@ const LocalRepoSubHeader = (props: Props) => {
   }, [
   ]);
 
-  //const hasAdditions = useMemo(() => {
-  //  if (repoData?.repoState?.commandMode != "compare") {
-  //    return false;
-  //  }
-  //  if ((repoData?.apiDiff?.description?.added?.length ?? 0) > 0) {
-  //    return true;
-  //  }
-  //  if ((repoData?.apiDiff?.licenses?.added?.length ?? 0) > 0) {
-  //    return true;
-  //  }
-  //  if ((repoData?.apiDiff?.plugins?.added?.length ?? 0) > 0) {
-  //    return true;
-  //  }
-  //  for (const plugin in repoData?.apiDiff?.store ?? {}) {
-  //    if ((repoData?.apiDiff?.store?.[plugin]?.added?.length ?? 0) > 0) {
-  //      return true;
-  //    }
-  //  }
-  //  return false;
-  //}, [repoData?.apiDiff, repoData?.repoState?.commandMode]);
+  const commitText = useMemo(() => {
+    const commitCount = props.repository?.branchState?.commitsSize ?? 0;
+    if (commitCount == 1) {
+      return `1 commit`
+    }
+    return `${commitCount} commits`;
 
-  //const hasRemovals = useMemo(() => {
-  //  if (repoData?.repoState?.commandMode != "compare") {
-  //    return false;
-  //  }
-  //  if ((repoData?.apiDiff?.description?.removed?.length ?? 0) > 0) {
-  //    return true;
-  //  }
-  //  if ((repoData?.apiDiff?.licenses?.removed?.length ?? 0) > 0) {
-  //    return true;
-  //  }
-  //  if ((repoData?.apiDiff?.plugins?.removed?.length ?? 0) > 0) {
-  //    return true;
-  //  }
-  //  for (const plugin in repoData?.apiDiff?.store ?? {}) {
-  //    if ((repoData?.apiDiff?.store?.[plugin]?.removed?.length ?? 0) > 0) {
-  //      return true;
-  //    }
-  //  }
-  //  return false;
-  //}, [repoData?.apiDiff, repoData?.repoState?.commandMode]);
-
+  }, [props.repository?.branchState?.commitsSize])
   return (
     <>
         <Container>
+
           <LeftContainer>
             {isInvalid && (
               <>
@@ -149,9 +163,17 @@ const LocalRepoSubHeader = (props: Props) => {
               </>
             )}
           </LeftContainer>
+          <RightContainer>
+            <Link to={historyLink}>
+              <CommitHistoryWrapper>
+                <CommitHistoryIcon src={HistoryBlue}/>
+                <CommitText>{`${commitText}`}</CommitText>
+              </CommitHistoryWrapper>
+            </Link>
+          </RightContainer>
         </Container>
     </>
   );
 };
 
-export default React.memo(LocalRepoSubHeader);
+export default React.memo(RemoteRepoSubHeader);

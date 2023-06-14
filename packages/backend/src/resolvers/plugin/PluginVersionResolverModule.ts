@@ -3,6 +3,7 @@ import BaseResolverModule from "../BaseResolverModule";
 import { main } from "@floro/graphql-schemas";
 import { inject, injectable } from "inversify";
 import { PluginVersion } from "@floro/database/src/entities/PluginVersion";
+import MainConfig from "@floro/config/src/MainConfig";
 
 @injectable()
 export default class PluginVersionResolverModule extends BaseResolverModule {
@@ -10,7 +11,19 @@ export default class PluginVersionResolverModule extends BaseResolverModule {
     "PluginVersion",
   ];
 
+  private config!: MainConfig;
+
+  constructor(
+    @inject(MainConfig) config: MainConfig,
+  ) {
+    super();
+    this.config = config;
+  }
+
   public PluginVersion: main.PluginVersionResolvers = {
+    entryUrl: (pluginVersion) => {
+      return this.config.url() + `/plugins/${pluginVersion.name}/${pluginVersion.version}`;
+    },
     pluginDependencies: (pluginVersion) => {
       const pv = pluginVersion as PluginVersion;
       const manifest = JSON.parse(pluginVersion.manifest as string);

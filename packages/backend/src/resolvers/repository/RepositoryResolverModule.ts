@@ -21,6 +21,8 @@ import { getCanAutofixReversionIfNotWIP, getCanRevert } from "floro/dist/src/rep
 import CommitStatePluginVersionsLoader from "../hooks/loaders/Repository/CommitStatePluginVersionsLoader";
 import CommitStateBinaryRefsLoader from "../hooks/loaders/Repository/CommitStateBinaryRefsLoader";
 
+const PAGINATION_LIMIT = 20;
+
 @injectable()
 export default class RepositoryResolverModule extends BaseResolverModule {
   public resolvers: Array<keyof this & keyof main.ResolversTypes> = [
@@ -335,9 +337,16 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           cacheKey,
           branchState.repositoryId
         );
-        const commit = cachedCommits.find(
-          (c) => c.sha == (sha ?? branchState?.branchHead)
+        const branchHeadCommit = cachedCommits.find(
+          (c) => c.sha == (branchState?.branchHead)
         );
+        const branchHistory = this.repositoryService.getCommitHistory(
+          cachedCommits,
+          branchState?.branchHead ?? ""
+        );
+        const commit = branchHistory.find(
+          (c) => c.sha == sha
+        ) ?? branchHeadCommit;
         if (!commit) {
           return null;
         }
@@ -369,6 +378,8 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           userId: commit.userId,
           authorUsername: commit.authorUsername,
           authorUserId: commit.authorUserId,
+          authorUser: commit.authorUser,
+          user: commit.user,
           idx: commit.idx,
           updatedAt: commit.updatedAt,
           repositoryId: branchState.repositoryId,
@@ -381,6 +392,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           isValid: commit.isValid ?? true,
           kvLink,
           stateLink,
+          lastUpdatedAt: commit?.updatedAt?.toISOString()
         };
       }
     ),
@@ -405,9 +417,13 @@ export default class RepositoryResolverModule extends BaseResolverModule {
       ],
       async (
         branchState: main.BranchState,
-        { idx }: main.BranchStateCommitsArgs,
+        { idx, searchQuery }: main.BranchStateCommitsArgs,
         { cacheKey }
       ) => {
+
+        if ((searchQuery ?? "")?.trim()?.length > 0 ) {
+          return [];
+        }
         const commitHistory = this.requestCache.getRepoCommitHistory(
           cacheKey,
           branchState?.repositoryId as string,
@@ -421,7 +437,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         );
         if (commitHistory) {
           if (idx === undefined || idx === null) {
-            return commitHistory?.slice(0, 20).map((commit) => {
+            return commitHistory?.slice(0, PAGINATION_LIMIT).map((commit) => {
               return {
                 ...commit,
                 isReverted: this.repositoryService.isReverted(
@@ -435,7 +451,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
             return [];
           }
           const startIdx = commitHistory.length - 1 - idx;
-          return commitHistory.slice(startIdx, startIdx + 20).map((commit) => {
+          return commitHistory.slice(startIdx, startIdx + PAGINATION_LIMIT).map((commit) => {
             return {
               ...commit,
               isReverted: this.repositoryService.isReverted(
@@ -471,39 +487,31 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         );
         if (commitHistory) {
           if ((searchQuery ?? "")?.trim() == "") {
-            return commitHistory?.slice(0, 10).map((commit) => {
-              return {
-                ...commit,
-                isReverted: this.repositoryService.isReverted(
-                  revertRanges,
-                  commit.idx
-                ),
-              };
-            });
+            return [];
           }
           const results = commitHistory?.filter((commit) => {
             if ((searchQuery?.length ?? 0) > 2) {
-              if (commit?.sha?.startsWith(searchQuery ?? "")) {
+              if (commit?.sha?.startsWith(searchQuery?.toLowerCase() ?? "")) {
                 return true;
               }
             }
             if (searchQuery?.startsWith("@")) {
               if (
-                ("@" + commit?.username)?.indexOf(searchQuery ?? "") != -1 ||
-                ("@" + commit?.authorUsername)?.indexOf(searchQuery ?? "") != -1
+                ("@" + commit?.username?.toLowerCase())?.indexOf(searchQuery?.toLowerCase() ?? "") != -1 ||
+                ("@" + commit?.authorUsername?.toLowerCase())?.indexOf(searchQuery?.toLowerCase() ?? "") != -1
               ) {
                 return true;
               }
             }
             if (
               (searchQuery?.length ?? 0) > 2 &&
-              commit?.message?.indexOf(searchQuery ?? "") != -1
+              commit?.message?.toLowerCase()?.indexOf(searchQuery?.toLowerCase() ?? "") != -1
             ) {
               return true;
             }
             return false;
           });
-          return results?.slice(0, 10).map((commit) => {
+          return results?.slice(0, PAGINATION_LIMIT).map((commit) => {
             return {
               ...commit,
               isReverted: this.repositoryService.isReverted(

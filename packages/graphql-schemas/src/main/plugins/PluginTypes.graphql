@@ -28,6 +28,7 @@ type PluginVersion {
   isPrivate: Boolean
   isBackwardsCompatible: Boolean
   previousReleaseVersion: String
+  entryUrl: String
   codeDocsUrl: String
   codeRepoUrl: String
   lightIcon: String

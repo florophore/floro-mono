@@ -175,7 +175,7 @@ const LocalSideOption = (props: Props): React.ReactElement => {
   return (
     <NavOption>
       <Link
-        to={props.locationPath + `?plugin=${props.plugin.name}&from=local`}
+        to={props.locationPath + `&plugin=${props.plugin.name}`}
         style={{ textDecoration: "none", display: "contents" }}
       >
         <NavIconWrapper>

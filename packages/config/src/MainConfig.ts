@@ -40,13 +40,13 @@ export default class MainConfig {
     if (isDev || isTest) {
       return CDN_PUBLIC_PEM_DEV;
     }
-    return process.env.CDN_PUBLIC_PEM ?? "";
+    return env.CDN_PUBLIC_PEM ?? "";
   }
 
   public cdnPrivatePEM(): string {
     if (isDev || isTest) {
       return CDN_PRIVATE_PEM_DEV;
     }
-    return process.env.CDN_PRIVATE_PEM ?? "";
+    return env.CDN_PRIVATE_PEM ?? "";
   }
 }

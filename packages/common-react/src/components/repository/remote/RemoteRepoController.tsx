@@ -3,11 +3,11 @@ import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import DotsLoader from "@floro/storybook/stories/design-system/DotsLoader";
-import HomeRead from "../home/HomeRead";
-import HomeWrite from "../home/HomeWrite";
-import LocalPluginController from "../plugin/LocalPluginController";
-import { useSourceGraphIsShown } from "../ui-state-hook";
-import SourceGraphMount from "../sourcegraph/SourceGraphMount";
+import { RemoteCommitState, useRemoteCommitState } from "./hooks/remote-state";
+import RemoteHeaderNav from "./header/RemoteHeaderNav";
+import RemoteHomeRead from "./home/RemoteHomeRead";
+import RemotePluginController from "../plugin/RemotePluginController";
+import HistoryDisplay from "./history/HistoryDisplay";
 
 const LoadingContainer = styled.div`
   display: flex;
@@ -47,6 +47,15 @@ interface Props {
   plugin?: string;
   isExpanded: boolean;
   onSetIsExpanded: (isExpanded: boolean) => void;
+  remoteCommitState: RemoteCommitState;
+  page:
+    | "history"
+    | "home"
+    | "settings"
+    | "branch-rules"
+    | "merge-requests"
+    | "merge-request"
+    | "merge-request-review";
 }
 
 const RemoteRepoController = (props: Props) => {
@@ -55,7 +64,6 @@ const RemoteRepoController = (props: Props) => {
     () => (theme.name == "light" ? "purple" : "lightPurple"),
     [theme.name]
   );
-  console.log(props.repository?.branchState);
 
   useEffect(() => {
     const commandToggleListeners = (event: KeyboardEvent) => {
@@ -81,19 +89,92 @@ const RemoteRepoController = (props: Props) => {
     };
   }, []);
 
-  //const localRepoHeader = useMemo(() => {
-  //  if (showSourceGraph) {
+  //const remoteRepoHeader = useMemo(() => {
+  //  if (props.remoteCommitState?.isLoading || !props.remoteCommitState) {
+
   //    return null;
   //  }
-  //  return  <LocalRepoSubHeader repository={props.repository}  plugin={props.plugin}/>
-  //}, [props.repository, props.plugin, showSourceGraph]);
+  //  return (
+  //  );
+  //}, [props.repository, props.plugin, props.remoteCommitState?.isLoading, props.remoteCommitState]);
+
+  const mainBody = useMemo(() => {
+    if (props.page == "history") {
+      return (
+        <HistoryDisplay
+          repository={props.repository}
+          remoteCommitState={props.remoteCommitState}
+        />
+      );
+    }
+    if (props.page == "home") {
+      if (props.plugin != "home") {
+
+      const hasPlugin = !!props.remoteCommitState?.renderedState?.plugins?.find?.(
+        (v) => props.plugin == v.key
+      );
+      if (!hasPlugin) {
+          return (
+            <NoPluginContainer>
+              <NoPluginTextWrapper>
+                <NoPluginText>{`${props.plugin} not installed`}</NoPluginText>
+              </NoPluginTextWrapper>
+            </NoPluginContainer>
+          );
+      }
+
+      return (
+        <>
+          {props.remoteCommitState?.renderedState?.plugins?.map((plugin) => {
+            return (
+              <React.Fragment key={plugin.key + ":" + plugin.value}>
+                {plugin.key == props.plugin && (
+                  <RemotePluginController
+                    pluginName={props.plugin}
+                    repository={props.repository}
+                    isExpanded={props.isExpanded}
+                    onSetIsExpanded={props.onSetIsExpanded}
+                    remoteCommitState={props.remoteCommitState}
+                  />
+                )}
+              </React.Fragment>
+            )
+          })}
+        </>
+      );
+
+      }
+      if (props.plugin == "home") {
+        return (
+          <RemoteHomeRead
+            repository={props.repository}
+            remoteCommitState={props.remoteCommitState}
+          />
+        );
+      }
+    }
+    return null;
+  }, [props.page, props.plugin, props.remoteCommitState, props.repository, props.onSetIsExpanded, props.isExpanded]);
 
 
+  if (props.remoteCommitState.isLoading) {
+    return (
+      <>
+          <LoadingContainer>
+            <DotsLoader color={loaderColor} size={"large"} />
+          </LoadingContainer>
+      </>
+    );
+  }
   return (
     <>
-        <LoadingContainer>
-          <DotsLoader color={loaderColor} size={"large"} />
-        </LoadingContainer>
+      <RemoteHeaderNav
+        remoteCommitState={props.remoteCommitState}
+        repository={props.repository}
+        plugin={props.plugin}
+        page={props.page}
+      />
+      {mainBody}
     </>
   );
 };

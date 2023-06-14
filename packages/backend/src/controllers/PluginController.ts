@@ -141,20 +141,6 @@ export default class PluginController extends BaseController {
     );
     const sessionKey = request.headers["session_key"];
     const session = await this.sessionStore.fetchSession(sessionKey);
-    if (!session) {
-      response.status(403).json({
-        message: "Forbidden.",
-      });
-      return null;
-    }
-
-    const user = await this.usersService.getUser(session?.userId as string);
-    if (!user) {
-      response.status(403).json({
-        message: "Forbidden.",
-      });
-      return null;
-    }
 
     const pluginVersion = await pluginVersionsContext.getByNameAndVersion(
       request?.params["name"] ?? "",
@@ -168,6 +154,13 @@ export default class PluginController extends BaseController {
     }
 
     if (pluginVersion.ownerType == "user_plugin" && pluginVersion.isPrivate) {
+      const user = await this.usersService.getUser(session?.userId as string);
+      if (!user) {
+        response.status(403).json({
+          message: "Forbidden.",
+        });
+        return null;
+      }
       if (user.id != pluginVersion.userId) {
         response.status(403).json({
           message: "Forbidden.",
@@ -177,6 +170,7 @@ export default class PluginController extends BaseController {
     }
 
     if (pluginVersion.ownerType == "org_plugin" && pluginVersion.isPrivate) {
+      const user = await this.usersService.getUser(session?.userId as string);
       const organization = await this.organizationService.fetchOrganization(
         pluginVersion.organizationId
       );

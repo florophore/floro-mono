@@ -41,19 +41,27 @@ type CommitInfo {
   repositoryId: String
   isReverted: Boolean
   isValid: Boolean
+  user: User
+  authorUser: User
+  updatedAt: DateTime
 }
 
 type BranchState {
   branchId: ID
-  repositoryId: ID
-  defaultBranchId: ID
+  repositoryId: String
+  defaultBranchId: String
   name: String
   branchHead: String
   updatedAt: String
   commitState(sha: ID): CommitState
-  commits(idx: Int): [CommitInfo]
+  commits(idx: Int, searchQuery: String): [CommitInfo]
   commitSearch(searchQuery: String): [CommitInfo]
   commitsSize: Int
+}
+
+type BinaryRef {
+  fileName: ID
+  url: String
 }
 
 type CommitState {
@@ -66,7 +74,8 @@ type CommitState {
   idx: Int
   repositoryId: String
   branchHead: String
-  branchId: ID
+  branchId: String
+  lastUpdatedAt: String
 
   kvLink: String
   stateLink: String
@@ -77,7 +86,10 @@ type CommitState {
   canAutoFix: Boolean
 
   pluginVersions: [PluginVersion]
-  binaryRefs: [String]
+  binaryRefs: [BinaryRef]
+
+  user: User
+  authorUser: User
 }
 
 type CreateUserRepositorySuccess {

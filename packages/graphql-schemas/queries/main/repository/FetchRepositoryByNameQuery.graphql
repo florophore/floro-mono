@@ -20,8 +20,8 @@ query fetchRepositoryByName(
           branchHead
           defaultBranchId
           name
-          branchHead
           commitsSize
+          updatedAt
           commitState(sha: $sha) {
             sha
             kvLink
@@ -29,15 +29,40 @@ query fetchRepositoryByName(
             isReverted
             isValid
             message
+            lastUpdatedAt
+            binaryRefs {
+              fileName
+              url
+            }
             pluginVersions {
               id
               name
+              displayName
               version
               darkIcon
               lightIcon
               selectedLightIcon
               selectedDarkIcon
               manifest
+              entryUrl
+            }
+            authorUser {
+              id
+              username
+              firstName
+              lastName
+              profilePhoto {
+                ...Photo
+              }
+            }
+            user {
+              id
+              username
+              firstName
+              lastName
+              profilePhoto {
+                ...Photo
+              }
             }
           }
         }

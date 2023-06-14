@@ -28,16 +28,20 @@ export default class CommitsContext extends BaseContext {
       where: {
         repositoryId,
       },
+      relations: { user: { profilePhoto: true } },
       order: {
-        idx: 'ASC'
-      }
+        idx: "ASC",
+      },
     });
   }
 
   public async getCommitBySha(repositoryId: string, sha: string): Promise<Commit|null> {
-    return await this.queryRunner.manager.findOneBy(Commit, {
-      repositoryId,
-      sha
+    return await this.queryRunner.manager.findOne(Commit, {
+      where: {
+        repositoryId,
+        sha
+      },
+      relations: { user: { profilePhoto: true } },
     });
   }
   public async repoHasCommit(repositoryId: string, sha: string): Promise<boolean> {

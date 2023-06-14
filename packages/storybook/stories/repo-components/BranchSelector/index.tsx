@@ -20,7 +20,7 @@ const Icon = styled.img`
 `
 
 export interface Props {
-    size?: 'regular'|'wide';
+    size?: 'regular'|'wide'|'mid';
     branches?: Array<Branch|null>;
     branch?: Branch|null;
     label?: string;

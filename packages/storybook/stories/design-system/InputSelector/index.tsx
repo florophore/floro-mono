@@ -157,7 +157,7 @@ export interface Props<T> {
   leftElement?: React.ReactElement|null;
   inputPaddingLeft?: number;
   noResultsMessage?: string;
-  size?: 'regular'|'wide';
+  size?: 'regular'|'wide'|'mid';
   disableNull?: boolean
 }
 
@@ -433,7 +433,9 @@ const InputSelector = <T,>({
 
   return (
     <div style={{ display: "flex", position: "relative" }}>
-      <Container style={{width: size == 'regular' ? 432 : 470}}>
+      <Container
+        style={{ width: size == "regular" ? 432 : size == "mid" ? 452 : 470, }}
+      >
         <Input
           value={isFocused ? text : optionText}
           label={label}

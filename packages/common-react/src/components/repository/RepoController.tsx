@@ -20,6 +20,7 @@ import RepoNavigator from "@floro/common-react/src/components/repository/RepoNav
 import { LocalVCSNavProvider } from "./local/vcsnav/LocalVCSContext";
 import { SourceGraphUIProvider } from "./sourcegraph/SourceGraphUIContext";
 import RemoteRepoController from "./remote/RemoteRepoController";
+import { useRemoteCommitState } from "./remote/hooks/remote-state";
 
 interface Props {
   from: "local" | "remote";
@@ -37,21 +38,7 @@ interface Props {
 
 const RepoController = (props: Props) => {
   const [isExpanded, setIsExpanded] = useState(true);
-
-  const s = useLocation();
-
-  const params = useParams();
-  const ownerHandle = params?.["ownerHandle"] ?? "";
-  const repoName = params?.["repoName"] ?? "";
-  const repoValue = useMemo(() => {
-    if (!props.repository?.name) {
-      return `/repo/@/${ownerHandle}/${repoName}`;
-    }
-    if (props.repository.repoType == "user_repo") {
-      return `/repo/@/${props.repository?.user?.username}/${props.repository?.name}`;
-    }
-    return `/repo/@/${props.repository?.organization?.handle}/${props.repository?.name}`;
-  }, [props.repository, ownerHandle]);
+  const remoteCommitState = useRemoteCommitState(props.repository);
 
   const onTogglePanel = useCallback(() => {
     setIsExpanded(!isExpanded);
@@ -73,10 +60,13 @@ const RepoController = (props: Props) => {
     <SourceGraphUIProvider isExpanded={isExpanded}>
       <LocalVCSNavProvider>
         <RepoNavigator
+          from={props.from}
           repository={props.repository}
           plugin={props.plugin ?? "home"}
           isExpanded={isExpanded}
           onSetIsExpanded={setIsExpanded}
+          remoteCommitState={remoteCommitState}
+          page={props.page}
         >
           <>
             {props.from == "local" && (
@@ -87,12 +77,14 @@ const RepoController = (props: Props) => {
                 onSetIsExpanded={setIsExpanded}
               />
             )}
-            {props.from == "remote" && props.page == "home" && (
+            {props.from == "remote" && (
               <RemoteRepoController
                 repository={props.repository}
                 plugin={props.plugin ?? "home"}
                 isExpanded={isExpanded}
                 onSetIsExpanded={setIsExpanded}
+                remoteCommitState={remoteCommitState}
+                page={props.page}
               />
             )}
           </>

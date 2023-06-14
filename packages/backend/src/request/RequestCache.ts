@@ -447,10 +447,7 @@ export default class RequestCache {
     const cache = this.getCache(cacheKey);
     return cache[`org-plugin-count:${organizationId}`] as number;
   }
-  public setRepo(
-    cacheKey: string,
-    repository: Repository
-  ) {
+  public setRepo(cacheKey: string, repository: Repository) {
     if (repository?.id) {
       const cache = this.getCache(cacheKey);
       cache[`repo:${repository?.id}`] = repository;
@@ -465,15 +462,20 @@ export default class RequestCache {
   public setRepoBranches(
     cacheKey: string,
     repoId: string,
-    branches: Array<FloroBranch & {updatedAt: string, dbId: string}>
+    branches: Array<FloroBranch & { updatedAt: string; dbId: string }>
   ) {
     const cache = this.getCache(cacheKey);
     cache[`repo-branches:${repoId}`] = branches;
   }
 
-  public getRepoBranches(cacheKey: string, repoId: string): Array<FloroBranch & {updatedAt: string, dbId: string}> {
+  public getRepoBranches(
+    cacheKey: string,
+    repoId: string
+  ): Array<FloroBranch & { updatedAt: string; dbId: string }> {
     const cache = this.getCache(cacheKey);
-    return cache[`repo-branches:${repoId}`] as Array<FloroBranch & {updatedAt: string, dbId: string}>;
+    return cache[`repo-branches:${repoId}`] as Array<
+      FloroBranch & { updatedAt: string; dbId: string }
+    >;
   }
 
   public setRepoCommits(
@@ -500,7 +502,11 @@ export default class RequestCache {
     cache[`repo-commit-history:${repoId}:${sha}`] = commits;
   }
 
-  public getRepoCommitHistory(cacheKey: string, repoId: string, sha: string): Array<Commit> {
+  public getRepoCommitHistory(
+    cacheKey: string,
+    repoId: string,
+    sha: string
+  ): Array<Commit> {
     const cache = this.getCache(cacheKey);
     return cache[`repo-commit-history:${repoId}:${sha}`] as Array<Commit>;
   }
@@ -514,27 +520,41 @@ export default class RequestCache {
     cache[`repo-remote-settings:${repoId}`] = remoteSettings;
   }
 
-  public getRepoRemoteSettings(cacheKey: string, repoId: string): RemoteSettings {
+  public getRepoRemoteSettings(
+    cacheKey: string,
+    repoId: string
+  ): RemoteSettings {
     const cache = this.getCache(cacheKey);
     return cache[`repo-remote-settings:${repoId}`] as RemoteSettings;
   }
 
-  public getRepoRevertRanges(cacheKey: string, repoId: string, sha: string): Array<{fromIdx: number, toIdx: number}> {
+  public getRepoRevertRanges(
+    cacheKey: string,
+    repoId: string,
+    sha: string
+  ): Array<{ fromIdx: number; toIdx: number }> {
     const cache = this.getCache(cacheKey);
-    return cache[`repo-revert-ranges:${repoId}:${sha}`] as Array<{fromIdx: number, toIdx: number}>;
+    return cache[`repo-revert-ranges:${repoId}:${sha}`] as Array<{
+      fromIdx: number;
+      toIdx: number;
+    }>;
   }
 
   public setRepoRevertRanges(
     cacheKey: string,
     repoId: string,
     sha: string,
-    ranges: Array<{fromIdx: number, toIdx: number}>
+    ranges: Array<{ fromIdx: number; toIdx: number }>
   ) {
     const cache = this.getCache(cacheKey);
     cache[`repo-revert-ranges:${repoId}:${sha}`] = ranges;
   }
 
-  public getCommitStateDatasource(cacheKey: string, repoId: string, sha: string): DataSource {
+  public getCommitStateDatasource(
+    cacheKey: string,
+    repoId: string,
+    sha: string
+  ): DataSource {
     const cache = this.getCache(cacheKey);
     return cache[`commit-state-datasource:${repoId}:${sha}`] as DataSource;
   }
@@ -548,9 +568,15 @@ export default class RequestCache {
     const cache = this.getCache(cacheKey);
     cache[`commit-state-datasource:${repoId}:${sha}`] = datasource;
   }
-  public getCommitStatePluginVersions(cacheKey: string, repoId: string, sha: string): PluginVersion[] {
+  public getCommitStatePluginVersions(
+    cacheKey: string,
+    repoId: string,
+    sha: string
+  ): PluginVersion[] {
     const cache = this.getCache(cacheKey);
-    return cache[`commit-state-plugin-versions:${repoId}:${sha}`] as PluginVersion[];
+    return cache[
+      `commit-state-plugin-versions:${repoId}:${sha}`
+    ] as PluginVersion[];
   }
 
   public setCommitStatePluginVersions(
@@ -563,16 +589,23 @@ export default class RequestCache {
     cache[`commit-state-plugin-versions:${repoId}:${sha}`] = pluginVersions;
   }
 
-  public getCommitStateBinaryRefs(cacheKey: string, repoId: string, sha: string): string[] {
+  public getCommitStateBinaryRefs(
+    cacheKey: string,
+    repoId: string,
+    sha: string
+  ): { fileName: string; url: string }[] {
     const cache = this.getCache(cacheKey);
-    return cache[`commit-state-binary-refs:${repoId}:${sha}`] as string[];
+    return cache[`commit-state-binary-refs:${repoId}:${sha}`] as {
+      fileName: string;
+      url: string;
+    }[];
   }
 
   public setCommitStateBinaryRefs(
     cacheKey: string,
     repoId: string,
     sha: string,
-    binaryRefs: string[]
+    binaryRefs: { fileName: string; url: string }[]
   ) {
     const cache = this.getCache(cacheKey);
     cache[`commit-state-binary-refs:${repoId}:${sha}`] = binaryRefs;

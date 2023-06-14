@@ -26,6 +26,7 @@ export default class PrivateCDNTestController extends BaseController {
   @Get("/private-cdn/*")
   public async getAsset(req, res) {
     try {
+      res.header("Access-Control-Allow-Origin", "*");
       const reqPath = req.path.split("&")[0];
       const reqRelativePath = reqPath.split("/private-cdn")[1]
       const isValid = this.storageAuthenticator.verifySignedURL(req.path, reqRelativePath);

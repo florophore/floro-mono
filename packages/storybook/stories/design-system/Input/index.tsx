@@ -20,7 +20,7 @@ export interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   inputPaddingLeft?: number;
   rightElement?: React.ReactElement|null;
   leftElement?: React.ReactElement|null;
-  widthSize?: 'regular'|'wide';
+  widthSize?: 'regular'|'wide'|'mid';
 }
 
 const Container = styled.div`
@@ -156,7 +156,10 @@ const Input = React.forwardRef(
     return (
       <Container
         onClick={onClickContainer}
-        style={{ border: `2px solid ${borderColor}`, width: widthSize == 'regular' ? 432 : 470 }}
+        style={{
+          border: `2px solid ${borderColor}`,
+          width: widthSize == "regular" ? 432 : widthSize == "mid" ? 452 : 470
+        }}
       >
         <LabelContainer>
           <LabelBorderEnd style={{ left: -1, background: borderColor }} />
@@ -164,11 +167,11 @@ const Input = React.forwardRef(
           <LabelBorderEnd style={{ right: -1 }} />
         </LabelContainer>
         <InputRowWrapper>
-          {!!rest?.leftElement &&
-            <div style={{height: 64, position: 'relative', marginTop: -27}}>
+          {!!rest?.leftElement && (
+            <div style={{ height: 64, position: "relative", marginTop: -27 }}>
               {rest?.leftElement}
             </div>
-          }
+          )}
           <InputElement
             value={value}
             ref={inputRef}
@@ -176,17 +179,17 @@ const Input = React.forwardRef(
             onFocus={onInputFocus}
             onBlur={onInputBlur}
             placeholder={placeholder}
-            spellCheck={'false'}
+            spellCheck={"false"}
             style={{
-              paddingLeft: inputPaddingLeft
+              paddingLeft: inputPaddingLeft,
             }}
             {...rest}
           />
-          {!!rest?.rightElement &&
-            <div style={{height: 64, position: 'relative', marginTop: -27}}>
+          {!!rest?.rightElement && (
+            <div style={{ height: 64, position: "relative", marginTop: -27 }}>
               {rest?.rightElement}
             </div>
-          }
+          )}
         </InputRowWrapper>
       </Container>
     );

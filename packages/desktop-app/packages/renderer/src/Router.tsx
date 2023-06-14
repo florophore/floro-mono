@@ -11,6 +11,7 @@ import OrganizationPage from './organization/OrganizationPage';
 import CreateOrgRepoPage from './create_org_repo/CreateOrgRepoPage';
 import RepoHomePage from './repository/RepoHomePage';
 import UserPluginsPage from './user_plugins/UserPluginsPage';
+import RepoHistoryPage from './repository/RepoHistoryPage';
 
 const Router = (): React.ReactElement => {
     const location = useLocation();
@@ -28,7 +29,7 @@ const Router = (): React.ReactElement => {
           <Route path="/home/plugins" element={<UserPluginsPage />} />
           <Route path="/org/@/:handle" element={<OrganizationPage />} />
           <Route path="/org/@/:handle/create-repo" element={<CreateOrgRepoPage/>} />
-          <Route path="/repo/@/:ownerHandle/:repoName/history" element={<RepoHomePage page={'history'}/>} />
+          <Route path="/repo/@/:ownerHandle/:repoName/history" element={<RepoHistoryPage page={'history'}/>} />
           <Route path="/repo/@/:ownerHandle/:repoName/settings" element={<RepoHomePage page={'settings'}/>} />
           <Route path="/repo/@/:ownerHandle/:repoName/settings/branchrules/:branchRuleId" element={<RepoHomePage page={'branch-rules'}/>} />
           <Route path="/repo/@/:ownerHandle/:repoName/mergerequests/:mergeRequestId/review" element={<RepoHomePage page={'merge-request-review'}/>} />

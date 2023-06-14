@@ -5,6 +5,7 @@ import RepoSideNavigator from "./RepoSideNavigator";
 import VersionControlPanel from "./VersionControlPanel";
 import { useLocalVCSNavContext } from "./local/vcsnav/LocalVCSContext";
 import { useSourceGraphIsShown } from "./ui-state-hook";
+import { RemoteCommitState } from "./remote/hooks/remote-state";
 
 const Container = styled.main`
   display: flex;
@@ -34,15 +35,43 @@ interface Props {
   children: React.ReactElement;
   isExpanded: boolean;
   onSetIsExpanded: (isExpanded: boolean) => void;
+  remoteCommitState: RemoteCommitState;
+  from: "local"|"remote";
+  page:
+    | "history"
+    | "home"
+    | "settings"
+    | "branch-rules"
+    | "merge-requests"
+    | "merge-request"
+    | "merge-request-review";
 }
 
 const RepoNavigator = (props: Props): React.ReactElement => {
   const sourceMapIsShown = useSourceGraphIsShown();
+  const hideSideNav = useMemo(() => {
+    if (props.from == "remote") {
+      if (props.page == "history") {
+        return true;
+      }
+
+      return false;
+    }
+    if (sourceMapIsShown) {
+      return true;
+    }
+    return false;
+  }, [sourceMapIsShown, props.from, props.page])
   return (
     <Container>
-      {!sourceMapIsShown &&
-        <RepoSideNavigator repository={props.repository} plugin={props.plugin} />
-      }
+      {!hideSideNav && (
+        <RepoSideNavigator
+          repository={props.repository}
+          plugin={props.plugin}
+          remoteCommitState={props.remoteCommitState}
+          page={props.page}
+        />
+      )}
       <ContentContainer>
         <Content>{props.children}</Content>
       </ContentContainer>
@@ -50,6 +79,9 @@ const RepoNavigator = (props: Props): React.ReactElement => {
         isExpanded={props.isExpanded}
         onSetIsExpanded={props.onSetIsExpanded}
         repository={props.repository}
+        remoteCommitState={props.remoteCommitState}
+        page={props.page}
+        plugin={props.plugin}
       />
     </Container>
   );

@@ -180,6 +180,7 @@ const LocalPluginController = (props: Props) => {
     props?.apiResponse?.repoState?.comparison,
   ])
 
+
   const conflictList = useMemo(() => {
     if (!props?.apiResponse?.repoState?.isInMergeConflict) {
       return [];
@@ -208,6 +209,29 @@ const LocalPluginController = (props: Props) => {
     props?.apiResponse?.repoState?.comparison,
   ]);
 
+  const binaryMap = useMemo(() => {
+    const out: {[key: string]: string} = {};
+    if (
+      props.apiResponse.repoState.commandMode == "compare" &&
+      compareFrom == "before"
+    ) {
+      for (const binary of (props?.apiResponse?.beforeState?.binaries ?? [])) {
+        out[binary] = "http://localhost:63403/binary/" + binary;
+      }
+    } else {
+      for (const binary of (props?.apiResponse?.applicationState?.binaries ?? [])) {
+        out[binary] = "http://localhost:63403/binary/" + binary;
+      }
+    }
+    return out;
+  }, [
+    manifest,
+    props.apiResponse.repoState.commandMode,
+    props?.apiResponse?.applicationState?.binaries,
+    props?.apiResponse?.beforeState?.binaries,
+    compareFrom,
+  ])
+
   const pluginState = useMemo(() => {
     return {
       changeset,
@@ -217,6 +241,7 @@ const LocalPluginController = (props: Props) => {
       binaryUrls,
       compareFrom: props?.apiResponse?.repoState?.commandMode == "compare" ? compareFrom : "none",
       commandMode: props?.apiResponse?.repoState?.commandMode ?? "view",
+      binaryMap
     };
   }, [
     changeset,
@@ -226,6 +251,7 @@ const LocalPluginController = (props: Props) => {
     binaryUrls,
     props?.apiResponse?.repoState?.commandMode,
     props?.apiResponse?.repoState?.comparison,
+    binaryMap
   ]);
 
   useEffect(() => {

@@ -20,6 +20,7 @@ import { Manifest } from "floro/dist/src/plugins";
 import { transformLocalManifestToPartialPlugin } from "./hooks/manifest-transforms";
 import LocalSideOption from "./LocalSideOption";
 import { useLocalVCSNavContext } from "./vcsnav/LocalVCSContext";
+import { useRepoLinkBase } from "../remote/hooks/remote-hooks";
 
 const Navigator = styled.nav`
   width: 72px;
@@ -106,6 +107,14 @@ const NavHighlight = styled.div`
 interface Props {
   repository: Repository;
   plugin: string;
+  page:
+    | "history"
+    | "home"
+    | "settings"
+    | "branch-rules"
+    | "merge-requests"
+    | "merge-request"
+    | "merge-request-review";
 }
 
 const LocalSideNavigator = (props: Props): React.ReactElement => {
@@ -292,13 +301,24 @@ const LocalSideNavigator = (props: Props): React.ReactElement => {
     ]);
 
 
+  const linkBase = useRepoLinkBase(props.repository, props.page);
+  const mainLink = useMemo(() => {
+    if (props.repository?.branchState?.commitState?.sha) {
+      return `${linkBase}?from=local&sha=${
+        props.repository?.branchState?.commitState?.sha
+      }&branch=${props.repository?.branchState?.branchId}`;
+    }
+    return `${linkBase}?from=local&branch=${
+      props.repository?.branchState?.branchId
+    }`;
+  }, [linkBase, props.plugin, props.repository?.branchState?.branchId, props.repository?.branchState?.commitState?.sha]);
 
   return (
     <Navigator>
       <NavOptionList>
         <NavOption>
           <Link
-            to={location.pathname + "?plugin=home&from=local"}
+            to={mainLink + "&plugin=home"}
             style={{ textDecoration: "none", display: "contents" }}
           >
             <NavIconWrapper>
@@ -336,7 +356,7 @@ const LocalSideNavigator = (props: Props): React.ReactElement => {
           const isInvalid = invalidityMap[plugin?.name as string];
           return (
             <LocalSideOption
-              locationPath={location.pathname}
+              locationPath={mainLink}
               plugin={plugin}
               isSelected={isSelected}
               key={index}

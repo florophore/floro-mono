@@ -450,10 +450,12 @@ export default class PluginRegistryService {
       for (const fname in files) {
         const content = files[fname];
         if (typeof content == "string") {
-          files[fname] = content.replaceAll?.(
-            "http://localhost:63403",
-            publicCdnUrl
-          );
+          files[fname] = content
+            .replaceAll?.("http://localhost:63403", publicCdnUrl)
+            ?.replaceAll(
+              `${publicCdnUrl}/plugins/${pluginUploadStream?.name}/${pluginUploadStream?.version}/`,
+              `${publicCdnUrl}/plugins/${pluginUploadStream.uuid}/`
+            );
         }
       }
       const didUpload = await this.pluginAccessor.writePluginFiles(
