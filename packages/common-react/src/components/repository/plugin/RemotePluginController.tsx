@@ -127,7 +127,8 @@ const RemotePluginController = (props: Props) => {
   const binaryUrls = useMemo(() => {
     return {
       upload: null,
-      download: null
+      download: null,
+      binaryToken: null
     }
   }, []);
 

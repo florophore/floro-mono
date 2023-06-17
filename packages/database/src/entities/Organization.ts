@@ -32,6 +32,7 @@ import { Plugin } from "./Plugin";
 import { PluginVersion } from "./PluginVersion";
 import { Branch } from "./Branch";
 import { Commit } from "./Commit";
+import { MergeRequest } from "./MergeRequest";
 
 @Entity("organizations")
 export class Organization extends BinaryPKBaseEntity {
@@ -164,4 +165,8 @@ export class Organization extends BinaryPKBaseEntity {
   @OneToMany("Commit", "organization")
   @JoinColumn()
   commits?: Relation<Commit>[];
+
+  @OneToMany("MergeRequest", "organization")
+  @JoinColumn()
+  mergeRequests?: Relation<MergeRequest>[];
 }

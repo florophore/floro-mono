@@ -198,13 +198,16 @@ const LocalPluginController = (props: Props) => {
       return {
         upload: "http://localhost:63403/binary/upload",
         download: "http://localhost:63403/binary",
+        binaryToken: props?.apiResponse?.binaryToken,
       }
     }
     return {
       upload: null,
       download: "http://localhost:63403/binary",
+      binaryToken: props?.apiResponse?.binaryToken,
     }
   }, [
+    props?.apiResponse?.binaryToken,
     props?.apiResponse?.repoState?.commandMode,
     props?.apiResponse?.repoState?.comparison,
   ]);

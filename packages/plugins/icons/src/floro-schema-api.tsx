@@ -338,6 +338,7 @@ interface PluginState {
   binaryUrls: {
     upload: null|string,
     download: null|string,
+    binaryToken: null|string,
   };
   binaryMap: {[key: string]: string};
 }
@@ -378,6 +379,7 @@ const FloroContext = createContext({
     binaryUrls: {
       upload: null,
       download: null,
+      binaryToken: null,
     },
     binaryMap: {},
   },
@@ -423,6 +425,7 @@ export const FloroProvider = (props: Props) => {
     binaryUrls: {
       upload: null,
       download: null,
+      binaryToken: null,
     },
     binaryMap: {},
   });
@@ -1757,16 +1760,16 @@ export const useUploadFile = () => {
       if (status == "in_progress") {
         return;
       }
-      if (!pluginState.binaryUrls.upload) {
+      if (!pluginState.binaryUrls.upload || !pluginState.binaryUrls.binaryToken) {
         return;
       }
       setStatus("in_progress");
       setProgress(0);
       setUploadObject(
-        startUploadFile(file, pluginState.binaryUrls.upload, onProgress)
+        startUploadFile(file, pluginState.binaryUrls.upload + "?token=" + pluginState.binaryUrls?.binaryToken, onProgress)
       );
     },
-    [status, pluginState.binaryUrls.upload, onProgress]
+    [status, pluginState.binaryUrls.upload, pluginState.binaryUrls?.binaryToken, onProgress]
   );
 
   const uploadBlob = useCallback(
@@ -1774,16 +1777,16 @@ export const useUploadFile = () => {
       if (status == "in_progress") {
         return;
       }
-      if (!pluginState.binaryUrls.upload) {
+      if (!pluginState.binaryUrls.upload || !pluginState.binaryUrls.binaryToken) {
         return;
       }
       setUploadObject(
-        startUploadBlob(data, type, pluginState.binaryUrls.upload, onProgress)
+        startUploadBlob(data, type, pluginState.binaryUrls.upload+ "?token=" + pluginState.binaryUrls?.binaryToken, onProgress)
       );
       setStatus("in_progress");
       setProgress(0);
     },
-    [status, pluginState.binaryUrls.upload, onProgress]
+    [status, pluginState.binaryUrls.upload, pluginState.binaryUrls.binaryToken, onProgress]
   );
 
   useEffect(() => {
@@ -1824,13 +1827,24 @@ export const useUploadFile = () => {
 
 export const useBinaryRef = (fileRef?: FileRef|null) => {
     const { pluginState } = useFloroContext();
-    if (!fileRef) {
+    return useMemo(() => {
+      if (!fileRef) {
         return null;
-    }
-    if (pluginState.binaryMap[fileRef]) {
-        return pluginState.binaryMap[fileRef];
-    }
-    return `${pluginState.binaryUrls.download}/${fileRef}`;
+      }
+      if (pluginState.binaryMap[fileRef]) {
+        return (
+          pluginState.binaryMap[fileRef] +
+          "?token=" +
+          pluginState.binaryUrls?.binaryToken
+        );
+      }
+      return `${pluginState.binaryUrls.download}/${fileRef}` + "?token=" + pluginState.binaryUrls?.binaryToken;
+    }, [
+      fileRef,
+      pluginState.binaryMap?.[fileRef ?? ""],
+      pluginState.binaryUrls?.binaryToken,
+      pluginState.binaryUrls.download,
+    ]);
 }
 
 interface BinaryReturn {

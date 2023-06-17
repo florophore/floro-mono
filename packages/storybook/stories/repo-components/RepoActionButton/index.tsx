@@ -74,6 +74,14 @@ import PushWhite from '@floro/common-assets/assets/images/repo_icons/push.white.
 import PushGray from '@floro/common-assets/assets/images/repo_icons/push.gray.svg';
 import PushMediumGray from '@floro/common-assets/assets/images/repo_icons/push.medium_gray.svg';
 
+import MergeRequestWhite from '@floro/common-assets/assets/images/repo_icons/merge_request.white.svg';
+import MergeRequestGray from '@floro/common-assets/assets/images/repo_icons/merge_request.gray.svg';
+import MergeRequestMediumGray from '@floro/common-assets/assets/images/repo_icons/merge_request.medium_gray.svg';
+
+import CopyWhite from '@floro/common-assets/assets/images/repo_icons/copy.white.svg';
+import CopyGray from '@floro/common-assets/assets/images/repo_icons/copy.gray.svg';
+import CopyMediumGray from '@floro/common-assets/assets/images/repo_icons/copy.medium_gray.svg';
+
 export interface ButtonProps {
   label: string;
   subTitle?: string;
@@ -82,15 +90,18 @@ export interface ButtonProps {
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
   tabIndex?: number;
   size?: "medium" | "large";
+  titleTextSize?: "medium"|"small";
   icon:
     | "source-graph"
     | "compare"
     | "settings"
+    | "copy"
     | "stash"
     | "stash-pop"
     | "discard"
     | "commit"
     | "merge"
+    | "merge-request"
     | "surgery"
     | "resolve"
     | "abort"
@@ -128,6 +139,7 @@ const RepoActionButton = ({
     isLoading,
     isDisabled=false,
     size = "medium",
+    titleTextSize = "medium",
     icon,
     subTitle,
     ...rest
@@ -154,6 +166,12 @@ const RepoActionButton = ({
           return theme.name == "light" ? SettingsGray : SettingsMediumGray;
         }
         return theme.name == "light" ? SettingsGray : SettingsWhite;
+      }
+      if (icon == "copy") {
+        if (isDisabled && !isLoading) {
+          return theme.name == "light" ? CopyGray : CopyMediumGray;
+        }
+        return theme.name == "light" ? CopyGray : CopyWhite;
       }
 
       if (icon == "stash") {
@@ -182,6 +200,13 @@ const RepoActionButton = ({
           return theme.name == "light" ? MergeGray : MergeMediumGray;
         }
         return theme.name == "light" ? MergeGray : MergeWhite;
+      }
+
+      if (icon == "merge-request") {
+        if (isDisabled && !isLoading) {
+          return theme.name == "light" ? MergeRequestGray : MergeRequestMediumGray;
+        }
+        return theme.name == "light" ? MergeRequestGray : MergeRequestWhite;
       }
 
       if (icon == "commit") {
@@ -295,7 +320,7 @@ const RepoActionButton = ({
           color: ${colorPalette.white};
           font-family: "MavenPro";
           font-weight: 600;
-          font-size: ${size == "medium" ? "1.44rem" : "1.7rem"};
+          font-size: ${size == "medium" ? titleTextSize == "medium" ? "1.44rem" : "1.2rem" : "1.7rem"};
           max-width: ${maxWidth}px;
           height: 64px;
           width: 100%;
@@ -336,7 +361,8 @@ const RepoActionButton = ({
           >
             <LabelTag
             style={{
-              color: isDisabled ? (theme.name == "light" ? ColorPalette.gray : ColorPalette.mediumGray) : theme.colors.contrastTextLight
+              color: isDisabled ? (theme.name == "light" ? ColorPalette.gray : ColorPalette.mediumGray) : theme.colors.contrastTextLight,
+              marginLeft: titleTextSize == "medium" ? 0 : 8
             }}
 
             >{label}</LabelTag>

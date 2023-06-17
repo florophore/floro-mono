@@ -36,6 +36,8 @@ import RemoteCurrentInfo from "@floro/storybook/stories/repo-components/RemoteCu
 import { useRepoLinkBase } from "../hooks/remote-hooks";
 import { useNavigate } from "react-router-dom";
 import { Branch } from "floro/dist/src/repo";
+import RepoActionButton from "@floro/storybook/stories/repo-components/RepoActionButton";
+import CopyFromIcon from "@floro/common-assets/assets/images/icons/copy.dark.svg";
 
 const InnerContent = styled.div`
   display: flex;
@@ -107,8 +109,13 @@ const RemoteVCSNavHome = (props: Props) => {
         props.repository?.branchState?.commitState?.sha
       }`;
     }
-    return `${linkBase}?from=remote&plugin=${props?.plugin ?? 'home'}`
-  }, [linkBase, props.plugin, props.repository?.branchState?.branchId, props.repository?.branchState?.commitState?.sha]);
+    return `${linkBase}?from=remote&plugin=${props?.plugin ?? "home"}`;
+  }, [
+    linkBase,
+    props.plugin,
+    props.repository?.branchState?.branchId,
+    props.repository?.branchState?.commitState?.sha,
+  ]);
 
   const defaultBranchLink = useMemo(() => {
     return `${linkBase}?from=remote&plugin=${props?.plugin ?? "home"}&branch=${
@@ -117,18 +124,22 @@ const RemoteVCSNavHome = (props: Props) => {
   }, [linkBase, props.plugin, props.repository?.branchState?.defaultBranchId]);
 
   const branchHeadLink = useMemo(() => {
-    return `${linkBase}?from=remote&plugin=${props?.plugin ?? 'home'}&branch=${props.repository?.branchState?.branchId}`
+    return `${linkBase}?from=remote&plugin=${props?.plugin ?? "home"}&branch=${
+      props.repository?.branchState?.branchId
+    }`;
   }, [linkBase, props.plugin, props.repository?.branchState?.branchId]);
 
-  const onChangeBranch = useCallback((branch: Branch|null) => {
-    if (branch?.id) {
-      navigate(homeLink + "&branch=" + branch?.id);
-    }
-
-  }, [linkBase, homeLink]);
+  const onChangeBranch = useCallback(
+    (branch: Branch | null) => {
+      if (branch?.id) {
+        navigate(homeLink + "&branch=" + branch?.id);
+      }
+    },
+    [linkBase, homeLink]
+  );
 
   const onGoToDefaultBranch = useCallback(() => {
-      navigate(defaultBranchLink);
+    navigate(defaultBranchLink);
   }, [defaultBranchLink]);
 
   return (
@@ -140,30 +151,47 @@ const RemoteVCSNavHome = (props: Props) => {
           onChangeBranch={onChangeBranch}
           defaultBranchLink={defaultBranchLink}
           currentHeadLink={branchHeadLink}
-          showBackButton={props?.repository?.branchState?.branchId != props?.repository?.branchState?.defaultBranchId}
+          showBackButton={
+            props?.repository?.branchState?.branchId !=
+            props?.repository?.branchState?.defaultBranchId
+          }
           onGoBack={onGoToDefaultBranch}
         />
+        <ButtonRow style={{ marginTop: 24 }}>
+          <RepoActionButton
+            label={"copy from repository"}
+            icon={"copy"}
+            titleTextSize="small"
+          />
+          <RepoActionButton
+            label={"remote settings"}
+            icon={"settings"}
+            titleTextSize="small"
+          />
+        </ButtonRow>
       </TopContainer>
       <BottomContainer>
+        <ButtonRow>
+          <RepoActionButton
+            label={"merge requests"}
+            icon={"merge-request"}
+            size="large"
+          />
+        </ButtonRow>
         {(cloneState?.state != "none" || !repoExistsLocally) &&
           !isLoading &&
           !cloneStateLoading && (
-            <ButtonRow>
-              <Button label="clone repo" bg={"orange"} size={"big"} />
-              <div style={{ width: 48 }} />
+            <ButtonRow style={{marginTop: 24}}>
               <Button
-                label="copy from repo"
-                bg={"purple"}
-                size={"big"}
+                label="clone repository"
+                bg={"orange"}
+                size={"extra-big"}
                 onClick={cloneRepo}
                 isLoading={cloneRepoMutation.isLoading}
                 isDisabled={!isDaemonConnected}
               />
             </ButtonRow>
           )}
-        {!(cloneState?.state != "none" || !repoExistsLocally) && (
-          <Button label="copy from repo" bg={"purple"} size={"extra-big"} />
-        )}
       </BottomContainer>
     </InnerContent>
   );

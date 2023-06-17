@@ -1,4 +1,4 @@
-import { injectable, inject } from "inversify";
+import { injectable, inject, multiInject } from "inversify";
 
 import DatabaseConnection from "@floro/database/src/connection/DatabaseConnection";
 import ContextFactory from "@floro/database/src/contexts/ContextFactory";
@@ -17,6 +17,16 @@ import ProtectedBranchRulesEnabledUserSettingsContext from "@floro/database/src/
 import ProtectedBranchRulesEnabledRoleSettingsContext from "@floro/database/src/contexts/repositories/ProtectedBranchRulesEnabledRoleSettingsContext";
 import OrganizationRolesContext from "@floro/database/src/contexts/organizations/OrganizationRolesContext";
 import { OrganizationRole } from "@floro/graphql-schemas/build/generated/main-graphql";
+import {
+  Branch as FloroBranch,
+  BRANCH_NAME_REGEX,
+  getBranchIdFromName,
+} from "floro/dist/src/repo";
+import RepoRBACService from "./RepoRBACService";
+import RepositoryService from "./RepositoryService";
+import UsersContext from "@floro/database/src/contexts/users/UsersContext";
+import OrganizationsContext from "@floro/database/src/contexts/organizations/OrganizationsContext";
+import BranchPushHandler from "../events/BranchPushEventHandler";
 
 export const LICENSE_CODE_LIST = new Set([
   "apache_2",
@@ -53,15 +63,24 @@ export default class BranchService {
   private databaseConnection!: DatabaseConnection;
   private contextFactory!: ContextFactory;
   private repoAccessor!: RepoAccessor;
+  private repoRBAC!: RepoRBACService;
+  private repositoryService!: RepositoryService;
+  private branchPushHandlers!: BranchPushHandler[];
 
   constructor(
     @inject(DatabaseConnection) databaseConnection: DatabaseConnection,
     @inject(ContextFactory) contextFactory: ContextFactory,
-    @inject(RepoAccessor) repoAccessor: RepoAccessor
+    @inject(RepoAccessor) repoAccessor: RepoAccessor,
+    @inject(RepoRBACService) repoRBAC: RepoRBACService,
+    @inject(RepositoryService) repositoryService: RepositoryService,
+    @multiInject("BranchPushHandler") branchPushHandlers: BranchPushHandler[]
   ) {
     this.databaseConnection = databaseConnection;
     this.contextFactory = contextFactory;
     this.repoAccessor = repoAccessor;
+    this.repoRBAC = repoRBAC;
+    this.repositoryService = repositoryService;
+    this.branchPushHandlers = branchPushHandlers;
   }
 
 
@@ -143,6 +162,200 @@ export default class BranchService {
             }
 
         }
+    }
+  }
+
+  public async pushBranch(branch: FloroBranch, repoId: string, user: User) {
+    const queryRunner = await this.databaseConnection.makeQueryRunner();
+    try {
+      await queryRunner.startTransaction();
+      const repositoriesContext = await this.contextFactory.createContext(
+        RepositoriesContext,
+        queryRunner
+      );
+      const repo = await repositoriesContext.getById(repoId);
+      if (!repo) {
+        await queryRunner.rollbackTransaction();
+        return {
+          action: "REPO_NOT_FOUND_ERROR",
+          error: {
+            type: "REPO_NOT_FOUND_ERROR",
+            message: "Repo Not Found",
+          },
+        };
+      }
+      const canPush = await this.repoRBAC.userHasPermissionToPush(
+        repo,
+        user,
+        branch.id
+      );
+      if (!canPush) {
+        await queryRunner.rollbackTransaction();
+        return {
+          action: "INVALID_PERMISSIONS_ERROR",
+          error: {
+            type: "INVALID_PERMISSIONS_ERROR",
+            message: "Invalid permissions",
+          },
+        };
+      }
+      const pushedBranch = await this.updateBranch(
+        repo,
+        branch,
+        user,
+        queryRunner
+      );
+      if (!pushedBranch) {
+        await queryRunner.rollbackTransaction();
+        return {
+          action: "CANT_PUSH_ERROR",
+          error: {
+            type: "CANT_PUSH_ERROR",
+            message: "Cannot push branch",
+          },
+        };
+      }
+      if (repo?.isPrivate) {
+        if (repo.repoType == "org_repo") {
+          const organizationsContext = await this.contextFactory.createContext(
+            OrganizationsContext,
+            queryRunner
+          );
+          const organization = await organizationsContext.getById(
+            repo.organizationId
+          );
+          const diskSpaceLimitBytes = parseInt(
+            organization?.diskSpaceLimitBytes as unknown as string
+          );
+          const utilizedDiskSpaceBytes = parseInt(
+            organization?.utilizedDiskSpaceBytes as unknown as string
+          );
+
+          if (utilizedDiskSpaceBytes > diskSpaceLimitBytes) {
+            await organizationsContext.updateOrganizationById(
+              organization?.id as string,
+              {
+                billingStatus: "delinquent"
+              }
+            );
+          }
+        }
+        else {
+          const usersContext = await this.contextFactory.createContext(
+            UsersContext,
+            queryRunner
+          );
+          if (user) {
+            const diskSpaceLimitBytes = parseInt(
+              user?.diskSpaceLimitBytes as unknown as string
+            );
+            const utilizedDiskSpaceBytes = parseInt(
+              user?.utilizedDiskSpaceBytes as unknown as string
+            );
+            if (utilizedDiskSpaceBytes > diskSpaceLimitBytes) {
+              // MAYBE ADD ONE DAY DO SOMETHING HERE
+            }
+            await usersContext.updateUser(user, {
+              diskSpaceLimitBytes,
+              utilizedDiskSpaceBytes,
+            });
+          }
+        }
+      }
+
+      const updatedRepo = await repositoriesContext.updateRepo(repo,  {
+        lastRepoUpdateAt: (new Date()).toISOString()
+      });
+
+      for (const handler of this.branchPushHandlers) {
+          await handler.onBranchChanged(queryRunner, user, pushedBranch);
+      }
+      await queryRunner.commitTransaction();
+      return {
+        action: "BRANCH_PUSHED",
+        repository: updatedRepo,
+        branch: pushedBranch
+      };
+    } catch (e: any) {
+      if (!queryRunner.isReleased) {
+        await queryRunner.rollbackTransaction();
+      }
+      return {
+        action: "LOG_ERROR",
+        error: {
+          type: "UNKNOWN_PUSH_BRANCH_ERROR",
+          message: e?.message,
+          meta: e,
+        },
+      };
+    } finally {
+      if (!queryRunner.isReleased) {
+        await queryRunner.release();
+      }
+    }
+  }
+
+  private async updateBranch(
+    repository: Repository,
+    floroBranch: FloroBranch,
+    user: User,
+    queryRunner: QueryRunner
+  ) {
+    try {
+      if (!BRANCH_NAME_REGEX.test(floroBranch?.name ?? "")) {
+        return null;
+      }
+      const branchesContext = await this.contextFactory.createContext(
+        BranchesContext,
+        queryRunner
+      );
+      const commitsContext = await this.contextFactory.createContext(
+        CommitsContext,
+        queryRunner
+      );
+      if (floroBranch?.lastCommit) {
+        const lastCommit = await commitsContext?.getCommitBySha(
+          repository.id,
+          floroBranch?.lastCommit
+        );
+        if (!lastCommit) {
+          return null;
+        }
+      }
+      const branches = await branchesContext.getAllByRepoId(repository.id);
+      const remoteBranch = branches?.find((b) => b.branchId == floroBranch?.id);
+      if (floroBranch?.baseBranchId) {
+        const baseBranch = branches?.find(
+          (b) => b.branchId == floroBranch?.baseBranchId
+        );
+        if (!baseBranch) {
+          return null;
+        }
+      }
+      // check commit exists
+      if (remoteBranch) {
+        const updatedBranch = await branchesContext.updateBranch(remoteBranch, {
+          baseBranchId: floroBranch?.baseBranchId ?? undefined,
+          lastCommit: floroBranch?.lastCommit ?? undefined,
+        });
+        await queryRunner.commitTransaction();
+        return updatedBranch;
+      }
+      const branchId = getBranchIdFromName(floroBranch?.name);
+      const createdBranch = await branchesContext.create({
+        branchId: branchId,
+        name: floroBranch.name,
+        baseBranchId: floroBranch?.baseBranchId ?? undefined,
+        lastCommit: floroBranch?.lastCommit ?? undefined,
+        createdById: user.id,
+        createdByUsername: user.username,
+        createdAt: floroBranch.createdAt,
+        organizationId: repository?.organizationId,
+        repositoryId: repository?.id,
+      });
+      return createdBranch;
+    } catch (e: any) {
+      return null;
     }
   }
 }

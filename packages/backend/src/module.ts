@@ -61,6 +61,9 @@ import RepositoryLoader from './resolvers/hooks/loaders/Repository/RepositoryLoa
 import RepositoryDatasourceFactoryService from './services/repositories/RepoDatasourceFactoryService';
 import CommitStateDatasourceLoader from './resolvers/hooks/loaders/Repository/CommitStateDatasourceLoader';
 import CommitStatePluginVersionsLoader from './resolvers/hooks/loaders/Repository/CommitStatePluginVersionsLoader';
+import MergeRequestService from './services/merge_requests/MergeRequestService';
+import BranchPushHandler from './services/events/BranchPushEventHandler';
+import MergeRequestEventService from './services/merge_requests/MergeRequestEventService';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -137,10 +140,16 @@ export default new ContainerModule((bind): void => {
     // REFERRALS
     bind(ReferralService).toSelf()
 
+    // MERGE REQUESTS
+    bind(MergeRequestService).toSelf();
+    bind(MergeRequestEventService).toSelf();
+
     // EVENT HANDLERS
     // CREATE USER HANLDER
     bind<CreateUserEventHandler>("CreateUserHandler").to(OrganizationInvitationService);
     bind<CreateUserEventHandler>("CreateUserHandler").to(ReferralService);
+    // BRANCH PUSH HANLDER
+    bind<BranchPushHandler>("BranchPushHandler").to(MergeRequestEventService);
 
     // Controllers
     bind<AuthenticationController>("Controllers").to(AuthenticationController);

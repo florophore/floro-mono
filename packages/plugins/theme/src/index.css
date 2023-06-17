@@ -82,6 +82,7 @@ body {
     height: 100%;
     width: 100%;
     display: flex;
+    zoom: 80%;
 }
 
 input[type="color"] {

@@ -11,12 +11,14 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  OneToOne,
 } from "typeorm";
 import { User } from "./User";
 import { Organization } from "./Organization";
 import { validateOrReject } from 'class-validator';
 import { Repository } from "./Repository";
 import { v4 as uuidv4 } from 'uuid';
+import { MergeRequest } from "./MergeRequest";
 
 @Entity("branches")
 export class Branch extends BaseEntity {
@@ -97,4 +99,7 @@ export class Branch extends BaseEntity {
   @ManyToOne("Repository", "branches")
   @JoinColumn()
   repository?: Relation<Repository>;
+
+  @OneToOne("MergeRequest", "dbBranch")
+  mergeRequests?: Relation<MergeRequest>[];
 }

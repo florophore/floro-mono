@@ -14,6 +14,11 @@ import { PluginVersion } from "./PluginVersion";
 import { Binary } from "./Binary";
 import { Branch } from "./Branch";
 import { Commit } from "./Commit";
+import { MergeRequest } from "./MergeRequest";
+import { ReviewerRequest } from "./ReviewerRequest";
+import { MergeRequestComment } from "./MergeRequestComment";
+import { ReviewStatus } from "./ReviewStatus";
+import { MergeRequestEvent } from "./MergeRequestEvent";
 
 @Entity("users")
 export class User extends BinaryPKBaseEntity {
@@ -111,4 +116,32 @@ export class User extends BinaryPKBaseEntity {
   @OneToMany("Commit", "authorUser")
   @JoinColumn()
   authoredCommits?: Relation<Commit>[];
+
+  @OneToMany("MergeRequest", "user")
+  @JoinColumn()
+  mergeRequests?: Relation<MergeRequest>[];
+
+  @OneToMany("MergeRequest", "openedByUser")
+  @JoinColumn()
+  openedMergeRequests?: Relation<MergeRequest>[];
+
+  @OneToMany("ReviewerRequest", "requestedByUser")
+  @JoinColumn()
+  sentReviewRequests?: Relation<ReviewerRequest>[];
+
+  @OneToMany("ReviewerRequest", "requestedReviewerUser")
+  @JoinColumn()
+  receivedReviewRequests?: Relation<ReviewerRequest>[];
+
+  @OneToMany("MergeRequestComment", "user")
+  @JoinColumn()
+  mergeRequestComments?: Relation<MergeRequestComment>[];
+
+  @OneToMany("ReviewStatus", "user")
+  @JoinColumn()
+  submittedReviewStatuses?: Relation<ReviewStatus>[];
+
+  @OneToMany("MergeRequestEvent", "performedByUser")
+  @JoinColumn()
+  mergeRequestEvents?: Relation<MergeRequestEvent>[];
 }

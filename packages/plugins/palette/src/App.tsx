@@ -1,4 +1,4 @@
-import { useCallback, useState, useRef } from 'react';
+import { useCallback, useState, useRef, useEffect } from 'react';
 import { ThemeProvider } from "@emotion/react";
 import styled from '@emotion/styled';
 import { useColorTheme } from "@floro/common-web/src/hooks/color-theme";

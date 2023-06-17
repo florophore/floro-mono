@@ -35,6 +35,7 @@ import UsersContext from "@floro/database/src/contexts/users/UsersContext";
 import RepositoryDatasourceFactoryService from "./RepoDatasourceFactoryService";
 import BinaryCommitUtilizationsContext from "@floro/database/src/contexts/repositories/BinaryCommitUtilizationsContext";
 import BinaryAccessor from "@floro/storage/src/accessors/BinaryAccessor";
+import { QueryRunner } from "typeorm";
 
 interface BranchRuleUserPermission {
   branchId: string;
@@ -96,7 +97,6 @@ export default class RepositoryService {
     @inject(DatabaseConnection) databaseConnection: DatabaseConnection,
     @inject(ContextFactory) contextFactory: ContextFactory,
     @inject(RepoAccessor) repoAccessor: RepoAccessor,
-    @inject(BranchService) branchService: BranchService,
     @inject(RepoRBACService) repoRBAC: RepoRBACService,
     @inject(MainConfig) mainConfig: MainConfig,
     @inject(StorageAuthenticator) storageAuthenticator: StorageAuthenticator,
@@ -107,7 +107,6 @@ export default class RepositoryService {
     this.databaseConnection = databaseConnection;
     this.contextFactory = contextFactory;
     this.repoAccessor = repoAccessor;
-    this.branchService = branchService;
     this.repoRBAC = repoRBAC;
     this.mainConfig = mainConfig;
     this.storageAuthenticator = storageAuthenticator;
@@ -874,82 +873,6 @@ export default class RepositoryService {
       }
     }
     return true;
-  }
-
-  public async pushBranch(
-    repository: Repository,
-    floroBranch: FloroBranch,
-    user: User
-  ) {
-    const queryRunner = await this.databaseConnection.makeQueryRunner();
-    try {
-      if (!BRANCH_NAME_REGEX.test(floroBranch?.name ?? "")) {
-        await queryRunner.rollbackTransaction();
-        return null;
-      }
-      await queryRunner.startTransaction();
-      const branchesContext = await this.contextFactory.createContext(
-        BranchesContext,
-        queryRunner
-      );
-      const commitsContext = await this.contextFactory.createContext(
-        CommitsContext,
-        queryRunner
-      );
-      if (floroBranch?.lastCommit) {
-        const lastCommit = await commitsContext?.getCommitBySha(
-          repository.id,
-          floroBranch?.lastCommit
-        );
-        if (!lastCommit) {
-          await queryRunner.rollbackTransaction();
-          return null;
-        }
-      }
-      const branches = await branchesContext.getAllByRepoId(repository.id);
-      const remoteBranch = branches?.find((b) => b.branchId == floroBranch?.id);
-      if (floroBranch?.baseBranchId) {
-        const baseBranch = branches?.find(
-          (b) => b.branchId == floroBranch?.baseBranchId
-        );
-        if (!baseBranch) {
-          await queryRunner.rollbackTransaction();
-          return null;
-        }
-      }
-      // check commit exists
-      if (remoteBranch) {
-        const updatedBranch = await branchesContext.updateBranch(remoteBranch, {
-          baseBranchId: floroBranch?.baseBranchId ?? undefined,
-          lastCommit: floroBranch?.lastCommit ?? undefined,
-        });
-        await queryRunner.commitTransaction();
-        return updatedBranch;
-      }
-      const branchId = getBranchIdFromName(floroBranch?.name);
-      const createdBranch = await branchesContext.create({
-        branchId: branchId,
-        name: floroBranch.name,
-        baseBranchId: floroBranch?.baseBranchId ?? undefined,
-        lastCommit: floroBranch?.lastCommit ?? undefined,
-        createdById: user.id,
-        createdByUsername: user.username,
-        createdAt: floroBranch.createdAt,
-        organizationId: repository?.organizationId,
-        repositoryId: repository?.id,
-      });
-      await queryRunner.commitTransaction();
-      return createdBranch;
-    } catch (e: any) {
-      if (!queryRunner.isReleased) {
-        await queryRunner.rollbackTransaction();
-      }
-      return null;
-    } finally {
-      if (!queryRunner.isReleased) {
-        await queryRunner.release();
-      }
-    }
   }
 
   public getKVLinkForBranch(repository: Repository, branch: FloroBranch) {

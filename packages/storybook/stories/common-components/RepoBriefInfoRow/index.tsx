@@ -124,7 +124,7 @@ const RepoBriefInfoRow = (props: Props): React.ReactElement => {
   );
 
   const linkLocation = useMemo(() => {
-    const searchParams = props.isLocal ? "?from=local&test=5" : "?from=remote";
+    const searchParams = props.isLocal ? "?from=local" : "?from=remote";
     if (props.repo.repoType == "user_repo") {
       return `/repo/@/${props.repo.user?.username}/${props.repo.name}${searchParams}`;
     }

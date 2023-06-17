@@ -18,6 +18,7 @@ const Container = styled.div`
   position: relative;
   border-radius: 10px;
   background: ${(props) => props.theme.background};
+  zoom: 80%;
 `;
 
 const ModalHeaderContainer = styled.div`

@@ -22,6 +22,7 @@ import UpdateBillingModal from "../modals/UpdateBillingModal";
 import ConfirmMergeWIPModal from "../modals/ConfirmMergeWIPModal";
 import ConfirmForcePullModal from "../modals/ConfirmForcePullModal";
 import ConfirmForcePushModal from "../modals/ConfirmForcePushModal";
+import CopyFromIcon from "@floro/common-assets/assets/images/icons/copy.dark.svg";
 
 const InnerContent = styled.div`
   display: flex;
@@ -228,9 +229,14 @@ const LocalVCSViewMode = (props: Props) => {
             </ButtonRow>
             <ButtonRow style={{ marginTop: 24 }}>
               <RepoActionButton
-                label={"local repository settings"}
+                label={"copy from repository"}
+                icon={"copy"}
+                titleTextSize="small"
+              />
+              <RepoActionButton
+                label={"local settings"}
                 icon={"settings"}
-                size="large"
+                titleTextSize="small"
               />
             </ButtonRow>
           </>

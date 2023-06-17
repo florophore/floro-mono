@@ -7,10 +7,10 @@ import {
   Plugin,
   PluginVersion,
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
-import PluginEditorRow from "./PluginEditorRow";
-import PreviewPlugin from "./PreviewPlugin";
+import PluginEditorRow from "../../home/plugin_editor/PluginEditorRow";
+import PreviewPlugin from "../../home/plugin_editor/PreviewPlugin";
 import { useLocalVCSNavContext } from "../../local/vcsnav/LocalVCSContext";
-import { RemoteCommitState } from "../../remote/hooks/remote-state";
+import { RemoteCommitState } from "../hooks/remote-state";
 import RemotePluginEditorRow from "./RemotePluginEditorRow";
 
 const PluginContainer = styled.div`

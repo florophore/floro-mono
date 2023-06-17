@@ -104,6 +104,7 @@ const RemoteRepoController = (props: Props) => {
         <HistoryDisplay
           repository={props.repository}
           remoteCommitState={props.remoteCommitState}
+          plugin={props.plugin}
         />
       );
     }

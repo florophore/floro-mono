@@ -4,7 +4,7 @@ import DatabaseConnection from "@floro/database/src/connection/DatabaseConnectio
 import ContextFactory from "@floro/database/src/contexts/ContextFactory";
 import UsersContext from "@floro/database/src/contexts/users/UsersContext";
 import UserAuthCredentialsContext from "@floro/database/src/contexts/authentication/UserAuthCredentialsContext";
-import UserServiceAgreementsContext from "@floro/database/src/contexts/users/UserServiceAgreementsContext"; 
+import UserServiceAgreementsContext from "@floro/database/src/contexts/users/UserServiceAgreementsContext";
 import { UserAuthCredential } from "@floro/database/src/entities/UserAuthCredential";
 import { User } from "@floro/database/src/entities/User";
 import GithubLoginClient from "@floro/third-party-services/src/github/GithubLoginClient";
@@ -87,7 +87,7 @@ export default class AuthenticationService {
     public async authWithGithubOAuth(code: string, loginClient: 'web'|'desktop'): Promise<AuthReponse> {
         const queryRunner = await this.databaseConnection.makeQueryRunner();
         try {
-            const githubAccessToken = await this.githubLoginClient.getAccessToken(code); 
+            const githubAccessToken = await this.githubLoginClient.getAccessToken(code);
             if (!(githubAccessToken instanceof GithubAccessToken)) {
                 return { action: 'LOG_ERROR', error: { type: 'GITHUB_OAUTH_ERROR', message: 'Bad auth code', meta: { code }} };
             }
@@ -96,7 +96,7 @@ export default class AuthenticationService {
                 return { action: 'LOG_ERROR', error: { type: 'GITHUB_OAUTH_ERROR', message: 'Bad access token', meta: { accessToken: githubAccessToken.accessToken }} };
             }
             const githubUserEmails = await this.githubLoginClient.getGithubUserEmails(githubAccessToken.accessToken);
-            if (!(githubUserEmails instanceof Array<GithubEmail>)) {
+            if (!(githubUserEmails instanceof Array)) {
                 return { action: 'LOG_ERROR', error: { type: 'GITHUB_OAUTH_ERROR', message: 'Bad access token', meta: { githubUserEmails }} };
             }
             const primaryEmail = githubUserEmails.find((email: GithubEmail) => {
@@ -171,7 +171,7 @@ export default class AuthenticationService {
             }
             await userAuthCredentialsContext.attachUserToCredentials(credentials, user)
             const credential = userAuthCredentialsContext.getGithubCredential(
-                await userAuthCredentialsContext.getCredentialsByEmail(primaryEmail.email) 
+                await userAuthCredentialsContext.getCredentialsByEmail(primaryEmail.email)
             );
             if (credential && !credential.isThirdPartyVerified) {
                 const verification = await this.emailVerificationStore.createEmailVerification(credential);
@@ -209,7 +209,7 @@ export default class AuthenticationService {
     public async authWithGoogleOAuth(code: string): Promise<AuthReponse> {
         const queryRunner = await this.databaseConnection.makeQueryRunner();
         try {
-            const googleAccessToken = await this.googleLoginClient.getAccessToken(code); 
+            const googleAccessToken = await this.googleLoginClient.getAccessToken(code);
             if (!(googleAccessToken instanceof GoogleAccessToken)) {
                 return { action: 'LOG_ERROR', error: { type: 'GOOGLE_OAUTH_ERROR', message: 'Bad auth code', meta: { code }} };
             }
@@ -259,7 +259,7 @@ export default class AuthenticationService {
             }
             await userAuthCredentialsContext.attachUserToCredentials(credentials, user)
             const credential = userAuthCredentialsContext.getGoogleCredential(
-                await userAuthCredentialsContext.getCredentialsByEmail(googleUser.email) 
+                await userAuthCredentialsContext.getCredentialsByEmail(googleUser.email)
             );
             if (credential) {
                 await queryRunner.commitTransaction();

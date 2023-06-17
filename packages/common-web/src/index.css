@@ -85,6 +85,10 @@ body {
     -webkit-app-region: no-drag;
 }
 
+#app > div {
+  zoom: 80%;
+}
+
 #title-bar {
     height: 60px;
     width: 100%;

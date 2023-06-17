@@ -8,6 +8,7 @@ import { Binary } from "./Binary";
 import { Commit } from "./Commit";
 import { RepoEnabledRoleSetting } from "./RepoEnabledRoleSetting";
 import { RepoEnabledUserSetting } from "./RepoEnabledUserSetting";
+import { MergeRequest } from "./MergeRequest";
 
 @Entity("repositories")
 export class Repository extends BinaryPKBaseEntity {
@@ -115,4 +116,8 @@ export class Repository extends BinaryPKBaseEntity {
 
   @OneToMany("RepoEnabledRoleSetting", "role")
   enabledRepoRoleSettings?: Relation<RepoEnabledRoleSetting>[];
+
+  @OneToMany("MergeRequest", "repository")
+  @JoinColumn()
+  mergeRequests?: Relation<MergeRequest>[];
 }

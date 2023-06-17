@@ -52,7 +52,7 @@ const ModalBackdrop = (props: Props): React.ReactElement => {
             position: absolute;
             display: flex;
             flex: 1;
-            height: calc(100vh - 72px);
+            height: calc(100vh - 58px);
             width: 100vw;
             justify-content: center;
             align-items: center;

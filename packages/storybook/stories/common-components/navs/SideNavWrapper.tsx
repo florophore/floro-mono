@@ -15,7 +15,7 @@ const Container = styled.div`
 
 const Nav = styled.div`
   width: 263px;
-  height: calc(100vh - 72px);
+  /*height: calc(100vh - 72px);*/
   border-right: 1px solid ${(props) => props.theme.colors.commonBorder};
   display: flex;
   flex-direction: column;
@@ -23,8 +23,10 @@ const Nav = styled.div`
 
 const Main = styled.div`
   height: 100%;
+  width: 100%;
+  /*
   width: calc(100vw - 335px);
-  height: calc(100vh - 72px);
+  height: calc(100vh - 72px); */
   overflow: scroll;
 `;
 

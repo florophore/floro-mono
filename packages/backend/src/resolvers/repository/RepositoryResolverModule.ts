@@ -21,7 +21,7 @@ import { getCanAutofixReversionIfNotWIP, getCanRevert } from "floro/dist/src/rep
 import CommitStatePluginVersionsLoader from "../hooks/loaders/Repository/CommitStatePluginVersionsLoader";
 import CommitStateBinaryRefsLoader from "../hooks/loaders/Repository/CommitStateBinaryRefsLoader";
 
-const PAGINATION_LIMIT = 20;
+const PAGINATION_LIMIT = 10;
 
 @injectable()
 export default class RepositoryResolverModule extends BaseResolverModule {

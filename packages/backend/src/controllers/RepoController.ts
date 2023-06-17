@@ -41,6 +41,7 @@ import DatabaseConnection from "@floro/database/src/connection/DatabaseConnectio
 import { Manifest, manifestListToSchemaMap } from "floro/dist/src/plugins";
 import { makeDataSource } from "floro/dist/src/datasource";
 import OrganizationsContext from "@floro/database/src/contexts/organizations/OrganizationsContext";
+import BranchService from "../services/repositories/BranchService";
 
 @injectable()
 export default class RepoController extends BaseController {
@@ -54,6 +55,7 @@ export default class RepoController extends BaseController {
   public repositoryService: RepositoryService;
   public storageAuthenticator!: StorageAuthenticator;
   public databaseConnection!: DatabaseConnection;
+  public branchService!: BranchService;
 
   constructor(
     @inject(DatabaseConnection) databaseConnection: DatabaseConnection,
@@ -65,7 +67,8 @@ export default class RepoController extends BaseController {
     @inject(BinaryAccessor) binaryAccessor: BinaryAccessor,
     @inject(RepoRBACService) repoRBAC: RepoRBACService,
     @inject(RepositoryService) repositoryService: RepositoryService,
-    @inject(StorageAuthenticator) storageAuthenticator: StorageAuthenticator
+    @inject(StorageAuthenticator) storageAuthenticator: StorageAuthenticator,
+    @inject(BranchService) branchService: BranchService
   ) {
     super();
     this.databaseConnection = databaseConnection;
@@ -78,6 +81,7 @@ export default class RepoController extends BaseController {
     this.repoRBAC = repoRBAC;
     this.repositoryService = repositoryService;
     this.storageAuthenticator = storageAuthenticator;
+    this.branchService = branchService;
   }
 
   @Get("/api/repo/:repoId/clone")
@@ -1216,8 +1220,8 @@ export default class RepoController extends BaseController {
         ack: true,
       });
     } catch (e) {
-      console.log("E", e);
       response.sendStatus(400);
+      console.log("push commit error", e);
       return;
     }
   }
@@ -1238,95 +1242,28 @@ export default class RepoController extends BaseController {
       return;
     }
     try {
-      const repositoriesContext = await this.contextFactory.createContext(
-        RepositoriesContext
-      );
-      const repo = await repositoriesContext.getById(repoId);
-      if (!repo) {
-        response.sendStatus(404);
-        return;
-      }
-      const canPush = await this.repoRBAC.userHasPermissionToPush(
-        repo,
-        session.user,
-        branch.id
-      );
-      if (!canPush) {
-        response.sendStatus(403);
-        return;
-      }
-      const pushedBranch = await this.repositoryService.pushBranch(
-        repo,
-        branch,
-        session.user
-      );
-      if (!pushedBranch) {
+      const branchResult = await this.branchService.pushBranch(branch, repoId, session.user);
+      if (branchResult.action != "BRANCH_PUSHED") {
         response.sendStatus(400);
+          console.error(
+            branchResult?.error?.type,
+            branchResult?.error?.message,
+            branchResult?.error?.meta
+          );
         return;
       }
-
+      // send webhook notification here
+      // should pub sub here as well as update repo state
       const pullInfo = await this.repositoryService.fetchPullInfo(
-        repo.id,
+        repoId,
         session.user,
         []
       );
-      if (repo?.isPrivate) {
-        if (repo.repoType == "org_repo") {
-          const organizationsContext = await this.contextFactory.createContext(
-            OrganizationsContext
-          );
-          const organization = await organizationsContext.getById(
-            repo.organizationId
-          );
-          const diskSpaceLimitBytes = parseInt(
-            organization?.diskSpaceLimitBytes as unknown as string
-          );
-          const utilizedDiskSpaceBytes = parseInt(
-            organization?.utilizedDiskSpaceBytes as unknown as string
-          );
-
-          if (utilizedDiskSpaceBytes > diskSpaceLimitBytes) {
-            await organizationsContext.updateOrganizationById(
-              organization?.id as string,
-              {
-                billingStatus: "delinquent"
-              }
-            );
-          }
-        }
-        else {
-          const usersContext = await this.contextFactory.createContext(
-            UsersContext
-          );
-          const user = await usersContext.getById(session?.userId)
-          if (user) {
-            const diskSpaceLimitBytes = parseInt(
-              session.user?.diskSpaceLimitBytes as unknown as string
-            );
-            const utilizedDiskSpaceBytes = parseInt(
-              session.user?.utilizedDiskSpaceBytes as unknown as string
-            );
-            if (utilizedDiskSpaceBytes > diskSpaceLimitBytes) {
-              // MAYBE ADD ONE DAY DO SOMETHING HERE
-            }
-            await usersContext.updateUser(user, {
-              diskSpaceLimitBytes,
-              utilizedDiskSpaceBytes,
-            });
-          }
-        }
-      }
-
-      await repositoriesContext.updateRepo(repo,  {
-        lastRepoUpdateAt: (new Date()).toISOString()
-      });
-
-      // send webhook notification here
-      // should pub sub here as well as update repo state
       response.send(pullInfo);
       return;
     } catch (e) {
       response.sendStatus(400);
+      console.log("push branch error", e);
       return;
     }
   }
