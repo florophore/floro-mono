@@ -9,6 +9,7 @@ import {
   ApplicationKVState,
   RepoState,
   CommitHistory,
+  getDivergenceOriginSha,
 } from "floro/dist/src/repo";
 import { DataSource, makeDataSource } from "floro/dist/src/datasource";
 import { CommitData } from "floro/dist/src/sequenceoperations";
@@ -84,7 +85,7 @@ export default class RepositoryDatasourceFactoryService {
     repository: Repository,
     branch: FloroBranch,
     commits: Array<Commit>,
-    mergeSha: string
+    mergeIntoSha?: string
   ) {
     const commitMap: { [sha: string]: Commit } = {};
     for (const commit of commits) {
@@ -92,11 +93,39 @@ export default class RepositoryDatasourceFactoryService {
         commitMap[commit.sha] = commit;
       }
     }
-    const mergeCommit = commitMap[mergeSha];
-    if (!mergeCommit) {
-      return [];
-    }
-    const shas = branch.lastCommit ? [branch.lastCommit, mergeSha] : [mergeSha];
+    const memoizedCommitHistory = {};
+    const memoizedCommitData = {};
+    const tmpDataSource = makeDataSource({
+      readCommitHistory: async (_repoId, sha) => {
+        if (!sha) {
+          return [];
+        }
+        if (memoizedCommitHistory[sha]) {
+          return memoizedCommitHistory[sha];
+        }
+        const commitHistory = this.getCommitHistory(
+          commits,
+          sha
+        );
+        memoizedCommitHistory[sha] = commitHistory;
+        return commitHistory as CommitHistory[];
+      },
+      readCommit: async (_repoId, sha) => {
+        if (memoizedCommitData[sha]) {
+          return memoizedCommitData[sha];
+        }
+        const commitData = await this.repoAccessor.readCommit(repository, sha);
+        memoizedCommitData[sha] = commitData;
+        return memoizedCommitData[sha];
+      }
+    })
+    const divergenceSha = await getDivergenceOriginSha(
+      tmpDataSource,
+      repository.id,
+      mergeIntoSha,
+      branch?.lastCommit as string,
+    );
+    const shas = [branch.lastCommit, mergeIntoSha, divergenceSha]?.filter(v => !!v);
     const pluginUtiltizationContext = await this.contextFactory.createContext(
       PluginCommitUtilizationsContext
     );
@@ -144,6 +173,34 @@ export default class RepositoryDatasourceFactoryService {
     }
     return pluginVersionContext.getByIds(seenPluginVerions);
   }
+  public async getPluginListForCommitList(
+    repositoryId: string,
+    shaList: Array<string>
+  ) {
+    const pluginUtiltizationContext = await this.contextFactory.createContext(
+      PluginCommitUtilizationsContext
+    );
+    const pluginVersionContext = await this.contextFactory.createContext(
+      PluginsVersionsContext
+    );
+    const seenPluginVerions: Array<string> = [];
+    for (const sha of shaList) {
+      if (sha) {
+        const utilizations = await pluginUtiltizationContext.getAllByRepoAndSha(
+            repositoryId,
+            sha
+        );
+        for (const utilization of utilizations) {
+            if (!seenPluginVerions.includes(utilization.pluginVersionId)) {
+            seenPluginVerions.push(utilization.pluginVersionId);
+            }
+        }
+      }
+    }
+    return pluginVersionContext.getByIds(seenPluginVerions);
+  }
+
+
 
   public async getDatasource(
     repository: Repository,
@@ -277,6 +334,19 @@ export default class RepositoryDatasourceFactoryService {
     while (currentSha) {
       out.push(commitMap[currentSha]);
       currentSha = commitMap[currentSha].parent;
+    }
+    return out;
+  }
+
+  public getCommitsInRange(commits: Array<Commit>, sha: string, divergenceSha?: string) {
+    const history = this.getCommitHistory(commits, sha);
+    const out: Array<Commit> = [];
+    for (let i = history.length - 1; --i; i >= 0) {
+      const commit = history[i];
+      out.push(commit);
+      if (commit.sha == divergenceSha) {
+        break;
+      }
     }
     return out;
   }

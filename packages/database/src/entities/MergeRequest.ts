@@ -29,17 +29,32 @@ export class MergeRequest extends BinaryPKBaseEntity {
   @Column("boolean")
   @IsOptional()
   @IsBoolean()
+  isConflictFree!: boolean;
+
+  @Column("boolean")
+  @IsOptional()
+  @IsBoolean()
   isMerged!: boolean;
 
   @Column("varchar")
   @IsOptional()
   @IsString()
-  branchHeadShaAtCreate!: boolean;
+  branchHeadShaAtCreate!: string;
 
   @Column("varchar")
   @IsOptional()
   @IsString()
-  branchHeadShaAtClose!: boolean;
+  branchHeadShaAtClose!: string;
+
+  @Column("varchar")
+  @IsOptional()
+  @IsString()
+  divergenceSha!: string;
+
+  @Column("varchar")
+  @IsString()
+  @IsDefined()
+  branchId?: string;
 
   @Column("boolean")
   @IsOptional()

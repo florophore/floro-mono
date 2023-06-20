@@ -67,7 +67,7 @@ export const LICENSE_CODE_LIST = new Set([
   "unlicense",
 ]);
 
-export interface CreateRepositoryReponse {
+export interface CreateRepositoryResponse {
   action:
     | "REPO_CREATED"
     | "REPO_NAME_TAKEN_ERROR"
@@ -127,7 +127,7 @@ export default class RepositoryService {
     name: string,
     isPrivate: boolean,
     licenseCode?: string | null
-  ): Promise<CreateRepositoryReponse> {
+  ): Promise<CreateRepositoryResponse> {
     if (!REPO_REGEX.test(name)) {
       return {
         action: "INVALID_PARAMS_ERROR",
@@ -265,7 +265,7 @@ export default class RepositoryService {
     name: string,
     isPrivate: boolean,
     licenseCode?: string | null
-  ): Promise<CreateRepositoryReponse> {
+  ): Promise<CreateRepositoryResponse> {
     if (!REPO_REGEX.test(name)) {
       return {
         action: "INVALID_PARAMS_ERROR",
@@ -546,9 +546,13 @@ export default class RepositoryService {
   }
 
   public async getBranches(
-    repoId: string
+    repoId: string,
+    queryRunner?: QueryRunner
   ): Promise<Array<FloroBranch & { updatedAt: string; dbId: string }>> {
-    const branchesContext = await this.contextFactory.createContext(
+    const branchesContext = !!queryRunner ? await this.contextFactory.createContext(
+      BranchesContext,
+      queryRunner
+    ) : await this.contextFactory.createContext(
       BranchesContext
     );
     const branches = await branchesContext.getAllByRepoId(repoId);

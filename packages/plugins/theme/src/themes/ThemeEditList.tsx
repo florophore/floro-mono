@@ -70,10 +70,9 @@ const ThemeEditList = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [newThemeName, setNewThemeName] = useState("");
   const [newThemeColor, setNewThemeColor] = useState("#FFFFFF");
-  const [newThemeAlpha, setNewThemeAlpha] = useState(255);
   const [themes, setThemes, isLoading, save] = useFloroState("$(theme).themes", [], false);
 
-  const isInvalid = useIsFloroInvalid("$(palette).shades");
+  const isInvalid = useIsFloroInvalid("$(theme).themes");
 
   const onReOrderThemes = useCallback(
     (values: SchemaTypes["$(theme).themes"]) => {
@@ -126,13 +125,11 @@ const ThemeEditList = () => {
       return;
     }
     setThemes([...themes, { id: newId, name: newThemeName, backgroundColor: {
-      alpha: newThemeAlpha,
       hexcode: newThemeColor,
     } }], true);
     setNewThemeName("");
     setNewThemeColor("#FFFFFF");
-    setNewThemeAlpha(255);
-  }, [newThemeName, newThemeColor, newThemeAlpha, newId, canAddNewName, isLoading, themes]);
+  }, [newThemeName, newThemeColor, newId, canAddNewName, isLoading, themes]);
 
   const onDragStart = useCallback(() => {
     setIsDragging(true);

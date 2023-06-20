@@ -173,7 +173,6 @@ const HomeRead = (props: Props) => {
   const repoManifestList = useRepoManifestList(props.repository);
   const devPluginsRequest = useRepoDevPlugins(props.repository);
   const { compareFrom } = useLocalVCSNavContext();
-  console.log(repoManifestList?.data);
 
   const manifestList = useMemo(() => {
     const devManifestList: Array<Manifest> = [];

@@ -20,6 +20,11 @@ export class MergeRequestComment extends BinaryPKBaseEntity {
   @IsString()
   branchHeadShaAtCreate!: string;
 
+  @Column("varchar")
+  @IsOptional()
+  @IsString()
+  pluginName!: string;
+
   @Column("boolean")
   @IsOptional()
   @IsBoolean()

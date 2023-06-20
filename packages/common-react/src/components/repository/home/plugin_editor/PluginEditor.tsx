@@ -10,6 +10,7 @@ import {
 import PluginEditorRow from "./PluginEditorRow";
 import PreviewPlugin from "./PreviewPlugin";
 import { useLocalVCSNavContext } from "../../local/vcsnav/LocalVCSContext";
+import { getMergeSequence } from "floro/dist/src/sequenceoperations";
 
 const PluginContainer = styled.div`
   padding: 16px;

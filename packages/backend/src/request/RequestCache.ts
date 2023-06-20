@@ -13,6 +13,9 @@ import { Branch as FloroBranch, RemoteSettings} from "floro/dist/src/repo";
 import { PluginVersion, RepositoryBranchStateArgs } from "@floro/graphql-schemas/build/generated/main-graphql";
 import { Commit } from "@floro/database/src/entities/Commit";
 import { DataSource } from "floro/dist/src/datasource";
+import { MergeRequest } from "@floro/database/src/entities/MergeRequest";
+import { MergeRequestComment } from "@floro/database/src/entities/MergeRequestComment";
+import { MergeRequestCommentReply } from "@floro/database/src/entities/MergeRequestCommentReply";
 
 @injectable()
 export default class RequestCache {
@@ -609,5 +612,78 @@ export default class RequestCache {
   ) {
     const cache = this.getCache(cacheKey);
     cache[`commit-state-binary-refs:${repoId}:${sha}`] = binaryRefs;
+  }
+  // MERGE REQUESTS
+
+  public getMergeRequest(
+    cacheKey: string,
+    mergeRequestId: string,
+  ): MergeRequest {
+    const cache = this.getCache(cacheKey);
+    return cache[`merge-request:${mergeRequestId}`] as MergeRequest;
+  }
+
+  public setMergeRequest(
+    cacheKey: string,
+    mergeRequest: MergeRequest,
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`merge-request:${mergeRequest.id}`] = mergeRequest;
+  }
+
+  public deleteMergeRequest(
+    cacheKey: string,
+    mergeRequest: MergeRequest,
+  ) {
+    const cache = this.getCache(cacheKey);
+    delete cache[`merge-request:${mergeRequest.id}`];
+  }
+
+  public getMergeRequestComment(
+    cacheKey: string,
+    mergeRequesCommentId: string,
+  ): MergeRequestComment {
+    const cache = this.getCache(cacheKey);
+    return cache[`merge-request-comment:${mergeRequesCommentId}`] as MergeRequestComment;
+  }
+
+  public setMergeRequestComment(
+    cacheKey: string,
+    mergeRequestComment: MergeRequestComment,
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`merge-request-comment:${mergeRequestComment.id}`] = mergeRequestComment;
+  }
+
+  public deleteMergeRequestComment(
+    cacheKey: string,
+    mergeRequestComment: MergeRequestComment,
+  ) {
+    const cache = this.getCache(cacheKey);
+    delete cache[`merge-request-comment:${mergeRequestComment.id}`];
+  }
+
+  public getMergeRequestCommentReply(
+    cacheKey: string,
+    mergeRequestCommentReplyId: string,
+  ): MergeRequestCommentReply {
+    const cache = this.getCache(cacheKey);
+    return cache[`merge-request-comment-reply:${mergeRequestCommentReplyId}`] as MergeRequestCommentReply;
+  }
+
+  public setMergeRequestCommentReply(
+    cacheKey: string,
+    mergeRequestCommentReply: MergeRequestCommentReply,
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`merge-request-comment-reply:${mergeRequestCommentReply.id}`] = mergeRequestCommentReply;
+  }
+
+  public deleteMergeRequestCommentReply(
+    cacheKey: string,
+    mergeRequestCommentReply: MergeRequestCommentReply,
+  ) {
+    const cache = this.getCache(cacheKey);
+    delete cache[`merge-request-comment-reply:${mergeRequestCommentReply.id}`];
   }
 }

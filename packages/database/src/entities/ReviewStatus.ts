@@ -1,5 +1,5 @@
 
-import { IsBoolean, IsDefined, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsDefined, IsIn, IsOptional, IsString } from "class-validator";
 import { Entity, Column, Relation, JoinColumn, ManyToOne, OneToMany } from "typeorm";
 import { BinaryPKBaseEntity } from "./BinaryPKBaseEntity";
 import { User } from "./User";
@@ -12,7 +12,12 @@ export class ReviewStatus extends BinaryPKBaseEntity {
   @Column("varchar")
   @IsDefined()
   @IsString()
-  approvalStatus!: string;
+  @IsIn([
+    "approved",
+    "requested_changes",
+    "blocked",
+  ])
+  approvalStatus!: string; // blocked and requested_changes are functionally the same thing
 
   @Column("varchar")
   @IsOptional()

@@ -1,0 +1,299 @@
+type MergeRequestPaginatedResult {
+  id: ID
+  lastId: ID
+  nextId: ID
+  mergeRequests: [MergeRequest]
+}
+
+type ReviewStatus {
+  id: ID
+  approvalStatus: String
+  branchHeadShaAtCreate: String
+  user: User
+  updatedAt: DateTime
+  createdAt: DateTime
+}
+
+type ReviewerRequest {
+  id: ID
+  requestedByUser: User
+  requestedReviewerUser: User
+  updatedAt: DateTime
+  createdAt: DateTime
+}
+
+type MergeRequestCommentReply {
+  id: ID
+  text: String
+  branchHeadShaAtCreate: String
+  user: User
+  updatedAt: DateTime
+  createdAt: DateTime
+}
+
+type MergeRequestComment {
+  id: ID
+  text: String
+  pluginName: String
+  branchHeadShaAtCreate: String
+  user: User
+  updatedAt: DateTime
+  createdAt: DateTime
+  replies: [MergeRequestCommentReply]
+}
+
+type MergeRequestEvent {
+  id: ID
+  eventName: String
+  subeventName: String
+  branchHeadShaAtCreate: String
+  eventGroupingId: String
+  performedByUser: User
+  reviewerRequest: ReviewerRequest
+  comment: MergeRequestComment
+  reply: MergeRequestCommentReply
+  reviewStatus: ReviewStatus
+  createdAt: DateTime
+}
+
+type MergeRequest {
+  id: ID
+  branchState: BranchState
+  divergenceState: CommitState
+  openedByUser: User
+  isOpen: Boolean
+  isMerged: Boolean
+  canMerge: Boolean
+  isConflictFree: Boolean
+  reviewStatuses: [ReviewStatus]
+  reviewerRequests: [ReviewerRequest]
+  comments: [MergeRequestComment]
+  pendingCommits: [CommitInfo]
+  mergedCommits: [CommitInfo]
+  timelineEvents: [MergeRequestEvent]
+}
+
+type MergeRequestAccessError {
+  type: String
+  message: String
+}
+
+type MergeRequestCommentAccessError {
+  type: String
+  message: String
+}
+
+type MergeRequestCommentReplyAccessError {
+  type: String
+  message: String
+}
+
+type CreateMergeRequestSuccess {
+  repository: Repository
+  mergeRequest: MergeRequest
+}
+
+type CreateMergeRequestError {
+  message: String
+  type: String
+}
+
+union CreateMergeRequestResponse =
+    CreateMergeRequestSuccess
+  | CreateMergeRequestError
+  | UnAuthenticatedError
+  | RepoAccessError
+
+type UpdateMergeRequestInfoSuccess {
+  repository: Repository
+  mergeRequest: MergeRequest
+}
+
+type UpdateMergeRequestInfoError {
+  message: String
+  type: String
+}
+
+union UpdateMergeRequestInfoResponse =
+    UpdateMergeRequestInfoSuccess
+  | UpdateMergeRequestInfoError
+  | UnAuthenticatedError
+  | RepoAccessError
+  | MergeRequestAccessError
+
+type CloseMergeRequestSuccess {
+  repository: Repository
+  mergeRequest: MergeRequest
+}
+
+type CloseMergeRequestError {
+  message: String
+  type: String
+}
+
+union CloseMergeRequestResponse =
+    CloseMergeRequestSuccess
+  | CloseMergeRequestError
+  | UnAuthenticatedError
+  | RepoAccessError
+  | MergeRequestAccessError
+
+type UpdateMergeRequestReviewersSuccess {
+  repository: Repository
+  mergeRequest: MergeRequest
+}
+
+type UpdateMergeRequestReviewersError {
+  message: String
+  type: String
+}
+
+union UpdateMergeRequestReviewersResponse =
+    UpdateMergeRequestReviewersSuccess
+  | UpdateMergeRequestReviewersError
+  | UnAuthenticatedError
+  | RepoAccessError
+  | MergeRequestAccessError
+
+type UpdateMergeRequestReviewStatusSuccess {
+  repository: Repository
+  mergeRequest: MergeRequest
+}
+
+type UpdateMergeRequestReviewStatusError {
+  message: String
+  type: String
+}
+
+union UpdateMergeRequestReviewStatusResponse =
+    UpdateMergeRequestReviewStatusSuccess
+  | UpdateMergeRequestReviewStatusError
+  | UnAuthenticatedError
+  | RepoAccessError
+  | MergeRequestAccessError
+
+type DeleteMergeRequestReviewStatusSuccess {
+  repository: Repository
+  mergeRequest: MergeRequest
+}
+
+type DeleteMergeRequestReviewStatusError {
+  message: String
+  type: String
+}
+
+union DeleteMergeRequestReviewStatusResponse =
+    DeleteMergeRequestReviewStatusSuccess
+  | DeleteMergeRequestReviewStatusError
+  | UnAuthenticatedError
+  | RepoAccessError
+  | MergeRequestAccessError
+
+type CreateMergeRequestCommentSuccess {
+  repository: Repository
+  mergeRequest: MergeRequest
+}
+
+type CreateMergeRequestCommentError {
+  message: String
+  type: String
+}
+
+union CreateMergeRequestCommentResponse =
+    CreateMergeRequestCommentSuccess
+  | CreateMergeRequestCommentError
+  | UnAuthenticatedError
+  | RepoAccessError
+  | MergeRequestAccessError
+
+type UpdateMergeRequestCommentSuccess {
+  repository: Repository
+  mergeRequest: MergeRequest
+}
+
+type UpdateMergeRequestCommentError {
+  message: String
+  type: String
+}
+
+union UpdateMergeRequestCommentResponse =
+    UpdateMergeRequestCommentSuccess
+  | UpdateMergeRequestCommentError
+  | UnAuthenticatedError
+  | RepoAccessError
+  | MergeRequestAccessError
+  | MergeRequestCommentAccessError
+
+type DeleteMergeRequestCommentSuccess {
+  repository: Repository
+  mergeRequest: MergeRequest
+}
+
+type DeleteMergeRequestCommentError {
+  message: String
+  type: String
+}
+
+union DeleteMergeRequestCommentResponse =
+    DeleteMergeRequestCommentSuccess
+  | DeleteMergeRequestCommentError
+  | UnAuthenticatedError
+  | RepoAccessError
+  | MergeRequestAccessError
+  | MergeRequestCommentAccessError
+
+type CreateMergeRequestCommentReplySuccess {
+  repository: Repository
+  mergeRequest: MergeRequest
+}
+
+type CreateMergeRequestCommentReplyError {
+  message: String
+  type: String
+}
+
+union CreateMergeRequestCommentReplyResponse =
+    CreateMergeRequestCommentReplySuccess
+  | CreateMergeRequestCommentReplyError
+  | UnAuthenticatedError
+  | RepoAccessError
+  | MergeRequestAccessError
+  | MergeRequestCommentAccessError
+
+type UpdateMergeRequestCommentReplySuccess {
+  repository: Repository
+  mergeRequest: MergeRequest
+}
+
+type UpdateMergeRequestCommentReplyError {
+  message: String
+  type: String
+}
+
+union UpdateMergeRequestCommentReplyResponse =
+    UpdateMergeRequestCommentReplySuccess
+  | UpdateMergeRequestCommentReplyError
+  | UnAuthenticatedError
+  | RepoAccessError
+  | MergeRequestAccessError
+  | MergeRequestCommentAccessError
+  | MergeRequestCommentReplyAccessError
+
+type DeleteMergeRequestCommentReplySuccess {
+  repository: Repository
+  mergeRequest: MergeRequest
+}
+
+type DeleteMergeRequestCommentReplyError {
+  message: String
+  type: String
+}
+
+union DeleteMergeRequestCommentReplyResponse =
+    DeleteMergeRequestCommentReplySuccess
+  | DeleteMergeRequestCommentReplyError
+  | UnAuthenticatedError
+  | RepoAccessError
+  | MergeRequestAccessError
+  | MergeRequestCommentAccessError
+  | MergeRequestCommentReplyAccessError

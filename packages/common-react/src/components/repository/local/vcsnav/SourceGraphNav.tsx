@@ -38,6 +38,7 @@ import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
 import ConfirmCheckoutShaModal from "../modals/ConfirmCheckoutShaModal";
 import SGPlainModal from "../../sourcegraph/sourgraphmodals/SGPlainModal";
+import WarningLabel from "@floro/storybook/stories/design-system/WarningLabel";
 
 TimeAgo.addDefaultLocale(en);
 
@@ -741,6 +742,11 @@ const SourceGraphNav = (props: Props) => {
                   onClick={onSelectAmend}
                 />
               </ButtonRow>
+              {props.apiResponse.isWIP && (
+                <ButtonRow style={{marginTop: 24}}>
+                  <WarningLabel label={"Work in progress! Commit, stash, or discard current changes to enable reversion options."} size={"small"}/>
+                </ButtonRow>
+              )}
             </>
           )}
         </TopContainer>

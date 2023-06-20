@@ -64,6 +64,21 @@ import CommitStatePluginVersionsLoader from './resolvers/hooks/loaders/Repositor
 import MergeRequestService from './services/merge_requests/MergeRequestService';
 import BranchPushHandler from './services/events/BranchPushEventHandler';
 import MergeRequestEventService from './services/merge_requests/MergeRequestEventService';
+import CreateMergeRequestEventHandler from './services/merge_requests/merge_request_events/CreateMergeRequestEventHandler';
+import UpdateMergeRequestEventHandler from './services/merge_requests/merge_request_events/UpdateMergeRequestEventHandler';
+import CloseMergeRequestEventHandler from './services/merge_requests/merge_request_events/CloseMergeRequestEventHandler';
+import UpdatedMergeRequestReviewersEventHandler from './services/merge_requests/merge_request_events/UpdatedMergeRequestReviewersEventHandler';
+import ReviewStatusChangeEventHandler from './services/merge_requests/merge_request_events/ReviewStatusChangeEventHandler';
+import MergeRequestCommentEventHandler from './services/merge_requests/merge_request_events/MergeRequestCommentEventHandler';
+import MergeRequestCommentReplyEventHandler from './services/merge_requests/merge_request_events/MergeRequestCommentReplyEventHandler';
+import MergeRequestResolverModule from './resolvers/merge_requests/MergeRequestResolverModule';
+import MergeRequestLoader from './resolvers/hooks/loaders/MergeRequest/MergeRequestLoader';
+import MergeRequestCommentLoader from './resolvers/hooks/loaders/MergeRequest/MergeRequestCommentLoader';
+import MergeRequestCommentReplyLoader from './resolvers/hooks/loaders/MergeRequest/MergeRequestCommentReplyLoader';
+import RepoAccessGuard from './resolvers/hooks/guards/RepoAccessGuard';
+import MergeRequestAccessGuard from './resolvers/hooks/guards/MergeRequestAccessGuard';
+import MergeRequestCommentAccessGuard from './resolvers/hooks/guards/MergeRequestCommentAccessGuard';
+import MergeRequestCommentReplyAccessGuard from './resolvers/hooks/guards/MergeRequestCommentAccessReplyGuard';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -77,6 +92,12 @@ export default new ContainerModule((bind): void => {
 
     //Guards
     bind(LoggedInUserGuard).toSelf()
+    // REPO GUARDS
+    bind(RepoAccessGuard).toSelf();
+    // MERGE REQUEST GUARDS
+    bind(MergeRequestAccessGuard).toSelf();
+    bind(MergeRequestCommentAccessGuard).toSelf();
+    bind(MergeRequestCommentReplyAccessGuard).toSelf();
 
     // LOADERS
     //ROOT LOADERS
@@ -113,6 +134,11 @@ export default new ContainerModule((bind): void => {
     bind(CommitStateDatasourceLoader).toSelf();
     bind(CommitStatePluginVersionsLoader).toSelf()
 
+    // MERGE REQUEST
+    bind(MergeRequestLoader).toSelf();
+    bind(MergeRequestCommentLoader).toSelf();
+    bind(MergeRequestCommentReplyLoader).toSelf();
+
     // SERVICES
     bind(AuthenticationService).toSelf();
     bind(UsersService).toSelf();
@@ -148,8 +174,18 @@ export default new ContainerModule((bind): void => {
     // CREATE USER HANLDER
     bind<CreateUserEventHandler>("CreateUserHandler").to(OrganizationInvitationService);
     bind<CreateUserEventHandler>("CreateUserHandler").to(ReferralService);
-    // BRANCH PUSH HANLDER
+
+    // BRANCH PUSH HANLDERS
+
     bind<BranchPushHandler>("BranchPushHandler").to(MergeRequestEventService);
+    // MERGE REQUESTS
+    bind<CreateMergeRequestEventHandler>("CreateMergeRequestEventHandler").to(MergeRequestEventService);
+    bind<UpdateMergeRequestEventHandler>("UpdateMergeRequestEventHandler").to(MergeRequestEventService);
+    bind<CloseMergeRequestEventHandler>("CloseMergeRequestEventHandler").to(MergeRequestEventService);
+    bind<UpdatedMergeRequestReviewersEventHandler>("UpdatedMergeRequestReviewersEventHandler").to(MergeRequestEventService);
+    bind<ReviewStatusChangeEventHandler>("ReviewStatusChangeEventHandler").to(MergeRequestEventService);
+    bind<MergeRequestCommentEventHandler>("MergeRequestCommentEventHandler").to(MergeRequestEventService);
+    bind<MergeRequestCommentReplyEventHandler>("MergeRequestCommentReplyEventHandler").to(MergeRequestEventService);
 
     // Controllers
     bind<AuthenticationController>("Controllers").to(AuthenticationController);
@@ -169,6 +205,7 @@ export default new ContainerModule((bind): void => {
     bind<PhotoResolverModule>("ResolverModule").to(PhotoResolverModule);
     bind<PluginResolverModule>("ResolverModule").to(PluginResolverModule);
     bind<PluginVersionResolverModule>("ResolverModule").to(PluginVersionResolverModule);
+    bind<MergeRequestResolverModule>("ResolverModule").to(MergeRequestResolverModule);
 
     // ADMIN MODULES OVERRIDE WITH AdminResolverModule
     bind<AdminUsersResolverModule>("AdminResolverModule").to(AdminUsersResolverModule);

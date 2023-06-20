@@ -1,0 +1,82 @@
+
+extend type Mutation {
+
+  createMergeRequest(
+    title: String!
+    description: String!
+    branchId: String!
+    repositoryId: String!
+  ): CreateMergeRequestResponse
+
+  updateMergeRequestInfo(
+    title: String!
+    description: String!
+    mergeRequestId: String!
+    repositoryId: String!
+  ): UpdateMergeRequestInfoResponse
+
+  closeMergeRequest(
+    mergeRequestId: String!
+    repositoryId: String!
+  ): CloseMergeRequestResponse
+
+  updateMergeRequestReviewers(
+    mergeRequestId: String!
+    repositoryId: String!,
+    reviewerIds: [String]
+  ): UpdateMergeRequestReviewersResponse
+
+  updateMergeRequestStatus(
+    mergeRequestId: String!
+    repositoryId: String!,
+    approvalStatus: String
+  ): UpdateMergeRequestReviewStatusResponse
+
+  deleteMergeRequestStatus(
+    mergeRequestId: String!
+    repositoryId: String!
+  ): DeleteMergeRequestReviewStatusResponse
+
+  createMergeRequestComment(
+    mergeRequestId: String!
+    repositoryId: String!,
+    text: String!,
+    pluginName: String,
+  ): CreateMergeRequestCommentResponse
+
+  updateMergeRequestComment(
+    mergeRequestCommentId: String!
+    mergeRequestId: String!
+    repositoryId: String!,
+    text: String!,
+  ): UpdateMergeRequestCommentResponse
+
+  deleteMergeRequestComment(
+    mergeRequestCommentId: String!
+    mergeRequestId: String!
+    repositoryId: String!,
+  ): DeleteMergeRequestCommentResponse
+
+  createMergeRequestCommentReply(
+    mergeRequestCommentId: String!
+    mergeRequestId: String!
+    repositoryId: String!,
+    text: String!
+  ): CreateMergeRequestCommentReplyResponse
+
+  updateMergeRequestCommentReply(
+    mergeRequestCommentReplyId: String!
+    mergeRequestCommentId: String!
+    mergeRequestId: String!
+    repositoryId: String!,
+    text: String!,
+  ): UpdateMergeRequestCommentReplyResponse
+
+  deleteMergeRequestCommentReply(
+    mergeRequestCommentReplyId: String!
+    mergeRequestCommentId: String!
+    mergeRequestId: String!
+    repositoryId: String!,
+  ): DeleteMergeRequestCommentReplyResponse
+
+}

@@ -22,4 +22,24 @@ export default class MergeRequestCommentsContext extends BaseContext {
   public async getById(id: string): Promise<MergeRequestComment | null> {
     return await this.queryRunner.manager.findOneBy(MergeRequestComment, { id });
   }
+  public async updateMergeRequestComment(
+    mergeRequestComment: MergeRequestComment,
+    mergeRequestCommentArgs: DeepPartial<MergeRequestComment>
+  ): Promise<MergeRequestComment> {
+    return (await this.updateMergeRequestCommentById(mergeRequestComment.id, mergeRequestCommentArgs)) ?? mergeRequestComment;
+  }
+
+  public async updateMergeRequestCommentById(
+    id: string,
+    mergeRequestCommentArgs: DeepPartial<MergeRequestComment>
+  ): Promise<MergeRequestComment | null> {
+    const mergeRequestComment = await this.getById(id);
+    if (mergeRequestComment === null) {
+      throw new Error("Invalid ID to update for MergeRequestComment.id: " + id);
+    }
+    for (const prop in mergeRequestCommentArgs) {
+      mergeRequestComment[prop] = mergeRequestCommentArgs[prop];
+    }
+    return await this.queryRunner.manager.save(MergeRequestComment, mergeRequestComment);
+  }
 }

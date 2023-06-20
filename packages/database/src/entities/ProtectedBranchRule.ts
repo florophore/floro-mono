@@ -36,6 +36,11 @@ export class ProtectedBranchRule extends BinaryPKBaseEntity {
   @Column("boolean")
   @IsDefined()
   @IsBoolean()
+  requireReapprovalOnPushToMerge?: boolean; // require re-approval when sha updates
+
+  @Column("boolean")
+  @IsDefined()
+  @IsBoolean()
   automaticallyDeleteMergedFeatureBranches?: boolean;
 
   @Column("boolean")

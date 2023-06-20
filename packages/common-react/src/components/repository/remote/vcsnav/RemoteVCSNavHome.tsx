@@ -159,6 +159,14 @@ const RemoteVCSNavHome = (props: Props) => {
         />
         <ButtonRow style={{ marginTop: 24 }}>
           <RepoActionButton
+            label={"merge requests"}
+            icon={"merge-request"}
+            size="large"
+          />
+        </ButtonRow>
+        <ButtonRow style={{ marginTop: 24 }}>
+
+          <RepoActionButton
             label={"copy from repository"}
             icon={"copy"}
             titleTextSize="small"
@@ -171,17 +179,10 @@ const RemoteVCSNavHome = (props: Props) => {
         </ButtonRow>
       </TopContainer>
       <BottomContainer>
-        <ButtonRow>
-          <RepoActionButton
-            label={"merge requests"}
-            icon={"merge-request"}
-            size="large"
-          />
-        </ButtonRow>
         {(cloneState?.state != "none" || !repoExistsLocally) &&
           !isLoading &&
           !cloneStateLoading && (
-            <ButtonRow style={{marginTop: 24}}>
+            <ButtonRow>
               <Button
                 label="clone repository"
                 bg={"orange"}

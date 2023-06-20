@@ -25,7 +25,7 @@ export class ReviewerRequest extends BinaryPKBaseEntity {
 
   @ManyToOne("User", "sentReviewRequests")
   @JoinColumn()
-  requestedByUser!: Relation<User>;
+  requestedByUser?: Relation<User>;
 
   @Column("uuid")
   mergeRequestId!: string;

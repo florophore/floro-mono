@@ -12,6 +12,12 @@ type Repository {
   updatedAt: DateTime
   branchState(branchId: ID): BranchState
   repoBranches: [RepoBranch]
+  openUserBranchesWithoutMergeRequests: [RepoBranch]
+  openMergeRequests(id: ID): MergeRequestPaginatedResult
+  openMergeRequestsCount: Int
+  closedMergeRequests(id: ID): MergeRequestPaginatedResult
+  closedMergeRequestsCount: Int
+  mergeRequest(id: ID): MergeRequest
 }
 
 type RepoBranch {
@@ -100,6 +106,11 @@ type CreateUserRepositorySuccess {
 type CreateUserRepositoryError {
   message: String
   type: String
+}
+
+type RepoAccessError {
+    type: String
+    message: String
 }
 
 union CreateUserRepositoryResponse =

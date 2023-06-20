@@ -268,7 +268,7 @@ export default class BranchService {
       });
 
       for (const handler of this.branchPushHandlers) {
-          await handler.onBranchChanged(queryRunner, user, pushedBranch);
+          await handler.onBranchChanged(queryRunner, updatedRepo, user, pushedBranch);
       }
       await queryRunner.commitTransaction();
       return {

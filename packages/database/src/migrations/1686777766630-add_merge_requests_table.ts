@@ -513,12 +513,17 @@ export class AddMergeRequestsTable1686777766630 implements MigrationInterface {
             isNullable: true,
           },
           {
+            name: "event_grouping_id",
+            type: "varchar",
+            isNullable: true,
+          },
+          {
             name: "branch_head_sha_at_event",
             type: "varchar",
             isNullable: true,
           },
           {
-            name: "performd_by_user_id",
+            name: "performed_by_user_id",
             type: "uuid",
             isNullable: false,
           },
@@ -567,7 +572,7 @@ export class AddMergeRequestsTable1686777766630 implements MigrationInterface {
     await queryRunner.createForeignKey(
       "merge_request_events",
       new TableForeignKey({
-        columnNames: ["performd_by_user_id"],
+        columnNames: ["performed_by_user_id"],
         referencedColumnNames: ["id"],
         referencedTableName: "users",
         onDelete: "SET NULL",

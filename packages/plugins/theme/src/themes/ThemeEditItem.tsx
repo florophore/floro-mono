@@ -233,7 +233,6 @@ const ShadeEditItem = (props: ShadeItemProps) => {
   const colorCircle = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [name, setName] = useState(themeObject?.name ?? "");
-  const [isEdittingHex, setIsEdittingHex] = useState(false);
 
   const warningIcon = useMemo(() => {
     if (theme.name == "light") {
@@ -303,7 +302,7 @@ const ShadeEditItem = (props: ShadeItemProps) => {
   }, [controls]);
 
   const onShowEditor = useCallback(() => {
-    setIsEdittingHex(true);
+    //setIsEdittingHex(true);
     if (inputRef?.current?.value && themeObject) {
         setTheme({
           ...themeObject,
@@ -326,7 +325,7 @@ const ShadeEditItem = (props: ShadeItemProps) => {
           }
         }, true);
     }
-    setIsEdittingHex(false);
+    //setIsEdittingHex(false);
   }, [themeObject])
 
   const onChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
