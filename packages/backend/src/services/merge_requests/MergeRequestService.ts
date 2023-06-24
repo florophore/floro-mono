@@ -17,7 +17,8 @@ import {
   ApplicationKVState,
   BranchRuleSettings,
   canAutoMergeCommitStates,
-  getDivergenceOriginSha,
+  getDivergenceOrigin,
+  getMergeOriginSha,
 } from "floro/dist/src/repo";
 import { Branch } from "@floro/database/src/entities/Branch";
 import { Branch as FloroBranch } from "floro/dist/src/repo";
@@ -366,18 +367,19 @@ export default class MergeRequestService implements BranchPushHandler {
       branch,
       baseBranch
     );
-    const divergenceSha = await getDivergenceOriginSha(
+    const divergenceOrigin = await getDivergenceOrigin(
       datasource,
       repository.id,
       branch?.lastCommit ?? undefined,
       baseBranch?.lastCommit ?? undefined
     );
+    const divergenceSha: string = getMergeOriginSha(divergenceOrigin) as string;
     const isMerged = !!divergenceSha && divergenceSha === branch?.lastCommit;
     let isConflictFree = isMerged || divergenceSha === baseBranch?.lastCommit;
     if (!isConflictFree) {
       const divergenceState = (await datasource.readCommitApplicationState?.(
         repository.id,
-        divergenceSha
+        divergenceSha as string
       )) as ApplicationKVState;
       const branchState = (await datasource.readCommitApplicationState?.(
         repository.id,
@@ -410,7 +412,7 @@ export default class MergeRequestService implements BranchPushHandler {
           repository.id,
           branchId
         );
-      if (!branchHasOpenRequest) {
+      if (branchHasOpenRequest) {
         await queryRunner.rollbackTransaction();
         return {
           action: "MERGE_REQUEST_ALREADY_EXISTS_FOR_BRANCH",
@@ -1274,12 +1276,13 @@ export default class MergeRequestService implements BranchPushHandler {
       floroBranch,
       baseBranch
     );
-    const divergenceSha = await getDivergenceOriginSha(
+    const divergenceOrigin = await getDivergenceOrigin(
       datasource,
       repository.id,
       floroBranch?.lastCommit ?? undefined,
       baseBranch?.lastCommit ?? undefined
     );
+    const divergenceSha: string = getMergeOriginSha(divergenceOrigin) as string;
     const isMerged = !!divergenceSha && divergenceSha === branch?.lastCommit;
     let isConflictFree = isMerged || divergenceSha === baseBranch?.lastCommit;
     if (!isConflictFree) {

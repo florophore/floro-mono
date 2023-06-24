@@ -79,6 +79,7 @@ import RepoAccessGuard from './resolvers/hooks/guards/RepoAccessGuard';
 import MergeRequestAccessGuard from './resolvers/hooks/guards/MergeRequestAccessGuard';
 import MergeRequestCommentAccessGuard from './resolvers/hooks/guards/MergeRequestCommentAccessGuard';
 import MergeRequestCommentReplyAccessGuard from './resolvers/hooks/guards/MergeRequestCommentAccessReplyGuard';
+import CommitInfoRepositoryLoader from './resolvers/hooks/loaders/Repository/CommitInfoRepoLoader';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -133,6 +134,7 @@ export default new ContainerModule((bind): void => {
     bind(RepositoryRevertRangesLoader).toSelf();
     bind(CommitStateDatasourceLoader).toSelf();
     bind(CommitStatePluginVersionsLoader).toSelf()
+    bind(CommitInfoRepositoryLoader).toSelf();
 
     // MERGE REQUEST
     bind(MergeRequestLoader).toSelf();

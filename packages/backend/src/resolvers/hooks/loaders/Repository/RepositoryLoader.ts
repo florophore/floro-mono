@@ -7,9 +7,9 @@ import RepositoryService from "../../../../services/repositories/RepositoryServi
 
 @injectable()
 export default class RepositoryLoader extends LoaderResolverHook<
+  any,
   { repositoryId: string },
-  unknown,
-  { currentUser: User | null; cacheKey: string }
+  { cacheKey: string }
 > {
   protected requestCache!: RequestCache;
   protected repositoryService!: RepositoryService;
@@ -25,21 +25,22 @@ export default class RepositoryLoader extends LoaderResolverHook<
   }
 
   public run = runWithHooks<
+    any,
     { repositoryId: string },
-    unknown,
-    { currentUser: User | null; cacheKey: string },
+    { cacheKey: string },
     void
   >(
     () => [],
-    async ({ repositoryId }, _, { currentUser, cacheKey }): Promise<void> => {
-      if (!repositoryId) {
+    async (object, { repositoryId }, { cacheKey }): Promise<void> => {
+      const repoId = object['repositoryId'] ?? repositoryId;
+      if (!repoId) {
         return;
       }
-      const cachedRepo = this.requestCache.getRepo(cacheKey, repositoryId);
+      const cachedRepo = this.requestCache.getRepo(cacheKey, repoId);
       if (cachedRepo) {
         return;
       }
-      const repo = await this.repositoryService.getRepository(repositoryId);
+      const repo = await this.repositoryService.getRepository(repoId);
       if (repo) {
         this.requestCache.setRepo(cacheKey, repo);
       }

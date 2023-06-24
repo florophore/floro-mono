@@ -19,6 +19,7 @@ import { ReviewerRequest } from "./ReviewerRequest";
 import { MergeRequestComment } from "./MergeRequestComment";
 import { ReviewStatus } from "./ReviewStatus";
 import { MergeRequestEvent } from "./MergeRequestEvent";
+import { IgnoredBranchNotification } from "./IgnoredBranchNotification";
 
 @Entity("users")
 export class User extends BinaryPKBaseEntity {
@@ -144,4 +145,8 @@ export class User extends BinaryPKBaseEntity {
   @OneToMany("MergeRequestEvent", "performedByUser")
   @JoinColumn()
   mergeRequestEvents?: Relation<MergeRequestEvent>[];
+
+  @OneToMany("IgnoredBranchNotification", "user")
+  @JoinColumn()
+  ignoredBranchNotifications?: Relation<IgnoredBranchNotification>[];
 }

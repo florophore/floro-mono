@@ -33,6 +33,7 @@ type RepoBranch {
 
 type CommitInfo {
   sha: ID
+  originalSha: String
   parent: String
   historicalParent: ID
   idx: Int
@@ -56,6 +57,7 @@ type BranchState {
   branchId: ID
   repositoryId: String
   defaultBranchId: String
+  baseBranchId: String
   name: String
   branchHead: String
   updatedAt: String
@@ -63,6 +65,13 @@ type BranchState {
   commits(idx: Int, searchQuery: String): [CommitInfo]
   commitSearch(searchQuery: String): [CommitInfo]
   commitsSize: Int
+  proposedMergeRequest: ProposedMergeRequest
+}
+
+type ProposedMergeRequest {
+  divergenceState: CommitState
+  isConflictFree: CommitState
+  pendingCommits: [CommitInfo]
 }
 
 type BinaryRef {
@@ -72,6 +81,7 @@ type BinaryRef {
 
 type CommitState {
   sha: ID
+  originalSha: String
   message: String
   username: String
   userId: String

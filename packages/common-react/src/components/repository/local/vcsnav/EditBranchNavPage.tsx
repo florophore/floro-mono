@@ -220,10 +220,11 @@ const EditBranchNavPage = (props: Props) => {
       sourceGraphResponse?.pointers ?? {}
     );
     return potentialBranches?.filter(
-      (v) => v.id != props?.apiResponse?.branch?.id
+      (v) => v.id != props?.apiResponse?.branch?.id && v.baseBranchId != props.apiResponse?.branch?.id
     );
   }, [
     branchHead,
+    props?.apiResponse?.branch?.id,
     sourceGraphResponse?.branches,
     sourceGraphResponse?.pointers,
   ]);

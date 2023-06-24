@@ -4,11 +4,11 @@ import { LoaderResolverHook, runWithHooks } from "../../ResolverHook";
 import RequestCache from "../../../../request/RequestCache";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-graphql";
 import RepositoryService from "../../../../services/repositories/RepositoryService";
-import { BranchState, CommitInfo, CommitState, MergeRequest } from "@floro/graphql-schemas/build/generated/main-graphql";
+import { BranchState, CommitInfo, CommitState } from "@floro/graphql-schemas/build/generated/main-graphql";
 
 @injectable()
-export default class RepositoryCommitsLoader extends LoaderResolverHook<
-  Repository|BranchState|CommitState|CommitInfo|MergeRequest,
+export default class CommitInfoRepositoryLoader extends LoaderResolverHook<
+  CommitInfo,
   unknown,
   { currentUser: User | null; cacheKey: string }
 > {
@@ -26,25 +26,26 @@ export default class RepositoryCommitsLoader extends LoaderResolverHook<
   }
 
   public run = runWithHooks<
-    Repository|BranchState|CommitState|CommitInfo|MergeRequest,
+    CommitInfo,
     unknown,
     { currentUser: User | null; cacheKey: string },
     void
   >(
     () => [],
-    async (object: Repository|BranchState|CommitState|CommitInfo|MergeRequest, _, { currentUser, cacheKey }): Promise<void> => {
-      const id = object?.['repositoryId'] ?? object?.['id'];
+    async (commitInfo: CommitInfo, _, { currentUser, cacheKey }): Promise<void> => {
+      const id = commitInfo?.repositoryId;
       if (!id) {
         return;
       }
-      const cachedCommits = this.requestCache.getRepoCommits(cacheKey, id as string);
-      if (cachedCommits) {
+      const cachedRepo = this.requestCache.getRepo(cacheKey, id as string);
+      if (cachedRepo) {
         return;
       }
-      const commits = await this.repositoryService.getCommits(id as string) ?? [];
-      if (commits) {
-        this.requestCache.setRepoCommits(cacheKey, id as string, commits);
+      const repo = await this.repositoryService.getRepository(id as string);
+      if (repo) {
+        this.requestCache.setRepo(cacheKey, repo);
       }
     }
   );
 }
+

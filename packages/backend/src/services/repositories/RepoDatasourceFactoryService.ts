@@ -9,7 +9,8 @@ import {
   ApplicationKVState,
   RepoState,
   CommitHistory,
-  getDivergenceOriginSha,
+  getDivergenceOrigin,
+  getMergeOriginSha,
 } from "floro/dist/src/repo";
 import { DataSource, makeDataSource } from "floro/dist/src/datasource";
 import { CommitData } from "floro/dist/src/sequenceoperations";
@@ -119,12 +120,13 @@ export default class RepositoryDatasourceFactoryService {
         return memoizedCommitData[sha];
       }
     })
-    const divergenceSha = await getDivergenceOriginSha(
+    const divergenceOrigin = await getDivergenceOrigin(
       tmpDataSource,
       repository.id,
       mergeIntoSha,
       branch?.lastCommit as string,
     );
+    const divergenceSha = getMergeOriginSha(divergenceOrigin);
     const shas = [branch.lastCommit, mergeIntoSha, divergenceSha]?.filter(v => !!v);
     const pluginUtiltizationContext = await this.contextFactory.createContext(
       PluginCommitUtilizationsContext
@@ -341,7 +343,7 @@ export default class RepositoryDatasourceFactoryService {
   public getCommitsInRange(commits: Array<Commit>, sha: string, divergenceSha?: string) {
     const history = this.getCommitHistory(commits, sha);
     const out: Array<Commit> = [];
-    for (let i = history.length - 1; --i; i >= 0) {
+    for (let i = history.length - 1; i >= 0; --i) {
       const commit = history[i];
       out.push(commit);
       if (commit.sha == divergenceSha) {

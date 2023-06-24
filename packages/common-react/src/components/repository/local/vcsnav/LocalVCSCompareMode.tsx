@@ -317,10 +317,10 @@ const LocalVCSCompareMode = (props: Props) => {
     }
     let current: SourceCommitNode = gridData.pointerMap[toSha];
     while (current?.parent) {
-      current = gridData.pointerMap[current.parent];
-      if (current.sha == comparisonSha) {
+      if (current.sha == comparisonSha || (current?.originalSha && current?.originalSha == comparisonSha)) {
         return true;
       }
+      current = gridData.pointerMap[current.parent];
     }
     return false;
   }, [comparisonSha, props?.apiResponse?.lastCommit?.sha, gridData.pointerMap]);
@@ -339,7 +339,7 @@ const LocalVCSCompareMode = (props: Props) => {
     let current: SourceCommitNode = gridData.pointerMap[comparisonSha];
     while (current?.parent) {
       current = gridData.pointerMap[current.parent];
-      if (current.sha == toSha) {
+      if (current.sha == toSha || (current?.originalSha && current?.originalSha == comparisonSha)) {
         return true;
       }
     }
@@ -494,11 +494,11 @@ const LocalVCSCompareMode = (props: Props) => {
               {(comparison?.against == "branch" ||
                 comparison?.against == "sha") && (
                 <MergeInfoRow>
-                  {(comparisonShaIsAncestor || comparisonShaIsNone) &&
+                  {(comparisonShaIsAncestor || comparisonShaIsNone ) &&
                     !canAutoMergeQuery.isLoading && (
                       <NothingToMerge>{"Nothing to merge"}</NothingToMerge>
                     )}
-                  {!(comparisonShaIsAncestor || comparisonShaIsNone) &&
+                  {!(comparisonShaIsAncestor || comparisonShaIsNone ) &&
                     !canAutoMergeQuery.isLoading && (
                       <>
                         {!comparisonShaIsChildAncestor &&

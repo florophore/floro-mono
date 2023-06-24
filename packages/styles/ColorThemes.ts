@@ -8,6 +8,7 @@ export interface ColorTheme {
     standardTextLight: string;
     contrastText: string;
     contrastTextLight: string;
+    subtitleInfo: string;
     titleText: string;
     promptText: string;
     disableOverlay: string;
@@ -148,6 +149,7 @@ export const LightTheme: ColorTheme = {
     standardTextLight: palette.gray,
     contrastText: palette.mediumGray,
     contrastTextLight: palette.gray,
+    subtitleInfo: palette.gray,
     titleText: palette.purple,
     promptText: palette.mediumGray,
     disableOverlay: palette.white,
@@ -288,6 +290,7 @@ export const DarkTheme: ColorTheme = {
         standardTextLight: palette.gray,
         contrastText: palette.white,
         contrastTextLight: palette.white,
+        subtitleInfo: palette.gray,
         titleText: palette.lightPurple,
         promptText: palette.white,
         disableOverlay: palette.gray,

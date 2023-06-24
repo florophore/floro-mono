@@ -52,6 +52,7 @@ export type StringDiff = {
 
 export interface CommitData {
   sha?: string;
+  originalSha?: string;
   diff: StateDiff;
   userId: string;
   username: string;

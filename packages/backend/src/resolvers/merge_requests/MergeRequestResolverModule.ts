@@ -14,6 +14,11 @@ import MergeRequestCommentLoader from "../hooks/loaders/MergeRequest/MergeReques
 import MergeRequestCommentAccessGuard from "../hooks/guards/MergeRequestCommentAccessGuard";
 import MergeRequestCommentReplyLoader from "../hooks/loaders/MergeRequest/MergeRequestCommentReplyLoader";
 import MergeRequestCommentReplyAccessGuard from "../hooks/guards/MergeRequestCommentAccessReplyGuard";
+import RepositoryCommitsLoader from "../hooks/loaders/Repository/RepositoryCommitsLoader";
+import { MergeRequest as DBMergeRequest } from "@floro/database/src/entities/MergeRequest";
+import { MergeRequest } from "@floro/graphql-schemas/build/generated/main-graphql";
+import RepositoryDatasourceFactoryService from "../../services/repositories/RepoDatasourceFactoryService";
+import RepositoryBranchesLoader from "../hooks/loaders/Repository/RepositoryBranchesLoader";
 
 @injectable()
 export default class MergeRequestResolverModule extends BaseResolverModule {
@@ -25,12 +30,16 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
   protected contextFactory!: ContextFactory;
   protected requestCache!: RequestCache;
   protected mergeRequestService!: MergeRequestService;
+  protected repositoryDatasourceFactoryService!: RepositoryDatasourceFactoryService;
 
   //loaders
   protected repositoryLoader!: RepositoryLoader;
   protected mergeRequestLoader!: MergeRequestLoader;
   protected mergeRequestCommentLoader!: MergeRequestCommentLoader;
   protected mergeRequestCommentReplyLoader!: MergeRequestCommentReplyLoader;
+
+  protected repositoryCommitsLoader!: RepositoryCommitsLoader;
+  protected repositoryBranchesLoader!: RepositoryBranchesLoader;
 
   // guards
   protected loggedInUserGuard!: LoggedInUserGuard;
@@ -42,10 +51,16 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
   constructor(
     @inject(ContextFactory) contextFactory: ContextFactory,
     @inject(RequestCache) requestCache: RequestCache,
-    @inject(LoggedInUserGuard) loggedInUserGuard: LoggedInUserGuard,
+    @inject(RepositoryDatasourceFactoryService)
+    repositoryDatasourceFactoryService: RepositoryDatasourceFactoryService,
     @inject(MergeRequestService) mergeRequestService: MergeRequestService,
+    @inject(LoggedInUserGuard) loggedInUserGuard: LoggedInUserGuard,
     @inject(RepositoryLoader) repositoryLoader: RepositoryLoader,
     @inject(RepoAccessGuard) repoAccessGuard: RepoAccessGuard,
+    @inject(RepositoryBranchesLoader)
+    repositoryBranchesLoader: RepositoryBranchesLoader,
+    @inject(RepositoryCommitsLoader)
+    repositoryCommitsLoader: RepositoryCommitsLoader,
     @inject(MergeRequestLoader) mergeRequestLoader: MergeRequestLoader,
     @inject(MergeRequestAccessGuard)
     mergeRequestAccessGuard: MergeRequestAccessGuard,
@@ -62,6 +77,8 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
     this.requestCache = requestCache;
     this.contextFactory = contextFactory;
     this.mergeRequestService = mergeRequestService;
+    this.repositoryDatasourceFactoryService =
+      repositoryDatasourceFactoryService;
 
     // guards
     this.loggedInUserGuard = loggedInUserGuard;
@@ -76,9 +93,85 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
     this.mergeRequestCommentLoader = mergeRequestCommentLoader;
     this.mergeRequestCommentReplyLoader = mergeRequestCommentReplyLoader;
     this.mergeRequestLoader = mergeRequestLoader;
+
+    this.repositoryCommitsLoader = repositoryCommitsLoader;
+    this.repositoryBranchesLoader = repositoryBranchesLoader;
   }
 
-  public MergeRequest: main.MergeRequestResolvers = {};
+  public MergeRequest: main.MergeRequestResolvers = {
+    branchState: runWithHooks(
+      () => [this.repositoryLoader, this.repositoryBranchesLoader, this.repositoryCommitsLoader],
+      async (mergeRequest: MergeRequest, _, { cacheKey }) => {
+        const dbMergeRequest = mergeRequest as DBMergeRequest;
+        if (!dbMergeRequest?.repositoryId) {
+          return null;
+        }
+        const repository = this.requestCache.getRepo(cacheKey, dbMergeRequest?.repositoryId);
+        console.log("BRO", repository)
+        if (!repository) {
+          return null;
+        }
+        const cachedBranches = this.requestCache.getRepoBranches(
+          cacheKey,
+          dbMergeRequest.repositoryId
+        );
+        if (!cachedBranches) {
+          return null;
+        }
+        const branch = cachedBranches.find(
+          (b) => b.id == dbMergeRequest.branchId
+        )
+        console.log("B", branch)
+        if (!branch) {
+          return null;
+        }
+        return {
+          branchId: branch.id,
+          updatedAt: branch.updatedAt,
+          baseBranchId: branch?.baseBranchId,
+          defaultBranchId: repository.defaultBranchId,
+          name: branch.name,
+          branchHead: branch.lastCommit ?? null,
+          repositoryId: repository.id,
+        };
+      return null;
+    }),
+    pendingCommits: runWithHooks(
+      () => [this.repositoryBranchesLoader, this.repositoryCommitsLoader],
+      async (mergeRequest: MergeRequest, _, { cacheKey }) => {
+        const dbMergeRequest = mergeRequest as DBMergeRequest;
+        if (!dbMergeRequest?.repositoryId) {
+          return [];
+        }
+        const cachedCommits = this.requestCache.getRepoCommits(
+          cacheKey,
+          dbMergeRequest.repositoryId
+        );
+        if (!cachedCommits) {
+          return [];
+        }
+
+        const cachedBranches = this.requestCache.getRepoBranches(
+          cacheKey,
+          dbMergeRequest.repositoryId
+        );
+        if (!cachedBranches) {
+          return [];
+        }
+        const branch = cachedBranches?.find(b => b.id == dbMergeRequest.branchId);
+        if (!branch?.lastCommit) {
+          return [];
+        }
+        const pendingCommits =
+          this.repositoryDatasourceFactoryService.getCommitsInRange(
+            cachedCommits,
+            branch?.lastCommit,
+            dbMergeRequest.divergenceSha
+          );
+        return pendingCommits;
+      }
+    ),
+  };
 
   public Query: main.QueryResolvers = {};
 

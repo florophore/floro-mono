@@ -50,6 +50,11 @@ export class Commit extends BaseEntity {
   sha?: string;
 
   @Column("varchar")
+  @IsHash("sha256")
+  @IsOptional()
+  originalSha?: string;
+
+  @Column("varchar")
   @IsOptional()
   @IsString()
   parent!: string;

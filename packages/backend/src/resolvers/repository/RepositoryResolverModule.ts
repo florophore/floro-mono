@@ -20,6 +20,8 @@ import CommitStateDatasourceLoader from "../hooks/loaders/Repository/CommitState
 import { getCanAutofixReversionIfNotWIP, getCanRevert } from "floro/dist/src/repoapi";
 import CommitStatePluginVersionsLoader from "../hooks/loaders/Repository/CommitStatePluginVersionsLoader";
 import CommitStateBinaryRefsLoader from "../hooks/loaders/Repository/CommitStateBinaryRefsLoader";
+import CommitInfoRepositoryLoader from "../hooks/loaders/Repository/CommitInfoRepoLoader";
+import MergeRequestsContext from "@floro/database/src/contexts/merge_requests/MergeRequestsContext";
 
 const PAGINATION_LIMIT = 10;
 
@@ -49,6 +51,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
   protected commitStateDatasourceLoader!: CommitStateDatasourceLoader;
   protected commitStatePluginVersionsLoader!: CommitStatePluginVersionsLoader;
   protected commitStateBinaryRefsLoader!: CommitStateBinaryRefsLoader;
+  protected commitInfoRepositoryLoader!: CommitInfoRepositoryLoader;
 
   constructor(
     @inject(ContextFactory) contextFactory: ContextFactory,
@@ -74,7 +77,9 @@ export default class RepositoryResolverModule extends BaseResolverModule {
     @inject(CommitStatePluginVersionsLoader)
     commitStatePluginVersionsLoader: CommitStatePluginVersionsLoader,
     @inject(CommitStateBinaryRefsLoader)
-    commitStateBinaryRefsLoader: CommitStateBinaryRefsLoader
+    commitStateBinaryRefsLoader: CommitStateBinaryRefsLoader,
+    @inject(CommitInfoRepositoryLoader)
+    commitInfoRepositoryLoader: CommitInfoRepositoryLoader
   ) {
     super();
     this.contextFactory = contextFactory;
@@ -96,6 +101,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
     this.commitStateDatasourceLoader = commitStateDatasourceLoader;
     this.commitStatePluginVersionsLoader = commitStatePluginVersionsLoader;
     this.commitStateBinaryRefsLoader = commitStateBinaryRefsLoader;
+    this.commitInfoRepositoryLoader = commitInfoRepositoryLoader;
   }
 
   public Repository: main.RepositoryResolvers = {
@@ -129,6 +135,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         return {
           branchId: branch.id,
           updatedAt: branch.updatedAt,
+          baseBranchId: branch?.baseBranchId,
           defaultBranchId: dbRepo.defaultBranchId,
           name: branch.name,
           branchHead: branch.lastCommit ?? null,
@@ -153,11 +160,23 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         return cachedBranches ?? [];
       }
     ),
+    mergeRequest: runWithHooks(() => [],
+    async (repository: main.Repository, { id}) => {
+      if (!repository) {
+        return null;
+      }
+      const mergeRequestsContext = await this.contextFactory.createContext(MergeRequestsContext);
+      const mergeRequest = await mergeRequestsContext.getById(id ?? "");
+      if (mergeRequest?.repositoryId == repository.id) {
+        return mergeRequest;
+      }
+      return null;
+    })
   };
 
   public CommitInfo: main.CommitInfoResolvers = {
     kvLink: runWithHooks(
-      () => [this.repositoryLoader],
+      () => [this.commitInfoRepositoryLoader],
       async (commitInfo: main.CommitInfo, _, { cacheKey }) => {
         if (!commitInfo.repositoryId) {
           return null;
@@ -177,7 +196,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
       }
     ),
     stateLink: runWithHooks(
-      () => [this.repositoryLoader],
+      () => [this.commitInfoRepositoryLoader],
       async (commitInfo: main.CommitInfo, _, { cacheKey }) => {
         if (!commitInfo.repositoryId) {
           return null;
@@ -373,6 +392,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
 
         return {
           sha: commit.sha,
+          originalSha: commit.originalSha,
           message: commit.message,
           username: commit.username,
           userId: commit.userId,

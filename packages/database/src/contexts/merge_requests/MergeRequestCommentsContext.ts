@@ -22,6 +22,7 @@ export default class MergeRequestCommentsContext extends BaseContext {
   public async getById(id: string): Promise<MergeRequestComment | null> {
     return await this.queryRunner.manager.findOneBy(MergeRequestComment, { id });
   }
+
   public async updateMergeRequestComment(
     mergeRequestComment: MergeRequestComment,
     mergeRequestCommentArgs: DeepPartial<MergeRequestComment>

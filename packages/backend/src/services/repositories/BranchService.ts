@@ -15,6 +15,7 @@ import {  QueryRunner } from "typeorm";
 import ProtectedBranchRulesContext from "@floro/database/src/contexts/repositories/ProtectedBranchRulesContext";
 import ProtectedBranchRulesEnabledUserSettingsContext from "@floro/database/src/contexts/repositories/ProtectedBranchRulesEnabledUserSettingsContext";
 import ProtectedBranchRulesEnabledRoleSettingsContext from "@floro/database/src/contexts/repositories/ProtectedBranchRulesEnabledRoleSettingsContext";
+import IgnoredBranchNotificationsContext from "@floro/database/src/contexts/merge_requests/IgnoredBranchNotificationsContext";
 import OrganizationRolesContext from "@floro/database/src/contexts/organizations/OrganizationRolesContext";
 import { OrganizationRole } from "@floro/graphql-schemas/build/generated/main-graphql";
 import {
@@ -266,6 +267,29 @@ export default class BranchService {
       const updatedRepo = await repositoriesContext.updateRepo(repo,  {
         lastRepoUpdateAt: (new Date()).toISOString()
       });
+
+      const ignoredBranchNotificationsContext = await this.contextFactory.createContext(IgnoredBranchNotificationsContext, queryRunner);
+      const hasIgnoredBranch =
+        await ignoredBranchNotificationsContext.hasIgnoredBranchNotification(
+          repo.id,
+          user.id,
+          branch.id
+        );
+      if (hasIgnoredBranch) {
+        const ignoredBranchNotification = await ignoredBranchNotificationsContext.getIgnoredBranch(
+          repo.id,
+          user.id,
+          branch.id
+        );
+        if (ignoredBranchNotification) {
+          await ignoredBranchNotificationsContext.updateIgnoredBranchNotification(
+            ignoredBranchNotification,
+            {
+              isDeleted: true,
+            }
+          );
+        }
+      }
 
       for (const handler of this.branchPushHandlers) {
           await handler.onBranchChanged(queryRunner, updatedRepo, user, pushedBranch);

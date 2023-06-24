@@ -504,12 +504,12 @@ export class AddMergeRequestsTable1686777766630 implements MigrationInterface {
           },
           {
             name: "event_name",
-            type: "uuid",
+            type: "varchar",
             isNullable: false,
           },
           {
             name: "subevent_name",
-            type: "uuid",
+            type: "varchar",
             isNullable: true,
           },
           {

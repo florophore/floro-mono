@@ -59,8 +59,7 @@ export default class MergeRequestEventService
       eventName: "CREATE_MERGE_REQUEST",
       mergeRequestId: mergeRequest.id,
       performedByUserId: byUser.id,
-      branchHeadShaAtCreate: branchHead,
-      isDeleted: false
+      branchHeadShaAtEvent: branchHead,
     })
   }
 
@@ -102,8 +101,7 @@ export default class MergeRequestEventService
       eventName: "BRANCH_UDPATED",
       mergeRequestId: mergeRequest.id,
       performedByUserId: byUser.id,
-      branchHeadShaAtCreate: branch?.lastCommit ?? undefined,
-      isDeleted: false
+      branchHeadShaAtEvent: branch?.lastCommit ?? undefined,
     })
     // EMAIL all reviewers
   }
@@ -122,8 +120,7 @@ export default class MergeRequestEventService
       eventName: "UPDATED_MERGE_REQUEST_INFO",
       mergeRequestId: mergeRequest.id,
       performedByUserId: byUser.id,
-      branchHeadShaAtCreate: branchHead,
-      isDeleted: false
+      branchHeadShaAtEvent: branchHead,
     })
   }
 
@@ -141,8 +138,7 @@ export default class MergeRequestEventService
       eventName: "CLOSED_MERGE_REQUEST",
       mergeRequestId: mergeRequest.id,
       performedByUserId: byUser.id,
-      branchHeadShaAtCreate: branchHead,
-      isDeleted: false
+      branchHeadShaAtEvent: branchHead,
     });
   }
 
@@ -166,10 +162,9 @@ export default class MergeRequestEventService
         eventName: "ADDED_REVIEWER",
         mergeRequestId: mergeRequest.id,
         performedByUserId: byUser.id,
-        branchHeadShaAtCreate: branchHead,
+        branchHeadShaAtEvent: branchHead,
         reviewerRequestId: reviewerRequest.id,
         eventGroupingId: groupId,
-        isDeleted: false
       });
     }
     // EMAIL
@@ -191,9 +186,8 @@ export default class MergeRequestEventService
       subeventName: reviewStatus.approvalStatus,
       mergeRequestId: mergeRequest.id,
       performedByUserId: byUser.id,
-      branchHeadShaAtCreate: branchHead,
+      branchHeadShaAtEvent: branchHead,
       reviewerRequestId: reviewStatus.id,
-      isDeleted: false
     });
     // EMAIL
   }
@@ -214,9 +208,8 @@ export default class MergeRequestEventService
       subeventName: reviewStatus.approvalStatus,
       mergeRequestId: mergeRequest.id,
       performedByUserId: byUser.id,
-      branchHeadShaAtCreate: branchHead,
+      branchHeadShaAtEvent: branchHead,
       reviewerRequestId: reviewStatus.id,
-      isDeleted: false
     });
     // EMAIL
   }
@@ -237,9 +230,8 @@ export default class MergeRequestEventService
       subeventName: reviewStatus.approvalStatus,
       mergeRequestId: mergeRequest.id,
       performedByUserId: byUser.id,
-      branchHeadShaAtCreate: branchHead,
+      branchHeadShaAtEvent: branchHead,
       reviewerRequestId: reviewStatus.id,
-      isDeleted: false
     });
   }
 
@@ -258,9 +250,8 @@ export default class MergeRequestEventService
       eventName: "ADDED_COMMENT",
       mergeRequestId: mergeRequest.id,
       performedByUserId: byUser.id,
-      branchHeadShaAtCreate: branchHead,
+      branchHeadShaAtEvent: branchHead,
       commentId: comment.id,
-      isDeleted: false
     });
     // EMAIL
   }
@@ -280,9 +271,8 @@ export default class MergeRequestEventService
       eventName: "UPDATED_COMMENT",
       mergeRequestId: mergeRequest.id,
       performedByUserId: byUser.id,
-      branchHeadShaAtCreate: branchHead,
+      branchHeadShaAtEvent: branchHead,
       commentId: comment.id,
-      isDeleted: false
     });
   }
 
@@ -301,9 +291,8 @@ export default class MergeRequestEventService
       eventName: "DELETED_COMMENT",
       mergeRequestId: mergeRequest.id,
       performedByUserId: byUser.id,
-      branchHeadShaAtCreate: branchHead,
+      branchHeadShaAtEvent: branchHead,
       commentId: comment.id,
-      isDeleted: false
     });
   }
 
@@ -323,10 +312,9 @@ export default class MergeRequestEventService
       eventName: "ADDED_COMMENT_REPLY",
       mergeRequestId: mergeRequest.id,
       performedByUserId: byUser.id,
-      branchHeadShaAtCreate: branchHead,
+      branchHeadShaAtEvent: branchHead,
       commentId: comment.id,
       commentReplyId: reply.id,
-      isDeleted: false
     });
     // EMAIL
   }
@@ -347,10 +335,9 @@ export default class MergeRequestEventService
       eventName: "UPDATED_COMMENT_REPLY",
       mergeRequestId: mergeRequest.id,
       performedByUserId: byUser.id,
-      branchHeadShaAtCreate: branchHead,
+      branchHeadShaAtEvent: branchHead,
       commentId: comment.id,
       commentReplyId: reply.id,
-      isDeleted: false
     });
   }
 
@@ -370,10 +357,9 @@ export default class MergeRequestEventService
       eventName: "DELETED_COMMENT_REPLY",
       mergeRequestId: mergeRequest.id,
       performedByUserId: byUser.id,
-      branchHeadShaAtCreate: branchHead,
+      branchHeadShaAtEvent: branchHead,
       commentId: comment.id,
       commentReplyId: reply.id,
-      isDeleted: false
     });
   }
 }

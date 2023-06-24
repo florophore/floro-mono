@@ -669,22 +669,24 @@ const SourceGraphNav = (props: Props) => {
             <Row style={{ marginBottom: 16, width: "100%" }}>
               <TextRow>
                 <Label>{"Commit:"}</Label>
-                <Value>{selectedCommit?.sha?.substring(0, 8)}</Value>
+                <Value>{selectedCommit?.sha?.substring(0, 8) ?? "None"}</Value>
               </TextRow>
-              <TimeTextRow
-                style={{
-                  justifyContent: "flex-end",
-                }}
-              >
-                <ElapseText>
-                  {"Committed "}
-                  <ElapseSince>{elapsedTime}</ElapseSince>
-                </ElapseText>
-              </TimeTextRow>
+              {elapsedTime && (
+                <TimeTextRow
+                  style={{
+                    justifyContent: "flex-end",
+                  }}
+                >
+                  <ElapseText>
+                    {"Committed "}
+                    <ElapseSince>{elapsedTime}</ElapseSince>
+                  </ElapseText>
+                </TimeTextRow>
+              )}
             </Row>
             {!showAmend && (
               <BlurbBox>
-                <BlurbText>{selectedCommit?.message}</BlurbText>
+                <BlurbText>{selectedCommit ? selectedCommit?.message : "No commit"}</BlurbText>
               </BlurbBox>
             )}
             {showAmend && (

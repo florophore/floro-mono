@@ -9,6 +9,7 @@ import { Commit } from "./Commit";
 import { RepoEnabledRoleSetting } from "./RepoEnabledRoleSetting";
 import { RepoEnabledUserSetting } from "./RepoEnabledUserSetting";
 import { MergeRequest } from "./MergeRequest";
+import { IgnoredBranchNotification } from "./IgnoredBranchNotification";
 
 @Entity("repositories")
 export class Repository extends BinaryPKBaseEntity {
@@ -120,4 +121,8 @@ export class Repository extends BinaryPKBaseEntity {
   @OneToMany("MergeRequest", "repository")
   @JoinColumn()
   mergeRequests?: Relation<MergeRequest>[];
+
+  @OneToMany("IgnoredBranchNotification", "repository")
+  @JoinColumn()
+  ignoredBranchNotifications?: Relation<IgnoredBranchNotification>[];
 }

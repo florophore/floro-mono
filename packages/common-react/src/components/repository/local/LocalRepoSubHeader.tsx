@@ -46,6 +46,15 @@ const InvalidState = styled.img`
   width: 32px;
 `;
 
+const DirectionText = styled.span`
+  color: ${(props) => props.theme.colors.subtitleInfo};
+  font-weight: 400;
+  font-size: 1rem;
+  font-family: "MavenPro";
+  font-style: italic;
+  margin-right: 8px;
+`;
+
 const InvalidText = styled.span`
   color: ${(props) => props.theme.colors.contrastText};
   font-weight: 500;
@@ -167,6 +176,14 @@ const LocalRepoSubHeader = (props: Props) => {
     return false;
   }, [repoData?.apiDiff, repoData?.repoState?.commandMode]);
 
+  const directionText = useMemo(() => {
+    if (repoData?.repoState?.comparison?.comparisonDirection == "backward") {
+      return "behind";
+    }
+    return "ahead";
+
+  }, [repoData?.repoState?.comparison?.comparisonDirection])
+
   return (
     <>
       {repoData?.repoState?.commandMode == "compare" && (
@@ -204,7 +221,10 @@ const LocalRepoSubHeader = (props: Props) => {
                 }}
               />
             </div>
-            {isInvalid && (
+            {!repoData?.repoState?.comparison?.same && (
+              <DirectionText>{directionText}</DirectionText>
+            )}
+            {(isInvalid) && (
               <>
                 <InvalidState src={warning} />
                 <InvalidText>{`(invalid)`}</InvalidText>
