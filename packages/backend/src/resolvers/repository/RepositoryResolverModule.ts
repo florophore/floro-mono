@@ -758,7 +758,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         const membership = this.requestCache.getOrganizationMembership(
           cacheKey,
           organizationId,
-          currentUser
+          currentUser.id
         );
         if (!membership) {
           return {

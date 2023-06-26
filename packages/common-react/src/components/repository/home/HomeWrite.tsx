@@ -249,6 +249,9 @@ const HomeWrite = (props: Props) => {
   const devPluginsRequest = useRepoDevPlugins(props.repository);
 
   const suggestedPluginsFetch = useFetchSuggestedPluginsQuery({
+    variables: {
+      repositoryId: props.repository.id as string
+    },
     fetchPolicy: 'cache-first'
   });
 

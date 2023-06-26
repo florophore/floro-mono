@@ -22,5 +22,41 @@ fragment Organization on Organization {
   publicPlugins {
     ...Plugin
   }
+  publicRepositories {
+    id
+    name
+    repoType
+    hashKey
+    isPrivate
+    lastRepoUpdateAt
+    createdAt
+    updatedAt
+    user {
+      id
+      username
+    }
+    organization {
+      id
+      handle
+    }
+  }
+  privateRepositories {
+    id
+    name
+    repoType
+    hashKey
+    isPrivate
+    lastRepoUpdateAt
+    createdAt
+    updatedAt
+    user {
+      id
+      username
+    }
+    organization {
+      id
+      handle
+    }
+  }
 }
 

@@ -72,6 +72,7 @@ const CompleteSignupPage = (props: Props) => {
         style={{
           position: 'absolute',
           width: '100%',
+          zoom: '100%'
         }}
         initial={{
           right: '-100%',

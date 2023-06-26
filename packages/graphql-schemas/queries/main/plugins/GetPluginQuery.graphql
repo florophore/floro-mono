@@ -1,4 +1,4 @@
-query GetPlugin($pluginName: String!) {
+query GetPlugin($pluginName: String!, $repositoryId: ID) {
   getPlugin(pluginName: $pluginName) {
     ... on UnAuthenticatedError {
       type
@@ -6,7 +6,40 @@ query GetPlugin($pluginName: String!) {
     }
     ...on FetchPluginResult {
       plugin {
-         ...Plugin
+        id
+        name
+        isPrivate
+        createdAt
+        updatedAt
+        ownerType
+
+        displayName
+        lightIcon
+        darkIcon
+        selectedLightIcon
+        selectedDarkIcon
+
+        createdByUser {
+          id
+          username
+        }
+        user {
+          id
+          username
+        }
+        organization {
+          id
+          handle
+        }
+        lastReleasedPublicVersion {
+          id
+        }
+        lastReleasedPrivateVersion {
+          id
+        }
+        versions(repositoryId: $repositoryId) {
+          ...PluginVersion
+        }
       }
     }
   }

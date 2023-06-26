@@ -1,4 +1,4 @@
-query FetchSuggestedPlugins {
+query FetchSuggestedPlugins($repositoryId: ID!) {
   fetchSuggestedPlugins {
     ... on UnAuthenticatedError {
       type
@@ -6,7 +6,40 @@ query FetchSuggestedPlugins {
     }
     ...on FetchSuggestedPluginsResult {
       plugins {
-         ...Plugin
+        id
+        name
+        isPrivate
+        createdAt
+        updatedAt
+        ownerType
+
+        displayName
+        lightIcon
+        darkIcon
+        selectedLightIcon
+        selectedDarkIcon
+
+        createdByUser {
+          id
+          username
+        }
+        user {
+          id
+          username
+        }
+        organization {
+          id
+          handle
+        }
+        lastReleasedPublicVersion {
+          id
+        }
+        lastReleasedPrivateVersion {
+          id
+        }
+        versions(repositoryId: $repositoryId) {
+          ...PluginVersion
+        }
       }
     }
   }

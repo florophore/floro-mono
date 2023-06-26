@@ -20,6 +20,7 @@ import { MergeRequestComment } from "./MergeRequestComment";
 import { ReviewStatus } from "./ReviewStatus";
 import { MergeRequestEvent } from "./MergeRequestEvent";
 import { IgnoredBranchNotification } from "./IgnoredBranchNotification";
+import { RepoEnabledRoleSetting } from "./RepoEnabledRoleSetting";
 
 @Entity("users")
 export class User extends BinaryPKBaseEntity {

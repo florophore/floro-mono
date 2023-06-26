@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useCallback, useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import ColorPalette from "@floro/styles/ColorPalette";
 import { User } from "@floro/graphql-schemas/build/generated/main-graphql";
@@ -28,8 +28,19 @@ export interface Props {
 }
 
 const UserProfilePhoto = (props: Props): React.ReactElement => {
+  const [hasError, setHasError] = useState(false);
+  const onShowError = useCallback(() => {
+    setHasError(true);
+  }, []);
+
+  const onHideError = useCallback(() => {
+    setHasError(false);
+  }, []);
+
   const hasProfilePhoto = useMemo(() => props.user.profilePhoto, [props?.user]);
+  const [offlinePhoto, setOfflinePhoto] = useState<string|null>(null);
   const pictureUrl = useMemo(() => {
+    if (hasProfilePhoto === undefined) return "";
     if (!hasProfilePhoto) return "";
     if (props.offlinePhoto) {
       return props.offlinePhoto;
@@ -38,12 +49,14 @@ const UserProfilePhoto = (props: Props): React.ReactElement => {
       return (
         props.user.profilePhoto?.thumbnailUrl ??
         props.user?.profilePhoto?.url ??
+        offlinePhoto ??
         ""
       );
     }
 
     return props.user?.profilePhoto?.url ?? "";
   }, [
+    offlinePhoto,
     props.user,
     props.size,
     props.user?.profilePhoto?.url,
@@ -51,7 +64,20 @@ const UserProfilePhoto = (props: Props): React.ReactElement => {
     props.offlinePhoto,
     hasProfilePhoto,
   ]);
-  if (!hasProfilePhoto) {
+
+  useEffect(() => {
+    if (pictureUrl) {
+      setOfflinePhoto(pictureUrl);
+    }
+  }, [pictureUrl])
+  if (!props.user?.firstName && offlinePhoto) {
+    return (
+      <ImageWrapper style={{ height: props.size, width: props.size }}>
+        <Image onLoad={onHideError} onError={onShowError} src={offlinePhoto} />
+      </ImageWrapper>
+    );
+    }
+  if (!hasProfilePhoto || hasError) {
     return (
       <InitialProfileDefault
         firstName={props?.user?.firstName ?? ""}
@@ -63,7 +89,7 @@ const UserProfilePhoto = (props: Props): React.ReactElement => {
 
   return (
     <ImageWrapper style={{ height: props.size, width: props.size }}>
-      <Image src={pictureUrl} />
+      <Image onLoad={onHideError} onError={onShowError} src={pictureUrl} />
     </ImageWrapper>
   );
 };

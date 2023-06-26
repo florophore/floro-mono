@@ -103,7 +103,7 @@ const RepoHistoryPage = (props: Props) => {
     if (repository.repoType == 'user_repo') {
       return `@${repository?.user?.username}`;
     }
-    return `@/${repository?.organization?.handle}`;
+    return `@${repository?.organization?.handle}`;
   }, [repository, ownerHandle]);
 
   const repoValue = useMemo(() => {

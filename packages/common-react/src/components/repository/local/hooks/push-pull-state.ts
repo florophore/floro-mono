@@ -69,6 +69,18 @@ export const usePushButtonSubTitle = (
       return "(nothing to push)";
     }
 
+    if (fetchInfo?.hasRemoteBranchCycle) {
+      return "(remote branch cycle found!)";
+    }
+
+    if (fetchInfo?.hasUnreleasedPlugins) {
+      return "(cannot push un-released plugins)";
+    }
+
+    if (fetchInfo?.hasInvalidPlugins) {
+      return "(cannot push invalid plugins)";
+    }
+
     if (fetchInfo.nothingToPush) {
       return "(force push required)";
     }
@@ -86,6 +98,9 @@ export const usePushButtonSubTitle = (
     fetchInfo?.userHasPermissionToPush,
     fetchInfo?.nothingToPush,
     fetchInfo?.hasConflict,
+    fetchInfo?.hasInvalidPlugins,
+    fetchInfo?.hasUnreleasedPlugins,
+    fetchInfo?.hasRemoteBranchCycle,
   ]);
 };
 
@@ -108,6 +123,11 @@ export const usePullButtonSubTitle = (
     if (!isOnline && fetchInfo.canPull) {
       return "(offline)";
     }
+
+    if (fetchInfo?.hasLocalBranchCycle) {
+      return "(local branch cycle found!)";
+    }
+
     if (fetchInfo?.fetchFailed) {
       return "(fetch failed)";
     }
@@ -142,6 +162,7 @@ export const usePullButtonSubTitle = (
     fetchInfo?.nothingToPull,
     fetchInfo?.hasConflict,
     fetchInfo?.pullCanMergeWip,
+    fetchInfo?.hasLocalBranchCycle
   ]);
 };
 

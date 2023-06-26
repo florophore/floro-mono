@@ -176,6 +176,7 @@ const PluginInstaller = (props: Props) => {
   const fetchPluginRequest = useGetPluginQuery({
     variables: {
       pluginName: props?.plugin?.name ?? "",
+      repositoryId: props.repository.id as string
     },
     fetchPolicy: 'cache-and-network'
   });

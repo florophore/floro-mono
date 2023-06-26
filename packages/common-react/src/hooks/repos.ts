@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import { Organization, Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { useMemo } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { useDaemonIsConnected } from "../pubsub/socket";
@@ -46,15 +46,51 @@ export const useCurrentUserRepos = () => {
     [privateRepositories, publicRepositories, repositories]
   );
 };
+export const useOrgRepos = (org?: Organization) => {
+  const privateRepositories = useMemo(() => {
+    return org?.privateRepositories ?? [];
+  }, [org?.privateRepositories]);
+  const publicRepositories = useMemo(() => {
+    return org?.publicRepositories ?? [];
+  }, [org?.publicRepositories]);
+  const repositories = useMemo(() => {
+    return [...privateRepositories, ...publicRepositories].sort(
+      (repoA, repoB) => {
+        if (!repoA?.lastRepoUpdateAt && !repoB?.lastRepoUpdateAt) {
+          return 0;
+        }
+        if (!repoA?.lastRepoUpdateAt) {
+          return 1;
+        }
+        if (!repoB?.lastRepoUpdateAt) {
+          return -1;
+        }
+        if (repoA.lastRepoUpdateAt == repoB.lastRepoUpdateAt) {
+          return 0;
+        }
+        if (repoA.lastRepoUpdateAt > repoB.lastRepoUpdateAt) {
+          return -1;
+        }
+        return 1;
+      }
+    );
+  }, [privateRepositories, publicRepositories]);
+  return useMemo(
+    () => ({
+      privateRepositories,
+      publicRepositories,
+      repositories,
+    }),
+    [privateRepositories, publicRepositories, repositories]
+  );
+};
 
 export const useLocalRepos = () => {
   const daemonIsRunning = useDaemonIsConnected();
   const queryClient = useQueryClient();
-  //useEffect(() => {
-  //  //if (daemonIsRunning) {
-  //  //}
-  //  queryClient.invalidateQueries("local-repos");
-  //}, [daemonIsRunning]);
+  useEffect(() => {
+    queryClient.refetchQueries({queryKey: ["local-repos"]});
+  }, [daemonIsRunning]);
 
   const response = useQuery("local-repos", async () => {
     try {

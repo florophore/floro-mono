@@ -6,10 +6,18 @@ fragment Repository on Repository {
   isPrivate
   licenseCode
   user {
-    ...User
+    id
+    username
+    profilePhoto {
+      ...Photo
+    }
   }
   organization {
-    ...Organization
+    id
+    handle
+    profilePhoto {
+      ...Photo
+    }
   }
   lastRepoUpdateAt
   createdAt

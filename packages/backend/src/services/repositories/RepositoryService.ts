@@ -27,6 +27,8 @@ import {
   BranchesMetaState,
   getBranchIdFromName,
   BRANCH_NAME_REGEX,
+  Branch,
+  branchIdIsCyclic,
 } from "floro/dist/src/repo";
 import OrganizationsContext from "@floro/database/src/contexts/organizations/OrganizationsContext";
 import MainConfig from "@floro/config/src/MainConfig";
@@ -36,6 +38,7 @@ import RepositoryDatasourceFactoryService from "./RepoDatasourceFactoryService";
 import BinaryCommitUtilizationsContext from "@floro/database/src/contexts/repositories/BinaryCommitUtilizationsContext";
 import BinaryAccessor from "@floro/storage/src/accessors/BinaryAccessor";
 import { QueryRunner } from "typeorm";
+import PluginsVersionsContext from "@floro/database/src/contexts/plugins/PluginVersionsContext";
 
 interface BranchRuleUserPermission {
   branchId: string;
@@ -102,7 +105,8 @@ export default class RepositoryService {
     @inject(StorageAuthenticator) storageAuthenticator: StorageAuthenticator,
     @inject(RepositoryDatasourceFactoryService)
     repositoryDatasourceFactoryService: RepositoryDatasourceFactoryService,
-    @inject(BinaryAccessor) binaryAccessor: BinaryAccessor
+    @inject(BinaryAccessor) binaryAccessor: BinaryAccessor,
+    @inject(BranchService) branchService: BranchService
   ) {
     this.databaseConnection = databaseConnection;
     this.contextFactory = contextFactory;
@@ -113,6 +117,7 @@ export default class RepositoryService {
     this.repositoryDatasourceFactoryService =
       repositoryDatasourceFactoryService;
     this.binaryAccessor = binaryAccessor;
+    this.branchService = branchService;
   }
 
   public async getRepository(id: string) {
@@ -340,6 +345,11 @@ export default class RepositoryService {
           };
         }
         await this.repoAccessor.initInitialRepoFoldersAndFiles(repository);
+        await this.branchService.initMainBranch(
+          queryRunner,
+          repository,
+          currentUser
+        );
         await queryRunner.commitTransaction();
         return {
           action: "REPO_CREATED",
@@ -700,10 +710,94 @@ export default class RepositoryService {
     };
   }
 
+  public async testPluginsAreValid(repository: Repository, pluginList: Array<{name: string, version: string}>): Promise<Array<{
+      name: string,
+      version: string,
+      status: "ok"|"unreleased"|"invalid",
+    }>> {
+    const out: Array<{
+      name: string,
+      version: string,
+      status: "ok"|"unreleased"|"invalid",
+    }> = [];
+    const pluginVersionContext = await this.contextFactory.createContext(PluginsVersionsContext);
+    const seen = new Set<string>();
+    for ( const { name, version } of pluginList) {
+      const key = `${name}:${version}`;
+      if (seen.has(key)) {
+        continue;
+      }
+      seen.add(key);
+      if (version.startsWith("dev")) {
+        out.push({
+          name,
+          version,
+          status: "invalid"
+        });
+        continue;
+      }
+      const pluginVersion = await pluginVersionContext.getByNameAndVersion(name, version);
+      if (!pluginVersion) {
+        out.push({
+          name,
+          version,
+          status: "invalid"
+        });
+        continue;
+      }
+      if (pluginVersion.isPrivate && !repository.isPrivate) {
+        out.push({
+          name,
+          version,
+          status: "invalid"
+        });
+        continue;
+      }
+      if (pluginVersion.isPrivate && pluginVersion.ownerType == "org_plugin") {
+        if (repository.repoType != "org_repo" || pluginVersion.organizationId != repository.organizationId) {
+          out.push({
+            name,
+            version,
+            status: "invalid"
+          });
+          continue;
+        }
+      }
+
+      if (pluginVersion.isPrivate && pluginVersion.ownerType == "user_plugin") {
+        if (repository.repoType != "user_repo" || pluginVersion.userId != repository.userId) {
+          out.push({
+            name,
+            version,
+            status: "invalid"
+          });
+          continue;
+        }
+      }
+      if (pluginVersion.state != "released") {
+          out.push({
+            name,
+            version,
+            status: "unreleased"
+          });
+          continue;
+      }
+
+      out.push({
+        name,
+        version,
+        status: "ok"
+      });
+    }
+    return out;
+  }
+
   public async fetchPullInfo(
     repoId: string,
     user: User,
-    branchLeaves: Array<string>
+    branchLeaves: Array<string>,
+    branch?: FloroBranch,
+    plugins: Array<{name: string, version: string}> = []
   ) {
     const repositoriesContext = await this.contextFactory.createContext(
       RepositoriesContext
@@ -792,11 +886,16 @@ export default class RepositoryService {
       };
     });
 
+    const hasRemoteBranchCycle = this.branchService.testBranchIsCyclic(branchExchange, branch);
+    const pluginStatuses = await this.testPluginsAreValid(repository, plugins);
+
     return {
       settings,
       commits: commitExchange,
       branches: branchExchange,
       branchHeadLinks,
+      hasRemoteBranchCycle,
+      pluginStatuses
     };
   }
 

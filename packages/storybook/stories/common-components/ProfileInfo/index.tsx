@@ -243,10 +243,10 @@ const ProfileInfo = (props: Props): React.ReactElement => {
     if (props.isEdittable) {
       props.onOpenNameChange?.();
     }
-  }, [props.isEdittable, props.onOpenNameChange]); 
+  }, [props.isEdittable, props.onOpenNameChange]);
 
   useEffect(() => {
-    reader.onload = onReaderLoad; 
+    reader.onload = onReaderLoad;
   }, [reader, onReaderLoad]);
 
   return (

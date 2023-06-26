@@ -1,12 +1,13 @@
-import React, {useMemo} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import OuterNavigator from '@floro/common-react/src/components/outer-navigator/OuterNavigator';
 import {useNavigationAnimator} from '@floro/common-react/src/navigation/navigation-animator';
 import {useLinkTitle} from '@floro/common-react/src/components/header_links/HeaderLink';
 import {useParams, useSearchParams} from 'react-router-dom';
-import {useFetchRepositoryByNameQuery} from '@floro/graphql-schemas/src/generated/main-client-graphql';
+import {FetchRepositoryByNameDocument, Repository, useFetchRepositoryByNameQuery} from '@floro/graphql-schemas/src/generated/main-client-graphql';
 import {useSession} from '@floro/common-react/src/session/session-context';
 import {useUserOrganizations} from '@floro/common-react/src/hooks/offline';
 import RepoController from '@floro/common-react/src/components/repository/RepoController';
+import { useApolloClient } from '@apollo/client';
 
 interface Props {
   page: "history"|"home"|"settings"|"branch-rules"|"merge-requests"|"merge-request"|"merge-request-review";
@@ -31,6 +32,8 @@ const RepoHomePage = (props: Props) => {
     },
   });
 
+
+  const [offlineRepo, setOfflineRepo] = useState<Repository|null>(null);
   const repository = useMemo(() => {
     if (data?.fetchRepositoryByName?.__typename == 'FetchRepositorySuccess') {
       return data?.fetchRepositoryByName.repository;
@@ -59,8 +62,16 @@ const RepoHomePage = (props: Props) => {
         }
       }
     }
-    return null;
-  }, [data, currentUser, ownerHandle, repoName, userOrganizations]);
+    return offlineRepo ?? null;
+  }, [data, currentUser, ownerHandle, repoName, userOrganizations, offlineRepo?.id]);
+
+  useEffect(() => {
+    if (repository) {
+      setOfflineRepo(repository);
+    }
+  }, [
+    repository
+  ]);
 
   const handleValue = useMemo(() => {
     if (!repository) {
@@ -84,7 +95,7 @@ const RepoHomePage = (props: Props) => {
     if (repository.repoType == 'user_repo') {
       return `@${repository?.user?.username}`;
     }
-    return `@/${repository?.organization?.handle}`;
+    return `@${repository?.organization?.handle}`;
   }, [repository, ownerHandle]);
 
   const repoValue = useMemo(() => {

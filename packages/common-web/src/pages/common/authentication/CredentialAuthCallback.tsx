@@ -98,12 +98,14 @@ const CredentialAuthCallback = (): React.ReactElement => {
 
   if (data?.fetchEmailAuth?.type == "COMPLETE_SIGNUP") {
     return (
-      <SignupContainer
-        completeSignupAction={
-          data.fetchEmailAuth.action as CompleteSignupAction
-        }
-        onPassedLogin={loginMutation.mutate}
-      />
+      <div style={{zoom: '100%'}}>
+        <SignupContainer
+          completeSignupAction={
+            data.fetchEmailAuth.action as CompleteSignupAction
+          }
+          onPassedLogin={loginMutation.mutate}
+        />
+      </div>
     );
   }
   return <SubPageLoader />;

@@ -175,11 +175,13 @@ const UserHome = () => {
           </ProfileInfoWrapper>
           <BottomNavContainer>
             <TopInfo>
-              <FollowerInfo
-                followerCount={0}
-                followingCount={0}
-              />
-              <div style={{ marginTop: 16, display: "flex" }}>
+              {false && (
+                <FollowerInfo
+                  followerCount={0}
+                  followingCount={0}
+                />
+              )}
+              <div style={{ marginTop: 0, display: "flex" }}>
                 <UserSettingsTab />
               </div>
               <div style={{ marginTop: 16, display: "flex" }}>

@@ -22,6 +22,7 @@ import {
   Branch as FloroBranch,
   BRANCH_NAME_REGEX,
   getBranchIdFromName,
+  branchIdIsCyclic,
 } from "floro/dist/src/repo";
 import RepoRBACService from "./RepoRBACService";
 import RepositoryService from "./RepositoryService";
@@ -63,28 +64,20 @@ export interface CreateRepositoryReponse {
 export default class BranchService {
   private databaseConnection!: DatabaseConnection;
   private contextFactory!: ContextFactory;
-  private repoAccessor!: RepoAccessor;
   private repoRBAC!: RepoRBACService;
-  private repositoryService!: RepositoryService;
   private branchPushHandlers!: BranchPushHandler[];
 
   constructor(
     @inject(DatabaseConnection) databaseConnection: DatabaseConnection,
     @inject(ContextFactory) contextFactory: ContextFactory,
-    @inject(RepoAccessor) repoAccessor: RepoAccessor,
     @inject(RepoRBACService) repoRBAC: RepoRBACService,
-    @inject(RepositoryService) repositoryService: RepositoryService,
     @multiInject("BranchPushHandler") branchPushHandlers: BranchPushHandler[]
   ) {
     this.databaseConnection = databaseConnection;
     this.contextFactory = contextFactory;
-    this.repoAccessor = repoAccessor;
     this.repoRBAC = repoRBAC;
-    this.repositoryService = repositoryService;
     this.branchPushHandlers = branchPushHandlers;
   }
-
-
 
   // only ever calll this during repo creation
   public async initMainBranch(queryRunner: QueryRunner, repository: Repository, currentUser: User) {
@@ -108,6 +101,7 @@ export default class BranchService {
         automaticallyDeleteMergedFeatureBranches: true,
         anyoneCanCreateMergeRequests: true,
         anyoneWithApprovalCanMerge: true,
+        requireReapprovalOnPushToMerge: true,
         anyoneCanMergeMergeRequests: repository.isPrivate && repository.repoType == "user_repo", // by default a private repo user can do anything
         anyoneCanApproveMergeRequests: repository.isPrivate, // limit in public case
         anyoneCanRevert: repository.isPrivate, // limit in public case
@@ -337,6 +331,7 @@ export default class BranchService {
         CommitsContext,
         queryRunner
       );
+
       if (floroBranch?.lastCommit) {
         const lastCommit = await commitsContext?.getCommitBySha(
           repository.id,
@@ -347,6 +342,21 @@ export default class BranchService {
         }
       }
       const branches = await branchesContext.getAllByRepoId(repository.id);
+      const branchExchange = branches?.map((b) => {
+        return {
+          id: b.branchId as string,
+          name: b.name as string,
+          lastCommit: b.lastCommit as string,
+          createdBy: b.createdById as string,
+          createdByUsername: b.createdByUsername as string,
+          createdAt: b.createdAt as string,
+          baseBranchId: b?.baseBranchId as string,
+        } as FloroBranch;
+      });
+      const isCyclic = this.testBranchIsCyclic(branchExchange, floroBranch);
+      if (isCyclic) {
+        return null;
+      }
       const remoteBranch = branches?.find((b) => b.branchId == floroBranch?.id);
       if (floroBranch?.baseBranchId) {
         const baseBranch = branches?.find(
@@ -381,5 +391,13 @@ export default class BranchService {
     } catch (e: any) {
       return null;
     }
+  }
+
+  public testBranchIsCyclic(branches: Array<FloroBranch>, branch: FloroBranch|undefined) {
+    if (!branch?.id || !branch?.baseBranchId) {
+      return false;
+    }
+    const testBranches = [...branches.filter(b => b.baseBranchId != branch.id), branch];
+    return branchIdIsCyclic(branch.id, testBranches);
   }
 }

@@ -44,7 +44,22 @@ export const createApolloClient = (hostname: string, isSecure = false) => {
     httpLink.concat(uploadLink)
   );
 
-  const cache = new InMemoryCache().restore(window.__APOLLO_STATE__ ?? {});
+  const cache = new InMemoryCache({
+    typePolicies: {
+      Repository: {
+        fields: {
+          branchState: {
+            merge(existing, incoming) {
+              return {
+                ...existing,
+                ...incoming,
+              }
+            }
+          }
+        }
+      }
+    }
+  }).restore(window.__APOLLO_STATE__ ?? {});
   return new ApolloClient({
     link: authMiddleware.concat(splitLink),
     cache,

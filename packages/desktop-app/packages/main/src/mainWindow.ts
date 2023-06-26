@@ -79,9 +79,9 @@ async function createWindow() {
       }
       oauthWindow.once('ready-to-show', () => {
         oauthWindow?.show();
-        //if (import.meta.env.DEV) {
-        //  oauthWindow?.webContents.openDevTools();
-        //}
+        if (import.meta.env.DEV) {
+          oauthWindow?.webContents.openDevTools();
+        }
       });
 
       socket.on('login', () => {
@@ -89,6 +89,7 @@ async function createWindow() {
         oauthWindow.destroy();
         socket.off('login');
         socket.off('complete_signup');
+        socket.off('kill_oauth');
       });
 
       socket.on('complete_signup', () => {
@@ -96,6 +97,7 @@ async function createWindow() {
         oauthWindow.destroy();
         socket.off('login');
         socket.off('complete_signup');
+        socket.off('kill_oauth');
       });
 
       socket.on('oauth_failed', () => {
@@ -103,7 +105,17 @@ async function createWindow() {
         oauthWindow.destroy();
         socket.off('login');
         socket.off('complete_signup');
+        socket.off('kill_oauth');
       });
+      socket.on('kill_oauth', () => {
+        console.log("BRO")
+        oauthWindow.close();
+        oauthWindow.destroy();
+        socket.off('login');
+        socket.off('complete_signup');
+        socket.off('kill_oauth');
+      });
+      console.log("BRO")
 
       ipcMain.once('oauth:sendOAuthResult', () => {
         oauthWindow.close();

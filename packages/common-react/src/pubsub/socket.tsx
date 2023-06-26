@@ -15,8 +15,9 @@ export const useDefineFloroSocket = (client: 'web'|'desktop') => {
   return useMemo(() => createSocket(client), []);
 }
 
-const FloroSocketContext = React.createContext<{socket: null|Socket}>({
-    socket: null
+const FloroSocketContext = React.createContext<{socket: null|Socket, client: 'web'|'desktop'|'cli'}>({
+    socket: null,
+    client: 'web'
 });
 
 export interface Props {
@@ -27,10 +28,10 @@ export interface Props {
 export const FloroSocketProvider = (props: Props) => {
     const socket = useDefineFloroSocket(props.client);
     return (
-      <FloroSocketContext.Provider value={{socket}}>
+      <FloroSocketContext.Provider value={{socket, client: props.client}}>
         {props?.children}
       </FloroSocketContext.Provider>
-    ); 
+    );
 }
 
 export const useFloroSocket = () => {

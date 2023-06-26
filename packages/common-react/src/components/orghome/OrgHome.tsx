@@ -25,6 +25,8 @@ import {
 import ChangeOrgNameModal from "./ChangeOrgNameModal";
 import PluginsTab from "@floro/storybook/stories/common-components/PluginsTab";
 import { useIsOnline } from "../../hooks/offline";
+import OrgDashboard from "./OrgDashboard";
+import ConnectionStatusTab from "@floro/storybook/stories/common-components/ConnectionStatusTab";
 
 const Background = styled.div`
   background-color: ${(props) => props.theme.background};
@@ -85,6 +87,7 @@ export interface Props {
 const OrgHome = (props: Props) => {
   const navigate = useNavigate();
   const isOnline = useIsOnline();
+  const isDaemonConnected = useDaemonIsConnected();
   const [uploadPhoto, uploadPhotoRequest] =
     useUploadOrganizationProfilePhotoMutation();
   const [removePhoto, removePhotoRequest] =
@@ -176,6 +179,8 @@ const OrgHome = (props: Props) => {
     }
   }, [uploadPhotoRequest.data, savePhoto]);
 
+  console.log("ORG", props.organization)
+
   return (
     <>
       {props.organization && (
@@ -215,8 +220,10 @@ const OrgHome = (props: Props) => {
             </ProfileInfoWrapper>
             <BottomNavContainer>
               <TopInfo>
-                <OrgFollowerTab followerCount={0} isFollowing={false} isLoading={false} isDisabled={!isOnline} />
-                <div style={{ marginTop: 16, display: "flex" }}>
+                {false && (
+                  <OrgFollowerTab followerCount={0} isFollowing={false} isLoading={false} isDisabled={!isOnline} />
+                )}
+                <div style={{ marginTop: 0, display: "flex" }}>
                   <MembersInfoTab
                     membersCount={props?.organization?.membersActiveCount ?? 0}
                     invitedCount={
@@ -249,6 +256,9 @@ const OrgHome = (props: Props) => {
                 <div style={{ marginTop: 16, display: "flex" }}>
                   <BillingTab />
                 </div>
+                <div style={{ marginTop: 16, display: "flex" }}>
+                  <ConnectionStatusTab isConnected={isDaemonConnected ?? false} />
+                </div>
               </TopInfo>
               <ButtonActionWrapper>
                 {props?.organization?.membership?.permissions
@@ -266,7 +276,11 @@ const OrgHome = (props: Props) => {
             </BottomNavContainer>
           </UserNav>
         )}
-        <MainContent></MainContent>
+        <MainContent>
+          {!!props.organization && (
+            <OrgDashboard organization={props.organization}/>
+          )}
+        </MainContent>
       </Background>
     </>
   );

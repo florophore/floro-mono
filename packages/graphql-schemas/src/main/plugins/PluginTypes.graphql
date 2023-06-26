@@ -8,7 +8,7 @@ type Plugin {
   createdByUser: User
   createdAt: DateTime
   updatedAt: DateTime
-  versions: [PluginVersion]
+  versions(repositoryId: ID): [PluginVersion]
 
   # DERIVED PROPS
   displayName: String

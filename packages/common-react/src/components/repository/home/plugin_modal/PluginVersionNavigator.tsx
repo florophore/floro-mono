@@ -48,13 +48,14 @@ export interface Props {
 }
 
 const PluginVersionList = (props: Props) => {
+  console.log("PV", props.versions)
   const versions = useMemo(() => {
     const currentVersion = props.apiResponse.applicationState.plugins?.find(({key}) => key == props?.versions[0].name);
     return props.versions.filter((v, index) => {
       if (currentVersion && currentVersion.value == v.version) {
         return true;
       }
-      return v.version?.startsWith("dev") || v.state == "released" || index == 0;
+      return v.version?.startsWith("dev") || v.state == "unreleased" || v.state == "released" || index == 0;
     });
   }, [props.versions, props.apiResponse.applicationState.plugins]);
 

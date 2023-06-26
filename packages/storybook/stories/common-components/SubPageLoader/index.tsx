@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from '@emotion/styled';
-import FloroIcon from '@floro/common-assets/assets/images/floro_v3_logo.svg';
+import FloroIcon from '@floro/common-assets/assets/images/floro_logo.svg';
 import DotsLoader from '@floro/storybook/stories/design-system/DotsLoader';
 
 
@@ -29,15 +29,17 @@ export interface Props {
 const SubPageLoader = (props?: Props): React.ReactElement => {
 
   return (
-    <BackgroundWrapper>
-      <FloroImage
-        src={FloroIcon}
-      />
-      {!props?.hideLoad && <DotsLoader size={"large"} color={"purple"}/>}
-      {!!props?.children &&
-        <>{props?.children}</>
-      }
-    </BackgroundWrapper>
+    <div style={{zoom: '100%'}}>
+      <BackgroundWrapper>
+        <FloroImage
+          src={FloroIcon}
+        />
+        {!props?.hideLoad && <DotsLoader size={"large"} color={"purple"}/>}
+        {!!props?.children &&
+          <>{props?.children}</>
+        }
+      </BackgroundWrapper>
+    </div>
   );
 }
 

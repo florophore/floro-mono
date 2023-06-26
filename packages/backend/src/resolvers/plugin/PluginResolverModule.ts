@@ -20,6 +20,8 @@ import PluginSearchService from "../../services/plugins/PluginSearchService";
 import OrganizationsContext from "@floro/database/src/contexts/organizations/OrganizationsContext";
 import PluginsContext from "@floro/database/src/contexts/plugins/PluginsContext";
 import PluginsVersionsContext from "@floro/database/src/contexts/plugins/PluginVersionsContext";
+import RepositoryLoader from "../hooks/loaders/Repository/RepositoryLoader";
+import { User } from "@floro/database/src/entities/User";
 
 @injectable()
 export default class PluginResolverModule extends BaseResolverModule {
@@ -38,6 +40,7 @@ export default class PluginResolverModule extends BaseResolverModule {
   protected pluginRegistryService!: PluginRegistryService;
   protected rootOrganizationMemberPermissionsLoader!: RootOrganizationMemberPermissionsLoader;
   protected pluginSearchService!: PluginSearchService;
+  protected repositoryLoader!: RepositoryLoader;
 
   constructor(
     @inject(ContextFactory) contextFactory: ContextFactory,
@@ -47,7 +50,8 @@ export default class PluginResolverModule extends BaseResolverModule {
     @inject(LoggedInUserGuard) loggedInUserGuard: LoggedInUserGuard,
     @inject(PluginSearchService) pluginSearchService: PluginSearchService,
     @inject(RootOrganizationMemberPermissionsLoader)
-    rootOrganizationMemberPermissionsLoader: RootOrganizationMemberPermissionsLoader
+    rootOrganizationMemberPermissionsLoader: RootOrganizationMemberPermissionsLoader,
+    @inject(RepositoryLoader) repositoryLoader: RepositoryLoader
   ) {
     super();
     this.contextFactory = contextFactory;
@@ -59,6 +63,7 @@ export default class PluginResolverModule extends BaseResolverModule {
     this.loggedInUserGuard = loggedInUserGuard;
     this.rootOrganizationMemberPermissionsLoader =
       rootOrganizationMemberPermissionsLoader;
+      this.repositoryLoader = repositoryLoader;
   }
 
   private sortBySemver(pluginVersions: DBPluginVersion[]): DBPluginVersion[] {
@@ -254,33 +259,79 @@ export default class PluginResolverModule extends BaseResolverModule {
 
   public Plugin: main.PluginResolvers = {
     versions: runWithHooks(
-      () => [],
-      async (plugin, _, { cacheKey, currentUser }) => {
+      () => [
+        this.repositoryLoader
+      ],
+      async (plugin, { repositoryId}: main.PluginVersionsArgs, { cacheKey, currentUser }: any) => {
         const dbPlugin = plugin as DBPlugin;
-        const membership = this.requestCache.getOrganizationMembership(
+        const repository = repositoryId
+          ? this.requestCache.getRepo(cacheKey, repositoryId)
+          : undefined;
+        const membership = currentUser?.id ? this.requestCache.getOrganizationMembership(
           cacheKey,
           dbPlugin.id,
           currentUser?.id
-        );
+        ) : null;
+        // public user plugin
         if (
-          dbPlugin.ownerType == "user_plugin" &&
-          currentUser?.id == dbPlugin.userId
+          !dbPlugin?.isPrivate &&
+          dbPlugin.ownerType == "user_plugin"
         ) {
-          return this.sortBySemver(dbPlugin?.versions ?? []);
+          // in this case, show all versions
+          return this.sortBySemver(dbPlugin?.versions ?? [])?.filter(p => {
+            if (p.state != "released") {
+              if (currentUser?.id == dbPlugin.userId) {
+                if (!repository) {
+                  return true;
+                }
+                return repository?.repoType == "user_repo" && repository?.userId == dbPlugin?.userId;
+              }
+            }
+            return true;
+          });
         }
         if (
           dbPlugin.ownerType == "org_plugin" &&
           membership &&
           membership.membershipState == "active"
         ) {
-          return this.sortBySemver(dbPlugin?.versions ?? []);
+          if (dbPlugin.isPrivate && dbPlugin.organizationId != repository?.organizationId) {
+            return [];
+          }
+          return this.sortBySemver(dbPlugin?.versions ?? [])?.filter(p => {
+            if (p.state != "released") {
+              if (!repository) {
+                return true;
+              }
+              if (repository && repository?.repoType == "org_repo") {
+                return repository?.organizationId == dbPlugin?.organizationId;
+              }
+              return false;
+            }
+            return true;
+          });
         }
-        if (!dbPlugin?.isPrivate) {
-          return this.sortBySemver(
-            dbPlugin?.versions?.filter?.((v) => {
-              return v.state == "released" && !v.isPrivate;
-            }) ?? []
-          );
+        if (dbPlugin?.isPrivate) {
+          if (dbPlugin.ownerType == "org_plugin") {
+            return [];
+          }
+          if (repository?.userId == dbPlugin.userId) {
+            if (dbPlugin.ownerType != "user_plugin") {
+              return []
+            }
+
+            return this.sortBySemver(
+              dbPlugin?.versions?.filter?.((v) => {
+                if (currentUser?.id == dbPlugin.userId) {
+                  if (!repository) {
+                    return true;
+                  }
+                  return repository?.repoType == "user_repo" && repository?.userId == dbPlugin.userId;
+                }
+                return v.state == "released";
+              }) ?? []
+            );
+          }
         }
         return null;
       }

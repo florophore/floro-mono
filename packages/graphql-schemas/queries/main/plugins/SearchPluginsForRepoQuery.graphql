@@ -7,7 +7,40 @@ query searchPluginsForRepository(
     repositoryId: $repositoryId
   ) {
     plugins {
-      ...Plugin
+      id
+      name
+      isPrivate
+      createdAt
+      updatedAt
+      ownerType
+
+      displayName
+      lightIcon
+      darkIcon
+      selectedLightIcon
+      selectedDarkIcon
+
+      createdByUser {
+        id
+        username
+      }
+      user {
+        id
+        username
+      }
+      organization {
+        id
+        handle
+      }
+      lastReleasedPublicVersion {
+        id
+      }
+      lastReleasedPrivateVersion {
+        id
+      }
+      versions(repositoryId: $repositoryId) {
+        ...PluginVersion
+      }
     }
   }
 }

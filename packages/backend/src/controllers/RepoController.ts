@@ -123,10 +123,16 @@ export default class RepoController extends BaseController {
       response.sendStatus(400);
     }
   }
+
   @Post("/api/repo/:repoId/fetch")
   public async fetchPullList(request, response) {
     const repoId = request?.params?.repoId;
     const branchLeaves: Array<string> = request?.body?.branchLeaves ?? [];
+    const branch: FloroBranch = request?.body?.branch ?? [];
+    const plugins: Array<{
+      name: string,
+      version: string,
+    }> = request?.body?.plugins ?? [];
     if (!repoId) {
       response.sendStatus(404);
       return;
@@ -154,13 +160,16 @@ export default class RepoController extends BaseController {
         const pullInfo = await this.repositoryService.fetchPullInfo(
           repo.id,
           session.user,
-          branchLeaves
+          branchLeaves,
+          branch,
+          plugins
         );
         response.send(pullInfo);
       } else {
         response.sendStatus(400);
       }
     } catch (e) {
+      console.log("E", e);
       response.sendStatus(400);
     }
   }

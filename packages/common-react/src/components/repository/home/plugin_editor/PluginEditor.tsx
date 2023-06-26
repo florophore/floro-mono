@@ -209,9 +209,7 @@ const PluginEditor = (props: Props) => {
           {(suggestedPlugins?.length ?? 0) > 0 && (
             <DevelopmentPluginsContainer
               style={{
-                borderTop: showTopDividerForSuggestedPlugin
-                  ? borderDivider
-                  : "none",
+                borderTop: borderDivider,
               }}
             >
               <DevelopmentPluginsTitle>

@@ -8,6 +8,7 @@ import {
 import { BinaryPKBaseEntity } from "./BinaryPKBaseEntity";
 import { Repository } from "./Repository";
 import { OrganizationRole } from "./OrganizationRole";
+import { User } from "./User";
 
 @Entity("repo_enabled_role_settings")
 export class RepoEnabledRoleSetting extends BinaryPKBaseEntity {
@@ -15,9 +16,6 @@ export class RepoEnabledRoleSetting extends BinaryPKBaseEntity {
   @IsDefined()
   @IsString()
   settingName?: string;
-
-  @Column("uuid")
-  uploadedByUserId!: string;
 
   @Column("uuid")
   roleId!: string;
