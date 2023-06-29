@@ -1,0 +1,5 @@
+subscription repositoryUpdates($repositoryId: ID, $branchId: ID, $sha: ID) {
+  repositoryUpdated(repositoryId: $repositoryId) {
+    ...CurrentRepository
+  }
+}

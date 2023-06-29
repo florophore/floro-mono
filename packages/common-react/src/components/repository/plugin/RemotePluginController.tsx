@@ -9,7 +9,8 @@ import { ApiResponse } from "floro/dist/src/repo";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { useUpdatePluginState } from "../local/hooks/local-hooks";
 import { useLocalVCSNavContext } from "../local/vcsnav/LocalVCSContext";
-import { RemoteCommitState } from "../remote/hooks/remote-state";
+import { ComparisonState, RemoteCommitState, useBeforeCommitState, useRemoteCompareFrom, useViewMode } from "../remote/hooks/remote-state";
+import { RepoPage } from "../types";
 
 
 
@@ -56,8 +57,10 @@ interface Props {
   pluginName: string;
   repository: Repository;
   remoteCommitState: RemoteCommitState;
+  comparisonState: ComparisonState;
   isExpanded: boolean;
   onSetIsExpanded: (isExpanded: boolean) => void;
+  page: RepoPage;
 }
 
 const RemotePluginController = (props: Props) => {
@@ -65,6 +68,10 @@ const RemotePluginController = (props: Props) => {
   const [hasLoaded, setHasLoaded] = useState(false);
   const [hasSentFirstData, setHasSetFirstData] = useState(false);
   const [ackId, setAckId] = useState<string | null>(null);
+
+  const { compareFrom } = useRemoteCompareFrom();
+  const beforeCommitState = useBeforeCommitState(props.repository, props.page);
+  const viewMode = useViewMode(props.page);
 
   const updatePluginState = useUpdatePluginState(
     props.pluginName,
@@ -79,21 +86,56 @@ const RemotePluginController = (props: Props) => {
   }, [props.pluginName]);
 
   const manifest = useMemo(() => {
+
+    if (viewMode == "compare" && compareFrom == "before") {
+      if (!props.comparisonState.beforeRemoteCommitState.schemaMap?.[props.pluginName]) {
+        return null;
+      }
+      return props.comparisonState.beforeRemoteCommitState.schemaMap?.[props.pluginName];
+    }
+    if (!props.remoteCommitState.schemaMap?.[props.pluginName]) {
+      return null;
+    }
     return props.remoteCommitState.schemaMap?.[props.pluginName];
   }, [
+    viewMode,
+    compareFrom,
+    props.comparisonState.beforeRemoteCommitState.schemaMap,
     props.remoteCommitState.schemaMap,
     props.pluginName,
   ]);
 
   const iframeUri = useMemo(() => {
-    const pluginVersion = props?.repository?.branchState?.commitState?.pluginVersions?.find?.(pv => {
-        return pv?.name == props.pluginName;
-    })
+
+    if (viewMode == "compare" && compareFrom == "before") {
+      const pluginVersion =
+        beforeCommitState?.pluginVersions?.find?.(
+          (pv) => {
+            return pv?.name == props.pluginName;
+          }
+        );
+      if (!pluginVersion) {
+        return null;
+      }
+      return pluginVersion.entryUrl;
+    }
+    const pluginVersion =
+      props?.repository?.branchState?.commitState?.pluginVersions?.find?.(
+        (pv) => {
+          return pv?.name == props.pluginName;
+        }
+      );
     if (!pluginVersion) {
       return null;
     }
     return pluginVersion.entryUrl;
-  }, [props?.repository?.branchState?.commitState?.pluginVersions, props.pluginName]);
+  }, [
+    viewMode,
+    compareFrom,
+    props?.repository?.branchState?.commitState?.pluginVersions,
+    beforeCommitState?.pluginVersions,
+    props.pluginName,
+  ]);
 
   const applicationState = useMemo(() => {
     if (!manifest) {
@@ -102,12 +144,22 @@ const RemotePluginController = (props: Props) => {
     const keys = [manifest.name, ...Object.keys(manifest.imports)];
     const out = {};
     for (const plugin of keys) {
-        out[plugin] = props.remoteCommitState?.renderedState?.store?.[plugin] ?? {};
+
+      if (viewMode == "compare" && compareFrom == "before") {
+        out[plugin] = props.comparisonState.beforeRemoteCommitState?.renderedState?.store?.[plugin] ?? {};
+      } else {
+        out[plugin] =
+          props.remoteCommitState?.renderedState?.store?.[plugin] ?? {};
+      }
     }
     return out;
-  }, [manifest,
-     props.remoteCommitState?.renderedState,
-    ]);
+  }, [
+    manifest,
+    viewMode,
+    compareFrom,
+    props.comparisonState.beforeRemoteCommitState?.renderedState,
+    props.remoteCommitState?.renderedState,
+  ]);
 
   const apiStoreInvalidity = useMemo(() => {
     if (!manifest) {
@@ -116,11 +168,18 @@ const RemotePluginController = (props: Props) => {
     const keys = [manifest.name, ...Object.keys(manifest.imports)];
     const out = {};
     for (const plugin of keys) {
-      out[plugin] = props.remoteCommitState?.invalidStates?.[plugin] ?? {};
+      if (viewMode == "compare" && compareFrom == "before") {
+        out[plugin] = props.comparisonState?.beforeRemoteCommitState?.invalidStates?.[plugin] ?? {};
+      } else {
+        out[plugin] = props.remoteCommitState?.invalidStates?.[plugin] ?? {};
+      }
     }
     return out;
   }, [
     manifest,
+    viewMode,
+    compareFrom,
+    props.comparisonState.beforeRemoteCommitState?.invalidStates,
     props.remoteCommitState?.invalidStates,
   ]);
 
@@ -135,33 +194,73 @@ const RemotePluginController = (props: Props) => {
 
   const binaryMap = useMemo(() => {
     const out: {[key: string]: string} = {};
-    for (const binaryRef of (props?.repository?.branchState?.commitState?.binaryRefs ?? [])) {
-        if (binaryRef?.fileName && binaryRef?.url) {
-            out[binaryRef?.fileName] = binaryRef?.url;
-        }
+    if (viewMode == "compare" && compareFrom == "before") {
+      for (const binaryRef of (beforeCommitState?.binaryRefs ?? [])) {
+          if (binaryRef?.fileName && binaryRef?.url) {
+              out[binaryRef?.fileName] = binaryRef?.url;
+          }
+      }
+    } else {
+
+      for (const binaryRef of (props?.repository?.branchState?.commitState?.binaryRefs ?? [])) {
+          if (binaryRef?.fileName && binaryRef?.url) {
+              out[binaryRef?.fileName] = binaryRef?.url;
+          }
+      }
     }
     return out;
   }, [
     manifest,
+    viewMode,
+    compareFrom,
     props?.repository?.branchState?.commitState?.binaryRefs,
+    beforeCommitState?.binaryRefs
+  ]);
+  const changeset = useMemo(() => {
+    if (viewMode != "compare" || !manifest) {
+      return []
+    }
+    const out: Array<string> = [];
+    const keys = [manifest.name, ...Object.keys(manifest.imports)];
+    for (const plugin of keys) {
+      if (compareFrom == "before"
+      ) {
+        out.push(
+          ...(props?.comparisonState?.apiDiff?.store?.[plugin]?.removed ?? [])
+        );
+      } else {
+        out.push(
+          ...(props?.comparisonState?.apiDiff?.store?.[plugin]?.added ?? [])
+        );
+      }
+    }
+    return out;
+  }, [
+    manifest,
+    viewMode,
+    props?.comparisonState?.apiDiff,
+    compareFrom,
   ])
 
   const pluginState = useMemo(() => {
     return {
-      changeset: [],
+      changeset,
       applicationState,
       apiStoreInvalidity,
       conflictList: [],
       binaryUrls,
-      compareFrom: "none",
-      commandMode: "view",
+      compareFrom: viewMode == "view" ? "none" :  compareFrom,
+      commandMode: viewMode,
       binaryMap
     };
   }, [
     applicationState,
     apiStoreInvalidity,
     binaryUrls,
-    binaryMap
+    binaryMap,
+    changeset,
+    compareFrom,
+    viewMode
   ]);
 
   useEffect(() => {

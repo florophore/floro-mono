@@ -10,7 +10,9 @@ import WarningLight from "@floro/common-assets/assets/images/icons/warning.light
 import WarningDark from "@floro/common-assets/assets/images/icons/warning.dark.svg";
 
 import { ApiResponse } from "floro/dist/src/repo";
-import { PluginVersion } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import { PluginVersion, Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import { ComparisonState, RemoteCommitState, useBeforeCommitState, useRemoteCompareFrom, useViewMode } from "./hooks/remote-state";
+import { RepoPage } from "../types";
 //import { useLocalVCSNavContext } from "./vcsnav/LocalVCSContext";
 
 const NavOption = styled.div`
@@ -89,10 +91,18 @@ interface Props {
   isInvalid: boolean;
   locationPath: string;
   pluginVersion: PluginVersion;
+  repository: Repository;
+  remoteCommitState: RemoteCommitState;
+  comparisonState: ComparisonState;
+  page: RepoPage;
 }
 
 const RemoteSideOption = (props: Props): React.ReactElement => {
   const theme = useTheme();
+
+  const { compareFrom} = useRemoteCompareFrom();
+  const viewMode = useViewMode(props.page);
+
   const icon = useMemo(
     () =>
       props.isSelected
@@ -123,6 +133,42 @@ const RemoteSideOption = (props: Props): React.ReactElement => {
     }
   }, [theme.name]);
 
+  const hasAdditions = useMemo(() => {
+    if (
+      viewMode != "compare" ||
+      compareFrom != "after"
+    ) {
+      return false;
+    }
+    return (
+      (props?.comparisonState?.apiDiff?.store?.[props.pluginVersion?.name ?? ""]?.added
+        ?.length ?? 0) > 0
+    );
+  }, [
+    props.pluginVersion.name,
+    viewMode,
+    compareFrom,
+    props?.comparisonState?.apiDiff,
+  ]);
+
+  const hasRemovals = useMemo(() => {
+    if (
+      viewMode != "compare" ||
+      compareFrom != "before"
+    ) {
+      return false;
+    }
+    return (
+      (props?.comparisonState?.apiDiff?.store?.[props.pluginVersion?.name ?? ""]?.removed
+        ?.length ?? 0) > 0
+    );
+  }, [
+    props.pluginVersion.name,
+    viewMode,
+    compareFrom,
+    props?.comparisonState?.apiDiff,
+  ])
+
 
   return (
     <NavOption>
@@ -143,21 +189,20 @@ const RemoteSideOption = (props: Props): React.ReactElement => {
           </NavText>
         </NavIconWrapper>
         {props.isInvalid && <XCircleImage src={xCircle} />}
-        {false && (
+        {hasAdditions && (
           <ChangeDot
             style={{
               background: theme.colors.addedBackground,
             }}
           />
         )}
-        {false && (
+        {hasRemovals && (
           <ChangeDot
             style={{
               background: theme.colors.removedBackground,
             }}
           />
         )}
-        {false && <ConflictDot/>}
       </Link>
     </NavOption>
   );

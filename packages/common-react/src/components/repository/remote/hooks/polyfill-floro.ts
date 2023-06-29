@@ -1,3 +1,5 @@
+import mdiff from "mdiff";
+
 export const manifestListToSchemaMap = (
   manifestList: Array<Manifest>
 ): { [pluginName: string]: Manifest } => {
@@ -1420,4 +1422,229 @@ export const getPluginInvalidStateIndices = async (
     }
   }
   return out;
+};
+
+export const getStateDiffFromCommitStates = (
+  beforeKVState: ApplicationKVState,
+  afterKVState: ApplicationKVState
+): StateDiff => {
+  const stateDiff: StateDiff = {
+    plugins: {
+      add: {},
+      remove: {},
+    },
+    binaries: {
+      add: {},
+      remove: {},
+    },
+    store: {},
+    licenses: {
+      add: {},
+      remove: {},
+    },
+    description: {
+      add: {},
+      remove: {},
+    },
+  };
+  const pluginsToTraverse = Array.from([
+    ...Object.keys(beforeKVState?.store ?? {}),
+    ...Object.keys(afterKVState?.store ?? {}),
+  ]);
+  for (const prop in afterKVState) {
+    if (prop == "store") {
+      for (const pluginName of pluginsToTraverse) {
+        const diff = getDiff(
+          beforeKVState?.store?.[pluginName] ?? [],
+          afterKVState?.store?.[pluginName] ?? []
+        );
+        stateDiff.store[pluginName] = diff;
+      }
+      continue;
+    }
+    if (prop == "description" || prop == "binaries") {
+      const diff = getArrayStringDiff(
+        (beforeKVState?.[prop] ?? []) as Array<string>,
+        (afterKVState?.[prop] ?? []) as Array<string>
+      );
+      stateDiff[prop] = diff;
+      continue;
+    }
+
+    const diff = getDiff(
+      beforeKVState?.[prop] ?? [],
+      afterKVState?.[prop] ?? []
+    );
+    stateDiff[prop] = diff;
+  }
+  return stateDiff;
+};
+
+export const getLCS = (
+  left: Array<string>,
+  right: Array<string>
+): Array<string> => {
+  const diff = mdiff(left, right);
+  const lcs = diff.getLcs();
+  return lcs ?? [];
+};
+
+const fastHash = (str: string) => {
+  let hash = 0;
+  let hash2 = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash * hash2) ^ ((hash << 5) - hash + str.charCodeAt(i));
+    hash2 = (hash2 << 5) - hash + str.charCodeAt(i);
+    hash |= 0;
+    hash2 |= 0;
+  }
+  return hash.toString(36).padEnd(6) + hash2.toString(36).padEnd(6);
+};
+
+export const getRowHash = (obj: {
+  key: string;
+  value: {
+    [key: string]: number | string | boolean | Array<number | string | boolean>;
+  };
+}): string => {
+  return fastHash(obj.key + JSON.stringify(obj.value));
+};
+
+export const getDiff = (
+  before: Array<DiffElement>,
+  after: Array<DiffElement>
+): Diff => {
+  const past = before.map(getRowHash);
+  const present = after.map(getRowHash);
+  const longestSequence = getLCS(past, present);
+  let removeIndex = 0;
+  let diff = {
+    add: {},
+    remove: {},
+  };
+  for (let i = 0; i < past.length; ++i) {
+    if (longestSequence[removeIndex] == past[i]) {
+      removeIndex++;
+    } else {
+      diff.remove[i] = before[i];
+    }
+  }
+
+  let addIndex = 0;
+  for (let i = 0; i < present.length; ++i) {
+    if (longestSequence[addIndex] == present[i]) {
+      addIndex++;
+    } else {
+      diff.add[i] = after[i];
+    }
+  }
+  return diff;
+};
+
+export const getArrayStringDiff = (
+  past: Array<string>,
+  present: Array<string>
+): StringDiff => {
+  const longestSequence = getLCS(past, present);
+
+  let diff = {
+    add: {},
+    remove: {},
+  };
+
+  for (let i = 0, removeIndex = 0; i < past.length; ++i) {
+    if (longestSequence[removeIndex] == past[i]) {
+      removeIndex++;
+    } else {
+      diff.remove[i] = past[i];
+    }
+  }
+
+  for (let i = 0, addIndex = 0; i < present.length; ++i) {
+    if (longestSequence[addIndex] == present[i]) {
+      addIndex++;
+    } else {
+      diff.add[i] = present[i];
+    }
+  }
+  return diff;
+};
+
+export const getApiDiff = (
+  beforeState: ApplicationKVState,
+  afterState: ApplicationKVState,
+  stateDiff: StateDiff
+): ApiDiff => {
+  const description = {
+    added: Object.keys(stateDiff.description.add).map((v) => parseInt(v)),
+    removed: Object.keys(stateDiff.description.remove).map((v) => parseInt(v)),
+  };
+
+  const licenses = {
+    added: Object.keys(stateDiff.licenses.add).map((v) => parseInt(v)),
+    removed: Object.keys(stateDiff.licenses.remove).map((v) => parseInt(v)),
+  };
+
+  const plugins = {
+    added: Object.keys(stateDiff.plugins.add).map((v) => parseInt(v)),
+    removed: Object.keys(stateDiff.plugins.remove).map((v) => parseInt(v)),
+  };
+  let store = {};
+
+  for (const pluginName in stateDiff?.store ?? {}) {
+    if (!beforeState?.store?.[pluginName]) {
+      // show only added state
+      const afterIndexedKvs = reIndexSchemaArrays(
+        afterState?.store?.[pluginName] ?? []
+      );
+      const added = Object.keys(stateDiff?.store?.[pluginName]?.add ?? {})
+        .map((v) => parseInt(v))
+        .map((i) => afterIndexedKvs[i]);
+      store[pluginName] = {
+        added,
+        removed: [],
+      };
+      continue;
+    }
+
+    if (!afterState?.store?.[pluginName]) {
+      // show only removed state
+      const beforeIndexedKvs = reIndexSchemaArrays(
+        beforeState?.store?.[pluginName] ?? []
+      );
+      const removed = Object.keys(stateDiff?.store?.[pluginName]?.remove ?? {})
+        .map((v) => parseInt(v))
+        .map((i) => beforeIndexedKvs[i]);
+      store[pluginName] = {
+        added: [],
+        removed,
+      };
+
+      continue;
+    }
+
+    const afterIndexedKvs = reIndexSchemaArrays(
+      afterState?.store?.[pluginName] ?? []
+    );
+    const added = Object.keys(stateDiff?.store?.[pluginName]?.add ?? {})
+      .map((v) => parseInt(v))
+      .map((i) => afterIndexedKvs[i]);
+    const beforeIndexedKvs = reIndexSchemaArrays(
+      beforeState?.store?.[pluginName] ?? []
+    );
+    const removed = Object.keys(stateDiff?.store?.[pluginName]?.remove ?? {})
+      .map((v) => parseInt(v))
+      .map((i) => beforeIndexedKvs[i]);
+
+    store[pluginName] = {
+      added,
+      removed,
+    };
+  }
+  return {
+    description,
+    licenses,
+    plugins,
+    store,
+  };
 };

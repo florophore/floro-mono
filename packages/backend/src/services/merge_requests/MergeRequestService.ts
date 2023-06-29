@@ -294,6 +294,21 @@ export default class MergeRequestService implements BranchPushHandler {
       mergeRequestCommentReplyEventHandlers;
   }
 
+  public async getExistingMergeRequestByBranch(
+    repositoryId: string,
+    branchId: string
+  ): Promise<MergeRequest | null> {
+    const mergeRequestsContext = await this.contextFactory.createContext(
+      MergeRequestsContext
+    );
+    const mergeRequest =
+      await mergeRequestsContext.getOpenMergeRequestByBranchNameAndRepo(
+        repositoryId,
+        branchId
+      );
+    return mergeRequest;
+  }
+
   public async mergeMergeRequest(
     mergeRequest: MergeRequest,
     repository: Repository,
@@ -978,7 +993,11 @@ export default class MergeRequestService implements BranchPushHandler {
         },
       };
     }
-    const possibleStatuses = new Set(["approved", "requested_changes", "blocked"]);
+    const possibleStatuses = new Set([
+      "approved",
+      "requested_changes",
+      "blocked",
+    ]);
     if (!possibleStatuses.has(approvalStatus ?? "")) {
       // ERROR
       return {
@@ -1229,7 +1248,6 @@ export default class MergeRequestService implements BranchPushHandler {
     }
   }
 
-
   public async onBranchChanged(
     queryRunner: QueryRunner,
     repository: Repository,
@@ -1399,15 +1417,15 @@ export default class MergeRequestService implements BranchPushHandler {
         repository.id,
         pendingCommits?.map((c) => c.sha as string)
       );
-    const pluginNames = pluginList.map(p => p.name);
+    const pluginNames = pluginList.map((p) => p.name);
     if (pluginName && !pluginNames.includes(pluginName)) {
-        return {
-          action: "INVALID_PLUGIN_COMMENT_ERROR",
-          error: {
-            type: "INVALID_PLUGIN_COMMENT_ERROR",
-            message: "Invalid plugin in comment",
-          },
-        };
+      return {
+        action: "INVALID_PLUGIN_COMMENT_ERROR",
+        error: {
+          type: "INVALID_PLUGIN_COMMENT_ERROR",
+          message: "Invalid plugin in comment",
+        },
+      };
     }
     const queryRunner = await this.databaseConnection.makeQueryRunner();
     try {
@@ -1562,7 +1580,7 @@ export default class MergeRequestService implements BranchPushHandler {
       await queryRunner.commitTransaction();
       return {
         action: "COMMENT_UPDATED",
-        mergeRequest
+        mergeRequest,
       };
     } catch (e: any) {
       if (!queryRunner.isReleased) {
@@ -1668,7 +1686,7 @@ export default class MergeRequestService implements BranchPushHandler {
       await queryRunner.commitTransaction();
       return {
         action: "COMMENT_DELETED",
-        mergeRequest
+        mergeRequest,
       };
     } catch (e: any) {
       if (!queryRunner.isReleased) {
@@ -1696,7 +1714,6 @@ export default class MergeRequestService implements BranchPushHandler {
     user: User,
     text: string
   ): Promise<CreateMergeRequestCommentReplyResponse> {
-
     if (comment.isDeleted) {
       return {
         action: "COMMENT_DOES_NOT_EXIST_ERROR",
@@ -1911,7 +1928,7 @@ export default class MergeRequestService implements BranchPushHandler {
       await queryRunner.commitTransaction();
       return {
         action: "COMMENT_REPLY_UPDATED",
-        mergeRequest
+        mergeRequest,
       };
     } catch (e: any) {
       if (!queryRunner.isReleased) {
@@ -2031,7 +2048,7 @@ export default class MergeRequestService implements BranchPushHandler {
       await queryRunner.commitTransaction();
       return {
         action: "COMMENT_REPLY_DELETED",
-        mergeRequest
+        mergeRequest,
       };
     } catch (e: any) {
       if (!queryRunner.isReleased) {

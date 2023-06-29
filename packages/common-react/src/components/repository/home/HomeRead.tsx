@@ -271,9 +271,6 @@ const HomeRead = (props: Props) => {
   ]);
 
   const description = useMemo((): string|React.ReactElement => {
-    if ((props?.apiResponse?.applicationState?.description?.length ?? 0) == 0) {
-      return "No description";
-    }
     if (props?.apiResponse?.repoState?.commandMode == "compare") {
       if (compareFrom == "before") {
         if ((props?.apiResponse?.beforeState?.description?.length ?? 0) == 0) {
@@ -348,6 +345,9 @@ const HomeRead = (props: Props) => {
           )}
         </>
       );
+    }
+    if ((props?.apiResponse?.applicationState?.description?.length ?? 0) == 0) {
+      return "No description";
     }
     return props.apiResponse.applicationState.description.join(" ");
   }, [

@@ -3,11 +3,19 @@ import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import DotsLoader from "@floro/storybook/stories/design-system/DotsLoader";
-import { RemoteCommitState, useRemoteCommitState } from "./hooks/remote-state";
+import {
+  ComparisonState,
+  RemoteCommitState,
+  useMergeRequestReviewPage,
+  useRemoteCompareFrom,
+  useViewMode,
+} from "./hooks/remote-state";
 import RemoteHeaderNav from "./header/RemoteHeaderNav";
 import RemoteHomeRead from "./home/RemoteHomeRead";
 import RemotePluginController from "../plugin/RemotePluginController";
 import HistoryDisplay from "./history/HistoryDisplay";
+import { RepoPage } from "../types";
+import ProposedMRHistoryDisplay from "./history/ProposedMRHistoryDisplay";
 
 const LoadingContainer = styled.div`
   display: flex;
@@ -39,7 +47,7 @@ const NoPluginText = styled.h3`
   font-size: 2.5rem;
   font-family: "MavenPro";
   text-align: center;
-  color: ${props => props.theme.colors.contrastText};
+  color: ${(props) => props.theme.colors.contrastText};
 `;
 
 interface Props {
@@ -48,14 +56,8 @@ interface Props {
   isExpanded: boolean;
   onSetIsExpanded: (isExpanded: boolean) => void;
   remoteCommitState: RemoteCommitState;
-  page:
-    | "history"
-    | "home"
-    | "settings"
-    | "branch-rules"
-    | "merge-requests"
-    | "merge-request"
-    | "merge-request-review";
+  comparisonState: ComparisonState;
+  page: RepoPage;
 }
 
 const RemoteRepoController = (props: Props) => {
@@ -70,15 +72,12 @@ const RemoteRepoController = (props: Props) => {
       //if (event.metaKey && event.shiftKey  && event.key == "e") {
       //  onToggleCommandMode();
       //}
-
       //if (event.metaKey && event.shiftKey  && event.key == "c") {
       //  onToggleCompare();
       //}
-
       //if (event.metaKey && event.shiftKey  && event.key == "[") {
       //  onGoToBefore();
       //}
-
       //if (event.metaKey && event.shiftKey  && event.key == "]") {
       //  onGoToAfter();
       //}
@@ -89,15 +88,9 @@ const RemoteRepoController = (props: Props) => {
     };
   }, []);
 
-  //const remoteRepoHeader = useMemo(() => {
-  //  if (props.remoteCommitState?.isLoading || !props.remoteCommitState) {
-
-  //    return null;
-  //  }
-  //  return (
-  //  );
-  //}, [props.repository, props.plugin, props.remoteCommitState?.isLoading, props.remoteCommitState]);
-
+  const { reviewPage } = useMergeRequestReviewPage();
+  const viewMode = useViewMode(props.page);
+  const { compareFrom} = useRemoteCompareFrom();
   const mainBody = useMemo(() => {
     if (props.page == "history") {
       return (
@@ -108,62 +101,124 @@ const RemoteRepoController = (props: Props) => {
         />
       );
     }
-    if (props.page == "home") {
-      if (props.plugin != "home") {
-
-      const hasPlugin = !!props.remoteCommitState?.renderedState?.plugins?.find?.(
-        (v) => props.plugin == v.key
-      );
-      if (!hasPlugin) {
-          return (
-            <NoPluginContainer>
-              <NoPluginTextWrapper>
-                <NoPluginText>{`${props.plugin} not installed`}</NoPluginText>
-              </NoPluginTextWrapper>
-            </NoPluginContainer>
-          );
-      }
-
+    if (props.page == "merge-request-create" && reviewPage == "commits") {
       return (
-        <>
-          {props.remoteCommitState?.renderedState?.plugins?.map((plugin) => {
-            return (
-              <React.Fragment key={plugin.key + ":" + plugin.value}>
-                {plugin.key == props.plugin && (
-                  <RemotePluginController
-                    pluginName={props.plugin}
-                    repository={props.repository}
-                    isExpanded={props.isExpanded}
-                    onSetIsExpanded={props.onSetIsExpanded}
-                    remoteCommitState={props.remoteCommitState}
-                  />
-                )}
-              </React.Fragment>
-            )
-          })}
-        </>
+        <ProposedMRHistoryDisplay
+          repository={props.repository}
+          remoteCommitState={props.remoteCommitState}
+          plugin={props.plugin}
+        />
       );
+    }
+    if (props.page == "home" || props.page == "merge-request-create") {
+      if (props.plugin != "home") {
+        if (viewMode == "compare" && compareFrom == "before") {
+          const hasPlugin =
+            !!props.comparisonState?.beforeRemoteCommitState.renderedState?.plugins?.find?.(
+              (v) => props.plugin == v.key
+            );
+          if (!hasPlugin) {
+            return (
+              <NoPluginContainer>
+                <NoPluginTextWrapper>
+                  <NoPluginText>{`${props.plugin} not installed before`}</NoPluginText>
+                </NoPluginTextWrapper>
+              </NoPluginContainer>
+            );
+          }
+        } else {
+          const hasPlugin =
+            !!props.remoteCommitState?.renderedState?.plugins?.find?.(
+              (v) => props.plugin == v.key
+            );
+          if (!hasPlugin) {
+            return (
+              <NoPluginContainer>
+                <NoPluginTextWrapper>
+                  <NoPluginText>{viewMode == "view" ? `${props.plugin} not installed` : `${props.plugin} not installed after`}</NoPluginText>
+                </NoPluginTextWrapper>
+              </NoPluginContainer>
+            );
+          }
+        }
 
+        if (viewMode == "compare" && compareFrom == "before") {
+          return (
+            <>
+              {props.comparisonState?.beforeRemoteCommitState?.renderedState?.plugins?.map((plugin) => {
+                return (
+                  <React.Fragment key={plugin.key + ":" + plugin.value}>
+                    {plugin.key == props.plugin && (
+                      <RemotePluginController
+                        pluginName={props.plugin}
+                        repository={props.repository}
+                        isExpanded={props.isExpanded}
+                        onSetIsExpanded={props.onSetIsExpanded}
+                        remoteCommitState={props.remoteCommitState}
+                        comparisonState={props.comparisonState}
+                        page={props.page}
+                      />
+                    )}
+                  </React.Fragment>
+                );
+              })}
+            </>
+          );
+        }
+
+        return (
+          <>
+            {props.remoteCommitState?.renderedState?.plugins?.map((plugin) => {
+              return (
+                <React.Fragment key={plugin.key + ":" + plugin.value}>
+                  {plugin.key == props.plugin && (
+                    <RemotePluginController
+                      pluginName={props.plugin}
+                      repository={props.repository}
+                      isExpanded={props.isExpanded}
+                      onSetIsExpanded={props.onSetIsExpanded}
+                      remoteCommitState={props.remoteCommitState}
+                      comparisonState={props.comparisonState}
+                      page={props.page}
+                    />
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </>
+        );
       }
       if (props.plugin == "home") {
         return (
           <RemoteHomeRead
             repository={props.repository}
             remoteCommitState={props.remoteCommitState}
+            comparisonState={props.comparisonState}
+            page={props.page}
           />
         );
       }
     }
     return null;
-  }, [props.page, props.plugin, props.remoteCommitState, props.repository, props.onSetIsExpanded, props.isExpanded]);
-
+  }, [
+    props.page,
+    props.plugin,
+    props.remoteCommitState,
+    props.comparisonState,
+    props.repository,
+    props.onSetIsExpanded,
+    props.isExpanded,
+    reviewPage,
+    viewMode,
+    compareFrom
+  ]);
 
   if (props.remoteCommitState.isLoading) {
     return (
       <>
-          <LoadingContainer>
-            <DotsLoader color={loaderColor} size={"large"} />
-          </LoadingContainer>
+        <LoadingContainer>
+          <DotsLoader color={loaderColor} size={"large"} />
+        </LoadingContainer>
       </>
     );
   }
@@ -171,6 +226,7 @@ const RemoteRepoController = (props: Props) => {
     <>
       <RemoteHeaderNav
         remoteCommitState={props.remoteCommitState}
+        comparisonState={props.comparisonState}
         repository={props.repository}
         plugin={props.plugin}
         page={props.page}

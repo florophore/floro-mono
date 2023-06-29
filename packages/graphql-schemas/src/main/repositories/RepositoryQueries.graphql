@@ -16,4 +16,14 @@ extend type Mutation {
     isPrivate: Boolean!
     licenseCode: String
   ): CreateUserRepositoryResponse
+
+  ignoreBranch(
+    repositoryId: ID!,
+    branchId: ID!
+  ): IgnoreBranchReponse
+}
+
+
+extend type Subscription {
+  repositoryUpdated(repositoryId: ID): Repository
 }

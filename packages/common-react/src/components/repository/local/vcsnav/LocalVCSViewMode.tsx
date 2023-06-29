@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import { Repository, useRepositoryUpdatesSubscription } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import styled from "@emotion/styled";
 import CurrentInfo from "@floro/storybook/stories/repo-components/CurrentInfo";
 import RepoActionButton from "@floro/storybook/stories/repo-components/RepoActionButton";
@@ -23,6 +23,9 @@ import ConfirmMergeWIPModal from "../modals/ConfirmMergeWIPModal";
 import ConfirmForcePullModal from "../modals/ConfirmForcePullModal";
 import ConfirmForcePushModal from "../modals/ConfirmForcePushModal";
 import CopyFromIcon from "@floro/common-assets/assets/images/icons/copy.dark.svg";
+import {
+  useSearchParams,
+} from "react-router-dom";
 
 const InnerContent = styled.div`
   display: flex;
@@ -117,9 +120,26 @@ const LocalVCSViewMode = (props: Props) => {
     updateCommand.mutate("compare");
   }, [updateCommand]);
 
-  const { data: fetchInfo, isLoading: pushInfoLoading } = useFetchInfo(
+  const { data: fetchInfo, isLoading: pushInfoLoading, refetch } = useFetchInfo(
     props.repository
   );
+
+  const [searchParams] = useSearchParams();
+  const branchId = searchParams.get('branch');
+  const sha = searchParams.get('sha');
+  const repoSubscription = useRepositoryUpdatesSubscription({
+    variables: {
+      repositoryId: props.repository.id,
+      branchId,
+      sha
+    }
+  });
+
+  useEffect(() => {
+    if (repoSubscription?.data) {
+      refetch();
+    }
+  }, [repoSubscription?.data])
 
   const isPushEnabled = usePushButtonEnabled(fetchInfo, pushInfoLoading);
   const isPullEnabled = usePullButtonEnabled(fetchInfo, pushInfoLoading);

@@ -12,8 +12,8 @@
     }
   },
   "imports": {
-    "theme": "0.0.12",
-    "palette": "0.0.12"
+    "theme": "0.0.15",
+    "palette": "0.0.15"
   },
   "types": {
     "Icon": {

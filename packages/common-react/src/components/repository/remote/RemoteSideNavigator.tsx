@@ -8,10 +8,11 @@ import PluginHomeSelectedLight from "@floro/common-assets/assets/images/icons/pl
 import PluginHomeSelectedDark from "@floro/common-assets/assets/images/icons/plugin_home.selected.dark.svg";
 import PluginHomeUnSelectedLight from "@floro/common-assets/assets/images/icons/plugin_home.unselected.light.svg";
 import PluginHomeUnSelectedDark from "@floro/common-assets/assets/images/icons/plugin_home.unselected.dark.svg";
-import { RemoteCommitState, useRemoteManifests } from "./hooks/remote-state";
+import { ComparisonState, RemoteCommitState, useBeforeCommitState, useRemoteCompareFrom, useRemoteManifests, useViewMode } from "./hooks/remote-state";
 import RemoteSideOption from "./RemoteSideOption";
 import { Manifest } from "./hooks/polyfill-floro";
 import { useRepoLinkBase } from "./hooks/remote-hooks";
+import { RepoPage } from "../types";
 
 const Navigator = styled.nav`
   width: 72px;
@@ -101,18 +102,16 @@ interface Props {
   repository: Repository;
   plugin: string;
   remoteCommitState: RemoteCommitState;
-  page:
-    | "history"
-    | "home"
-    | "settings"
-    | "branch-rules"
-    | "merge-requests"
-    | "merge-request"
-    | "merge-request-review";
+  comparisonState: ComparisonState;
+  page: RepoPage;
 }
 
 const RepoSideNavigator = (props: Props): React.ReactElement => {
   const theme = useTheme();
+  const { compareFrom} = useRemoteCompareFrom();
+  const beforeCommitState = useBeforeCommitState(props.repository, props.page);
+  const viewMode = useViewMode(props.page);
+
   const HomeIcon = useMemo(() => {
     if (props.plugin?.toLowerCase() == "home") {
     return theme.name == "light"
@@ -126,25 +125,103 @@ const RepoSideNavigator = (props: Props): React.ReactElement => {
 
   const pluginVersionList = useMemo(() => {
     const pluginList: Array<PluginVersion> = [];
-    for (const { key: pluginName } of props?.remoteCommitState?.renderedState?.plugins ?? []) {
-      const pv = props.repository.branchState?.commitState?.pluginVersions?.find(v => v?.name == pluginName);
-      if (pv) {
-        pluginList.push(pv);
+    if (viewMode == "compare" && compareFrom == "before") {
+      for (const { key: pluginName } of props?.comparisonState
+        ?.beforeRemoteCommitState.renderedState?.plugins ?? []) {
+        const pv =
+          beforeCommitState?.pluginVersions?.find(
+            (v) => v?.name == pluginName
+          );
+        if (pv) {
+          pluginList.push(pv);
+        }
+      }
+    } else {
+      for (const { key: pluginName } of props?.remoteCommitState?.renderedState
+        ?.plugins ?? []) {
+        const pv =
+          props.repository.branchState?.commitState?.pluginVersions?.find(
+            (v) => v?.name == pluginName
+          );
+        if (pv) {
+          pluginList.push(pv);
+        }
       }
     }
     return pluginList;
-  }, [props?.remoteCommitState?.renderedState, props?.repository?.branchState?.commitState?.pluginVersions]);
+  }, [
+    props?.remoteCommitState?.renderedState,
+    props?.repository?.branchState?.commitState?.pluginVersions,
+    props?.comparisonState?.beforeRemoteCommitState.renderedState?.plugins,
+    compareFrom,
+    viewMode,
+    beforeCommitState?.pluginVersions,
+  ]);
 
   const invalidityMap = useMemo(() => {
     const out: { [key: string]: boolean} = {};
-    for (const plugin in props?.remoteCommitState?.invalidStates) {
-      out[plugin] = (props?.remoteCommitState?.invalidStates?.[plugin] ?? []).length > 0;
+    if (viewMode == "compare" && compareFrom == "before") {
+      for (const plugin in props?.comparisonState?.beforeRemoteCommitState?.invalidStates) {
+        out[plugin] = (props?.comparisonState?.beforeRemoteCommitState?.invalidStates?.[plugin] ?? []).length > 0;
+      }
+    } else {
+      for (const plugin in props?.remoteCommitState?.invalidStates) {
+        out[plugin] = (props?.remoteCommitState?.invalidStates?.[plugin] ?? []).length > 0;
+      }
     }
     return out;
-  }, [props?.remoteCommitState?.invalidStates]);
+  }, [props?.remoteCommitState?.invalidStates,
+    props?.comparisonState?.beforeRemoteCommitState.invalidStates,
+    compareFrom,
+    viewMode,
+  ]);
+    const homeHasAdditions = useMemo(() => {
+      if (viewMode != "compare" || compareFrom != "after") {
+        return false;
+      }
+      if ((props?.comparisonState?.apiDiff?.description?.added?.length ?? 0) > 0) {
+        return true;
+      }
+      if ((props?.comparisonState?.apiDiff?.licenses?.added?.length ?? 0) > 0) {
+        return true;
+      }
+      if ((props?.comparisonState?.apiDiff?.plugins?.added?.length ?? 0) > 0) {
+        return true;
+      }
+      return false;
+    }, [
+      viewMode,
+      compareFrom,
+      props?.comparisonState?.apiDiff,
+    ]);
+
+    const homeHasRemovals = useMemo(() => {
+      if (viewMode != "compare" || compareFrom != "before") {
+        return false;
+      }
+      if ((props?.comparisonState?.apiDiff?.description?.removed?.length ?? 0) > 0) {
+        return true;
+      }
+      if ((props?.comparisonState?.apiDiff?.licenses?.removed?.length ?? 0) > 0) {
+        return true;
+      }
+      if ((props?.comparisonState?.apiDiff?.plugins?.removed?.length ?? 0) > 0) {
+        return true;
+      }
+      return false;
+    }, [
+      compareFrom,
+      props?.comparisonState?.apiDiff,
+      viewMode
+    ]);
 
   const linkBase = useRepoLinkBase(props.repository, props.page);
   const mainLink = useMemo(() => {
+    if (viewMode == "compare") {
+      return `${linkBase}?from=remote&compare_from=${
+        compareFrom
+      }`;
+    }
     if (props.repository?.branchState?.commitState?.sha) {
       return `${linkBase}?from=remote&sha=${
         props.repository?.branchState?.commitState?.sha
@@ -153,7 +230,7 @@ const RepoSideNavigator = (props: Props): React.ReactElement => {
     return `${linkBase}?from=remote&branch=${
       props.repository?.branchState?.branchId
     }`;
-  }, [linkBase, props.plugin, props.repository?.branchState?.branchId, props.repository?.branchState?.commitState?.sha]);
+  }, [linkBase, props.plugin, props.repository?.branchState?.branchId, props.repository?.branchState?.commitState?.sha, viewMode, compareFrom]);
 
   return (
     <Navigator>
@@ -176,6 +253,20 @@ const RepoSideNavigator = (props: Props): React.ReactElement => {
                 {"home"}
               </NavText>
             </NavIconWrapper>
+            {homeHasAdditions && (
+              <ChangeDot
+                style={{
+                  background: theme.colors.addedBackground,
+                }}
+              />
+            )}
+            {homeHasRemovals && (
+              <ChangeDot
+                style={{
+                  background: theme.colors.removedBackground,
+                }}
+              />
+            )}
           </Link>
         </NavOption>
         {pluginVersionList?.map((pluginVersion, index) => {
@@ -192,6 +283,10 @@ const RepoSideNavigator = (props: Props): React.ReactElement => {
               isSelected={isSelected}
               key={index}
               isInvalid={isInvalid}
+              repository={props.repository}
+              remoteCommitState={props.remoteCommitState}
+              comparisonState={props.comparisonState}
+              page={props.page}
             />
           )
         })}

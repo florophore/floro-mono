@@ -686,4 +686,22 @@ export default class RequestCache {
     const cache = this.getCache(cacheKey);
     delete cache[`merge-request-comment-reply:${mergeRequestCommentReply.id}`];
   }
+
+
+  public setOpenUserBranches(
+    cacheKey: string,
+    repositoryId: string,
+    branches: Array<FloroBranch>
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`open-user-branches:${repositoryId}`] = branches;
+  }
+
+  public getOpenUserBranches(
+    cacheKey: string,
+    repositoryId: string,
+  ): Array<FloroBranch> {
+    const cache = this.getCache(cacheKey);
+    return cache[`open-user-branches:${repositoryId}`];
+  }
 }

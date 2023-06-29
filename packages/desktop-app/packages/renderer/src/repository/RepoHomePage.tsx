@@ -10,7 +10,7 @@ import RepoController from '@floro/common-react/src/components/repository/RepoCo
 import { useApolloClient } from '@apollo/client';
 
 interface Props {
-  page: "history"|"home"|"settings"|"branch-rules"|"merge-requests"|"merge-request"|"merge-request-review";
+  page: "history"|"home"|"settings"|"branch-rules"|"merge-requests"|"merge-request"|"merge-request-review"|"merge-request-create";
 }
 
 const RepoHomePage = (props: Props) => {
@@ -30,6 +30,7 @@ const RepoHomePage = (props: Props) => {
       branchId,
       sha
     },
+    fetchPolicy: 'cache-and-network'
   });
 
 

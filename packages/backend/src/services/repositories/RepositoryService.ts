@@ -596,6 +596,21 @@ export default class RepositoryService {
     );
   }
 
+  public getCommitHistoryBetween(commits: Array<Commit>, topSha: string|undefined, bottomSha: string|undefined) {
+    const history =  this.repositoryDatasourceFactoryService.getCommitHistory(
+      commits,
+      topSha
+    );
+    const out: Array<Commit> = []
+    let current = history[0];
+    let index = 0;
+    while (current && current?.sha != bottomSha) {
+      out.push(current);
+      current = history[++index];
+    }
+    return out;
+  }
+
   public getRevertRanges(commitHistory: Array<Commit>) {
     const out: Array<{ fromIdx: number; toIdx: number }> = [];
     const commitMap = {};

@@ -19,6 +19,7 @@ import { Manifest } from "floro/dist/src/plugins";
 import PluginsVersionsContext from "@floro/database/src/contexts/plugins/PluginVersionsContext";
 import { SourceCommitNode } from "floro/dist/src/sourcegraph";
 import PluginCommitUtilizationsContext from "@floro/database/src/contexts/repositories/PluginCommitUtilizationsContext";
+import { User } from "@floro/database/src/entities/User";
 
 @injectable()
 export default class RepositoryDatasourceFactoryService {
@@ -123,8 +124,8 @@ export default class RepositoryDatasourceFactoryService {
     const divergenceOrigin = await getDivergenceOrigin(
       tmpDataSource,
       repository.id,
-      mergeIntoSha,
       branch?.lastCommit as string,
+      mergeIntoSha,
     );
     const divergenceSha = getMergeOriginSha(divergenceOrigin);
     const shas = [branch.lastCommit, mergeIntoSha, divergenceSha]?.filter(v => !!v);
@@ -208,7 +209,8 @@ export default class RepositoryDatasourceFactoryService {
     repository: Repository,
     branch: FloroBranch,
     commits: Array<Commit>,
-    pluginVersions: Array<PluginVersion>
+    pluginVersions: Array<PluginVersion>,
+    user?: User
   ): Promise<DataSource> {
     const pluginMap: { [pluginVersionName: string]: Manifest } = {};
     const commitMap: { [sha: string]: Commit } = {};
@@ -239,6 +241,9 @@ export default class RepositoryDatasourceFactoryService {
       comparison: null,
     };
     return makeDataSource({
+      repoExists: async (): Promise<boolean> => {
+        return true;
+      },
       readCurrentRepoState: async (): Promise<RepoState> => {
         return repoState;
       },
@@ -324,7 +329,7 @@ export default class RepositoryDatasourceFactoryService {
     });
   }
 
-  public getCommitHistory(commits: Array<Commit>, sha: string) {
+  public getCommitHistory(commits: Array<Commit>, sha: string|undefined) {
     const commitMap: { [sha: string]: Commit } = {};
     for (const commit of commits) {
       if (commit.sha) {

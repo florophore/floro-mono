@@ -23,6 +23,7 @@ query fetchRepositoryHistory(
           defaultBranchId
           name
           commitsSize
+          updatedAt
           commitSearch(searchQuery: $searchQuery) {
             sha
             message
@@ -81,7 +82,6 @@ query fetchRepositoryHistory(
               }
             }
           }
-          updatedAt
           commitState(sha: $sha) {
             sha
             kvLink

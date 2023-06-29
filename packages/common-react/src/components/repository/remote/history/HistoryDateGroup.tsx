@@ -66,7 +66,8 @@ interface Props {
   remoteCommitState: RemoteCommitState;
   datedCommitGroup: {date: string, commits: Array<CommitInfo>};
   homeLink: string;
-  onSelect: (sha: string, idx: number) => void;
+  onSelect?: (sha: string, idx: number) => void;
+  hideSelect?: boolean;
 }
 
 const HistoryDateGroup = (props: Props) => {
@@ -104,6 +105,7 @@ const HistoryDateGroup = (props: Props) => {
                     commit={commit}
                     homeLink={props.homeLink}
                     onSelect={props.onSelect}
+                    hideSelect={props.hideSelect}
                   />
                 )
               })}

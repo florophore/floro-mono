@@ -23,6 +23,7 @@ import RedXCircleLight from "@floro/common-assets/assets/images/icons/red_x_circ
 import RedXCircleDark from "@floro/common-assets/assets/images/icons/red_x_circle.dark.svg";
 
 import TimeAgo from "javascript-time-ago";
+import { RepoPage } from "../../types";
 
 const InnerContent = styled.div`
   display: flex;
@@ -274,14 +275,7 @@ interface Props {
   repository: Repository;
   remoteCommitState: RemoteCommitState;
   plugin: string;
-  page:
-    | "history"
-    | "home"
-    | "settings"
-    | "branch-rules"
-    | "merge-requests"
-    | "merge-request"
-    | "merge-request-review";
+  page: RepoPage;
 }
 
 const RemoteVCSCommitHistory = (props: Props) => {

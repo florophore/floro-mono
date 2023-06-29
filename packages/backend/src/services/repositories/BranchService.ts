@@ -11,7 +11,7 @@ import { REPO_REGEX } from "@floro/common-web/src/utils/validators";
 import { Organization } from "@floro/database/src/entities/Organization";
 import { Repository } from "@floro/database/src/entities/Repository";
 import RepoAccessor from "@floro/storage/src/accessors/RepoAccessor";
-import {  QueryRunner } from "typeorm";
+import { QueryRunner } from "typeorm";
 import ProtectedBranchRulesContext from "@floro/database/src/contexts/repositories/ProtectedBranchRulesContext";
 import ProtectedBranchRulesEnabledUserSettingsContext from "@floro/database/src/contexts/repositories/ProtectedBranchRulesEnabledUserSettingsContext";
 import ProtectedBranchRulesEnabledRoleSettingsContext from "@floro/database/src/contexts/repositories/ProtectedBranchRulesEnabledRoleSettingsContext";
@@ -23,12 +23,15 @@ import {
   BRANCH_NAME_REGEX,
   getBranchIdFromName,
   branchIdIsCyclic,
+  RemoteSettings,
 } from "floro/dist/src/repo";
 import RepoRBACService from "./RepoRBACService";
 import RepositoryService from "./RepositoryService";
 import UsersContext from "@floro/database/src/contexts/users/UsersContext";
 import OrganizationsContext from "@floro/database/src/contexts/organizations/OrganizationsContext";
 import BranchPushHandler from "../events/BranchPushEventHandler";
+import { Branch } from "@floro/database/src/entities/Branch";
+import MergeRequestsContext from "@floro/database/src/contexts/merge_requests/MergeRequestsContext";
 
 export const LICENSE_CODE_LIST = new Set([
   "apache_2",
@@ -80,83 +83,91 @@ export default class BranchService {
   }
 
   // only ever calll this during repo creation
-  public async initMainBranch(queryRunner: QueryRunner, repository: Repository, currentUser: User) {
-
-    const branchesContext = await this.contextFactory.createContext(BranchesContext, queryRunner);
-    const protectedBranchRulesContext = await this.contextFactory.createContext(ProtectedBranchRulesContext, queryRunner);
+  public async initMainBranch(
+    queryRunner: QueryRunner,
+    repository: Repository,
+    currentUser: User
+  ) {
+    const branchesContext = await this.contextFactory.createContext(
+      BranchesContext,
+      queryRunner
+    );
+    const protectedBranchRulesContext = await this.contextFactory.createContext(
+      ProtectedBranchRulesContext,
+      queryRunner
+    );
     const mainBranch = await branchesContext.create({
-        name: "Main",
-        branchId: "main",
-        createdById: currentUser.id,
-        createdByUsername: currentUser.username,
-        createdAt: (new Date()).toISOString(),
-        organizationId: repository?.organizationId,
-        repositoryId: repository?.id
+      name: "Main",
+      branchId: "main",
+      createdById: currentUser.id,
+      createdByUsername: currentUser.username,
+      createdAt: new Date().toISOString(),
+      organizationId: repository?.organizationId,
+      repositoryId: repository?.id,
     });
     const branchRule = await protectedBranchRulesContext.create({
-        branchId: mainBranch.branchId,
-        branchName: mainBranch.name,
-        disableDirectPushing: true,
-        requireApprovalToMerge: true,
-        automaticallyDeleteMergedFeatureBranches: true,
-        anyoneCanCreateMergeRequests: true,
-        anyoneWithApprovalCanMerge: true,
-        requireReapprovalOnPushToMerge: true,
-        anyoneCanMergeMergeRequests: repository.isPrivate && repository.repoType == "user_repo", // by default a private repo user can do anything
-        anyoneCanApproveMergeRequests: repository.isPrivate, // limit in public case
-        anyoneCanRevert: repository.isPrivate, // limit in public case
-        anyoneCanAutofix: repository.isPrivate, // limit in public case
-        repositoryId: repository?.id,
+      branchId: mainBranch.branchId,
+      branchName: mainBranch.name,
+      disableDirectPushing: true,
+      requireApprovalToMerge: true,
+      automaticallyDeleteMergedFeatureBranches: true,
+      anyoneCanCreateMergeRequests: true,
+      anyoneWithApprovalCanMerge: true,
+      requireReapprovalOnPushToMerge: true,
+      anyoneCanMergeMergeRequests:
+        repository.isPrivate && repository.repoType == "user_repo", // by default a private repo user can do anything
+      anyoneCanApproveMergeRequests: repository.isPrivate, // limit in public case
+      anyoneCanRevert: repository.isPrivate, // limit in public case
+      anyoneCanAutofix: repository.isPrivate, // limit in public case
+      repositoryId: repository?.id,
     });
 
     const settingNames = [
-        'anyoneCanApproveMergeRequests',
-        'anyoneCanRevert',
-        'anyoneCanAutofix',
-    ]
+      "anyoneCanApproveMergeRequests",
+      "anyoneCanRevert",
+      "anyoneCanAutofix",
+    ];
 
     if (repository.isPrivate) {
-        if (repository.repoType == "user_repo") {
-            for (const settingName of settingNames) {
-                const protectedBranchRulesEnabledUserSettingsContext =
-                await this.contextFactory.createContext(
-                    ProtectedBranchRulesEnabledUserSettingsContext,
-                    queryRunner
-                );
-                await protectedBranchRulesEnabledUserSettingsContext.create({
-                    settingName,
-                    protectedBranchRuleId: branchRule.id,
-                    userId: currentUser.id,
-                })
-            }
+      if (repository.repoType == "user_repo") {
+        for (const settingName of settingNames) {
+          const protectedBranchRulesEnabledUserSettingsContext =
+            await this.contextFactory.createContext(
+              ProtectedBranchRulesEnabledUserSettingsContext,
+              queryRunner
+            );
+          await protectedBranchRulesEnabledUserSettingsContext.create({
+            settingName,
+            protectedBranchRuleId: branchRule.id,
+            userId: currentUser.id,
+          });
         }
+      }
 
-        if (repository.repoType == "org_repo") {
-
-            const organizationRolesContext =
-                await this.contextFactory.createContext(
-                OrganizationRolesContext,
-                queryRunner
-                );
-            const adminRole =
-              await organizationRolesContext.getRoleForOrgByPresetName(
-                repository.organizationId,
-                "admin"
-              );
-            for (const settingName of settingNames) {
-                const protectedBranchRulesEnabledRoleSettingsContext =
-                await this.contextFactory.createContext(
-                    ProtectedBranchRulesEnabledRoleSettingsContext,
-                    queryRunner
-                );
-                await protectedBranchRulesEnabledRoleSettingsContext.create({
-                    settingName,
-                    protectedBranchRuleId: branchRule.id,
-                    roleId: adminRole.id
-                })
-            }
-
+      if (repository.repoType == "org_repo") {
+        const organizationRolesContext =
+          await this.contextFactory.createContext(
+            OrganizationRolesContext,
+            queryRunner
+          );
+        const adminRole =
+          await organizationRolesContext.getRoleForOrgByPresetName(
+            repository.organizationId,
+            "admin"
+          );
+        for (const settingName of settingNames) {
+          const protectedBranchRulesEnabledRoleSettingsContext =
+            await this.contextFactory.createContext(
+              ProtectedBranchRulesEnabledRoleSettingsContext,
+              queryRunner
+            );
+          await protectedBranchRulesEnabledRoleSettingsContext.create({
+            settingName,
+            protectedBranchRuleId: branchRule.id,
+            roleId: adminRole.id,
+          });
         }
+      }
     }
   }
 
@@ -182,7 +193,8 @@ export default class BranchService {
       const canPush = await this.repoRBAC.userHasPermissionToPush(
         repo,
         user,
-        branch.id
+        branch.id,
+        queryRunner
       );
       if (!canPush) {
         await queryRunner.rollbackTransaction();
@@ -230,12 +242,11 @@ export default class BranchService {
             await organizationsContext.updateOrganizationById(
               organization?.id as string,
               {
-                billingStatus: "delinquent"
+                billingStatus: "delinquent",
               }
             );
           }
-        }
-        else {
+        } else {
           const usersContext = await this.contextFactory.createContext(
             UsersContext,
             queryRunner
@@ -258,11 +269,15 @@ export default class BranchService {
         }
       }
 
-      const updatedRepo = await repositoriesContext.updateRepo(repo,  {
-        lastRepoUpdateAt: (new Date()).toISOString()
+      const updatedRepo = await repositoriesContext.updateRepo(repo, {
+        lastRepoUpdateAt: new Date().toISOString(),
       });
 
-      const ignoredBranchNotificationsContext = await this.contextFactory.createContext(IgnoredBranchNotificationsContext, queryRunner);
+      const ignoredBranchNotificationsContext =
+        await this.contextFactory.createContext(
+          IgnoredBranchNotificationsContext,
+          queryRunner
+        );
       const hasIgnoredBranch =
         await ignoredBranchNotificationsContext.hasIgnoredBranchNotification(
           repo.id,
@@ -270,11 +285,12 @@ export default class BranchService {
           branch.id
         );
       if (hasIgnoredBranch) {
-        const ignoredBranchNotification = await ignoredBranchNotificationsContext.getIgnoredBranch(
-          repo.id,
-          user.id,
-          branch.id
-        );
+        const ignoredBranchNotification =
+          await ignoredBranchNotificationsContext.getIgnoredBranch(
+            repo.id,
+            user.id,
+            branch.id
+          );
         if (ignoredBranchNotification) {
           await ignoredBranchNotificationsContext.updateIgnoredBranchNotification(
             ignoredBranchNotification,
@@ -286,15 +302,21 @@ export default class BranchService {
       }
 
       for (const handler of this.branchPushHandlers) {
-          await handler.onBranchChanged(queryRunner, updatedRepo, user, pushedBranch);
+        await handler.onBranchChanged(
+          queryRunner,
+          updatedRepo,
+          user,
+          pushedBranch
+        );
       }
       await queryRunner.commitTransaction();
       return {
         action: "BRANCH_PUSHED",
         repository: updatedRepo,
-        branch: pushedBranch
+        branch: pushedBranch,
       };
     } catch (e: any) {
+      console.log("E", e);
       if (!queryRunner.isReleased) {
         await queryRunner.rollbackTransaction();
       }
@@ -372,7 +394,6 @@ export default class BranchService {
           baseBranchId: floroBranch?.baseBranchId ?? undefined,
           lastCommit: floroBranch?.lastCommit ?? undefined,
         });
-        await queryRunner.commitTransaction();
         return updatedBranch;
       }
       const branchId = getBranchIdFromName(floroBranch?.name);
@@ -393,11 +414,75 @@ export default class BranchService {
     }
   }
 
-  public testBranchIsCyclic(branches: Array<FloroBranch>, branch: FloroBranch|undefined) {
+  public testBranchIsCyclic(
+    branches: Array<FloroBranch>,
+    branch: FloroBranch | undefined
+  ) {
     if (!branch?.id || !branch?.baseBranchId) {
       return false;
     }
-    const testBranches = [...branches.filter(b => b.baseBranchId != branch.id), branch];
+    const testBranches = [
+      ...branches.filter((b) => b.baseBranchId != branch.id),
+      branch,
+    ];
     return branchIdIsCyclic(branch.id, testBranches);
+  }
+
+  public async getOpenBranchesByUser(
+    repository: Repository,
+    user: User,
+    branches: Array<FloroBranch>,
+    remoteSettings: RemoteSettings,
+    filterIgnored: boolean
+  ): Promise<Array<FloroBranch>> {
+    const ignoredBranchNotificationsContext =
+      await this.contextFactory.createContext(
+        IgnoredBranchNotificationsContext
+      );
+    const mergeRequestsContext = await this.contextFactory.createContext(
+      MergeRequestsContext
+    );
+    const userBranches = branches?.filter((branch) => {
+      return branch.createdBy == user.id;
+    });
+
+    const openUserBranches: Array<FloroBranch> = [];
+    for (const branch of userBranches) {
+      if (branch.id == repository.defaultBranchId) {
+        continue;
+      }
+      if (!branch?.lastCommit) {
+        continue;
+      }
+      const baseBranchRule = remoteSettings.branchRules.find(
+        (b) => b.branchId == branch.baseBranchId
+      );
+      if (baseBranchRule && !baseBranchRule?.canCreateMergeRequests) {
+        continue;
+      }
+      if (filterIgnored) {
+        const hasIgnoredBranch =
+          await ignoredBranchNotificationsContext.hasIgnoredBranchNotification(
+            repository.id,
+            user.id,
+            branch.id
+          );
+        if (hasIgnoredBranch) {
+          continue;
+        }
+      }
+      const branchHasOpenRequest =
+        await mergeRequestsContext.repoHasOpenRequestOnBranch(
+          repository.id,
+          branch.id
+        );
+      if (branchHasOpenRequest) {
+        continue;
+      }
+      openUserBranches.push(branch);
+    }
+    return openUserBranches.sort((a, b) => {
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
   }
 }

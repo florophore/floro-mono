@@ -103,6 +103,9 @@ interface Props {
   pluginVersions: Array<PluginVersion>;
   pluginName: string;
   pluginVersion: string;
+  isCompareMode?: boolean;
+  wasAdded?: boolean;
+  wasRemoved?: boolean;
 }
 
 const RemotePluginEditorRow = (props: Props) => {
@@ -139,7 +142,13 @@ const RemotePluginEditorRow = (props: Props) => {
       <CenterInfo>
         <DisplayName
           style={{
-            color: theme.colors.connectionTextColor
+            color: props.isCompareMode
+              ? props.wasAdded
+                ? theme.colors.addedText
+                : props.wasRemoved
+                ? theme.colors.removedText
+                : theme.colors.connectionTextColor
+              : theme.colors.connectionTextColor
           }}
         >
           {pluginVersion?.displayName}
@@ -148,7 +157,13 @@ const RemotePluginEditorRow = (props: Props) => {
       <RightSide>
         <VersionNumber
           style={{
-            color: theme.colors.connectionTextColor
+            color: props.isCompareMode
+              ? props.wasAdded
+                ? theme.colors.addedText
+                : props.wasRemoved
+                ? theme.colors.removedText
+                : theme.colors.connectionTextColor
+              : theme.colors.connectionTextColor
           }}
         >
           {props.pluginVersion}

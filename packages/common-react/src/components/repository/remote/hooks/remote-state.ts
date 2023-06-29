@@ -1,6 +1,10 @@
-import { useMemo } from "react";
-import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import { useMemo, useCallback } from "react";
+import {
+  CommitState,
+  Repository,
+} from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { useQuery } from "react-query";
+import { useSearchParams} from "react-router-dom";
 import {
   Manifest,
   manifestListToSchemaMap,
@@ -12,22 +16,26 @@ import {
   getInvalidStates,
   topSortManifests,
   DataSource,
+  getStateDiffFromCommitStates,
+  ApiDiff,
+  getApiDiff,
+  EMPTY_COMMIT_DIFF,
 } from "./polyfill-floro";
 import { useRemoteKVState, useRemoteRenderedState } from "./remote-hooks";
+import { RepoPage } from "../../types";
 
-export const useRemoteManifests = (repo: Repository): Array<Manifest> => {
+export const useRemoteManifests = (
+  commitState?: CommitState | null
+): Array<Manifest> => {
   return useMemo(() => {
-    if (!repo?.branchState?.commitState?.pluginVersions) {
+    if (!commitState?.pluginVersions) {
       return [];
     }
-    const manifests = repo?.branchState?.commitState?.pluginVersions?.map(
-      (pluginVersion) => {
-        return JSON.parse(pluginVersion?.manifest ?? "{}") as Manifest;
-      },
-      []
-    );
+    const manifests = commitState?.pluginVersions?.map((pluginVersion) => {
+      return JSON.parse(pluginVersion?.manifest ?? "{}") as Manifest;
+    }, []);
     return topSortManifests(manifests);
-  }, [repo?.branchState?.commitState?.pluginVersions]);
+  }, [commitState?.pluginVersions]);
 };
 
 export const useInvalidStates = (
@@ -37,8 +45,8 @@ export const useInvalidStates = (
   sha?: string
 ) => {
   return useQuery(
-    "remote-repo--invalid-state:" + (sha ?? "none") + ":loading" + isLoading,
-    async (): Promise<ApiStoreInvalidity|null> => {
+    "remote-repo-invalid-state:" + (sha ?? "none") + ":loading" + isLoading,
+    async (): Promise<ApiStoreInvalidity | null> => {
       if (!sha) {
         return {};
       }
@@ -58,16 +66,19 @@ export const useInvalidStates = (
 
 export interface RemoteCommitState {
   renderedState: RenderedApplicationState;
+  kvState: ApplicationKVState;
   schemaMap: { [pluginName: string]: Manifest };
   isLoading: boolean;
   invalidStates: ApiStoreInvalidity;
   binaryMap: { [fileName: string]: string };
 }
 
-export const useRemoteCommitState = (repo: Repository): RemoteCommitState => {
-  const renderedStateQuery = useRemoteRenderedState(repo);
-  const kvStateQuery = useRemoteKVState(repo);
-  const manifests = useRemoteManifests(repo);
+export const useRemoteCommitState = (
+  commitState?: CommitState | null
+): RemoteCommitState => {
+  const renderedStateQuery = useRemoteRenderedState(commitState);
+  const kvStateQuery = useRemoteKVState(commitState);
+  const manifests = useRemoteManifests(commitState);
 
   const renderedState = useMemo(() => {
     return renderedStateQuery?.data ?? EMPTY_RENDERED_APPLICATION_STATE;
@@ -89,7 +100,7 @@ export const useRemoteCommitState = (repo: Repository): RemoteCommitState => {
 
   const binaryMap = useMemo((): { [fileName: string]: string } => {
     return (
-      repo?.branchState?.commitState?.binaryRefs?.reduce?.((acc, binRef) => {
+      commitState?.binaryRefs?.reduce?.((acc, binRef) => {
         if (binRef?.fileName) {
           return {
             [binRef.fileName]: binRef?.url as string,
@@ -99,7 +110,7 @@ export const useRemoteCommitState = (repo: Repository): RemoteCommitState => {
         return acc;
       }, {} as { [fileName: string]: string }) ?? {}
     );
-  }, [repo?.branchState?.commitState?.binaryRefs]);
+  }, [commitState?.binaryRefs]);
 
   const datasource = useMemo(
     () =>
@@ -117,7 +128,7 @@ export const useRemoteCommitState = (repo: Repository): RemoteCommitState => {
     datasource,
     kvState,
     isLoading,
-    repo?.branchState?.commitState?.sha as string
+    commitState?.sha as string
   );
 
   const invalidStates = useMemo((): ApiStoreInvalidity => {
@@ -129,9 +140,157 @@ export const useRemoteCommitState = (repo: Repository): RemoteCommitState => {
 
   return {
     renderedState,
+    kvState,
     schemaMap,
     isLoading,
     invalidStates,
     binaryMap,
   };
+};
+
+export const useDiff = (
+  beforeRemoteState: RemoteCommitState,
+  afterRemoteState: RemoteCommitState,
+  mode: "view" | "compare"
+): ApiDiff => {
+  const diff = useMemo(() => {
+    if (mode == "view") {
+      return EMPTY_COMMIT_DIFF;
+    }
+    return getStateDiffFromCommitStates(
+      beforeRemoteState?.kvState,
+      afterRemoteState.kvState
+    );
+  }, [beforeRemoteState?.kvState, afterRemoteState.kvState, mode]);
+
+  return useMemo(() => {
+    if (mode == "view") {
+      return {
+        description: {
+          added: [],
+          removed: [],
+        },
+        licenses: {
+          added: [],
+          removed: [],
+        },
+        plugins: {
+          added: [],
+          removed: [],
+        },
+        store: {},
+      };
+    }
+    return  getApiDiff(
+      beforeRemoteState?.kvState,
+      afterRemoteState.kvState,
+      diff
+    );
+  }, [diff, beforeRemoteState?.kvState, afterRemoteState.kvState, mode]);
+};
+export const useBeforeCommitState = (
+  repository: Repository,
+  page: RepoPage
+): CommitState|null => {
+  return useMemo(() => {
+    if (page == "merge-request-create") {
+      return repository?.branchState?.proposedMergeRequest?.divergenceState ?? null;
+    }
+    return null;
+  }, [page]);
+};
+
+export const useViewMode = (
+  page: RepoPage
+): "view" | "compare" => {
+  return useMemo(() => {
+    if (page == "merge-request-create") {
+      return "compare";
+    }
+    return "view";
+  }, [page]);
+};
+
+export interface ComparisonState {
+  apiDiff: ApiDiff;
+  beforeRemoteCommitState: RemoteCommitState;
+}
+
+export const useComparisonState = (
+  page: RepoPage,
+  repository: Repository,
+  remoteCommitState: RemoteCommitState
+): ComparisonState => {
+  const mode = useViewMode(page);
+  const beforeCommitState = useMemo(() => {
+    if (page == "merge-request-create") {
+      return repository?.branchState?.proposedMergeRequest?.divergenceState;
+    }
+    return null;
+  }, [
+    mode,
+    page,
+    repository?.branchState?.proposedMergeRequest?.divergenceState,
+  ]);
+
+  const beforeRemoteCommitState = useRemoteCommitState(beforeCommitState);
+  const apiDiff = useDiff(beforeRemoteCommitState, remoteCommitState, mode);
+  return {
+    beforeRemoteCommitState,
+    apiDiff
+  };
+};
+
+export const useRemoteCompareFrom = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const compareFromRaw = searchParams.get("compare_from");
+  const plugin = searchParams.get("plugin") ?? "home";
+  const compareFrom = useMemo(() => {
+    if (compareFromRaw == "before") {
+      return "before";
+    }
+    return "after";
+  }, [compareFromRaw]);
+  const setCompareFrom = useCallback(
+    (compareFrom: "before" | "after") => {
+      setSearchParams({
+        plugin,
+        compare_from: compareFrom,
+      });
+    },
+    [searchParams, plugin]
+  );
+  return { compareFrom, setCompareFrom };
+};
+
+
+export const useMergeRequestReviewPage = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const reviewPageRaw = searchParams.get("review_page");
+  const plugin = searchParams.get("plugin") ?? "home";
+  const reviewPage = useMemo(() => {
+    if (reviewPageRaw == "commits") {
+      return "commits";
+    }
+    if (reviewPageRaw == "changes") {
+      return "changes";
+    }
+    return "none";
+  }, [reviewPageRaw]);
+  const setReviewPage = useCallback(
+    (reviewPage: "commits" | "changes" | "none") => {
+      if (reviewPage == "none") {
+        setSearchParams({
+          plugin
+        });
+        return;
+      }
+      setSearchParams({
+        review_page: reviewPage,
+        plugin
+      });
+    },
+    [searchParams, plugin]
+  );
+  return { reviewPage, setReviewPage };
 };

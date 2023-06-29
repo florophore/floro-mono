@@ -18,6 +18,7 @@ import {useParams, useSearchParams} from 'react-router-dom';
 import SearchInput from "@floro/storybook/stories/design-system/SearchInput";
 import { useRepoLinkBase } from "../hooks/remote-hooks";
 import { useNavigate } from "react-router";
+import { RepoPage } from "../../types";
 
 const InnerContent = styled.div`
   display: flex;
@@ -141,14 +142,7 @@ interface Props {
   repository: Repository;
   remoteCommitState: RemoteCommitState;
   plugin: string;
-  page:
-    | "history"
-    | "home"
-    | "settings"
-    | "branch-rules"
-    | "merge-requests"
-    | "merge-request"
-    | "merge-request-review";
+  page: RepoPage;
 }
 
 const RemoteVCSBranchHistory = (props: Props) => {

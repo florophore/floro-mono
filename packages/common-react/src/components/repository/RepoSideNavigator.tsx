@@ -3,20 +3,15 @@ import { Repository } from "@floro/graphql-schemas/src/generated/main-client-gra
 import { useSearchParams } from "react-router-dom";
 import LocalSideNavigator from "./local/LocalSideNavigator";
 import RemoteSideNavigator from "./remote/RemoteSideNavigator";
-import { RemoteCommitState } from "./remote/hooks/remote-state";
+import { ComparisonState, RemoteCommitState } from "./remote/hooks/remote-state";
+import { RepoPage } from "./types";
 
 interface Props {
   repository: Repository;
   plugin: string;
   remoteCommitState: RemoteCommitState;
-  page:
-    | "history"
-    | "home"
-    | "settings"
-    | "branch-rules"
-    | "merge-requests"
-    | "merge-request"
-    | "merge-request-review";
+  comparisonState: ComparisonState;
+  page: RepoPage;
 }
 
 const RepoSideNavigator = (props: Props): React.ReactElement => {
@@ -32,6 +27,7 @@ const RepoSideNavigator = (props: Props): React.ReactElement => {
   return (
     <RemoteSideNavigator
       remoteCommitState={props.remoteCommitState}
+      comparisonState={props.comparisonState}
       plugin={props.plugin}
       repository={props.repository}
       page={props.page}

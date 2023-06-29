@@ -22,6 +22,7 @@ import BranchSelector from "../BranchSelector";
 import TimeAgo from "javascript-time-ago";
 
 import en from "javascript-time-ago/locale/en";
+import ColorPalette from "@floro/styles/ColorPalette";
 
 TimeAgo.addDefaultLocale(en);
 
@@ -157,6 +158,17 @@ const ElapseText = styled.p`
 const ElapseSince = styled.span`
   font-weight: 400;
 `;
+
+const BranchHeadNotification = styled.div`
+  position: absolute;
+  top: 3px;
+  right: -20px;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  border: 1px solid ${ColorPalette.white};
+  background: ${props => props.theme.colors.warningTextColor};
+`
 
 
 export interface Props {
@@ -327,8 +339,9 @@ const RemoteCurrentInfo = (props: Props): React.ReactElement => {
               </Link>
             )}
             {!branchHeadIsMatching && props.currentHeadLink && (
-              <Link to={props.currentHeadLink}>
+              <Link style={{position: 'relative'}} to={props.currentHeadLink}>
                 <LinkLabelSpan>{"Go to branch head"}</LinkLabelSpan>
+                <BranchHeadNotification/>
               </Link>
             )}
           </LeftRow>

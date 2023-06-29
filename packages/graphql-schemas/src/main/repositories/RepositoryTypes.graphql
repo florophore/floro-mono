@@ -12,7 +12,8 @@ type Repository {
   updatedAt: DateTime
   branchState(branchId: ID): BranchState
   repoBranches: [RepoBranch]
-  openUserBranchesWithoutMergeRequests: [RepoBranch]
+  openUserBranchesWithoutMergeRequests(filterIgnored: Boolean): [RepoBranch]
+  openUserBranchesWithoutMergeRequestsCount: Int
   openMergeRequests(id: ID): MergeRequestPaginatedResult
   openMergeRequestsCount: Int
   closedMergeRequests(id: ID): MergeRequestPaginatedResult
@@ -65,13 +66,21 @@ type BranchState {
   commits(idx: Int, searchQuery: String): [CommitInfo]
   commitSearch(searchQuery: String): [CommitInfo]
   commitsSize: Int
-  proposedMergeRequest: ProposedMergeRequest
+  proposedMergeRequest(idx: Int): ProposedMergeRequest
 }
 
 type ProposedMergeRequest {
+  baseBranch: RepoBranch
   divergenceState: CommitState
-  isConflictFree: CommitState
+  isConflictFree: Boolean
+  isMerged: Boolean
+  canMerge: Boolean
+  existingMergeRequest: MergeRequest
+  canCreateMergeRequest: Boolean
   pendingCommits: [CommitInfo]
+  suggestedTitle: String
+  suggestedDescription: String
+  pendingCommitsCount: Int
 }
 
 type BinaryRef {
@@ -155,3 +164,17 @@ type FetchRepositoryError {
 union FetchRepositoryReponse =
     FetchRepositorySuccess
   | FetchRepositoryError
+
+type IgnoreBranchSuccess {
+  repository: Repository
+}
+
+type IgnoreBranchError {
+  message: String
+  type: String
+}
+
+union IgnoreBranchReponse =
+    IgnoreBranchSuccess
+  | IgnoreBranchError
+  | UnAuthenticatedError

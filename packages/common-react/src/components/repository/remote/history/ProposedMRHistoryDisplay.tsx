@@ -113,27 +113,16 @@ interface Props {
   plugin?: string;
 }
 
-const HistoryDisplay = (props: Props) => {
+const ProposedMRHistoryDisplay = (props: Props) => {
 
   const [searchParams] = useSearchParams();
-  const searchQuery = searchParams.get("query");
   const container = useRef<HTMLDivElement>(null);
 
   const theme = useTheme();
 
-  const isSearching = useMemo(() => {
-    return (searchQuery?.trim()?.length ?? 0) > 0;
-  }, [searchQuery]);
-
-  const foundCommits = useMemo(() => {
-    if (isSearching) {
-      return props.repository?.branchState?.commitSearch;
-    }
-    return props.repository?.branchState?.commits;
-  }, [isSearching, props.repository?.branchState?.commits, props.repository?.branchState?.commitSearch]);
-
-  const [commits, setCommits] = useState(foundCommits ?? []);
-
+  const commits = useMemo(() => {
+    return props?.repository?.branchState?.proposedMergeRequest?.pendingCommits ?? []
+  }, [props?.repository?.branchState?.proposedMergeRequest?.pendingCommits]);
 
   const linkBase = useRepoLinkBase(props.repository);
   const homeLink = useMemo(() => {
@@ -145,85 +134,80 @@ const HistoryDisplay = (props: Props) => {
     }&plugin=${props.plugin ?? "home"}`;
   }, [props.repository?.branchState, linkBase, props.plugin]);
 
-  const historyLink = useMemo(() => {
-    if (!props.repository?.branchState?.branchId) {
-      return `${linkBase}/history?from=remote&plugin=${props?.plugin ?? "home"}&query=${searchQuery ?? ""}`;
-    }
-    return `${linkBase}/history?from=remote&branch=${
+  const commitsLink = useMemo(() => {
+    return `${linkBase}/mergerequests/create/${
       props.repository?.branchState?.branchId
-    }&plugin=${props.plugin ?? "home"}&query=${searchQuery ?? ""}`;
-  }, [props.repository?.branchState, linkBase, props.plugin, searchQuery]);
+    }?from=remote&plugin=${props.plugin ?? "home"}&review_page=commits`;
+  }, [props.repository?.branchState, linkBase, props.plugin]);
 
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (foundCommits) {
-      setCommits(foundCommits);
-    }
-  }, [foundCommits]);
 
   const datedCommitHistory = useDatedCommitHistory(
     (commits ?? []) as Array<CommitInfo>
   );
 
   const showNewer = useMemo(() => {
-    if (isSearching) {
+    if (
+      !props.repository?.branchState?.proposedMergeRequest?.pendingCommits?.[0]
+    ) {
       return false;
     }
-    if (!props.repository?.branchState?.commits?.[0]) {
-      return false;
-    }
-
     return (
-      props.repository?.branchState?.commits[0]?.sha !=
-      props.repository?.branchState?.commitState?.sha
+      props.repository?.branchState?.proposedMergeRequest?.pendingCommits[0]
+        ?.sha != props.repository?.branchState?.branchHead
     );
-  }, [props.repository?.branchState?.commits, isSearching]);
+  }, [
+    props.repository?.branchState?.proposedMergeRequest?.pendingCommits,
+    props.repository?.branchState?.branchHead,
+  ]);
 
   const showOlder = useMemo(() => {
-    if (isSearching) {
-      return false;
-    }
-    const commitsLength = props?.repository?.branchState?.commits?.length ?? 0;
+    const commitsLength = props?.repository?.branchState?.proposedMergeRequest?.pendingCommits?.length ?? 0;
     if (commitsLength <= 1) {
       return false;
     }
-    const lastCommit = props?.repository?.branchState?.commits?.[commitsLength -  1];
+    const lastCommit = props?.repository?.branchState?.proposedMergeRequest?.pendingCommits?.[commitsLength -  1];
     if (!lastCommit) {
       return false;
     }
     return lastCommit.idx != 0;
-  }, [props.repository?.branchState?.commits, isSearching]);
+  }, [props.repository?.branchState?.proposedMergeRequest?.pendingCommits]);
 
   const newerIdx = useMemo(() => {
     if (!showNewer) {
       return null;
     }
     return Math.min(
-      (props.repository?.branchState?.commits?.[0]?.idx ?? 0) + PAGINATION_SIZE,
-      (props.repository?.branchState?.commitsSize ?? 0) - 1
+      (props.repository?.branchState?.proposedMergeRequest?.pendingCommits?.[0]
+        ?.idx ?? 0) + PAGINATION_SIZE,
+      (props.repository?.branchState?.proposedMergeRequest
+        ?.pendingCommitsCount ?? 0) - 1
     );
-  }, [showNewer, props.repository?.branchState?.commits?.[0], props.repository?.branchState?.commitsSize])
+  }, [
+    showNewer,
+    props.repository?.branchState?.proposedMergeRequest?.pendingCommits?.[0],
+    props.repository?.branchState?.proposedMergeRequest?.pendingCommitsCount,
+  ]);
 
   const olderIdx = useMemo(() => {
     if (!showOlder) {
       return null;
     }
 
-    const commitsLength = props?.repository?.branchState?.commits?.length ?? 0;
-    const lastCommit = props?.repository?.branchState?.commits?.[commitsLength -  1];
+    const commitsLength = props?.repository?.branchState?.proposedMergeRequest?.pendingCommits?.length ?? 0;
+    const lastCommit = props?.repository?.branchState?.proposedMergeRequest?.pendingCommits?.[commitsLength -  1];
     return Math.max(
       (lastCommit?.idx ?? 0) - 1,
       0
     );
-  }, [showOlder, props.repository?.branchState?.commits?.[0], props.repository?.branchState?.commitsSize])
+  }, [showOlder, props.repository?.branchState?.proposedMergeRequest?.pendingCommits?.[0], props.repository?.branchState?.proposedMergeRequest?.pendingCommitsCount])
 
   const onShowOlder = useCallback(() => {
     if (!showOlder) {
       return;
     }
-    navigate(historyLink + "&idx=" + olderIdx);
-  }, [showOlder, olderIdx, historyLink]);
+    navigate(commitsLink + "&idx=" + olderIdx);
+  }, [showOlder, olderIdx, commitsLink]);
 
   const onShowNewer = useCallback(() => {
     if (!showNewer) {
@@ -232,41 +216,21 @@ const HistoryDisplay = (props: Props) => {
     if (!newerIdx) {
       return;
     }
-    navigate(historyLink + "&idx=" + newerIdx);
-  }, [showNewer, newerIdx, historyLink]);
+    navigate(commitsLink + "&idx=" + newerIdx);
+  }, [showNewer, newerIdx, commitsLink]);
 
   const index = searchParams.get('idx');
-
-  const onSelect = useCallback((sha: string, idx: number) => {
-    if (!index) {
-      navigate(historyLink + "&sha=" + sha);
-    } else {
-      navigate(historyLink + "&sha=" + sha + "&idx=" + index);
-    }
-  }, [historyLink, index]);
 
   useEffect(() => {
     container?.current?.scrollTo({ top: 0, behavior: "smooth"})
   }, [index])
 
-  if (!isSearching && props.repository?.branchState?.commitsSize == 0) {
+  if (props.repository?.branchState?.proposedMergeRequest?.pendingCommitsCount == 0) {
     return (
         <Container>
         <NoCommitsContainer>
             <NoCommitsTextWrapper>
-            <NoCommitsText>{`no commits in branch history`}</NoCommitsText>
-            </NoCommitsTextWrapper>
-        </NoCommitsContainer>
-        </Container>
-    );
-  }
-
-  if (isSearching && commits?.length == 0) {
-    return (
-        <Container>
-        <NoCommitsContainer>
-            <NoCommitsTextWrapper>
-            <NoCommitsText>{`no results`}</NoCommitsText>
+            <NoCommitsText>{`no commits to merge`}</NoCommitsText>
             </NoCommitsTextWrapper>
         </NoCommitsContainer>
         </Container>
@@ -283,11 +247,11 @@ const HistoryDisplay = (props: Props) => {
             datedCommitGroup={datedCommitGroup}
             key={index}
             homeLink={homeLink}
-            onSelect={onSelect}
+            hideSelect
           />
         );
       })}
-      {((showNewer || showOlder) && (props?.repository?.branchState?.commitsSize ?? 0) > PAGINATION_SIZE) && (
+      {((showNewer || showOlder) && (props?.repository?.branchState?.proposedMergeRequest?.pendingCommitsCount ?? 0) > PAGINATION_SIZE) && (
         <div
           style={{
             marginTop: 24,
@@ -310,4 +274,4 @@ const HistoryDisplay = (props: Props) => {
   );
 };
 
-export default React.memo(HistoryDisplay);
+export default React.memo(ProposedMRHistoryDisplay);

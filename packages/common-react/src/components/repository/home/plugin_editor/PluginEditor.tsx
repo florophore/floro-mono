@@ -79,7 +79,6 @@ const PluginEditor = (props: Props) => {
       props.apiResponse.repoState.commandMode == "compare" &&
       compareFrom == "before"
     ) {
-      console.log("props?.apiResponse?.beforeState?.plugins", props?.apiResponse?.beforeState?.plugins)
       return props?.apiResponse?.beforeState?.plugins ?? [];
     }
 

@@ -81,6 +81,7 @@ import MergeRequestMediumGray from '@floro/common-assets/assets/images/repo_icon
 import CopyWhite from '@floro/common-assets/assets/images/repo_icons/copy.white.svg';
 import CopyGray from '@floro/common-assets/assets/images/repo_icons/copy.gray.svg';
 import CopyMediumGray from '@floro/common-assets/assets/images/repo_icons/copy.medium_gray.svg';
+import { isPropertySignature } from 'typescript';
 
 export interface ButtonProps {
   label: string;
@@ -111,6 +112,8 @@ export interface ButtonProps {
     | "cherry-pick"
     | "push"
     | "pull";
+  showNotification?: boolean;
+  notificationCount?: number;
 }
 
 const IconWrapper = styled.div`
@@ -133,15 +136,39 @@ const SubTitleTag = styled.p`
   font-size: 0.85rem;
 `;
 
+const NotificationWrapper = styled.div`
+  background: red;
+  height: 24px;
+  width: 24px;
+  position: absolute;
+  right: 8px;
+  top: 4px;
+  background: ${ColorPalette.teal};
+  border: 2px solid ${props => props.theme.colors.contrastTextLight};
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+
+const NotificationText = styled.span`
+  font-family: "MavenPro";
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: ${ColorPalette.white};
+`;
+
 const RepoActionButton = ({
     label,
     onClick,
     isLoading,
     isDisabled=false,
+    showNotification = false,
     size = "medium",
     titleTextSize = "medium",
     icon,
     subTitle,
+    notificationCount = 0,
     ...rest
 }: ButtonProps): React.ReactElement => {
     const theme = useTheme();
@@ -387,6 +414,13 @@ const RepoActionButton = ({
           >
             <DotsLoader color={theme.name == "light" ? "gray" : "white"} size={"medium"} />
           </div>
+        )}
+        {showNotification && (
+          <NotificationWrapper>
+            <NotificationText>{notificationCount}</NotificationText>
+
+          </NotificationWrapper>
+
         )}
       </button>
     );

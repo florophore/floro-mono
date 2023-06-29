@@ -8,11 +8,13 @@ import WarningLight from "@floro/common-assets/assets/images/icons/warning.light
 import WarningDark from "@floro/common-assets/assets/images/icons/warning.dark.svg";
 import DualToggle from "@floro/storybook/stories/design-system/DualToggle";
 import ColorPalette from "@floro/styles/ColorPalette";
-import { RemoteCommitState } from "../hooks/remote-state";
+import { ComparisonState, RemoteCommitState } from "../hooks/remote-state";
 import BranchSelector from "@floro/storybook/stories/repo-components/BranchSelector";
 import { Branch } from "floro/dist/src/repo";
 import RemoteRepoSubHeader from './RemoteRepoSubHeader';
 import RemoteHistoryHeader from "./RemoteHistoryHeader";
+import RemoteCreateMRHeader from "./RemoteCreateMRHeader";
+import { RepoPage } from "../../types";
 
 const Container = styled.div`
   display: flex;
@@ -74,14 +76,8 @@ interface Props {
   repository: Repository;
   plugin?: string;
   remoteCommitState: RemoteCommitState;
-  page:
-    | "history"
-    | "home"
-    | "settings"
-    | "branch-rules"
-    | "merge-requests"
-    | "merge-request"
-    | "merge-request-review";
+  comparisonState: ComparisonState;
+  page: RepoPage;
 }
 
 const RemoteHeaderNav = (props: Props) => {
@@ -165,6 +161,14 @@ const RemoteHeaderNav = (props: Props) => {
         remoteCommitState={props.remoteCommitState}
       />
     );
+  }
+  if (props.page == "merge-request-create") {
+    return <RemoteCreateMRHeader
+      repository={props.repository}
+      plugin={props.plugin}
+      remoteCommitState={props.remoteCommitState}
+      comparisonState={props.comparisonState}
+    />;
   }
   return (
     <RemoteRepoSubHeader

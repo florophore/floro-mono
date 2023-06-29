@@ -1,5 +1,6 @@
 import { injectable, inject } from "inversify";
 
+import { QueryRunner } from "typeorm";
 import DatabaseConnection from "@floro/database/src/connection/DatabaseConnection";
 import ContextFactory from "@floro/database/src/contexts/ContextFactory";
 import { User } from "@floro/database/src/entities/User";
@@ -29,14 +30,16 @@ export default class RepoRBACService {
   public async userHasPermissionToPush(
     repository: Repository,
     currentUser: User,
-    branchId?: string
+    branchId: string|undefined,
+    queryRunner?: QueryRunner,
   ): Promise<boolean> {
     try {
       if (!currentUser?.id || !repository?.id) {
         return false;
       }
       const protectedBranchRulesContext = await this.contextFactory.createContext(
-        ProtectedBranchRulesContext
+        ProtectedBranchRulesContext,
+        queryRunner
       );
       if (branchId) {
         const protectedBranch = await protectedBranchRulesContext.getByRepoAndBranchId(
@@ -55,7 +58,8 @@ export default class RepoRBACService {
       }
 
       const organizationsMembersContext = await this.contextFactory.createContext(
-        OrganizationMembersContext
+        OrganizationMembersContext,
+        queryRunner
       );
       if (repository.repoType == "org_repo") {
         const membership = await organizationsMembersContext.getByOrgIdAndUserId(
@@ -71,7 +75,8 @@ export default class RepoRBACService {
         if (!repository?.anyoneCanPushBranches) {
           const organizationMemberRolesContext =
             await this.contextFactory.createContext(
-              OrganizationMemberRolesContext
+              OrganizationMemberRolesContext,
+              queryRunner
             );
           if (membership && membership?.membershipState == "active") {
             const memberRoles =
@@ -79,7 +84,8 @@ export default class RepoRBACService {
             const roleIds = memberRoles?.map((r) => r.id);
             const repositoryEnabledRoleSettingsContext =
               await this.contextFactory.createContext(
-                RepositoryEnabledRoleSettingsContext
+                RepositoryEnabledRoleSettingsContext,
+                queryRunner
               );
             const hasRoles =
               await repositoryEnabledRoleSettingsContext.hasRepoRoleIds(
@@ -98,7 +104,8 @@ export default class RepoRBACService {
       }
       const repositoryEnabledUserSettingsContext =
         await this.contextFactory.createContext(
-          RepositoryEnabledUserSettingsContext
+          RepositoryEnabledUserSettingsContext,
+          queryRunner
         );
       const hasUserPermission =
         await repositoryEnabledUserSettingsContext.hasRepoUserId(

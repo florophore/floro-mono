@@ -21,6 +21,7 @@ import { transformLocalManifestToPartialPlugin } from "./hooks/manifest-transfor
 import LocalSideOption from "./LocalSideOption";
 import { useLocalVCSNavContext } from "./vcsnav/LocalVCSContext";
 import { useRepoLinkBase } from "../remote/hooks/remote-hooks";
+import { RepoPage } from "../types";
 
 const Navigator = styled.nav`
   width: 72px;
@@ -107,14 +108,7 @@ const NavHighlight = styled.div`
 interface Props {
   repository: Repository;
   plugin: string;
-  page:
-    | "history"
-    | "home"
-    | "settings"
-    | "branch-rules"
-    | "merge-requests"
-    | "merge-request"
-    | "merge-request-review";
+  page: RepoPage;
 }
 
 const LocalSideNavigator = (props: Props): React.ReactElement => {

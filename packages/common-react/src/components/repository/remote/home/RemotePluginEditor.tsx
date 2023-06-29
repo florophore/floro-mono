@@ -10,8 +10,9 @@ import {
 import PluginEditorRow from "../../home/plugin_editor/PluginEditorRow";
 import PreviewPlugin from "../../home/plugin_editor/PreviewPlugin";
 import { useLocalVCSNavContext } from "../../local/vcsnav/LocalVCSContext";
-import { RemoteCommitState } from "../hooks/remote-state";
+import { ComparisonState, RemoteCommitState, useBeforeCommitState, useRemoteCompareFrom, useViewMode } from "../hooks/remote-state";
 import RemotePluginEditorRow from "./RemotePluginEditorRow";
+import { RepoPage } from "../../types";
 
 const PluginContainer = styled.div`
   padding: 16px;
@@ -57,16 +58,63 @@ const NoPluginsText = styled.h3`
 interface Props {
   repository: Repository;
   remoteCommitState: RemoteCommitState;
+  comparisonState: ComparisonState;
+  page: RepoPage;
 }
 
 const RemotePluginEditor = (props: Props) => {
   const theme = useTheme();
 
+  const { compareFrom } = useRemoteCompareFrom();
+  const beforeCommitState = useBeforeCommitState(props.repository, props.page);
+  const viewMode = useViewMode(props.page);
+
   const plugins = useMemo(() => {
+    if (
+      viewMode == "compare" &&
+      compareFrom == "before"
+    ) {
+      return props.comparisonState?.beforeRemoteCommitState.renderedState?.plugins ?? [];
+    }
     return props.remoteCommitState.renderedState.plugins ?? [];
   }, [
+    viewMode,
+    compareFrom,
     props.remoteCommitState.renderedState.plugins,
+    props.comparisonState?.beforeRemoteCommitState.renderedState.plugins,
   ]);
+
+  const pluginChanges = useMemo(() => {
+    if (viewMode == "compare") {
+      if (compareFrom == "before") {
+        return new Set(props?.comparisonState?.apiDiff?.plugins?.removed);
+      }
+      return new Set(props?.comparisonState?.apiDiff?.plugins?.added);
+    }
+
+    return new Set<number>();
+  }, [
+    props?.comparisonState?.apiDiff?.plugins?.added,
+    props?.comparisonState?.apiDiff?.plugins?.removed,
+    viewMode,
+    compareFrom,
+  ]);
+
+  const pluginVersions = useMemo(() => {
+    if (
+      viewMode == "compare" &&
+      compareFrom == "before"
+    ) {
+      return (beforeCommitState?.pluginVersions ?? []) as PluginVersion[];
+    }
+    return (props.repository?.branchState?.commitState?.pluginVersions ?? []) as PluginVersion[];
+  }, [
+    viewMode,
+    compareFrom,
+    props.repository?.branchState?.commitState?.pluginVersions,
+    beforeCommitState?.pluginVersions,
+
+  ])
   return (
     <div>
       {(plugins?.length ?? 0) > 0 && (
@@ -76,12 +124,12 @@ const RemotePluginEditor = (props: Props) => {
               <RemotePluginEditorRow
                 key={index}
                 repository={props.repository}
-                pluginVersions={
-                  (props.repository?.branchState?.commitState?.pluginVersions ??
-                  []) as PluginVersion[]
-                }
+                pluginVersions={pluginVersions}
                 pluginName={pluginKV.key}
                 pluginVersion={pluginKV.value}
+                isCompareMode={viewMode == "compare"}
+                wasAdded={compareFrom == "after" && pluginChanges.has(index)}
+                wasRemoved={compareFrom == "before" && pluginChanges.has(index)}
               />
             );
           })}

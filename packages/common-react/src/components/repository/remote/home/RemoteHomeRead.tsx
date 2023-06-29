@@ -6,8 +6,10 @@ import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { Manifest } from "floro/dist/src/plugins";
-import { RemoteCommitState } from "../hooks/remote-state";
+import { ComparisonState, RemoteCommitState, useBeforeCommitState, useRemoteCompareFrom, useViewMode } from "../hooks/remote-state";
 import RemotePluginEditor from "./RemotePluginEditor";
+import ColorPalette from "@floro/styles/ColorPalette";
+import { RepoPage } from "../../types";
 
 const Container = styled.div`
   height: 100%;
@@ -158,40 +160,212 @@ const LicenseTitle = styled.div`
 interface Props {
   repository: Repository;
   remoteCommitState: RemoteCommitState;
+  comparisonState: ComparisonState;
+  page: RepoPage;
 }
 
 const RemoteHomeRead = (props: Props) => {
 
   const theme = useTheme();
+  const { compareFrom } = useRemoteCompareFrom();
+  const beforeCommitState = useBeforeCommitState(props.repository, props.page);
+  const viewMode = useViewMode(props.page);
   const plugins = useMemo(() => {
+    if (viewMode == "compare" && compareFrom == "before") {
+      return props.comparisonState?.beforeRemoteCommitState?.renderedState?.plugins ?? [];
+    }
     return props.remoteCommitState?.renderedState?.plugins ?? [];
   }, [
     props.remoteCommitState?.renderedState,
+    props.comparisonState?.beforeRemoteCommitState?.renderedState,
+    viewMode,
+    compareFrom
   ]);
 
+  const descriptionChanges = useMemo((): Set<number> => {
+    if (viewMode != "compare") {
+      return new Set<number>([]);
+    }
+    if (compareFrom == "before") {
+      return new Set<number>(props?.comparisonState?.apiDiff?.description?.removed ?? []);
+    }
+    return new Set<number>(props?.comparisonState?.apiDiff?.description?.added ?? []);
+  }, [
+    viewMode,
+    compareFrom,
+    props?.comparisonState?.apiDiff?.description?.added,
+    props?.comparisonState?.apiDiff?.description?.removed,
+  ]);
 
   const description = useMemo((): string|React.ReactElement => {
+
+    if (viewMode == "compare") {
+      if (compareFrom == "before") {
+        if ((props?.comparisonState?.beforeRemoteCommitState?.renderedState?.description?.length ?? 0) == 0) {
+          return "No description";
+        }
+        return (
+          <>
+            {props?.comparisonState?.beforeRemoteCommitState?.renderedState?.description?.map(
+              (sentence, index) => {
+                return (
+                  <React.Fragment key={index}>
+                    <span
+                      style={{
+                        background: descriptionChanges.has(index)
+                          ? ColorPalette.lightRed
+                          : "none",
+                        color: descriptionChanges.has(index)
+                          ? ColorPalette.black
+                          : theme.colors.contrastText,
+                        fontWeight: descriptionChanges.has(index) ? 500 : 400,
+                        paddingLeft: descriptionChanges.has(index)  ? 4 : 0,
+                        paddingRight: descriptionChanges.has(index) ? 4 : 0,
+                      }}
+                    >
+                      {sentence}
+                    </span>{" "}
+                  </React.Fragment>
+                );
+              }
+            )}
+          </>
+        );
+      }
+      return (
+        <>
+          {props.remoteCommitState.renderedState.description.map(
+            (sentence, index) => {
+              return (
+                <React.Fragment key={index}>
+                  <span
+                    style={{
+                      background: descriptionChanges.has(index)
+                        ? ColorPalette.lightTeal
+                        : "none",
+                      color: descriptionChanges.has(index)
+                        ? ColorPalette.black
+                        : theme.colors.contrastText,
+                      fontWeight: descriptionChanges.has(index)
+                        ? 500
+                        : 400,
+                      paddingLeft: descriptionChanges.has(index)
+                        ? 4
+                        : 0,
+                      paddingRight: descriptionChanges.has(index)
+                        ? 4
+                        : 0,
+                    }}
+                  >
+                    {sentence}
+                  </span>{" "}
+                </React.Fragment>
+              );
+            }
+          )}
+        </>
+      );
+    }
     if ((props?.remoteCommitState?.renderedState?.description?.length ?? 0) == 0) {
       return "No description";
     }
     return props?.remoteCommitState?.renderedState.description.join(" ");
   }, [
     props?.remoteCommitState?.renderedState.description,
+    props?.comparisonState?.beforeRemoteCommitState?.renderedState?.description,
+    viewMode,
+    compareFrom,
+    descriptionChanges,
     theme
   ]);
 
   const hasNoLicense = useMemo(() => {
-    return (props?.remoteCommitState?.renderedState?.licenses?.length ?? 0) == 0;
-  }, [props?.remoteCommitState?.renderedState?.licenses]);
+    if (viewMode == "compare" && compareFrom == "before") {
+      return (props?.comparisonState?.beforeRemoteCommitState?.renderedState?.licenses?.length ?? 0) == 0;
+    }
+    return (props?.remoteCommitState?.renderedState.licenses?.length ?? 0) == 0;
+  }, [
+    props?.remoteCommitState?.renderedState.licenses,
+    props?.comparisonState?.beforeRemoteCommitState?.renderedState?.licenses,
+    compareFrom,
+    viewMode,
+  ]);
+
+  const licensesChanges = useMemo((): Set<number> => {
+    if (viewMode != "compare") {
+      return new Set<number>([]);
+    }
+    if (compareFrom == "before") {
+      return new Set<number>(props?.comparisonState?.apiDiff?.licenses?.removed ?? []);
+    }
+    return new Set<number>(props?.comparisonState?.apiDiff?.licenses?.added ?? []);
+  }, [
+    viewMode,
+    compareFrom,
+    props?.comparisonState?.apiDiff?.licenses?.added,
+    props?.comparisonState?.apiDiff?.licenses?.removed,
+  ]);
 
 
   const licenses = useMemo(() => {
+
+    if (
+      viewMode == "compare") {
+      if (compareFrom == "before") {
+        return (
+          <BlurbBox style={{ paddingTop: 0, paddingBottom: 0 }}>
+            {hasNoLicense && (
+              <NoLicenseContainer>
+                <NoLicensesText>{"No licenses selected"}</NoLicensesText>
+              </NoLicenseContainer>
+            )}
+            {props?.comparisonState?.beforeRemoteCommitState?.renderedState?.licenses.map((license, index) => {
+              return (
+                <LicenseRow key={index}>
+                  <LicenseTitle
+                  style={{
+                    color: licensesChanges.has(index)
+                      ? theme.colors.removedText
+                      : theme.colors.contrastText,
+                  }}
+                  >{license.value}</LicenseTitle>
+                </LicenseRow>
+              );
+            })}
+          </BlurbBox>
+        );
+      }
+      return (
+        <BlurbBox style={{ paddingTop: 0, paddingBottom: 0 }}>
+          {hasNoLicense && (
+            <NoLicenseContainer>
+              <NoLicensesText>{"No licenses selected"}</NoLicensesText>
+            </NoLicenseContainer>
+          )}
+          {props.remoteCommitState.renderedState.licenses.map((license, index) => {
+            return (
+              <LicenseRow key={index}>
+                <LicenseTitle
+                  style={{
+                    color: licensesChanges.has(index)
+                      ? theme.colors.addedText
+                      : theme.colors.contrastText,
+                  }}
+                >
+                  {license.value}
+                </LicenseTitle>
+              </LicenseRow>
+            );
+          })}
+        </BlurbBox>
+      );
+    }
 
     return (
       <BlurbBox style={{ paddingTop: 0, paddingBottom: 0 }}>
         {hasNoLicense && (
           <NoLicenseContainer>
-            <NoLicensesText>{"No licenses added"}</NoLicensesText>
+            <NoLicensesText>{"No licenses selected"}</NoLicensesText>
           </NoLicenseContainer>
         )}
         {props?.remoteCommitState?.renderedState.licenses.map((license, index) => {
@@ -205,6 +379,11 @@ const RemoteHomeRead = (props: Props) => {
     );
   }, [
     props?.remoteCommitState?.renderedState?.licenses,
+    props?.comparisonState?.beforeRemoteCommitState?.renderedState?.licenses,
+    hasNoLicense,
+    licensesChanges,
+    viewMode,
+    compareFrom,
     theme
   ])
 
@@ -248,6 +427,8 @@ const RemoteHomeRead = (props: Props) => {
             <RemotePluginEditor
               repository={props.repository}
               remoteCommitState={props.remoteCommitState}
+              comparisonState={props.comparisonState}
+              page={props.page}
             />
           )}
         </BlurbBox>

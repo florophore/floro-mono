@@ -1086,6 +1086,8 @@ export default class PluginResolverModule extends BaseResolverModule {
             if (!membership) {
               return false;
             }
+            console.log("WHAT 1", payload)
+            console.log("WHAT", membership.membershipState)
             return membership.membershipState == "active";
           }
         )

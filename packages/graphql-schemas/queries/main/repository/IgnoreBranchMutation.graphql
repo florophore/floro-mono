@@ -1,0 +1,27 @@
+mutation ignoreBranch(
+  $repositoryId: ID!
+  $branchId: ID!
+) {
+  ignoreBranch(repositoryId: $repositoryId, branchId: $branchId) {
+    ... on IgnoreBranchSuccess {
+      repository {
+        id
+        openUserBranchesWithoutMergeRequestsCount
+        openUserBranchesWithoutMergeRequests {
+            id
+            name
+            baseBranchId
+            updatedAt
+            createdBy
+            createdByUsername
+            lastCommit
+        }
+      }
+    }
+    ... on IgnoreBranchError {
+      message
+      type
+    }
+  }
+}
+

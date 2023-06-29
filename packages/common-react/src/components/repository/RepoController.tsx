@@ -11,6 +11,7 @@ import {
 import {
   Repository,
   useFetchRepositoryByNameQuery,
+  useRepositoryUpdatesSubscription,
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { useSession } from "@floro/common-react/src/session/session-context";
 import { useUserOrganizations } from "@floro/common-react/src/hooks/offline";
@@ -20,25 +21,31 @@ import RepoNavigator from "@floro/common-react/src/components/repository/RepoNav
 import { LocalVCSNavProvider } from "./local/vcsnav/LocalVCSContext";
 import { SourceGraphUIProvider } from "./sourcegraph/SourceGraphUIContext";
 import RemoteRepoController from "./remote/RemoteRepoController";
-import { useRemoteCommitState } from "./remote/hooks/remote-state";
+import { useComparisonState, useRemoteCommitState } from "./remote/hooks/remote-state";
+import { RepoPage } from "./types";
 
 interface Props {
   from: "local" | "remote";
   repository: Repository;
   plugin?: string;
-  page:
-    | "history"
-    | "home"
-    | "settings"
-    | "branch-rules"
-    | "merge-requests"
-    | "merge-request"
-    | "merge-request-review";
+  page: RepoPage;
 }
 
 const RepoController = (props: Props) => {
   const [isExpanded, setIsExpanded] = useState(true);
-  const remoteCommitState = useRemoteCommitState(props.repository);
+  const remoteCommitState = useRemoteCommitState(props.repository?.branchState?.commitState);
+  const comparisonState = useComparisonState(props.page, props.repository, remoteCommitState);
+  const [searchParams] = useSearchParams();
+
+  const branchId = searchParams.get('branch');
+  const sha = searchParams.get('sha');
+  useRepositoryUpdatesSubscription({
+    variables: {
+      repositoryId: props.repository.id,
+      branchId,
+      sha
+    }
+  });
 
   const onTogglePanel = useCallback(() => {
     setIsExpanded(!isExpanded);
@@ -66,6 +73,7 @@ const RepoController = (props: Props) => {
           isExpanded={isExpanded}
           onSetIsExpanded={setIsExpanded}
           remoteCommitState={remoteCommitState}
+          comparisonState={comparisonState}
           page={props.page}
         >
           <>
@@ -84,6 +92,7 @@ const RepoController = (props: Props) => {
                 isExpanded={isExpanded}
                 onSetIsExpanded={setIsExpanded}
                 remoteCommitState={remoteCommitState}
+                comparisonState={comparisonState}
                 page={props.page}
               />
             )}

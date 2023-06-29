@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import { CommitState, Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { Manifest } from "floro/dist/src/plugins";
 import axios from "axios";
 import { useQuery, useMutation, useQueryClient } from "react-query";
@@ -7,40 +7,40 @@ import { ApplicationKVState, RenderedApplicationState } from "./polyfill-floro";
 
 import { useParams } from "react-router-dom";
 
-export const useRemoteRenderedState = (repo: Repository) => {
+export const useRemoteRenderedState = (commitState?: CommitState|null) => {
   return useQuery(
-    "remote-repo-state:" + (repo?.branchState?.commitState?.sha ?? "none"),
+    "remote-repo-state:" + (commitState?.sha ?? "none"),
     async (): Promise<RenderedApplicationState|null> => {
-      if (!repo?.branchState?.commitState?.sha) {
+      if (!commitState?.sha) {
         return null;
       }
-      if (!repo?.branchState?.commitState?.stateLink) {
+      if (!commitState?.stateLink) {
         return null;
       }
-      const state = await axios.get(repo?.branchState?.commitState?.stateLink);
+      const state = await axios.get(commitState?.stateLink);
       return state?.data;
     },
     {
-      cacheTime: 3000,
+      cacheTime: 1800000,
     }
   );
 };
 
-export const useRemoteKVState = (repo: Repository) => {
+export const useRemoteKVState = (commitState?: CommitState|null) => {
   return useQuery(
-    "remote-repo-kv:" + (repo?.branchState?.commitState?.sha ?? "none"),
+    "remote-repo-kv:" + (commitState?.sha ?? "none"),
     async (): Promise<ApplicationKVState|null> => {
-      if (!repo?.branchState?.commitState?.sha) {
+      if (!commitState?.sha) {
         return null;
       }
-      if (!repo?.branchState?.commitState?.kvLink) {
+      if (!commitState?.kvLink) {
         return null;
       }
-      const state = await axios.get(repo?.branchState?.commitState?.kvLink);
+      const state = await axios.get(commitState?.kvLink);
       return state?.data;
     },
     {
-      cacheTime: 3000,
+      cacheTime: 1800000,
     }
   );
 };
@@ -49,7 +49,14 @@ export const useRepoLinkBase = (repository: Repository, page?: string) => {
   const params = useParams();
   const ownerHandle = params?.["ownerHandle"] ?? "";
   const repoName = params?.["repoName"] ?? "";
-  const suffix = !page || page == "home" ? "" : `/${page}`
+  const branchId = params?.["branchId"] ?? "";
+  const pageSuffix = useMemo(() => {
+    if (page == "merge-request-create") {
+      return "mergerequests/create/" + branchId;
+    }
+    return page;
+  }, [page, branchId])
+  const suffix = !page || page == "home" ? "" : `/${pageSuffix}`
   return useMemo(() => {
     if (!repository?.name) {
       return `/repo/@/${ownerHandle}/${repoName}${suffix}`;

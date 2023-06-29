@@ -5,7 +5,7 @@ import React, {
   useRef,
   useEffect,
 } from "react";
-import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import { RepoBranch, Repository, useIgnoreBranchMutation } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { Link, useSearchParams } from "react-router-dom";
 import styled from "@emotion/styled";
 import { css } from "@emotion/css";
@@ -38,6 +38,9 @@ import { useNavigate } from "react-router-dom";
 import { Branch } from "floro/dist/src/repo";
 import RepoActionButton from "@floro/storybook/stories/repo-components/RepoActionButton";
 import CopyFromIcon from "@floro/common-assets/assets/images/icons/copy.dark.svg";
+import CreateMergeRequest from '@floro/storybook/stories/repo-components/CreateMergeRequest';
+import { link } from "fs";
+import { RepoPage } from "../../types";
 
 const InnerContent = styled.div`
   display: flex;
@@ -77,20 +80,14 @@ interface Props {
   repository: Repository;
   remoteCommitState: RemoteCommitState;
   plugin: string;
-  page:
-    | "history"
-    | "home"
-    | "settings"
-    | "branch-rules"
-    | "merge-requests"
-    | "merge-request"
-    | "merge-request-review";
+  page: RepoPage;
 }
 
 const RemoteVCSNavHome = (props: Props) => {
   const { data: repoExistsLocally, isLoading } = useRepoExistsLocally(
     props.repository
   );
+  const [ignoreBranch, ignoreBranchRequest] = useIgnoreBranchMutation();
   const navigate = useNavigate();
   const cloneRepoMutation = useCloneRepo(props.repository);
   const isDaemonConnected = useDaemonIsConnected();
@@ -117,6 +114,10 @@ const RemoteVCSNavHome = (props: Props) => {
     props.repository?.branchState?.commitState?.sha,
   ]);
 
+  const branchlessLink = useMemo(() => {
+    return `${linkBase}?from=remote&plugin=${props?.plugin ?? "home"}`;
+  }, [linkBase, props.plugin]);
+
   const defaultBranchLink = useMemo(() => {
     return `${linkBase}?from=remote&plugin=${props?.plugin ?? "home"}&branch=${
       props.repository?.branchState?.defaultBranchId
@@ -130,7 +131,7 @@ const RemoteVCSNavHome = (props: Props) => {
   }, [linkBase, props.plugin, props.repository?.branchState?.branchId]);
 
   const onChangeBranch = useCallback(
-    (branch: Branch | null) => {
+    (branch: RepoBranch | null) => {
       if (branch?.id) {
         navigate(homeLink + "&branch=" + branch?.id);
       }
@@ -141,6 +142,29 @@ const RemoteVCSNavHome = (props: Props) => {
   const onGoToDefaultBranch = useCallback(() => {
     navigate(defaultBranchLink);
   }, [defaultBranchLink]);
+
+  const onIgnore = useCallback((branch: RepoBranch) => {
+    if (ignoreBranchRequest.loading || !props.repository?.id || !branch?.id) {
+      return;
+    }
+    ignoreBranch({
+      variables: {
+        repositoryId: props.repository.id,
+        branchId: branch.id,
+      }
+    })
+  }, [ignoreBranchRequest.loading, props.repository])
+
+  const onCreateMergeRequest = useCallback((branch: RepoBranch) => {
+    navigate(linkBase + "/mergerequests/create/" + branch.id + "?from=remote");
+  }, [linkBase, navigate]);
+
+  const showMRNotifcation = useMemo(() => {
+    if (props?.repository?.openUserBranchesWithoutMergeRequestsCount == undefined) {
+      return false;
+    }
+    return props?.repository?.openUserBranchesWithoutMergeRequestsCount > 0;
+  }, [props?.repository?.openUserBranchesWithoutMergeRequestsCount]);
 
   return (
     <InnerContent>
@@ -159,13 +183,14 @@ const RemoteVCSNavHome = (props: Props) => {
         />
         <ButtonRow style={{ marginTop: 24 }}>
           <RepoActionButton
+            showNotification={showMRNotifcation}
+            notificationCount={props?.repository?.openUserBranchesWithoutMergeRequestsCount ?? 0}
             label={"merge requests"}
             icon={"merge-request"}
             size="large"
           />
         </ButtonRow>
         <ButtonRow style={{ marginTop: 24 }}>
-
           <RepoActionButton
             label={"copy from repository"}
             icon={"copy"}
@@ -177,6 +202,17 @@ const RemoteVCSNavHome = (props: Props) => {
             titleTextSize="small"
           />
         </ButtonRow>
+        {props?.repository?.openUserBranchesWithoutMergeRequests?.[0] && (
+          <ButtonRow style={{ marginTop: 24 }}>
+            <CreateMergeRequest
+              onIgnore={onIgnore}
+              onCreate={onCreateMergeRequest}
+              homeLink={branchlessLink}
+              branch={props.repository.openUserBranchesWithoutMergeRequests[0]}
+              ignoreLoading={ignoreBranchRequest.loading}
+            />
+          </ButtonRow>
+        )}
       </TopContainer>
       <BottomContainer>
         {(cloneState?.state != "none" || !repoExistsLocally) &&

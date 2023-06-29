@@ -1251,6 +1251,14 @@ export default class RepoController extends BaseController {
       return;
     }
     try {
+      const repositoriesContext = await this.contextFactory.createContext(
+        RepositoriesContext
+      );
+      const repo = await repositoriesContext.getById(repoId);
+      if (!repo) {
+        response.sendStatus(400);
+        return;
+      }
       const branchResult = await this.branchService.pushBranch(branch, repoId, session.user);
       if (branchResult.action != "BRANCH_PUSHED") {
         response.sendStatus(400);
@@ -1261,14 +1269,16 @@ export default class RepoController extends BaseController {
           );
         return;
       }
-      // send webhook notification here
-      // should pub sub here as well as update repo state
       const pullInfo = await this.repositoryService.fetchPullInfo(
         repoId,
         session.user,
         []
       );
       response.send(pullInfo);
+      this.pubsub?.publish?.(`REPOSITORY_UPDATED:${repoId}`, {
+        repositoryUpdated: repo
+      });
+      // send webhook notification here
       return;
     } catch (e) {
       response.sendStatus(400);

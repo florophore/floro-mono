@@ -17,8 +17,9 @@ import { useDaemonIsConnected, useFloroSocket, useSocketEvent } from "../../pubs
 import LocalVCSNavController from "./local/vcsnav/LocalVCSNavController";
 import { useSourceGraphIsShown } from "./ui-state-hook";
 import {  useCloneState, useRepoExistsLocally } from "./local/hooks/local-hooks";
-import { RemoteCommitState } from "./remote/hooks/remote-state";
+import { ComparisonState, RemoteCommitState } from "./remote/hooks/remote-state";
 import RemoteVCSNavController from "./remote/vcsnav/RemoteVCSNavController";
+import { RepoPage } from "./types";
 
 const Container = styled.nav`
   display: flex;
@@ -112,17 +113,11 @@ const OuterShadow = styled.div`
 interface Props {
   repository: Repository;
   remoteCommitState: RemoteCommitState;
+  comparisonState: ComparisonState;
   isExpanded: boolean;
   onSetIsExpanded: (isExpanded: boolean) => void;
   plugin: string;
-  page:
-    | "history"
-    | "home"
-    | "settings"
-    | "branch-rules"
-    | "merge-requests"
-    | "merge-request"
-    | "merge-request-review";
+  page: RepoPage;
 }
 
 
@@ -150,13 +145,13 @@ const VersionControlPanel = (props: Props) => {
   );
 
   useEffect(() => {
-    if (!isDaemonConnected) {
+    if (!isDaemonConnected && from == "local") {
       setSearchParams({
         from: "remote"
       });
     }
 
-  }, [searchParams, isDaemonConnected]);
+  }, [searchParams, isDaemonConnected, from]);
 
   const onTogglePanel = useCallback(() => {
     props.onSetIsExpanded(!props.isExpanded);
@@ -287,7 +282,7 @@ const VersionControlPanel = (props: Props) => {
           )}
           <NavigationWrapper>
             {from == "remote" && (
-              <RemoteVCSNavController plugin={props.plugin} page={props.page} repository={props.repository} remoteCommitState={props.remoteCommitState} />
+              <RemoteVCSNavController plugin={props.plugin} page={props.page} repository={props.repository} remoteCommitState={props.remoteCommitState} comparisonState={props.comparisonState} />
             )}
             {from == "local" && (
               <LocalVCSNavController repository={props.repository} />

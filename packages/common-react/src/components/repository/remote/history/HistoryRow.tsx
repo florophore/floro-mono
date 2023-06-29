@@ -138,7 +138,8 @@ interface Props {
   remoteCommitState: RemoteCommitState;
   commit: CommitInfo;
   homeLink: string;
-  onSelect: (sha: string, idx: number) => void;
+  onSelect?: (sha: string, idx: number) => void;
+  hideSelect?: boolean;
 }
 const HistoryRow = (props: Props) => {
   const theme = useTheme();
@@ -205,12 +206,17 @@ const HistoryRow = (props: Props) => {
         <Link to={props.homeLink + "&sha=" + props.commit.sha}>
           <CommitTitle>{props.commit?.message}</CommitTitle>
         </Link>
-        <Button
-          onClick={onClickSelect}
-          label={"select"}
-          bg={"purple"}
-          size={"small"}
-        />
+        {!props.hideSelect && (
+          <Button
+            onClick={onClickSelect}
+            label={"select"}
+            bg={"purple"}
+            size={"small"}
+          />
+        )}
+        {props.hideSelect && (
+          <div style={{height: 36}}></div>
+        )}
       </TopRow>
       <ShaRow>
         <ShaTitle>{shaTitle}</ShaTitle>
