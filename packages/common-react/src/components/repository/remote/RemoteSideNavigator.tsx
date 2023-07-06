@@ -8,7 +8,7 @@ import PluginHomeSelectedLight from "@floro/common-assets/assets/images/icons/pl
 import PluginHomeSelectedDark from "@floro/common-assets/assets/images/icons/plugin_home.selected.dark.svg";
 import PluginHomeUnSelectedLight from "@floro/common-assets/assets/images/icons/plugin_home.unselected.light.svg";
 import PluginHomeUnSelectedDark from "@floro/common-assets/assets/images/icons/plugin_home.unselected.dark.svg";
-import { ComparisonState, RemoteCommitState, useBeforeCommitState, useRemoteCompareFrom, useRemoteManifests, useViewMode } from "./hooks/remote-state";
+import { ComparisonState, RemoteCommitState, useBeforeCommitState, useMainCommitState, useRemoteCompareFrom, useRemoteManifests, useViewMode } from "./hooks/remote-state";
 import RemoteSideOption from "./RemoteSideOption";
 import { Manifest } from "./hooks/polyfill-floro";
 import { useRepoLinkBase } from "./hooks/remote-hooks";
@@ -123,6 +123,10 @@ const RepoSideNavigator = (props: Props): React.ReactElement => {
       : PluginHomeUnSelectedDark;
   }, [props.plugin, theme.name]);
 
+  const commitState = useMainCommitState(props.page, props.repository);
+
+
+  console.log("viewMode", viewMode, "compareFrom", compareFrom)
   const pluginVersionList = useMemo(() => {
     const pluginList: Array<PluginVersion> = [];
     if (viewMode == "compare" && compareFrom == "before") {
@@ -140,7 +144,7 @@ const RepoSideNavigator = (props: Props): React.ReactElement => {
       for (const { key: pluginName } of props?.remoteCommitState?.renderedState
         ?.plugins ?? []) {
         const pv =
-          props.repository.branchState?.commitState?.pluginVersions?.find(
+          commitState?.pluginVersions?.find(
             (v) => v?.name == pluginName
           );
         if (pv) {
@@ -151,7 +155,7 @@ const RepoSideNavigator = (props: Props): React.ReactElement => {
     return pluginList;
   }, [
     props?.remoteCommitState?.renderedState,
-    props?.repository?.branchState?.commitState?.pluginVersions,
+    commitState?.pluginVersions,
     props?.comparisonState?.beforeRemoteCommitState.renderedState?.plugins,
     compareFrom,
     viewMode,
@@ -217,20 +221,25 @@ const RepoSideNavigator = (props: Props): React.ReactElement => {
 
   const linkBase = useRepoLinkBase(props.repository, props.page);
   const mainLink = useMemo(() => {
+    if (props.page == "merge-request") {
+      return `${linkBase}?from=remote&compare_from=${compareFrom}&review_page=changes`;
+    }
     if (viewMode == "compare") {
-      return `${linkBase}?from=remote&compare_from=${
-        compareFrom
-      }`;
+      return `${linkBase}?from=remote&compare_from=${compareFrom}`;
     }
     if (props.repository?.branchState?.commitState?.sha) {
-      return `${linkBase}?from=remote&sha=${
-        props.repository?.branchState?.commitState?.sha
-      }&branch=${props.repository?.branchState?.branchId}`;
+      return `${linkBase}?from=remote&sha=${props.repository?.branchState?.commitState?.sha}&branch=${props.repository?.branchState?.branchId}`;
     }
-    return `${linkBase}?from=remote&branch=${
-      props.repository?.branchState?.branchId
-    }`;
-  }, [linkBase, props.plugin, props.repository?.branchState?.branchId, props.repository?.branchState?.commitState?.sha, viewMode, compareFrom]);
+    return `${linkBase}?from=remote&branch=${props.repository?.branchState?.branchId}`;
+  }, [
+    linkBase,
+    props.plugin,
+    props.repository?.branchState?.branchId,
+    props.repository?.branchState?.commitState?.sha,
+    viewMode,
+    compareFrom,
+    props.page,
+  ]);
 
   return (
     <Navigator>

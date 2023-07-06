@@ -16,6 +16,8 @@ import RemotePluginController from "../plugin/RemotePluginController";
 import HistoryDisplay from "./history/HistoryDisplay";
 import { RepoPage } from "../types";
 import ProposedMRHistoryDisplay from "./history/ProposedMRHistoryDisplay";
+import MergeRequestHistoryDisplay from "./mergerequesthistory/MergeRequestHistoryDisplay";
+import MRHistoryDisplay from "./history/MRHistoryDisplay";
 
 const LoadingContainer = styled.div`
   display: flex;
@@ -101,6 +103,14 @@ const RemoteRepoController = (props: Props) => {
         />
       );
     }
+    if (props.page == "merge-requests") {
+      return (
+        <MergeRequestHistoryDisplay
+          repository={props.repository}
+          plugin={props.plugin}
+        />
+      );
+    }
     if (props.page == "merge-request-create" && reviewPage == "commits") {
       return (
         <ProposedMRHistoryDisplay
@@ -110,7 +120,20 @@ const RemoteRepoController = (props: Props) => {
         />
       );
     }
-    if (props.page == "home" || props.page == "merge-request-create") {
+
+    if (props.page == "merge-request" && reviewPage == "commits") {
+      return (
+        <MRHistoryDisplay
+          repository={props.repository}
+          remoteCommitState={props.remoteCommitState}
+          plugin={props.plugin}
+        />
+      );
+    }
+    if (props.page == "merge-request" && reviewPage == "none") {
+      return null;
+    }
+    if (props.page == "home" || props.page == "merge-request-create" || props.page == "merge-request") {
       if (props.plugin != "home") {
         if (viewMode == "compare" && compareFrom == "before") {
           const hasPlugin =

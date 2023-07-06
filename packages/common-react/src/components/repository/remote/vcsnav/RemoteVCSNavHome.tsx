@@ -114,6 +114,19 @@ const RemoteVCSNavHome = (props: Props) => {
     props.repository?.branchState?.commitState?.sha,
   ]);
 
+  const mergeRequestsLink = useMemo(() => {
+    if (props.repository?.branchState?.commitState?.sha) {
+      return `${linkBase}/mergerequests?from=remote&plugin=${props?.plugin ?? "home"}&sha=${
+        props.repository?.branchState?.commitState?.sha
+      }`;
+    }
+    return `${linkBase}/mergerequests?from=remote&plugin=${props?.plugin ?? "home"}`;
+  }, [linkBase, props.plugin]);
+
+  const onClickMergeRequests = useCallback(() => {
+    navigate(mergeRequestsLink);
+  }, [mergeRequestsLink, navigate])
+
   const branchlessLink = useMemo(() => {
     return `${linkBase}?from=remote&plugin=${props?.plugin ?? "home"}`;
   }, [linkBase, props.plugin]);
@@ -166,6 +179,13 @@ const RemoteVCSNavHome = (props: Props) => {
     return props?.repository?.openUserBranchesWithoutMergeRequestsCount > 0;
   }, [props?.repository?.openUserBranchesWithoutMergeRequestsCount]);
 
+  const showMRSecondaryNotifcation = useMemo(() => {
+    if (props?.repository?.openUserMergeRequestsCount == undefined) {
+      return false;
+    }
+    return props?.repository?.openUserMergeRequestsCount > 0;
+  }, [props?.repository?.openUserMergeRequestsCount]);
+
   return (
     <InnerContent>
       <TopContainer>
@@ -183,8 +203,11 @@ const RemoteVCSNavHome = (props: Props) => {
         />
         <ButtonRow style={{ marginTop: 24 }}>
           <RepoActionButton
+            onClick={onClickMergeRequests}
             showNotification={showMRNotifcation}
             notificationCount={props?.repository?.openUserBranchesWithoutMergeRequestsCount ?? 0}
+            showSecondaryNotification={showMRSecondaryNotifcation}
+            secondaryNotificationCount={props?.repository?.openUserMergeRequestsCount ?? 0}
             label={"merge requests"}
             icon={"merge-request"}
             size="large"

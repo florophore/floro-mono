@@ -1,0 +1,171 @@
+subscription proposedMergeRequestRepositoryUpdates(
+  $repositoryId: ID
+  $branchId: ID
+  $idx: Int
+) {
+  repositoryUpdated(repositoryId: $repositoryId) {
+    ...Repository
+    organization {
+      ...Organization
+    }
+    user {
+      ...User
+    }
+    repoBranches {
+      id
+      name
+      lastCommit
+      baseBranchId
+      createdBy
+      createdByUsername
+      createdAt
+      updatedAt
+    }
+    branchState(branchId: $branchId) {
+      branchId
+      name
+      branchHead
+      defaultBranchId
+      name
+      commitsSize
+      updatedAt
+      proposedMergeRequest(idx: $idx) {
+        baseBranch {
+          id
+          name
+          lastCommit
+          baseBranchId
+          createdBy
+          createdByUsername
+          createdAt
+          updatedAt
+        }
+        suggestedDescription
+        suggestedTitle
+        isConflictFree
+        isMerged
+        canMerge
+        canCreateMergeRequest
+        existingMergeRequest {
+          id
+        }
+        pendingCommitsCount
+        pendingCommits {
+          sha
+          message
+          idx
+          username
+          authorUsername
+          timestamp
+          isReverted
+          isValid
+          updatedAt
+          authorUser {
+            id
+            username
+            firstName
+            lastName
+            profilePhoto {
+              ...Photo
+            }
+          }
+          user {
+            id
+            username
+            firstName
+            lastName
+            profilePhoto {
+              ...Photo
+            }
+          }
+        }
+        divergenceState {
+          sha
+          kvLink
+          stateLink
+          isReverted
+          isValid
+          message
+          lastUpdatedAt
+          binaryRefs {
+            fileName
+            url
+          }
+          pluginVersions {
+            id
+            name
+            displayName
+            version
+            darkIcon
+            lightIcon
+            selectedLightIcon
+            selectedDarkIcon
+            manifest
+            entryUrl
+          }
+          authorUser {
+            id
+            username
+            firstName
+            lastName
+            profilePhoto {
+              ...Photo
+            }
+          }
+          user {
+            id
+            username
+            firstName
+            lastName
+            profilePhoto {
+              ...Photo
+            }
+          }
+        }
+      }
+      commitState {
+        sha
+        kvLink
+        stateLink
+        isReverted
+        isValid
+        message
+        lastUpdatedAt
+        binaryRefs {
+          fileName
+          url
+        }
+        pluginVersions {
+          id
+          name
+          displayName
+          version
+          darkIcon
+          lightIcon
+          selectedLightIcon
+          selectedDarkIcon
+          manifest
+          entryUrl
+        }
+        authorUser {
+          id
+          username
+          firstName
+          lastName
+          profilePhoto {
+            ...Photo
+          }
+        }
+        user {
+          id
+          username
+          firstName
+          lastName
+          profilePhoto {
+            ...Photo
+          }
+        }
+      }
+    }
+  }
+}

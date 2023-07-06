@@ -100,6 +100,7 @@ export interface Props {
   onIgnore?: (branch: RepoBranch) => void;
   onCreate?: (branch: RepoBranch) => void;
   homeLink: string;
+  hideIgnore?: boolean;
 }
 
 const CreateMergeRequest = (props: Props) => {
@@ -132,7 +133,9 @@ const CreateMergeRequest = (props: Props) => {
           />
         </ButtonContainer>
       </InnerContainer>
-      <XIcon onClick={onIgnore} src={XCircleLight} />
+      {!props.hideIgnore && (
+        <XIcon onClick={onIgnore} src={XCircleLight} />
+      )}
     </Container>
   );
 };

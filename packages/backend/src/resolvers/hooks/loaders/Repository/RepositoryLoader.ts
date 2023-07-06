@@ -31,8 +31,8 @@ export default class RepositoryLoader extends LoaderResolverHook<
     void
   >(
     () => [],
-    async (object, { repositoryId }, { cacheKey }): Promise<void> => {
-      const repoId = object['repositoryId'] ?? repositoryId;
+    async (object, args, { cacheKey }): Promise<void> => {
+      const repoId = object?.['repositoryId'] ?? args.repositoryId;
       if (!repoId) {
         return;
       }

@@ -179,8 +179,6 @@ const OrgHome = (props: Props) => {
     }
   }, [uploadPhotoRequest.data, savePhoto]);
 
-  console.log("ORG", props.organization)
-
   return (
     <>
       {props.organization && (

@@ -1,0 +1,38 @@
+query fetchRepositoryMergeRequest(
+  $ownerHandle: String!
+  $repoName: String!
+  $mergeRequestId: ID
+  $idx: Int
+) {
+  fetchRepositoryByName(ownerHandle: $ownerHandle, repoName: $repoName) {
+    ... on FetchRepositorySuccess {
+      repository {
+        ...Repository
+        organization {
+          ...Organization
+        }
+        user {
+          ...User
+        }
+        mergeRequest(id: $mergeRequestId) {
+          ...MergeRequest
+        }
+        repoBranches {
+          id
+          name
+          lastCommit
+          baseBranchId
+          createdBy
+          createdByUsername
+          createdAt
+          updatedAt
+        }
+      }
+    }
+    ... on FetchRepositoryError {
+      message
+      type
+    }
+  }
+}
+

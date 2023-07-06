@@ -38,7 +38,7 @@ export default class RepoAccessGuard extends GuardResolverHook<
 
   public run = runWithHooks(
     () => [this.loggedInUserGuard, this.repositoryLoader],
-    async (_, { repositoryId }: { repositoryId: string }, context) => {
+    async (_, args: { repositoryId: string }, context) => {
       if (!context.currentUser) {
         return {
           __typename: "UnAuthenticatedError",
@@ -46,7 +46,14 @@ export default class RepoAccessGuard extends GuardResolverHook<
           message: "Unauthenticated request",
         };
       }
-      const repo = this.requestCache.getRepo(context.cacheKey, repositoryId);
+      if (!args.repositoryId) {
+        return {
+          __typename: "RepoAccessError",
+          type: "REPO_ACCESS_ERROR",
+          message: "Repo access error",
+        };
+      }
+      const repo = this.requestCache.getRepo(context.cacheKey, args.repositoryId);
       if (!repo) {
         return {
           __typename: "RepoAccessError",

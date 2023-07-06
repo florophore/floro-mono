@@ -1,0 +1,73 @@
+query fetchRepositoryMergeRequestHistory(
+  $ownerHandle: String!
+  $repoName: String!
+  $mode: String
+  $id: ID
+  $query: String
+) {
+  fetchRepositoryByName(ownerHandle: $ownerHandle, repoName: $repoName) {
+    ... on FetchRepositorySuccess {
+      repository {
+        ...Repository
+        organization {
+          ...Organization
+        }
+        user {
+          ...User
+        }
+        openUserBranchesWithoutMergeRequestsCount
+        openUserBranchesWithoutMergeRequests(filterIgnored: false) {
+          id
+          name
+          baseBranchId
+          updatedAt
+          createdBy
+          createdByUsername
+          lastCommit
+        }
+        openBranchesWithoutMergeRequestsCount
+        openBranchesWithoutMergeRequests {
+          id
+          name
+          baseBranchId
+          updatedAt
+          createdBy
+          createdByUsername
+          lastCommit
+        }
+        openMergeRequestsCount
+        openMergeRequests(mode: $mode, id: $id, openQuery: $query) {
+          id
+          nextId
+          lastId
+          mergeRequests {
+            ...SimpleMergeRequest
+          }
+        }
+        closedMergeRequestsCount
+        closedMergeRequests(mode: $mode, id: $id, closedQuery: $query) {
+          id
+          nextId
+          lastId
+          mergeRequests {
+            ...SimpleMergeRequest
+          }
+        }
+        openUserMergeRequestsCount
+        branchState {
+          branchId
+          name
+          branchHead
+          defaultBranchId
+          name
+          commitsSize
+          updatedAt
+        }
+      }
+    }
+    ... on FetchRepositoryError {
+      message
+      type
+    }
+  }
+}

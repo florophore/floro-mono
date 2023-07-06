@@ -114,6 +114,8 @@ export interface ButtonProps {
     | "pull";
   showNotification?: boolean;
   notificationCount?: number;
+  showSecondaryNotification?: boolean;
+  secondaryNotificationCount?: number;
 }
 
 const IconWrapper = styled.div`
@@ -151,6 +153,21 @@ const NotificationWrapper = styled.div`
   align-items: center;
 `
 
+const SecondaryNotificationWrapper = styled.div`
+  background: red;
+  height: 24px;
+  width: 24px;
+  position: absolute;
+  right: 8px;
+  top: 32px;
+  background: ${ColorPalette.orange};
+  border: 2px solid ${props => props.theme.colors.contrastTextLight};
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+
 const NotificationText = styled.span`
   font-family: "MavenPro";
   font-weight: 600;
@@ -164,11 +181,13 @@ const RepoActionButton = ({
     isLoading,
     isDisabled=false,
     showNotification = false,
+    showSecondaryNotification = false,
     size = "medium",
     titleTextSize = "medium",
     icon,
     subTitle,
     notificationCount = 0,
+    secondaryNotificationCount = 0,
     ...rest
 }: ButtonProps): React.ReactElement => {
     const theme = useTheme();
@@ -420,7 +439,11 @@ const RepoActionButton = ({
             <NotificationText>{notificationCount}</NotificationText>
 
           </NotificationWrapper>
-
+        )}
+        {showSecondaryNotification && (
+          <SecondaryNotificationWrapper>
+            <NotificationText>{secondaryNotificationCount}</NotificationText>
+          </SecondaryNotificationWrapper>
         )}
       </button>
     );

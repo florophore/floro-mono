@@ -448,7 +448,7 @@ export default class BranchService {
 
     const openUserBranches: Array<FloroBranch> = [];
     for (const branch of userBranches) {
-      if (branch.id == repository.defaultBranchId) {
+      if (branch.id == repository.defaultBranchId || !branch?.baseBranchId) {
         continue;
       }
       if (!branch?.lastCommit) {

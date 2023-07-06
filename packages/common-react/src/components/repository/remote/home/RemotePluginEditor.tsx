@@ -10,7 +10,7 @@ import {
 import PluginEditorRow from "../../home/plugin_editor/PluginEditorRow";
 import PreviewPlugin from "../../home/plugin_editor/PreviewPlugin";
 import { useLocalVCSNavContext } from "../../local/vcsnav/LocalVCSContext";
-import { ComparisonState, RemoteCommitState, useBeforeCommitState, useRemoteCompareFrom, useViewMode } from "../hooks/remote-state";
+import { ComparisonState, RemoteCommitState, useBeforeCommitState, useMainCommitState, useRemoteCompareFrom, useViewMode } from "../hooks/remote-state";
 import RemotePluginEditorRow from "./RemotePluginEditorRow";
 import { RepoPage } from "../../types";
 
@@ -100,6 +100,8 @@ const RemotePluginEditor = (props: Props) => {
     compareFrom,
   ]);
 
+  const commitState = useMainCommitState(props.page, props.repository);
+
   const pluginVersions = useMemo(() => {
     if (
       viewMode == "compare" &&
@@ -107,11 +109,11 @@ const RemotePluginEditor = (props: Props) => {
     ) {
       return (beforeCommitState?.pluginVersions ?? []) as PluginVersion[];
     }
-    return (props.repository?.branchState?.commitState?.pluginVersions ?? []) as PluginVersion[];
+    return (commitState?.pluginVersions ?? []) as PluginVersion[];
   }, [
     viewMode,
     compareFrom,
-    props.repository?.branchState?.commitState?.pluginVersions,
+    commitState?.pluginVersions,
     beforeCommitState?.pluginVersions,
 
   ])

@@ -8,13 +8,16 @@ import WarningLight from "@floro/common-assets/assets/images/icons/warning.light
 import WarningDark from "@floro/common-assets/assets/images/icons/warning.dark.svg";
 import DualToggle from "@floro/storybook/stories/design-system/DualToggle";
 import ColorPalette from "@floro/styles/ColorPalette";
-import { ComparisonState, RemoteCommitState } from "../hooks/remote-state";
+import { ComparisonState, RemoteCommitState, useMergeRequestReviewPage } from "../hooks/remote-state";
 import BranchSelector from "@floro/storybook/stories/repo-components/BranchSelector";
 import { Branch } from "floro/dist/src/repo";
 import RemoteRepoSubHeader from './RemoteRepoSubHeader';
 import RemoteHistoryHeader from "./RemoteHistoryHeader";
 import RemoteCreateMRHeader from "./RemoteCreateMRHeader";
 import { RepoPage } from "../../types";
+import RemoteMergeRequestsHistoryHeader from "./RemoteMergeRequestsHistoryHeader";
+import RemoteMergeRequestHeader from "./RemoteMergeRequestHeader";
+import RemoteMRReviewHeader from "./RemoteMRReviewHeader";
 
 const Container = styled.div`
   display: flex;
@@ -81,77 +84,8 @@ interface Props {
 }
 
 const RemoteHeaderNav = (props: Props) => {
-  const theme = useTheme();
-  const loaderColor = useMemo(
-    () => (theme.name == "light" ? "purple" : "lightPurple"),
-    [theme.name]
-  );
 
-  const warning = useMemo(() => {
-    if (theme.name == "light") {
-      return WarningLight;
-    }
-    return WarningDark;
-  }, [theme.name]);
-
-  const isInvalid = useMemo(() => {
-    return false;
-    //if (
-    //  repoData?.repoState?.commandMode == "compare" &&
-    //  compareFrom == "before"
-    //) {
-    //  return (
-    //    (repoData?.beforeApiStoreInvalidity?.[props?.plugin ?? ""]?.length ??
-    //      0) > 0
-    //  );
-    //}
-    //return (
-    //  (repoData?.apiStoreInvalidity?.[props?.plugin ?? ""]?.length ?? 0) > 0
-    //);
-  }, [
-  ]);
-
-  //const hasAdditions = useMemo(() => {
-  //  if (repoData?.repoState?.commandMode != "compare") {
-  //    return false;
-  //  }
-  //  if ((repoData?.apiDiff?.description?.added?.length ?? 0) > 0) {
-  //    return true;
-  //  }
-  //  if ((repoData?.apiDiff?.licenses?.added?.length ?? 0) > 0) {
-  //    return true;
-  //  }
-  //  if ((repoData?.apiDiff?.plugins?.added?.length ?? 0) > 0) {
-  //    return true;
-  //  }
-  //  for (const plugin in repoData?.apiDiff?.store ?? {}) {
-  //    if ((repoData?.apiDiff?.store?.[plugin]?.added?.length ?? 0) > 0) {
-  //      return true;
-  //    }
-  //  }
-  //  return false;
-  //}, [repoData?.apiDiff, repoData?.repoState?.commandMode]);
-
-  //const hasRemovals = useMemo(() => {
-  //  if (repoData?.repoState?.commandMode != "compare") {
-  //    return false;
-  //  }
-  //  if ((repoData?.apiDiff?.description?.removed?.length ?? 0) > 0) {
-  //    return true;
-  //  }
-  //  if ((repoData?.apiDiff?.licenses?.removed?.length ?? 0) > 0) {
-  //    return true;
-  //  }
-  //  if ((repoData?.apiDiff?.plugins?.removed?.length ?? 0) > 0) {
-  //    return true;
-  //  }
-  //  for (const plugin in repoData?.apiDiff?.store ?? {}) {
-  //    if ((repoData?.apiDiff?.store?.[plugin]?.removed?.length ?? 0) > 0) {
-  //      return true;
-  //    }
-  //  }
-  //  return false;
-  //}, [repoData?.apiDiff, repoData?.repoState?.commandMode]);
+  const { reviewPage } = useMergeRequestReviewPage();
 
   if (props.page == "history") {
     return (
@@ -162,6 +96,35 @@ const RemoteHeaderNav = (props: Props) => {
       />
     );
   }
+
+  if (props.page == "merge-request") {
+    if (reviewPage != "none") {
+    return (
+      <RemoteMRReviewHeader
+        repository={props.repository}
+        plugin={props.plugin}
+        remoteCommitState={props.remoteCommitState}
+        comparisonState={props.comparisonState}
+      />
+    );
+    }
+    return (
+      <RemoteMergeRequestHeader
+        repository={props.repository}
+        plugin={props.plugin}
+      />
+    );
+  }
+
+  if (props.page == "merge-requests") {
+    return (
+      <RemoteMergeRequestsHistoryHeader
+        repository={props.repository}
+        plugin={props.plugin}
+      />
+    );
+  }
+
   if (props.page == "merge-request-create") {
     return <RemoteCreateMRHeader
       repository={props.repository}

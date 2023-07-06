@@ -140,7 +140,6 @@ interface Props {
 }
 const OrgDashboard = (props: Props) => {
   const { repositories } = useOrgRepos(props.organization);
-  console.log("REPS", repositories)
   const localRepos = useLocalRepos();
   const localRepoIds = useMemo(() => {
     if (!localRepos) {

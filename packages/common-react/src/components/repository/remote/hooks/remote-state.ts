@@ -196,6 +196,9 @@ export const useBeforeCommitState = (
     if (page == "merge-request-create") {
       return repository?.branchState?.proposedMergeRequest?.divergenceState ?? null;
     }
+    if (page == "merge-request") {
+      return repository?.mergeRequest?.divergenceState ?? null;
+    }
     return null;
   }, [page]);
 };
@@ -207,6 +210,9 @@ export const useViewMode = (
     if (page == "merge-request-create") {
       return "compare";
     }
+    if (page == "merge-request") {
+      return "compare";
+    }
     return "view";
   }, [page]);
 };
@@ -214,6 +220,30 @@ export const useViewMode = (
 export interface ComparisonState {
   apiDiff: ApiDiff;
   beforeRemoteCommitState: RemoteCommitState;
+}
+
+export const useMainCommitState = (
+  page: RepoPage,
+  repository: Repository
+): CommitState | null => {
+  return useMemo(() => {
+    if (page == "merge-request") {
+      return repository?.mergeRequest?.branchState?.commitState ?? null;
+    }
+    return repository?.branchState?.commitState ?? null;
+  }, [
+    page,
+    repository?.branchState?.commitState,
+    repository?.mergeRequest?.branchState?.commitState,
+  ]);
+};
+
+export const useMainRemoteState = (
+  page: RepoPage,
+  repository: Repository,
+): RemoteCommitState => {
+  const commitState = useMainCommitState(page, repository);
+  return useRemoteCommitState(commitState);
 }
 
 export const useComparisonState = (
@@ -225,6 +255,9 @@ export const useComparisonState = (
   const beforeCommitState = useMemo(() => {
     if (page == "merge-request-create") {
       return repository?.branchState?.proposedMergeRequest?.divergenceState;
+    }
+    if (page == "merge-request") {
+      return repository?.mergeRequest?.divergenceState;
     }
     return null;
   }, [
@@ -239,30 +272,7 @@ export const useComparisonState = (
     beforeRemoteCommitState,
     apiDiff
   };
-};
-
-export const useRemoteCompareFrom = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const compareFromRaw = searchParams.get("compare_from");
-  const plugin = searchParams.get("plugin") ?? "home";
-  const compareFrom = useMemo(() => {
-    if (compareFromRaw == "before") {
-      return "before";
-    }
-    return "after";
-  }, [compareFromRaw]);
-  const setCompareFrom = useCallback(
-    (compareFrom: "before" | "after") => {
-      setSearchParams({
-        plugin,
-        compare_from: compareFrom,
-      });
-    },
-    [searchParams, plugin]
-  );
-  return { compareFrom, setCompareFrom };
-};
-
+}
 
 export const useMergeRequestReviewPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -293,4 +303,60 @@ export const useMergeRequestReviewPage = () => {
     [searchParams, plugin]
   );
   return { reviewPage, setReviewPage };
+};
+
+;
+
+export const useRemoteCompareFrom = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const compareFromRaw = searchParams.get("compare_from");
+  const plugin = searchParams.get("plugin") ?? "home";
+  const reviewPageRaw = searchParams.get("review_page");
+  const compareFrom = useMemo(() => {
+    if (compareFromRaw == "before") {
+      return "before";
+    }
+    return "after";
+  }, [compareFromRaw]);
+  const setCompareFrom = useCallback(
+    (compareFrom: "before" | "after") => {
+      if (reviewPageRaw) {
+        setSearchParams({
+          plugin,
+          compare_from: compareFrom,
+          review_page: reviewPageRaw
+        });
+        return;
+      }
+      setSearchParams({
+        plugin,
+        compare_from: compareFrom,
+      });
+    },
+    [searchParams, plugin, reviewPageRaw]
+  );
+  return { compareFrom, setCompareFrom };
+};
+
+
+export const useMergeRequestsFilter = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const plugin = searchParams.get("plugin") ?? "home";
+  const filterMRRaw = searchParams.get("filter_mr") ?? "open";
+  const filterMR = useMemo(() => {
+    if (filterMRRaw == "closed") {
+      return "closed";
+    }
+    return "open";
+  }, [filterMRRaw]);
+  const setFilterMR = useCallback(
+    (filterMR: "open" | "closed") => {
+      setSearchParams({
+        plugin,
+        filter_mr: filterMR,
+      });
+    },
+    [searchParams, plugin]
+  );
+  return { filterMR, setFilterMR };
 };

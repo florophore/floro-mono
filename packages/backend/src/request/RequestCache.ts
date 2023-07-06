@@ -687,7 +687,6 @@ export default class RequestCache {
     delete cache[`merge-request-comment-reply:${mergeRequestCommentReply.id}`];
   }
 
-
   public setOpenUserBranches(
     cacheKey: string,
     repositoryId: string,
@@ -703,5 +702,39 @@ export default class RequestCache {
   ): Array<FloroBranch> {
     const cache = this.getCache(cacheKey);
     return cache[`open-user-branches:${repositoryId}`];
+  }
+
+  public setOpenRepoMergeRequests(
+    cacheKey: string,
+    repositoryId: string,
+    mergeRequests: Array<MergeRequest>
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`open-repo-merge-requests:${repositoryId}`] = mergeRequests;
+  }
+
+  public getOpenRepoMergeRequests(
+    cacheKey: string,
+    repositoryId: string,
+  ): Array<MergeRequest> {
+    const cache = this.getCache(cacheKey);
+    return cache[`open-repo-merge-requests:${repositoryId}`];
+  }
+
+  public setClosedRepoMergeRequests(
+    cacheKey: string,
+    repositoryId: string,
+    mergeRequests: Array<MergeRequest>
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`closed-repo-merge-requests:${repositoryId}`] = mergeRequests;
+  }
+
+  public getClosedRepoMergeRequests(
+    cacheKey: string,
+    repositoryId: string,
+  ): Array<MergeRequest> {
+    const cache = this.getCache(cacheKey);
+    return cache[`closed-repo-merge-requests:${repositoryId}`];
   }
 }

@@ -9,7 +9,7 @@ import { ApiResponse } from "floro/dist/src/repo";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { useUpdatePluginState } from "../local/hooks/local-hooks";
 import { useLocalVCSNavContext } from "../local/vcsnav/LocalVCSContext";
-import { ComparisonState, RemoteCommitState, useBeforeCommitState, useRemoteCompareFrom, useViewMode } from "../remote/hooks/remote-state";
+import { ComparisonState, RemoteCommitState, useBeforeCommitState, useMainCommitState, useRemoteCompareFrom, useViewMode } from "../remote/hooks/remote-state";
 import { RepoPage } from "../types";
 
 
@@ -105,6 +105,8 @@ const RemotePluginController = (props: Props) => {
     props.pluginName,
   ]);
 
+  const commitState = useMainCommitState(props.page, props.repository);
+
   const iframeUri = useMemo(() => {
 
     if (viewMode == "compare" && compareFrom == "before") {
@@ -120,7 +122,7 @@ const RemotePluginController = (props: Props) => {
       return pluginVersion.entryUrl;
     }
     const pluginVersion =
-      props?.repository?.branchState?.commitState?.pluginVersions?.find?.(
+      commitState?.pluginVersions?.find?.(
         (pv) => {
           return pv?.name == props.pluginName;
         }
@@ -132,7 +134,7 @@ const RemotePluginController = (props: Props) => {
   }, [
     viewMode,
     compareFrom,
-    props?.repository?.branchState?.commitState?.pluginVersions,
+    commitState?.pluginVersions,
     beforeCommitState?.pluginVersions,
     props.pluginName,
   ]);
@@ -202,7 +204,7 @@ const RemotePluginController = (props: Props) => {
       }
     } else {
 
-      for (const binaryRef of (props?.repository?.branchState?.commitState?.binaryRefs ?? [])) {
+      for (const binaryRef of (commitState?.binaryRefs ?? [])) {
           if (binaryRef?.fileName && binaryRef?.url) {
               out[binaryRef?.fileName] = binaryRef?.url;
           }
@@ -213,7 +215,7 @@ const RemotePluginController = (props: Props) => {
     manifest,
     viewMode,
     compareFrom,
-    props?.repository?.branchState?.commitState?.binaryRefs,
+    commitState?.binaryRefs,
     beforeCommitState?.binaryRefs
   ]);
   const changeset = useMemo(() => {

@@ -16,9 +16,15 @@ import MergeRequestCommentReplyLoader from "../hooks/loaders/MergeRequest/MergeR
 import MergeRequestCommentReplyAccessGuard from "../hooks/guards/MergeRequestCommentAccessReplyGuard";
 import RepositoryCommitsLoader from "../hooks/loaders/Repository/RepositoryCommitsLoader";
 import { MergeRequest as DBMergeRequest } from "@floro/database/src/entities/MergeRequest";
-import { MergeRequest } from "@floro/graphql-schemas/build/generated/main-graphql";
+import { CommitInfo, MergeRequest } from "@floro/graphql-schemas/build/generated/main-graphql";
 import RepositoryDatasourceFactoryService from "../../services/repositories/RepoDatasourceFactoryService";
 import RepositoryBranchesLoader from "../hooks/loaders/Repository/RepositoryBranchesLoader";
+import OpenMergeRequestsLoader from "../hooks/loaders/MergeRequest/OpenMergeRequestsLoader";
+import ClosedMergeRequestsLoader from "../hooks/loaders/MergeRequest/ClosedMergeRequestsLoader";
+import { Commit } from "@floro/database/src/entities/Commit";
+import RepositoryService from "../../services/repositories/RepositoryService";
+
+const PAGINATION_LIMIT = 10;
 
 @injectable()
 export default class MergeRequestResolverModule extends BaseResolverModule {
@@ -30,6 +36,7 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
   protected contextFactory!: ContextFactory;
   protected requestCache!: RequestCache;
   protected mergeRequestService!: MergeRequestService;
+  protected repositoryService!: RepositoryService;
   protected repositoryDatasourceFactoryService!: RepositoryDatasourceFactoryService;
 
   //loaders
@@ -47,6 +54,8 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
   protected mergeRequestCommentAccessGuard!: MergeRequestCommentAccessGuard;
   protected mergeRequestAccessGuard!: MergeRequestAccessGuard;
   protected mergeRequestCommentReplyAccessGuard!: MergeRequestCommentReplyAccessGuard;
+  protected openMergeRequestsLoader!: OpenMergeRequestsLoader;
+  protected closedMergeRequestsLoader!: ClosedMergeRequestsLoader;
 
   constructor(
     @inject(ContextFactory) contextFactory: ContextFactory,
@@ -71,12 +80,19 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
     @inject(MergeRequestCommentAccessGuard)
     mergeRequestCommentAccessGuard: MergeRequestCommentAccessGuard,
     @inject(MergeRequestCommentReplyLoader)
-    mergeRequestCommentReplyLoader: MergeRequestCommentReplyLoader
+    mergeRequestCommentReplyLoader: MergeRequestCommentReplyLoader,
+    @inject(OpenMergeRequestsLoader)
+    openMergeRequestsLoader: OpenMergeRequestsLoader,
+    @inject(ClosedMergeRequestsLoader)
+    closedMergeRequestsLoader: ClosedMergeRequestsLoader,
+    @inject(RepositoryService)
+    repositoryService: RepositoryService
   ) {
     super();
     this.requestCache = requestCache;
     this.contextFactory = contextFactory;
     this.mergeRequestService = mergeRequestService;
+    this.repositoryService = repositoryService;
     this.repositoryDatasourceFactoryService =
       repositoryDatasourceFactoryService;
 
@@ -94,6 +110,9 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
     this.mergeRequestCommentReplyLoader = mergeRequestCommentReplyLoader;
     this.mergeRequestLoader = mergeRequestLoader;
 
+    this.openMergeRequestsLoader = openMergeRequestsLoader;
+    this.closedMergeRequestsLoader = closedMergeRequestsLoader;
+
     this.repositoryCommitsLoader = repositoryCommitsLoader;
     this.repositoryBranchesLoader = repositoryBranchesLoader;
   }
@@ -107,7 +126,6 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
           return null;
         }
         const repository = this.requestCache.getRepo(cacheKey, dbMergeRequest?.repositoryId);
-        console.log("BRO", repository)
         if (!repository) {
           return null;
         }
@@ -121,7 +139,6 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
         const branch = cachedBranches.find(
           (b) => b.id == dbMergeRequest.branchId
         )
-        console.log("B", branch)
         if (!branch) {
           return null;
         }
@@ -134,11 +151,10 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
           branchHead: branch.lastCommit ?? null,
           repositoryId: repository.id,
         };
-      return null;
     }),
-    pendingCommits: runWithHooks(
+    commits: runWithHooks(
       () => [this.repositoryBranchesLoader, this.repositoryCommitsLoader],
-      async (mergeRequest: MergeRequest, _, { cacheKey }) => {
+      async (mergeRequest: MergeRequest, {idx}: main.MergeRequestCommitsArgs, { cacheKey }) => {
         const dbMergeRequest = mergeRequest as DBMergeRequest;
         if (!dbMergeRequest?.repositoryId) {
           return [];
@@ -149,6 +165,12 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
         );
         if (!cachedCommits) {
           return [];
+        }
+
+        const commitMap: { [key: string]: Commit } = {};
+        for (let i = 0; i < cachedCommits.length; ++i) {
+          const commit = cachedCommits[i];
+          commitMap[commit.sha as string] = commit;
         }
 
         const cachedBranches = this.requestCache.getRepoBranches(
@@ -162,13 +184,88 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
         if (!branch?.lastCommit) {
           return [];
         }
-        const pendingCommits =
+
+        const history = this.repositoryService.getCommitHistory(
+          cachedCommits,
+          branch?.lastCommit
+        );
+        const ranges = this.repositoryService.getRevertRanges(history);
+
+        const allPendingCommits = this.repositoryService.getCommitHistoryBetween(
+                cachedCommits,
+                branch?.lastCommit,
+                dbMergeRequest.divergenceSha ?? undefined
+              )?.map((c: Commit) => commitMap[c.sha as string]);
+
+        let pendingCommits: Array<CommitInfo>;
+        if (idx === undefined || idx === null) {
+          pendingCommits = allPendingCommits
+            ?.slice(0, PAGINATION_LIMIT)
+            .map((commit) => {
+              return {
+                ...commit,
+                isReverted: this.repositoryService.isReverted(
+                  ranges,
+                  commit.idx
+                ),
+              };
+            });
+        } else {
+          const startIdx = allPendingCommits.length - 1 - idx;
+          pendingCommits = allPendingCommits
+            .slice(startIdx, startIdx + PAGINATION_LIMIT)
+            .map((commit) => {
+              return {
+                ...commit,
+                isReverted: this.repositoryService.isReverted(
+                  ranges,
+                  commit.idx
+                ),
+              };
+            });
+        }
+        return pendingCommits;
+      }
+    ),
+    commitsCount: runWithHooks(
+      () => [this.repositoryBranchesLoader, this.repositoryCommitsLoader],
+      async (mergeRequest: MergeRequest, {idx}: main.MergeRequestCommitsArgs, { cacheKey }) => {
+        const dbMergeRequest = mergeRequest as DBMergeRequest;
+        if (!dbMergeRequest?.repositoryId) {
+          return 0;
+        }
+        const cachedCommits = this.requestCache.getRepoCommits(
+          cacheKey,
+          dbMergeRequest.repositoryId
+        );
+        if (!cachedCommits) {
+          return 0;
+        }
+
+        const commitMap: { [key: string]: Commit } = {};
+        for (let i = 0; i < cachedCommits.length; ++i) {
+          const commit = cachedCommits[i];
+          commitMap[commit.sha as string] = commit;
+        }
+
+        const cachedBranches = this.requestCache.getRepoBranches(
+          cacheKey,
+          dbMergeRequest.repositoryId
+        );
+        if (!cachedBranches) {
+          return 0;
+        }
+        const branch = cachedBranches?.find(b => b.id == dbMergeRequest.branchId);
+        if (!branch?.lastCommit) {
+          return 0;
+        }
+        const allPendingCommits =
           this.repositoryDatasourceFactoryService.getCommitsInRange(
             cachedCommits,
             branch?.lastCommit,
             dbMergeRequest.divergenceSha
           );
-        return pendingCommits;
+        return allPendingCommits.length;
       }
     ),
   };

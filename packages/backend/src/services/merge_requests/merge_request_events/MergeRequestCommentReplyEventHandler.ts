@@ -5,7 +5,7 @@ import { User } from '@floro/database/src/entities/User';
 import { QueryRunner } from 'typeorm';
 
 export default interface MergeRequestCommentReplyEventHandler {
-    onMergeRequestCommentReplyCreated(queryRunner: QueryRunner, byUser: User, branchHead: string|undefined, mergeRequest: MergeRequest, comment: MergeRequestComment, reply: MergeRequestCommentReply): Promise<void>
-    onMergeRequestCommentReplyUpdated(queryRunner: QueryRunner, byUser: User, branchHead: string|undefined, mergeRequest: MergeRequest, comment: MergeRequestComment, reply: MergeRequestCommentReply): Promise<void>
-    onMergeRequestCommentReplyDeleted(queryRunner: QueryRunner, byUser: User, branchHead: string|undefined, mergeRequest: MergeRequest, comment: MergeRequestComment, reply: MergeRequestCommentReply): Promise<void>
+    onMergeRequestCommentReplyCreated(queryRunner: QueryRunner, byUser: User, baseBranchId: string|undefined, branchHead: string|undefined, mergeRequest: MergeRequest, comment: MergeRequestComment, reply: MergeRequestCommentReply): Promise<void>
+    onMergeRequestCommentReplyUpdated(queryRunner: QueryRunner, byUser: User, baseBranchId: string|undefined, branchHead: string|undefined, mergeRequest: MergeRequest, comment: MergeRequestComment, reply: MergeRequestCommentReply): Promise<void>
+    onMergeRequestCommentReplyDeleted(queryRunner: QueryRunner, byUser: User, baseBranchId: string|undefined, branchHead: string|undefined, mergeRequest: MergeRequest, comment: MergeRequestComment, reply: MergeRequestCommentReply): Promise<void>
 }

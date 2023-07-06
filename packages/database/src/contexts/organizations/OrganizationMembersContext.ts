@@ -19,7 +19,7 @@ export default class OrganizationMembersContext extends BaseContext {
 
   public async createOrganizationMember(
     orgMemberArgs: DeepPartial<
-      OrganizationMember 
+      OrganizationMember
     > & { membershipState: "active" }
   ): Promise<OrganizationMember> {
     const orgMemberEntity = this.organizationMemberRepo.create(orgMemberArgs);
@@ -40,7 +40,9 @@ export default class OrganizationMembersContext extends BaseContext {
         userId,
       },
       relations: {
-        user: true
+        user: {
+          profilePhoto: true
+        },
       }
     });
   }
@@ -76,7 +78,7 @@ export default class OrganizationMembersContext extends BaseContext {
           }
         }
       }
-    }); 
+    });
   }
 
   public async getMemberCountForOrganization(

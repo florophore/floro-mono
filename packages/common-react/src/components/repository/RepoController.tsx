@@ -21,7 +21,7 @@ import RepoNavigator from "@floro/common-react/src/components/repository/RepoNav
 import { LocalVCSNavProvider } from "./local/vcsnav/LocalVCSContext";
 import { SourceGraphUIProvider } from "./sourcegraph/SourceGraphUIContext";
 import RemoteRepoController from "./remote/RemoteRepoController";
-import { useComparisonState, useRemoteCommitState } from "./remote/hooks/remote-state";
+import { useComparisonState, useMainRemoteState, useRemoteCommitState } from "./remote/hooks/remote-state";
 import { RepoPage } from "./types";
 
 interface Props {
@@ -33,7 +33,7 @@ interface Props {
 
 const RepoController = (props: Props) => {
   const [isExpanded, setIsExpanded] = useState(true);
-  const remoteCommitState = useRemoteCommitState(props.repository?.branchState?.commitState);
+  const remoteCommitState = useMainRemoteState(props.page, props.repository);
   const comparisonState = useComparisonState(props.page, props.repository, remoteCommitState);
   const [searchParams] = useSearchParams();
 

@@ -30,6 +30,9 @@ import MergeRequestService from "../../services/merge_requests/MergeRequestServi
 import { EMPTY_COMMIT_STATE, canAutoMergeCommitStates, getCommitState, getDivergenceOrigin, getMergeCommitStates, getMergeOriginSha } from "floro/dist/src/repo";
 import { User as FloroUser } from "floro/dist/src/filestructure";
 import { CommitData } from "floro/dist/src/sequenceoperations";
+import OpenMergeRequestsLoader from "../hooks/loaders/MergeRequest/OpenMergeRequestsLoader";
+import ClosedMergeRequestsLoader from "../hooks/loaders/MergeRequest/ClosedMergeRequestsLoader";
+import { User } from "@floro/database/src/entities/User";
 
 const PAGINATION_LIMIT = 10;
 
@@ -64,6 +67,9 @@ export default class RepositoryResolverModule extends BaseResolverModule {
   protected commitStateBinaryRefsLoader!: CommitStateBinaryRefsLoader;
   protected commitInfoRepositoryLoader!: CommitInfoRepositoryLoader;
 
+  protected openMergeRequestsLoader!: OpenMergeRequestsLoader;
+  protected closedMergeRequestsLoader!: ClosedMergeRequestsLoader;
+
   constructor(
     @inject(ContextFactory) contextFactory: ContextFactory,
     @inject(RequestCache) requestCache: RequestCache,
@@ -93,6 +99,10 @@ export default class RepositoryResolverModule extends BaseResolverModule {
     commitInfoRepositoryLoader: CommitInfoRepositoryLoader,
     @inject(BranchService) branchService: BranchService,
     @inject(MergeRequestService) mergeRequestService: MergeRequestService,
+    @inject(OpenMergeRequestsLoader)
+    openMergeRequestsLoader: OpenMergeRequestsLoader,
+    @inject(ClosedMergeRequestsLoader)
+    closedMergeRequestsLoader: ClosedMergeRequestsLoader
   ) {
     super();
     this.contextFactory = contextFactory;
@@ -117,6 +127,9 @@ export default class RepositoryResolverModule extends BaseResolverModule {
     this.commitStatePluginVersionsLoader = commitStatePluginVersionsLoader;
     this.commitStateBinaryRefsLoader = commitStateBinaryRefsLoader;
     this.commitInfoRepositoryLoader = commitInfoRepositoryLoader;
+
+    this.openMergeRequestsLoader = openMergeRequestsLoader;
+    this.closedMergeRequestsLoader = closedMergeRequestsLoader;
   }
 
   public Repository: main.RepositoryResolvers = {
@@ -263,8 +276,93 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           cachedRemoteSettings,
           false
         );
-
         return openUserBranches?.length ?? 0;
+      }
+    ),
+    openBranchesWithoutMergeRequests: runWithHooks(
+      () => [this.repositoryBranchesLoader, this.openMergeRequestsLoader],
+      async (repository: main.Repository, _, { cacheKey }) => {
+        if (!repository.id) {
+          return [];
+        }
+        const cachedBranches = this.requestCache.getRepoBranches(
+          cacheKey,
+          repository.id
+        );
+        if (!cachedBranches) {
+          return [];
+        }
+        const cachedOpenMergeRequests =
+          this.requestCache.getOpenRepoMergeRequests(cacheKey, repository.id);
+        if (!cachedOpenMergeRequests) {
+          return [];
+        }
+        const branchesWithMergeOpenMergeRequests = new Set(
+          cachedOpenMergeRequests.map((mergeRequest) => {
+            return mergeRequest.branchId;
+          })
+        );
+        return cachedBranches?.filter((b) => {
+          return (
+            !branchesWithMergeOpenMergeRequests.has(b.id) && b.baseBranchId
+          );
+        });
+      }
+    ),
+    openBranchesWithoutMergeRequestsCount: runWithHooks(
+      () => [this.repositoryBranchesLoader, this.openMergeRequestsLoader],
+      async (repository: main.Repository, _, { cacheKey }) => {
+        if (!repository.id) {
+          return 0;
+        }
+        const cachedBranches = this.requestCache.getRepoBranches(
+          cacheKey,
+          repository.id
+        );
+        if (!cachedBranches) {
+          return 0;
+        }
+        const cachedOpenMergeRequests =
+          this.requestCache.getOpenRepoMergeRequests(cacheKey, repository.id);
+        if (!cachedOpenMergeRequests) {
+          return 0;
+        }
+        const branchesWithMergeOpenMergeRequests = new Set(
+          cachedOpenMergeRequests.map((mergeRequest) => {
+            return mergeRequest.branchId;
+          })
+        );
+        return cachedBranches?.filter((b) => {
+          return (
+            !branchesWithMergeOpenMergeRequests.has(b.id) && b.baseBranchId
+          );
+        }).length;
+      }
+    ),
+    openUserMergeRequestsCount: runWithHooks(
+      () => [this.repositoryBranchesLoader, this.openMergeRequestsLoader],
+      async (repository: main.Repository, _, context: { cacheKey: string, currentUser?: User|null}) => {
+        if (!repository.id) {
+          return 0;
+        }
+        if (!context.currentUser?.id) {
+          return 0;
+        }
+        const cachedBranches = this.requestCache.getRepoBranches(
+          context.cacheKey,
+          repository.id
+        );
+        if (!cachedBranches) {
+          return 0;
+        }
+        const cachedOpenMergeRequests =
+          this.requestCache.getOpenRepoMergeRequests(context.cacheKey, repository.id);
+        if (!cachedOpenMergeRequests) {
+          return 0;
+        }
+        return cachedOpenMergeRequests?.filter(mr => {
+          return mr.openedByUserId == context.currentUser?.id;
+        })?.length;
       }
     ),
     mergeRequest: runWithHooks(
@@ -281,6 +379,85 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           return mergeRequest;
         }
         return null;
+      }
+    ),
+    openMergeRequests: runWithHooks(
+      () => [this.openMergeRequestsLoader],
+      async (
+        repository: main.Repository,
+        { id, openQuery, mode }: main.RepositoryOpenMergeRequestsArgs,
+        { cacheKey }
+      ) => {
+        if (mode != "open") {
+          return null;
+        }
+        if (!repository?.id) {
+          return null;
+        }
+        const cachedOpenMergeRequests =
+          this.requestCache.getOpenRepoMergeRequests(cacheKey, repository.id);
+        if (!cachedOpenMergeRequests) {
+          return null;
+        }
+        return this.mergeRequestService.getMergeRequestPaginatedResut(
+          cachedOpenMergeRequests,
+          id,
+          openQuery
+        );
+      }
+    ),
+
+    openMergeRequestsCount: runWithHooks(
+      () => [this.openMergeRequestsLoader],
+      async (repository: main.Repository, _, { cacheKey }) => {
+        if (!repository?.id) {
+          return null;
+        }
+        const cachedOpenMergeRequests =
+          this.requestCache.getOpenRepoMergeRequests(cacheKey, repository.id);
+        if (!cachedOpenMergeRequests) {
+          return null;
+        }
+        return cachedOpenMergeRequests.length;
+      }
+    ),
+    closedMergeRequests: runWithHooks(
+      () => [this.closedMergeRequestsLoader],
+      async (
+        repository: main.Repository,
+        { id, closedQuery, mode }: main.RepositoryClosedMergeRequestsArgs,
+        { cacheKey }
+      ) => {
+        if (mode != "closed") {
+          return null;
+        }
+        if (!repository?.id) {
+          return null;
+        }
+        const cachedClosedMergeRequests =
+          this.requestCache.getClosedRepoMergeRequests(cacheKey, repository.id);
+        if (!cachedClosedMergeRequests) {
+          return null;
+        }
+        return this.mergeRequestService.getMergeRequestPaginatedResut(
+          cachedClosedMergeRequests,
+          id,
+          closedQuery
+        );
+      }
+    ),
+    closedMergeRequestsCount: runWithHooks(
+      () => [this.closedMergeRequestsLoader],
+      async (repository: main.Repository, _, { cacheKey }) => {
+        if (!repository?.id) {
+          return null;
+        }
+        const cachedClosedMergeRequests =
+          this.requestCache.getClosedRepoMergeRequests(cacheKey, repository.id);
+        if (!cachedClosedMergeRequests) {
+          return null;
+        }
+        return cachedClosedMergeRequests.length;
       }
     ),
   };
@@ -450,10 +627,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
 
   public BranchState: main.BranchStateResolvers = {
     proposedMergeRequest: runWithHooks(
-      () => [
-        this.repositoryRemoteSettingsLoader,
-        this.repositoryCommitsLoader
-      ],
+      () => [this.repositoryRemoteSettingsLoader, this.repositoryCommitsLoader],
       async (
         branchState: main.BranchState,
         { idx }: main.BranchStateProposedMergeRequestArgs,
@@ -480,7 +654,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           branchState.repositoryId
         );
 
-        const commitMap: {[key: string]: Commit} = {};
+        const commitMap: { [key: string]: Commit } = {};
         for (let i = 0; i < cachedCommits.length; ++i) {
           const commit = cachedCommits[i];
           commitMap[commit.sha as string] = commit;
@@ -491,27 +665,38 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           branchState.repositoryId
         );
 
-        const branch = cachedBranches?.find(b => b.id == branchState.branchId);
+        const branch = cachedBranches?.find(
+          (b) => b.id == branchState.branchId
+        );
         if (!branch?.lastCommit) {
           return null;
         }
-        const baseBranch = cachedBranches?.find(b => b.id == branchState.baseBranchId);
-        const baseBranchRule = cachedRemoteSettings?.branchRules?.find(b => b.branchId == baseBranch?.id);
-        const canCreateMergeRequest = baseBranchRule?.canCreateMergeRequests ?? true;
-
-        const datasource = await this.mergeRequestService.getMergeRequestDataSource(
-          repository,
-          branch,
-          baseBranch
+        const baseBranch = cachedBranches?.find(
+          (b) => b.id == branchState.baseBranchId
         );
+        const baseBranchRule = cachedRemoteSettings?.branchRules?.find(
+          (b) => b.branchId == baseBranch?.id
+        );
+        const canCreateMergeRequest =
+          baseBranchRule?.canCreateMergeRequests ?? true;
+
+        const datasource =
+          await this.mergeRequestService.getMergeRequestDataSource(
+            repository,
+            branch,
+            baseBranch
+          );
         const divergenceOrigin = await getDivergenceOrigin(
           datasource,
           repository.id,
           branch?.lastCommit ?? undefined,
           baseBranch?.lastCommit ?? undefined
         );
-        const divergenceSha: string = getMergeOriginSha(divergenceOrigin) as string;
-        const isMerged = !!divergenceSha && divergenceOrigin.trueOrigin === branch?.lastCommit;
+        const divergenceSha: string = getMergeOriginSha(
+          divergenceOrigin
+        ) as string;
+        const isMerged =
+          !!divergenceSha && divergenceOrigin.trueOrigin === branch?.lastCommit;
         const rebaseList = await getMergeRebaseCommitList(
           datasource,
           repository.id,
@@ -563,9 +748,21 @@ export default class RepositoryResolverModule extends BaseResolverModule {
             });
         }
 
-        const fromCommitState = await getCommitState(datasource, repository.id, branch?.lastCommit ?? null);
-        const intoCommitState = await getCommitState(datasource, repository.id, baseBranch?.lastCommit ?? null);
-        const originCommitState = await getCommitState(datasource, repository.id, divergenceSha);
+        const fromCommitState = await getCommitState(
+          datasource,
+          repository.id,
+          branch?.lastCommit ?? null
+        );
+        const intoCommitState = await getCommitState(
+          datasource,
+          repository.id,
+          baseBranch?.lastCommit ?? null
+        );
+        const originCommitState = await getCommitState(
+          datasource,
+          repository.id,
+          divergenceSha
+        );
         const isConflictFree = await canAutoMergeCommitStates(
           datasource,
           fromCommitState ?? EMPTY_COMMIT_STATE,
@@ -574,35 +771,50 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         );
 
         const canMerge = isConflictFree && !isMerged;
-        const divergeCommit = divergenceOrigin ? commitMap[divergenceSha] : null;
-        const mergeRequest = this.mergeRequestService.getExistingMergeRequestByBranch(repository.id, branch.id);
+        const divergeCommit = divergenceOrigin
+          ? commitMap[divergenceSha]
+          : null;
+        const mergeRequest =
+          this.mergeRequestService.getExistingMergeRequestByBranch(
+            repository.id,
+            branch.id
+          );
         const suggestedTitle = branch?.name ?? "";
-        const suggestedDescription = allPendingCommits[allPendingCommits.length - 1]?.message ?? "";
+        const suggestedDescription =
+          allPendingCommits[allPendingCommits.length - 1]?.message ?? "";
 
-        const divergenceState = divergeCommit ? {
-          sha: divergeCommit.sha,
-          originalSha: divergeCommit.originalSha,
-          message: divergeCommit.message,
-          username: divergeCommit.username,
-          userId: divergeCommit.userId,
-          authorUsername: divergeCommit.authorUsername,
-          authorUserId: divergeCommit.authorUserId,
-          authorUser: divergeCommit.authorUser,
-          user: divergeCommit.user,
-          idx: divergeCommit.idx,
-          updatedAt: divergeCommit.updatedAt,
-          repositoryId: branchState.repositoryId,
-          branchId: branchState.branchId,
-          branchHead: branchState.branchHead,
-          isReverted: this.repositoryService.isReverted(
-            ranges,
-            divergeCommit.idx
-          ),
-          isValid: divergeCommit.isValid ?? true,
-          kvLink: this.repositoryService.getKVLinkForCommit(repository, divergeCommit),
-          stateLink: this.repositoryService.getStateLinkForCommit(repository, divergeCommit),
-          lastUpdatedAt: divergeCommit?.updatedAt?.toISOString(),
-        } : null;
+        const divergenceState = divergeCommit
+          ? {
+              sha: divergeCommit.sha,
+              originalSha: divergeCommit.originalSha,
+              message: divergeCommit.message,
+              username: divergeCommit.username,
+              userId: divergeCommit.userId,
+              authorUsername: divergeCommit.authorUsername,
+              authorUserId: divergeCommit.authorUserId,
+              authorUser: divergeCommit.authorUser,
+              user: divergeCommit.user,
+              idx: divergeCommit.idx,
+              updatedAt: divergeCommit.updatedAt,
+              repositoryId: branchState.repositoryId,
+              branchId: branchState.branchId,
+              branchHead: branchState.branchHead,
+              isReverted: this.repositoryService.isReverted(
+                ranges,
+                divergeCommit.idx
+              ),
+              isValid: divergeCommit.isValid ?? true,
+              kvLink: this.repositoryService.getKVLinkForCommit(
+                repository,
+                divergeCommit
+              ),
+              stateLink: this.repositoryService.getStateLinkForCommit(
+                repository,
+                divergeCommit
+              ),
+              lastUpdatedAt: divergeCommit?.updatedAt?.toISOString(),
+            }
+          : null;
         return {
           suggestedTitle,
           suggestedDescription,
@@ -614,7 +826,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           canCreateMergeRequest,
           pendingCommits,
           divergenceState,
-          pendingCommitsCount: allPendingCommits.length
+          pendingCommitsCount: allPendingCommits.length,
         };
       }
     ),
@@ -760,7 +972,6 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         return [];
       }
     ),
-
     commitSearch: runWithHooks(
       () => [
         this.repositoryCommitHistoryLoader,

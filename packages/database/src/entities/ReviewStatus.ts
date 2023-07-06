@@ -24,6 +24,11 @@ export class ReviewStatus extends BinaryPKBaseEntity {
   @IsString()
   branchHeadShaAtCreate!: string;
 
+  @Column("varchar")
+  @IsOptional()
+  @IsString()
+  baseBranchIdAtCreate!: string;
+
   @Column("boolean")
   @IsOptional()
   @IsBoolean()

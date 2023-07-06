@@ -7,6 +7,7 @@ export default interface UpdatedMergeRequestReviewersEventHandler {
   onUpdatedMergeRequestReviwers(
     queryRunner: QueryRunner,
     byUser: User,
+    baseBranchId: string|undefined,
     branchHead: string|undefined,
     mergeRequest: MergeRequest,
     reviewerRequests: ReviewerRequest[],

@@ -4,7 +4,7 @@ import { User } from '@floro/database/src/entities/User';
 import { QueryRunner } from 'typeorm';
 
 export default interface MergeRequestCommentEventHandler {
-    onMergeRequestCommentCreated(queryRunner: QueryRunner, byUser: User, branchHead: string|undefined, mergeRequest: MergeRequest, comment: MergeRequestComment): Promise<void>
-    onMergeRequestCommentUpdated(queryRunner: QueryRunner, byUser: User, branchHead: string|undefined, mergeRequest: MergeRequest, comment: MergeRequestComment): Promise<void>
-    onMergeRequestCommentDeleted(queryRunner: QueryRunner, byUser: User, branchHead: string|undefined, mergeRequest: MergeRequest, comment: MergeRequestComment): Promise<void>
+    onMergeRequestCommentCreated(queryRunner: QueryRunner, byUser: User, baseBranchId: string|undefined, branchHead: string|undefined, mergeRequest: MergeRequest, comment: MergeRequestComment): Promise<void>
+    onMergeRequestCommentUpdated(queryRunner: QueryRunner, byUser: User, baseBranchId: string|undefined, branchHead: string|undefined, mergeRequest: MergeRequest, comment: MergeRequestComment): Promise<void>
+    onMergeRequestCommentDeleted(queryRunner: QueryRunner, byUser: User, baseBranchId: string|undefined, branchHead: string|undefined, mergeRequest: MergeRequest, comment: MergeRequestComment): Promise<void>
 }

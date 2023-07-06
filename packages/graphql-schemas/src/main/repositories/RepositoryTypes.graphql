@@ -14,9 +14,12 @@ type Repository {
   repoBranches: [RepoBranch]
   openUserBranchesWithoutMergeRequests(filterIgnored: Boolean): [RepoBranch]
   openUserBranchesWithoutMergeRequestsCount: Int
-  openMergeRequests(id: ID): MergeRequestPaginatedResult
+  openUserMergeRequestsCount: Int
+  openBranchesWithoutMergeRequests: [RepoBranch]
+  openBranchesWithoutMergeRequestsCount: Int
+  openMergeRequests(mode: String, id: ID, openQuery: String): MergeRequestPaginatedResult
   openMergeRequestsCount: Int
-  closedMergeRequests(id: ID): MergeRequestPaginatedResult
+  closedMergeRequests(mode: String, id: ID, closedQuery: String): MergeRequestPaginatedResult
   closedMergeRequestsCount: Int
   mergeRequest(id: ID): MergeRequest
 }

@@ -13,6 +13,8 @@ import RepoHomePage from './repository/RepoHomePage';
 import UserPluginsPage from './user_plugins/UserPluginsPage';
 import RepoHistoryPage from './repository/RepoHistoryPage';
 import RepoCreateMergeRequestPage from './repository/RepoCreateMergeRequestPage';
+import RepoMergeRequestHistoryPage from './repository/RepoMergeRequestHistoryPage';
+import RepoMergeRequestPage from './repository/RepoMergeRequestPage';
 
 const Router = (): React.ReactElement => {
     const location = useLocation();
@@ -34,9 +36,10 @@ const Router = (): React.ReactElement => {
           <Route path="/repo/@/:ownerHandle/:repoName/settings" element={<RepoHomePage page={'settings'}/>} />
           <Route path="/repo/@/:ownerHandle/:repoName/settings/branchrules/:branchRuleId" element={<RepoHomePage page={'branch-rules'}/>} />
           <Route path="/repo/@/:ownerHandle/:repoName/mergerequests/create/:branchId" element={<RepoCreateMergeRequestPage/>} />
-          <Route path="/repo/@/:ownerHandle/:repoName/mergerequests/:mergeRequestId/review" element={<RepoHomePage page={'merge-request-review'}/>} />
-          <Route path="/repo/@/:ownerHandle/:repoName/mergerequests/:mergeRequestId" element={<RepoHomePage page={'merge-request'}/>} />
-          <Route path="/repo/@/:ownerHandle/:repoName/mergerequests" element={<RepoHomePage page={'merge-requests'}/>} />
+          <Route path="/repo/@/:ownerHandle/:repoName/mergerequests/:mergeRequestId/review" element={<RepoMergeRequestPage/>} />
+          <Route path="/repo/@/:ownerHandle/:repoName/mergerequests/:mergeRequestId" element={<RepoMergeRequestPage/>} />
+          <Route path="/repo/@/:ownerHandle/:repoName/mergerequests" element={<RepoMergeRequestHistoryPage/>} />
+          <Route path="/repo/@/:ownerHandle/:repoName/openbranches" element={<RepoMergeRequestHistoryPage/>} />
           <Route path="/repo/@/:ownerHandle/:repoName" element={<RepoHomePage page={'home'}/>} />
         </Routes>
       </AnimatePresence>

@@ -80,6 +80,8 @@ import MergeRequestAccessGuard from './resolvers/hooks/guards/MergeRequestAccess
 import MergeRequestCommentAccessGuard from './resolvers/hooks/guards/MergeRequestCommentAccessGuard';
 import MergeRequestCommentReplyAccessGuard from './resolvers/hooks/guards/MergeRequestCommentAccessReplyGuard';
 import CommitInfoRepositoryLoader from './resolvers/hooks/loaders/Repository/CommitInfoRepoLoader';
+import OpenMergeRequestsLoader from './resolvers/hooks/loaders/MergeRequest/OpenMergeRequestsLoader';
+import ClosedMergeRequestsLoader from './resolvers/hooks/loaders/MergeRequest/ClosedMergeRequestsLoader';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -140,6 +142,8 @@ export default new ContainerModule((bind): void => {
     bind(MergeRequestLoader).toSelf();
     bind(MergeRequestCommentLoader).toSelf();
     bind(MergeRequestCommentReplyLoader).toSelf();
+    bind(OpenMergeRequestsLoader).toSelf();
+    bind(ClosedMergeRequestsLoader).toSelf();
 
     // SERVICES
     bind(AuthenticationService).toSelf();

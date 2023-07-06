@@ -1,0 +1,233 @@
+fragment MergeRequest on MergeRequest {
+  id
+  openedByUser {
+    id
+    username
+    firstName
+    lastName
+    profilePhoto {
+      ...Photo
+    }
+  }
+  title
+  description
+  createdAt
+  isOpen
+  isMerged
+  canMerge
+  isConflictFree
+  mergeRequestCount
+  commitsCount
+  reviewStatuses {
+    id
+    approvalStatus
+    branchHeadShaAtCreate
+    updatedAt
+    createdAt
+    user {
+      id
+      username
+      firstName
+      lastName
+      profilePhoto {
+        ...Photo
+      }
+    }
+  }
+  reviewerRequests {
+    id
+    updatedAt
+    createdAt
+    requestedByUser {
+      id
+      username
+      firstName
+      lastName
+      profilePhoto {
+        ...Photo
+      }
+    }
+    requestedReviewerUser {
+      id
+      username
+      firstName
+      lastName
+      profilePhoto {
+        ...Photo
+      }
+    }
+  }
+  comments {
+    id
+    text
+    pluginName
+    branchHeadShaAtCreate
+    updatedAt
+    createdAt
+    user {
+      id
+      username
+      firstName
+      lastName
+      profilePhoto {
+        ...Photo
+      }
+    }
+    replies {
+      id
+      text
+      branchHeadShaAtCreate
+      updatedAt
+      createdAt
+      user {
+        id
+        username
+        firstName
+        lastName
+        profilePhoto {
+          ...Photo
+        }
+      }
+    }
+  }
+  timelineEvents {
+    id
+    eventName
+    subeventName
+    branchHeadShaAtCreate
+    eventGroupingId
+    performedByUser {
+      id
+      username
+      firstName
+      lastName
+      profilePhoto {
+        ...Photo
+      }
+    }
+  }
+  divergenceState {
+    sha
+    kvLink
+    stateLink
+    isReverted
+    isValid
+    message
+    lastUpdatedAt
+    binaryRefs {
+      fileName
+      url
+    }
+    pluginVersions {
+      id
+      name
+      displayName
+      version
+      darkIcon
+      lightIcon
+      selectedLightIcon
+      selectedDarkIcon
+      manifest
+      entryUrl
+    }
+    authorUser {
+      id
+      username
+      firstName
+      lastName
+      profilePhoto {
+        ...Photo
+      }
+    }
+    user {
+      id
+      username
+      firstName
+      lastName
+      profilePhoto {
+        ...Photo
+      }
+    }
+  }
+  commits(idx: $idx) {
+    sha
+    message
+    idx
+    username
+    authorUsername
+    timestamp
+    isReverted
+    isValid
+    updatedAt
+    authorUser {
+      id
+      username
+      firstName
+      lastName
+      profilePhoto {
+        ...Photo
+      }
+    }
+    user {
+      id
+      username
+      firstName
+      lastName
+      profilePhoto {
+        ...Photo
+      }
+    }
+  }
+  branchState {
+    branchId
+    name
+    branchHead
+    defaultBranchId
+    name
+    commitsSize
+    updatedAt
+    commitState {
+      sha
+      kvLink
+      stateLink
+      isReverted
+      isValid
+      message
+      lastUpdatedAt
+      binaryRefs {
+        fileName
+        url
+      }
+      pluginVersions {
+        id
+        name
+        displayName
+        version
+        darkIcon
+        lightIcon
+        selectedLightIcon
+        selectedDarkIcon
+        manifest
+        entryUrl
+      }
+      authorUser {
+        id
+        username
+        firstName
+        lastName
+        profilePhoto {
+          ...Photo
+        }
+      }
+      user {
+        id
+        username
+        firstName
+        lastName
+        profilePhoto {
+          ...Photo
+        }
+      }
+    }
+  }
+}

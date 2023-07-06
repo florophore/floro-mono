@@ -5,13 +5,13 @@ import React, {
   useRef,
   useEffect,
 } from "react";
-import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import { Repository, useProposedMergeRequestRepositoryUpdatesSubscription, useCreateMergeRequestMutation } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 
 import BackArrowIconLight from "@floro/common-assets/assets/images/icons/back_arrow.light.svg";
 import BackArrowIconDark from "@floro/common-assets/assets/images/icons/back_arrow.dark.svg";
-import { ComparisonState, RemoteCommitState } from "../hooks/remote-state";
+import { ComparisonState, RemoteCommitState, useMergeRequestReviewPage } from "../hooks/remote-state";
 import { useSearchParams } from "react-router-dom";
 import SearchInput from "@floro/storybook/stories/design-system/SearchInput";
 import { useRepoLinkBase } from "../hooks/remote-hooks";
@@ -25,6 +25,14 @@ import BranchIconDark from "@floro/common-assets/assets/images/icons/branch_icon
 
 import MergeIconLight from "@floro/common-assets/assets/images/repo_icons/merge.gray.svg";
 import MergeIconDark from "@floro/common-assets/assets/images/repo_icons/merge.white.svg";
+
+import ResolveWhite from '@floro/common-assets/assets/images/repo_icons/resolve.white.svg';
+import ResolveGray from '@floro/common-assets/assets/images/repo_icons/resolve.gray.svg';
+import ResolveMediumGray from '@floro/common-assets/assets/images/repo_icons/resolve.medium_gray.svg';
+
+import AbortWhite from '@floro/common-assets/assets/images/repo_icons/abort.white.svg';
+import AbortGray from '@floro/common-assets/assets/images/repo_icons/abort.gray.svg';
+import AbortMediumGray from '@floro/common-assets/assets/images/repo_icons/abort.medium_gray.svg';
 
 const InnerContent = styled.div`
   display: flex;
@@ -211,6 +219,45 @@ const ValueSpan = styled.span`
   overflow: hidden;
 `;
 
+const MergeInfoRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+`;
+
+const NothingToMerge = styled.p`
+  padding: 0;
+  margin: 0;
+  font-weight: 500;
+  font-size: 1.1rem;
+  font-family: "MavenPro";
+  color: ${(props) => props.theme.colors.standardTextLight};
+  font-style: italic;
+`;
+
+const MergeOkay = styled.p`
+  padding: 0;
+  margin: 0;
+  font-weight: 500;
+  font-size: 1.1rem;
+  font-family: "MavenPro";
+  color: ${(props) => props.theme.colors.addedText};
+  font-style: italic;
+`;
+
+const MergeError = styled.p`
+  padding: 0;
+  margin: 0;
+  font-weight: 500;
+  font-size: 1.1rem;
+  font-family: "MavenPro";
+  color: ${(props) => props.theme.colors.removedText};
+  font-style: italic;
+`;
+
 export const getBranchIdFromName = (name: string): string => {
   return name
     .toLowerCase()
@@ -229,6 +276,33 @@ const RemoteCreateMergeRequest = (props: Props) => {
   const theme = useTheme();
   const navigate = useNavigate();
 
+  const [searchParams] = useSearchParams();
+  const idxString = searchParams.get('idx');
+  const idx = useMemo(() => {
+    try {
+      if (!idxString) {
+        return null;
+      }
+      const idxInt = parseInt(idxString);
+      if (Number.isNaN(idxInt)) {
+        return null
+      }
+      return idxInt;
+    } catch(e) {
+      return null;
+    }
+  }, [idxString]);
+
+  const [createMergeRequest, createMergeRequestRequest] = useCreateMergeRequestMutation();
+
+
+  useProposedMergeRequestRepositoryUpdatesSubscription({
+    variables: {
+      repositoryId: props.repository.id,
+      idx
+    },
+  });
+
   const branchIcon = useMemo(() => {
     if (theme.name == "light") {
       return BranchIconLight;
@@ -243,6 +317,22 @@ const RemoteCreateMergeRequest = (props: Props) => {
     return MergeIconDark;
   }, [theme.name]);
 
+  const resolveIcon = useMemo(() => {
+    if (theme.name == "light") {
+      return ResolveGray;
+    }
+    return ResolveWhite;
+
+  }, [theme.name])
+
+  const abortIcon = useMemo(() => {
+    if (theme.name == "light") {
+      return AbortGray;
+    }
+    return AbortWhite;
+
+  }, [theme.name])
+
   //useEffect(() => {
   //    setUrlSearchParams({
   //      query: searchText,
@@ -254,6 +344,7 @@ const RemoteCreateMergeRequest = (props: Props) => {
   //}, [searchText, isFocused])
 
   const linkBase = useRepoLinkBase(props.repository);
+  const { reviewPage, setReviewPage } = useMergeRequestReviewPage();
   const homeLink = useMemo(() => {
     if (!props.repository?.branchState?.branchId) {
       return `${linkBase}?from=remote&plugin=${props?.plugin ?? "home"}`;
@@ -265,7 +356,6 @@ const RemoteCreateMergeRequest = (props: Props) => {
   const textareaContainer = useRef<HTMLDivElement>(null);
   const textarea = useRef<HTMLTextAreaElement>(null);
   const [isMessageFocused, setIsMessageFocused] = useState(false);
-  const [isTitleFocused, setIsTitleFocused] = useState(false);
 
   const [title, setTitle] = useState(
     props?.repository?.branchState?.proposedMergeRequest?.suggestedTitle ?? ""
@@ -289,13 +379,6 @@ const RemoteCreateMergeRequest = (props: Props) => {
     }
   }, [description, props?.repository?.branchState?.proposedMergeRequest?.suggestedDescription])
 
-  const onFocusTitle = useCallback(() => {
-    setIsTitleFocused(true);
-  }, []);
-
-  const onBlurTitle = useCallback(() => {
-    setIsTitleFocused(false);
-  }, []);
   const onFocusMessage = useCallback(() => {
     setIsMessageFocused(true);
   }, []);
@@ -312,8 +395,12 @@ const RemoteCreateMergeRequest = (props: Props) => {
   }, [theme, isMessageFocused]);
 
   const onGoBack = useCallback(() => {
+    if (reviewPage == "commits") {
+      setReviewPage("none");
+      return;
+    }
     navigate(homeLink);
-  }, [homeLink]);
+  }, [homeLink, reviewPage]);
 
   const backArrowIcon = useMemo(() => {
     if (theme.name == "light") {
@@ -343,6 +430,61 @@ const RemoteCreateMergeRequest = (props: Props) => {
       (b) => b?.id == branch?.baseBranchId
     );
   }, [props.repository?.repoBranches, branch]);
+
+
+  const onCreateMergeRequest = useCallback(() => {
+    if (!branch?.id || !props?.repository?.id) {
+      return;
+    }
+    createMergeRequest({
+      variables: {
+        branchId: branch.id,
+        repositoryId: props?.repository?.id as string,
+        title,
+        description
+      }
+    })
+  }, [branch?.id, title, description, props?.repository?.id])
+
+  useEffect(() => {
+    if (createMergeRequestRequest?.data?.createMergeRequest?.__typename == "CreateMergeRequestSuccess") {
+      if (createMergeRequestRequest?.data?.createMergeRequest.mergeRequest?.id) {
+        const link = `${linkBase}/mergerequests/${
+          createMergeRequestRequest?.data?.createMergeRequest.mergeRequest?.id
+        }?from=remote&plugin=${props?.plugin ?? "home"}`;
+        navigate(link)
+      }
+    }
+
+  }, [createMergeRequestRequest, linkBase]);
+
+  const mergeError = useMemo(() => {
+    if (!branch?.baseBranchId) {
+      return "No base branch for branch " + branch?.name;
+    }
+    if (!props.repository?.branchState?.proposedMergeRequest?.canCreateMergeRequest) {
+      return "Invalid permissions";
+    }
+
+    if (props.repository?.branchState?.proposedMergeRequest?.isMerged) {
+      return "Branch already merged";
+    }
+    return null;
+  }, [props.repository?.branchState?.proposedMergeRequest, branch])
+
+  const disableCreate = useMemo(() => {
+    if (mergeError) {
+      return true;
+    }
+    if (title?.trim() == "") {
+      return true;
+    }
+    if (description?.trim() == "") {
+      return true;
+    }
+    return false;
+
+  }, [branch, title, description, mergeError]);
 
   return (
     <>
@@ -385,6 +527,19 @@ const RemoteCreateMergeRequest = (props: Props) => {
               {!baseBranch?.name && <ValueSpan>{"None"}</ValueSpan>}
             </RightRow>
           </Row>
+          {props.repository?.branchState?.proposedMergeRequest?.canMerge && (
+            <Row style={{marginTop: 16, justifyContent: "flex-start"}}>
+                <Icon src={resolveIcon} />
+                <LabelSpan>{"Able to merge"}</LabelSpan>
+            </Row>
+          )}
+          {!props.repository?.branchState?.proposedMergeRequest?.canMerge && (
+            <Row style={{marginTop: 16, justifyContent: "flex-start"}}>
+                <Icon src={abortIcon} />
+                <LabelSpan>{"Unable to merge"}</LabelSpan>
+            </Row>
+
+          )}
           <Row style={{marginTop: 16}}>
             <Input
               value={title}
@@ -427,6 +582,11 @@ const RemoteCreateMergeRequest = (props: Props) => {
           </Row>
         </TopContainer>
         <BottomContainer>
+          {!!mergeError && (
+            <MergeInfoRow>
+              <MergeError>{'Unable to create Merge Request: ' + mergeError}</MergeError>
+            </MergeInfoRow>
+          )}
           <div
             style={{
               width: "100%",
@@ -436,6 +596,9 @@ const RemoteCreateMergeRequest = (props: Props) => {
             }}
           >
             <Button
+              onClick={onCreateMergeRequest}
+              isLoading={createMergeRequestRequest.loading}
+              isDisabled={disableCreate}
               label={"create merge request"}
               bg={"orange"}
               size={"extra-big"}

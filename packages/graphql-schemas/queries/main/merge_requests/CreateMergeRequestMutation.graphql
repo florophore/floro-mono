@@ -1,0 +1,66 @@
+mutation CreateMergeRequest(
+  $title: String!
+  $description: String!
+  $branchId: String!
+  $repositoryId: String!
+) {
+  createMergeRequest(
+    title: $title
+    description: $description
+    branchId: $branchId
+    repositoryId: $repositoryId
+  ) {
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+    ... on RepoAccessError {
+      type
+      message
+    }
+    ... on CreateMergeRequestSuccess {
+      repository {
+        ...Repository
+        openUserBranchesWithoutMergeRequestsCount
+        openUserBranchesWithoutMergeRequests(filterIgnored: false) {
+          id
+          name
+          baseBranchId
+          updatedAt
+          createdBy
+          createdByUsername
+          lastCommit
+        }
+        openBranchesWithoutMergeRequestsCount
+        openBranchesWithoutMergeRequests {
+          id
+          name
+          baseBranchId
+          updatedAt
+          createdBy
+          createdByUsername
+          lastCommit
+        }
+        openMergeRequestsCount
+        closedMergeRequestsCount
+        repoBranches {
+          id
+          name
+          lastCommit
+          baseBranchId
+          createdBy
+          createdByUsername
+          createdAt
+          updatedAt
+        }
+      }
+      mergeRequest {
+        ...SimpleMergeRequest
+      }
+    }
+    ... on CreateMergeRequestError {
+      message
+      type
+    }
+  }
+}

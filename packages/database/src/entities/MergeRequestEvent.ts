@@ -32,6 +32,11 @@ export class MergeRequestEvent extends BinaryPKBaseEntity {
   @IsString()
   branchHeadShaAtEvent!: string;
 
+  @Column("varchar")
+  @IsOptional()
+  @IsString()
+  baseBranchIdAtEvent!: string;
+
   @Column("uuid")
   performedByUserId!: string;
 

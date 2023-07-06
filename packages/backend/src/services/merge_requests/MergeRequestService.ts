@@ -30,6 +30,7 @@ import ReviewerRequestsContext from "@floro/database/src/contexts/merge_requests
 import OrganizationMembersContext from "@floro/database/src/contexts/organizations/OrganizationMembersContext";
 import ReviewStatusesContext from "@floro/database/src/contexts/merge_requests/ReviewStatusesContext";
 import { ReviewerRequest } from "@floro/database/src/entities/ReviewerRequest";
+import { ProtectedBranchRule } from "@floro/database/src/entities/ProtectedBranchRule";
 import { v4 as uuidv4 } from "uuid";
 import UpdatedMergeRequestReviewersEventHandler from "./merge_request_events/UpdatedMergeRequestReviewersEventHandler";
 import ReviewStatusChangeEventHandler from "./merge_request_events/ReviewStatusChangeEventHandler";
@@ -38,6 +39,7 @@ import MergeRequestCommentEventHandler from "./merge_request_events/MergeRequest
 import MergeRequestCommentReplyEventHandler from "./merge_request_events/MergeRequestCommentReplyEventHandler";
 import { MergeRequestComment } from "@floro/database/src/entities/MergeRequestComment";
 import { MergeRequestCommentReply } from "@floro/database/src/entities/MergeRequestCommentReply";
+import ProtectedBranchRulesContext from "@floro/database/src/contexts/repositories/ProtectedBranchRulesContext";
 
 export interface CreateMergeRequestResponse {
   action:
@@ -240,6 +242,20 @@ export interface DeleteMergeRequestCommentReplyResponse {
   };
 };
 
+export interface MergeRequestPermissions {
+  canEditReviewers: boolean;
+  canRemoveSelfFromReviewers: boolean;
+  canBlock: boolean;
+  canApprove: boolean;
+  allowedToMerge: boolean;
+  canClose: boolean;
+  canDeleteBranch: boolean;
+  hasApproval: boolean;
+}
+
+const REVIEWER_LIMIT = 5;
+const MERGE_REQUEST_LIMIT = 10;
+
 @injectable()
 export default class MergeRequestService implements BranchPushHandler {
   private databaseConnection!: DatabaseConnection;
@@ -307,6 +323,370 @@ export default class MergeRequestService implements BranchPushHandler {
         branchId
       );
     return mergeRequest;
+  }
+
+
+  public getMergeRequestPaginatedResut(
+    mergeRequests: Array<MergeRequest>,
+    id?: string|null,
+    query?: string|null
+  ): {
+    id: string|null|undefined,
+    lastId: string|null,
+    nextId: string|null,
+    mergeRequests: Array<MergeRequest>
+  } {
+    let found = !id;
+    id = !id ? mergeRequests?.[0]?.id : id;
+    const out: Array<MergeRequest> = [];
+    let i: number;
+    let lastId:string|null = null;
+    const isSearch = (query?.trim() ?? "") != "";
+    const lowerCaseQuery = query?.trim()?.toLowerCase() ?? "";
+    for (i = 0; i < mergeRequests?.length; ++i) {
+      if (!isSearch) {
+        if (!found && id && mergeRequests[i].id == id) {
+          lastId = mergeRequests?.[i - 1]?.id ?? null;
+          found = true;
+        }
+        if (found) {
+          out.push(mergeRequests[i]);
+        }
+      } else {
+        const userFullName = `${mergeRequests[i].openedByUser?.firstName} ${mergeRequests[i].user?.lastName}`.toLowerCase();
+        const username = `@${mergeRequests[i].openedByUser?.username?.toLowerCase()}`;
+        if (lowerCaseQuery) {
+          if (mergeRequests[i]?.title?.toLowerCase()?.indexOf(lowerCaseQuery) != -1) {
+            out.push(mergeRequests[i]);
+          } else if(mergeRequests[i]?.description?.toLowerCase()?.indexOf(lowerCaseQuery) != -1) {
+            out.push(mergeRequests[i]);
+          } else if(userFullName?.indexOf(lowerCaseQuery) != -1) {
+            out.push(mergeRequests[i]);
+          } else if (mergeRequests[i].openedByUser?.username?.toLowerCase()?.indexOf(lowerCaseQuery) != -1) {
+            out.push(mergeRequests[i]);
+          } else if (username?.toLocaleLowerCase()?.indexOf(lowerCaseQuery) != -1) {
+            out.push(mergeRequests[i]);
+          } else if (mergeRequests[i].mergeRequestCount.toString() == lowerCaseQuery) {
+            out.push(mergeRequests[i]);
+          }
+        }
+      }
+
+      if (out.length == MERGE_REQUEST_LIMIT) {
+        if (isSearch) {
+          return {
+            id: null,
+            lastId: null,
+            nextId: null,
+            mergeRequests: out
+          }
+        }
+        return {
+          id,
+          lastId,
+          nextId: mergeRequests?.[i + 1]?.id,
+          mergeRequests: out
+        }
+      }
+    }
+    return {
+      id: isSearch ? null : id,
+      lastId: isSearch ? null : lastId,
+      nextId: null,
+      mergeRequests: out
+    }
+
+  }
+
+  public async getMergeRequestPermissions(
+    mergeRequest: MergeRequest,
+    repository: Repository,
+    user: User,
+    queryRunner?: QueryRunner,
+  ): Promise<MergeRequestPermissions> {
+
+    const userRepoSettings =
+      await this.repositoryService.fetchRepoSettingsForUser(
+        repository.id,
+        user
+      );
+
+    const reviewerRequestsContext = await this.contextFactory.createContext(
+      ReviewerRequestsContext,
+      queryRunner
+    );
+    const openReviewerRequests =
+      await reviewerRequestsContext.getReviewerRequestsByMergeRequestId(
+        mergeRequest.id
+      );
+    const existingReviewerIds = new Set(openReviewerRequests?.map(
+      (r) => r.requestedReviewerUserId
+    ));
+
+    const branches = await this.repositoryService.getBranches(repository.id);
+    const branch = branches?.find((b) => b.id == mergeRequest?.branchId);
+
+    const baseBranch: FloroBranch | undefined | null = !!branch?.baseBranchId
+      ? branches?.find((b) => b.id == branch?.baseBranchId)
+      : null;
+
+    const branchRule: BranchRuleSettings | undefined | null = !!baseBranch
+      ? userRepoSettings?.branchRules.find((b) => b?.branchId == baseBranch?.id)
+      : null;
+
+    const canEditReviewers = repository?.repoType == "user_repo" ? user?.id == repository?.userId : mergeRequest?.openedByUserId == user?.id;
+    const canRemoveSelfFromReviewers = !!user?.id && existingReviewerIds.has(user?.id)
+
+    const canClose = await this.getCanClose(
+      mergeRequest,
+      repository,
+      user,
+      queryRunner
+    );
+
+    const allowedToMerge = await this.getAllowedToMerge(
+      mergeRequest,
+      repository,
+      user,
+      branch,
+      baseBranch,
+      branchRule
+    )
+
+    const hasApproval = await this.hasApproval(
+      mergeRequest,
+      repository,
+      branch,
+      baseBranch,
+      queryRunner
+    );
+
+    return {
+      hasApproval,
+      canEditReviewers,
+      canRemoveSelfFromReviewers,
+      canBlock: branchRule?.canApproveMergeRequests ?? ((repository?.repoType == "user_repo" && mergeRequest?.openedByUserId == user?.id) || mergeRequest?.openedByUserId != user?.id),
+      canApprove: branchRule?.canApproveMergeRequests ?? ((repository?.repoType == "user_repo" && mergeRequest?.openedByUserId == user?.id) || mergeRequest?.openedByUserId != user?.id),
+      allowedToMerge,
+      canClose,
+      canDeleteBranch: userRepoSettings?.canDeleteBranches ?? canClose,
+    };
+  }
+
+  public async getCanClose(
+    mergeRequest: MergeRequest,
+    repository: Repository,
+    user: User,
+    queryRunner?: QueryRunner,
+  ): Promise<boolean> {
+    if (!user?.id) {
+      return false;
+    }
+    if (repository.repoType == "user_repo") {
+      if (repository.isPrivate) {
+        return repository.userId == user?.id;
+      }
+      return repository?.userId == user?.id || mergeRequest?.openedByUserId == user?.id;
+    }
+    const organizationsMembersContext =
+      await this.contextFactory.createContext(OrganizationMembersContext, queryRunner);
+
+    const mrUserMembership =
+      await organizationsMembersContext.getByOrgIdAndUserId(
+        repository.organizationId,
+        user.id
+      );
+    const membership =
+      await organizationsMembersContext.getByOrgIdAndUserId(
+        repository.organizationId,
+        user.id
+      );
+
+    if (mrUserMembership?.membershipState != "active") {
+      if (!repository?.isPrivate && user?.id == mergeRequest?.userId) {
+        return true;
+      }
+      if (membership?.membershipState == "active") {
+        return true;
+      }
+    }
+    if (membership?.membershipState == "active") {
+      return user?.id == mergeRequest?.userId;
+    }
+
+    return false;
+  }
+
+  public async getAllowedToMerge(
+    mergeRequest: MergeRequest,
+    repository: Repository,
+    user: User,
+    branch?: FloroBranch|null,
+    baseBranch?: FloroBranch|null,
+    branchRuleSetting?: BranchRuleSettings|null,
+    queryRunner?: QueryRunner,
+  ): Promise<boolean> {
+    if (branchRuleSetting?.canMergeMergeRequests) {
+      return true;
+    }
+    if (!baseBranch) {
+      return false;
+    }
+    if (branchRuleSetting?.canMergeWithApproval) {
+      return await this.hasApproval(
+        mergeRequest,
+        repository,
+        branch,
+        baseBranch,
+        queryRunner
+      );
+    }
+    return await this.getCanClose(mergeRequest, repository, user, queryRunner);
+  }
+
+  public async hasApproval(
+    mergeRequest: MergeRequest,
+    repository: Repository,
+    branch?: FloroBranch|null,
+    baseBranch?: FloroBranch|null,
+    queryRunner?: QueryRunner,
+  ): Promise<boolean> {
+
+    const reviewStatusesContext = await this.contextFactory.createContext(
+      ReviewStatusesContext,
+      queryRunner
+    );
+    if (baseBranch?.id) {
+      const protectedBranchRulesContext = await this.contextFactory.createContext(
+        ProtectedBranchRulesContext,
+        queryRunner
+      );
+
+      const branchBrule = await protectedBranchRulesContext.getByRepoAndBranchId(
+        repository.id,
+        baseBranch?.id
+      )
+      if (branchBrule) {
+        if (branchBrule?.requireApprovalToMerge) {
+          const reviewStatuses = await reviewStatusesContext.getMergeRequestReviewStatuses(mergeRequest.id);
+          if (branchBrule?.requireReapprovalOnPushToMerge) {
+            const currentReviews = reviewStatuses?.filter(rs => {
+              return rs.branchHeadShaAtCreate == branch?.lastCommit && rs?.baseBranchIdAtCreate == branch?.baseBranchId;
+            });
+            if (currentReviews.length == 0) {
+              return false;
+            }
+            return currentReviews?.reduce((hasApproval, reviewStatus) => {
+              if (!hasApproval) {
+                return false;
+              }
+              return reviewStatus.approvalStatus == "approved";
+
+            }, true)
+          }
+          if (reviewStatuses.length == 0) {
+            return false;
+          }
+          const currentReviews = reviewStatuses?.filter(rs => {
+            return rs?.baseBranchIdAtCreate == branch?.baseBranchId;
+          });
+          return currentReviews?.reduce((hasApproval, reviewStatus) => {
+            if (!hasApproval) {
+              return false;
+            }
+            return reviewStatus.approvalStatus == "approved";
+          }, true)
+        }
+      }
+    }
+    return true;
+  }
+
+  public async getPotentialReviewersForMergeRequest(
+    mergeRequest: MergeRequest,
+    repository: Repository,
+    user: User,
+    query?: string|null
+  ): Promise<User[]> {
+    if (user?.id) {
+      return []
+    }
+    if (!mergeRequest.isOpen) {
+      return []
+    }
+
+    const reviewerRequestsContext = await this.contextFactory.createContext(
+      ReviewerRequestsContext,
+    );
+    const openReviewerRequests =
+      await reviewerRequestsContext.getReviewerRequestsByMergeRequestId(
+        mergeRequest.id
+      );
+    const existingReviewerIds = new Set(openReviewerRequests?.map(
+      (r) => r.requestedReviewerUserId
+    ));
+    if (repository.repoType == "user_repo") {
+
+      if (existingReviewerIds.has(repository.user.id)) {
+        return [];
+      }
+      return [repository.user];
+    }
+    const branches = await this.repositoryService.getBranches(repository.id);
+    const branch = branches?.find((b) => b.id == mergeRequest?.branchId);
+    if (!branch) {
+      return [];
+    }
+    const baseBranch: FloroBranch | undefined | null = !!branch?.baseBranchId
+      ? branches?.find((b) => b.id == branch?.baseBranchId)
+      : null;
+
+    const organizationsMembersContext =
+      await this.contextFactory.createContext(OrganizationMembersContext);
+    const orgMemembers = await organizationsMembersContext.getAllMembersForOrganization(repository.organizationId);
+    const users = orgMemembers.filter(om => {
+      if (existingReviewerIds.has(om.userId)) {
+        return false;
+      }
+      return om.membershipState == "active";
+    })?.map(om => om.user) as Array<User>;
+    let potentialUsers: Array<User> = []
+    if ((query ?? "")?.trim()?.length > 0) {
+      const lowerCaseQuery = query?.trim().toLowerCase() ?? "";
+      potentialUsers = users?.filter(user => {
+        if (`${user.firstName.toLowerCase()} ${user.lastName.toLowerCase()}`.indexOf(lowerCaseQuery) != -1) {
+          return true;
+        }
+        if (`@${user?.username?.toLowerCase()}`.indexOf(lowerCaseQuery) != -1 || user?.username?.toLowerCase().indexOf(lowerCaseQuery) != -1) {
+          return true;
+        }
+        return false;
+      }).sort((a, b) => {
+        return `${a.firstName} ${a.lastName}` >= `${b.firstName} ${b.lastName}` ? 1 : -1;
+      });
+    } else {
+      potentialUsers = users.sort((a, b) => {
+        return `${a.firstName} ${a.lastName}` >= `${b.firstName} ${b.lastName}` ? 1 : -1;
+      });
+    }
+    let out: Array<User> = []
+    for (const user of potentialUsers) {
+      if (out.length == REVIEWER_LIMIT) {
+        break;
+      }
+      const userRepoSettings =
+        await this.repositoryService.fetchRepoSettingsForUser(
+          repository.id,
+          user
+        );
+      const branchRule: BranchRuleSettings | undefined | null = !!baseBranch
+        ? userRepoSettings?.branchRules.find((b) => b?.branchId == baseBranch?.id)
+        : null;
+      if (branchRule?.canApproveMergeRequests) {
+        out.push(user);
+      }
+    }
+    return out;
   }
 
   public async mergeMergeRequest(
@@ -437,6 +817,8 @@ export default class MergeRequestService implements BranchPushHandler {
           },
         };
       }
+      const count = await mergeRequestsContext.countMergeRequestsByRepo(repository.id);
+      debugger;
       const mergeRequest = await mergeRequestsContext.create({
         title,
         description,
@@ -451,6 +833,7 @@ export default class MergeRequestService implements BranchPushHandler {
         organizationId: repository?.organizationId,
         userId: repository?.userId,
         openedByUserId: user?.id,
+        mergeRequestCount: count + 1,
         isDeleted: false,
       });
       if (!mergeRequest) {
@@ -469,6 +852,7 @@ export default class MergeRequestService implements BranchPushHandler {
         await createMergeRequestEventHandler.onMergeRequestCreated(
           queryRunner,
           user,
+          branch?.baseBranchId ?? undefined,
           branch?.lastCommit ?? undefined,
           mergeRequest
         );
@@ -589,6 +973,7 @@ export default class MergeRequestService implements BranchPushHandler {
         await updateMergeRequestEventHandler.onMergeRequestUpdated(
           queryRunner,
           user,
+          branch?.baseBranchId ?? undefined,
           branch?.lastCommit ?? undefined,
           updatedMergeRequest
         );
@@ -687,6 +1072,7 @@ export default class MergeRequestService implements BranchPushHandler {
         await closeMergeRequestEventHandler.onMergeRequestClosed(
           queryRunner,
           user,
+          branch?.baseBranchId ?? undefined,
           branch?.lastCommit ?? undefined,
           updatedMergeRequest
         );
@@ -946,6 +1332,7 @@ export default class MergeRequestService implements BranchPushHandler {
         await updatedMergeRequestReviewersEventHandler.onUpdatedMergeRequestReviwers(
           queryRunner,
           user,
+          branch?.baseBranchId ?? undefined,
           branch?.lastCommit ?? undefined,
           mergeRequest,
           reviewerRequests,
@@ -1112,6 +1499,7 @@ export default class MergeRequestService implements BranchPushHandler {
           await reviewStatusChangeEventHandler.onReviewStatusChanged(
             queryRunner,
             user,
+            branch?.baseBranchId ?? undefined,
             branch?.lastCommit ?? undefined,
             mergeRequest,
             updatedReviewStatus
@@ -1126,6 +1514,7 @@ export default class MergeRequestService implements BranchPushHandler {
         // create case
         const reviewStatus = await reviewStatusesContext.create({
           approvalStatus,
+          baseBranchIdAtCreate: branch.baseBranchId ?? undefined,
           branchHeadShaAtCreate: branch.lastCommit ?? undefined,
           isDeleted: false,
           mergeRequestId: mergeRequest.id,
@@ -1137,6 +1526,7 @@ export default class MergeRequestService implements BranchPushHandler {
           await reviewStatusChangeEventHandler.onReviewStatusAdded(
             queryRunner,
             user,
+            branch?.baseBranchId ?? undefined,
             branch?.lastCommit ?? undefined,
             mergeRequest,
             reviewStatus
@@ -1218,6 +1608,7 @@ export default class MergeRequestService implements BranchPushHandler {
         await reviewStatusChangeEventHandler.onReviewStatusRemoved(
           queryRunner,
           user,
+          branch?.baseBranchId ?? undefined,
           branch?.lastCommit ?? undefined,
           mergeRequest,
           deletedReviewStatus
@@ -1451,6 +1842,7 @@ export default class MergeRequestService implements BranchPushHandler {
         await mergeRequestCommentEventHandler.onMergeRequestCommentCreated(
           queryRunner,
           user,
+          branch?.baseBranchId ?? undefined,
           branch?.lastCommit ?? undefined,
           mergeRequest,
           comment
@@ -1571,6 +1963,7 @@ export default class MergeRequestService implements BranchPushHandler {
         await mergeRequestCommentEventHandler.onMergeRequestCommentUpdated(
           queryRunner,
           user,
+          branch?.baseBranchId ?? undefined,
           branch?.lastCommit ?? undefined,
           mergeRequest,
           updatedComment
@@ -1677,6 +2070,7 @@ export default class MergeRequestService implements BranchPushHandler {
         await mergeRequestCommentEventHandler.onMergeRequestCommentDeleted(
           queryRunner,
           user,
+          branch?.baseBranchId ?? undefined,
           branch?.lastCommit ?? undefined,
           mergeRequest,
           deletedComment
@@ -1787,6 +2181,7 @@ export default class MergeRequestService implements BranchPushHandler {
         await mergeRequestCommentReplyEventHandler.onMergeRequestCommentReplyCreated(
           queryRunner,
           user,
+          branch?.baseBranchId ?? undefined,
           branch?.lastCommit ?? undefined,
           mergeRequest,
           comment,
@@ -1918,6 +2313,7 @@ export default class MergeRequestService implements BranchPushHandler {
         await mergeRequestCommentReplyEventHandler.onMergeRequestCommentReplyUpdated(
           queryRunner,
           user,
+          branch?.baseBranchId ?? undefined,
           branch?.lastCommit ?? undefined,
           mergeRequest,
           comment,
@@ -2038,6 +2434,7 @@ export default class MergeRequestService implements BranchPushHandler {
         await mergeRequestCommentReplyEventHandler.onMergeRequestCommentReplyDeleted(
           queryRunner,
           user,
+          branch?.baseBranchId ?? undefined,
           branch?.lastCommit ?? undefined,
           mergeRequest,
           comment,

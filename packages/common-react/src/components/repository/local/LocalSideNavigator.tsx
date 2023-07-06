@@ -22,6 +22,7 @@ import LocalSideOption from "./LocalSideOption";
 import { useLocalVCSNavContext } from "./vcsnav/LocalVCSContext";
 import { useRepoLinkBase } from "../remote/hooks/remote-hooks";
 import { RepoPage } from "../types";
+import { useMainCommitState } from "../remote/hooks/remote-state";
 
 const Navigator = styled.nav`
   width: 72px;
@@ -296,16 +297,17 @@ const LocalSideNavigator = (props: Props): React.ReactElement => {
 
 
   const linkBase = useRepoLinkBase(props.repository, props.page);
+  const commitState = useMainCommitState(props.page, props.repository);
   const mainLink = useMemo(() => {
-    if (props.repository?.branchState?.commitState?.sha) {
+    if (commitState?.sha) {
       return `${linkBase}?from=local&sha=${
-        props.repository?.branchState?.commitState?.sha
+        commitState?.sha
       }&branch=${props.repository?.branchState?.branchId}`;
     }
     return `${linkBase}?from=local&branch=${
       props.repository?.branchState?.branchId
     }`;
-  }, [linkBase, props.plugin, props.repository?.branchState?.branchId, props.repository?.branchState?.commitState?.sha]);
+  }, [linkBase, props.plugin, props.repository?.branchState?.branchId, commitState?.sha]);
 
   return (
     <Navigator>

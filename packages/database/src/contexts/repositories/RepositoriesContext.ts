@@ -29,7 +29,9 @@ export default class RepositoriesContext extends BaseContext {
     return await this.queryRunner.manager.findOne(Repository, {
       where: { id },
       relations: {
-        user: true,
+        user: {
+          profilePhoto: true
+        },
         organization: true,
       },
     });
@@ -39,7 +41,9 @@ export default class RepositoriesContext extends BaseContext {
     return await this.queryRunner.manager.findOne(Repository, {
       where: { hashKey },
       relations: {
-        user: true,
+        user: {
+          profilePhoto: true
+        },
         organization: true,
       },
     });
@@ -49,7 +53,9 @@ export default class RepositoriesContext extends BaseContext {
     return await this.queryRunner.manager.find(Repository, {
       where: { userId },
       relations: {
-        user: true,
+        user: {
+          profilePhoto: true
+        },
         organization: true,
       },
     });
@@ -62,7 +68,9 @@ export default class RepositoriesContext extends BaseContext {
     return await this.queryRunner.manager.find(Repository, {
       where: { userId, isPrivate },
       relations: {
-        user: true,
+        user: {
+          profilePhoto: true
+        },
       },
       order: {
         createdAt: "DESC",

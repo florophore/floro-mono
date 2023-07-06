@@ -22,7 +22,10 @@ export default class ReviewerStatusesContext extends BaseContext {
   public async getById(id: string): Promise<ReviewStatus | null> {
     return await this.queryRunner.manager.findOneBy(ReviewStatus, { id });
   }
-  public async getByMergeRequestIdAndUserId(mergeRequestId: string, userId: string): Promise<ReviewStatus | null> {
+  public async getByMergeRequestIdAndUserId(
+    mergeRequestId: string,
+    userId: string
+  ): Promise<ReviewStatus | null> {
     return await this.queryRunner.manager.findOneBy(ReviewStatus, {
       mergeRequestId,
       userId,
@@ -46,6 +49,18 @@ export default class ReviewerStatusesContext extends BaseContext {
     );
     return count > 0;
   }
+
+  public async getMergeRequestReviewStatuses(
+    mergeRequestId: string
+  ): Promise<Array<ReviewStatus>> {
+    return await this.queryRunner.manager.find(ReviewStatus, {
+      where: {
+        mergeRequestId,
+        isDeleted: false,
+      },
+    });
+  }
+
   public async updateReviewStatus(
     reviewStatusRequest: ReviewStatus,
     args: DeepPartial<ReviewStatus>
@@ -67,9 +82,6 @@ export default class ReviewerStatusesContext extends BaseContext {
     for (const prop in reviewStatusArgs) {
       reviewStatus[prop] = reviewStatusArgs[prop];
     }
-    return await this.queryRunner.manager.save(
-      ReviewStatus,
-      reviewStatus
-    );
+    return await this.queryRunner.manager.save(ReviewStatus, reviewStatus);
   }
 }

@@ -1,4 +1,4 @@
-import { IsBoolean, IsDefined, IsIn, IsOptional, IsString, IsUUID, ValidateIf } from "class-validator";
+import { IsBoolean, IsDefined, IsIn, IsInt, IsOptional, IsString, IsUUID, ValidateIf } from "class-validator";
 import { Entity, Column, OneToOne, Relation, JoinColumn, OneToMany, ManyToOne } from "typeorm";
 import { BinaryPKBaseEntity } from "./BinaryPKBaseEntity";
 import { Organization } from "./Organization";
@@ -60,6 +60,11 @@ export class MergeRequest extends BinaryPKBaseEntity {
   @IsOptional()
   @IsBoolean()
   isDeleted!: boolean;
+
+  @Column("integer")
+  @IsOptional()
+  @IsInt()
+  mergeRequestCount!: number;
 
   @Column("uuid")
   userId!: string;

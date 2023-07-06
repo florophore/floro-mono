@@ -1,0 +1,20 @@
+fragment SimpleMergeRequest on MergeRequest {
+  id
+  title
+  description
+  createdAt
+  openedByUser {
+    id
+    username
+    firstName
+    lastName
+    profilePhoto {
+      ...Photo
+    }
+  }
+  isOpen
+  isMerged
+  canMerge
+  isConflictFree
+  mergeRequestCount
+}

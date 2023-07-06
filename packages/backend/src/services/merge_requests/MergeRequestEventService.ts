@@ -48,6 +48,7 @@ export default class MergeRequestEventService
   public async onMergeRequestCreated(
     queryRunner: QueryRunner,
     byUser: User,
+    baseBranchId: string|undefined,
     branchHead: string|undefined,
     mergeRequest: MergeRequest
   ): Promise<void> {
@@ -109,6 +110,7 @@ export default class MergeRequestEventService
   public async onMergeRequestUpdated(
     queryRunner: QueryRunner,
     byUser: User,
+    baseBranchId: string|undefined,
     branchHead: string|undefined,
     mergeRequest: MergeRequest
   ): Promise<void> {
@@ -127,6 +129,7 @@ export default class MergeRequestEventService
   public async onMergeRequestClosed(
     queryRunner: QueryRunner,
     byUser: User,
+    baseBranchId: string|undefined,
     branchHead: string|undefined,
     mergeRequest: MergeRequest
   ): Promise<void> {
@@ -145,6 +148,7 @@ export default class MergeRequestEventService
   public async onUpdatedMergeRequestReviwers(
     queryRunner: QueryRunner,
     byUser: User,
+    baseBranchId: string|undefined,
     branchHead: string|undefined,
     mergeRequest: MergeRequest,
     reviewerRequests: ReviewerRequest[],
@@ -173,6 +177,7 @@ export default class MergeRequestEventService
   public async onReviewStatusAdded(
     queryRunner: QueryRunner,
     byUser: User,
+    baseBranchId: string|undefined,
     branchHead: string|undefined,
     mergeRequest: MergeRequest,
     reviewStatus: ReviewStatus
@@ -195,6 +200,7 @@ export default class MergeRequestEventService
   public async onReviewStatusChanged(
     queryRunner: QueryRunner,
     byUser: User,
+    baseBranchId: string|undefined,
     branchHead: string|undefined,
     mergeRequest: MergeRequest,
     reviewStatus: ReviewStatus
@@ -217,6 +223,7 @@ export default class MergeRequestEventService
   public async onReviewStatusRemoved(
     queryRunner: QueryRunner,
     byUser: User,
+    baseBranchId: string|undefined,
     branchHead: string|undefined,
     mergeRequest: MergeRequest,
     reviewStatus: ReviewStatus
@@ -238,6 +245,7 @@ export default class MergeRequestEventService
   public async onMergeRequestCommentCreated(
     queryRunner: QueryRunner,
     byUser: User,
+    baseBranchId: string|undefined,
     branchHead: string|undefined,
     mergeRequest: MergeRequest,
     comment: MergeRequestComment
@@ -259,6 +267,7 @@ export default class MergeRequestEventService
   public async onMergeRequestCommentUpdated(
     queryRunner: QueryRunner,
     byUser: User,
+    baseBranchId: string|undefined,
     branchHead: string|undefined,
     mergeRequest: MergeRequest,
     comment: MergeRequestComment
@@ -279,6 +288,7 @@ export default class MergeRequestEventService
   public async onMergeRequestCommentDeleted(
     queryRunner: QueryRunner,
     byUser: User,
+    baseBranchId: string|undefined,
     branchHead: string|undefined,
     mergeRequest: MergeRequest,
     comment: MergeRequestComment
@@ -299,6 +309,7 @@ export default class MergeRequestEventService
   public async onMergeRequestCommentReplyCreated(
     queryRunner: QueryRunner,
     byUser: User,
+    baseBranchId: string|undefined,
     branchHead: string|undefined,
     mergeRequest: MergeRequest,
     comment: MergeRequestComment,
@@ -322,6 +333,7 @@ export default class MergeRequestEventService
   public async onMergeRequestCommentReplyUpdated(
     queryRunner: QueryRunner,
     byUser: User,
+    baseBranchId: string|undefined,
     branchHead: string|undefined,
     mergeRequest: MergeRequest,
     comment: MergeRequestComment,
@@ -344,6 +356,7 @@ export default class MergeRequestEventService
   public async onMergeRequestCommentReplyDeleted(
     queryRunner: QueryRunner,
     byUser: User,
+    baseBranchId: string|undefined,
     branchHead: string|undefined,
     mergeRequest: MergeRequest,
     comment: MergeRequestComment,

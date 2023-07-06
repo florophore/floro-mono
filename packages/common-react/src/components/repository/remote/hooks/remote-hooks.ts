@@ -50,12 +50,16 @@ export const useRepoLinkBase = (repository: Repository, page?: string) => {
   const ownerHandle = params?.["ownerHandle"] ?? "";
   const repoName = params?.["repoName"] ?? "";
   const branchId = params?.["branchId"] ?? "";
+  const mergeRequestId = params?.["mergeRequestId"] ?? "";
   const pageSuffix = useMemo(() => {
     if (page == "merge-request-create") {
       return "mergerequests/create/" + branchId;
     }
+    if (page == "merge-request") {
+      return "mergerequests/" + mergeRequestId;
+    }
     return page;
-  }, [page, branchId])
+  }, [page, branchId,mergeRequestId])
   const suffix = !page || page == "home" ? "" : `/${pageSuffix}`
   return useMemo(() => {
     if (!repository?.name) {

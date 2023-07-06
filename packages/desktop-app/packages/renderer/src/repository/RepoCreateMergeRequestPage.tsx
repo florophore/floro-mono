@@ -3,7 +3,7 @@ import OuterNavigator from '@floro/common-react/src/components/outer-navigator/O
 import {useNavigationAnimator} from '@floro/common-react/src/navigation/navigation-animator';
 import {useLinkTitle} from '@floro/common-react/src/components/header_links/HeaderLink';
 import {useParams, useSearchParams} from 'react-router-dom';
-import {FetchRepositoryByNameDocument, Repository, useFetchRepositoryByNameQuery, useFetchRepositoryProposedMergeRequestQuery} from '@floro/graphql-schemas/src/generated/main-client-graphql';
+import {FetchRepositoryByNameDocument, Repository, useFetchRepositoryByNameQuery, useFetchRepositoryProposedMergeRequestQuery, useProposedMergeRequestRepositoryUpdatesSubscription, useRepositoryUpdatesSubscription} from '@floro/graphql-schemas/src/generated/main-client-graphql';
 import {useSession} from '@floro/common-react/src/session/session-context';
 import {useUserOrganizations} from '@floro/common-react/src/hooks/offline';
 import RepoController from '@floro/common-react/src/components/repository/RepoController';
@@ -34,7 +34,7 @@ const RepoCreateMergeRequestPage = () => {
     }
   }, [idxString]);
   const userOrganizations = useUserOrganizations();
-  const {data} = useFetchRepositoryProposedMergeRequestQuery({
+  const {data, refetch} = useFetchRepositoryProposedMergeRequestQuery({
     variables: {
       ownerHandle,
       repoName,
@@ -76,6 +76,19 @@ const RepoCreateMergeRequestPage = () => {
     }
     return offlineRepo ?? null;
   }, [data, currentUser, ownerHandle, repoName, userOrganizations, offlineRepo?.id]);
+
+  const {data: subscriptionData } = useRepositoryUpdatesSubscription({
+    variables: {
+      repositoryId: repository?.id,
+      branchId
+    },
+  });
+  useEffect(() => {
+    if (subscriptionData?.repositoryUpdated?.id) {
+      refetch();
+    }
+  }, [subscriptionData])
+
 
   useEffect(() => {
     if (repository) {

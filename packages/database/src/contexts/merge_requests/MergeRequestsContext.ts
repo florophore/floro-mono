@@ -23,6 +23,44 @@ export default class MergeRequestsContext extends BaseContext {
     return await this.queryRunner.manager.findOneBy(MergeRequest, { id });
   }
 
+  public async getAllOpenMergeRequests(
+    repositoryId: string
+  ): Promise<MergeRequest[]> {
+    return await this.queryRunner.manager.find(MergeRequest, {
+      where: {
+        repositoryId,
+        isOpen: true,
+      },
+      order: {
+        mergeRequestCount: 'DESC'
+      },
+      relations: {
+        openedByUser: {
+          profilePhoto: true
+        }
+      }
+    });
+  }
+
+  public async getAllClosedMergeRequests(
+    repositoryId: string
+  ): Promise<MergeRequest[]> {
+    return await this.queryRunner.manager.find(MergeRequest, {
+      where: {
+        repositoryId,
+        isOpen: false,
+      },
+      order: {
+        mergeRequestCount: 'DESC'
+      },
+      relations: {
+        openedByUser: {
+          profilePhoto: true
+        }
+      }
+    });
+  }
+
   public async getOpenMergeRequestByBranchNameAndRepo(
     repositoryId: string,
     branchId: string,
@@ -32,6 +70,20 @@ export default class MergeRequestsContext extends BaseContext {
       repositoryId,
       isOpen: true,
     });
+  }
+
+  public async countMergeRequestsByRepo(
+    repositoryId: string
+  ): Promise<number> {
+    const [, count] = await this.queryRunner.manager.findAndCount(
+      MergeRequest,
+      {
+        where: {
+          repositoryId,
+        },
+      }
+    );
+    return count;
   }
 
   public async repoHasOpenRequestOnBranch(

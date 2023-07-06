@@ -56,8 +56,20 @@ type MergeRequestEvent {
   createdAt: DateTime
 }
 
+type MergeRequestPermissions {
+  canEditReviewers: Boolean
+  canRemoveSelfFromReviewers: Boolean
+  canBlock: Boolean
+  canApprove: Boolean
+  allowedToMerge: Boolean
+  canClose: Boolean
+  canDeleteBranch: Boolean
+}
+
 type MergeRequest {
   id: ID
+  description: String
+  title: String
   branchState: BranchState
   divergenceState: CommitState
   openedByUser: User
@@ -65,12 +77,17 @@ type MergeRequest {
   isMerged: Boolean
   canMerge: Boolean
   isConflictFree: Boolean
+  mergeRequestCount: Int
+  createdAt: DateTime
+  commitsCount: Int
+
   reviewStatuses: [ReviewStatus]
   reviewerRequests: [ReviewerRequest]
   comments: [MergeRequestComment]
-  pendingCommits: [CommitInfo]
-  mergedCommits: [CommitInfo]
+  commits(idx: Int): [CommitInfo]
   timelineEvents: [MergeRequestEvent]
+  mergeRequestPermissions: MergeRequestPermissions
+  potentialReviewers(query: String): [User]
 }
 
 type MergeRequestAccessError {

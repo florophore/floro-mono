@@ -127,21 +127,11 @@ const RemoteRepoSubHeader = (props: Props) => {
   }, [theme.name]);
 
   const isInvalid = useMemo(() => {
-    return false;
-    //if (
-    //  repoData?.repoState?.commandMode == "compare" &&
-    //  compareFrom == "before"
-    //) {
-    //  return (
-    //    (repoData?.beforeApiStoreInvalidity?.[props?.plugin ?? ""]?.length ??
-    //      0) > 0
-    //  );
-    //}
-    //return (
-    //  (repoData?.apiStoreInvalidity?.[props?.plugin ?? ""]?.length ?? 0) > 0
-    //);
-  }, [
-  ]);
+    return (
+      (props.remoteCommitState?.binaryMap?.[props?.plugin ?? ""]?.length ?? 0) >
+      0
+    );
+  }, [props.remoteCommitState?.binaryMap, props.plugin]);
 
   const commitText = useMemo(() => {
     const commitCount = props.repository?.branchState?.commitsSize ?? 0;
@@ -154,7 +144,6 @@ const RemoteRepoSubHeader = (props: Props) => {
   return (
     <>
         <Container>
-
           <LeftContainer>
             {isInvalid && (
               <>
