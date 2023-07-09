@@ -1,0 +1,68 @@
+mutation UpdateOrganizationRole(
+  $organizationId: ID!
+  $roleId: ID!
+  $name: String!
+  $isDefault: Boolean!
+  $canCreateRepos: Boolean!
+  $canModifyOrganizationSettings: Boolean!
+  $canModifyOrganizationDeveloperSettings: Boolean!
+  $canModifyOrganizationMembers: Boolean!
+  $canInviteMembers: Boolean!
+  $canModifyInvites: Boolean!
+  $canModifyOwnInternalHandle: Boolean!
+  $canModifyBilling: Boolean!
+  $canRegisterPlugins: Boolean!
+  $canUploadPlugins: Boolean!
+  $canReleasePlugins: Boolean!
+  $canModifyOrganizationRoles: Boolean!
+  $canAssignRoles: Boolean!
+) {
+  updateOrganizationRole(
+    organizationId: $organizationId
+    roleId: $roleId
+    name: $name
+    isDefault: $isDefault
+    canCreateRepos: $canCreateRepos
+    canModifyOrganizationSettings: $canModifyOrganizationSettings
+    canModifyOrganizationDeveloperSettings: $canModifyOrganizationDeveloperSettings
+    canModifyOrganizationMembers: $canModifyOrganizationMembers
+    canInviteMembers: $canInviteMembers
+    canModifyInvites: $canModifyInvites
+    canModifyOwnInternalHandle: $canModifyOwnInternalHandle
+    canModifyBilling: $canModifyBilling
+    canRegisterPlugins: $canRegisterPlugins
+    canUploadPlugins: $canUploadPlugins
+    canReleasePlugins: $canReleasePlugins
+    canModifyOrganizationRoles: $canModifyOrganizationRoles
+    canAssignRoles: $canAssignRoles
+  ) {
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+    ... on UpdateOrganizationRoleError {
+      type
+      message
+    }
+    ... on UpdateOrganizationRoleSuccess {
+      organization {
+        ...Organization
+        membership {
+          ...OrganizationMember
+          permissions {
+            ...OrganizationPermissions
+          }
+          roles {
+            ...OrganizationRole
+          }
+        }
+        roles {
+          ...OrganizationRole
+        }
+      }
+      organizationRole {
+        ...OrganizationRole
+      }
+    }
+  }
+}

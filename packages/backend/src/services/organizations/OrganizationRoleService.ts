@@ -77,7 +77,10 @@ export default class OrganizationRoleService {
     canModifyOwnInternalHandle: boolean,
     canModifyBilling: boolean,
     canModifyOrganizationRoles: boolean,
-    canAssignRoles: boolean
+    canAssignRoles: boolean,
+    canRegisterPlugins: boolean,
+    canUploadPlugins: boolean,
+    canReleasePlugins: boolean,
   ): Promise<CreateOrganizationInvitationReponse> {
     if (currentMember.membershipState != "active") {
       return {
@@ -134,6 +137,9 @@ export default class OrganizationRoleService {
         canModifyBilling,
         canModifyOrganizationRoles,
         canAssignRoles,
+        canRegisterPlugins,
+        canUploadPlugins,
+        canReleasePlugins,
       });
 
     return {
@@ -158,7 +164,10 @@ export default class OrganizationRoleService {
     canModifyOwnInternalHandle: boolean,
     canModifyBilling: boolean,
     canModifyOrganizationRoles: boolean,
-    canAssignRoles: boolean
+    canAssignRoles: boolean,
+    canRegisterPlugins: boolean,
+    canUploadPlugins: boolean,
+    canReleasePlugins: boolean,
   ): Promise<UpdateOrganizationInvitationReponse> {
     if (organization.id != organizationRole.organizationId) {
       return {
@@ -231,6 +240,9 @@ export default class OrganizationRoleService {
         canModifyBilling,
         canModifyOrganizationRoles,
         canAssignRoles,
+        canRegisterPlugins,
+        canUploadPlugins,
+        canReleasePlugins,
       }
     );
     return {

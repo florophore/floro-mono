@@ -192,16 +192,18 @@ const UserHome = () => {
                   <PluginsTab pluginCount={currentUser?.pluginCount ?? 0} />
                 </Link>
               </div>
-              <div style={{ marginTop: 16, display: "flex" }}>
-                <StorageTab
-                  utilizedDiskSpaceBytes={
-                    currentUser?.utilizedDiskSpaceBytes ?? 0
-                  }
-                  diskSpaceLimitBytes={
-                    currentUser?.diskSpaceLimitBytes ?? 0
-                  }
-                />
-              </div>
+              {false && (
+                <div style={{ marginTop: 16, display: "flex" }}>
+                  <StorageTab
+                    utilizedDiskSpaceBytes={
+                      currentUser?.utilizedDiskSpaceBytes ?? 0
+                    }
+                    diskSpaceLimitBytes={
+                      currentUser?.diskSpaceLimitBytes ?? 0
+                    }
+                  />
+                </div>
+              )}
               <div style={{ marginTop: 16, display: "flex" }}>
                 <ConnectionStatusTab isConnected={isDaemonConnected ?? false} />
               </div>

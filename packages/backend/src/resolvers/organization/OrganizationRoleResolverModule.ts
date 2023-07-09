@@ -69,6 +69,9 @@ export default class OrganizationRoleResolverModule extends BaseResolverModule {
           canModifyBilling,
           canModifyOrganizationRoles,
           canAssignRoles,
+          canRegisterPlugins,
+          canUploadPlugins,
+          canReleasePlugins,
         }: main.MutationCreateOrganizationRoleArgs,
         { currentUser, cacheKey }
       ) => {
@@ -122,7 +125,10 @@ export default class OrganizationRoleResolverModule extends BaseResolverModule {
           canModifyOwnInternalHandle,
           canModifyBilling,
           canModifyOrganizationRoles,
-          canAssignRoles
+          canAssignRoles,
+          canRegisterPlugins,
+          canUploadPlugins,
+          canReleasePlugins,
         );
         if (result.action == "ROLE_CREATED") {
           this.requestCache.clearOrganizationRoles(cacheKey, organization);
@@ -162,6 +168,9 @@ export default class OrganizationRoleResolverModule extends BaseResolverModule {
           canModifyBilling,
           canModifyOrganizationRoles,
           canAssignRoles,
+          canRegisterPlugins,
+          canUploadPlugins,
+          canReleasePlugins,
         }: main.MutationUpdateOrganizationRoleArgs,
         { currentUser, cacheKey }
       ) => {
@@ -225,7 +234,10 @@ export default class OrganizationRoleResolverModule extends BaseResolverModule {
           canModifyOwnInternalHandle,
           canModifyBilling,
           canModifyOrganizationRoles,
-          canAssignRoles
+          canAssignRoles,
+          canRegisterPlugins,
+          canUploadPlugins,
+          canReleasePlugins,
         );
         if (result.action == "ROLE_UPDATED") {
           this.requestCache.clearOrganizationRoles(cacheKey, organization);

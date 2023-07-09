@@ -218,20 +218,20 @@ const OrgHome = (props: Props) => {
             </ProfileInfoWrapper>
             <BottomNavContainer>
               <TopInfo>
-                {false && (
-                  <OrgFollowerTab followerCount={0} isFollowing={false} isLoading={false} isDisabled={!isOnline} />
-                )}
                 <div style={{ marginTop: 0, display: "flex" }}>
                   <MembersInfoTab
                     membersCount={props?.organization?.membersActiveCount ?? 0}
                     invitedCount={
                       props?.organization?.invitationsSentCount ?? 0
                     }
+                    organization={props.organization}
                   />
                 </div>
-                <div style={{ marginTop: 16, display: "flex" }}>
-                  <MemberSettingsTab />
-                </div>
+                {false && (
+                  <div style={{ marginTop: 16, display: "flex" }}>
+                    <MemberSettingsTab />
+                  </div>
+                )}
                 <div style={{ marginTop: 16, display: "flex" }}>
                   <OrgSettingsTab />
                 </div>
@@ -241,16 +241,18 @@ const OrgHome = (props: Props) => {
                 <div style={{ marginTop: 16, display: "flex" }}>
                   <PluginsTab pluginCount={0} />
                 </div>
-                <div style={{ marginTop: 16, display: "flex" }}>
-                  <StorageTab
-                    utilizedDiskSpaceBytes={
-                      props?.organization?.utilizedDiskSpaceBytes ?? 0
-                    }
-                    diskSpaceLimitBytes={
-                      props?.organization?.diskSpaceLimitBytes ?? 0
-                    }
-                  />
-                </div>
+                {false && (
+                  <div style={{ marginTop: 16, display: "flex" }}>
+                    <StorageTab
+                      utilizedDiskSpaceBytes={
+                        props?.organization?.utilizedDiskSpaceBytes ?? 0
+                      }
+                      diskSpaceLimitBytes={
+                        props?.organization?.diskSpaceLimitBytes ?? 0
+                      }
+                    />
+                  </div>
+                )}
                 <div style={{ marginTop: 16, display: "flex" }}>
                   <BillingTab />
                 </div>

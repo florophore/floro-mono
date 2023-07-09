@@ -28,6 +28,8 @@ import PhotosContext from "@floro/database/src/contexts/photos/PhotosContext";
 import { Photo } from "@floro/database/src/entities/Photo";
 import RootOrganizationMemberPermissionsLoader from "../hooks/loaders/Root/OrganizationID/RootOrganizationMemberPermissionsLoader";
 import PluginsContext from "@floro/database/src/contexts/plugins/PluginsContext";
+import OrganizationMemberService from "../../services/organizations/OrganizationMemberService";
+import OrganizationInvitationService from "../../services/organizations/OrganizationInvitationService";
 
 @injectable()
 export default class OrganizationResolverModule extends BaseResolverModule {
@@ -38,6 +40,8 @@ export default class OrganizationResolverModule extends BaseResolverModule {
   ];
   protected contextFactory!: ContextFactory;
   protected organizaionService!: OrganizationService;
+  protected organizationMemberService!: OrganizationMemberService;
+  protected organizationInvitationService!: OrganizationInvitationService;
   protected requestCache!: RequestCache;
 
   protected loggedInUserGuard!: LoggedInUserGuard;
@@ -55,6 +59,8 @@ export default class OrganizationResolverModule extends BaseResolverModule {
     @inject(ContextFactory) contextFactory: ContextFactory,
     @inject(RequestCache) requestCache: RequestCache,
     @inject(OrganizationService) organizaionService: OrganizationService,
+    @inject(OrganizationMemberService) organizationMemberService: OrganizationMemberService,
+    @inject(OrganizationInvitationService) organizationInvitationService: OrganizationInvitationService,
     @inject(LoggedInUserGuard) loggedInUserGuard: LoggedInUserGuard,
     @inject(OrganizationMemberLoader)
     organizationMemberLoader: OrganizationMemberLoader,
@@ -74,6 +80,8 @@ export default class OrganizationResolverModule extends BaseResolverModule {
     super();
     this.contextFactory = contextFactory;
     this.organizaionService = organizaionService;
+    this.organizationMemberService = organizationMemberService;
+    this.organizationInvitationService = organizationInvitationService;
     this.requestCache = requestCache;
 
     // guards
@@ -379,9 +387,9 @@ export default class OrganizationResolverModule extends BaseResolverModule {
         );
       }
     ),
-    members: runWithHooks(
+    membersResult: runWithHooks(
       () => [this.organizationMemberLoader],
-      async (organization, _, { cacheKey, currentUser }) => {
+      async (organization, args: main.OrganizationMembersResultArgs, { cacheKey, currentUser }) => {
         const organizationMembership =
           this.requestCache.getOrganizationMembership(
             cacheKey,
@@ -396,45 +404,59 @@ export default class OrganizationResolverModule extends BaseResolverModule {
           organization.id as string
         );
         if (cachedMembers) {
-          return cachedMembers;
+          const result =
+            this.organizationMemberService.getPaginatedMembersResult(
+              cachedMembers,
+              args?.id as string,
+              args.query as string,
+              args?.filterOutDeactivated ?? false
+            );
+          return result;
+        } else {
+          const organanizationMembersContext =
+            await this.contextFactory.createContext(OrganizationMembersContext);
+          const members =
+            await organanizationMembersContext.getAllMembersForOrganization(
+              organization.id as string
+            );
+          members.forEach((member: OrganizationMember) => {
+            const roles = member.organizationMemberRoles
+              ?.filter((memberRole) => {
+                return memberRole.organizationMemberId == member.id;
+              })
+              ?.map((memberRole) => {
+                return memberRole?.organizationRole;
+              });
+            this.requestCache.setOrganizationMembership(
+              cacheKey,
+              organization as Organization,
+              member.user as User,
+              member
+            );
+            this.requestCache.setMembershipRoles(
+              cacheKey,
+              member,
+              roles as OrganizationRole[]
+            );
+          });
+          this.requestCache.setOrganizationMembers(
+            cacheKey,
+            organization,
+            members
+          );
+          const result =
+            this.organizationMemberService.getPaginatedMembersResult(
+              members,
+              args?.id as string,
+              args.query as string
+            );
+          return result;
         }
-        const organanizationMembersContext =
-          await this.contextFactory.createContext(OrganizationMembersContext);
-        const members =
-          await organanizationMembersContext.getAllMembersForOrganization(
-            organization.id as string
-          );
-        members.forEach((member: OrganizationMember) => {
-          const roles = member.organizationMemberRoles
-            ?.filter((memberRole) => {
-              return memberRole.organizationMemberId == member.id;
-            })
-            ?.map((memberRole) => {
-              return memberRole?.organizationRole;
-            });
-          this.requestCache.setOrganizationMembership(
-            cacheKey,
-            organization as Organization,
-            member.user as User,
-            member
-          );
-          this.requestCache.setMembershipRoles(
-            cacheKey,
-            member,
-            roles as OrganizationRole[]
-          );
-        });
-        this.requestCache.setOrganizationMembers(
-          cacheKey,
-          organization,
-          members
-        );
-        return members;
       }
     ),
-    invitations: runWithHooks(
+    invitationsResult: runWithHooks(
       () => [this.organizationMemberPermissionsLoader],
-      async (organization, _, { currentUser, cacheKey }) => {
+      async (organization, args: main.OrganizationInvitationsResultArgs, { currentUser, cacheKey }) => {
         if (!currentUser) {
           return null;
         }
@@ -459,37 +481,50 @@ export default class OrganizationResolverModule extends BaseResolverModule {
           organization.id as string
         );
         if (cachedInvitations) {
-          return cachedInvitations;
-        }
-        const organanizationInvitationsContext =
-          await this.contextFactory.createContext(
-            OrganizationInvitationsContext
-          );
-        const invitations =
-          await organanizationInvitationsContext.getAllInvitationsForOrganization(
-            organization.id as string
-          );
-        this.requestCache.setOrganizationInvitations(
-          cacheKey,
-          organization as Organization,
-          invitations
-        );
-        invitations.forEach((invitation) => {
-          const roles =
-            invitation?.organizationInvitationRoles
-              ?.filter(
-                (invitationRole) =>
-                  invitationRole?.organizationInvitationId == invitation.id
-              )
-              ?.map?.((invitationRole) => invitationRole?.organizationRole)
-              ?.filter((v) => v != undefined) ?? [];
-          this.requestCache.setOrganizationInvitationRoles(
+          const result =
+            this.organizationInvitationService.getPaginatedInvitationsResult(
+              cachedInvitations,
+              args?.id as string,
+              args?.query as string
+            );
+          return result;
+        } else {
+          const organanizationInvitationsContext =
+            await this.contextFactory.createContext(
+              OrganizationInvitationsContext
+            );
+          const invitations =
+            await organanizationInvitationsContext.getAllInvitationsForOrganization(
+              organization.id as string
+            );
+          this.requestCache.setOrganizationInvitations(
             cacheKey,
-            invitation,
-            roles as OrganizationRole[]
+            organization as Organization,
+            invitations
           );
-        });
-        return invitations;
+          invitations.forEach((invitation) => {
+            const roles =
+              invitation?.organizationInvitationRoles
+                ?.filter(
+                  (invitationRole) =>
+                    invitationRole?.organizationInvitationId == invitation.id
+                )
+                ?.map?.((invitationRole) => invitationRole?.organizationRole)
+                ?.filter((v) => v != undefined) ?? [];
+            this.requestCache.setOrganizationInvitationRoles(
+              cacheKey,
+              invitation,
+              roles as OrganizationRole[]
+            );
+          });
+          const result =
+            this.organizationInvitationService.getPaginatedInvitationsResult(
+              invitations,
+              args?.id as string,
+              args?.query as string
+            );
+          return result;
+        }
       }
     ),
     publicRepositories: async (organization, _, { cacheKey }) => {

@@ -6,8 +6,8 @@ import MergeRequestsContext from "@floro/database/src/contexts/merge_requests/Me
 
 @injectable()
 export default class MergeRequestLoader extends LoaderResolverHook<
-  { mergeRequestId: string },
   unknown,
+  { mergeRequestId: string },
   { cacheKey: string }
 > {
   protected requestCache!: RequestCache;
@@ -23,13 +23,14 @@ export default class MergeRequestLoader extends LoaderResolverHook<
   }
 
   public run = runWithHooks<
-    { mergeRequestId: string },
     unknown,
+    { mergeRequestId: string },
     { cacheKey: string },
     void
   >(
     () => [],
-    async ({ mergeRequestId }, _, { cacheKey }): Promise<void> => {
+    async (_, args, { cacheKey }): Promise<void> => {
+      const  mergeRequestId = args?.mergeRequestId;
       if (!mergeRequestId) {
         return;
       }

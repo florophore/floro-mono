@@ -3,6 +3,9 @@ import styled from '@emotion/styled';
 import { useTheme } from '@emotion/react';
 import MembersIconLight from '@floro/common-assets/assets/images/icons/members.light.svg';
 import MembersIconDark from '@floro/common-assets/assets/images/icons/members.dark.svg';
+import { Organization } from '@floro/graphql-schemas/build/generated/main-graphql';
+import { Link } from 'react-router-dom';
+import ColorPalette from '@floro/styles/ColorPalette';
 
 const Container = styled.div`
     display: flex;
@@ -31,6 +34,9 @@ const MemberText = styled.p`
     font-family: "MavenPro";
     font-weight: 600;
     color: ${props => props.theme.colors.followerTextColor};
+    &:hover {
+        color: ${ColorPalette.linkBlue};
+    }
 `;
 
 const MemberNumeral = styled.span`
@@ -51,6 +57,7 @@ const accountRound = (count: number): string => {
 export interface Props {
   membersCount: number;
   invitedCount: number;
+  organization: Organization;
 }
 
 const MembersInfoTab = (props: Props): React.ReactElement => {
@@ -69,8 +76,12 @@ const MembersInfoTab = (props: Props): React.ReactElement => {
     <Container>
         <MemberIcon src={membersIcon}/>
         <TextContainer>
-            <MemberText style={{marginRight: 8}}>Members <MemberNumeral>{memberCount}</MemberNumeral></MemberText>
-            <MemberText>Invited <MemberNumeral>{invitedCount}</MemberNumeral></MemberText>
+            <Link to={`/org/@/${props?.organization?.handle}/members`}>
+                <MemberText style={{marginRight: 8}}>Members <MemberNumeral>{memberCount}</MemberNumeral></MemberText>
+            </Link>
+            <Link to={`/org/@/${props?.organization?.handle}/invitations`}>
+                <MemberText>Invited <MemberNumeral>{invitedCount}</MemberNumeral></MemberText>
+            </Link>
         </TextContainer>
     </Container>
   );

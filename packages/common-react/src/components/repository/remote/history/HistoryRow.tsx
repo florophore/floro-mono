@@ -19,6 +19,7 @@ import RedXCircleLight from "@floro/common-assets/assets/images/icons/red_x_circ
 import RedXCircleDark from "@floro/common-assets/assets/images/icons/red_x_circle.dark.svg";
 import ColorPalette from "@floro/styles/ColorPalette";
 import { Link } from "react-router-dom";
+import InitialProfileDefault from "@floro/storybook/stories/common-components/InitialProfileDefault";
 
 const Container = styled.div`
   width: 100%;
@@ -231,9 +232,18 @@ const HistoryRow = (props: Props) => {
         )}
       </ShaRow>
       <UserRow>
-        <ProfilePhoto
-          src={props.commit?.user?.profilePhoto?.thumbnailUrl ?? ""}
-        />
+        {props.commit?.user?.profilePhoto?.thumbnailUrl && (
+          <ProfilePhoto
+            src={props.commit?.user?.profilePhoto?.thumbnailUrl ?? ""}
+          />
+        )}
+        {!props.commit?.user?.profilePhoto?.thumbnailUrl && (
+          <InitialProfileDefault
+            size={36}
+            firstName={props.commit?.user?.firstName ?? ""}
+            lastName={props.commit?.user?.lastName ?? ""}
+          />
+        )}
         <TimeTextRow
           style={{
             justifyContent: "flex-end",
@@ -247,10 +257,19 @@ const HistoryRow = (props: Props) => {
         </TimeTextRow>
         {showAuthor && (
           <>
-            <ProfilePhoto
-              style={{ marginLeft: 16 }}
-              src={props.commit?.authorUser?.profilePhoto?.thumbnailUrl ?? ""}
-            />
+            {props.commit?.authorUser?.profilePhoto?.thumbnailUrl && (
+              <ProfilePhoto
+                style={{ marginLeft: 16 }}
+                src={props.commit?.authorUser?.profilePhoto?.thumbnailUrl ?? ""}
+              />
+            )}
+            {!props.commit?.authorUser?.profilePhoto?.thumbnailUrl && (
+              <InitialProfileDefault
+                size={36}
+                firstName={props.commit?.authorUser?.firstName ?? ""}
+                lastName={props.commit?.authorUser?.lastName ?? ""}
+              />
+            )}
             <TimeTextRow
               style={{
                 justifyContent: "flex-end",

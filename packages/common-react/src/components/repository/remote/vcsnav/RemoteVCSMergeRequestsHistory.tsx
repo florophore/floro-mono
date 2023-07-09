@@ -330,6 +330,7 @@ const RemoteVCSMergeRequestsHistory = (props: Props) => {
                   </BranchHistoryContainer>
                 </Row>
                   <Row style={{marginTop: 0}}>
+                    <div style={{width: '100%'}}>
                     {props?.repository?.openUserBranchesWithoutMergeRequests?.map(
                       (branch, index) => {
                         return (
@@ -344,6 +345,8 @@ const RemoteVCSMergeRequestsHistory = (props: Props) => {
                         );
                       }
                     )}
+
+                    </div>
                   </Row>
                 </>
               )}

@@ -27,6 +27,7 @@ import OrganizationMemberRolesContext from "@floro/database/src/contexts/organiz
 import OrganizationsContext from "@floro/database/src/contexts/organizations/OrganizationsContext";
 
 const profanityFilter = new ProfanityFilter();
+const PAGE_SIZE = 10;
 
 export interface CreateOrganizationInvitationReponse {
   action:
@@ -137,6 +138,69 @@ export default class OrganizationInvitationService
     this.contextFactory = contextFactory;
     this.emailAuthStore = emailAuthStore;
     this.emailQueue = emailQueue;
+  }
+  public getPaginatedInvitationsResult(invitations: OrganizationInvitation[], id: string, query: string) {
+    const lowerCaseQuery = (query ?? "").trim();
+    const isSearching = lowerCaseQuery == "";
+    const out: Array<OrganizationInvitation> = [];
+    const sortedInvitations = invitations.sort((a, b) => {
+      const aName = `${a.user?.firstName} ${a.user?.lastName}`.toLowerCase();
+      const bName = `${b.user?.firstName} ${b.user?.lastName}`.toLowerCase();
+      return aName >= bName ? 1 : -1;
+    });
+    if (isSearching) {
+      for (const invitation of sortedInvitations) {
+        const fullname = `${invitation?.firstName} ${invitation?.lastName}`.toLowerCase();
+        if (invitation.email.indexOf(lowerCaseQuery) != -1) {
+          out.push(invitation);
+        } else if (fullname.indexOf(lowerCaseQuery) != -1) {
+          out.push(invitation);
+        }
+        if (out.length == PAGE_SIZE) {
+          return {
+            id: null,
+            nextId: null,
+            lastId: null,
+            invitations: out
+          }
+        }
+      }
+      return {
+        id: null,
+        nextId: null,
+        lastId: null,
+        invitations: out
+      }
+    }
+
+    let found = !id;
+    let lastId:string|null = null;
+    for (let i = 0; i < sortedInvitations.length; ++i) {
+      const invitation = sortedInvitations[i];
+      if(found) {
+        out.push(invitation);
+        if (out.length == sortedInvitations.length) {
+          return {
+            id: invitation?.id,
+            nextId: sortedInvitations[i + 1]?.id,
+            lastId,
+            memebers: out
+          }
+        }
+        continue;
+      }
+      if (invitation.id == id) {
+        lastId = sortedInvitations[i - 1]?.id;
+        found = true;
+        out.push(invitation);
+      }
+    }
+    return {
+      id: out[out.length - 1]?.id,
+      nextId: null,
+      lastId,
+      memebers: out
+    }
   }
 
   public async onUserCreated(

@@ -13,12 +13,6 @@ query User($id: ID!) {
             ...OrganizationRole
           }
         }
-        members {
-          ...OrganizationMember
-          roles {
-            ...OrganizationRole
-          }
-        }
         roles {
           ...OrganizationRole
         }

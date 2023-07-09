@@ -6,7 +6,7 @@ import DotsLoader from '../DotsLoader';
 
 export interface ButtonProps {
     label: string|React.ReactElement;
-    bg: "purple"|"orange"|"teal"|"gray";
+    bg: "purple"|"orange"|"teal"|"gray"|"red";
     size: "extra-big"|"big"|"medium"|"small"|"extra-small";
     textSize?: "normal"|"small";
     isDisabled?: boolean;
@@ -37,6 +37,9 @@ const Button = ({
         if (bg == "teal") {
             return colorPalette.teal;
         }
+        if (bg == "red") {
+            return colorPalette.red;
+        }
         return colorPalette.purple;
     }, [bg]);
 
@@ -49,6 +52,9 @@ const Button = ({
         }
         if (bg == "teal") {
             return colorPalette.lightTeal;
+        }
+        if (bg == "red") {
+            return colorPalette.lightRed;
         }
         return colorPalette.lightPurple;
     }, [bg]);

@@ -23,8 +23,6 @@ const RemoteVCSNavController = (props: Props) => {
   const [searchParams] = useSearchParams();
   const sha = searchParams.get('sha');
 
-  const { reviewPage } = useMergeRequestReviewPage();
-
   if (props.page == "merge-requests") {
     return (
       <RemoteVCSMergeRequestsHistory

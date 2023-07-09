@@ -18,6 +18,7 @@ import { RepoPage } from "../types";
 import ProposedMRHistoryDisplay from "./history/ProposedMRHistoryDisplay";
 import MergeRequestHistoryDisplay from "./mergerequesthistory/MergeRequestHistoryDisplay";
 import MRHistoryDisplay from "./history/MRHistoryDisplay";
+import MergeRequest from "./mergerequest/MergeRequest";
 
 const LoadingContainer = styled.div`
   display: flex;
@@ -131,7 +132,7 @@ const RemoteRepoController = (props: Props) => {
       );
     }
     if (props.page == "merge-request" && reviewPage == "none") {
-      return null;
+      return <MergeRequest repository={props.repository} page={props.page} />;
     }
     if (props.page == "home" || props.page == "merge-request-create" || props.page == "merge-request") {
       if (props.plugin != "home") {

@@ -1,0 +1,83 @@
+mutation UpdateMergeRequest(
+  $title: String!
+  $description: String!
+  $mergeRequestId: String!
+  $repositoryId: String!
+) {
+  updateMergeRequestInfo(
+    title: $title
+    description: $description
+    mergeRequestId: $mergeRequestId
+    repositoryId: $repositoryId
+  ) {
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+    ... on RepoAccessError {
+      type
+      message
+    }
+    ... on UpdateMergeRequestInfoSuccess {
+      repository {
+        ...Repository
+        openUserBranchesWithoutMergeRequestsCount
+        openUserBranchesWithoutMergeRequests(filterIgnored: false) {
+          id
+          name
+          baseBranchId
+          updatedAt
+          createdBy
+          createdByUsername
+          lastCommit
+        }
+        openBranchesWithoutMergeRequestsCount
+        openBranchesWithoutMergeRequests {
+          id
+          name
+          baseBranchId
+          updatedAt
+          createdBy
+          createdByUsername
+          lastCommit
+        }
+        openMergeRequestsCount
+        closedMergeRequestsCount
+        repoBranches {
+          id
+          name
+          lastCommit
+          baseBranchId
+          createdBy
+          createdByUsername
+          createdAt
+          updatedAt
+        }
+      }
+      mergeRequest {
+        ...SimpleMergeRequest
+        timelineEvents {
+          id
+          eventName
+          subeventName
+          branchHeadShaAtCreate
+          eventGroupingId
+          createdAt
+          performedByUser {
+            id
+            username
+            firstName
+            lastName
+            profilePhoto {
+              ...Photo
+            }
+          }
+        }
+      }
+    }
+    ... on UpdateMergeRequestInfoError {
+      message
+      type
+    }
+  }
+}

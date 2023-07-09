@@ -243,6 +243,7 @@ export interface DeleteMergeRequestCommentReplyResponse {
 };
 
 export interface MergeRequestPermissions {
+  canEditInfo: boolean;
   canEditReviewers: boolean;
   canRemoveSelfFromReviewers: boolean;
   canBlock: boolean;
@@ -461,7 +462,26 @@ export default class MergeRequestService implements BranchPushHandler {
       queryRunner
     );
 
+    const organizationsMembersContext =
+      await this.contextFactory.createContext(OrganizationMembersContext, queryRunner);
+    const ownerMembership =
+      repository?.repoType == "org_repo"
+        ? await organizationsMembersContext.getByOrgIdAndUserId(
+            repository.organizationId,
+            user.id
+          )
+        : null;
+
+    const canEditInfo =
+      mergeRequest?.openedByUserId == user?.id ||
+      (repository?.repoType == "user_repo" &&
+        mergeRequest?.userId == user?.id) ||
+      (repository?.repoType == "org_repo" &&
+        canClose &&
+        ownerMembership?.membershipState != "active");
+
     return {
+      canEditInfo,
       hasApproval,
       canEditReviewers,
       canRemoveSelfFromReviewers,
@@ -571,7 +591,7 @@ export default class MergeRequestService implements BranchPushHandler {
           const reviewStatuses = await reviewStatusesContext.getMergeRequestReviewStatuses(mergeRequest.id);
           if (branchBrule?.requireReapprovalOnPushToMerge) {
             const currentReviews = reviewStatuses?.filter(rs => {
-              return rs.branchHeadShaAtCreate == branch?.lastCommit && rs?.baseBranchIdAtCreate == branch?.baseBranchId;
+              return rs.branchHeadShaAtUpdate == branch?.lastCommit && rs?.baseBranchIdAtCreate == branch?.baseBranchId;
             });
             if (currentReviews.length == 0) {
               return false;
@@ -1491,7 +1511,7 @@ export default class MergeRequestService implements BranchPushHandler {
         const updatedReviewStatus =
           await reviewStatusesContext.updateReviewStatus(reviewStatus, {
             approvalStatus,
-            branchHeadShaAtCreate: branch.lastCommit ?? undefined,
+            branchHeadShaAtUpdate: branch.lastCommit ?? undefined,
           });
         // emit update event here
         for (const reviewStatusChangeEventHandler of this
@@ -1515,7 +1535,7 @@ export default class MergeRequestService implements BranchPushHandler {
         const reviewStatus = await reviewStatusesContext.create({
           approvalStatus,
           baseBranchIdAtCreate: branch.baseBranchId ?? undefined,
-          branchHeadShaAtCreate: branch.lastCommit ?? undefined,
+          branchHeadShaAtUpdate: branch.lastCommit ?? undefined,
           isDeleted: false,
           mergeRequestId: mergeRequest.id,
           userId: user.id,

@@ -23,12 +23,6 @@ query CurrentUserHome {
                 ...OrganizationRole
               }
           }
-          members {
-              ...OrganizationMember
-              roles {
-                ...OrganizationRole
-              }
-          }
           roles {
             ...OrganizationRole
           }

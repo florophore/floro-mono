@@ -10,7 +10,7 @@ import sizeof from "object-sizeof";
 import { OrganizationInvitation } from "@floro/database/src/entities/OrganizationInvitation";
 import { Repository } from "@floro/database/src/entities/Repository";
 import { Branch as FloroBranch, RemoteSettings} from "floro/dist/src/repo";
-import { PluginVersion, RepositoryBranchStateArgs } from "@floro/graphql-schemas/build/generated/main-graphql";
+import { MergeRequestPermissions, PluginVersion, RepositoryBranchStateArgs } from "@floro/graphql-schemas/build/generated/main-graphql";
 import { Commit } from "@floro/database/src/entities/Commit";
 import { DataSource } from "floro/dist/src/datasource";
 import { MergeRequest } from "@floro/database/src/entities/MergeRequest";
@@ -736,5 +736,22 @@ export default class RequestCache {
   ): Array<MergeRequest> {
     const cache = this.getCache(cacheKey);
     return cache[`closed-repo-merge-requests:${repositoryId}`];
+  }
+
+  public setMergeRequestPermissions(
+    cacheKey: string,
+    mergeRequestId: string,
+    mergeRequestPermissions: MergeRequestPermissions
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`merge-request-permissions:${mergeRequestId}`] = mergeRequestPermissions;
+  }
+
+  public getMergeRequestPermissions(
+    cacheKey: string,
+    mergeRequestId: string,
+  ): MergeRequestPermissions {
+    const cache = this.getCache(cacheKey);
+    return cache[`merge-request-permissions:${mergeRequestId}`];
   }
 }

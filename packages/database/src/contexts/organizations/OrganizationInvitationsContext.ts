@@ -150,6 +150,9 @@ export default class OrganizationInvitationsContext extends BaseContext {
         user: true,
         invitedByUser: {
           profilePhoto: true
+        },
+        organization: {
+          profilePhoto: true,
         }
       },
       order: {

@@ -28,12 +28,6 @@ mutation CreateOrganization(
             ...OrganizationRole
           }
         }
-        members {
-          ...OrganizationMember
-          roles {
-            ...OrganizationRole
-          }
-        }
         roles {
           ...OrganizationRole
         }

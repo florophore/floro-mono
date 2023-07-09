@@ -28,10 +28,14 @@ const Icon = styled.img`
 `;
 
 const TextSpan = styled.span`
+    cursor: pointer;
     font-size: 0.9rem;
     font-family: "MavenPro";
     font-weight: 600;
     color: ${props => props.theme.colors.followerTextColor};
+    &:hover {
+        color: ${ColorPalette.linkBlue};
+    }
 `;
 const PluginCountNumeral = styled.span`
     font-weight: 400;

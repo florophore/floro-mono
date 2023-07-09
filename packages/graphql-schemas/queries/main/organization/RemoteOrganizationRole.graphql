@@ -1,0 +1,38 @@
+mutation RemoveOrganizationRole(
+  $organizationId: ID!
+  $roleId: ID!
+) {
+  removeOrganizationRole(
+    organizationId: $organizationId
+    roleId: $roleId
+  ) {
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+    ... on RemoveOrganizationRoleError {
+      type
+      message
+    }
+    ... on RemoveOrganizationRoleSuccess {
+      organization {
+        ...Organization
+        membership {
+          ...OrganizationMember
+          permissions {
+            ...OrganizationPermissions
+          }
+          roles {
+            ...OrganizationRole
+          }
+        }
+        roles {
+          ...OrganizationRole
+        }
+      }
+      organizationRole {
+        ...OrganizationRole
+      }
+    }
+  }
+}

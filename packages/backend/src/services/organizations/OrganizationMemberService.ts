@@ -14,6 +14,7 @@ import OrganizationMemberRolesContext from "@floro/database/src/contexts/organiz
 import ProfanityFilter from "bad-words";
 
 const profanityFilter = new ProfanityFilter();
+const PAGE_SIZE = 10;
 
 export interface DeactivateOrganizationMemberResponse {
   action:
@@ -68,6 +69,76 @@ export default class OrganizationMemberService {
   ) {
     this.databaseConnection = databaseConnection;
     this.contextFactory = contextFactory;
+  }
+
+  public getPaginatedMembersResult(memebers: OrganizationMember[], id: string, query: string, filterDeactivated?: boolean) {
+    const lowerCaseQuery = (query ?? "").trim();
+    const isSearching = lowerCaseQuery == "";
+    const out: Array<OrganizationMember> = [];
+    const sortedMembers = memebers?.filter(m => {
+      if (!filterDeactivated) {
+        return true;
+      }
+      return m.membershipState == "active";
+    }).sort((a, b) => {
+      const aName = `${a.user?.firstName} ${a.user?.lastName}`.toLowerCase();
+      const bName = `${b.user?.firstName} ${b.user?.lastName}`.toLowerCase();
+      return aName >= bName ? 1 : -1;
+    });
+    if (isSearching) {
+      for (const member of sortedMembers) {
+        const fullname = `${member.user?.firstName} ${member.user?.lastName}`.toLowerCase();
+        const username = `${member.user?.username}`.toLowerCase();
+        if (`@${username}`.indexOf(lowerCaseQuery) != -1 || username.indexOf(lowerCaseQuery) != -1) {
+          out.push(member);
+        } else if (fullname.indexOf(lowerCaseQuery) != -1) {
+          out.push(member);
+        }
+        if (out.length == PAGE_SIZE) {
+          return {
+            id: null,
+            nextId: null,
+            lastId: null,
+            memebers: out
+          }
+        }
+      }
+      return {
+        id: null,
+        nextId: null,
+        lastId: null,
+        memebers: out
+      }
+    }
+
+    let found = !id;
+    let lastId:string|null = null;
+    for (let i = 0; i < sortedMembers.length; ++i) {
+      const memeber = sortedMembers[i];
+      if(found) {
+        out.push(memeber);
+        if (out.length == sortedMembers.length) {
+          return {
+            id: memeber?.id,
+            nextId: sortedMembers[i + 1]?.id,
+            lastId,
+            memebers: out
+          }
+        }
+        continue;
+      }
+      if (memeber.id == id) {
+        lastId = sortedMembers[i - 1]?.id;
+        found = true;
+        out.push(memeber);
+      }
+    }
+    return {
+      id: out[out.length - 1]?.id,
+      nextId: null,
+      lastId,
+      memebers: out
+    }
   }
 
   public async deactivateMember(

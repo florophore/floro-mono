@@ -20,6 +20,31 @@ export default class MergeRequestEventsContext extends BaseContext {
   }
 
   public async getById(id: string): Promise<MergeRequestEvent | null> {
-    return await this.queryRunner.manager.findOneBy(MergeRequestEvent, { id });
+    return await this.queryRunner.manager.findOne(MergeRequestEvent, {
+      where: { id },
+      relations: {
+        performedByUser: {
+          profilePhoto: true
+        }
+      }
+    });
+  }
+
+  public async getAllForMergeRequestId(
+    mergeRequestId: string
+  ): Promise<MergeRequestEvent[]> {
+    return await this.queryRunner.manager.find(MergeRequestEvent, {
+      where: {
+        mergeRequestId
+      },
+      order: {
+        createdAt: 'ASC'
+      },
+      relations: {
+        performedByUser: {
+          profilePhoto: true
+        }
+      }
+    });
   }
 }

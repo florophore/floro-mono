@@ -1,0 +1,88 @@
+query OrganizationMemberManagement(
+  $handle: String!
+  $memberId: ID
+  $invitationId: ID
+  $memberQuery: String
+  $invitationQuery: String
+  $filterOutDeactivated: Boolean
+) {
+  organizationByHandle(handle: $handle) {
+    ...Organization
+    membership {
+      ...OrganizationMember
+      permissions {
+        ...OrganizationPermissions
+      }
+      roles {
+        ...OrganizationRole
+      }
+    }
+    roles {
+      ...OrganizationRole
+    }
+    membersResult(
+      id: $memberId
+      query: $memberQuery
+      filterOutDeactivated: $filterOutDeactivated
+    ) {
+      id
+      nextId
+      lastId
+      members {
+        id
+        membershipState
+        createdAt
+        user {
+          id
+          username
+          firstName
+          lastName
+          profilePhoto {
+            ...Photo
+          }
+        }
+        roles {
+          id
+          name
+          isDefault
+        }
+      }
+    }
+    invitationsResult(id: $invitationId, query: $invitationQuery) {
+      id
+      nextId
+      lastId
+      invitations {
+        id
+        firstName
+        lastName
+        email
+        invitationState
+        createdAt
+        user {
+          id
+          username
+          firstName
+          lastName
+          profilePhoto {
+            ...Photo
+          }
+        }
+        invitedByUser {
+          id
+          username
+          firstName
+          lastName
+          profilePhoto {
+            ...Photo
+          }
+        }
+        roles {
+          id
+          name
+          isDefault
+        }
+      }
+    }
+  }
+}

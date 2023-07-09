@@ -15,8 +15,8 @@ type Organization {
 
   membership: OrganizationMember
   roles: [OrganizationRole]
-  members: [OrganizationMember]
-  invitations: [OrganizationInvitation]
+  membersResult(id: ID, query: String, filterOutDeactivated: Boolean): PaginatedOrganizationMembers
+  invitationsResult(id: ID, query: String): PaginatedOrganizationInvitations
 
   publicRepositories: [Repository]
   privateRepositories: [Repository]
@@ -28,6 +28,20 @@ type Organization {
   pluginCount: Int
 }
 
+type PaginatedOrganizationMembers {
+  id: ID
+  nextId: ID
+  lastId: ID
+  members: [OrganizationMember]
+}
+
+type PaginatedOrganizationInvitations {
+  id: ID
+  nextId: ID
+  lastId: ID
+  invitations: [OrganizationInvitation]
+}
+
 type OrganizationMember {
   id: ID
   internalHandle: String
@@ -36,6 +50,7 @@ type OrganizationMember {
   organization: Organization
   permissions: OrganizationPermissions
   roles: [OrganizationRole]
+  createdAt: DateTime
 }
 
 type OrganizationInvitation {
@@ -44,6 +59,7 @@ type OrganizationInvitation {
   lastName: String
   email: String
   invitationState: String
+  createdAt: DateTime
 
   user: User
   invitedByUser: User

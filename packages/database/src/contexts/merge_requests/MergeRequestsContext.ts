@@ -20,7 +20,14 @@ export default class MergeRequestsContext extends BaseContext {
   }
 
   public async getById(id: string): Promise<MergeRequest | null> {
-    return await this.queryRunner.manager.findOneBy(MergeRequest, { id });
+    return await this.queryRunner.manager.findOne(MergeRequest, {
+      where: { id },
+      relations: {
+        openedByUser: {
+          profilePhoto: true,
+        },
+      },
+    });
   }
 
   public async getAllOpenMergeRequests(
@@ -65,10 +72,17 @@ export default class MergeRequestsContext extends BaseContext {
     repositoryId: string,
     branchId: string,
   ): Promise<MergeRequest | null> {
-    return await this.queryRunner.manager.findOneBy(MergeRequest, {
-      branchId,
-      repositoryId,
-      isOpen: true,
+    return await this.queryRunner.manager.findOne(MergeRequest, {
+      where: {
+        branchId,
+        repositoryId,
+        isOpen: true,
+      },
+      relations: {
+        openedByUser: {
+          profilePhoto: true
+        }
+      }
     });
   }
 

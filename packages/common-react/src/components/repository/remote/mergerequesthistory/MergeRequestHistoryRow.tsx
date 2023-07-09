@@ -22,6 +22,7 @@ import RedXCircleDark from "@floro/common-assets/assets/images/icons/red_x_circl
 import ColorPalette from "@floro/styles/ColorPalette";
 import { Link } from "react-router-dom";
 import { useRepoLinkBase } from "../hooks/remote-hooks";
+import InitialProfileDefault from "@floro/storybook/stories/common-components/InitialProfileDefault";
 
 const Container = styled.div`
   width: 100%;
@@ -186,9 +187,18 @@ const MergeRequestHistoryRow = (props: Props) => {
         </RevertedPill>
       </ShaRow>
       <UserRow>
-        <ProfilePhoto
-          src={props.mergeRequest?.openedByUser?.profilePhoto?.thumbnailUrl ?? ""}
-        />
+        {props.mergeRequest?.openedByUser?.profilePhoto?.thumbnailUrl && (
+          <ProfilePhoto
+            src={props.mergeRequest?.openedByUser?.profilePhoto?.thumbnailUrl ?? ""}
+          />
+        )}
+        {!props.mergeRequest?.openedByUser?.profilePhoto?.thumbnailUrl && (
+          <InitialProfileDefault
+            size={36}
+            firstName={props.mergeRequest?.openedByUser?.firstName ?? ""}
+            lastName={props.mergeRequest?.openedByUser?.lastName ?? ""}
+          />
+        )}
         <TimeTextRow
           style={{
             justifyContent: "flex-end",

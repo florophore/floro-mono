@@ -527,16 +527,16 @@ const RemoteCreateMergeRequest = (props: Props) => {
               {!baseBranch?.name && <ValueSpan>{"None"}</ValueSpan>}
             </RightRow>
           </Row>
-          {props.repository?.branchState?.proposedMergeRequest?.canMerge && (
+          {props.repository?.branchState?.proposedMergeRequest?.isConflictFree && (
             <Row style={{marginTop: 16, justifyContent: "flex-start"}}>
                 <Icon src={resolveIcon} />
-                <LabelSpan>{"Able to merge"}</LabelSpan>
+                <LabelSpan>{"No Conflicts"}</LabelSpan>
             </Row>
           )}
-          {!props.repository?.branchState?.proposedMergeRequest?.canMerge && (
+          {!props.repository?.branchState?.proposedMergeRequest?.isConflictFree && (
             <Row style={{marginTop: 16, justifyContent: "flex-start"}}>
                 <Icon src={abortIcon} />
-                <LabelSpan>{"Unable to merge"}</LabelSpan>
+                <LabelSpan>{"Has Conflicts"}</LabelSpan>
             </Row>
 
           )}

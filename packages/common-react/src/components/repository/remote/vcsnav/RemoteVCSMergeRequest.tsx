@@ -1,4 +1,3 @@
-
 import React, {
   useMemo,
   useState,
@@ -6,13 +5,22 @@ import React, {
   useRef,
   useEffect,
 } from "react";
-import { Repository, useProposedMergeRequestRepositoryUpdatesSubscription, useCreateMergeRequestMutation } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import {
+  Repository,
+  useProposedMergeRequestRepositoryUpdatesSubscription,
+  useCreateMergeRequestMutation,
+  useUpdateMergeRequestMutation,
+} from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 
 import BackArrowIconLight from "@floro/common-assets/assets/images/icons/back_arrow.light.svg";
 import BackArrowIconDark from "@floro/common-assets/assets/images/icons/back_arrow.dark.svg";
-import { ComparisonState, RemoteCommitState, useMergeRequestReviewPage } from "../hooks/remote-state";
+import {
+  ComparisonState,
+  RemoteCommitState,
+  useMergeRequestReviewPage,
+} from "../hooks/remote-state";
 import { useSearchParams } from "react-router-dom";
 import SearchInput from "@floro/storybook/stories/design-system/SearchInput";
 import { useRepoLinkBase } from "../hooks/remote-hooks";
@@ -27,13 +35,14 @@ import BranchIconDark from "@floro/common-assets/assets/images/icons/branch_icon
 import MergeIconLight from "@floro/common-assets/assets/images/repo_icons/merge.gray.svg";
 import MergeIconDark from "@floro/common-assets/assets/images/repo_icons/merge.white.svg";
 
-import ResolveWhite from '@floro/common-assets/assets/images/repo_icons/resolve.white.svg';
-import ResolveGray from '@floro/common-assets/assets/images/repo_icons/resolve.gray.svg';
-import ResolveMediumGray from '@floro/common-assets/assets/images/repo_icons/resolve.medium_gray.svg';
+import ResolveWhite from "@floro/common-assets/assets/images/repo_icons/resolve.white.svg";
+import ResolveGray from "@floro/common-assets/assets/images/repo_icons/resolve.gray.svg";
+import ResolveMediumGray from "@floro/common-assets/assets/images/repo_icons/resolve.medium_gray.svg";
 
-import AbortWhite from '@floro/common-assets/assets/images/repo_icons/abort.white.svg';
-import AbortGray from '@floro/common-assets/assets/images/repo_icons/abort.gray.svg';
-import AbortMediumGray from '@floro/common-assets/assets/images/repo_icons/abort.medium_gray.svg';
+import AbortWhite from "@floro/common-assets/assets/images/repo_icons/abort.white.svg";
+import AbortGray from "@floro/common-assets/assets/images/repo_icons/abort.gray.svg";
+import AbortMediumGray from "@floro/common-assets/assets/images/repo_icons/abort.medium_gray.svg";
+import { useMergeRequestNavContext } from "../mergerequest/MergeRequestContext";
 
 const InnerContent = styled.div`
   display: flex;
@@ -267,8 +276,6 @@ const SubTitleSpan = styled.span`
   white-space: nowrap;
 `;
 
-
-
 export const getBranchIdFromName = (name: string): string => {
   return name
     .toLowerCase()
@@ -285,6 +292,7 @@ interface Props {
 const RemoteVCSMergeRequest = (props: Props) => {
   const theme = useTheme();
   const navigate = useNavigate();
+  const { isEditting, setIsEditting } = useMergeRequestNavContext();
 
   const branchIcon = useMemo(() => {
     if (theme.name == "light") {
@@ -305,24 +313,24 @@ const RemoteVCSMergeRequest = (props: Props) => {
       return ResolveGray;
     }
     return ResolveWhite;
-
-  }, [theme.name])
+  }, [theme.name]);
 
   const abortIcon = useMemo(() => {
     if (theme.name == "light") {
       return AbortGray;
     }
     return AbortWhite;
-
-  }, [theme.name])
+  }, [theme.name]);
 
   const linkBase = useRepoLinkBase(props.repository);
   const { reviewPage, setReviewPage } = useMergeRequestReviewPage();
-  const homeLink = useMemo(() => {
+  const backLink = useMemo(() => {
     if (!props.repository?.mergeRequest?.branchState?.branchId) {
-      return `${linkBase}?from=remote&plugin=${props?.plugin ?? "home"}`;
+      return `${linkBase}/mergerequests?from=remote&plugin=${
+        props?.plugin ?? "home"
+      }`;
     }
-    return `${linkBase}?from=remote&branch=${
+    return `${linkBase}/mergerequests?from=remote&branch=${
       props.repository?.mergeRequest?.branchState?.branchId
     }&plugin=${props.plugin ?? "home"}`;
   }, [props.repository?.mergeRequest?.branchState, linkBase, props.plugin]);
@@ -342,13 +350,16 @@ const RemoteVCSMergeRequest = (props: Props) => {
     if (title == "" && props?.repository?.mergeRequest?.title != "") {
       setTitle(props?.repository?.mergeRequest?.title ?? "");
     }
-  }, [title, props?.repository?.mergeRequest?.title])
+  }, [title, props?.repository?.mergeRequest?.title]);
 
   useEffect(() => {
-    if (description == "" && props?.repository?.mergeRequest?.description != "") {
+    if (
+      description == "" &&
+      props?.repository?.mergeRequest?.description != ""
+    ) {
       setDescription(props?.repository?.mergeRequest?.description ?? "");
     }
-  }, [description, props?.repository?.mergeRequest?.description])
+  }, [description, props?.repository?.mergeRequest?.description]);
 
   const onFocusMessage = useCallback(() => {
     setIsMessageFocused(true);
@@ -366,12 +377,16 @@ const RemoteVCSMergeRequest = (props: Props) => {
   }, [theme, isMessageFocused]);
 
   const onGoBack = useCallback(() => {
+    if (isEditting) {
+        setIsEditting(false);
+        return;
+    }
     if (reviewPage == "commits") {
       setReviewPage("none");
       return;
     }
-    navigate(homeLink);
-  }, [homeLink, reviewPage]);
+    navigate(backLink);
+  }, [backLink, reviewPage, isEditting]);
 
   const backArrowIcon = useMemo(() => {
     if (theme.name == "light") {
@@ -391,7 +406,10 @@ const RemoteVCSMergeRequest = (props: Props) => {
     return props.repository?.repoBranches?.find(
       (b) => b?.id == props.repository?.mergeRequest?.branchState?.branchId
     );
-  }, [props.repository?.repoBranches, props.repository?.mergeRequest?.branchState?.branchId]);
+  }, [
+    props.repository?.repoBranches,
+    props.repository?.mergeRequest?.branchState?.branchId,
+  ]);
 
   const baseBranch = useMemo(() => {
     if (!branch?.baseBranchId) {
@@ -430,6 +448,53 @@ const RemoteVCSMergeRequest = (props: Props) => {
 
   //}, [branch, title, description, mergeError]);
 
+
+  const [updateMergeRequest, updateMergeRequestRequest] = useUpdateMergeRequestMutation();
+
+  const disableUpdate = useMemo(() => {
+    if (!props?.repository?.mergeRequest?.mergeRequestPermissions?.canEditInfo) {
+      return false;
+    }
+   // if (mergeError) {
+   //   return true;
+   // }
+    if (title?.trim() == "") {
+      return true;
+    }
+    if (description?.trim() == "") {
+      return true;
+    }
+    return false;
+
+  }, [title, description, props?.repository?.mergeRequest?.mergeRequestPermissions?.canEditInfo]);
+
+  const onUpdate = useCallback(() => {
+    if (disableUpdate) {
+      return;
+    }
+    if (!props?.repository?.id) {
+      return false;
+    }
+    if (!props?.repository?.mergeRequest?.id) {
+      return false;
+    }
+    updateMergeRequest({
+      variables: {
+        repositoryId: props?.repository?.id,
+        mergeRequestId: props?.repository?.mergeRequest.id,
+        title,
+        description,
+      }
+    });
+
+  }, [disableUpdate, props?.repository?.id, props?.repository?.mergeRequest?.id, title, description]);
+
+  useEffect(() => {
+    if (updateMergeRequestRequest?.data?.updateMergeRequestInfo?.__typename == "UpdateMergeRequestInfoSuccess") {
+      setIsEditting(false);
+    }
+  }, [updateMergeRequestRequest?.data?.updateMergeRequestInfo])
+
   return (
     <>
       <InnerContent>
@@ -451,84 +516,89 @@ const RemoteVCSMergeRequest = (props: Props) => {
               <GoBackIcon src={backArrowIcon} onClick={onGoBack} />
             </div>
           </TitleRow>
-          <Row style={{marginTop: 16, justifyContent: "flex-start"}}>
-            <LeftRow>
-              <Icon src={branchIcon} />
-              <LabelSpan>{"From Branch:"}</LabelSpan>
-            </LeftRow>
-            <RightRow>
-              {branch?.name && <ValueSpan>{branch?.name}</ValueSpan>}
-              {!branch?.name && <ValueSpan>{"None"}</ValueSpan>}
-            </RightRow>
-          </Row>
-          <Row style={{marginTop: 16, justifyContent: "flex-start"}}>
-            <LeftRow>
-              <Icon src={mergeIcon} />
-              <LabelSpan>{"Merging Into:"}</LabelSpan>
-            </LeftRow>
-            <RightRow>
-              {baseBranch?.name && <ValueSpan>{baseBranch?.name}</ValueSpan>}
-              {!baseBranch?.name && <ValueSpan>{"None"}</ValueSpan>}
-            </RightRow>
-          </Row>
-          {props.repository?.mergeRequest?.isConflictFree && (
-            <Row style={{marginTop: 16, justifyContent: "flex-start"}}>
-                <Icon src={resolveIcon} />
-                <LabelSpan>{"No conflicts"}</LabelSpan>
-            </Row>
-          )}
-          {!props.repository?.mergeRequest?.isConflictFree && (
-            <Row style={{marginTop: 16, justifyContent: "flex-start"}}>
-                <Icon src={abortIcon} />
-                <LabelSpan>{"Has conflicts"}</LabelSpan>
-            </Row>
-
-          )}
-          <Row style={{marginBottom: 12}}>
-            <SubTitleSpan>{'Reviewers'}</SubTitleSpan>
-          </Row>
-          {false && (
+          {!isEditting && (
             <>
-                <Row style={{marginTop: 16}}>
-                    <Input
-                    value={title}
-                    label={"title"}
-                    placeholder={"title"}
-                    onTextChanged={setTitle}
-                    widthSize="wide"
-                    />
+              <Row style={{ marginTop: 16, justifyContent: "flex-start" }}>
+                <LeftRow>
+                  <Icon src={branchIcon} />
+                  <LabelSpan>{"From Branch:"}</LabelSpan>
+                </LeftRow>
+                <RightRow>
+                  {branch?.name && <ValueSpan>{branch?.name}</ValueSpan>}
+                  {!branch?.name && <ValueSpan>{"None"}</ValueSpan>}
+                </RightRow>
+              </Row>
+              <Row style={{ marginTop: 16, justifyContent: "flex-start" }}>
+                <LeftRow>
+                  <Icon src={mergeIcon} />
+                  <LabelSpan>{"Merging Into:"}</LabelSpan>
+                </LeftRow>
+                <RightRow>
+                  {baseBranch?.name && (
+                    <ValueSpan>{baseBranch?.name}</ValueSpan>
+                  )}
+                  {!baseBranch?.name && <ValueSpan>{"None"}</ValueSpan>}
+                </RightRow>
+              </Row>
+              {props.repository?.mergeRequest?.isConflictFree && (
+                <Row style={{ marginTop: 16, justifyContent: "flex-start" }}>
+                  <Icon src={resolveIcon} />
+                  <LabelSpan>{"No conflicts"}</LabelSpan>
                 </Row>
-                <Row>
-                    <TextAreaBlurbBox
-                    style={{
-                        border: `1px solid ${textareaBorderColor}`,
-                        position: "relative",
-                    }}
-                    ref={textareaContainer}
-                    >
-                    <LabelContainer>
-                        <LabelBorderEnd
-                        style={{ left: -1, background: textareaBorderColor }}
-                        />
-                        <LabelText style={{ color: textareaBorderColor }}>
-                        {"description"}
-                        </LabelText>
-                        <LabelBorderEnd style={{ right: -1 }} />
-                    </LabelContainer>
-                    {description == "" && (
-                        <BlurbPlaceholder>
-                        {"Write a description from your merge request"}
-                        </BlurbPlaceholder>
-                    )}
-                    <BlurbTextArea
-                        ref={textarea}
-                        onFocus={onFocusMessage}
-                        onBlur={onBlurMessage}
-                        value={description}
-                        onChange={onTextBoxChanged}
-                    />
-                    </TextAreaBlurbBox>
+              )}
+              {!props.repository?.mergeRequest?.isConflictFree && (
+                <Row style={{ marginTop: 16, justifyContent: "flex-start" }}>
+                  <Icon src={abortIcon} />
+                  <LabelSpan>{"Has conflicts"}</LabelSpan>
                 </Row>
+              )}
+              <Row style={{ marginBottom: 12 }}>
+                <SubTitleSpan>{"Reviewers"}</SubTitleSpan>
+              </Row>
+            </>
+          )}
+          {isEditting && (
+            <>
+              <Row style={{ marginTop: 16 }}>
+                <Input
+                  value={title}
+                  label={"title"}
+                  placeholder={"title"}
+                  onTextChanged={setTitle}
+                  widthSize="wide"
+                />
+              </Row>
+              <Row>
+                <TextAreaBlurbBox
+                  style={{
+                    border: `1px solid ${textareaBorderColor}`,
+                    position: "relative",
+                  }}
+                  ref={textareaContainer}
+                >
+                  <LabelContainer>
+                    <LabelBorderEnd
+                      style={{ left: -1, background: textareaBorderColor }}
+                    />
+                    <LabelText style={{ color: textareaBorderColor }}>
+                      {"description"}
+                    </LabelText>
+                    <LabelBorderEnd style={{ right: -1 }} />
+                  </LabelContainer>
+                  {description == "" && (
+                    <BlurbPlaceholder>
+                      {"Write a description from your merge request"}
+                    </BlurbPlaceholder>
+                  )}
+                  <BlurbTextArea
+                    ref={textarea}
+                    onFocus={onFocusMessage}
+                    onBlur={onBlurMessage}
+                    value={description}
+                    onChange={onTextBoxChanged}
+                  />
+                </TextAreaBlurbBox>
+              </Row>
             </>
           )}
         </TopContainer>
@@ -541,6 +611,16 @@ const RemoteVCSMergeRequest = (props: Props) => {
               justifyContent: "center",
             }}
           >
+            {isEditting && (
+              <Button
+                onClick={onUpdate}
+                isDisabled={disableUpdate}
+                isLoading={updateMergeRequestRequest.loading}
+                label={"edit merge request info"}
+                bg={"orange"}
+                size={"extra-big"}
+              />
+            )}
           </div>
         </BottomContainer>
       </InnerContent>

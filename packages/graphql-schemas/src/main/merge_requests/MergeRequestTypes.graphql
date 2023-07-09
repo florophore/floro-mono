@@ -8,7 +8,8 @@ type MergeRequestPaginatedResult {
 type ReviewStatus {
   id: ID
   approvalStatus: String
-  branchHeadShaAtCreate: String
+  branchHeadShaAtUpdate: String
+  baseBranchIdAtCreate: String
   user: User
   updatedAt: DateTime
   createdAt: DateTime
@@ -57,6 +58,8 @@ type MergeRequestEvent {
 }
 
 type MergeRequestPermissions {
+  hasApproval: Boolean
+  canEditInfo: Boolean
   canEditReviewers: Boolean
   canRemoveSelfFromReviewers: Boolean
   canBlock: Boolean

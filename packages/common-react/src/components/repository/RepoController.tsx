@@ -23,6 +23,7 @@ import { SourceGraphUIProvider } from "./sourcegraph/SourceGraphUIContext";
 import RemoteRepoController from "./remote/RemoteRepoController";
 import { useComparisonState, useMainRemoteState, useRemoteCommitState } from "./remote/hooks/remote-state";
 import { RepoPage } from "./types";
+import { MergeRequestNavProvider } from "./remote/mergerequest/MergeRequestContext";
 
 interface Props {
   from: "local" | "remote";
@@ -34,17 +35,21 @@ interface Props {
 const RepoController = (props: Props) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const remoteCommitState = useMainRemoteState(props.page, props.repository);
-  const comparisonState = useComparisonState(props.page, props.repository, remoteCommitState);
+  const comparisonState = useComparisonState(
+    props.page,
+    props.repository,
+    remoteCommitState
+  );
   const [searchParams] = useSearchParams();
 
-  const branchId = searchParams.get('branch');
-  const sha = searchParams.get('sha');
+  const branchId = searchParams.get("branch");
+  const sha = searchParams.get("sha");
   useRepositoryUpdatesSubscription({
     variables: {
       repositoryId: props.repository.id,
       branchId,
-      sha
-    }
+      sha,
+    },
   });
 
   const onTogglePanel = useCallback(() => {
@@ -65,40 +70,42 @@ const RepoController = (props: Props) => {
 
   return (
     <SourceGraphUIProvider isExpanded={isExpanded}>
-      <LocalVCSNavProvider>
-        <RepoNavigator
-          from={props.from}
-          repository={props.repository}
-          plugin={props.plugin ?? "home"}
-          isExpanded={isExpanded}
-          onSetIsExpanded={setIsExpanded}
-          remoteCommitState={remoteCommitState}
-          comparisonState={comparisonState}
-          page={props.page}
-        >
-          <>
-            {props.from == "local" && (
-              <LocalRepoController
-                repository={props.repository}
-                plugin={props.plugin ?? "home"}
-                isExpanded={isExpanded}
-                onSetIsExpanded={setIsExpanded}
-              />
-            )}
-            {props.from == "remote" && (
-              <RemoteRepoController
-                repository={props.repository}
-                plugin={props.plugin ?? "home"}
-                isExpanded={isExpanded}
-                onSetIsExpanded={setIsExpanded}
-                remoteCommitState={remoteCommitState}
-                comparisonState={comparisonState}
-                page={props.page}
-              />
-            )}
-          </>
-        </RepoNavigator>
-      </LocalVCSNavProvider>
+      <MergeRequestNavProvider>
+        <LocalVCSNavProvider>
+          <RepoNavigator
+            from={props.from}
+            repository={props.repository}
+            plugin={props.plugin ?? "home"}
+            isExpanded={isExpanded}
+            onSetIsExpanded={setIsExpanded}
+            remoteCommitState={remoteCommitState}
+            comparisonState={comparisonState}
+            page={props.page}
+          >
+            <>
+              {props.from == "local" && (
+                <LocalRepoController
+                  repository={props.repository}
+                  plugin={props.plugin ?? "home"}
+                  isExpanded={isExpanded}
+                  onSetIsExpanded={setIsExpanded}
+                />
+              )}
+              {props.from == "remote" && (
+                <RemoteRepoController
+                  repository={props.repository}
+                  plugin={props.plugin ?? "home"}
+                  isExpanded={isExpanded}
+                  onSetIsExpanded={setIsExpanded}
+                  remoteCommitState={remoteCommitState}
+                  comparisonState={comparisonState}
+                  page={props.page}
+                />
+              )}
+            </>
+          </RepoNavigator>
+        </LocalVCSNavProvider>
+      </MergeRequestNavProvider>
     </SourceGraphUIProvider>
   );
 };

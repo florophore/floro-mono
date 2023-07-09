@@ -16,12 +16,6 @@ query OrganizationByHandle($handle: String!) {
             ...OrganizationRole
             }
         }
-        members {
-            ...OrganizationMember
-            roles {
-            ...OrganizationRole
-            }
-        }
         roles {
             ...OrganizationRole
         }

@@ -22,7 +22,7 @@ export class ReviewStatus extends BinaryPKBaseEntity {
   @Column("varchar")
   @IsOptional()
   @IsString()
-  branchHeadShaAtCreate!: string;
+  branchHeadShaAtUpdate!: string;
 
   @Column("varchar")
   @IsOptional()

@@ -22,6 +22,7 @@ import { MergeRequestComment } from "@floro/database/src/entities/MergeRequestCo
 import MergeRequestCommentReplyEventHandler from "./merge_request_events/MergeRequestCommentReplyEventHandler";
 import { MergeRequestCommentReply } from "@floro/database/src/entities/MergeRequestCommentReply";
 import MergeRequestEventsContext from "@floro/database/src/contexts/merge_requests/MergeRequestEventsContext";
+import { MergeRequestEvent } from "@floro/graphql-schemas/build/generated/main-graphql";
 
 @injectable()
 export default class MergeRequestEventService
@@ -45,11 +46,23 @@ export default class MergeRequestEventService
     this.databaseConnection = databaseConnection;
     this.contextFactory = contextFactory;
   }
+
+  public async fetchTimelineForMergeRequest(
+    mergeRequestId: string
+  ): Promise<MergeRequestEvent[]> {
+    const mergeRequestEventsContext = await this.contextFactory.createContext(
+      MergeRequestEventsContext
+    );
+    return await mergeRequestEventsContext.getAllForMergeRequestId(
+      mergeRequestId
+    );
+  }
+
   public async onMergeRequestCreated(
     queryRunner: QueryRunner,
     byUser: User,
-    baseBranchId: string|undefined,
-    branchHead: string|undefined,
+    baseBranchId: string | undefined,
+    branchHead: string | undefined,
     mergeRequest: MergeRequest
   ): Promise<void> {
     const mergeRequestEventsContext = await this.contextFactory.createContext(
@@ -61,7 +74,7 @@ export default class MergeRequestEventService
       mergeRequestId: mergeRequest.id,
       performedByUserId: byUser.id,
       branchHeadShaAtEvent: branchHead,
-    })
+    });
   }
 
   public async onBranchChanged(
@@ -103,15 +116,15 @@ export default class MergeRequestEventService
       mergeRequestId: mergeRequest.id,
       performedByUserId: byUser.id,
       branchHeadShaAtEvent: branch?.lastCommit ?? undefined,
-    })
+    });
     // EMAIL all reviewers
   }
 
   public async onMergeRequestUpdated(
     queryRunner: QueryRunner,
     byUser: User,
-    baseBranchId: string|undefined,
-    branchHead: string|undefined,
+    baseBranchId: string | undefined,
+    branchHead: string | undefined,
     mergeRequest: MergeRequest
   ): Promise<void> {
     const mergeRequestEventsContext = await this.contextFactory.createContext(
@@ -123,14 +136,14 @@ export default class MergeRequestEventService
       mergeRequestId: mergeRequest.id,
       performedByUserId: byUser.id,
       branchHeadShaAtEvent: branchHead,
-    })
+    });
   }
 
   public async onMergeRequestClosed(
     queryRunner: QueryRunner,
     byUser: User,
-    baseBranchId: string|undefined,
-    branchHead: string|undefined,
+    baseBranchId: string | undefined,
+    branchHead: string | undefined,
     mergeRequest: MergeRequest
   ): Promise<void> {
     const mergeRequestEventsContext = await this.contextFactory.createContext(
@@ -148,14 +161,13 @@ export default class MergeRequestEventService
   public async onUpdatedMergeRequestReviwers(
     queryRunner: QueryRunner,
     byUser: User,
-    baseBranchId: string|undefined,
-    branchHead: string|undefined,
+    baseBranchId: string | undefined,
+    branchHead: string | undefined,
     mergeRequest: MergeRequest,
     reviewerRequests: ReviewerRequest[],
     addedReviewers: User[],
     groupId: string
   ): Promise<void> {
-
     const mergeRequestEventsContext = await this.contextFactory.createContext(
       MergeRequestEventsContext,
       queryRunner
@@ -177,8 +189,8 @@ export default class MergeRequestEventService
   public async onReviewStatusAdded(
     queryRunner: QueryRunner,
     byUser: User,
-    baseBranchId: string|undefined,
-    branchHead: string|undefined,
+    baseBranchId: string | undefined,
+    branchHead: string | undefined,
     mergeRequest: MergeRequest,
     reviewStatus: ReviewStatus
   ): Promise<void> {
@@ -200,8 +212,8 @@ export default class MergeRequestEventService
   public async onReviewStatusChanged(
     queryRunner: QueryRunner,
     byUser: User,
-    baseBranchId: string|undefined,
-    branchHead: string|undefined,
+    baseBranchId: string | undefined,
+    branchHead: string | undefined,
     mergeRequest: MergeRequest,
     reviewStatus: ReviewStatus
   ): Promise<void> {
@@ -223,8 +235,8 @@ export default class MergeRequestEventService
   public async onReviewStatusRemoved(
     queryRunner: QueryRunner,
     byUser: User,
-    baseBranchId: string|undefined,
-    branchHead: string|undefined,
+    baseBranchId: string | undefined,
+    branchHead: string | undefined,
     mergeRequest: MergeRequest,
     reviewStatus: ReviewStatus
   ): Promise<void> {
@@ -245,8 +257,8 @@ export default class MergeRequestEventService
   public async onMergeRequestCommentCreated(
     queryRunner: QueryRunner,
     byUser: User,
-    baseBranchId: string|undefined,
-    branchHead: string|undefined,
+    baseBranchId: string | undefined,
+    branchHead: string | undefined,
     mergeRequest: MergeRequest,
     comment: MergeRequestComment
   ): Promise<void> {
@@ -267,8 +279,8 @@ export default class MergeRequestEventService
   public async onMergeRequestCommentUpdated(
     queryRunner: QueryRunner,
     byUser: User,
-    baseBranchId: string|undefined,
-    branchHead: string|undefined,
+    baseBranchId: string | undefined,
+    branchHead: string | undefined,
     mergeRequest: MergeRequest,
     comment: MergeRequestComment
   ): Promise<void> {
@@ -288,8 +300,8 @@ export default class MergeRequestEventService
   public async onMergeRequestCommentDeleted(
     queryRunner: QueryRunner,
     byUser: User,
-    baseBranchId: string|undefined,
-    branchHead: string|undefined,
+    baseBranchId: string | undefined,
+    branchHead: string | undefined,
     mergeRequest: MergeRequest,
     comment: MergeRequestComment
   ): Promise<void> {
@@ -309,8 +321,8 @@ export default class MergeRequestEventService
   public async onMergeRequestCommentReplyCreated(
     queryRunner: QueryRunner,
     byUser: User,
-    baseBranchId: string|undefined,
-    branchHead: string|undefined,
+    baseBranchId: string | undefined,
+    branchHead: string | undefined,
     mergeRequest: MergeRequest,
     comment: MergeRequestComment,
     reply: MergeRequestCommentReply
@@ -333,8 +345,8 @@ export default class MergeRequestEventService
   public async onMergeRequestCommentReplyUpdated(
     queryRunner: QueryRunner,
     byUser: User,
-    baseBranchId: string|undefined,
-    branchHead: string|undefined,
+    baseBranchId: string | undefined,
+    branchHead: string | undefined,
     mergeRequest: MergeRequest,
     comment: MergeRequestComment,
     reply: MergeRequestCommentReply
@@ -356,8 +368,8 @@ export default class MergeRequestEventService
   public async onMergeRequestCommentReplyDeleted(
     queryRunner: QueryRunner,
     byUser: User,
-    baseBranchId: string|undefined,
-    branchHead: string|undefined,
+    baseBranchId: string | undefined,
+    branchHead: string | undefined,
     mergeRequest: MergeRequest,
     comment: MergeRequestComment,
     reply: MergeRequestCommentReply
