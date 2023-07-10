@@ -1,6 +1,7 @@
 extend type Query {
     organization(id: ID!): Organization
     organizationByHandle(handle: String!): Organization
+    searchUsersToInvite(organizationId: ID!, query: String!): InviteSearchResultResponse
 }
 
 extend type Mutation {

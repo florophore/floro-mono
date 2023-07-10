@@ -30,6 +30,7 @@ import RootOrganizationMemberPermissionsLoader from "../hooks/loaders/Root/Organ
 import PluginsContext from "@floro/database/src/contexts/plugins/PluginsContext";
 import OrganizationMemberService from "../../services/organizations/OrganizationMemberService";
 import OrganizationInvitationService from "../../services/organizations/OrganizationInvitationService";
+import UsersContext from "@floro/database/src/contexts/users/UsersContext";
 
 @injectable()
 export default class OrganizationResolverModule extends BaseResolverModule {
@@ -59,8 +60,10 @@ export default class OrganizationResolverModule extends BaseResolverModule {
     @inject(ContextFactory) contextFactory: ContextFactory,
     @inject(RequestCache) requestCache: RequestCache,
     @inject(OrganizationService) organizaionService: OrganizationService,
-    @inject(OrganizationMemberService) organizationMemberService: OrganizationMemberService,
-    @inject(OrganizationInvitationService) organizationInvitationService: OrganizationInvitationService,
+    @inject(OrganizationMemberService)
+    organizationMemberService: OrganizationMemberService,
+    @inject(OrganizationInvitationService)
+    organizationInvitationService: OrganizationInvitationService,
     @inject(LoggedInUserGuard) loggedInUserGuard: LoggedInUserGuard,
     @inject(OrganizationMemberLoader)
     organizationMemberLoader: OrganizationMemberLoader,
@@ -389,7 +392,11 @@ export default class OrganizationResolverModule extends BaseResolverModule {
     ),
     membersResult: runWithHooks(
       () => [this.organizationMemberLoader],
-      async (organization, args: main.OrganizationMembersResultArgs, { cacheKey, currentUser }) => {
+      async (
+        organization,
+        args: main.OrganizationMembersResultArgs,
+        { cacheKey, currentUser }
+      ) => {
         const organizationMembership =
           this.requestCache.getOrganizationMembership(
             cacheKey,
@@ -456,7 +463,11 @@ export default class OrganizationResolverModule extends BaseResolverModule {
     ),
     invitationsResult: runWithHooks(
       () => [this.organizationMemberPermissionsLoader],
-      async (organization, args: main.OrganizationInvitationsResultArgs, { currentUser, cacheKey }) => {
+      async (
+        organization,
+        args: main.OrganizationInvitationsResultArgs,
+        { currentUser, cacheKey }
+      ) => {
         if (!currentUser) {
           return null;
         }
@@ -843,5 +854,55 @@ export default class OrganizationResolverModule extends BaseResolverModule {
       }
       return organization;
     },
+    searchUsersToInvite: runWithHooks(
+      () => [this.loggedInUserGuard],
+      async (_root, { organizationId, query }, { currentUser }) => {
+        if (!organizationId || !currentUser.id) {
+          return {
+            __typename: "InviteSearchResultError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        const organanizationMembersContext =
+          await this.contextFactory.createContext(OrganizationMembersContext);
+        const organizationMembership =
+          await organanizationMembersContext.getByOrgIdAndUserId(
+            organizationId,
+            currentUser.id
+          );
+        if (!organizationMembership) {
+          return {
+            __typename: "InviteSearchResultError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        if (organizationMembership?.membershipState != "active") {
+          return {
+            __typename: "InviteSearchResultError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        const allMembers =
+          await organanizationMembersContext.getAllMembersForOrganization(
+            organizationId
+          );
+        const excludedIds = allMembers.map((m) => m.userId);
+        const usersContext = await this.contextFactory.createContext(
+          UsersContext
+        );
+        const result = await usersContext.searchUsersExcludingIds(
+          query ?? "",
+          excludedIds
+        );
+        return {
+          __typename: "InviteSearchResultSuccess",
+          users: result,
+          query,
+        };
+      }
+    ),
   };
 }

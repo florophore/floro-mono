@@ -283,3 +283,18 @@ union RemoveOrganizationRoleResponse =
     RemoveOrganizationRoleError
   | RemoveOrganizationRoleSuccess
   | UnAuthenticatedError
+
+type InviteSearchResultSuccess {
+  query: String
+  users: [User]
+}
+
+type InviteSearchResultError {
+  message: String
+  type: String
+}
+
+union InviteSearchResultResponse =
+    InviteSearchResultError
+  | InviteSearchResultSuccess
+  | UnAuthenticatedError

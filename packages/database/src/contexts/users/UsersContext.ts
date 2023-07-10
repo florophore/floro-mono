@@ -76,24 +76,23 @@ export default class UsersContext extends BaseContext {
 
     public async searchUsersExcludingIds(query: string, excludingIds: string[], limit = 5): Promise<User[]> {
         try {
-
         const qb = this.userRepo.createQueryBuilder("user", this.queryRunner);
         if (query.startsWith("@")) {
           const usernameQuery = query.substring(1);
           return await qb
             .leftJoinAndSelect("user.profilePhoto", "photo")
-            .where("user.id NOT IN (:...ids)", {ids: excludingIds})
-            .where("user.username ILIKE :query || '%'")
+            .where("(user.username ILIKE :query || '%') AND user.id <> ALL(:ids)")
             .setParameter("query", usernameQuery.trim().toLowerCase())
+            .setParameter("ids", excludingIds)
             .limit(limit)
             .orderBy("LENGTH(user.username)", "ASC")
             .getMany();
         }
         return await qb
           .leftJoinAndSelect("user.profilePhoto", "photo")
-          .where("user.id NOT IN (:...ids)", {ids: excludingIds})
-          .where(`user.first_name || ' '  || user.last_name ILIKE :query || '%'`)
+          .where(`(user.first_name || ' '  || user.last_name ILIKE :query || '%') AND user.id <> ALL(:ids)`)
           .setParameter("query", query.trim().toLowerCase())
+          .setParameter("ids", excludingIds)
           .limit(limit)
           .orderBy(`LENGTH(user.first_name || ' ' || user.last_name)`, "ASC")
           .getMany();

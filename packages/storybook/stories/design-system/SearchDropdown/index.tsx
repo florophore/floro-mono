@@ -22,12 +22,13 @@ const InnerShadow = styled.div`
 
 export interface Props {
     children?: React.ReactElement;
+    width?: number
 }
 
 const SearchDropdown = (props: Props) => {
 
     return (
-        <Container>
+        <Container style={{width: props?.width ?? 396}}>
             <InnerShadow>
                 {props.children}
             </InnerShadow>

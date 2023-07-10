@@ -1,0 +1,24 @@
+query SearchUsersToInvite($organizationId: ID!, $query: String!) {
+  searchUsersToInvite(organizationId: $organizationId, query: $query) {
+    ... on InviteSearchResultError {
+      message
+      type
+    }
+    ... on InviteSearchResultSuccess {
+      query
+      users {
+        id
+        username
+        firstName
+        lastName
+        profilePhoto {
+            ...Photo
+        }
+      }
+    }
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+  }
+}

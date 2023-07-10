@@ -1,9 +1,11 @@
+
 import React, { useMemo, useCallback } from "react";
 import styled from "@emotion/styled";
-import { Plugin } from "@floro/graphql-schemas/build/generated/main-graphql";
+import { Plugin, User } from "@floro/graphql-schemas/build/generated/main-graphql";
 import { useTheme } from "@emotion/react";
 import PluginDefaultSelectedLight from '@floro/common-assets/assets/images/icons/plugin_default.selected.light.svg';
 import PluginDefaultSelectedDark from '@floro/common-assets/assets/images/icons/plugin_default.selected.dark.svg';
+import UserProfilePhoto from "@floro/storybook/stories/common-components/UserProfilePhoto";
 
 const RowContainer = styled.div`
   flex: 1;
@@ -38,7 +40,7 @@ const RightSideInfo = styled.div`
 const DisplayTitle = styled.h6`
   margin: 0;
   padding: 0;
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-family: "MavenPro";
   font-weight: 600;
   color: ${props => props.theme.colors.pluginDisplayTitle};
@@ -62,14 +64,19 @@ const SubText = styled.p`
   color: ${props => props.theme.colors.contrastText};
 `;
 
+const upcaseFirst = (str: string) => {
+  const rest = str.substring(1);
+  return (str?.[0]?.toUpperCase() ?? "") + rest;
+};
+
 export interface Props {
-  plugin: Plugin;
-  onHoverPlugin?: (plugin: Plugin) => void;
-  onClickPlugin?: (plugin: Plugin) => void;
+  user: User;
+  onHoverUser?: (user: User) => void;
+  onClickUser?: (user: User) => void;
   isSelected?: boolean;
 }
 
-const PluginResultRow = (props: Props) => {
+const UserResultRow = (props: Props) => {
   const theme = useTheme();
 
   const backgroundColor = useMemo(() => {
@@ -79,36 +86,33 @@ const PluginResultRow = (props: Props) => {
     return theme.colors.searchHighlightedBackground;
   }, [props.isSelected, theme]);
 
-  const icon = useMemo(() => {
-    if (theme.name == "light") {
-        return props.plugin.selectedLightIcon ?? PluginDefaultSelectedLight;
-    }
-    return props.plugin.selectedDarkIcon ?? PluginDefaultSelectedDark;
-  }, [theme.name, props.plugin]);
 
   const usernameDisplay = useMemo(() => {
-    if (props.plugin.ownerType == "user_plugin") {
-        return "@" + props.plugin.user?.username;
-    }
-    return "@" + props.plugin.organization?.handle;
+    return "@" + props.user?.username;
 
-  }, [props.plugin]);
+  }, [props.user]);
+
+  const firstName = useMemo(() => upcaseFirst(props.user?.firstName ?? ""), [props.user?.firstName]);
+  const lastName = useMemo(() => upcaseFirst(props.user?.lastName ?? ""), [props.user?.lastName]);
+
+  const userFullname = useMemo(() => {
+    return `${firstName} ${lastName}`;
+  }, [firstName, lastName]);
 
   const onClick = useCallback(() => {
-    props.onClickPlugin?.(props.plugin);
-  }, [props.onClickPlugin, props.plugin])
+    props.onClickUser?.(props.user);
+  }, [props.onClickUser, props.user])
 
   const onMouseEnter = useCallback(() => {
-    props.onHoverPlugin?.(props.plugin);
-  }, [props.onHoverPlugin, props.plugin])
+    props.onHoverUser?.(props.user);
+  }, [props.onHoverUser, props.user])
 
   return (
     <RowContainer style={{backgroundColor}} onClick={onClick} onMouseEnter={onMouseEnter}>
-        <RowImage src={icon}/>
+        <UserProfilePhoto offlinePhoto={null} user={props.user} size={56}/>
         <RightSideInfo>
-            <DisplayTitle>{props.plugin.displayName}</DisplayTitle>
+            <DisplayTitle>{userFullname}</DisplayTitle>
             <SubRow>
-                <SubText>{props.plugin.name}</SubText>
                 <SubText>{usernameDisplay}</SubText>
             </SubRow>
         </RightSideInfo>
@@ -116,4 +120,4 @@ const PluginResultRow = (props: Props) => {
   );
 };
 
-export default React.memo(PluginResultRow);
+export default React.memo(UserResultRow);
