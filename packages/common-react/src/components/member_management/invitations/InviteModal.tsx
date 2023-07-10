@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import styled from "@emotion/styled";
 import RootLongModal from "@floro/common-react/src/components/RootLongModal";
@@ -21,6 +20,7 @@ import RedXDark from "@floro/common-assets/assets/images/icons/red_x_circle.dark
 
 import VerifyLight from "@floro/common-assets/assets/images/icons/verified.light.svg";
 import VerifyDark from "@floro/common-assets/assets/images/icons/verified.dark.svg";
+import ColorPalette from "@floro/styles/ColorPalette";
 
 const HeaderWrapper = styled.div`
   height: 100%;
@@ -129,6 +129,16 @@ const SentText = styled.p`
   font-weight: 600;
   text-align: center;
   color: ${(props) => props.theme.colors.titleText};
+`;
+
+const InstructionsText = styled.p`
+  padding: 0;
+  margin: 24px 0 0 0;
+  font-size: 1.2rem;
+  font-family: "MavenPro";
+  font-weight: 400;
+  color: ${(props) => ColorPalette.gray};
+
 `;
 
 const upcaseFirst = (str: string) => {
@@ -384,8 +394,8 @@ const InviteModal = (props: Props) => {
               alignItems: "center",
             }}
           >
-            <WarningIcon src={errorIcon}/>
-            <SentText>{'Something went wrong!'}</SentText>
+            <WarningIcon src={errorIcon} />
+            <SentText>{"Something went wrong!"}</SentText>
           </TopWrapper>
         )}
         {showSuccess && (
@@ -395,14 +405,10 @@ const InviteModal = (props: Props) => {
               alignItems: "center",
             }}
           >
-            <VerifyIcon src={verifyIcon}/>
-            <PromptText>{'Invitation sent to'}</PromptText>
-            {isEmail && (
-              <SentText>{userInput}</SentText>
-            )}
-            {!isEmail && (
-              <SentText>{userFullname}</SentText>
-            )}
+            <VerifyIcon src={verifyIcon} />
+            <PromptText>{"Invitation sent to"}</PromptText>
+            {isEmail && <SentText>{userInput}</SentText>}
+            {!isEmail && <SentText>{userFullname}</SentText>}
           </TopWrapper>
         )}
         {!showError && !showSuccess && (
@@ -432,6 +438,15 @@ const InviteModal = (props: Props) => {
                     />
                   </SearchDropdownContainer>
                 )}
+              </div>
+            )}
+            {!inviteUser && !isEmail && (
+              <div style={{width: 468, display: 'block', textAlign: 'left'}}>
+                <InstructionsText>
+                  {
+                    "Search for members to invite by @username, first name and last name or enter their email address if you do not know if they are signed up with floro."
+                  }
+                </InstructionsText>
               </div>
             )}
             {inviteUser && (
