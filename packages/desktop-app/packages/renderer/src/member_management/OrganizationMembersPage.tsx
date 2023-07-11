@@ -33,6 +33,7 @@ const OrganizationMembersPage = () => {
       memberId: isSearching ? null : id,
       memberQuery: search
     },
+    fetchPolicy: "cache-and-network"
   });
 
   const organizations = useUserOrganizations();

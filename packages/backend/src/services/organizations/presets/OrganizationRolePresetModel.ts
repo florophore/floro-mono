@@ -235,7 +235,7 @@ export default class OrganizationRolePresetModel implements OrganizationRoleMode
       true,              //  canUploadPlugins
       true,              //  canReleasePlugins
       true,              //  canModifyOrganizationRoles
-      true,              //  canAssignRoles
+      false,             //  canAssignRoles
       organization.id,
       createdByUser.id,
       createdByOrganizationMember.id,

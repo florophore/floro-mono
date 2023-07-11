@@ -25,12 +25,12 @@ const Image = styled.img`
 
 export interface Props {
   size: number;
-  organization: Organization;
+  organization: Organization|null;
   offlinePhoto: string|null;
 }
 
 const OrgProfilePhoto = (props: Props): React.ReactElement => {
-  const hasProfilePhoto = useMemo(() => props.organization.profilePhoto, [props?.organization]);
+  const hasProfilePhoto = useMemo(() => props.organization?.profilePhoto, [props?.organization]);
   const pictureUrl = useMemo(() => {
     if (!hasProfilePhoto) return "";
     if (props.offlinePhoto) {
@@ -38,7 +38,7 @@ const OrgProfilePhoto = (props: Props): React.ReactElement => {
     }
     if (props.size <= 100) {
       return (
-        props.organization.profilePhoto?.thumbnailUrl ??
+        props.organization?.profilePhoto?.thumbnailUrl ??
         props.organization?.profilePhoto?.url ??
         ""
       );

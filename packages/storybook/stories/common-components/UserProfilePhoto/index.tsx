@@ -23,7 +23,7 @@ const Image = styled.img`
 
 export interface Props {
   size: number;
-  user: User;
+  user: User|null;
   offlinePhoto: string|null;
 }
 
@@ -37,7 +37,7 @@ const UserProfilePhoto = (props: Props): React.ReactElement => {
     setHasError(false);
   }, []);
 
-  const hasProfilePhoto = useMemo(() => props.user.profilePhoto, [props?.user]);
+  const hasProfilePhoto = useMemo(() => props.user?.profilePhoto, [props?.user]);
   const [offlinePhoto, setOfflinePhoto] = useState<string|null>(null);
   const pictureUrl = useMemo(() => {
     if (hasProfilePhoto === undefined) return "";
@@ -47,7 +47,7 @@ const UserProfilePhoto = (props: Props): React.ReactElement => {
     }
     if (props.size <= 100) {
       return (
-        props.user.profilePhoto?.thumbnailUrl ??
+        props.user?.profilePhoto?.thumbnailUrl ??
         props.user?.profilePhoto?.url ??
         offlinePhoto ??
         ""

@@ -141,7 +141,7 @@ const UserDescriptor = (props: Props): React.ReactElement => {
     }
     return XDark;
   }, [theme.name]);
-  const onRemote = useCallback(() => {
+  const onRemove = useCallback(() => {
     if (props.user) {
         props?.onRemove?.(props.user);
     }
@@ -189,7 +189,7 @@ const UserDescriptor = (props: Props): React.ReactElement => {
                 </SubRow>
             </RightSideInfo>
             <XContainer>
-                <XIcon src={xIcon} onClick={onRemote}/>
+                <XIcon src={xIcon} onClick={onRemove}/>
             </XContainer>
           </RightContainer>
         </InfoContainer>

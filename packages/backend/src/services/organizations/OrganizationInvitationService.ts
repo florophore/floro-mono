@@ -141,16 +141,16 @@ export default class OrganizationInvitationService
   }
   public getPaginatedInvitationsResult(invitations: OrganizationInvitation[], id: string, query: string) {
     const lowerCaseQuery = (query ?? "").trim();
-    const isSearching = lowerCaseQuery == "";
+    const isSearching = lowerCaseQuery != "";
     const out: Array<OrganizationInvitation> = [];
     const sortedInvitations = invitations.sort((a, b) => {
-      const aName = `${a.user?.firstName} ${a.user?.lastName}`.toLowerCase();
-      const bName = `${b.user?.firstName} ${b.user?.lastName}`.toLowerCase();
+      const aName = `${a.user?.firstName ?? a?.firstName} ${a.user?.lastName ?? a?.lastName}`.toLowerCase();
+      const bName = `${b.user?.firstName ?? b?.firstName} ${b.user?.lastName ?? b?.lastName}`.toLowerCase();
       return aName >= bName ? 1 : -1;
     });
     if (isSearching) {
       for (const invitation of sortedInvitations) {
-        const fullname = `${invitation?.firstName} ${invitation?.lastName}`.toLowerCase();
+        const fullname = `${invitation?.user?.firstName ?? invitation?.firstName} ${invitation?.user?.lastName ?? invitation?.lastName}`.toLowerCase();
         if (invitation.email.indexOf(lowerCaseQuery) != -1) {
           out.push(invitation);
         } else if (fullname.indexOf(lowerCaseQuery) != -1) {
@@ -179,27 +179,27 @@ export default class OrganizationInvitationService
       const invitation = sortedInvitations[i];
       if(found) {
         out.push(invitation);
-        if (out.length == sortedInvitations.length) {
+        if (out.length == PAGE_SIZE) {
           return {
             id: invitation?.id,
             nextId: sortedInvitations[i + 1]?.id,
             lastId,
-            memebers: out
+            invitations: out
           }
         }
         continue;
       }
       if (invitation.id == id) {
-        lastId = sortedInvitations[i - 1]?.id;
+        lastId = sortedInvitations[i - (PAGE_SIZE)]?.id;
         found = true;
         out.push(invitation);
       }
     }
     return {
-      id: out[out.length - 1]?.id,
+      id: out[out.length - (PAGE_SIZE)]?.id,
       nextId: null,
       lastId,
-      memebers: out
+      invitations: out
     }
   }
 
@@ -318,28 +318,28 @@ export default class OrganizationInvitationService
       let user: User | null = null;
       await queryRunner.startTransaction();
 
-      if (organization?.billingPlan == "free") {
-        const activeMemberCount =
-          await organizationMembersContext.getMemberCountForOrganization(
-            organization.id as string
-          );
-        const sentInviteCount =
-          await organizationInvitationsContext.getSentInvitationCountForOrganization(
-            organization.id as string
-          );
-        const remainingSeats =
-          (organization?.freeSeats ?? 10) -
-          (activeMemberCount + sentInviteCount);
-        if (remainingSeats <= 0) {
-          return {
-            action: "NO_REMAINING_SEATS_ERROR",
-            error: {
-              type: "NO_REMAINING_SEATS_ERROR",
-              message: "No remaining seats",
-            },
-          };
-        }
-      }
+      //if (organization?.billingPlan == "free") {
+      //  const activeMemberCount =
+      //    await organizationMembersContext.getMemberCountForOrganization(
+      //      organization.id as string
+      //    );
+      //  const sentInviteCount =
+      //    await organizationInvitationsContext.getSentInvitationCountForOrganization(
+      //      organization.id as string
+      //    );
+      //  const remainingSeats =
+      //    (organization?.freeSeats ?? 10) -
+      //    (activeMemberCount + sentInviteCount);
+      //  if (remainingSeats <= 0) {
+      //    return {
+      //      action: "NO_REMAINING_SEATS_ERROR",
+      //      error: {
+      //        type: "NO_REMAINING_SEATS_ERROR",
+      //        message: "No remaining seats",
+      //      },
+      //    };
+      //  }
+      //}
 
       if (userId) {
         user = await usersContext.getById(userId);
@@ -834,9 +834,16 @@ export default class OrganizationInvitationService
       subject: "Floro Invitation to " + organization.name,
     });
 
+    const organizationInvitationsContext =
+      await this.contextFactory.createContext(OrganizationInvitationsContext);
+    const updatedInvitation =
+      await organizationInvitationsContext.forceUpdateUpdatedAt(
+        organizationInvitation,
+      );
+
     return {
       action: "INVITATION_RESENT",
-      organizationInvitation,
+      organizationInvitation: updatedInvitation as OrganizationInvitation,
     };
   }
 

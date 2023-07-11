@@ -6,6 +6,7 @@ type Organization {
   contactEmail: String
   invitationsSentCount: Int
   membersActiveCount: Int
+  activeAdminCount: Int
   remainingSeats: Int
   freeDiskSpaceBytes: Float
   diskSpaceLimitBytes: Float
@@ -60,6 +61,7 @@ type OrganizationInvitation {
   email: String
   invitationState: String
   createdAt: DateTime
+  updatedAt: DateTime
 
   user: User
   invitedByUser: User
@@ -177,6 +179,22 @@ type CancelOrganizationInvitationError {
 union CancelInvitationOrganizationResponse =
     CancelOrganizationInvitationError
   | CancelOrganizationInvitationSuccess
+  | UnAuthenticatedError
+
+
+type UpdateOrganizationInvitationSuccess {
+  organizationInvitation: OrganizationInvitation
+  organization: Organization
+}
+
+type UpdateOrganizationInvitationError {
+  message: String
+  type: String
+}
+
+union UpdateInvitationOrganizationResponse =
+    UpdateOrganizationInvitationError
+  | UpdateOrganizationInvitationSuccess
   | UnAuthenticatedError
 
 type ResendOrganizationInvitationSuccess {

@@ -59,6 +59,9 @@ export class OrganizationInvitation extends BinaryPKBaseEntity {
   @IsString()
   invitationState?: string;
 
+  @Column("int")
+  updateCount!: number;
+
   @Column("uuid")
   organizationId!: string;
 

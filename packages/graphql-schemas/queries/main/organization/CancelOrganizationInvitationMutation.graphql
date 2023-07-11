@@ -1,0 +1,86 @@
+mutation CancelOrganizationInvitation(
+  $organizationId: ID!
+  $invitationId: ID!
+  $currentInvitationId: ID
+  $currentInvitationQuery: String
+) {
+  cancelOrganizationInvitation(
+    organizationId: $organizationId
+    invitationId: $invitationId
+  ) {
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+    ... on CancelOrganizationInvitationError {
+      type
+      message
+    }
+    ... on CancelOrganizationInvitationSuccess {
+      organization {
+        id
+        invitationsSentCount
+        membersActiveCount
+        activeAdminCount
+        remainingSeats
+        freeDiskSpaceBytes
+        diskSpaceLimitBytes
+        utilizedDiskSpaceBytes
+        billingStatus
+        billingPlan
+        roles {
+          ...OrganizationRole
+        }
+        invitationsResult(
+          id: $currentInvitationId
+          query: $currentInvitationQuery
+        ) {
+          id
+          nextId
+          lastId
+          invitations {
+            id
+            firstName
+            lastName
+            email
+            invitationState
+            createdAt
+            updatedAt
+            user {
+              id
+              username
+              firstName
+              lastName
+              profilePhoto {
+                ...Photo
+              }
+            }
+            invitedByUser {
+              id
+              username
+              firstName
+              lastName
+              profilePhoto {
+                ...Photo
+              }
+            }
+            roles {
+              id
+              name
+              isDefault
+            }
+          }
+        }
+      }
+      organizationInvitation {
+        id
+        firstName
+        lastName
+        email
+        invitationState
+        createdAt
+        updatedAt
+      }
+    }
+  }
+}

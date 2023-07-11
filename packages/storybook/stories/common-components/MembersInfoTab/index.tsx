@@ -58,6 +58,7 @@ export interface Props {
   membersCount: number;
   invitedCount: number;
   organization: Organization;
+  showInvites: boolean;
 }
 
 const MembersInfoTab = (props: Props): React.ReactElement => {
@@ -79,9 +80,11 @@ const MembersInfoTab = (props: Props): React.ReactElement => {
             <Link to={`/org/@/${props?.organization?.handle}/members`}>
                 <MemberText style={{marginRight: 8}}>Members <MemberNumeral>{memberCount}</MemberNumeral></MemberText>
             </Link>
-            <Link to={`/org/@/${props?.organization?.handle}/invitations`}>
-                <MemberText>Invited <MemberNumeral>{invitedCount}</MemberNumeral></MemberText>
-            </Link>
+            {props.showInvites && (
+              <Link to={`/org/@/${props?.organization?.handle}/invitations`}>
+                  <MemberText>Invited <MemberNumeral>{invitedCount}</MemberNumeral></MemberText>
+              </Link>
+            )}
         </TextContainer>
     </Container>
   );

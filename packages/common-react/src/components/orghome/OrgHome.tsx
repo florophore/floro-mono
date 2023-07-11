@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import styled from "@emotion/styled";
 import OrgProfileInfo from "@floro/storybook/stories/common-components/OrgProfileInfo";
@@ -179,6 +179,10 @@ const OrgHome = (props: Props) => {
     }
   }, [uploadPhotoRequest.data, savePhoto]);
 
+  const showInvites = useMemo(() => {
+    return !!props?.organization?.membership?.permissions?.canModifyInvites;
+  }, [props?.organization?.membership?.permissions?.canModifyInvites]);
+
   return (
     <>
       {props.organization && (
@@ -218,26 +222,33 @@ const OrgHome = (props: Props) => {
             </ProfileInfoWrapper>
             <BottomNavContainer>
               <TopInfo>
-                <div style={{ marginTop: 0, display: "flex" }}>
-                  <MembersInfoTab
-                    membersCount={props?.organization?.membersActiveCount ?? 0}
-                    invitedCount={
-                      props?.organization?.invitationsSentCount ?? 0
-                    }
-                    organization={props.organization}
-                  />
-                </div>
+                {props.organization?.membership?.membershipState == "active" && (
+                  <div style={{ marginTop: 0, display: "flex" }}>
+                    <MembersInfoTab
+                      membersCount={props?.organization?.membersActiveCount ?? 0}
+                      invitedCount={
+                        props?.organization?.invitationsSentCount ?? 0
+                      }
+                      organization={props.organization}
+                      showInvites={showInvites}
+                    />
+                  </div>
+                )}
                 {false && (
                   <div style={{ marginTop: 16, display: "flex" }}>
                     <MemberSettingsTab />
                   </div>
                 )}
-                <div style={{ marginTop: 16, display: "flex" }}>
-                  <OrgSettingsTab />
-                </div>
-                <div style={{ marginTop: 16, display: "flex" }}>
-                  <DevSettingsTab />
-                </div>
+                {props?.organization?.membership?.permissions?.canModifyBilling && (
+                  <div style={{ marginTop: 16, display: "flex" }}>
+                    <OrgSettingsTab />
+                  </div>
+                )}
+                {props?.organization?.membership?.permissions?.canModifyOrganizationDeveloperSettings && (
+                  <div style={{ marginTop: 16, display: "flex" }}>
+                    <DevSettingsTab />
+                  </div>
+                )}
                 <div style={{ marginTop: 16, display: "flex" }}>
                   <PluginsTab pluginCount={0} />
                 </div>
@@ -253,9 +264,11 @@ const OrgHome = (props: Props) => {
                     />
                   </div>
                 )}
-                <div style={{ marginTop: 16, display: "flex" }}>
-                  <BillingTab />
-                </div>
+                {props?.organization?.membership?.permissions?.canModifyBilling && (
+                  <div style={{ marginTop: 16, display: "flex" }}>
+                    <BillingTab />
+                  </div>
+                )}
                 <div style={{ marginTop: 16, display: "flex" }}>
                   <ConnectionStatusTab isConnected={isDaemonConnected ?? false} />
                 </div>

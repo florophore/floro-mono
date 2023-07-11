@@ -64,15 +64,6 @@ export default class OrganizationInvitationResolverModule extends BaseResolverMo
       }
       return null;
     },
-    user: (organizationInvitation, _, { currentUser }) => {
-      if (
-        (organizationInvitation as OrganizationInvitation)?.userId ==
-        currentUser.id
-      ) {
-        return currentUser;
-      }
-      return null;
-    },
     roles: runWithHooks(
       () => [this.organizationInvitationMemberPermissionsLoader],
       async (organizationInvitation, _, { cacheKey, currentUser }) => {
@@ -363,6 +354,101 @@ export default class OrganizationInvitationResolverModule extends BaseResolverMo
         }
         return {
           __typename: "CreateOrganizationInvitationError",
+          message: result.error?.message ?? "Unknown Error",
+          type: result.error?.type ?? "UNKNOWN_ERROR",
+        };
+      }
+    ),
+    updateOrganizationInvitation: runWithHooks(
+      () => [
+        this.loggedInUserGuard,
+        this.rootOrganizationMemberPermissionsLoader,
+      ],
+      async (
+        _,
+        {
+          organizationId,
+          invitationId,
+          roleIds
+        }: main.MutationUpdateOrganizationInvitationArgs,
+        { currentUser, cacheKey }
+      ) => {
+        const organization = this.requestCache.getOrganization(
+          cacheKey,
+          organizationId
+        );
+        if (!organization) {
+          return {
+            __typename: "UpdateOrganizationInvitationError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        const currentMember = this.requestCache.getOrganizationMembership(
+          cacheKey,
+          organizationId,
+          currentUser.id
+        );
+        if (!currentMember?.id) {
+          return {
+            __typename: "UpdateOrganizationInvitationError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        const permissions = this.requestCache.getMembershipPermissions(
+          cacheKey,
+          currentMember.id
+        );
+        if (!permissions) {
+          return {
+            __typename: "UpdateOrganizationInvitationError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        const organizationInvitationsContext =
+          await this.contextFactory.createContext(
+            OrganizationInvitationsContext
+          );
+        const organizationInvitation =
+          await organizationInvitationsContext.getById(invitationId);
+        if (organizationInvitation?.organizationId != organizationId) {
+          return {
+            __typename: "UpdateOrganizationInvitationError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        const result =
+          await this.organizationInvitationService.updateInvitationRoles(
+            organizationInvitation,
+            organization,
+            currentMember,
+            permissions,
+            (roleIds ?? []) as Array<string>
+          );
+        if (result.action == "INVITATION_ROLES_UPDATED") {
+          return {
+            __typename: "UpdateOrganizationInvitationSuccess",
+            organizationInvitation: result.organizationInvitation,
+            organization,
+          };
+        }
+        if (result.action == "LOG_ERROR") {
+          console.error(
+            result.error?.type,
+            result?.error?.message,
+            result?.error?.meta
+          );
+          return {
+            __typename: "UpdateOrganizationInvitationError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        return {
+          __typename: "UpdateOrganizationInvitationError",
           message: result.error?.message ?? "Unknown Error",
           type: result.error?.type ?? "UNKNOWN_ERROR",
         };

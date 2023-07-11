@@ -27,6 +27,7 @@ import {
 } from "../../offline/OfflinePhotoContext";
 import StorageTab from "@floro/storybook/stories/common-components/StorageTab";
 import { useCurrentUserRepos, useLocalRepos, useOrgRepos } from "../../hooks/repos";
+import ColorPalette from "@floro/styles/ColorPalette";
 
 const Container = styled.div`
   flex: 1;
@@ -135,6 +136,13 @@ const BottomGradiuent = styled.div`
   );
 `;
 
+const NoReposText = styled.span`
+  font-family: "MavenPro";
+  color: ${ColorPalette.gray};
+  font-weight: 500;
+  font-size: 1.4rem;
+`
+
 interface Props {
     organization?: Organization;
 }
@@ -158,6 +166,9 @@ const OrgDashboard = (props: Props) => {
             <SideBarTitle>{`Repositories (${repositories.length})`}</SideBarTitle>
           </SideBarTitleWrapper>
           <RepoInnerContainer>
+            {repositories?.length == 0 && (
+              <NoReposText>{'No organization repos created yet'}</NoReposText>
+            )}
             {repositories?.map((repo, index) => {
               return <RepoBriefInfoRow repo={repo as Repository} key={index} isLocal={localRepoIds.has(repo?.id)} />;
             })}

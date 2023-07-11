@@ -9,12 +9,8 @@ import InviteModal from "./invitations/InviteModal";
 
 const Container = styled.div`
   flex: 1;
-  height: 100%;
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  padding: 24px;
+  padding: 24px 24px 80px 24px;
 `;
 
 const Title = styled.h1`
@@ -56,7 +52,7 @@ const MembersHome = (props: Props) => {
       >
         <Container>
           <Title>{"Members"}</Title>
-          <div style={{ marginTop: 24 }}>
+          <div style={{ marginTop: 24, marginBottom: 24 }}>
             <SearchInput
               showClear
               borderColor={theme.name == "light" ? "gray" : "white"}

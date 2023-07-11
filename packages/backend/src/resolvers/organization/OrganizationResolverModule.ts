@@ -31,6 +31,7 @@ import PluginsContext from "@floro/database/src/contexts/plugins/PluginsContext"
 import OrganizationMemberService from "../../services/organizations/OrganizationMemberService";
 import OrganizationInvitationService from "../../services/organizations/OrganizationInvitationService";
 import UsersContext from "@floro/database/src/contexts/users/UsersContext";
+import OrganizationRolesContext from "@floro/database/src/contexts/organizations/OrganizationRolesContext";
 
 @injectable()
 export default class OrganizationResolverModule extends BaseResolverModule {
@@ -259,19 +260,77 @@ export default class OrganizationResolverModule extends BaseResolverModule {
         if (organizationMembership?.membershipState != "active") {
           return null;
         }
-        const permissions = this.requestCache.getMembershipPermissions(
-          cacheKey,
-          organizationMembership.id
-        );
-        if (!permissions.canModifyOrganizationMembers) {
-          return null;
-        }
         const activeMemberCount =
           this.requestCache.getOrganizationActiveMemberCount(
             cacheKey,
             organization.id as string
           );
         return activeMemberCount ?? null;
+      }
+    ),
+    activeAdminCount: runWithHooks(
+      () => [
+        this.organizationMemberPermissionsLoader,
+        this.organizationActiveMemberCountLoader,
+        this.organizationSentInvitationsCountLoader,
+      ],
+      async (organization, _, { currentUser, cacheKey }) => {
+        if (!currentUser) {
+          return null;
+        }
+        const organizationMembership =
+          this.requestCache.getOrganizationMembership(
+            cacheKey,
+            organization.id as string,
+            currentUser.id
+          );
+        if (organizationMembership?.membershipState != "active") {
+          return null;
+        }
+        const permissions = this.requestCache.getMembershipPermissions(
+          cacheKey,
+          organizationMembership.id
+        );
+        if (
+          !permissions.canModifyOrganizationMembers &&
+          !permissions.canAssignRoles
+        ) {
+          return null;
+        }
+
+        const cachedMembers = this.requestCache.getOrganizationMembers(
+          cacheKey,
+          organization.id as string
+        );
+        const organanizationMembersContext =
+          await this.contextFactory.createContext(OrganizationMembersContext);
+        const members = !!cachedMembers ? cachedMembers :
+          await organanizationMembersContext.getAllMembersForOrganization(
+            organization.id as string
+          );
+        if (members && organization) {
+          this.requestCache.setOrganizationMembers(cacheKey, organization as Organization, members);
+        }
+
+        const organizationRolesContext = await this.contextFactory.createContext(
+          OrganizationRolesContext
+        );
+        const roles = await organizationRolesContext.getAllForOrg(
+          organization as Organization
+        );
+        const adminRole = roles.find((role) => role.presetCode == "admin");
+        if (!adminRole) {
+          return null;
+        }
+        const activeMembersWithAdminRoles = members?.filter((member) => {
+          return (
+            member?.membershipState == "active" &&
+            member.organizationMemberRoles
+              ?.map((r) => r.organizationRoleId)
+              ?.includes(adminRole.id)
+          );
+        });
+        return activeMembersWithAdminRoles.length;
       }
     ),
     remainingSeats: runWithHooks(
@@ -889,7 +948,16 @@ export default class OrganizationResolverModule extends BaseResolverModule {
           await organanizationMembersContext.getAllMembersForOrganization(
             organizationId
           );
-        const excludedIds = allMembers.map((m) => m.userId);
+
+        const organizationInvitationsContext =
+          await this.contextFactory.createContext(
+            OrganizationInvitationsContext
+          );
+
+        const allInvites = await organizationInvitationsContext.getAllInvitationsForOrganization(organizationId);
+        const sentUserIds = allInvites.map((i) => i.userId)?.filter(v => !!v);
+
+        const excludedIds = [...allMembers.map((m) => m.userId), ...sentUserIds];
         const usersContext = await this.contextFactory.createContext(
           UsersContext
         );

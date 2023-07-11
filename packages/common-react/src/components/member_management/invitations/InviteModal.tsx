@@ -8,6 +8,7 @@ import {
   Organization,
   User,
   useSearchUsersToInviteLazyQuery,
+  useCreateOrganizationInvitationMutation
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import Checkbox from "@floro/storybook/stories/design-system/Checkbox";
 import debouncer from 'lodash.debounce';
@@ -151,6 +152,8 @@ export interface Props {
   show: boolean;
   onDismissModal: () => void;
   organization: Organization;
+  currentInvitationId?: string|null;
+  currentInvitationQuery?: string|null;
 }
 
 const InviteModal = (props: Props) => {
@@ -166,6 +169,8 @@ const InviteModal = (props: Props) => {
   const [assignedRoles, setAssignedRoles] = useState<Set<string>>(new Set([]));
 
   const [selectedUser, setSelectedUser] = useState<User|undefined>(undefined);
+
+  const [createInvitation, createInvitationResponse] = useCreateOrganizationInvitationMutation();
 
   const verifyIcon = useMemo(() => {
     if (theme.name == "light") {
@@ -183,6 +188,7 @@ const InviteModal = (props: Props) => {
 
   const onHideError = useCallback(() => {
     setShowError(false);
+    createInvitationResponse.reset();
   }, []);
 
   const defaultRoleIds = useMemo(() => {
@@ -216,6 +222,7 @@ const InviteModal = (props: Props) => {
         setSelectedUser(undefined);
         setShowError(false);
         setShowSuccess(false);
+        createInvitationResponse.reset();
     }
   }, [props.show, defaultRoleIds]);
 
@@ -248,16 +255,6 @@ const InviteModal = (props: Props) => {
   const onInputChange = useCallback((text: string) => {
     setUserInput(text);
   }, []);
-
-  const showBottomSection = useMemo(() => {
-    if (isEmail) {
-      return true;
-    }
-    if (!!inviteUser) {
-      return true;
-    }
-    return false;
-  }, [inviteUser, isEmail])
 
   useEffect(() => {
     if (!props.organization?.id || inputIsEmpty) {
@@ -355,7 +352,69 @@ const InviteModal = (props: Props) => {
       return firstNameIsValid;
     }
     return false;
-  }, [isEmail, firstNameIsValid, inviteUser])
+  }, [isEmail, firstNameIsValid, inviteUser]);
+
+  const onSendInvite = useCallback(() => {
+    if (!props.organization?.id) {
+      return;
+    }
+    if (isEmail) {
+      createInvitation({
+        variables: {
+          organizationId: props.organization?.id,
+          email: userInput,
+          firstName,
+          lastName,
+          roleIds: Array.from(assignedRoles),
+          currentInvitationId: props.currentInvitationId,
+          currentInvitationQuery: props.currentInvitationQuery,
+        },
+      });
+      return;
+    }
+    if (!inviteUser) {
+      return;
+    }
+    createInvitation({
+      variables: {
+        organizationId: props.organization?.id,
+        userId: inviteUser.id,
+        roleIds: Array.from(assignedRoles),
+        currentInvitationId: props.currentInvitationId,
+        currentInvitationQuery: props.currentInvitationQuery,
+      },
+    });
+  }, [
+    canSend,
+    props.organization,
+    inviteUser,
+    isEmail,
+    userInput,
+    firstName,
+    lastName,
+    assignedRoles,
+    props.currentInvitationId,
+    props.currentInvitationQuery,
+  ]);
+
+  useEffect(() => {
+    if (
+      createInvitationResponse?.data?.createInvitation?.__typename ==
+      "CreateOrganizationInvitationSuccess"
+    ) {
+      setShowSuccess(true);
+      return;
+    }
+    if (
+      createInvitationResponse?.data?.createInvitation?.__typename ==
+        "CreateOrganizationInvitationError" ||
+      createInvitationResponse?.data?.createInvitation?.__typename ==
+        "UnAuthenticatedError"
+    ) {
+      setShowError(true);
+      return;
+    }
+  }, [createInvitationResponse]);
 
   const userFirstName = useMemo(() => upcaseFirst(inviteUser?.firstName ?? ""), [inviteUser?.firstName]);
   const userLastName = useMemo(() => upcaseFirst(inviteUser?.lastName ?? ""), [inviteUser?.lastName]);
@@ -479,7 +538,7 @@ const InviteModal = (props: Props) => {
                 </div>
               </>
             )}
-            {(inviteUser || isEmail) && (
+            {(inviteUser || isEmail) && props.organization?.membership?.permissions?.canAssignRoles && (
               <div
                 style={{
                   marginTop: 24,
@@ -550,7 +609,9 @@ const InviteModal = (props: Props) => {
           {!showError && !showSuccess && (
             <ButtonRow>
               <Button
+                isLoading={createInvitationResponse.loading}
                 isDisabled={!canSend}
+                onClick={onSendInvite}
                 label={"send invitation"}
                 bg={"purple"}
                 size={"extra-big"}

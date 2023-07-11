@@ -80,7 +80,7 @@ const UsernameText = styled.span`
   margin-left: 8px;
 `;
 
-const OwnerDescriptor = ({
+const OrgOwnerDescriptor = ({
   label,
   organization,
   offlinePhoto = null
@@ -114,4 +114,4 @@ const OwnerDescriptor = ({
   );
 };
 
-export default React.memo(OwnerDescriptor);
+export default React.memo(OrgOwnerDescriptor);

@@ -20,6 +20,7 @@ import {
   useCurrentUserHomeQuery,
   Organization,
   Repository,
+  OrganizationInvitation,
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import ChangeNameModal from "./ChangeNameModal";
 import {
@@ -28,6 +29,9 @@ import {
 } from "../../offline/OfflinePhotoContext";
 import StorageTab from "@floro/storybook/stories/common-components/StorageTab";
 import { useCurrentUserRepos, useLocalRepos } from "../../hooks/repos";
+import ColorPalette from "@floro/styles/ColorPalette";
+import UserInvite from "./invitations/UserInvite";
+import ConfirmRejectInviteModal from "./invitations/ConfirmRejectInviteModal";
 
 const Container = styled.div`
   flex: 1;
@@ -110,6 +114,8 @@ const InvitationContainer = styled.div`
   display: flex;
   flex: 4;
   flex-direction: column;
+  position: relative;
+  max-height: 44.44%;
 `;
 
 const TopGradient = styled.div`
@@ -120,7 +126,7 @@ const TopGradient = styled.div`
   height: 16px;
   background: linear-gradient(
     ${(props) => props.theme.gradients.backgroundFullOpacity},
-    ${(props) => props.theme.gradients.backgroundNoOpacity}
+    ${(props) =>props.theme.gradients.backgroundNoOpacity}
   );
 `;
 
@@ -132,12 +138,54 @@ const BottomGradiuent = styled.div`
   height: 16px;
   background: linear-gradient(
     ${(props) => props.theme.gradients.backgroundNoOpacity},
-    ${(props) => props.theme.gradients.backgroundFullOpacity}
+    ${(props) => props.theme.gradients.backgroundNoOpacity}
   );
 `;
 
+const NoReposText = styled.span`
+  font-family: "MavenPro";
+  color: ${(props) => ColorPalette.gray};
+  font-weight: 500;
+  font-size: 1.4rem;
+`
+
+const InvitationsInnerContainer = styled.div`
+  width: 100%;
+  flex-direction: column;
+  padding: 8px 0px 4px 8px;
+  box-sizing: border-box;
+  position: relative;
+  overflow-y: scroll;
+  &::-webkit-scrollbar {
+    width: 9px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(155, 155, 155, 0.5);
+    border-radius: 20px;
+    border: transparent;
+  }
+`;
+
+
 const HomeDashboard = () => {
   const { repositories } = useCurrentUserRepos();
+  const [invititationToReject, setInvitationToReject] =
+    useState<OrganizationInvitation | null>(null);
+  const [showRejectModal, setShowRejectModal] =
+    useState<boolean>(false);
+
+  const onShowRejectModal = useCallback((invitation: OrganizationInvitation) => {
+    setInvitationToReject(invitation);
+    setShowRejectModal(true);
+  }, []);
+  const onDismissRejectModal = useCallback(() => {
+    setInvitationToReject(null);
+    setShowRejectModal(false);
+  }, []);
+
   const localRepos = useLocalRepos();
   const localRepoIds = useMemo(() => {
     if (!localRepos) {
@@ -146,9 +194,18 @@ const HomeDashboard = () => {
     return new Set(localRepos ?? []);
   }, [localRepos]);
 
+  const { currentUser } = useSession();
+  const invitationCount = useMemo(() => {
+    return currentUser?.organizationInvitations?.length ?? 0;
+  }, [currentUser?.organizationInvitations])
 
   return (
     <Container>
+      <ConfirmRejectInviteModal
+        invitation={invititationToReject}
+        show={showRejectModal}
+        onDismiss={onDismissRejectModal}
+      />
       <MainContainer></MainContainer>
       <SideBar>
         <RepoContainer>
@@ -156,8 +213,17 @@ const HomeDashboard = () => {
             <SideBarTitle>{`Repositories (${repositories.length})`}</SideBarTitle>
           </SideBarTitleWrapper>
           <RepoInnerContainer>
+            {repositories.length == 0 && (
+              <NoReposText>{"No personal repos created yet"}</NoReposText>
+            )}
             {repositories?.map((repo, index) => {
-              return <RepoBriefInfoRow repo={repo as Repository} key={index} isLocal={localRepoIds.has(repo?.id)} />;
+              return (
+                <RepoBriefInfoRow
+                  repo={repo as Repository}
+                  key={index}
+                  isLocal={localRepoIds.has(repo?.id)}
+                />
+              );
             })}
           </RepoInnerContainer>
           <TopGradient />
@@ -165,8 +231,24 @@ const HomeDashboard = () => {
         </RepoContainer>
         <InvitationContainer>
           <SideBarTitleWrapper>
-            <SideBarTitle>{`Invitations (0)`}</SideBarTitle>
+            <SideBarTitle>{`Invitations (${invitationCount})`}</SideBarTitle>
           </SideBarTitleWrapper>
+          <InvitationsInnerContainer>
+            {invitationCount == 0 && (
+              <NoReposText>{"No invitations to display"}</NoReposText>
+            )}
+            {currentUser?.organizationInvitations?.map((invitation, index) => {
+              return (
+                <UserInvite
+                  invitation={invitation as OrganizationInvitation}
+                  key={index}
+                  onRejectInvite={onShowRejectModal}
+                />
+              );
+            })}
+          </InvitationsInnerContainer>
+          <TopGradient />
+          <BottomGradiuent />
         </InvitationContainer>
       </SideBar>
     </Container>

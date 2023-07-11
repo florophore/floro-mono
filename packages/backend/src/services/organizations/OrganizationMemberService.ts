@@ -73,7 +73,7 @@ export default class OrganizationMemberService {
 
   public getPaginatedMembersResult(memebers: OrganizationMember[], id: string, query: string, filterDeactivated?: boolean) {
     const lowerCaseQuery = (query ?? "").trim();
-    const isSearching = lowerCaseQuery == "";
+    const isSearching = lowerCaseQuery != "";
     const out: Array<OrganizationMember> = [];
     const sortedMembers = memebers?.filter(m => {
       if (!filterDeactivated) {
@@ -99,7 +99,7 @@ export default class OrganizationMemberService {
             id: null,
             nextId: null,
             lastId: null,
-            memebers: out
+            members: out
           }
         }
       }
@@ -107,7 +107,7 @@ export default class OrganizationMemberService {
         id: null,
         nextId: null,
         lastId: null,
-        memebers: out
+        members: out
       }
     }
 
@@ -122,22 +122,22 @@ export default class OrganizationMemberService {
             id: memeber?.id,
             nextId: sortedMembers[i + 1]?.id,
             lastId,
-            memebers: out
+            members: out
           }
         }
         continue;
       }
       if (memeber.id == id) {
-        lastId = sortedMembers[i - 1]?.id;
+        lastId = sortedMembers[i - PAGE_SIZE]?.id;
         found = true;
         out.push(memeber);
       }
     }
     return {
-      id: out[out.length - 1]?.id,
+      id: out[out.length - PAGE_SIZE]?.id,
       nextId: null,
       lastId,
-      memebers: out
+      members: out
     }
   }
 

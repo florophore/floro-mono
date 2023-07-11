@@ -52,4 +52,29 @@ fragment User on User {
       handle
     }
   }
+  organizationInvitations {
+    id
+    firstName
+    lastName
+    email
+    invitationState
+    createdAt
+    invitedByUser {
+      id
+      username
+      firstName
+      lastName
+      profilePhoto {
+        ...Photo
+      }
+    }
+    organization {
+      id
+      name
+      handle
+      profilePhoto {
+        ...Photo
+      }
+    }
+  }
 }

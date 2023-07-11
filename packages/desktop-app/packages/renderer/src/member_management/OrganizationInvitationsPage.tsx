@@ -33,6 +33,7 @@ const OrganizationInvitationsPage = () => {
       invitationId: isSearching ? null : id,
       invitationQuery: search
     },
+    fetchPolicy: "cache-and-network"
   });
 
   const organizations = useUserOrganizations();

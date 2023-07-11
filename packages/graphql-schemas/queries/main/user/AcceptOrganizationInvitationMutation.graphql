@@ -1,0 +1,99 @@
+mutation AcceptOrganizationInvitation($invitationId: ID!) {
+  acceptOrganizationInvitation(invitationId: $invitationId) {
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+    ... on AcceptOrganizationInvitationError {
+      type
+      message
+    }
+    ... on AcceptOrganizationInvitationSuccess {
+      user {
+        id
+        firstName
+        lastName
+        username
+        freeDiskSpaceBytes
+        diskSpaceLimitBytes
+        utilizedDiskSpaceBytes
+        profilePhoto {
+          ...Photo
+        }
+        organizations {
+          ...Organization
+          membership {
+            ...OrganizationMember
+            permissions {
+              ...OrganizationPermissions
+            }
+            roles {
+              ...OrganizationRole
+            }
+          }
+          roles {
+            ...OrganizationRole
+          }
+        }
+        organizationInvitations {
+          id
+          firstName
+          lastName
+          email
+          invitationState
+          createdAt
+          updatedAt
+          invitedByUser {
+            id
+            username
+            firstName
+            lastName
+            profilePhoto {
+              ...Photo
+            }
+          }
+          organization {
+            id
+            name
+            handle
+            profilePhoto {
+              ...Photo
+            }
+          }
+        }
+      }
+      organizationInvitation {
+        id
+        firstName
+        lastName
+        email
+        invitationState
+        createdAt
+        updatedAt
+        user {
+          id
+          username
+          firstName
+          lastName
+          profilePhoto {
+            ...Photo
+          }
+        }
+        invitedByUser {
+          id
+          username
+          firstName
+          lastName
+          profilePhoto {
+            ...Photo
+          }
+        }
+        roles {
+          id
+          name
+          isDefault
+        }
+      }
+    }
+  }
+}

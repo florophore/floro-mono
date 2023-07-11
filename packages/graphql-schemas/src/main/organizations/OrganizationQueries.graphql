@@ -6,15 +6,16 @@ extend type Query {
 
 extend type Mutation {
     createOrganization(name: String!, handle: String!, legalName: String!, contactEmail: String!, agreedToCustomerServiceAgreement: Boolean!): CreateOrganizationResponse
-    createInvitation(organizationId:ID!, userId: String, email: String, firstName: String, lastName: String, roleIds: [ID]): CreateInvitationOrganizationResponse
-
     updateOrganizationName(organizationId:ID!, name: String!, legalName: String!): UpdateOrganizationNameResponse
 
+    createInvitation(organizationId:ID!, userId: String, email: String, firstName: String, lastName: String, roleIds: [ID]): CreateInvitationOrganizationResponse
     cancelOrganizationInvitation(organizationId: ID!, invitationId: ID!): CancelInvitationOrganizationResponse
     resendOrganizationInvitation(organizationId: ID!, invitationId: ID!): ResendInvitationOrganizationResponse
+    updateOrganizationInvitation(organizationId: ID!, invitationId: ID!, roleIds: [ID]): UpdateInvitationOrganizationResponse
 
     deactivateOrganizationMembership(organizationId: ID!, memberId: ID!): DeactivateOrganizationMemberResponse
     reactivateOrganizationMembership(organizationId: ID!, memberId: ID!): ReactivateOrganizationMemberResponse
+
     updateOrganizationMembership(organizationId: ID!, memberId: ID!, internalHandle: String, roleIds: [ID]): UpdateOrganizationMemberResponse
 
     createOrganizationRole(

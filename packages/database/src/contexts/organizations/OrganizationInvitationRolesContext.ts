@@ -49,10 +49,8 @@ export default class OrganizationInvitationRolesContext extends BaseContext {
   }
 
   public async deleteRolesForInvitation(organizationInvitation: OrganizationInvitation): Promise<void> {
-    await this.queryRunner.manager.delete(OrganizationInvitation, {
-      where: {
-        organizationInvitationId: organizationInvitation.id
-      }
+    await this.queryRunner.manager.delete(OrganizationInvitationRole, {
+      organizationInvitationId: organizationInvitation.id
     });
   }
 }

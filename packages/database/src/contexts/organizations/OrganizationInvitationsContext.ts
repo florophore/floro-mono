@@ -90,6 +90,14 @@ export default class OrganizationInvitationsContext extends BaseContext {
     });
   }
 
+  public async forceUpdateUpdatedAt(
+    organizationInvitation: OrganizationInvitation,
+  ): Promise<OrganizationInvitation|null> {
+    return await this.updateOrganizationInvitationById(organizationInvitation.id, {
+      updateCount: organizationInvitation.updateCount + 1
+    })
+  }
+
   public async updateOrganizationInvitationById(
     id: string,
     orgInvitationArgs: DeepPartial<OrganizationInvitation>

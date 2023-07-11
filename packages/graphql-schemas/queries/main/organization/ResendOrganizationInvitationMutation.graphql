@@ -1,0 +1,29 @@
+mutation ResendOrganizationInvitation(
+  $organizationId: ID!
+  $invitationId: ID!
+) {
+  resendOrganizationInvitation(
+    organizationId: $organizationId
+    invitationId: $invitationId
+  ) {
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+    ... on ResendOrganizationInvitationError {
+      type
+      message
+    }
+    ... on ResendOrganizationInvitationSuccess {
+      organizationInvitation {
+        id
+        firstName
+        lastName
+        email
+        invitationState
+        createdAt
+        updatedAt
+      }
+    }
+  }
+}

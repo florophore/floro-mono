@@ -33,6 +33,8 @@ export interface Props {
   onOlder: () => void;
   newerDisabled: boolean;
   olderDisabled: boolean;
+  newerText?: string;
+  olderText?: string;
 }
 
 const PaginationToggle = (props: Props) => {
@@ -90,7 +92,7 @@ const PaginationToggle = (props: Props) => {
         }}
       >
         <OptionText style={{ color: leftColor }}>
-          {"Newer"}
+          {props?.newerText ?? "Newer"}
         </OptionText>
       </Option>
       <Option
@@ -104,7 +106,7 @@ const PaginationToggle = (props: Props) => {
         }}
       >
         <OptionText style={{ color: rightColor }}>
-          {"Older"}
+          {props?.olderText ?? "Older"}
         </OptionText>
       </Option>
     </Container>

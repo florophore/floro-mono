@@ -141,18 +141,20 @@ const MembersController = (props: Props) => {
                   >{`Members (${memberCount})`}</DisplayName>
                 </Link>
               </RowContainer>
-              <RowContainer>
-                <Link to={`/org/@/${props?.organization?.handle}/invitations`}>
-                  <DisplayName
-                    style={{
-                      color:
-                        props.page == "invitations"
-                          ? theme.colors.selectedPluginRow
-                          : theme.colors.unselectedPluginRow,
-                    }}
-                  >{`Invitations (${invitedCount})`}</DisplayName>
-                </Link>
-              </RowContainer>
+              {(props.organization?.membership?.permissions?.canModifyInvites) && (
+                <RowContainer>
+                  <Link to={`/org/@/${props?.organization?.handle}/invitations`}>
+                    <DisplayName
+                      style={{
+                        color:
+                          props.page == "invitations"
+                            ? theme.colors.selectedPluginRow
+                            : theme.colors.unselectedPluginRow,
+                      }}
+                    >{`Invitations (${invitedCount})`}</DisplayName>
+                  </Link>
+                </RowContainer>
+              )}
               {(props.organization?.membership?.permissions?.canModifyOrganizationRoles) && (
                 <RowContainer>
                   <Link to={`/org/@/${props?.organization?.handle}/roles`}>
