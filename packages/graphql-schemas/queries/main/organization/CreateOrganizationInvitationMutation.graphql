@@ -28,6 +28,7 @@ mutation CreateOrganizationInvitation(
       organization {
         id
         invitationsSentCount
+        membersCount
         membersActiveCount
         activeAdminCount
         remainingSeats

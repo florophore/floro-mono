@@ -289,29 +289,29 @@ export default class OrganizationMemberService {
 
       await queryRunner.startTransaction();
 
-      if (organization.billingPlan == "free") {
-        const activeMemberCount =
-          await organizationMembersContext.getMemberCountForOrganization(
-            organization.id as string
-          );
-        const sentInviteCount =
-          await organizationInvitationsContext.getSentInvitationCountForOrganization(
-            organization.id as string
-          );
-        const remainingSeats =
-          (organization?.freeSeats ?? 10) -
-          (activeMemberCount + sentInviteCount);
-        if (remainingSeats <= 0) {
-          await queryRunner.rollbackTransaction();
-          return {
-            action: "NO_REMAINING_SEATS_ERROR",
-            error: {
-              type: "NO_REMAINING_SEATS_ERROR",
-              message: "No remaining seats",
-            },
-          };
-        }
-      }
+      //if (organization.billingPlan == "free") {
+      //  const activeMemberCount =
+      //    await organizationMembersContext.getMemberCountForOrganization(
+      //      organization.id as string
+      //    );
+      //  const sentInviteCount =
+      //    await organizationInvitationsContext.getSentInvitationCountForOrganization(
+      //      organization.id as string
+      //    );
+      //  const remainingSeats =
+      //    (organization?.freeSeats ?? 10) -
+      //    (activeMemberCount + sentInviteCount);
+      //  if (remainingSeats <= 0) {
+      //    await queryRunner.rollbackTransaction();
+      //    return {
+      //      action: "NO_REMAINING_SEATS_ERROR",
+      //      error: {
+      //        type: "NO_REMAINING_SEATS_ERROR",
+      //        message: "No remaining seats",
+      //      },
+      //    };
+      //  }
+      //}
 
       const reactivatedMember =
         await organizationMembersContext.reactivateMembership(

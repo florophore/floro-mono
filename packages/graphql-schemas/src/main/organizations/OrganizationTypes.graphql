@@ -6,6 +6,7 @@ type Organization {
   contactEmail: String
   invitationsSentCount: Int
   membersActiveCount: Int
+  membersCount: Int
   activeAdminCount: Int
   remainingSeats: Int
   freeDiskSpaceBytes: Float

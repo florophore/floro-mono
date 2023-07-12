@@ -244,6 +244,27 @@ export default class RequestCache {
     );
   }
 
+  public setOrganizationMemberCount(
+    cacheKey: string,
+    organization: Organization,
+    count: number
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`organization-members-count:${organization.id}`] = count;
+  }
+
+  public getOrganizationMemberCount(
+    cacheKey: string,
+    organizationId: string
+  ): number {
+    const cache = this.getCache(cacheKey);
+    return (
+      (cache[
+        `organization-members-count:${organizationId}`
+      ] as number) ?? null
+    );
+  }
+
   public setOrganizationActiveMemberCount(
     cacheKey: string,
     organization: Organization,

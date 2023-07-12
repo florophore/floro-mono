@@ -576,7 +576,6 @@ const InviteModal = (props: Props) => {
                 </div>
               </div>
             )}
-            ;
           </TopWrapper>
         )}
         <BottomWrapper>

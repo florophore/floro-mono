@@ -1,22 +1,23 @@
-mutation CancelOrganizationInvitation(
+mutation ReactivateOrganizationMember(
   $organizationId: ID!
-  $invitationId: ID!
-  $currentInvitationId: ID
-  $currentInvitationQuery: String
+  $memberId: ID!
+  $currentMemberId: ID
+  $currentMemberQuery: String
+  $filterOutDeactivated: Boolean
 ) {
-  cancelOrganizationInvitation(
+  reactivateOrganizationMembership(
     organizationId: $organizationId
-    invitationId: $invitationId
+    memberId: $memberId
   ) {
     ... on UnAuthenticatedError {
       type
       message
     }
-    ... on CancelOrganizationInvitationError {
+    ... on ReactivateOrganizationMemberError {
       type
       message
     }
-    ... on CancelOrganizationInvitationSuccess {
+    ... on ReactivateOrganizationMemberSuccess {
       organization {
         id
         invitationsSentCount
@@ -32,31 +33,19 @@ mutation CancelOrganizationInvitation(
         roles {
           ...OrganizationRole
         }
-        invitationsResult(
-          id: $currentInvitationId
-          query: $currentInvitationQuery
+        membersResult(
+          id: $currentMemberId
+          query: $currentMemberQuery
+          filterOutDeactivated: $filterOutDeactivated
         ) {
           id
           nextId
           lastId
-          invitations {
+          members {
             id
-            firstName
-            lastName
-            email
-            invitationState
+            membershipState
             createdAt
-            updatedAt
             user {
-              id
-              username
-              firstName
-              lastName
-              profilePhoto {
-                ...Photo
-              }
-            }
-            invitedByUser {
               id
               username
               firstName
@@ -73,14 +62,10 @@ mutation CancelOrganizationInvitation(
           }
         }
       }
-      organizationInvitation {
+      organizationMember {
         id
-        firstName
-        lastName
-        email
-        invitationState
+        membershipState
         createdAt
-        updatedAt
       }
     }
   }

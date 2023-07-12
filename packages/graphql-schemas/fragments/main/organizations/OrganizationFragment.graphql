@@ -6,6 +6,7 @@ fragment Organization on Organization {
   contactEmail
   invitationsSentCount
   membersActiveCount
+  membersCount
   remainingSeats
   freeDiskSpaceBytes
   diskSpaceLimitBytes

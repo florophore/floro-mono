@@ -8,7 +8,7 @@ import OrganizationMemberPermissionsLoader from "./OrganizationMemberPermissions
 import OrganizationMembersContext from "@floro/database/src/contexts/organizations/OrganizationMembersContext";
 
 @injectable()
-export default class OrganizationActiveMemberCountLoader extends LoaderResolverHook<Organization, unknown, {currentUser: User| null, cacheKey: string}> {
+export default class OrganizationMemberCountLoader extends LoaderResolverHook<Organization, unknown, {currentUser: User| null, cacheKey: string}> {
     protected requestCache!: RequestCache;
     private contextFactory!: ContextFactory;
     private organizationMemberPermissionsLoader!: OrganizationMemberPermissionsLoader;
@@ -43,12 +43,12 @@ export default class OrganizationActiveMemberCountLoader extends LoaderResolverH
         if (!permissions?.canModifyInvites && !permissions?.canInviteMembers && !permissions.canModifyOrganizationMembers) {
             return;
         }
-        const cachedCount = this.requestCache.getOrganizationActiveMemberCount(context.cacheKey, organization.id);
+        const cachedCount = this.requestCache.getOrganizationMemberCount(context.cacheKey, organization.id);
         if (cachedCount) {
             return;
         }
         const organizationMembersContext = await this.contextFactory.createContext(OrganizationMembersContext);
-        const count = await organizationMembersContext.getActiveMemeberCountForOrganization(organization.id as string);
-        this.requestCache.setOrganizationActiveMemberCount(context.cacheKey, organization as Organization, count);
+        const count = await organizationMembersContext.getMemberCountForOrganization(organization.id as string);
+        this.requestCache.setOrganizationMemberCount(context.cacheKey, organization as Organization, count);
     });
 }

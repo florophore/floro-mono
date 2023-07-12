@@ -30,6 +30,7 @@ import OrganizationInvitationOrganizationMemberLoader from './resolvers/hooks/lo
 import OrganizationInvitationOrganizationMemberRolesLoader from './resolvers/hooks/loaders/OrganizationInvitation/OrganizationInvitationOrganizationMemberRoles';
 import OrganizationInvitationMemberPermissionsLoader from './resolvers/hooks/loaders/OrganizationInvitation/OrganizationInvitationMemberPermissionLoader';
 import OrganizationActiveMemberCountLoader from './resolvers/hooks/loaders/Organization/OrganizationActiveMemberCountLoader';
+import OrganizationMemberCountLoader from './resolvers/hooks/loaders/Organization/OrganizationMemberCountLoader';
 import OrganizationSentInvitationsCountLoader from './resolvers/hooks/loaders/Organization/OrganizationSentInvitationsCountLoader';
 import RepositoryBranchesLoader from './resolvers/hooks/loaders/Repository/RepositoryBranchesLoader';
 import RepositoryCommitsLoader from './resolvers/hooks/loaders/Repository/RepositoryCommitsLoader';
@@ -121,6 +122,7 @@ export default new ContainerModule((bind): void => {
     bind(OrganizationInvitationOrganizationMemberLoader).toSelf();
     bind(OrganizationInvitationOrganizationMemberRolesLoader).toSelf();
     bind(OrganizationInvitationMemberPermissionsLoader).toSelf();
+    bind(OrganizationMemberCountLoader).toSelf();
     bind(OrganizationActiveMemberCountLoader).toSelf();
     bind(OrganizationSentInvitationsCountLoader).toSelf();
 

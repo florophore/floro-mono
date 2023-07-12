@@ -32,6 +32,7 @@ import OrganizationMemberService from "../../services/organizations/Organization
 import OrganizationInvitationService from "../../services/organizations/OrganizationInvitationService";
 import UsersContext from "@floro/database/src/contexts/users/UsersContext";
 import OrganizationRolesContext from "@floro/database/src/contexts/organizations/OrganizationRolesContext";
+import OrganizationMemberCountLoader from "../hooks/loaders/Organization/OrganizationMemberCountLoader";
 
 @injectable()
 export default class OrganizationResolverModule extends BaseResolverModule {
@@ -55,6 +56,7 @@ export default class OrganizationResolverModule extends BaseResolverModule {
 
   protected organizationSentInvitationsCountLoader!: OrganizationSentInvitationsCountLoader;
   protected organizationActiveMemberCountLoader!: OrganizationActiveMemberCountLoader;
+  protected organizationMemberCountLoader!: OrganizationMemberCountLoader;
   protected rootOrganizationMemberPermissionsLoader!: RootOrganizationMemberPermissionsLoader;
 
   constructor(
@@ -78,6 +80,8 @@ export default class OrganizationResolverModule extends BaseResolverModule {
     organizationSentInvitationsCountLoader: OrganizationSentInvitationsCountLoader,
     @inject(OrganizationActiveMemberCountLoader)
     organizationActiveMemberCountLoader: OrganizationActiveMemberCountLoader,
+    @inject(OrganizationMemberCountLoader)
+    organizationMemberCountLoader: OrganizationMemberCountLoader,
     @inject(RootOrganizationMemberPermissionsLoader)
     rootOrganizationMemberPermissionsLoader: RootOrganizationMemberPermissionsLoader
   ) {
@@ -100,6 +104,7 @@ export default class OrganizationResolverModule extends BaseResolverModule {
       organizationSentInvitationsCountLoader;
     this.organizationActiveMemberCountLoader =
       organizationActiveMemberCountLoader;
+      this.organizationMemberCountLoader = organizationMemberCountLoader;
     this.rootOrganizationMemberPermissionsLoader =
       rootOrganizationMemberPermissionsLoader;
   }
@@ -240,6 +245,32 @@ export default class OrganizationResolverModule extends BaseResolverModule {
             organization.id as string
           );
         return invitationCount ?? null;
+      }
+    ),
+    membersCount: runWithHooks(
+      () => [
+        this.organizationMemberPermissionsLoader,
+        this.organizationMemberCountLoader,
+      ],
+      async (organization, _, { currentUser, cacheKey }) => {
+        if (!currentUser) {
+          return null;
+        }
+        const organizationMembership =
+          this.requestCache.getOrganizationMembership(
+            cacheKey,
+            organization.id as string,
+            currentUser.id
+          );
+        if (organizationMembership?.membershipState != "active") {
+          return null;
+        }
+        const membersCount =
+          this.requestCache.getOrganizationMemberCount(
+            cacheKey,
+            organization.id as string
+          );
+        return membersCount ?? null;
       }
     ),
     membersActiveCount: runWithHooks(
@@ -514,7 +545,8 @@ export default class OrganizationResolverModule extends BaseResolverModule {
             this.organizationMemberService.getPaginatedMembersResult(
               members,
               args?.id as string,
-              args.query as string
+              args.query as string,
+              args?.filterOutDeactivated ?? false
             );
           return result;
         }

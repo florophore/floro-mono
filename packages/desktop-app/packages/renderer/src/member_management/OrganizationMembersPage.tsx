@@ -15,6 +15,10 @@ const OrganizationMembersPage = () => {
   const search = searchParams.get("query") ?? "";
   const id = searchParams.get("id") ?? null;
   const isSearching = search?.trim() != "";
+  const filterDeactivatedRaw = searchParams.get("filter_deactivated") ?? "";
+  const filterDeactived = useMemo(() => {
+    return filterDeactivatedRaw?.toLowerCase() == "true";
+  }, [filterDeactivatedRaw]);
   const title = useLinkTitle(
     {
       value: `/org/@/${handle}`,
@@ -31,7 +35,8 @@ const OrganizationMembersPage = () => {
     variables: {
       handle: handle ?? '',
       memberId: isSearching ? null : id,
-      memberQuery: search
+      memberQuery: search,
+      filterOutDeactivated: filterDeactived
     },
     fetchPolicy: "cache-and-network"
   });

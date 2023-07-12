@@ -23,6 +23,7 @@ mutation UpdateOrganizationInvitation(
         id
         invitationsSentCount
         membersActiveCount
+        membersCount
         activeAdminCount
         remainingSeats
         freeDiskSpaceBytes

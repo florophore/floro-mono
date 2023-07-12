@@ -234,15 +234,17 @@ const InvitationRow = (props: Props): React.ReactElement => {
         </UserInfo>
         <StatusTitle>{"sent"}</StatusTitle>
       </TopRow>
-      <RolesContainer>
-        {props?.invitation?.roles?.map((role, index) => {
-          return (
-            <RolePill key={index}>
-              <RoleTitle>{role?.name}</RoleTitle>
-            </RolePill>
-          );
-        })}
-      </RolesContainer>
+      {props.organization?.membership?.permissions?.canAssignRoles && (
+        <RolesContainer>
+          {props?.invitation?.roles?.map((role, index) => {
+            return (
+              <RolePill key={index}>
+                <RoleTitle>{role?.name}</RoleTitle>
+              </RolePill>
+            );
+          })}
+        </RolesContainer>
+      )}
       <InvitedRow>
         <InvitedText>{invitedSentence}</InvitedText>
       </InvitedRow>

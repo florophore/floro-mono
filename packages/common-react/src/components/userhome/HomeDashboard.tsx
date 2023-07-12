@@ -144,7 +144,7 @@ const BottomGradiuent = styled.div`
 
 const NoReposText = styled.span`
   font-family: "MavenPro";
-  color: ${(props) => ColorPalette.gray};
+  color: ${ColorPalette.gray};
   font-weight: 500;
   font-size: 1.4rem;
 `
