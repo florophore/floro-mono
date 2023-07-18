@@ -2,6 +2,7 @@ export declare type RepoPage =
   | "history"
   | "home"
   | "settings"
+  | "branch-rule"
   | "branch-rules"
   | "merge-requests"
   | "merge-request"

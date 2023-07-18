@@ -118,18 +118,24 @@ const ConfirmReactivateMembershipModal = (props: Props) => {
   const [reactivateMember, reactivateMemberResult] = useReactivateOrganizationMemberMutation();
   const onDeactivate = useCallback(() => {
     if (!props.organization?.id || !props?.member?.id) {
-        return;
+      return;
     }
     reactivateMember({
-        variables: {
-            organizationId: props.organization.id,
-            memberId: props.member.id,
-            currentMemberId: props.currentMemberId,
-            currentMemberQuery: props.currentMemeberQuery,
-            filterOutDeactivated: props.currentFilterDeactivatedMembers
-        }
+      variables: {
+        organizationId: props.organization.id,
+        memberId: props.member.id,
+        currentMemberId: props.currentMemberId,
+        currentMemberQuery: props.currentMemeberQuery,
+        filterOutDeactivated: props.currentFilterDeactivatedMembers,
+      },
     });
-  }, [props.organization?.id, props?.member?.id, props.currentMemberId, props.currentMemeberQuery, props.currentFilterDeactivatedMembers]);
+  }, [
+    props.organization?.id,
+    props?.member?.id,
+    props.currentMemberId,
+    props.currentMemeberQuery,
+    props.currentFilterDeactivatedMembers,
+  ]);
 
 
   useEffect(() => {

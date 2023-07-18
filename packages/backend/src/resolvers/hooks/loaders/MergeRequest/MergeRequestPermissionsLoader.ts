@@ -8,7 +8,7 @@ import { MergeRequest, User } from "@floro/graphql-schemas/build/generated/main-
 import { MergeRequest as DBMergeRequest } from "@floro/database/src/entities/MergeRequest";
 import { User as DBUser } from "@floro/database/src/entities/User";
 import MergeRequestService from "../../../../services/merge_requests/MergeRequestService";
-import RepositoryLoader from "../Repository/RepositoryLoader";
+import RootRepositoryLoader from "../Root/RepositoryID/RepositoryLoader";
 
 @injectable()
 export default class MergeRequestPermissionsLoader extends LoaderResolverHook<
@@ -19,13 +19,13 @@ export default class MergeRequestPermissionsLoader extends LoaderResolverHook<
   protected requestCache!: RequestCache;
   protected contextFactory!: ContextFactory;
   protected mergeRequestService!: MergeRequestService;
-  protected repositoryLoader!: RepositoryLoader;
+  protected repositoryLoader!: RootRepositoryLoader;
 
 
   constructor(
     @inject(RequestCache) requestCache: RequestCache,
     @inject(MergeRequestService) mergeRequestService: MergeRequestService,
-    @inject(RepositoryLoader) repositoryLoader: RepositoryLoader,
+    @inject(RootRepositoryLoader) repositoryLoader: RootRepositoryLoader,
     @inject(ContextFactory) contextFactory: ContextFactory
   ) {
     super();

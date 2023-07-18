@@ -1,0 +1,6 @@
+extend type Mutation {
+  createBranchRule(
+    repositoryId: ID!
+    branchId: String!
+  ): CreateBranchRuleReponse
+}

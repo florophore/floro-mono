@@ -74,6 +74,16 @@ export class Repository extends BinaryPKBaseEntity {
   @Column("boolean")
   @IsOptional()
   @IsBoolean()
+  anyoneCanRead!: boolean;
+
+  @Column("boolean")
+  @IsOptional()
+  @IsBoolean()
+  allowExternalUsersToPush!: boolean;
+
+  @Column("boolean")
+  @IsOptional()
+  @IsBoolean()
   anyoneCanPushBranches!: boolean;
 
   @Column("boolean")

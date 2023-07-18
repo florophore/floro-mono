@@ -1,0 +1,27 @@
+type CreateBranchRuleSuccess {
+  repository: Repository
+}
+
+type CreateBranchRuleError {
+  message: String
+  type: String
+}
+
+union CreateBranchRuleReponse =
+    CreateBranchRuleSuccess
+  | CreateBranchRuleError
+  | UnAuthenticatedError
+
+type SearchUsersForSettingSuccess {
+  users: [User]
+}
+
+type SearchUsersForSettingError {
+  message: String
+  type: String
+}
+
+union SearchUsersForSettingResponse =
+    SearchUsersForSettingSuccess
+  | SearchUsersForSettingError
+  | UnAuthenticatedError

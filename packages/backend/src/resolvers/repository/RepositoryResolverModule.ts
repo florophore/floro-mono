@@ -13,26 +13,44 @@ import RepositoryBranchesLoader from "../hooks/loaders/Repository/RepositoryBran
 import { Repository } from "@floro/database/src/entities/Repository";
 import RepositoryCommitsLoader from "../hooks/loaders/Repository/RepositoryCommitsLoader";
 import RepositoryCommitHistoryLoader from "../hooks/loaders/Repository/RepositoryCommitHistoryLoader";
-import RepositoryLoader from "../hooks/loaders/Repository/RepositoryLoader";
+import RootRepositoryLoader from "../hooks/loaders/Root/RepositoryID/RepositoryLoader";
 import { Commit } from "@floro/database/src/entities/Commit";
 import RepositoryRevertRangesLoader from "../hooks/loaders/Repository/RepositoryRevertRangesLoader";
 import CommitStateDatasourceLoader from "../hooks/loaders/Repository/CommitStateDatasourceLoader";
-import { getCanAutofixReversionIfNotWIP, getCanRevert, getMergeRebaseCommitList } from "floro/dist/src/repoapi";
+import {
+  getCanAutofixReversionIfNotWIP,
+  getCanRevert,
+  getMergeRebaseCommitList,
+} from "floro/dist/src/repoapi";
 import CommitStatePluginVersionsLoader from "../hooks/loaders/Repository/CommitStatePluginVersionsLoader";
 import CommitStateBinaryRefsLoader from "../hooks/loaders/Repository/CommitStateBinaryRefsLoader";
 import CommitInfoRepositoryLoader from "../hooks/loaders/Repository/CommitInfoRepoLoader";
 import MergeRequestsContext from "@floro/database/src/contexts/merge_requests/MergeRequestsContext";
 import { withFilter } from "graphql-subscriptions";
-import { CommitInfo, SubscriptionSubscribeFn } from "@floro/graphql-schemas/build/generated/main-graphql";
+import {
+  CommitInfo,
+  OrganizationRole,
+  SubscriptionSubscribeFn,
+} from "@floro/graphql-schemas/build/generated/main-graphql";
 import BranchService from "../../services/repositories/BranchService";
 import IgnoredBranchNotificationsContext from "@floro/database/src/contexts/merge_requests/IgnoredBranchNotificationsContext";
 import MergeRequestService from "../../services/merge_requests/MergeRequestService";
-import { EMPTY_COMMIT_STATE, canAutoMergeCommitStates, getCommitState, getDivergenceOrigin, getMergeCommitStates, getMergeOriginSha } from "floro/dist/src/repo";
+import {
+  EMPTY_COMMIT_STATE,
+  canAutoMergeCommitStates,
+  getCommitState,
+  getDivergenceOrigin,
+  getMergeOriginSha,
+} from "floro/dist/src/repo";
 import { User as FloroUser } from "floro/dist/src/filestructure";
 import { CommitData } from "floro/dist/src/sequenceoperations";
 import OpenMergeRequestsLoader from "../hooks/loaders/MergeRequest/OpenMergeRequestsLoader";
 import ClosedMergeRequestsLoader from "../hooks/loaders/MergeRequest/ClosedMergeRequestsLoader";
 import { User } from "@floro/database/src/entities/User";
+import OrganizationMemberRolesContext from "@floro/database/src/contexts/organizations/OrganizationMemberRolesContext";
+import RepositoryEnabledRoleSettingsContext from "@floro/database/src/contexts/repositories/RepositoryEnabledRoleSettingsContext";
+import RepositoryEnabledUserSettingsContext from "@floro/database/src/contexts/repositories/RepositoryEnabledUserSettingsContext";
+import ProtectedBranchRulesContext from "@floro/database/src/contexts/repositories/ProtectedBranchRulesContext";
 
 const PAGINATION_LIMIT = 10;
 
@@ -61,7 +79,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
   protected repositoryCommitsLoader!: RepositoryCommitsLoader;
   protected repositoryCommitHistoryLoader!: RepositoryCommitHistoryLoader;
   protected repositoryRevertRangesLoader!: RepositoryRevertRangesLoader;
-  protected repositoryLoader!: RepositoryLoader;
+  protected rootRepositoryLoader!: RootRepositoryLoader;
   protected commitStateDatasourceLoader!: CommitStateDatasourceLoader;
   protected commitStatePluginVersionsLoader!: CommitStatePluginVersionsLoader;
   protected commitStateBinaryRefsLoader!: CommitStateBinaryRefsLoader;
@@ -87,8 +105,8 @@ export default class RepositoryResolverModule extends BaseResolverModule {
     repositoryCommitHistoryLoader: RepositoryCommitHistoryLoader,
     @inject(RepositoryRevertRangesLoader)
     repositoryRevertRangesLoader: RepositoryRevertRangesLoader,
-    @inject(RepositoryLoader)
-    repositoryLoader: RepositoryLoader,
+    @inject(RootRepositoryLoader)
+    rootRepositoryLoader: RootRepositoryLoader,
     @inject(CommitStateDatasourceLoader)
     commitStateDatasourceLoader: CommitStateDatasourceLoader,
     @inject(CommitStatePluginVersionsLoader)
@@ -122,7 +140,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
     this.repositoryCommitsLoader = repositoryCommitsLoader;
     this.repositoryCommitHistoryLoader = repositoryCommitHistoryLoader;
     this.repositoryRevertRangesLoader = repositoryRevertRangesLoader;
-    this.repositoryLoader = repositoryLoader;
+    this.rootRepositoryLoader = rootRepositoryLoader;
     this.commitStateDatasourceLoader = commitStateDatasourceLoader;
     this.commitStatePluginVersionsLoader = commitStatePluginVersionsLoader;
     this.commitStateBinaryRefsLoader = commitStateBinaryRefsLoader;
@@ -341,7 +359,11 @@ export default class RepositoryResolverModule extends BaseResolverModule {
     ),
     openUserMergeRequestsCount: runWithHooks(
       () => [this.repositoryBranchesLoader, this.openMergeRequestsLoader],
-      async (repository: main.Repository, _, context: { cacheKey: string, currentUser?: User|null}) => {
+      async (
+        repository: main.Repository,
+        _,
+        context: { cacheKey: string; currentUser?: User | null }
+      ) => {
         if (!repository.id) {
           return 0;
         }
@@ -356,11 +378,14 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           return 0;
         }
         const cachedOpenMergeRequests =
-          this.requestCache.getOpenRepoMergeRequests(context.cacheKey, repository.id);
+          this.requestCache.getOpenRepoMergeRequests(
+            context.cacheKey,
+            repository.id
+          );
         if (!cachedOpenMergeRequests) {
           return 0;
         }
-        return cachedOpenMergeRequests?.filter(mr => {
+        return cachedOpenMergeRequests?.filter((mr) => {
           return mr.openedByUserId == context.currentUser?.id;
         })?.length;
       }
@@ -458,6 +483,448 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           return null;
         }
         return cachedClosedMergeRequests.length;
+      }
+    ),
+    // PERMISSIONS
+    anyoneCanRead: runWithHooks(
+      () => [this.repositoryRemoteSettingsLoader],
+      async (repository: main.Repository, _, { cacheKey, currentUser }) => {
+        if (!repository?.id || !currentUser) {
+          return null;
+        }
+        if (repository?.repoType != "org_repo") {
+          return null;
+        }
+        const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
+          cacheKey,
+          repository?.id
+        );
+        if (cachedRemoteSettings?.canChangeSettings) {
+          return repository.anyoneCanRead ?? false;
+        }
+        return null;
+      }
+    ),
+    canReadRoles: runWithHooks(
+      () => [this.repositoryRemoteSettingsLoader],
+      async (repository: main.Repository, _, { cacheKey, currentUser }) => {
+        if (!repository?.id || !currentUser) {
+          return null;
+        }
+        if (repository?.repoType != "org_repo") {
+          return [];
+        }
+        const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
+          cacheKey,
+          repository?.id
+        );
+        if (cachedRemoteSettings?.canChangeSettings) {
+          const repositoryEnabledRoleSettingsContext =
+            await this.contextFactory.createContext(
+              RepositoryEnabledRoleSettingsContext
+            );
+          const enabledRoleSettings =
+            await repositoryEnabledRoleSettingsContext.getAllForRepositorySetting(
+              repository.id,
+              "anyoneCanRead"
+            );
+          return enabledRoleSettings?.map((s) => s.role as OrganizationRole);
+        }
+        return null;
+      }
+    ),
+    canReadUsers: runWithHooks(
+      () => [this.repositoryRemoteSettingsLoader],
+      async (repository: main.Repository, _, { cacheKey, currentUser }) => {
+        if (!repository?.id || !currentUser) {
+          return null;
+        }
+        if (repository?.repoType != "org_repo") {
+          return [];
+        }
+        const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
+          cacheKey,
+          repository?.id
+        );
+        if (cachedRemoteSettings?.canChangeSettings) {
+          const repositoryEnabledUserSettingsContext =
+            await this.contextFactory.createContext(
+              RepositoryEnabledUserSettingsContext
+            );
+          const enabledUserSettings =
+            await repositoryEnabledUserSettingsContext.getAllForRepositorySetting(
+              repository.id,
+              "anyoneCanRead"
+            );
+          return enabledUserSettings?.map((s) => s.user as User);
+        }
+        return null;
+      }
+    ),
+    anyoneCanPushBranches: runWithHooks(
+      () => [this.repositoryRemoteSettingsLoader],
+      async (repository: main.Repository, _, { cacheKey, currentUser }) => {
+        if (!repository?.id || !currentUser) {
+          return null;
+        }
+        if (repository?.repoType != "org_repo") {
+          return null;
+        }
+        const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
+          cacheKey,
+          repository?.id
+        );
+        if (cachedRemoteSettings?.canChangeSettings) {
+          return repository.anyoneCanPushBranches ?? false;
+        }
+        return null;
+      }
+    ),
+    allowExternalUsersToPush: runWithHooks(
+      () => [this.repositoryRemoteSettingsLoader],
+      async (repository: main.Repository, _, { cacheKey, currentUser }) => {
+        if (!repository?.id || !currentUser) {
+          return null;
+        }
+        if (repository?.repoType != "org_repo") {
+          return null;
+        }
+        const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
+          cacheKey,
+          repository?.id
+        );
+        if (cachedRemoteSettings?.canChangeSettings && !repository.isPrivate) {
+          return repository.allowExternalUsersToPush ?? false;
+        }
+        return null;
+      }
+    ),
+    canPushBranchesRoles: runWithHooks(
+      () => [this.repositoryRemoteSettingsLoader],
+      async (repository: main.Repository, _, { cacheKey, currentUser }) => {
+        if (!repository?.id || !currentUser) {
+          return null;
+        }
+        if (repository?.repoType != "org_repo") {
+          return [];
+        }
+        const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
+          cacheKey,
+          repository?.id
+        );
+        if (cachedRemoteSettings?.canChangeSettings) {
+          const repositoryEnabledRoleSettingsContext =
+            await this.contextFactory.createContext(
+              RepositoryEnabledRoleSettingsContext
+            );
+          const enabledRoleSettings =
+            await repositoryEnabledRoleSettingsContext.getAllForRepositorySetting(
+              repository.id,
+              "anyoneCanPushBranches"
+            );
+          return enabledRoleSettings?.map((s) => s.role as OrganizationRole);
+        }
+        return null;
+      }
+    ),
+    canPushBranchesUsers: runWithHooks(
+      () => [this.repositoryRemoteSettingsLoader],
+      async (repository: main.Repository, _, { cacheKey, currentUser }) => {
+        if (!repository?.id || !currentUser) {
+          return null;
+        }
+        if (repository?.repoType != "org_repo") {
+          return [];
+        }
+        const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
+          cacheKey,
+          repository?.id
+        );
+        if (cachedRemoteSettings?.canChangeSettings) {
+          const repositoryEnabledUserSettingsContext =
+            await this.contextFactory.createContext(
+              RepositoryEnabledUserSettingsContext
+            );
+          const enabledUserSettings =
+            await repositoryEnabledUserSettingsContext.getAllForRepositorySetting(
+              repository.id,
+              "anyoneCanPushBranches"
+            );
+          return enabledUserSettings?.map((s) => s.user as User);
+        }
+        return null;
+      }
+    ),
+
+    anyoneCanDeleteBranches: runWithHooks(
+      () => [this.repositoryRemoteSettingsLoader],
+      async (repository: main.Repository, _, { cacheKey, currentUser }) => {
+        if (!repository?.id || !currentUser) {
+          return null;
+        }
+        if (repository?.repoType != "org_repo") {
+          return null;
+        }
+        const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
+          cacheKey,
+          repository?.id
+        );
+        if (cachedRemoteSettings?.canChangeSettings) {
+          return repository.anyoneCanDeleteBranches ?? false;
+        }
+        return null;
+      }
+    ),
+    canDeleteBranchesRoles: runWithHooks(
+      () => [this.repositoryRemoteSettingsLoader],
+      async (repository: main.Repository, _, { cacheKey, currentUser }) => {
+        if (!repository?.id || !currentUser) {
+          return null;
+        }
+        if (repository?.repoType != "org_repo") {
+          return [];
+        }
+        const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
+          cacheKey,
+          repository?.id
+        );
+        if (cachedRemoteSettings?.canChangeSettings) {
+          const repositoryEnabledRoleSettingsContext =
+            await this.contextFactory.createContext(
+              RepositoryEnabledRoleSettingsContext
+            );
+          const enabledRoleSettings =
+            await repositoryEnabledRoleSettingsContext.getAllForRepositorySetting(
+              repository.id,
+              "anyoneCanDeleteBranches"
+            );
+          return enabledRoleSettings?.map((s) => s.role as OrganizationRole);
+        }
+        return null;
+      }
+    ),
+    canDeleteBranchesUsers: runWithHooks(
+      () => [this.repositoryRemoteSettingsLoader],
+      async (repository: main.Repository, _, { cacheKey, currentUser }) => {
+        if (!repository?.id || !currentUser) {
+          return null;
+        }
+        if (repository?.repoType != "org_repo") {
+          return [];
+        }
+        const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
+          cacheKey,
+          repository?.id
+        );
+        if (cachedRemoteSettings?.canChangeSettings) {
+          const repositoryEnabledUserSettingsContext =
+            await this.contextFactory.createContext(
+              RepositoryEnabledUserSettingsContext
+            );
+          const enabledUserSettings =
+            await repositoryEnabledUserSettingsContext.getAllForRepositorySetting(
+              repository.id,
+              "anyoneCanDeleteBranches"
+            );
+          return enabledUserSettings?.map((s) => s.user as User);
+        }
+        return null;
+      }
+    ),
+
+    anyoneCanChangeSettings: runWithHooks(
+      () => [this.repositoryRemoteSettingsLoader],
+      async (repository: main.Repository, _, { cacheKey, currentUser }) => {
+        if (!repository?.id || !currentUser) {
+          return null;
+        }
+        if (repository?.repoType != "org_repo") {
+          return null;
+        }
+        const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
+          cacheKey,
+          repository?.id
+        );
+        if (cachedRemoteSettings?.canChangeSettings) {
+          return repository.anyoneCanChangeSettings ?? false;
+        }
+        return null;
+      }
+    ),
+    canChangeSettingsRoles: runWithHooks(
+      () => [this.repositoryRemoteSettingsLoader],
+      async (repository: main.Repository, _, { cacheKey, currentUser }) => {
+        if (!repository?.id || !currentUser) {
+          return null;
+        }
+        if (repository?.repoType != "org_repo") {
+          return [];
+        }
+        const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
+          cacheKey,
+          repository?.id
+        );
+        if (cachedRemoteSettings?.canChangeSettings) {
+          const repositoryEnabledRoleSettingsContext =
+            await this.contextFactory.createContext(
+              RepositoryEnabledRoleSettingsContext
+            );
+          const enabledRoleSettings =
+            await repositoryEnabledRoleSettingsContext.getAllForRepositorySetting(
+              repository.id,
+              "anyoneCanChangeSettings"
+            );
+          return enabledRoleSettings?.map((s) => s.role as OrganizationRole);
+        }
+        return null;
+      }
+    ),
+    canChangeSettingsUsers: runWithHooks(
+      () => [this.repositoryRemoteSettingsLoader],
+      async (repository: main.Repository, _, { cacheKey, currentUser }) => {
+        if (!repository?.id || !currentUser) {
+          return null;
+        }
+        if (repository?.repoType != "org_repo") {
+          return [];
+        }
+        const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
+          cacheKey,
+          repository?.id
+        );
+        if (cachedRemoteSettings?.canChangeSettings) {
+          const repositoryEnabledUserSettingsContext =
+            await this.contextFactory.createContext(
+              RepositoryEnabledUserSettingsContext
+            );
+          const enabledUserSettings =
+            await repositoryEnabledUserSettingsContext.getAllForRepositorySetting(
+              repository.id,
+              "anyoneCanChangeSettings"
+            );
+          return enabledUserSettings?.map((s) => s.user as User);
+        }
+        return null;
+      }
+    ),
+    canTurnOffAnyoneCanChangeSettings: runWithHooks(
+      () => [this.repositoryRemoteSettingsLoader],
+      async (repository: main.Repository, _, { cacheKey, currentUser }) => {
+        const dbRepo: Repository = repository as Repository;
+        if (!repository?.id || !currentUser) {
+          return null;
+        }
+        if (repository?.repoType != "org_repo") {
+          return false;
+        }
+        const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
+          cacheKey,
+          repository?.id
+        );
+        if (cachedRemoteSettings?.canChangeSettings) {
+          // check roles and ids
+          // check user settings first
+          const organizationMembersContext =
+            await this.contextFactory.createContext(OrganizationMembersContext);
+          const member = await organizationMembersContext.getByOrgIdAndUserId(
+            dbRepo?.organizationId as string,
+            currentUser.id
+          );
+          if (member?.membershipState != "active") {
+            return false;
+          }
+
+          const organizationMemberRolesContext =
+            await this.contextFactory.createContext(
+              OrganizationMemberRolesContext
+            );
+          const memberRoles =
+            await organizationMemberRolesContext.getRolesByMember(member);
+          const isAdmin = !!memberRoles?.find((r) => r.presetCode == "admin");
+          if (isAdmin) {
+            return true;
+          }
+          const repositoryEnabledUserSettingsContext =
+            await this.contextFactory.createContext(
+              RepositoryEnabledUserSettingsContext
+            );
+          const enabledUserSettings =
+            await repositoryEnabledUserSettingsContext.getAllForRepositorySetting(
+              repository.id,
+              "anyoneCanChangeSettings"
+            );
+          const enabledUserIds = enabledUserSettings?.map(
+            (s) => s.user?.id as string
+          );
+          if (enabledUserIds.includes(currentUser?.id)) {
+            return true;
+          }
+
+          const repositoryEnabledRoleSettingsContext =
+            await this.contextFactory.createContext(
+              RepositoryEnabledRoleSettingsContext
+            );
+          const enabledRoleSettings =
+            await repositoryEnabledRoleSettingsContext.getAllForRepositorySetting(
+              repository.id,
+              "anyoneCanChangeSettings"
+            );
+          const enabledRoleIds = enabledRoleSettings.map((s) => s.roleId);
+
+          const userRoles =
+            await organizationMemberRolesContext.getRolesByMember(member);
+          for (const userRole of userRoles) {
+            if (enabledRoleIds.includes(userRole.id)) {
+              return true;
+            }
+          }
+          return false;
+        }
+        return false;
+      }
+    ),
+    protectedBranchRules: runWithHooks(
+      () => [this.repositoryRemoteSettingsLoader],
+      async (repository: main.Repository, _, { cacheKey, currentUser }) => {
+        if (!repository?.id || !currentUser) {
+          return null;
+        }
+        const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
+          cacheKey,
+          repository?.id
+        );
+        if (cachedRemoteSettings?.canChangeSettings) {
+          const protectedBranchRulesContext =
+            await this.contextFactory.createContext(
+              ProtectedBranchRulesContext
+            );
+          return await protectedBranchRulesContext.getProtectedBranchesForRepo(
+            repository.id
+          );
+        }
+        return null;
+      }
+    ),
+    searchUsersForRepo: runWithHooks(
+      () => [this.repositoryRemoteSettingsLoader],
+      async (repository: main.Repository, args: main.RepositorySearchUsersForRepoArgs, { cacheKey, currentUser }) => {
+        if (!repository) {
+          return null;
+        }
+        const excludedUserIds: Array<string> = (args?.excludedUserIds ?? []) as Array<string>;
+        const restrictToOrg: boolean = (args?.restrictToOrg ?? repository?.repoType == "org_repo");
+        if (restrictToOrg && repository.repoType != "org_repo") {
+          return null;
+        }
+        if (repository.isPrivate && repository.repoType != "org_repo") {
+          return null;
+        }
+        if (repository.isPrivate && repository.repoType == "user_repo") {
+          return null;
+        }
+        const forceRestrictToOrg = repository.isPrivate && repository.repoType == "org_repo";
+        const query: string = args?.query ?? "";
+        return null;
       }
     ),
   };
@@ -1089,6 +1556,52 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           currentUser.id
         );
         if (member?.membershipState == "active") {
+          if (!repository.anyoneCanRead) {
+            const organizationMemberRolesContext =
+              await this.contextFactory.createContext(
+                OrganizationMemberRolesContext
+              );
+            const memberRoles =
+              await organizationMemberRolesContext.getRolesByMember(member);
+            const isAdmin = !!memberRoles?.find((r) => r.presetCode == "admin");
+            if (isAdmin) {
+              return {
+                __typename: "FetchRepositorySuccess",
+                repository,
+              };
+            }
+            const roleIds = memberRoles?.map((r) => r.id);
+            const repositoryEnabledRoleSettingsContext =
+              await this.contextFactory.createContext(
+                RepositoryEnabledRoleSettingsContext
+              );
+
+            const repositoryEnabledUserSettingsContext =
+              await this.contextFactory.createContext(
+                RepositoryEnabledUserSettingsContext
+              );
+            const hasUserPermission =
+              await repositoryEnabledUserSettingsContext.hasRepoUserId(
+                repository.id,
+                currentUser.id,
+                "anyoneCanRead"
+              );
+            if (!hasUserPermission) {
+              const hasRoles =
+                await repositoryEnabledRoleSettingsContext.hasRepoRoleIds(
+                  repository.id,
+                  roleIds,
+                  "anyoneCanRead"
+                );
+              if (!hasRoles) {
+                return {
+                  __typename: "FetchRepositoryError",
+                  type: "REPO_ERROR",
+                  message: "Repo error",
+                };
+              }
+            }
+          }
           return {
             __typename: "FetchRepositorySuccess",
             repository,
@@ -1153,6 +1666,52 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           currentUser.id
         );
         if (member?.membershipState == "active") {
+          if (!repository.anyoneCanRead) {
+            const organizationMemberRolesContext =
+              await this.contextFactory.createContext(
+                OrganizationMemberRolesContext
+              );
+            const memberRoles =
+              await organizationMemberRolesContext.getRolesByMember(member);
+            const isAdmin = !!memberRoles?.find((r) => r.presetCode == "admin");
+            if (isAdmin) {
+              return {
+                __typename: "FetchRepositorySuccess",
+                repository,
+              };
+            }
+            const roleIds = memberRoles?.map((r) => r.id);
+            const repositoryEnabledRoleSettingsContext =
+              await this.contextFactory.createContext(
+                RepositoryEnabledRoleSettingsContext
+              );
+
+            const repositoryEnabledUserSettingsContext =
+              await this.contextFactory.createContext(
+                RepositoryEnabledUserSettingsContext
+              );
+            const hasUserPermission =
+              await repositoryEnabledUserSettingsContext.hasRepoUserId(
+                repository.id,
+                currentUser.id,
+                "anyoneCanRead"
+              );
+            if (!hasUserPermission) {
+              const hasRoles =
+                await repositoryEnabledRoleSettingsContext.hasRepoRoleIds(
+                  repository.id,
+                  roleIds,
+                  "anyoneCanRead"
+                );
+              if (!hasRoles) {
+                return {
+                  __typename: "FetchRepositoryError",
+                  type: "REPO_ERROR",
+                  message: "Repo error",
+                };
+              }
+            }
+          }
           return {
             __typename: "FetchRepositorySuccess",
             repository,

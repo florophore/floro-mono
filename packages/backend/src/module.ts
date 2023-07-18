@@ -58,7 +58,7 @@ import PluginPermissionService from './services/plugins/PluginPermissionService'
 import PluginVersionResolverModule from './resolvers/plugin/PluginVersionResolverModule';
 import PluginSearchService from './services/plugins/PluginSearchService';
 import BranchService from './services/repositories/BranchService';
-import RepositoryLoader from './resolvers/hooks/loaders/Repository/RepositoryLoader';
+import RootRepositoryLoader from './resolvers/hooks/loaders/Root/RepositoryID/RepositoryLoader';
 import RepositoryDatasourceFactoryService from './services/repositories/RepoDatasourceFactoryService';
 import CommitStateDatasourceLoader from './resolvers/hooks/loaders/Repository/CommitStateDatasourceLoader';
 import CommitStatePluginVersionsLoader from './resolvers/hooks/loaders/Repository/CommitStatePluginVersionsLoader';
@@ -84,6 +84,9 @@ import CommitInfoRepositoryLoader from './resolvers/hooks/loaders/Repository/Com
 import OpenMergeRequestsLoader from './resolvers/hooks/loaders/MergeRequest/OpenMergeRequestsLoader';
 import ClosedMergeRequestsLoader from './resolvers/hooks/loaders/MergeRequest/ClosedMergeRequestsLoader';
 import MergeRequestPermissionsLoader from './resolvers/hooks/loaders/MergeRequest/MergeRequestPermissionsLoader';
+import RepoSettingsService from './services/repositories/RepoSettingsService';
+import RootRepositoryRemoteSettingsLoader from './resolvers/hooks/loaders/Root/RepositoryID/RootRepositoryRemoteSettingsLoader';
+import RepositoryProtectedBranchesResolverModule from './resolvers/repository/RepositoryProtectedBranchesResolverModule';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -110,6 +113,8 @@ export default new ContainerModule((bind): void => {
     bind(RootOrganizationMemberLoader).toSelf();
     bind(RootOrganizationMemberRolesLoader).toSelf();
     bind(RootOrganizationMemberPermissionsLoader).toSelf();
+    // ROOT REPO
+    bind(RootRepositoryRemoteSettingsLoader).toSelf();
 
     //ORGANIZATION LOADERS
     bind(OrganizationMemberLoader).toSelf();
@@ -131,7 +136,7 @@ export default new ContainerModule((bind): void => {
     bind(MembershipRolesLoader).toSelf();
 
     //REPOSITORY LOADERS
-    bind(RepositoryLoader).toSelf();
+    bind(RootRepositoryLoader).toSelf();
     bind(RepositoryBranchesLoader).toSelf();
     bind(RepositoryRemoteSettingsLoader).toSelf();
     bind(RepositoryCommitsLoader).toSelf();
@@ -172,6 +177,7 @@ export default new ContainerModule((bind): void => {
     bind(RepoRBACService).toSelf();
     bind(BranchService).toSelf();
     bind(RepositoryDatasourceFactoryService).toSelf();
+    bind(RepoSettingsService).toSelf();
 
     // REFERRALS
     bind(ReferralService).toSelf()
@@ -216,6 +222,7 @@ export default new ContainerModule((bind): void => {
     bind<PluginResolverModule>("ResolverModule").to(PluginResolverModule);
     bind<PluginVersionResolverModule>("ResolverModule").to(PluginVersionResolverModule);
     bind<MergeRequestResolverModule>("ResolverModule").to(MergeRequestResolverModule);
+    bind<RepositoryProtectedBranchesResolverModule>("ResolverModule").to(RepositoryProtectedBranchesResolverModule);
 
     // ADMIN MODULES OVERRIDE WITH AdminResolverModule
     bind<AdminUsersResolverModule>("AdminResolverModule").to(AdminUsersResolverModule);

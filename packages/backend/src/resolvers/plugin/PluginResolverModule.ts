@@ -20,7 +20,7 @@ import PluginSearchService from "../../services/plugins/PluginSearchService";
 import OrganizationsContext from "@floro/database/src/contexts/organizations/OrganizationsContext";
 import PluginsContext from "@floro/database/src/contexts/plugins/PluginsContext";
 import PluginsVersionsContext from "@floro/database/src/contexts/plugins/PluginVersionsContext";
-import RepositoryLoader from "../hooks/loaders/Repository/RepositoryLoader";
+import RootRepositoryLoader from "../hooks/loaders/Root/RepositoryID/RepositoryLoader";
 import { User } from "@floro/database/src/entities/User";
 
 @injectable()
@@ -40,7 +40,7 @@ export default class PluginResolverModule extends BaseResolverModule {
   protected pluginRegistryService!: PluginRegistryService;
   protected rootOrganizationMemberPermissionsLoader!: RootOrganizationMemberPermissionsLoader;
   protected pluginSearchService!: PluginSearchService;
-  protected repositoryLoader!: RepositoryLoader;
+  protected repositoryLoader!: RootRepositoryLoader;
 
   constructor(
     @inject(ContextFactory) contextFactory: ContextFactory,
@@ -51,7 +51,7 @@ export default class PluginResolverModule extends BaseResolverModule {
     @inject(PluginSearchService) pluginSearchService: PluginSearchService,
     @inject(RootOrganizationMemberPermissionsLoader)
     rootOrganizationMemberPermissionsLoader: RootOrganizationMemberPermissionsLoader,
-    @inject(RepositoryLoader) repositoryLoader: RepositoryLoader
+    @inject(RootRepositoryLoader) repositoryLoader: RootRepositoryLoader
   ) {
     super();
     this.contextFactory = contextFactory;

@@ -1,4 +1,4 @@
-import { DeepPartial, QueryRunner, Repository } from "typeorm";
+import { DeepPartial, In, QueryRunner, Repository } from "typeorm";
 import { Organization } from "../../entities/Organization";
 import { OrganizationMember } from "../../entities/OrganizationMember";
 import { OrganizationMemberRole } from "../../entities/OrganizationMemberRole";
@@ -80,6 +80,29 @@ export default class OrganizationMemberRolesContext extends BaseContext {
         (organizationMemberRole) => organizationMemberRole.organizationRole
       )
       ?.filter((result) => result != undefined) as OrganizationRole[];
+  }
+
+  public async getEnabledOrganizationMembersForRoleIds(
+    organizationId: string,
+    roleIds: Array<string>
+  ): Promise<OrganizationMember[]> {
+    const joinResults = await this.queryRunner.manager.find(
+      OrganizationMemberRole,
+      {
+        where: {
+          organizationId,
+          organizationRoleId: In(roleIds),
+        },
+        relations: {
+          organizationMember: true,
+        }
+      }
+    );
+    return joinResults
+      ?.map(
+        (organizationMemberRole) => organizationMemberRole.organizationMember
+      )
+      ?.filter((member) => member?.membershipState == "active") as OrganizationMember[];
   }
 
   public async deleteRolesForMember(organizationMember: OrganizationMember): Promise<void> {

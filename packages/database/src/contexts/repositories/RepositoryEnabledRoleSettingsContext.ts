@@ -39,4 +39,32 @@ export default class RepositoryEnabledRoleSettingsContext extends BaseContext {
     });
     return count > 0;
   }
+
+  public async getAllForRepositorySetting(
+    repositoryId: string,
+    settingName: string
+  ) {
+    return await this.queryRunner.manager.find(RepoEnabledRoleSetting, {
+      where: {
+        repositoryId,
+        settingName,
+      },
+      relations: {
+        role: true,
+      },
+      order: {
+        role: 'ASC',
+      },
+    });
+  }
+
+  public async deleteRepoRoleSettings(
+    repositoryId: string,
+    settingName: string
+  ) {
+    return await this.queryRunner.manager.delete(RepoEnabledRoleSetting, {
+      repositoryId,
+      settingName,
+    })
+  }
 }

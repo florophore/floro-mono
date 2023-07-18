@@ -8,7 +8,7 @@ import {
 import RequestCache from "../../../request/RequestCache";
 import ContextFactory from "@floro/database/src/contexts/ContextFactory";
 import LoggedInUserGuard from "./LoggedInUserGuard";
-import RepositoryLoader from "../loaders/Repository/RepositoryLoader";
+import RootRepositoryLoader from "../loaders/Root/RepositoryID/RepositoryLoader";
 import MergeRequestLoader from "../loaders/MergeRequest/MergeRequestLoader";
 import { MergeRequestAccessError } from "@floro/graphql-schemas/build/generated/main-graphql";
 import RepoAccessGuard from "./RepoAccessGuard";
@@ -27,7 +27,7 @@ export default class MergeRequestCommentReplyAccessGuard extends GuardResolverHo
   protected contextFactory!: ContextFactory;
   protected requestCache!: RequestCache;
   protected loggedInUserGuard!: LoggedInUserGuard;
-  protected repositoryLoader!: RepositoryLoader;
+  protected repositoryLoader!: RootRepositoryLoader;
   protected mergeRequestLoader!: MergeRequestLoader;
   protected mergeRequestCommentLoader!: MergeRequestCommentLoader;
   protected mergeRequestCommentReplyLoader!: MergeRequestCommentReplyLoader;
@@ -39,7 +39,7 @@ export default class MergeRequestCommentReplyAccessGuard extends GuardResolverHo
     @inject(RequestCache) requestCache: RequestCache,
     @inject(ContextFactory) contextFactory: ContextFactory,
     @inject(LoggedInUserGuard) loggedInUserGuard: LoggedInUserGuard,
-    @inject(RepositoryLoader) repositoryLoader: RepositoryLoader,
+    @inject(RootRepositoryLoader) repositoryLoader: RootRepositoryLoader,
     @inject(RepoAccessGuard) repoAccessGuard: RepoAccessGuard,
     @inject(MergeRequestLoader) mergeRequestLoader: MergeRequestLoader,
     @inject(MergeRequestAccessGuard) mergeRequestAccessGuard: MergeRequestAccessGuard,

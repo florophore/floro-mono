@@ -10,7 +10,7 @@ import {
   BranchState,
   CommitState,
 } from "@floro/graphql-schemas/build/generated/main-graphql";
-import RepositoryLoader from "./RepositoryLoader";
+import RootRepositoryLoader from "../Root/RepositoryID/RepositoryLoader";
 import RepositoryRemoteSettingsLoader from "./RepositoryRemoteSettingsLoader";
 
 @injectable()
@@ -21,7 +21,7 @@ export default class CommitStateBinaryRefsLoader extends LoaderResolverHook<
 > {
   protected requestCache!: RequestCache;
   protected repositoryService!: RepositoryService;
-  protected repositoryLoader!: RepositoryLoader;
+  protected repositoryLoader!: RootRepositoryLoader;
 
   constructor(
     @inject(RequestCache) requestCache: RequestCache,

@@ -100,4 +100,33 @@ export default class UsersContext extends BaseContext {
             return [];
         }
     }
+
+    public async searchUsersIncludingIdsAndExcludingIds(query: string, includingIds: string[], excludingIds: string[], limit = 5): Promise<User[]> {
+        try {
+        const qb = this.userRepo.createQueryBuilder("user", this.queryRunner);
+        if (query.startsWith("@")) {
+          const usernameQuery = query.substring(1);
+          return await qb
+            .leftJoinAndSelect("user.profilePhoto", "photo")
+            .where("(user.username ILIKE :query || '%') AND user.id <> ALL(:excluded_ids) AND user.id IN (:included_ids)")
+            .setParameter("query", usernameQuery.trim().toLowerCase())
+            .setParameter("excluded_ids", excludingIds)
+            .setParameter("included_ids", includingIds)
+            .limit(limit)
+            .orderBy("LENGTH(user.username)", "ASC")
+            .getMany();
+        }
+        return await qb
+          .leftJoinAndSelect("user.profilePhoto", "photo")
+          .where(`(user.first_name || ' '  || user.last_name ILIKE :query || '%') AND user.id <> ALL(:excluded_ids) AND user.id IN (:included_ids)`)
+          .setParameter("query", query.trim().toLowerCase())
+          .setParameter("excluded_ids", excludingIds)
+          .setParameter("included_ids", includingIds)
+          .limit(limit)
+          .orderBy(`LENGTH(user.first_name || ' ' || user.last_name)`, "ASC")
+          .getMany();
+        } catch(e) {
+            return [];
+        }
+    }
 }

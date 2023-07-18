@@ -22,6 +22,72 @@ type Repository {
   closedMergeRequests(mode: String, id: ID, closedQuery: String): MergeRequestPaginatedResult
   closedMergeRequestsCount: Int
   mergeRequest(id: ID): MergeRequest
+
+  #repo settings
+  defaultBranchId: String
+
+  anyoneCanRead: Boolean #if public, this is always true
+  canReadUsers: [User]
+  canReadRoles: [OrganizationRole]
+
+  allowExternalUsersToPush: Boolean
+  anyoneCanPushBranches: Boolean # if private org, this is true, if public org, this is true for org,
+                                 # if private user, this is never true
+  canPushBranchesUsers: [User]
+  canPushBranchesRoles: [OrganizationRole]
+
+  anyoneCanDeleteBranches: Boolean # if org, must be org member, if user must be user, do even display for user
+  canDeleteBranchesUsers: [User]
+  canDeleteBranchesRoles: [OrganizationRole]
+
+  anyoneCanChangeSettings: Boolean # if org, must be org member, if user must be user, not relevant to user repos
+  canChangeSettingsUsers: [User]
+  canChangeSettingsRoles: [OrganizationRole]
+
+  canTurnOffAnyoneCanChangeSettings: Boolean
+
+  protectedBranchRules: [ProtectedBranchRule]
+
+  searchUsersForRepo(
+    excludedUserIds: [String]
+    query: String
+    restrictToOrg: Boolean
+  ): SearchUsersForSettingResponse
+}
+
+type ProtectedBranchRule {
+  id: ID
+  repositoryId: String
+
+  branchId: String
+  branchName: String
+
+  disableDirectPushing: Boolean
+  requireApprovalToMerge: Boolean
+  requireReapprovalOnPushToMerge: Boolean
+
+  automaticallyDeleteMergedFeatureBranches: Boolean
+
+  anyoneCanCreateMergeRequests: Boolean
+  canCreateMergeRequestsUsers: [User]
+  canCreateMergeRequestsRoles: [OrganizationRole]
+
+  anyoneWithApprovalCanMerge: Boolean
+  withApprovalCanMergeUsers: [User] # if public, can be anyone
+  withApprovalCanMergeRoles: [OrganizationRole]
+
+  anyoneCanApproveMergeRequests: Boolean # if org, must be org member, if user must be user
+  canApproveMergeRequestsUsers: [User] # if public, can be anyone
+  canApproveMergeRequestsRoles: [OrganizationRole]
+
+  anyoneCanRevert: Boolean # if org, must be org member, if user must be user
+  canRevertUsers: [User]
+  canRevertRoles: [OrganizationRole]
+
+  anyoneCanAutofix: Boolean # if org, must be org member, if user must be user
+  canAutofixUsers: [User]
+  canAutofixRoles: [OrganizationRole]
+
 }
 
 type RepoBranch {
@@ -133,6 +199,11 @@ type CreateUserRepositoryError {
 type RepoAccessError {
     type: String
     message: String
+}
+
+type RepoSettingAccessError {
+  type: String
+  message: String
 }
 
 union CreateUserRepositoryResponse =

@@ -33,6 +33,8 @@ import OrganizationInvitationService from "../../services/organizations/Organiza
 import UsersContext from "@floro/database/src/contexts/users/UsersContext";
 import OrganizationRolesContext from "@floro/database/src/contexts/organizations/OrganizationRolesContext";
 import OrganizationMemberCountLoader from "../hooks/loaders/Organization/OrganizationMemberCountLoader";
+import RepositoryService from "../../services/repositories/RepositoryService";
+import RepoRBACService from "../../services/repositories/RepoRBACService";
 
 @injectable()
 export default class OrganizationResolverModule extends BaseResolverModule {
@@ -43,6 +45,7 @@ export default class OrganizationResolverModule extends BaseResolverModule {
   ];
   protected contextFactory!: ContextFactory;
   protected organizaionService!: OrganizationService;
+  protected repoRBACService!: RepoRBACService;
   protected organizationMemberService!: OrganizationMemberService;
   protected organizationInvitationService!: OrganizationInvitationService;
   protected requestCache!: RequestCache;
@@ -63,6 +66,7 @@ export default class OrganizationResolverModule extends BaseResolverModule {
     @inject(ContextFactory) contextFactory: ContextFactory,
     @inject(RequestCache) requestCache: RequestCache,
     @inject(OrganizationService) organizaionService: OrganizationService,
+    @inject(RepoRBACService) repoRBACService: RepoRBACService,
     @inject(OrganizationMemberService)
     organizationMemberService: OrganizationMemberService,
     @inject(OrganizationInvitationService)
@@ -88,6 +92,7 @@ export default class OrganizationResolverModule extends BaseResolverModule {
     super();
     this.contextFactory = contextFactory;
     this.organizaionService = organizaionService;
+    this.repoRBACService = repoRBACService;
     this.organizationMemberService = organizationMemberService;
     this.organizationInvitationService = organizationInvitationService;
     this.requestCache = requestCache;
@@ -678,12 +683,14 @@ export default class OrganizationResolverModule extends BaseResolverModule {
           organization.id as string,
           true
         );
+        const filteredRepos = await this.repoRBACService.filterPrivateOrgRepos(privateRepos, organizationMembership);
         this.requestCache.setOrganizationPrivateRepos(
           cacheKey,
           organization as Organization,
-          privateRepos
+          filteredRepos
         );
-        return privateRepos as Repository[];
+        // nned to filter
+        return filteredRepos as Repository[];
       }
     ),
     publicPlugins: runWithHooks(
@@ -937,7 +944,7 @@ export default class OrganizationResolverModule extends BaseResolverModule {
       }
       return organization;
     },
-    organizationByHandle: async (_, { handle }, { cacheKey }) => {
+    organizationByHandle: async (_, { handle }, { cacheKey}) => {
       const organization =
         await this.organizaionService.fetchOrganizationByHandle(handle);
       if (organization) {

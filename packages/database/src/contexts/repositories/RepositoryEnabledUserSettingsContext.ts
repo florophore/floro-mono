@@ -29,14 +29,54 @@ export default class RepositoryEnabledUserSettingsContext extends BaseContext {
     });
   }
 
-  public async hasRepoUserId(repositoryId: string, userId: string, settingName: string): Promise<boolean> {
-    const [, count] = await this.queryRunner.manager.findAndCount(RepoEnabledUserSetting, {
+  public async hasRepoUserId(
+    repositoryId: string,
+    userId: string,
+    settingName: string
+  ): Promise<boolean> {
+    const [, count] = await this.queryRunner.manager.findAndCount(
+      RepoEnabledUserSetting,
+      {
         where: {
-            repositoryId,
-            userId,
-            settingName
-        }
-    });
+          repositoryId,
+          userId,
+          settingName,
+        },
+      }
+    );
     return count > 0;
+  }
+
+  public async getAllForRepositorySetting(
+    repositoryId: string,
+    settingName: string
+  ) {
+    return await this.queryRunner.manager.find(RepoEnabledUserSetting, {
+      where: {
+        repositoryId,
+        settingName,
+      },
+      relations: {
+        user: {
+          profilePhoto: true,
+        },
+      },
+      order: {
+        user: {
+          firstName: "ASC",
+          lastName: "ASC",
+        },
+      },
+    });
+  }
+
+  public async deleteRepoUserSettings(
+    repositoryId: string,
+    settingName: string
+  ) {
+    return await this.queryRunner.manager.delete(RepoEnabledUserSetting, {
+      repositoryId,
+      settingName,
+    })
   }
 }

@@ -117,8 +117,8 @@ export default class BranchService {
       anyoneCanMergeMergeRequests:
         repository.isPrivate && repository.repoType == "user_repo", // by default a private repo user can do anything
       anyoneCanApproveMergeRequests: repository.isPrivate, // limit in public case
-      anyoneCanRevert: repository.isPrivate, // limit in public case
-      anyoneCanAutofix: repository.isPrivate, // limit in public case
+      anyoneCanRevert: repository.isPrivate,
+      anyoneCanAutofix: repository.isPrivate,
       repositoryId: repository?.id,
     });
 
@@ -155,17 +155,32 @@ export default class BranchService {
             repository.organizationId,
             "admin"
           );
+        const technicalAdminRole =
+          await organizationRolesContext.getRoleForOrgByPresetName(
+            repository.organizationId,
+            "admin"
+          );
+        const protectedBranchRulesEnabledRoleSettingsContext =
+          await this.contextFactory.createContext(
+            ProtectedBranchRulesEnabledRoleSettingsContext,
+            queryRunner
+          );
         for (const settingName of settingNames) {
-          const protectedBranchRulesEnabledRoleSettingsContext =
-            await this.contextFactory.createContext(
-              ProtectedBranchRulesEnabledRoleSettingsContext,
-              queryRunner
-            );
           await protectedBranchRulesEnabledRoleSettingsContext.create({
             settingName,
             protectedBranchRuleId: branchRule.id,
             roleId: adminRole.id,
           });
+        }
+
+        if (technicalAdminRole) {
+          for (const settingName of settingNames) {
+            await protectedBranchRulesEnabledRoleSettingsContext.create({
+              settingName,
+              protectedBranchRuleId: branchRule.id,
+              roleId: technicalAdminRole.id,
+            });
+          }
         }
       }
     }

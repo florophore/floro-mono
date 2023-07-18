@@ -41,4 +41,45 @@ export default class ProtectedBranchRulesEnabledUserSettingsContext extends Base
     });
     return count > 0;
   }
+
+  public async getAllForBranchRuleSetting(
+    protectedBranchRuleId: string,
+    settingName: string
+  ) {
+    return await this.queryRunner.manager.find(ProtectedBranchRuleEnabledUserSetting, {
+      where: {
+        protectedBranchRuleId,
+        settingName,
+      },
+      relations: {
+        user: {
+          profilePhoto: true,
+        },
+      },
+      order: {
+        user: {
+          firstName: "ASC",
+          lastName: "ASC",
+        },
+      },
+    });
+  }
+
+  public async deleteBranchRoleUserSettings(
+    protectedBranchRuleId: string,
+    settingName: string
+  ) {
+    return await this.queryRunner.manager.delete(ProtectedBranchRuleEnabledUserSetting, {
+      protectedBranchRuleId,
+      settingName,
+    })
+  }
+
+  public async deleteAllForBranchRule(
+    protectedBranchRuleId: string,
+  ) {
+    return await this.queryRunner.manager.delete(ProtectedBranchRuleEnabledUserSetting, {
+      protectedBranchRuleId,
+    })
+  }
 }

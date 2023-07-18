@@ -41,4 +41,40 @@ export default class ProtectedBranchRuleEnabledRoleSettingsContext extends BaseC
     });
     return count > 0;
   }
+
+  public async getAllForBranchRuleSetting(
+    protectedBranchRuleId: string,
+    settingName: string
+  ) {
+    return await this.queryRunner.manager.find(ProtectedBranchRuleEnabledRoleSetting, {
+      where: {
+        protectedBranchRuleId,
+        settingName,
+      },
+      relations: {
+        role: true,
+      },
+      order: {
+        role: "ASC",
+      },
+    });
+  }
+
+  public async deleteBranchRuleRoleSettings(
+    protectedBranchRuleId: string,
+    settingName: string
+  ) {
+    return await this.queryRunner.manager.delete(ProtectedBranchRuleEnabledRoleSetting, {
+      protectedBranchRuleId,
+      settingName,
+    })
+  }
+
+  public async deleteAllForBranchRule(
+    protectedBranchRuleId: string,
+  ) {
+    return await this.queryRunner.manager.delete(ProtectedBranchRuleEnabledRoleSetting, {
+      protectedBranchRuleId,
+    })
+  }
 }

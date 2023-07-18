@@ -13,6 +13,15 @@ import OrganizationMemberRolesContext from "@floro/database/src/contexts/organiz
 import { ProtectedBranchRule } from "@floro/database/src/entities/ProtectedBranchRule";
 import ProtectedBranchRuleEnabledUserSettingsContext from "@floro/database/src/contexts/repositories/RepositoryEnabledUserSettingsContext";
 import ProtectedBranchRuleEnabledRoleSettingsContext from "@floro/database/src/contexts/repositories/RepositoryEnabledRoleSettingsContext";
+import { OrganizationMember } from "@floro/database/src/entities/OrganizationMember";
+
+
+export interface RepoPermissions {
+  canReadRepo: boolean;
+  canPushBranches: boolean;
+  canDeleteBranches: boolean;
+  canChangeSettings: boolean;
+}
 
 @injectable()
 export default class RepoRBACService {
@@ -30,22 +39,24 @@ export default class RepoRBACService {
   public async userHasPermissionToPush(
     repository: Repository,
     currentUser: User,
-    branchId: string|undefined,
-    queryRunner?: QueryRunner,
+    branchId: string | undefined,
+    queryRunner?: QueryRunner
   ): Promise<boolean> {
     try {
       if (!currentUser?.id || !repository?.id) {
         return false;
       }
-      const protectedBranchRulesContext = await this.contextFactory.createContext(
-        ProtectedBranchRulesContext,
-        queryRunner
-      );
-      if (branchId) {
-        const protectedBranch = await protectedBranchRulesContext.getByRepoAndBranchId(
-          repository.id,
-          branchId
+      const protectedBranchRulesContext =
+        await this.contextFactory.createContext(
+          ProtectedBranchRulesContext,
+          queryRunner
         );
+      if (branchId) {
+        const protectedBranch =
+          await protectedBranchRulesContext.getByRepoAndBranchId(
+            repository.id,
+            branchId
+          );
         if (protectedBranch?.disableDirectPushing) {
           return false;
         }
@@ -57,18 +68,67 @@ export default class RepoRBACService {
         return true;
       }
 
-      const organizationsMembersContext = await this.contextFactory.createContext(
-        OrganizationMembersContext,
-        queryRunner
-      );
-      if (repository.repoType == "org_repo") {
-        const membership = await organizationsMembersContext.getByOrgIdAndUserId(
-          repository.organizationId,
-          currentUser.id
+      const organizationsMembersContext =
+        await this.contextFactory.createContext(
+          OrganizationMembersContext,
+          queryRunner
         );
+      const membership =
+        repository.repoType == "org_repo"
+          ? await organizationsMembersContext.getByOrgIdAndUserId(
+              repository.organizationId,
+              currentUser.id
+            )
+          : null;
+      if (repository.repoType == "org_repo") {
+        const organizationMemberRolesContext =
+          await this.contextFactory.createContext(
+            OrganizationMemberRolesContext,
+            queryRunner
+          );
+        const memberRoles =
+          membership?.membershipState == "active"
+            ? await organizationMemberRolesContext.getRolesByMember(membership)
+            : [];
+        const isAdmin = !!memberRoles?.find((r) => r.presetCode == "admin");
+        if (isAdmin) {
+          return true;
+        }
         if (repository?.isPrivate) {
           if (!membership || membership?.membershipState != "active") {
             return false;
+          }
+
+          if (!repository?.anyoneCanRead) {
+            const roleIds = memberRoles?.map((r) => r.id);
+            const repositoryEnabledRoleSettingsContext =
+              await this.contextFactory.createContext(
+                RepositoryEnabledRoleSettingsContext,
+                queryRunner
+              );
+
+            const repositoryEnabledUserSettingsContext =
+              await this.contextFactory.createContext(
+                RepositoryEnabledUserSettingsContext,
+                queryRunner
+              );
+            const hasUserPermission =
+              await repositoryEnabledUserSettingsContext.hasRepoUserId(
+                repository.id,
+                currentUser.id,
+                "anyoneCanRead"
+              );
+            if (!hasUserPermission) {
+              const hasRoles =
+                await repositoryEnabledRoleSettingsContext.hasRepoRoleIds(
+                  repository.id,
+                  roleIds,
+                  "anyoneCanRead"
+                );
+              if (!hasRoles) {
+                return false;
+              }
+            }
           }
         }
 
@@ -99,7 +159,7 @@ export default class RepoRBACService {
           }
         }
       }
-      if (repository?.anyoneCanPushBranches) {
+      if (repository?.anyoneCanPushBranches && membership && membership?.membershipState == "active") {
         return true;
       }
       const repositoryEnabledUserSettingsContext =
@@ -113,13 +173,15 @@ export default class RepoRBACService {
           currentUser.id,
           "anyoneCanPushBranches"
         );
-      if (!hasUserPermission) {
-        return false;
+      if (hasUserPermission && membership?.membershipState != "active" && repository.allowExternalUsersToPush) {
+        return true;
       }
-      return true;
+      if (hasUserPermission && membership?.membershipState == "active") {
+        return true;
+      }
+      return false;
     } catch (e) {
-      console.log("E", e);
-      return false
+      return false;
     }
   }
 
@@ -147,21 +209,64 @@ export default class RepoRBACService {
       if (repository?.isPrivate && membership?.membershipState != "active") {
         return false;
       }
+      if (repository?.isPrivate && membership?.membershipState == "active") {
+        const organizationMemberRolesContext =
+          await this.contextFactory.createContext(
+            OrganizationMemberRolesContext
+          );
+        const memberRoles =
+          await organizationMemberRolesContext.getRolesByMember(membership);
+        const isAdmin = !!memberRoles?.find((r) => r.presetCode == "admin");
+        if (isAdmin) {
+          return true;
+        }
+        if (!repository.anyoneCanRead) {
+          const roleIds = memberRoles?.map((r) => r.id);
+          const repositoryEnabledRoleSettingsContext =
+            await this.contextFactory.createContext(
+              RepositoryEnabledRoleSettingsContext
+            );
+
+          const repositoryEnabledUserSettingsContext =
+            await this.contextFactory.createContext(
+              RepositoryEnabledUserSettingsContext
+            );
+          const hasUserPermission =
+            await repositoryEnabledUserSettingsContext.hasRepoUserId(
+              repository.id,
+              currentUser.id,
+              "anyoneCanRead"
+            );
+          if (!hasUserPermission) {
+            const hasRoles =
+              await repositoryEnabledRoleSettingsContext.hasRepoRoleIds(
+                repository.id,
+                roleIds,
+                "anyoneCanRead"
+              );
+            if (!hasRoles) {
+              return false;
+            }
+          }
+        }
+      }
     }
     return true;
   }
 
-  public async calculateUserProtectedBranchRuleSettingPermission (
+  public async calculateUserProtectedBranchRuleSettingPermission(
     protectedBranchRule: ProtectedBranchRule,
     repository: Repository,
-    user: User|null|undefined,
+    user: User | null | undefined,
+    repoPermissions: RepoPermissions,
     settingName:
       | "anyoneCanCreateMergeRequests"
       | "anyoneWithApprovalCanMerge"
       | "anyoneCanMergeMergeRequests"
       | "anyoneCanApproveMergeRequests"
       | "anyoneCanRevert"
-      | "anyoneCanAutofix"
+      | "anyoneCanAutofix",
+      queryRunner?: QueryRunner
   ) {
     if (!user) {
       return false;
@@ -170,30 +275,16 @@ export default class RepoRBACService {
       if (repository.isPrivate) {
         return user.id == repository.createdByUserId;
       }
-
-      if (protectedBranchRule[settingName]) {
-        if (user.id != repository.createdByUserId) {
-          if (settingName == "anyoneCanRevert") {
-            return false;
-          }
-
-          if (settingName == "anyoneCanAutofix") {
-            return false;
-          }
-
-          if (settingName == "anyoneCanApproveMergeRequests") {
-            return false;
-          }
-
-          if (settingName == "anyoneCanMergeMergeRequests") {
-            return false;
-          }
-        }
+      if (user.id == repository.createdByUserId) {
         return true;
+      }
+      if (!repoPermissions.canPushBranches) {
+        return false;
       }
       const protectedBranchRuleEnabledUserSettingsContext =
         await this.contextFactory.createContext(
-          ProtectedBranchRuleEnabledUserSettingsContext
+          ProtectedBranchRuleEnabledUserSettingsContext,
+          queryRunner
         );
       const hasUserPermission =
         await protectedBranchRuleEnabledUserSettingsContext.hasRepoUserId(
@@ -206,7 +297,8 @@ export default class RepoRBACService {
     // dealing with org case
 
     const organizationsMembersContext = await this.contextFactory.createContext(
-      OrganizationMembersContext
+      OrganizationMembersContext,
+      queryRunner
     );
     const membership = await organizationsMembersContext.getByOrgIdAndUserId(
       repository.organizationId,
@@ -217,48 +309,37 @@ export default class RepoRBACService {
     }
 
     if (protectedBranchRule[settingName]) {
-      if (membership?.membershipState != "active") {
-          if (settingName == "anyoneCanRevert") {
-            return false;
-          }
-          if (settingName == "anyoneCanAutofix") {
-            return false;
-          }
-          if (settingName == "anyoneCanApproveMergeRequests") {
-            return false;
-          }
-          if (settingName == "anyoneCanMergeMergeRequests") {
-            return false;
-          }
+      if (membership?.membershipState == "active" || repoPermissions.canPushBranches) {
+        return true;
       }
-      return true;
     }
 
     if (membership?.membershipState == "active") {
-        const organizationMemberRolesContext =
-          await this.contextFactory.createContext(
-            OrganizationMemberRolesContext
-          );
-      const memberRoles =
-        await organizationMemberRolesContext.getRolesByMember(membership);
+      const organizationMemberRolesContext =
+        await this.contextFactory.createContext(OrganizationMemberRolesContext, queryRunner);
+      const memberRoles = await organizationMemberRolesContext.getRolesByMember(
+        membership
+      );
       const roleIds = memberRoles?.map((r) => r.id);
       const protectedBranchRuleEnabledRoleSettingsContext =
         await this.contextFactory.createContext(
-          ProtectedBranchRuleEnabledRoleSettingsContext
+          ProtectedBranchRuleEnabledRoleSettingsContext,
+          queryRunner
         );
-        const hasRoles =
-          await protectedBranchRuleEnabledRoleSettingsContext.hasRepoRoleIds(
-            repository.id,
-            roleIds,
-            settingName
-          );
-        if (hasRoles) {
-          return true;
-        }
+      const hasRoles =
+        await protectedBranchRuleEnabledRoleSettingsContext.hasRepoRoleIds(
+          repository.id,
+          roleIds,
+          settingName
+        );
+      if (hasRoles) {
+        return true;
+      }
     }
     const protectedBranchRuleEnabledUserSettingsContext =
       await this.contextFactory.createContext(
-        ProtectedBranchRuleEnabledUserSettingsContext
+        ProtectedBranchRuleEnabledUserSettingsContext,
+        queryRunner
       );
     const hasUserPermission =
       await protectedBranchRuleEnabledUserSettingsContext.hasRepoUserId(
@@ -271,26 +352,33 @@ export default class RepoRBACService {
 
   public async calculateUserRepositorySettingPermission(
     repository: Repository,
-    user: User|null|undefined,
+    user: User | null | undefined,
     settingName:
+      | "anyoneCanRead"
       | "anyoneCanPushBranches"
       | "anyoneCanDeleteBranches"
-      | "anyoneCanChangeSettings"
-  ) {
+      | "anyoneCanChangeSettings",
+      queryRunner?: QueryRunner
+  ): Promise<boolean> {
+    if (!repository.isPrivate) {
+      if (settingName == "anyoneCanRead") {
+        return true;
+      }
+    }
     if (!user) {
       return false;
     }
     if (repository.repoType == "user_repo") {
-      if (repository.isPrivate || settingName == "anyoneCanChangeSettings") {
-        return user.id == repository.createdByUserId;
-      }
-
-      if (repository[settingName]) {
+      if (user.id == repository.createdByUserId) {
         return true;
+      }
+      if (repository.isPrivate) {
+        return false;
       }
       const repositoryEnabledUserSettingsContext =
         await this.contextFactory.createContext(
-          RepositoryEnabledUserSettingsContext
+          RepositoryEnabledUserSettingsContext,
+          queryRunner
         );
       const hasUserPermission =
         await repositoryEnabledUserSettingsContext.hasRepoUserId(
@@ -298,12 +386,24 @@ export default class RepoRBACService {
           user.id,
           settingName
         );
-      return hasUserPermission;
+      if (settingName == "anyoneCanChangeSettings") {
+        return false;
+      }
+      if (
+        hasUserPermission &&
+        repository.allowExternalUsersToPush &&
+        (settingName == "anyoneCanPushBranches" ||
+          settingName == "anyoneCanDeleteBranches")
+      ) {
+        return true;
+      }
+      return false;
     }
     // dealing with org case
 
     const organizationsMembersContext = await this.contextFactory.createContext(
-      OrganizationMembersContext
+      OrganizationMembersContext,
+      queryRunner
     );
     const membership = await organizationsMembersContext.getByOrgIdAndUserId(
       repository.organizationId,
@@ -313,38 +413,42 @@ export default class RepoRBACService {
       return false;
     }
 
-    if (settingName == "anyoneCanChangeSettings" && membership?.membershipState != "active") {
+    if (
+      settingName == "anyoneCanChangeSettings" &&
+      membership?.membershipState != "active"
+    ) {
       return false;
     }
 
-    if (repository[settingName]) {
-      return true;
-    }
     if (membership?.membershipState == "active") {
-        const organizationMemberRolesContext =
-          await this.contextFactory.createContext(
-            OrganizationMemberRolesContext
-          );
-      const memberRoles =
-        await organizationMemberRolesContext.getRolesByMember(membership);
+      if (repository[settingName]) {
+        return true;
+      }
+      const organizationMemberRolesContext =
+        await this.contextFactory.createContext(OrganizationMemberRolesContext, queryRunner);
+      const memberRoles = await organizationMemberRolesContext.getRolesByMember(
+        membership
+      );
       const roleIds = memberRoles?.map((r) => r.id);
       const repositoryEnabledRoleSettingsContext =
         await this.contextFactory.createContext(
-          RepositoryEnabledRoleSettingsContext
+          RepositoryEnabledRoleSettingsContext,
+          queryRunner
         );
-        const hasRoles =
-          await repositoryEnabledRoleSettingsContext.hasRepoRoleIds(
-            repository.id,
-            roleIds,
-            settingName
-          );
-        if (hasRoles) {
-          return true;
-        }
+      const hasRoles =
+        await repositoryEnabledRoleSettingsContext.hasRepoRoleIds(
+          repository.id,
+          roleIds,
+          settingName
+        );
+      if (hasRoles) {
+        return true;
+      }
     }
     const repositoryEnabledUserSettingsContext =
       await this.contextFactory.createContext(
-        RepositoryEnabledUserSettingsContext
+        RepositoryEnabledUserSettingsContext,
+        queryRunner
       );
     const hasUserPermission =
       await repositoryEnabledUserSettingsContext.hasRepoUserId(
@@ -352,9 +456,81 @@ export default class RepoRBACService {
         user.id,
         settingName
       );
-    if (hasUserPermission) {
-      return true;
+
+    if (
+      hasUserPermission &&
+      repository.allowExternalUsersToPush &&
+      settingName == "anyoneCanDeleteBranches" &&
+      membership?.membershipState != "active"
+    ) {
+      const hasPushPermission =
+        await repositoryEnabledUserSettingsContext.hasRepoUserId(
+          repository.id,
+          user.id,
+          "anyoneCanPushBranches"
+        );
+      return hasPushPermission;
     }
-    return false;
+    return hasUserPermission;
+  }
+
+  public async filterPrivateOrgRepos(
+    repositories: Array<Repository>,
+    membership: OrganizationMember,
+  ): Promise<Array<Repository>> {
+    if (membership?.membershipState != "active") {
+      return [];
+    }
+    const out: Array<Repository> = [];
+    const organizationMemberRolesContext =
+      await this.contextFactory.createContext(OrganizationMemberRolesContext);
+    const memberRoles =
+      membership?.membershipState == "active"
+        ? await organizationMemberRolesContext.getRolesByMember(membership)
+        : [];
+
+    const isAdmin = !!memberRoles?.find((r) => r.presetCode == "admin");
+    if (isAdmin) {
+      return repositories;
+    }
+    const repositoryEnabledRoleSettingsContext =
+      await this.contextFactory.createContext(
+        RepositoryEnabledRoleSettingsContext
+      );
+
+    const repositoryEnabledUserSettingsContext =
+      await this.contextFactory.createContext(
+        RepositoryEnabledUserSettingsContext
+      );
+    const roleIds = memberRoles?.map((r) => r.id);
+    for (const repo of repositories) {
+      if (repo.anyoneCanRead) {
+        out.push(repo);
+        continue;
+      }
+
+      const hasUserPermission =
+        await repositoryEnabledUserSettingsContext.hasRepoUserId(
+          repo.id,
+          membership.userId,
+          "anyoneCanRead"
+        );
+      if (hasUserPermission) {
+        out.push(repo);
+        continue;
+      }
+      const hasRoles =
+        await repositoryEnabledRoleSettingsContext.hasRepoRoleIds(
+          repo.id,
+          roleIds,
+          "anyoneCanRead"
+        );
+      if (hasRoles) {
+        out.push(repo);
+        continue;
+      }
+    }
+
+    return out;
   }
 }

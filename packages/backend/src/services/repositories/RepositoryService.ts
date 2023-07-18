@@ -15,7 +15,7 @@ import RepoAccessor from "@floro/storage/src/accessors/RepoAccessor";
 import BranchService from "./BranchService";
 import { Commit } from "@floro/database/src/entities/Commit";
 import { Binary } from "@floro/database/src/entities/Binary";
-import RepoRBACService from "./RepoRBACService";
+import RepoRBACService, { RepoPermissions } from "./RepoRBACService";
 import ProtectedBranchRulesContext from "@floro/database/src/contexts/repositories/ProtectedBranchRulesContext";
 import { ProtectedBranchRule } from "@floro/database/src/entities/ProtectedBranchRule";
 import { SourceCommitNode, SourceGraph } from "floro/dist/src/sourcegraph";
@@ -39,6 +39,12 @@ import BinaryCommitUtilizationsContext from "@floro/database/src/contexts/reposi
 import BinaryAccessor from "@floro/storage/src/accessors/BinaryAccessor";
 import { QueryRunner } from "typeorm";
 import PluginsVersionsContext from "@floro/database/src/contexts/plugins/PluginVersionsContext";
+import OrganizationMemberRolesContext from "@floro/database/src/contexts/organizations/OrganizationMemberRolesContext";
+import OrganizationMembersContext from "@floro/database/src/contexts/organizations/OrganizationMembersContext";
+import OrganizationRolesContext from "@floro/database/src/contexts/organizations/OrganizationRolesContext";
+import { RepoEnabledRoleSetting } from "@floro/database/src/entities/RepoEnabledRoleSetting";
+import RepositoryEnabledRoleSettingsContext from "@floro/database/src/contexts/repositories/RepositoryEnabledRoleSettingsContext";
+import RepositoryEnabledUserSettingsContext from "@floro/database/src/contexts/repositories/RepositoryEnabledUserSettingsContext";
 
 interface BranchRuleUserPermission {
   branchId: string;
@@ -365,6 +371,57 @@ export default class RepositoryService {
           licenseCode: licenseCode as string,
           repoType: "org_repo",
         });
+        // we should add setting access rules here
+
+        const organizationRolesContext =
+          await this.contextFactory.createContext(
+            OrganizationRolesContext,
+            queryRunner
+          );
+        const adminRole =
+          await organizationRolesContext.getRoleForOrgByPresetName(
+            repository.organizationId,
+            "admin"
+          );
+
+        const technicalAdminRole =
+          await organizationRolesContext.getRoleForOrgByPresetName(
+            repository.organizationId,
+            "admin"
+          );
+
+        const repositoryEnabledRoleSettingsContext =
+          await this.contextFactory.createContext(
+            RepositoryEnabledRoleSettingsContext,
+            queryRunner
+          );
+
+        const repositoryEnabledUserSettingsContext =
+          await this.contextFactory.createContext(
+            RepositoryEnabledUserSettingsContext,
+            queryRunner
+          );
+
+        await repositoryEnabledUserSettingsContext.create({
+          settingName: "anyoneCanChangeSettings",
+          repositoryId: repository.id,
+          userId: currentUser.id
+        })
+
+        await repositoryEnabledRoleSettingsContext.create({
+          settingName: "anyoneCanChangeSettings",
+          repositoryId: repository.id,
+          roleId: adminRole.id
+        });
+
+        if (technicalAdminRole) {
+          await repositoryEnabledRoleSettingsContext.create({
+            settingName: "anyoneCanChangeSettings",
+            repositoryId: repository.id,
+            roleId: technicalAdminRole.id
+          });
+        }
+
         const loadedRepository = await repositoriesContext.getById(
           repository.id
         );
@@ -437,13 +494,16 @@ export default class RepositoryService {
   public async fetchProtectedBranchSettingsForUser(
     repository: Repository,
     protectedBranchRule: ProtectedBranchRule,
-    user: User | null | undefined
+    repoPermissions: RepoPermissions,
+    user: User | null | undefined,
   ): Promise<BranchRuleUserPermission> {
+
     const canCreateMergeRequests =
       await this.repoRBAC.calculateUserProtectedBranchRuleSettingPermission(
         protectedBranchRule,
         repository,
         user,
+        repoPermissions,
         "anyoneCanCreateMergeRequests"
       );
     const canMergeWithApproval =
@@ -451,6 +511,7 @@ export default class RepositoryService {
         protectedBranchRule,
         repository,
         user,
+        repoPermissions,
         "anyoneWithApprovalCanMerge"
       );
 
@@ -459,6 +520,7 @@ export default class RepositoryService {
         protectedBranchRule,
         repository,
         user,
+        repoPermissions,
         "anyoneCanMergeMergeRequests"
       );
 
@@ -467,6 +529,7 @@ export default class RepositoryService {
         protectedBranchRule,
         repository,
         user,
+        repoPermissions,
         "anyoneCanApproveMergeRequests"
       );
 
@@ -475,6 +538,7 @@ export default class RepositoryService {
         protectedBranchRule,
         repository,
         user,
+        repoPermissions,
         "anyoneCanRevert"
       );
 
@@ -483,6 +547,7 @@ export default class RepositoryService {
         protectedBranchRule,
         repository,
         user,
+        repoPermissions,
         "anyoneCanAutofix"
       );
 
@@ -511,23 +576,37 @@ export default class RepositoryService {
     if (!repository) {
       return null;
     }
+
+    const organizationMembersContext = await this.contextFactory.createContext(OrganizationMembersContext);
+    const organizationMemberRolesContext = await this.contextFactory.createContext(OrganizationMemberRolesContext);
+    const membership = repository.repoType == "org_repo" && user ? await organizationMembersContext.getByOrgIdAndUserId(repository.organizationId, user?.id) : null;
+    const roles = membership?.membershipState == "active" ? await organizationMemberRolesContext.getRolesByMemberId(membership?.id) : [];
+    const isAdmin = repository.repoType == "org_repo" && !!roles.find(r => r.presetCode == "admin");
+
     let accountInGoodStanding = await this.getAccountStandingOkay(repository);
-    const canPushBranches =
+    // check if user isAdmin
+    const canReadRepo = isAdmin || (!repository.isPrivate && repository.repoType != "org_repo") ||
       await this.repoRBAC.calculateUserRepositorySettingPermission(
+        repository,
+        user,
+        "anyoneCanRead"
+      );
+    const canPushBranches =
+      isAdmin || await this.repoRBAC.calculateUserRepositorySettingPermission(
         repository,
         user,
         "anyoneCanPushBranches"
       );
 
     const canDeleteBranches =
-      await this.repoRBAC.calculateUserRepositorySettingPermission(
+      isAdmin || await this.repoRBAC.calculateUserRepositorySettingPermission(
         repository,
         user,
         "anyoneCanDeleteBranches"
       );
 
     const canChangeSettings =
-      await this.repoRBAC.calculateUserRepositorySettingPermission(
+      isAdmin || await this.repoRBAC.calculateUserRepositorySettingPermission(
         repository,
         user,
         "anyoneCanChangeSettings"
@@ -539,14 +618,22 @@ export default class RepositoryService {
     const protectedBranchRules =
       await protectedBranchRulesContext.getProtectedBranchesForRepo(repoId);
 
+    const repoPermissions: RepoPermissions = {
+      canReadRepo,
+      canPushBranches,
+      canDeleteBranches,
+      canChangeSettings
+    };
+
     const branchRules = await Promise.all(
       protectedBranchRules.map((branchRule) =>
-        this.fetchProtectedBranchSettingsForUser(repository, branchRule, user)
+        this.fetchProtectedBranchSettingsForUser(repository, branchRule, repoPermissions, user)
       )
     );
 
     return {
       defaultBranchId: repository?.defaultBranchId,
+      canReadRepo,
       canPushBranches,
       canDeleteBranches,
       canChangeSettings,

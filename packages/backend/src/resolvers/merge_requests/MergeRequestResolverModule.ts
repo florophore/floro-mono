@@ -6,7 +6,7 @@ import { runWithHooks } from "../hooks/ResolverHook";
 import RequestCache from "../../request/RequestCache";
 import ContextFactory from "@floro/database/src/contexts/ContextFactory";
 import MergeRequestService from "../../services/merge_requests/MergeRequestService";
-import RepositoryLoader from "../hooks/loaders/Repository/RepositoryLoader";
+import RootRepositoryLoader from "../hooks/loaders/Root/RepositoryID/RepositoryLoader";
 import RepoAccessGuard from "../hooks/guards/RepoAccessGuard";
 import MergeRequestLoader from "../hooks/loaders/MergeRequest/MergeRequestLoader";
 import MergeRequestAccessGuard from "../hooks/guards/MergeRequestAccessGuard";
@@ -43,7 +43,7 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
   protected repositoryDatasourceFactoryService!: RepositoryDatasourceFactoryService;
 
   //loaders
-  protected repositoryLoader!: RepositoryLoader;
+  protected repositoryLoader!: RootRepositoryLoader;
   protected mergeRequestLoader!: MergeRequestLoader;
   protected mergeRequestCommentLoader!: MergeRequestCommentLoader;
   protected mergeRequestCommentReplyLoader!: MergeRequestCommentReplyLoader;
@@ -70,7 +70,7 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
     @inject(MergeRequestEventService)
     mergeRequestEventService: MergeRequestEventService,
     @inject(LoggedInUserGuard) loggedInUserGuard: LoggedInUserGuard,
-    @inject(RepositoryLoader) repositoryLoader: RepositoryLoader,
+    @inject(RootRepositoryLoader) repositoryLoader: RootRepositoryLoader,
     @inject(RepoAccessGuard) repoAccessGuard: RepoAccessGuard,
     @inject(RepositoryBranchesLoader)
     repositoryBranchesLoader: RepositoryBranchesLoader,

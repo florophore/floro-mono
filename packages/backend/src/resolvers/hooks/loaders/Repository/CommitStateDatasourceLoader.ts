@@ -10,7 +10,7 @@ import {
   BranchState,
   CommitState,
 } from "@floro/graphql-schemas/build/generated/main-graphql";
-import RepositoryLoader from "./RepositoryLoader";
+import RootRepositoryLoader from "../Root/RepositoryID/RepositoryLoader";
 import RepositoryRemoteSettingsLoader from "./RepositoryRemoteSettingsLoader";
 
 @injectable()
@@ -23,7 +23,7 @@ export default class CommitStateDatasourceLoader extends LoaderResolverHook<
   protected repositoryService!: RepositoryService;
   protected repositoryDatasourceFactoryService!: RepositoryDatasourceFactoryService;
   protected repositoryCommitsLoader!: RepositoryCommitsLoader;
-  protected repositoryLoader!: RepositoryLoader;
+  protected repositoryLoader!: RootRepositoryLoader;
   protected repositoryRemoteSettingsLoader!: RepositoryRemoteSettingsLoader;
 
   constructor(
@@ -33,7 +33,7 @@ export default class CommitStateDatasourceLoader extends LoaderResolverHook<
     repositoryDatasourceFactoryService: RepositoryDatasourceFactoryService,
     @inject(RepositoryCommitsLoader)
     repositoryCommitsLoader: RepositoryCommitsLoader,
-    @inject(RepositoryLoader) repositoryLoader: RepositoryLoader,
+    @inject(RootRepositoryLoader) repositoryLoader: RootRepositoryLoader,
     @inject(RepositoryRemoteSettingsLoader) repositoryRemoteSettingsLoader: RepositoryRemoteSettingsLoader,
   ) {
     super();
@@ -49,7 +49,7 @@ export default class CommitStateDatasourceLoader extends LoaderResolverHook<
   public run = runWithHooks<
     CommitState,
     unknown,
-    { currentUser: User | null; cacheKey: string },
+    { currentUser?: User | null; cacheKey: string },
     void
   >(
     () => [this.repositoryLoader, this.repositoryCommitsLoader, this.repositoryRemoteSettingsLoader],
