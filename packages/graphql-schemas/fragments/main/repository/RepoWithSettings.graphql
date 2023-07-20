@@ -8,6 +8,9 @@ fragment RepoWithSettings on Repository {
             name
             isMutable
         }
+        permissions {
+          canModifyOrganizationDeveloperSettings
+        }
     }
     roles {
         id
@@ -32,7 +35,6 @@ fragment RepoWithSettings on Repository {
   repoPermissions {
     canPushBranches
     canChangeSettings
-    canDeleteBranches
   }
 
   defaultBranchId
@@ -65,21 +67,6 @@ fragment RepoWithSettings on Repository {
     }
   }
   canPushBranchesRoles {
-    id
-    name
-  }
-
-  anyoneCanDeleteBranches
-  canDeleteBranchesUsers {
-    id
-    firstName
-    lastName
-    username
-    profilePhoto {
-        ...Photo
-    }
-  }
-  canDeleteBranchesRoles {
     id
     name
   }

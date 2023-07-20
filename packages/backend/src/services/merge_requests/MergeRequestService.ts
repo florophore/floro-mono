@@ -489,7 +489,7 @@ export default class MergeRequestService implements BranchPushHandler {
       canApprove: branchRule?.canApproveMergeRequests ?? ((repository?.repoType == "user_repo" && mergeRequest?.openedByUserId == user?.id) || mergeRequest?.openedByUserId != user?.id),
       allowedToMerge,
       canClose,
-      canDeleteBranch: userRepoSettings?.canDeleteBranches ?? canClose,
+      canDeleteBranch: userRepoSettings?.canPushBranches ?? canClose,
     };
   }
 

@@ -695,97 +695,6 @@ export default class RepositoryResolverModule extends BaseResolverModule {
       }
     ),
 
-    anyoneCanDeleteBranches: runWithHooks(
-      () => [this.repositoryRemoteSettingsLoader],
-      async (repository: main.Repository, _, { cacheKey, currentUser }) => {
-        if (!repository?.id || !currentUser) {
-          return null;
-        }
-        if (repository?.repoType != "org_repo") {
-          return null;
-        }
-        const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
-          cacheKey,
-          repository?.id
-        );
-        if (cachedRemoteSettings?.canChangeSettings) {
-          return repository.anyoneCanDeleteBranches ?? false;
-        }
-        return null;
-      }
-    ),
-    canDeleteBranchesRoles: runWithHooks(
-      () => [this.repositoryRemoteSettingsLoader],
-      async (repository: main.Repository, _, { cacheKey, currentUser }) => {
-        if (!repository?.id || !currentUser) {
-          return null;
-        }
-        if (repository?.repoType != "org_repo") {
-          return [];
-        }
-        const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
-          cacheKey,
-          repository?.id
-        );
-        if (cachedRemoteSettings?.canChangeSettings) {
-          const repositoryEnabledRoleSettingsContext =
-            await this.contextFactory.createContext(
-              RepositoryEnabledRoleSettingsContext
-            );
-          const enabledRoleSettings =
-            await repositoryEnabledRoleSettingsContext.getAllForRepositorySetting(
-              repository.id,
-              "anyoneCanDeleteBranches"
-            );
-          return enabledRoleSettings?.map((s) => s.role as OrganizationRole);
-        }
-        return null;
-      }
-    ),
-    canDeleteBranchesUsers: runWithHooks(
-      () => [this.repositoryRemoteSettingsLoader, this.writeAccessIdsLoader],
-      async (repository: main.Repository, _, { cacheKey, currentUser }) => {
-        if (!repository?.id || !currentUser) {
-          return null;
-        }
-        if (repository?.repoType != "org_repo") {
-          return [];
-        }
-        const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
-          cacheKey,
-          repository?.id
-        );
-        const cachedWriteAccessIds =
-          this.requestCache.getRepoWriteAccessIds(cacheKey, repository?.id) ??
-          new Set<string>();
-        if (cachedRemoteSettings?.canChangeSettings) {
-          const repositoryEnabledUserSettingsContext =
-            await this.contextFactory.createContext(
-              RepositoryEnabledUserSettingsContext
-            );
-          const enabledUserSettings =
-            await repositoryEnabledUserSettingsContext.getAllForRepositorySetting(
-              repository.id,
-              "anyoneCanDeleteBranches"
-            );
-          const users = enabledUserSettings
-            ?.filter((s) => cachedWriteAccessIds.has(s.userId))
-            ?.map((s) => s.user as User);
-          users.sort?.((a, b) => {
-            if (!a || !b) {
-              return 0;
-            }
-            return `${a?.firstName} ${a?.lastName}`.toLowerCase() >=
-              `${b?.firstName} ${b?.lastName}`.toLowerCase()
-              ? 1
-              : -1;
-          });
-          return users;
-        }
-        return null;
-      }
-    ),
-
     anyoneCanChangeSettings: runWithHooks(
       () => [this.repositoryRemoteSettingsLoader],
       async (repository: main.Repository, _, { cacheKey, currentUser }) => {
@@ -888,7 +797,6 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         );
         return {
           canPushBranches: cachedRemoteSettings.canPushBranches,
-          canDeleteBranches: cachedRemoteSettings.canDeleteBranches,
           canChangeSettings: cachedRemoteSettings.canChangeSettings,
         };
       }

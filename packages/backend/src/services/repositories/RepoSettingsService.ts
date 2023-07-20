@@ -522,8 +522,7 @@ export default class RepoSettingsService {
     settingName:
       | "anyoneCanRead"
       | "anyoneCanPushBranches"
-      | "anyoneCanChangeSettings"
-      | "anyoneCanDeleteBranches",
+      | "anyoneCanChangeSettings",
     userIds: string[],
     roleIds: string[]
   ) {
@@ -644,43 +643,6 @@ export default class RepoSettingsService {
                   });
                 }
               }
-            }
-            if (repository.isPrivate) {
-              const membership =
-                await organizationMembersContext.getByOrgIdAndUserId(
-                  repository.organizationId,
-                  userId
-                );
-              if (membership?.membershipState == "active") {
-                await repositoryEnabledUserSettingsContext.create({
-                  settingName,
-                  repositoryId: repository.id,
-                  userId,
-                });
-              }
-            }
-          }
-        }
-
-        if (settingName == "anyoneCanDeleteBranches") {
-          if (
-            repository.repoType == "user_repo" &&
-            !repository.isPrivate &&
-            repository.allowExternalUsersToPush
-          ) {
-            await repositoryEnabledUserSettingsContext.create({
-              settingName,
-              repositoryId: repository.id,
-              userId,
-            });
-          }
-          if (repository.repoType == "org_repo") {
-            if (!repository.isPrivate && repository.allowExternalUsersToPush) {
-              await repositoryEnabledUserSettingsContext.create({
-                settingName,
-                repositoryId: repository.id,
-                userId,
-              });
             }
             if (repository.isPrivate) {
               const membership =
@@ -1171,43 +1133,6 @@ export default class RepoSettingsService {
     });
   }
 
-
-  public async updateAnyoneCanDeleteBranches(
-    repository: Repository,
-    anyoneCanDeleteBranches: boolean
-  ) {
-    if (repository.isPrivate && repository.repoType != "org_repo") {
-      return null;
-    }
-    const repositoriesContext = await this.contextFactory.createContext(
-      RepositoriesContext
-    );
-    return await repositoriesContext.updateRepo(repository, {
-      anyoneCanDeleteBranches,
-    });
-  }
-
-  public async updateDeleteBranchesAccess(
-    repository: Repository,
-    roleIds: string[],
-    userIds: string[]
-  ) {
-
-    if (repository.isPrivate && repository.repoType != "org_repo") {
-      return null;
-    }
-
-    const didUpdate = await this.updateRepoAnyoneSettingAccess(
-      repository,
-      "anyoneCanDeleteBranches",
-      userIds,
-      roleIds
-    );
-    if (didUpdate) {
-      return repository;
-    }
-    return null;
-  }
 
   public async updateBranchRuleSettingValue(
     repository: Repository,

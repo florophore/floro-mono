@@ -598,13 +598,6 @@ export default class RepositoryService {
         "anyoneCanPushBranches"
       );
 
-    const canDeleteBranches =
-      isAdmin || await this.repoRBAC.calculateUserRepositorySettingPermission(
-        repository,
-        user,
-        "anyoneCanDeleteBranches"
-      );
-
     const canChangeSettings =
       isAdmin || await this.repoRBAC.calculateUserRepositorySettingPermission(
         repository,
@@ -621,7 +614,6 @@ export default class RepositoryService {
     const repoPermissions: RepoPermissions = {
       canReadRepo,
       canPushBranches,
-      canDeleteBranches,
       canChangeSettings
     };
 
@@ -635,7 +627,6 @@ export default class RepositoryService {
       defaultBranchId: repository?.defaultBranchId,
       canReadRepo,
       canPushBranches,
-      canDeleteBranches,
       canChangeSettings,
       branchRules,
       accountInGoodStanding,

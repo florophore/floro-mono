@@ -24,6 +24,7 @@ import DefaultBranchSetting from "./settings_boxes/DefaultBranchSetting";
 import CanChangeSettingsSetting from "./settings_boxes/CanChangeSettingsSetting";
 import CanReadSetting from "./settings_boxes/CanReadSetting";
 import CanPushBranchesSetting from "./settings_boxes/CanPushBranchesSetting";
+import { useSession } from "../../../../session/session-context";
 
 const Container = styled.div`
   height: 100%;
@@ -99,6 +100,7 @@ interface Props {
 const SettingsDisplay = (props: Props) => {
 
   const linkBase = useRepoLinkBase(props.repository);
+  const { currentUser } = useSession();
   const apiLink = useMemo(() => {
     return linkBase + "/settings/api?from=remote&plugin=" + (props?.plugin ?? "home");
   }, [linkBase, props.plugin]);
@@ -130,6 +132,20 @@ const SettingsDisplay = (props: Props) => {
     return true;
   }, [props?.repository]);
 
+  const canChangeApiSettings = useMemo(() => {
+    if (props?.repository?.repoType == "user_repo") {
+      return currentUser?.id == props?.repository?.user?.id;
+    }
+    return props?.repository?.organization?.membership?.permissions
+      ?.canModifyOrganizationDeveloperSettings ?? false;
+  }, [
+    currentUser?.id,
+    props?.repository?.user?.id,
+    props?.repository?.repoType,
+    props?.repository?.organization?.membership?.permissions
+      ?.canModifyOrganizationDeveloperSettings,
+  ]);
+
   if (!props?.repository?.repoPermissions?.canChangeSettings) {
     return (
       <InsufficientPermssionsContainer>
@@ -146,9 +162,11 @@ const SettingsDisplay = (props: Props) => {
     <Container>
       <TitleContainer>
         <Title>{"Repo Settings"}</Title>
-        <Link to={apiLink}>
-            <ApiConfigText>{'Configure API Settings'}</ApiConfigText>
-        </Link>
+        {canChangeApiSettings && (
+          <Link to={apiLink}>
+              <ApiConfigText>{'Configure API Settings'}</ApiConfigText>
+          </Link>
+        )}
       </TitleContainer>
       <DefaultBranchSetting repository={props.repository}/>
       {showChangeSettings && (

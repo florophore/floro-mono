@@ -9,7 +9,6 @@ fragment CurrentRepository on Repository {
   repoPermissions {
     canPushBranches
     canChangeSettings
-    canDeleteBranches
   }
   branchState(branchId: $branchId) {
     branchId

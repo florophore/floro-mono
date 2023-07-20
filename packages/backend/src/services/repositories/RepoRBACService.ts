@@ -19,7 +19,6 @@ import { OrganizationMember } from "@floro/database/src/entities/OrganizationMem
 export interface RepoPermissions {
   canReadRepo: boolean;
   canPushBranches: boolean;
-  canDeleteBranches: boolean;
   canChangeSettings: boolean;
 }
 
@@ -356,7 +355,6 @@ export default class RepoRBACService {
     settingName:
       | "anyoneCanRead"
       | "anyoneCanPushBranches"
-      | "anyoneCanDeleteBranches"
       | "anyoneCanChangeSettings",
       queryRunner?: QueryRunner
   ): Promise<boolean> {
@@ -392,8 +390,7 @@ export default class RepoRBACService {
       if (
         hasUserPermission &&
         repository.allowExternalUsersToPush &&
-        (settingName == "anyoneCanPushBranches" ||
-          settingName == "anyoneCanDeleteBranches")
+        (settingName == "anyoneCanPushBranches")
       ) {
         return true;
       }
@@ -457,20 +454,6 @@ export default class RepoRBACService {
         settingName
       );
 
-    if (
-      hasUserPermission &&
-      repository.allowExternalUsersToPush &&
-      settingName == "anyoneCanDeleteBranches" &&
-      membership?.membershipState != "active"
-    ) {
-      const hasPushPermission =
-        await repositoryEnabledUserSettingsContext.hasRepoUserId(
-          repository.id,
-          user.id,
-          "anyoneCanPushBranches"
-        );
-      return hasPushPermission;
-    }
     return hasUserPermission;
   }
 

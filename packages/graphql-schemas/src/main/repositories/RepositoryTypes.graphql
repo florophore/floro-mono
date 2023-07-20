@@ -37,10 +37,6 @@ type Repository {
   canPushBranchesUsers: [User]
   canPushBranchesRoles: [OrganizationRole]
 
-  anyoneCanDeleteBranches: Boolean # if org, must be org member, if user must be user, do even display for user
-  canDeleteBranchesUsers: [User]
-  canDeleteBranchesRoles: [OrganizationRole]
-
   anyoneCanChangeSettings: Boolean # if org, must be org member, if user must be user, not relevant to user repos
   canChangeSettingsUsers: [User]
   canChangeSettingsRoles: [OrganizationRole]
@@ -88,7 +84,6 @@ type ProtectedBranchRule {
 
 type RepoPermissions {
   canPushBranches: Boolean
-  canDeleteBranches: Boolean
   canChangeSettings: Boolean
 }
 

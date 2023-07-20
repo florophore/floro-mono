@@ -89,11 +89,6 @@ export class Repository extends BinaryPKBaseEntity {
   @Column("boolean")
   @IsOptional()
   @IsBoolean()
-  anyoneCanDeleteBranches!: boolean;
-
-  @Column("boolean")
-  @IsOptional()
-  @IsBoolean()
   anyoneCanChangeSettings!: boolean;
 
   @Column("uuid")
