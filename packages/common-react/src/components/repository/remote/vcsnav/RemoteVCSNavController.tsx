@@ -10,6 +10,7 @@ import RemoteVCSCreateMergeRequest from "./RemoteVCSCreateMergeRequest";
 import { RepoPage } from "../../types";
 import RemoteVCSMergeRequestsHistory from "./RemoteVCSMergeRequestsHistory";
 import RemoteVCSMergeRequest from "./RemoteVCSMergeRequest";
+import RemoteVCSSettings from "./RemoteVCSSettings";
 
 interface Props {
   repository: Repository;
@@ -22,6 +23,15 @@ interface Props {
 const RemoteVCSNavController = (props: Props) => {
   const [searchParams] = useSearchParams();
   const sha = searchParams.get('sha');
+
+  if (props.page == "settings") {
+    return (
+      <RemoteVCSSettings
+        repository={props.repository}
+        plugin={props.plugin}
+      />
+    );
+  }
 
   if (props.page == "merge-requests") {
     return (

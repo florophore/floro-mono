@@ -76,7 +76,7 @@ const Circles = {
 
 const DotsLoader = (props: DotLoaderProps) => {
     const Circle = useMemo(() => Circles[props?.size], [props?.size]);
-    const backgroundColor = useMemo(() => colorPalette[props?.color ?? 'white'], []);
+    const backgroundColor = useMemo(() => colorPalette[props?.color ?? 'white'], [props.color]);
     return (
         <Wrapper>
             <LoadingDots>

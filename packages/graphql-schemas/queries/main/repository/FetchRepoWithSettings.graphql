@@ -1,0 +1,16 @@
+query fetchRepositoryWithSettings(
+  $ownerHandle: String!
+  $repoName: String!
+) {
+  fetchRepositoryByName(ownerHandle: $ownerHandle, repoName: $repoName) {
+    ... on FetchRepositorySuccess {
+      repository {
+        ...RepoWithSettings
+      }
+    }
+    ... on FetchRepositoryError {
+      message
+      type
+    }
+  }
+}

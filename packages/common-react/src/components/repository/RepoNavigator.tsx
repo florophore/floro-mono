@@ -52,6 +52,9 @@ const RepoNavigator = (props: Props): React.ReactElement => {
       if (props.page == "history") {
         return true;
       }
+      if (props.page == "settings") {
+        return true;
+      }
       if (props.page == "merge-requests") {
         return true;
       }

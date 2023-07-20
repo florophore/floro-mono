@@ -6,6 +6,11 @@ fragment CurrentRepository on Repository {
   user {
     ...User
   }
+  repoPermissions {
+    canPushBranches
+    canChangeSettings
+    canDeleteBranches
+  }
   branchState(branchId: $branchId) {
     branchId
     name

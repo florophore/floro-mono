@@ -12,6 +12,28 @@ union CreateBranchRuleReponse =
   | CreateBranchRuleError
   | UnAuthenticatedError
 
+
+type RepoSettingAccessError {
+  type: String
+  message: String
+}
+
+type RepoSettingChangeSuccess {
+  repository: Repository
+}
+
+type RepoSettingChangeError {
+  message: String
+  type: String
+}
+
+union RepoSettingChangeResponse =
+    RepoSettingChangeSuccess
+  | RepoSettingChangeError
+  | RepoSettingAccessError
+  | UnAuthenticatedError
+
+
 type SearchUsersForSettingSuccess {
   users: [User]
 }

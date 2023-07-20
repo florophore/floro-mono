@@ -27,7 +27,6 @@ export const render = async (url: string, deps: {client: ApolloClient<any>}, con
           helmet
       }
   } catch(e) {
-    console.log("E", e);
       return {
           appHtml: '',
           appState: {},

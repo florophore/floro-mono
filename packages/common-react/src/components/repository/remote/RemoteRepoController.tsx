@@ -19,6 +19,7 @@ import ProposedMRHistoryDisplay from "./history/ProposedMRHistoryDisplay";
 import MergeRequestHistoryDisplay from "./mergerequesthistory/MergeRequestHistoryDisplay";
 import MRHistoryDisplay from "./history/MRHistoryDisplay";
 import MergeRequest from "./mergerequest/MergeRequest";
+import SettingsDisplay from "./settings/SettingsDisplay";
 
 const LoadingContainer = styled.div`
   display: flex;
@@ -103,6 +104,14 @@ const RemoteRepoController = (props: Props) => {
           plugin={props.plugin}
         />
       );
+    }
+    if (props.page == "settings") {
+      return (
+        <SettingsDisplay
+          repository={props.repository}
+          plugin={props.plugin ?? "home"}
+        />
+      )
     }
     if (props.page == "merge-requests") {
       return (

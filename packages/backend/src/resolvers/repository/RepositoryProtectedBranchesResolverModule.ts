@@ -53,6 +53,7 @@ import RepositoryEnabledUserSettingsContext from "@floro/database/src/contexts/r
 import ProtectedBranchRulesContext from "@floro/database/src/contexts/repositories/ProtectedBranchRulesContext";
 import ProtectedBranchRulesEnabledUserSettingsContext from "@floro/database/src/contexts/repositories/ProtectedBranchRulesEnabledUserSettingsContext";
 import ProtectedBranchRuleEnabledRoleSettingsContext from "@floro/database/src/contexts/repositories/ProtectedBranchRulesEnabledRoleSettingsContext";
+import WriteAccessIdsLoader from "../hooks/loaders/Repository/WriteAccessIdsLoader";
 
 @injectable()
 export default class RepositoryProtectedBranchesResolverModule extends BaseResolverModule {
@@ -80,6 +81,7 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
   protected commitStatePluginVersionsLoader!: CommitStatePluginVersionsLoader;
   protected commitStateBinaryRefsLoader!: CommitStateBinaryRefsLoader;
   protected commitInfoRepositoryLoader!: CommitInfoRepositoryLoader;
+  protected writeAccessIdsLoader!: WriteAccessIdsLoader;
 
   protected openMergeRequestsLoader!: OpenMergeRequestsLoader;
   protected closedMergeRequestsLoader!: ClosedMergeRequestsLoader;
@@ -116,7 +118,9 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
     @inject(OpenMergeRequestsLoader)
     openMergeRequestsLoader: OpenMergeRequestsLoader,
     @inject(ClosedMergeRequestsLoader)
-    closedMergeRequestsLoader: ClosedMergeRequestsLoader
+    closedMergeRequestsLoader: ClosedMergeRequestsLoader,
+    @inject(WriteAccessIdsLoader)
+    writeAccessIdsLoader: WriteAccessIdsLoader
   ) {
     super();
     this.contextFactory = contextFactory;
@@ -141,6 +145,7 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
     this.commitStatePluginVersionsLoader = commitStatePluginVersionsLoader;
     this.commitStateBinaryRefsLoader = commitStateBinaryRefsLoader;
     this.commitInfoRepositoryLoader = commitInfoRepositoryLoader;
+    this.writeAccessIdsLoader = writeAccessIdsLoader;
 
     this.openMergeRequestsLoader = openMergeRequestsLoader;
     this.closedMergeRequestsLoader = closedMergeRequestsLoader;
@@ -185,8 +190,10 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
     ),
 
     withApprovalCanMergeUsers: runWithHooks(
-      () => [],
-      async (protectedBranchRule: main.ProtectedBranchRule) => {
+      () => [
+        this.writeAccessIdsLoader
+      ],
+      async (protectedBranchRule: main.ProtectedBranchRule, _, { cacheKey}) => {
         if (!protectedBranchRule?.id) {
           return null;
         }
@@ -199,11 +206,18 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
             protectedBranchRule.id,
             "anyoneWithApprovalCanMerge"
           );
-        return enabledUsersForSetting?.map((r) => r.user as User);
+        const cachedWriteAccessIds = this.requestCache.getRepoWriteAccessIds(
+          cacheKey,
+          protectedBranchRule?.repositoryId as string
+        ) ?? new Set<string>();
+        return enabledUsersForSetting
+          ?.filter((s) => cachedWriteAccessIds.has(s.userId))
+          ?.map((s) => s.user as User);
       }
     ),
     withApprovalCanMergeRoles: runWithHooks(
-      () => [],
+      () => [
+      ],
       async (protectedBranchRule: main.ProtectedBranchRule) => {
         if (!protectedBranchRule?.id) {
           return null;
@@ -222,8 +236,10 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
     ),
 
     canApproveMergeRequestsUsers: runWithHooks(
-      () => [],
-      async (protectedBranchRule: main.ProtectedBranchRule) => {
+      () => [
+        this.writeAccessIdsLoader
+      ],
+      async (protectedBranchRule: main.ProtectedBranchRule, _, { cacheKey}) => {
         if (!protectedBranchRule?.id) {
           return null;
         }
@@ -236,7 +252,14 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
             protectedBranchRule.id,
             "anyoneCanApproveMergeRequests"
           );
-        return enabledUsersForSetting?.map((r) => r.user as User);
+
+        const cachedWriteAccessIds = this.requestCache.getRepoWriteAccessIds(
+          cacheKey,
+          protectedBranchRule?.repositoryId as string
+        ) ?? new Set<string>();
+        return enabledUsersForSetting
+          ?.filter((s) => cachedWriteAccessIds.has(s.userId))
+          ?.map((s) => s.user as User);
       }
     ),
     canApproveMergeRequestsRoles: runWithHooks(
@@ -259,8 +282,10 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
     ),
 
     canRevertUsers: runWithHooks(
-      () => [],
-      async (protectedBranchRule: main.ProtectedBranchRule) => {
+      () => [
+        this.writeAccessIdsLoader
+      ],
+      async (protectedBranchRule: main.ProtectedBranchRule, _, { cacheKey}) => {
         if (!protectedBranchRule?.id) {
           return null;
         }
@@ -273,7 +298,13 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
             protectedBranchRule.id,
             "anyoneCanRevert"
           );
-        return enabledUsersForSetting?.map((r) => r.user as User);
+        const cachedWriteAccessIds = this.requestCache.getRepoWriteAccessIds(
+          cacheKey,
+          protectedBranchRule?.repositoryId as string
+        ) ?? new Set<string>();
+        return enabledUsersForSetting
+          ?.filter((s) => cachedWriteAccessIds.has(s.userId))
+          ?.map((s) => s.user as User);
       }
     ),
     canRevertRoles: runWithHooks(
@@ -296,8 +327,10 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
     ),
 
     canAutofixUsers: runWithHooks(
-      () => [],
-      async (protectedBranchRule: main.ProtectedBranchRule) => {
+      () => [
+        this.writeAccessIdsLoader
+      ],
+      async (protectedBranchRule: main.ProtectedBranchRule, _, { cacheKey}) => {
         if (!protectedBranchRule?.id) {
           return null;
         }
@@ -310,7 +343,13 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
             protectedBranchRule.id,
             "anyoneCanAutofix"
           );
-        return enabledUsersForSetting?.map((r) => r.user as User);
+        const cachedWriteAccessIds = this.requestCache.getRepoWriteAccessIds(
+          cacheKey,
+          protectedBranchRule?.repositoryId as string
+        ) ?? new Set<string>();
+        return enabledUsersForSetting
+          ?.filter((s) => cachedWriteAccessIds.has(s.userId))
+          ?.map((s) => s.user as User);
       }
     ),
     canAutofixRoles: runWithHooks(

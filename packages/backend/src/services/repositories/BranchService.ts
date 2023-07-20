@@ -331,7 +331,6 @@ export default class BranchService {
         branch: pushedBranch,
       };
     } catch (e: any) {
-      console.log("E", e);
       if (!queryRunner.isReleased) {
         await queryRunner.rollbackTransaction();
       }

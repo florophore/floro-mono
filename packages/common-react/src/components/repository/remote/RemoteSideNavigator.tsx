@@ -124,9 +124,6 @@ const RepoSideNavigator = (props: Props): React.ReactElement => {
   }, [props.plugin, theme.name]);
 
   const commitState = useMainCommitState(props.page, props.repository);
-
-
-  console.log("viewMode", viewMode, "compareFrom", compareFrom)
   const pluginVersionList = useMemo(() => {
     const pluginList: Array<PluginVersion> = [];
     if (viewMode == "compare" && compareFrom == "before") {

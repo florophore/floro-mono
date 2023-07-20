@@ -87,6 +87,10 @@ const RemoteHeaderNav = (props: Props) => {
 
   const { reviewPage } = useMergeRequestReviewPage();
 
+  if (props.page == "settings") {
+    return null;
+  }
+
   if (props.page == "history") {
     return (
       <RemoteHistoryHeader

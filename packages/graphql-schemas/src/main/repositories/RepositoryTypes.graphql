@@ -22,6 +22,7 @@ type Repository {
   closedMergeRequests(mode: String, id: ID, closedQuery: String): MergeRequestPaginatedResult
   closedMergeRequestsCount: Int
   mergeRequest(id: ID): MergeRequest
+  repoPermissions: RepoPermissions
 
   #repo settings
   defaultBranchId: String
@@ -45,14 +46,9 @@ type Repository {
   canChangeSettingsRoles: [OrganizationRole]
 
   canTurnOffAnyoneCanChangeSettings: Boolean
+  canTurnOffAnyoneCanRead: Boolean
 
   protectedBranchRules: [ProtectedBranchRule]
-
-  searchUsersForRepo(
-    excludedUserIds: [String]
-    query: String
-    restrictToOrg: Boolean
-  ): SearchUsersForSettingResponse
 }
 
 type ProtectedBranchRule {
@@ -88,6 +84,12 @@ type ProtectedBranchRule {
   canAutofixUsers: [User]
   canAutofixRoles: [OrganizationRole]
 
+}
+
+type RepoPermissions {
+  canPushBranches: Boolean
+  canDeleteBranches: Boolean
+  canChangeSettings: Boolean
 }
 
 type RepoBranch {
@@ -199,11 +201,6 @@ type CreateUserRepositoryError {
 type RepoAccessError {
     type: String
     message: String
-}
-
-type RepoSettingAccessError {
-  type: String
-  message: String
 }
 
 union CreateUserRepositoryResponse =

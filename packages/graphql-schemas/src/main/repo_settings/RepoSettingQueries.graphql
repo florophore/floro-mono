@@ -1,6 +1,45 @@
+extend type Query {
+  searchUsersForRepoReadAccess(
+    repositoryId: ID!
+    query: String,
+    excludedUserIds: [String]
+  ): SearchUsersForSettingResponse
+
+  searchUsersForRepoSettingsAccess(
+    repositoryId: ID!
+    query: String,
+    excludedUserIds: [String]
+  ): SearchUsersForSettingResponse
+
+  searchUsersForRepoPushAccess(
+    repositoryId: ID!
+    query: String,
+    excludedUserIds: [String]
+  ): SearchUsersForSettingResponse
+
+  searchUsersForRepoForProtectedBranchAccess(
+    repositoryId: ID!
+    query: String,
+    excludedUserIds: [String]
+  ): SearchUsersForSettingResponse
+}
+
 extend type Mutation {
   createBranchRule(
     repositoryId: ID!
     branchId: String!
   ): CreateBranchRuleReponse
+
+  updateAnyoneCanRead(repositoryId: ID!, anyoneCanRead: Boolean!): RepoSettingChangeResponse
+  updateAnyoneCanReadUsers(repositoryId: ID!, userIds: [ID]!): RepoSettingChangeResponse
+  updateAnyoneCanReadRoles(repositoryId: ID!, roleIds: [ID]!): RepoSettingChangeResponse
+
+  updateAnyoneCanChangeSettings(repositoryId: ID!, anyoneCanChangeSettings: Boolean!): RepoSettingChangeResponse
+  updateAnyoneCanChangeSettingsUsers(repositoryId: ID!, userIds: [ID]!): RepoSettingChangeResponse
+  updateAnyoneCanChangeSettingsRoles(repositoryId: ID!, roleIds: [ID]!): RepoSettingChangeResponse
+
+  updateAnyoneCanPushBranches(repositoryId: ID!, anyoneCanPushBranches: Boolean!): RepoSettingChangeResponse
+  updateAnyoneCanPushBranchesUsers(repositoryId: ID!, userIds: [ID]!): RepoSettingChangeResponse
+  updateAnyoneCanPushBranchesRoles(repositoryId: ID!, roleIds: [ID]!): RepoSettingChangeResponse
+  updateAllowExternalUsersToPush(repositoryId: ID!, allowExternalUsersToPush: Boolean!): RepoSettingChangeResponse
 }

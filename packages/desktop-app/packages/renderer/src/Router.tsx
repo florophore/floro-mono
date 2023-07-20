@@ -18,6 +18,7 @@ import RepoMergeRequestPage from './repository/RepoMergeRequestPage';
 import OrganizationMembersPage from './member_management/OrganizationMembersPage';
 import OrganizationInvitationsPage from './member_management/OrganizationInvitationsPage';
 import OrganizationRolesPage from './member_management/OrganizationRolesPage';
+import RepoHomeSettingsPage from './repository/RepoHomeSettingsPage';
 
 const Router = (): React.ReactElement => {
     const location = useLocation();
@@ -39,7 +40,7 @@ const Router = (): React.ReactElement => {
           <Route path="/org/@/:handle/invitations" element={<OrganizationInvitationsPage/>} />
           <Route path="/org/@/:handle/roles" element={<OrganizationRolesPage/>} />
           <Route path="/repo/@/:ownerHandle/:repoName/history" element={<RepoHistoryPage page={'history'}/>} />
-          <Route path="/repo/@/:ownerHandle/:repoName/settings" element={<RepoHomePage page={'settings'}/>} />
+          <Route path="/repo/@/:ownerHandle/:repoName/settings" element={<RepoHomeSettingsPage/>} />
           <Route path="/repo/@/:ownerHandle/:repoName/settings/branchrules/:branchRuleId" element={<RepoHomePage page={'branch-rules'}/>} />
           <Route path="/repo/@/:ownerHandle/:repoName/mergerequests/create/:branchId" element={<RepoCreateMergeRequestPage/>} />
           <Route path="/repo/@/:ownerHandle/:repoName/mergerequests/:mergeRequestId/review" element={<RepoMergeRequestPage/>} />

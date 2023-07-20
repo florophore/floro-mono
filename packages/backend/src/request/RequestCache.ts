@@ -775,4 +775,21 @@ export default class RequestCache {
     const cache = this.getCache(cacheKey);
     return cache[`merge-request-permissions:${mergeRequestId}`];
   }
+
+  public setRepoWriteAccessIds(
+    cacheKey: string,
+    repositoryId: string,
+    userWriteAccessIds: Set<string>
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`repo-write-access-ids:${repositoryId}`] = userWriteAccessIds;
+  }
+
+  public getRepoWriteAccessIds(
+    cacheKey: string,
+    repositoryId: string,
+  ): Set<string> {
+    const cache = this.getCache(cacheKey);
+    return cache[`repo-write-access-ids:${repositoryId}`];
+  }
 }

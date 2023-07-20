@@ -10,7 +10,13 @@ import RedHexagonWarningLight from "@floro/common-assets/assets/images/icons/red
 import RedHexagonWarningDark from "@floro/common-assets/assets/images/icons/red_hexagon_warning.dark.svg";
 import { Repository } from "@floro/graphql-schemas/build/generated/main-client-graphql";
 import { ApiResponse } from "floro/dist/src/repo";
-import { Organization, OrganizationInvitation, useCancelOrganizationInvitationMutation, useRejectOrganizationInvitationMutation, useUpdateOrganizationInvitationMutation } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import {
+  Organization,
+  OrganizationInvitation,
+  useCancelOrganizationInvitationMutation,
+  useRejectOrganizationInvitationMutation,
+  useUpdateOrganizationInvitationMutation,
+} from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import RootLongModal from "../../RootLongModal";
 import UserProfilePhoto from "@floro/storybook/stories/common-components/UserProfilePhoto";
 import Checkbox from "@floro/storybook/stories/design-system/Checkbox";
@@ -69,20 +75,20 @@ const LabelText = styled.span`
   font-size: 1.4rem;
   transition: 500ms color;
   user-select: none;
-  color: ${props => props.theme.colors.titleText};
+  color: ${(props) => props.theme.colors.titleText};
 `;
 
 const UserInfo = styled.div`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 `;
 
 const UserNameContainers = styled.div`
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin-left: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 16px;
 `;
 
 const UserTitle = styled.h4`
@@ -103,8 +109,6 @@ const HandleSubTitle = styled.p`
   font-size: 1.2rem;
 `;
 
-
-
 const BottomContentContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -117,14 +121,13 @@ const upcaseFirst = (str: string) => {
   return (str?.[0]?.toUpperCase() ?? "") + rest;
 };
 
-
 export interface Props {
   onDismiss: () => void;
   show?: boolean;
-  invitation: OrganizationInvitation|null;
+  invitation: OrganizationInvitation | null;
   organization: Organization;
-  currentInvitationId: string|null;
-  currentInvitationQuery: string|null;
+  currentInvitationId: string | null;
+  currentInvitationQuery: string | null;
 }
 
 const EditInvitationRolesModal = (props: Props) => {
@@ -136,11 +139,17 @@ const EditInvitationRolesModal = (props: Props) => {
     );
   }, []);
   const firstName = useMemo(
-    () => upcaseFirst(props.invitation?.user?.firstName ?? props?.invitation?.firstName ?? ""),
+    () =>
+      upcaseFirst(
+        props.invitation?.user?.firstName ?? props?.invitation?.firstName ?? ""
+      ),
     [props.invitation?.user?.firstName, props?.invitation?.firstName]
   );
   const lastName = useMemo(
-    () => upcaseFirst(props.invitation?.user?.lastName ?? props?.invitation?.lastName ?? ""),
+    () =>
+      upcaseFirst(
+        props.invitation?.user?.lastName ?? props?.invitation?.lastName ?? ""
+      ),
     [props?.invitation?.user?.lastName, props?.invitation?.lastName]
   );
 
@@ -149,9 +158,11 @@ const EditInvitationRolesModal = (props: Props) => {
   }, [firstName, lastName]);
 
   const usernameDisplay = useMemo(() => {
-    if (!props.invitation?.user) {{
+    if (!props.invitation?.user) {
+      {
         return props.invitation?.email ?? "";
-    }}
+      }
+    }
     return "@" + props.invitation.user?.username;
   }, [props.invitation?.user?.username, props.invitation?.email]);
   const [assignedRoles, setAssignedRoles] = useState<Set<string>>(new Set([]));
@@ -162,9 +173,9 @@ const EditInvitationRolesModal = (props: Props) => {
         new Set(props?.invitation?.roles?.map((v) => v?.id as string) ?? [])
       );
     }
-
-  }, [props?.invitation?.roles, props.show])
-  const [updateInvite, updateInviteResult] = useUpdateOrganizationInvitationMutation();
+  }, [props?.invitation?.roles, props.show]);
+  const [updateInvite, updateInviteResult] =
+    useUpdateOrganizationInvitationMutation();
   const onUpdate = useCallback(() => {
     if (!props.organization?.id || !props?.invitation?.id) {
       return;
@@ -208,59 +219,55 @@ const EditInvitationRolesModal = (props: Props) => {
       <ContentContainer>
         <TopContentContainer>
           <UserInfo>
-          <UserProfilePhoto
-            user={
-              props?.invitation?.user ?? {
-                firstName: props?.invitation?.firstName,
-                lastName: props?.invitation?.lastName,
-              } ??
-              null
-            }
-            size={72}
-            offlinePhoto={null}
-          />
-          <UserNameContainers>
-            <UserTitle>{userFullname}</UserTitle>
-            <HandleSubTitle>{usernameDisplay}</HandleSubTitle>
-          </UserNameContainers>
+            <UserProfilePhoto
+              user={
+                props?.invitation?.user ?? {
+                  firstName: props?.invitation?.firstName,
+                  lastName: props?.invitation?.lastName,
+                } ??
+                null
+              }
+              size={72}
+              offlinePhoto={null}
+            />
+            <UserNameContainers>
+              <UserTitle>{userFullname}</UserTitle>
+              <HandleSubTitle>{usernameDisplay}</HandleSubTitle>
+            </UserNameContainers>
           </UserInfo>
 
-              <div
-                style={{
-                  marginTop: 24,
-                  display: "flex",
-                  alignItems: "flex-start",
-                  width: 468,
-                  flexDirection: "column",
-                }}
-              >
-                <LabelText>{"Assign Roles"}</LabelText>
-                <div style={{ marginTop: 20 }}>
-                  {props?.organization?.roles?.map((role, index) => {
-                    return (
-                      <RoleRow key={index}>
-                        <Checkbox
-                          isChecked={assignedRoles.has(role?.id as string)}
-                          onChange={() => {
-                            if (assignedRoles.has(role?.id as string)) {
-                              assignedRoles.delete(role?.id as string);
-                              setAssignedRoles(
-                                new Set(Array.from(assignedRoles))
-                              );
-                            } else {
-                              assignedRoles.add(role?.id as string);
-                              setAssignedRoles(
-                                new Set(Array.from(assignedRoles))
-                              );
-                            }
-                          }}
-                        />
-                        <RoleText>{role?.name}</RoleText>
-                      </RoleRow>
-                    );
-                  })}
-                </div>
-              </div>
+          <div
+            style={{
+              marginTop: 24,
+              display: "flex",
+              alignItems: "flex-start",
+              width: 468,
+              flexDirection: "column",
+            }}
+          >
+            <LabelText>{"Assign Roles"}</LabelText>
+            <div style={{ marginTop: 20 }}>
+              {props?.organization?.roles?.map((role, index) => {
+                return (
+                  <RoleRow key={index}>
+                    <Checkbox
+                      isChecked={assignedRoles.has(role?.id as string)}
+                      onChange={() => {
+                        if (assignedRoles.has(role?.id as string)) {
+                          assignedRoles.delete(role?.id as string);
+                          setAssignedRoles(new Set(Array.from(assignedRoles)));
+                        } else {
+                          assignedRoles.add(role?.id as string);
+                          setAssignedRoles(new Set(Array.from(assignedRoles)));
+                        }
+                      }}
+                    />
+                    <RoleText>{role?.name}</RoleText>
+                  </RoleRow>
+                );
+              })}
+            </div>
+          </div>
         </TopContentContainer>
         <BottomContentContainer>
           <Button

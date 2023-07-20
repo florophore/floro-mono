@@ -1,4 +1,4 @@
-import { injectable, inject } from "inversify";
+import { injectable, inject, multiInject } from "inversify";
 
 import { QueryRunner } from "typeorm";
 import DatabaseConnection from "@floro/database/src/connection/DatabaseConnection";
@@ -20,24 +20,25 @@ import RepositoriesContext from "@floro/database/src/contexts/repositories/Repos
 import BranchService from "./BranchService";
 import RepositoryService from "./RepositoryService";
 import OrganizationRolesContext from "@floro/database/src/contexts/organizations/OrganizationRolesContext";
+import GrantRepoAccessHandler from "../events/GrantRepoAccessHandler";
 
 @injectable()
 export default class RepoSettingsService {
   private databaseConnection!: DatabaseConnection;
   private contextFactory!: ContextFactory;
-  private branchService!: BranchService;
   private repositoryService!: RepositoryService;
+  private grantAccessHandlers!: GrantRepoAccessHandler[];
 
   constructor(
     @inject(DatabaseConnection) databaseConnection: DatabaseConnection,
     @inject(ContextFactory) contextFactory: ContextFactory,
-    @inject(BranchService) branchService: BranchService,
-    @inject(RepositoryService) repositoryService: RepositoryService
+    @inject(RepositoryService) repositoryService: RepositoryService,
+    @multiInject("GrantRepoAccessHandler") grantAccessHandlers: GrantRepoAccessHandler[]
   ) {
     this.databaseConnection = databaseConnection;
     this.contextFactory = contextFactory;
-    this.branchService = branchService;
     this.repositoryService = repositoryService;
+    this.grantAccessHandlers = grantAccessHandlers;
   }
 
   public async getWriteAccessUserIds(
@@ -47,7 +48,7 @@ export default class RepoSettingsService {
       return [repository.createdByUserId];
     }
     if (!repository.isPrivate && repository.repoType == "user_repo") {
-      if (repository.allowExternalUsersToPush) {
+      if (!repository.allowExternalUsersToPush) {
         return [repository.createdByUserId];
       }
 
@@ -218,10 +219,10 @@ export default class RepoSettingsService {
   }
 
   // SEARCH QUERIES
-
   public async searchUsersForRepoReadAccess(
     repository: Repository,
-    query: string
+    query: string,
+    excludedUserIds: string[]
   ) {
     if (repository.repoType == "user_repo" || !repository.isPrivate) {
       return [];
@@ -230,17 +231,6 @@ export default class RepoSettingsService {
       return [];
     }
     // PUBLIC ORG CASE ONLY MATTERS
-
-    const repositoryEnabledUserSettingsContext =
-      await this.contextFactory.createContext(
-        RepositoryEnabledUserSettingsContext
-      );
-    const enabledOrgUsers =
-      await repositoryEnabledUserSettingsContext.getAllForRepositorySetting(
-        repository.id,
-        "anyoneCanRead"
-      );
-
     const organizationMembersContext = await this.contextFactory.createContext(
       OrganizationMembersContext
     );
@@ -251,18 +241,18 @@ export default class RepoSettingsService {
     const activeUserIds = members
       ?.filter?.((m) => m.membershipState == "active")
       ?.map((m) => m.userId);
-    const enabledOrgUserIds = enabledOrgUsers.map((eou) => eou.userId);
     const usersContext = await this.contextFactory.createContext(UsersContext);
     return await usersContext.searchUsersIncludingIdsAndExcludingIds(
       query,
       activeUserIds,
-      enabledOrgUserIds
+      excludedUserIds
     );
   }
 
   public async searchUsersForRepoCanAdjustRepoSettings(
     repository: Repository,
-    query: string
+    query: string,
+    excludedUserIds: string[]
   ) {
     if (repository.repoType == "user_repo") {
       return [];
@@ -277,90 +267,78 @@ export default class RepoSettingsService {
     const activeUserIds = members
       ?.filter?.((m) => m.membershipState == "active")
       ?.map((m) => m.userId);
-
-    const repositoryEnabledUserSettingsContext =
-      await this.contextFactory.createContext(
-        RepositoryEnabledUserSettingsContext
-      );
-    const enabledOrgUsers =
-      await repositoryEnabledUserSettingsContext.getAllForRepositorySetting(
-        repository.id,
-        "anyoneCanChangeSettings"
-      );
-    const enabledOrgUserIds = enabledOrgUsers.map((eou) => eou.userId);
-
     const usersContext = await this.contextFactory.createContext(UsersContext);
     return await usersContext.searchUsersIncludingIdsAndExcludingIds(
       query,
       activeUserIds,
-      enabledOrgUserIds
+      excludedUserIds
     );
   }
 
   public async searchUsersForRepoPushAccess(
     repository: Repository,
-    query: string
+    query: string,
+    excludedUserIds: string[]
   ) {
-    if (repository.repoType == "user_repo") {
-      if (repository.isPrivate || !repository.allowExternalUsersToPush) {
+    if (repository.repoType == "user_repo" && repository.isPrivate) {
+      return [];
+    }
+    if (repository.repoType == "user_repo" || (!repository.isPrivate && repository?.repoType == "org_repo" && repository.allowExternalUsersToPush)) {
+      if (repository.repoType == "user_repo" && !repository.allowExternalUsersToPush) {
         return [];
+      }
+
+      if (repository.repoType == "org_repo" && repository.anyoneCanPushBranches) {
+        const organizationMembersContext =
+          await this.contextFactory.createContext(OrganizationMembersContext);
+        const members =
+          await organizationMembersContext.getAllMembersForOrganization(
+            repository.organizationId
+          );
+        const activeUserIds = members
+          ?.filter?.((m) => m.membershipState == "active")
+          ?.map((m) => m.userId);
+
+        const usersContext = await this.contextFactory.createContext(
+          UsersContext
+        );
+        return await usersContext.searchUsersExcludingIds(
+          query,
+          this.uniqueDefinedList([...activeUserIds, ...excludedUserIds])
+        );
       }
       const usersContext = await this.contextFactory.createContext(
         UsersContext
       );
-      const writeAcessUserIds = await this.getWriteAccessUserIds(repository);
       return await usersContext.searchUsersExcludingIds(
         query,
-        writeAcessUserIds
+        this.uniqueDefinedList([...excludedUserIds, repository.userId])
       );
     }
-    if (repository.isPrivate || !repository.allowExternalUsersToPush) {
-      const organizationMembersContext =
-        await this.contextFactory.createContext(OrganizationMembersContext);
-      const members =
-        await organizationMembersContext.getAllMembersForOrganization(
-          repository.organizationId
-        );
-      const activeUserIds = members
-        ?.filter?.((m) => m.membershipState == "active")
-        ?.map((m) => m.userId);
+    const organizationMembersContext =
+      await this.contextFactory.createContext(OrganizationMembersContext);
+    const members =
+      await organizationMembersContext.getAllMembersForOrganization(
+        repository.organizationId
+      );
+    const activeUserIds = members
+      ?.filter?.((m) => m.membershipState == "active")
+      ?.map((m) => m.userId);
 
-      const repositoryEnabledUserSettingsContext =
-        await this.contextFactory.createContext(
-          RepositoryEnabledUserSettingsContext
-        );
-      const enabledOrgUsers =
-        await repositoryEnabledUserSettingsContext.getAllForRepositorySetting(
-          repository.id,
-          "anyoneCanPushBranches"
-        );
-      const enabledOrgUserIds = enabledOrgUsers.map((eou) => eou.userId);
-      const usersContext = await this.contextFactory.createContext(
-        UsersContext
-      );
-      return await usersContext.searchUsersIncludingIdsAndExcludingIds(
-        query,
-        activeUserIds,
-        enabledOrgUserIds
-      );
-    }
-    const repositoryEnabledUserSettingsContext =
-      await this.contextFactory.createContext(
-        RepositoryEnabledUserSettingsContext
-      );
-    const enabledOrgUsers =
-      await repositoryEnabledUserSettingsContext.getAllForRepositorySetting(
-        repository.id,
-        "anyoneCanPushBranches"
-      );
-    const enabledOrgUserIds = enabledOrgUsers.map((eou) => eou.userId);
-    const usersContext = await this.contextFactory.createContext(UsersContext);
-    return await usersContext.searchUsersExcludingIds(query, enabledOrgUserIds);
+    const usersContext = await this.contextFactory.createContext(
+      UsersContext
+    );
+    return await usersContext.searchUsersIncludingIdsAndExcludingIds(
+      query,
+      activeUserIds,
+      excludedUserIds
+    );
   }
 
   public async searchUsersForRepoDeleteAccess(
     repository: Repository,
-    query: string
+    query: string,
+    excludedUserIds: string[]
   ) {
     if (repository.repoType == "user_repo") {
       if (repository.isPrivate || !repository.allowExternalUsersToPush) {
@@ -370,42 +348,26 @@ export default class RepoSettingsService {
         UsersContext
       );
       const writeAcessUserIds = await this.getWriteAccessUserIds(repository);
-      return await usersContext.searchUsersExcludingIds(
+      return await usersContext.searchUsersIncludingIdsAndExcludingIds(
         query,
-        writeAcessUserIds
+        writeAcessUserIds,
+        excludedUserIds
       );
     }
 
     const writeAccessUserIds = await this.getWriteAccessUserIds(repository);
-    const repositoryEnabledUserSettingsContext =
-      await this.contextFactory.createContext(
-        RepositoryEnabledUserSettingsContext
-      );
-    const enabledOrgUsers =
-      await repositoryEnabledUserSettingsContext.getAllForRepositorySetting(
-        repository.id,
-        "anyoneCanDeleteBranches"
-      );
-    const enabledOrgUserIds = enabledOrgUsers.map((eou) => eou.userId);
     const usersContext = await this.contextFactory.createContext(UsersContext);
     return await usersContext.searchUsersIncludingIdsAndExcludingIds(
       query,
       writeAccessUserIds,
-      enabledOrgUserIds
+      excludedUserIds
     );
   }
 
   public async searchUsersForRepoProtectedBranchSettingAccess(
     repository: Repository,
-    baseBranchId: string,
-    settingName:
-      | "anyoneCanCreateMergeRequests"
-      | "anyoneWithApprovalCanMerge"
-      | "anyoneCanMergeMergeRequests"
-      | "anyoneCanApproveMergeRequests"
-      | "anyoneCanRevert"
-      | "anyoneCanAutofix",
-    query: string
+    query: string,
+    excludedUserIds: string[]
   ) {
     if (repository.repoType == "user_repo") {
       if (repository.isPrivate || !repository.allowExternalUsersToPush) {
@@ -415,28 +377,19 @@ export default class RepoSettingsService {
         UsersContext
       );
       const writeAcessUserIds = await this.getWriteAccessUserIds(repository);
-      return await usersContext.searchUsersExcludingIds(
+      return await usersContext.searchUsersIncludingIdsAndExcludingIds(
         query,
-        writeAcessUserIds
+        writeAcessUserIds,
+        excludedUserIds
       );
     }
 
     const writeAccessUserIds = await this.getWriteAccessUserIds(repository);
-    const protectedBranchRuleEnabledUserSettingsContext =
-      await this.contextFactory.createContext(
-        ProtectedBranchRulesEnabledUserSettingsContext
-      );
-    const enabledOrgUsers =
-      await protectedBranchRuleEnabledUserSettingsContext.getAllForBranchRuleSetting(
-        baseBranchId,
-        settingName
-      );
-    const enableUserIds = enabledOrgUsers.map((eou) => eou.userId);
     const usersContext = await this.contextFactory.createContext(UsersContext);
     return await usersContext.searchUsersIncludingIdsAndExcludingIds(
       query,
       writeAccessUserIds,
-      enableUserIds
+      excludedUserIds
     );
   }
 
@@ -599,7 +552,7 @@ export default class RepoSettingsService {
       );
 
       const organizationRolesContext = await this.contextFactory.createContext(
-        OrganizationMemberRolesContext,
+        OrganizationRolesContext,
         queryRunner
       );
       const organizationMembersContext =
@@ -670,12 +623,27 @@ export default class RepoSettingsService {
             });
           }
           if (repository.repoType == "org_repo") {
-            if (!repository.isPrivate && repository.allowExternalUsersToPush) {
-              await repositoryEnabledUserSettingsContext.create({
-                settingName,
-                repositoryId: repository.id,
-                userId,
-              });
+            if (!repository.isPrivate) {
+              if (repository.allowExternalUsersToPush) {
+                await repositoryEnabledUserSettingsContext.create({
+                  settingName,
+                  repositoryId: repository.id,
+                  userId,
+                });
+              } else {
+                const membership =
+                  await organizationMembersContext.getByOrgIdAndUserId(
+                    repository.organizationId,
+                    userId
+                  );
+                if (membership?.membershipState == "active") {
+                  await repositoryEnabledUserSettingsContext.create({
+                    settingName,
+                    repositoryId: repository.id,
+                    userId,
+                  });
+                }
+              }
             }
             if (repository.isPrivate) {
               const membership =
@@ -789,7 +757,7 @@ export default class RepoSettingsService {
       );
 
       const organizationRolesContext = await this.contextFactory.createContext(
-        OrganizationMemberRolesContext,
+        OrganizationRolesContext,
         queryRunner
       );
 
@@ -1007,8 +975,7 @@ export default class RepoSettingsService {
     anyoneCanRead: boolean,
     user: User
   ) {
-    // check that user has role id, user level, is admin
-    if (repository.isPrivate || repository.repoType != "org_repo") {
+    if (!repository.isPrivate || repository.repoType != "org_repo") {
       return null;
     }
 
@@ -1066,7 +1033,7 @@ export default class RepoSettingsService {
     userIds: string[],
     user: User
   ) {
-    if (repository.isPrivate || repository.repoType != "org_repo") {
+    if (!repository.isPrivate || repository.repoType != "org_repo") {
       return null;
     }
     if (!repository.anyoneCanRead) {
@@ -1105,7 +1072,6 @@ export default class RepoSettingsService {
     const addedIds = this.getAddedIds(enabledUserIds, userIds)?.filter(
       (v) => v != user.id
     );
-    // DIFF IDS HERE
 
     // check that user has role id, user level, is admin
     const didUpdate = await this.updateRepoAnyoneSettingAccess(
@@ -1115,7 +1081,18 @@ export default class RepoSettingsService {
       roleIds
     );
     if (didUpdate) {
-      // SEND NOTIFICATION
+      const usersContext =
+        await this.contextFactory.createContext(
+          UsersContext
+        );
+      for (const addedId of addedIds) {
+        const userGrantedAccessTo = await usersContext.getById(addedId);
+        if (userGrantedAccessTo) {
+          for (const handler of this.grantAccessHandlers) {
+            await handler.onGrantReadAccess(repository, user, userGrantedAccessTo);
+          }
+        }
+      }
       return repository;
     }
     return null;
@@ -1150,7 +1127,7 @@ export default class RepoSettingsService {
       await this.contextFactory.createContext(
         RepositoryEnabledUserSettingsContext
       );
-    const enabledUsers = await repositoryEnabledUserSettingsContext.getAllForRepositorySetting(repository.id, "anyoneCanRead");
+    const enabledUsers = await repositoryEnabledUserSettingsContext.getAllForRepositorySetting(repository.id, "anyoneCanPushBranches");
     const enabledUserIds = enabledUsers.map(eu => eu.userId);
     const addedIds = this.getAddedIds(enabledUserIds, userIds)?.filter(
       (v) => v != user.id
@@ -1162,7 +1139,18 @@ export default class RepoSettingsService {
       roleIds
     );
     if (didUpdate) {
-      // SEND NOTIFICATION
+      const usersContext =
+        await this.contextFactory.createContext(
+          UsersContext
+        );
+      for (const addedId of addedIds) {
+        const userGrantedAccessTo = await usersContext.getById(addedId);
+        if (userGrantedAccessTo) {
+          for (const handler of this.grantAccessHandlers) {
+            await handler.onGrantWriteAccess(repository, user, userGrantedAccessTo);
+          }
+        }
+      }
       return repository;
     }
     return null;

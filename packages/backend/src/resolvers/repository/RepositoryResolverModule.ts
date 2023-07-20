@@ -51,6 +51,9 @@ import OrganizationMemberRolesContext from "@floro/database/src/contexts/organiz
 import RepositoryEnabledRoleSettingsContext from "@floro/database/src/contexts/repositories/RepositoryEnabledRoleSettingsContext";
 import RepositoryEnabledUserSettingsContext from "@floro/database/src/contexts/repositories/RepositoryEnabledUserSettingsContext";
 import ProtectedBranchRulesContext from "@floro/database/src/contexts/repositories/ProtectedBranchRulesContext";
+import WriteAccessIdsLoader from "../hooks/loaders/Repository/WriteAccessIdsLoader";
+import RootRepositoryRemoteSettingsLoader from "../hooks/loaders/Root/RepositoryID/RootRepositoryRemoteSettingsLoader";
+import RepoSettingsService from "../../services/repositories/RepoSettingsService";
 
 const PAGINATION_LIMIT = 10;
 
@@ -66,6 +69,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
     "CommitInfo",
   ];
   protected repositoryService!: RepositoryService;
+  protected repoSettingsService!: RepoSettingsService;
   protected branchService!: BranchService;
   protected mergeRequestService!: MergeRequestService;
   protected contextFactory!: ContextFactory;
@@ -80,10 +84,12 @@ export default class RepositoryResolverModule extends BaseResolverModule {
   protected repositoryCommitHistoryLoader!: RepositoryCommitHistoryLoader;
   protected repositoryRevertRangesLoader!: RepositoryRevertRangesLoader;
   protected rootRepositoryLoader!: RootRepositoryLoader;
+  protected rootRepositoryRemoteSettingsLoader!: RootRepositoryRemoteSettingsLoader;
   protected commitStateDatasourceLoader!: CommitStateDatasourceLoader;
   protected commitStatePluginVersionsLoader!: CommitStatePluginVersionsLoader;
   protected commitStateBinaryRefsLoader!: CommitStateBinaryRefsLoader;
   protected commitInfoRepositoryLoader!: CommitInfoRepositoryLoader;
+  protected writeAccessIdsLoader!: WriteAccessIdsLoader;
 
   protected openMergeRequestsLoader!: OpenMergeRequestsLoader;
   protected closedMergeRequestsLoader!: ClosedMergeRequestsLoader;
@@ -92,6 +98,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
     @inject(ContextFactory) contextFactory: ContextFactory,
     @inject(RequestCache) requestCache: RequestCache,
     @inject(RepositoryService) repositoryService: RepositoryService,
+    @inject(RepoSettingsService) repoSettingsService: RepoSettingsService,
     @inject(LoggedInUserGuard) loggedInUserGuard: LoggedInUserGuard,
     @inject(RootOrganizationMemberPermissionsLoader)
     rootOrganizationMemberPermissionsLoader: RootOrganizationMemberPermissionsLoader,
@@ -107,6 +114,8 @@ export default class RepositoryResolverModule extends BaseResolverModule {
     repositoryRevertRangesLoader: RepositoryRevertRangesLoader,
     @inject(RootRepositoryLoader)
     rootRepositoryLoader: RootRepositoryLoader,
+    @inject(RootRepositoryRemoteSettingsLoader)
+    rootRepositoryRemoteSettingsLoader: RootRepositoryRemoteSettingsLoader,
     @inject(CommitStateDatasourceLoader)
     commitStateDatasourceLoader: CommitStateDatasourceLoader,
     @inject(CommitStatePluginVersionsLoader)
@@ -120,13 +129,15 @@ export default class RepositoryResolverModule extends BaseResolverModule {
     @inject(OpenMergeRequestsLoader)
     openMergeRequestsLoader: OpenMergeRequestsLoader,
     @inject(ClosedMergeRequestsLoader)
-    closedMergeRequestsLoader: ClosedMergeRequestsLoader
+    closedMergeRequestsLoader: ClosedMergeRequestsLoader,
+    @inject(WriteAccessIdsLoader) writeAccessIdsLoader: WriteAccessIdsLoader
   ) {
     super();
     this.contextFactory = contextFactory;
     this.requestCache = requestCache;
 
     this.repositoryService = repositoryService;
+    this.repoSettingsService = repoSettingsService;
     this.branchService = branchService;
     this.mergeRequestService = mergeRequestService;
 
@@ -141,10 +152,13 @@ export default class RepositoryResolverModule extends BaseResolverModule {
     this.repositoryCommitHistoryLoader = repositoryCommitHistoryLoader;
     this.repositoryRevertRangesLoader = repositoryRevertRangesLoader;
     this.rootRepositoryLoader = rootRepositoryLoader;
+    this.rootRepositoryRemoteSettingsLoader =
+      rootRepositoryRemoteSettingsLoader;
     this.commitStateDatasourceLoader = commitStateDatasourceLoader;
     this.commitStatePluginVersionsLoader = commitStatePluginVersionsLoader;
     this.commitStateBinaryRefsLoader = commitStateBinaryRefsLoader;
     this.commitInfoRepositoryLoader = commitInfoRepositoryLoader;
+    this.writeAccessIdsLoader = writeAccessIdsLoader;
 
     this.openMergeRequestsLoader = openMergeRequestsLoader;
     this.closedMergeRequestsLoader = closedMergeRequestsLoader;
@@ -528,7 +542,11 @@ export default class RepositoryResolverModule extends BaseResolverModule {
               repository.id,
               "anyoneCanRead"
             );
-          return enabledRoleSettings?.map((s) => s.role as OrganizationRole);
+          const roles =  enabledRoleSettings?.map((s) => s.role as OrganizationRole);
+          roles.sort((a, b) => {
+            return (a?.name?.toLowerCase?.() ?? "") >= (b?.name?.toLowerCase?.() ?? "") ?  1: -1;
+          })
+          return roles;
         }
         return null;
       }
@@ -556,18 +574,25 @@ export default class RepositoryResolverModule extends BaseResolverModule {
               repository.id,
               "anyoneCanRead"
             );
-          return enabledUserSettings?.map((s) => s.user as User);
+          const users = enabledUserSettings?.map((s) => s.user as User);
+          users.sort?.((a, b) => {
+            if (!a || !b) {
+              return 0;
+            }
+            return `${a?.firstName} ${a?.lastName}`.toLowerCase() >=
+              `${b?.firstName} ${b?.lastName}`.toLowerCase()
+              ? 1
+              : -1;
+          });
+          return users;
         }
-        return null;
+        return [];
       }
     ),
     anyoneCanPushBranches: runWithHooks(
       () => [this.repositoryRemoteSettingsLoader],
       async (repository: main.Repository, _, { cacheKey, currentUser }) => {
         if (!repository?.id || !currentUser) {
-          return null;
-        }
-        if (repository?.repoType != "org_repo") {
           return null;
         }
         const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
@@ -586,14 +611,11 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         if (!repository?.id || !currentUser) {
           return null;
         }
-        if (repository?.repoType != "org_repo") {
-          return null;
-        }
         const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
           cacheKey,
           repository?.id
         );
-        if (cachedRemoteSettings?.canChangeSettings && !repository.isPrivate) {
+        if (cachedRemoteSettings?.canChangeSettings) {
           return repository.allowExternalUsersToPush ?? false;
         }
         return null;
@@ -622,24 +644,29 @@ export default class RepositoryResolverModule extends BaseResolverModule {
               repository.id,
               "anyoneCanPushBranches"
             );
-          return enabledRoleSettings?.map((s) => s.role as OrganizationRole);
+          const roles =  enabledRoleSettings?.map((s) => s.role as OrganizationRole);
+          roles.sort((a, b) => {
+            return (a?.name?.toLowerCase?.() ?? "") >= (b?.name?.toLowerCase?.() ?? "") ?  1: -1;
+          })
+          return roles;
         }
         return null;
       }
     ),
     canPushBranchesUsers: runWithHooks(
-      () => [this.repositoryRemoteSettingsLoader],
+      () => [this.repositoryRemoteSettingsLoader, this.writeAccessIdsLoader],
       async (repository: main.Repository, _, { cacheKey, currentUser }) => {
         if (!repository?.id || !currentUser) {
           return null;
-        }
-        if (repository?.repoType != "org_repo") {
-          return [];
         }
         const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
           cacheKey,
           repository?.id
         );
+
+        const cachedWriteAccessIds =
+          this.requestCache.getRepoWriteAccessIds(cacheKey, repository?.id) ??
+          new Set<string>();
         if (cachedRemoteSettings?.canChangeSettings) {
           const repositoryEnabledUserSettingsContext =
             await this.contextFactory.createContext(
@@ -650,7 +677,19 @@ export default class RepositoryResolverModule extends BaseResolverModule {
               repository.id,
               "anyoneCanPushBranches"
             );
-          return enabledUserSettings?.map((s) => s.user as User);
+          const users = enabledUserSettings
+            ?.filter((s) => cachedWriteAccessIds.has(s.userId))
+            ?.map((s) => s.user as User);
+          users.sort?.((a, b) => {
+            if (!a || !b) {
+              return 0;
+            }
+            return `${a?.firstName} ${a?.lastName}`.toLowerCase() >=
+              `${b?.firstName} ${b?.lastName}`.toLowerCase()
+              ? 1
+              : -1;
+          });
+          return users;
         }
         return null;
       }
@@ -704,7 +743,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
       }
     ),
     canDeleteBranchesUsers: runWithHooks(
-      () => [this.repositoryRemoteSettingsLoader],
+      () => [this.repositoryRemoteSettingsLoader, this.writeAccessIdsLoader],
       async (repository: main.Repository, _, { cacheKey, currentUser }) => {
         if (!repository?.id || !currentUser) {
           return null;
@@ -716,6 +755,9 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           cacheKey,
           repository?.id
         );
+        const cachedWriteAccessIds =
+          this.requestCache.getRepoWriteAccessIds(cacheKey, repository?.id) ??
+          new Set<string>();
         if (cachedRemoteSettings?.canChangeSettings) {
           const repositoryEnabledUserSettingsContext =
             await this.contextFactory.createContext(
@@ -726,7 +768,19 @@ export default class RepositoryResolverModule extends BaseResolverModule {
               repository.id,
               "anyoneCanDeleteBranches"
             );
-          return enabledUserSettings?.map((s) => s.user as User);
+          const users = enabledUserSettings
+            ?.filter((s) => cachedWriteAccessIds.has(s.userId))
+            ?.map((s) => s.user as User);
+          users.sort?.((a, b) => {
+            if (!a || !b) {
+              return 0;
+            }
+            return `${a?.firstName} ${a?.lastName}`.toLowerCase() >=
+              `${b?.firstName} ${b?.lastName}`.toLowerCase()
+              ? 1
+              : -1;
+          });
+          return users;
         }
         return null;
       }
@@ -774,7 +828,11 @@ export default class RepositoryResolverModule extends BaseResolverModule {
               repository.id,
               "anyoneCanChangeSettings"
             );
-          return enabledRoleSettings?.map((s) => s.role as OrganizationRole);
+          const roles =  enabledRoleSettings?.map((s) => s.role as OrganizationRole);
+          roles.sort((a, b) => {
+            return (a?.name?.toLowerCase?.() ?? "") >= (b?.name?.toLowerCase?.() ?? "") ?  1: -1;
+          })
+          return roles;
         }
         return null;
       }
@@ -802,9 +860,113 @@ export default class RepositoryResolverModule extends BaseResolverModule {
               repository.id,
               "anyoneCanChangeSettings"
             );
-          return enabledUserSettings?.map((s) => s.user as User);
+          const users = enabledUserSettings
+            ?.map((s) => s.user as User);
+          users.sort?.((a, b) => {
+            if (!a || !b) {
+              return 0;
+            }
+            return `${a?.firstName} ${a?.lastName}`.toLowerCase() >=
+              `${b?.firstName} ${b?.lastName}`.toLowerCase()
+              ? 1
+              : -1;
+          });
+          return users;
         }
         return null;
+      }
+    ),
+    repoPermissions: runWithHooks(
+      () => [this.repositoryRemoteSettingsLoader],
+      async (repository: main.Repository, _, { cacheKey, currentUser }) => {
+        if (!repository?.id || !currentUser) {
+          return null;
+        }
+        const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
+          cacheKey,
+          repository?.id
+        );
+        return {
+          canPushBranches: cachedRemoteSettings.canPushBranches,
+          canDeleteBranches: cachedRemoteSettings.canDeleteBranches,
+          canChangeSettings: cachedRemoteSettings.canChangeSettings,
+        };
+      }
+    ),
+    canTurnOffAnyoneCanRead: runWithHooks(
+      () => [this.repositoryRemoteSettingsLoader],
+      async (repository: main.Repository, _, { cacheKey, currentUser }) => {
+        const dbRepo: Repository = repository as Repository;
+        if (!repository?.id || !currentUser) {
+          return null;
+        }
+        if (repository?.repoType != "org_repo" || !repository.isPrivate) {
+          return false;
+        }
+        const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
+          cacheKey,
+          repository?.id
+        );
+        if (cachedRemoteSettings?.canChangeSettings) {
+          // check roles and ids
+          // check user settings first
+          const organizationMembersContext =
+            await this.contextFactory.createContext(OrganizationMembersContext);
+          const member = await organizationMembersContext.getByOrgIdAndUserId(
+            dbRepo?.organizationId as string,
+            currentUser.id
+          );
+          if (member?.membershipState != "active") {
+            return false;
+          }
+
+          const organizationMemberRolesContext =
+            await this.contextFactory.createContext(
+              OrganizationMemberRolesContext
+            );
+          const memberRoles =
+            await organizationMemberRolesContext.getRolesByMember(member);
+          const isAdmin = !!memberRoles?.find((r) => r.presetCode == "admin");
+          if (isAdmin) {
+            return true;
+          }
+          const repositoryEnabledUserSettingsContext =
+            await this.contextFactory.createContext(
+              RepositoryEnabledUserSettingsContext
+            );
+          const enabledUserSettings =
+            await repositoryEnabledUserSettingsContext.getAllForRepositorySetting(
+              repository.id,
+              "anyoneCanRead"
+            );
+          const enabledUserIds = enabledUserSettings?.map(
+            (s) => s.user?.id as string
+          );
+          if (enabledUserIds.includes(currentUser?.id)) {
+            return true;
+          }
+
+          const repositoryEnabledRoleSettingsContext =
+            await this.contextFactory.createContext(
+              RepositoryEnabledRoleSettingsContext
+            );
+          const enabledRoleSettings =
+            await repositoryEnabledRoleSettingsContext.getAllForRepositorySetting(
+              repository.id,
+              "anyoneCanRead"
+            );
+          const enabledRoleIds = enabledRoleSettings.map((s) => s.roleId);
+
+          const userRoles =
+            await organizationMemberRolesContext.getRolesByMember(member);
+          for (const userRole of userRoles) {
+            if (enabledRoleIds.includes(userRole.id)) {
+              return true;
+            }
+          }
+          return false;
+        }
+        return false;
       }
     ),
     canTurnOffAnyoneCanChangeSettings: runWithHooks(
@@ -902,28 +1064,6 @@ export default class RepositoryResolverModule extends BaseResolverModule {
             repository.id
           );
         }
-        return null;
-      }
-    ),
-    searchUsersForRepo: runWithHooks(
-      () => [this.repositoryRemoteSettingsLoader],
-      async (repository: main.Repository, args: main.RepositorySearchUsersForRepoArgs, { cacheKey, currentUser }) => {
-        if (!repository) {
-          return null;
-        }
-        const excludedUserIds: Array<string> = (args?.excludedUserIds ?? []) as Array<string>;
-        const restrictToOrg: boolean = (args?.restrictToOrg ?? repository?.repoType == "org_repo");
-        if (restrictToOrg && repository.repoType != "org_repo") {
-          return null;
-        }
-        if (repository.isPrivate && repository.repoType != "org_repo") {
-          return null;
-        }
-        if (repository.isPrivate && repository.repoType == "user_repo") {
-          return null;
-        }
-        const forceRestrictToOrg = repository.isPrivate && repository.repoType == "org_repo";
-        const query: string = args?.query ?? "";
         return null;
       }
     ),
@@ -1724,6 +1864,149 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         };
       }
     ),
+    searchUsersForRepoSettingsAccess: runWithHooks(
+      () => [this.loggedInUserGuard],
+      async (
+        _,
+        args: main.QuerySearchUsersForRepoSettingsAccessArgs,
+        { currentUser }
+      ) => {
+        const repository = await this.repositoryService.fetchRepoById(
+          args.repositoryId
+        );
+        if (!repository) {
+          return null;
+        }
+        const remoteSettings =
+          await this.repositoryService.fetchRepoSettingsForUser(
+            args.repositoryId,
+            currentUser
+          );
+        if (!remoteSettings?.canChangeSettings) {
+          return {
+            __typename: "SearchUsersForSettingError",
+            type: "REPO_ERROR",
+            message: "Repo error",
+          };
+        }
+        const excludedUserIds: Array<string> = (args?.excludedUserIds ??
+          []) as Array<string>;
+        const query: string = args?.query ?? "";
+        const result =
+          await this.repoSettingsService.searchUsersForRepoCanAdjustRepoSettings(
+            repository as Repository,
+            query,
+            excludedUserIds
+          );
+        if (!result) {
+          return {
+            __typename: "SearchUsersForSettingError",
+            type: "REPO_ERROR",
+            message: "Repo error",
+          };
+        }
+        return {
+          __typename: "SearchUsersForSettingSuccess",
+          users: result,
+        };
+      }
+    ),
+
+    searchUsersForRepoReadAccess: runWithHooks(
+      () => [this.loggedInUserGuard],
+      async (
+        _,
+        args: main.QuerySearchUsersForRepoReadAccessArgs,
+        { currentUser }
+      ) => {
+        const repository = await this.repositoryService.fetchRepoById(
+          args.repositoryId
+        );
+        if (!repository) {
+          return null;
+        }
+        const remoteSettings =
+          await this.repositoryService.fetchRepoSettingsForUser(
+            args.repositoryId,
+            currentUser
+          );
+        if (!remoteSettings?.canChangeSettings) {
+          return {
+            __typename: "SearchUsersForSettingError",
+            type: "REPO_ERROR",
+            message: "Repo error",
+          };
+        }
+        const excludedUserIds: Array<string> = (args?.excludedUserIds ??
+          []) as Array<string>;
+        const query: string = args?.query ?? "";
+        const result =
+          await this.repoSettingsService.searchUsersForRepoReadAccess(
+            repository as Repository,
+            query,
+            excludedUserIds
+          );
+        if (!result) {
+          return {
+            __typename: "SearchUsersForSettingError",
+            type: "REPO_ERROR",
+            message: "Repo error",
+          };
+        }
+        return {
+          __typename: "SearchUsersForSettingSuccess",
+          users: result,
+        };
+      }
+    ),
+
+    searchUsersForRepoPushAccess: runWithHooks(
+      () => [this.loggedInUserGuard],
+      async (
+        _,
+        args: main.QuerySearchUsersForRepoReadAccessArgs,
+        { currentUser }
+      ) => {
+        const repository = await this.repositoryService.fetchRepoById(
+          args.repositoryId
+        );
+        if (!repository) {
+          return null;
+        }
+        const remoteSettings =
+          await this.repositoryService.fetchRepoSettingsForUser(
+            args.repositoryId,
+            currentUser
+          );
+        if (!remoteSettings?.canChangeSettings) {
+          return {
+            __typename: "SearchUsersForSettingError",
+            type: "REPO_ERROR",
+            message: "Repo error",
+          };
+        }
+        const excludedUserIds: Array<string> = (args?.excludedUserIds ??
+          []) as Array<string>;
+        const query: string = args?.query ?? "";
+        const result =
+          await this.repoSettingsService.searchUsersForRepoPushAccess(
+            repository as Repository,
+            query,
+            excludedUserIds
+          );
+        if (!result) {
+          return {
+            __typename: "SearchUsersForSettingError",
+            type: "REPO_ERROR",
+            message: "Repo error",
+          };
+        }
+        return {
+          __typename: "SearchUsersForSettingSuccess",
+          users: result,
+        };
+      }
+    ),
   };
 
   public Mutation: main.MutationResolvers = {
@@ -1866,7 +2149,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
     ),
     ignoreBranch: runWithHooks(
       () => [this.loggedInUserGuard],
-      async (_, { repositoryId, branchId }, { currentUser, cacheKey }) => {
+      async (_, { repositoryId, branchId }, { currentUser }) => {
         if (!repositoryId || !branchId) {
           return {
             __typename: "IgnoreBranchError",
@@ -1958,6 +2241,422 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         return {
           __typename: "IgnoreBranchSuccess",
           repository,
+        };
+      }
+    ),
+    // SETTING MUTATIONS
+    updateAnyoneCanChangeSettings: runWithHooks(
+      () => [this.loggedInUserGuard, this.rootRepositoryRemoteSettingsLoader],
+      async (
+        _,
+        args: main.MutationUpdateAnyoneCanChangeSettingsArgs,
+        { cacheKey, currentUser }
+      ) => {
+        const repository = await this.repositoryService.fetchRepoById(
+          args.repositoryId
+        );
+        if (!repository) {
+          return {
+            __typename: "RepoSettingChangeError",
+            message: "Repo Not Found",
+            type: "REPO_NOT_FOUND_ERROR",
+          };
+        }
+
+        const updatedRepo =
+          await this.repoSettingsService.updateAnyoneCanChangeSettings(
+            repository,
+            args?.anyoneCanChangeSettings ?? false,
+            currentUser
+          );
+        if (!updatedRepo) {
+          return {
+            __typename: "RepoSettingChangeError",
+            message: "Repo Update Error",
+            type: "REPO_UPDATE_ERROR",
+          };
+        }
+        return {
+          __typename: "RepoSettingChangeSuccess",
+          repository: updatedRepo,
+        };
+      }
+    ),
+
+    updateAnyoneCanChangeSettingsUsers: runWithHooks(
+      () => [this.loggedInUserGuard, this.rootRepositoryRemoteSettingsLoader],
+      async (
+        _,
+        args: main.MutationUpdateAnyoneCanChangeSettingsUsersArgs,
+        { currentUser }
+      ) => {
+        const repository = await this.repositoryService.fetchRepoById(
+          args.repositoryId
+        );
+        if (!repository) {
+          return {
+            __typename: "RepoSettingChangeError",
+            message: "Repo Not Found",
+            type: "REPO_NOT_FOUND_ERROR",
+          };
+        }
+
+        const repositoryEnabledRoleSettingsContext =
+          await this.contextFactory.createContext(
+            RepositoryEnabledRoleSettingsContext
+          );
+        const enabledRoles = await repositoryEnabledRoleSettingsContext.getAllForRepositorySetting(repository.id, "anyoneCanChangeSettings");
+        const enabledRoleIds = enabledRoles.map(er => er.roleId);
+
+        const updatedRepo =
+          await this.repoSettingsService.updateSettingsAccess(
+            repository,
+            enabledRoleIds,
+            (args?.userIds ?? []) as Array<string>,
+            currentUser
+          );
+        if (!updatedRepo) {
+          return {
+            __typename: "RepoSettingChangeError",
+            message: "Repo Update Error",
+            type: "REPO_UPDATE_ERROR",
+          };
+        }
+        return {
+          __typename: "RepoSettingChangeSuccess",
+          repository: updatedRepo,
+        };
+      }
+    ),
+
+    updateAnyoneCanChangeSettingsRoles: runWithHooks(
+      () => [this.loggedInUserGuard, this.rootRepositoryRemoteSettingsLoader],
+      async (
+        _,
+        args: main.MutationUpdateAnyoneCanChangeSettingsRolesArgs,
+        { currentUser }
+      ) => {
+        const repository = await this.repositoryService.fetchRepoById(
+          args.repositoryId
+        );
+        if (!repository) {
+          return {
+            __typename: "RepoSettingChangeError",
+            message: "Repo Not Found",
+            type: "REPO_NOT_FOUND_ERROR",
+          };
+        }
+
+        const repositoryEnabledUserSettingsContext =
+          await this.contextFactory.createContext(
+            RepositoryEnabledUserSettingsContext
+          );
+        const enabledUsers = await repositoryEnabledUserSettingsContext.getAllForRepositorySetting(repository.id, "anyoneCanChangeSettings");
+        const enabledUserIds = enabledUsers.map(eu => eu.userId);
+
+        const updatedRepo =
+          await this.repoSettingsService.updateSettingsAccess(
+            repository,
+            (args?.roleIds ?? []) as Array<string>,
+            enabledUserIds,
+            currentUser
+          );
+        if (!updatedRepo) {
+          return {
+            __typename: "RepoSettingChangeError",
+            message: "Repo Update Error",
+            type: "REPO_UPDATE_ERROR",
+          };
+        }
+        return {
+          __typename: "RepoSettingChangeSuccess",
+          repository: updatedRepo,
+        };
+      }
+    ),
+    updateAnyoneCanRead: runWithHooks(
+      () => [this.loggedInUserGuard, this.rootRepositoryRemoteSettingsLoader],
+      async (
+        _,
+        args: main.MutationUpdateAnyoneCanReadArgs,
+        { cacheKey, currentUser }
+      ) => {
+        const repository = await this.repositoryService.fetchRepoById(
+          args.repositoryId
+        );
+        if (!repository) {
+          return {
+            __typename: "RepoSettingChangeError",
+            message: "Repo Not Found",
+            type: "REPO_NOT_FOUND_ERROR",
+          };
+        }
+
+        const updatedRepo =
+          await this.repoSettingsService.updateAnyoneCanRead(
+            repository,
+            args?.anyoneCanRead ?? false,
+            currentUser
+          );
+        if (!updatedRepo) {
+          return {
+            __typename: "RepoSettingChangeError",
+            message: "Repo Update Error",
+            type: "REPO_UPDATE_ERROR",
+          };
+        }
+        return {
+          __typename: "RepoSettingChangeSuccess",
+          repository: updatedRepo,
+        };
+      }
+    ),
+    updateAnyoneCanReadUsers: runWithHooks(
+      () => [this.loggedInUserGuard, this.rootRepositoryRemoteSettingsLoader],
+      async (
+        _,
+        args: main.MutationUpdateAnyoneCanReadUsersArgs,
+        { currentUser }
+      ) => {
+        const repository = await this.repositoryService.fetchRepoById(
+          args.repositoryId
+        );
+        if (!repository) {
+          return {
+            __typename: "RepoSettingChangeError",
+            message: "Repo Not Found",
+            type: "REPO_NOT_FOUND_ERROR",
+          };
+        }
+
+        const repositoryEnabledRoleSettingsContext =
+          await this.contextFactory.createContext(
+            RepositoryEnabledRoleSettingsContext
+          );
+        const enabledRoles = await repositoryEnabledRoleSettingsContext.getAllForRepositorySetting(repository.id, "anyoneCanRead");
+        const enabledRoleIds = enabledRoles.map(er => er.roleId);
+
+        const updatedRepo =
+          await this.repoSettingsService.updateReadAccess(
+            repository,
+            enabledRoleIds,
+            (args?.userIds ?? []) as Array<string>,
+            currentUser
+          );
+        if (!updatedRepo) {
+          return {
+            __typename: "RepoSettingChangeError",
+            message: "Repo Update Error",
+            type: "REPO_UPDATE_ERROR",
+          };
+        }
+        return {
+          __typename: "RepoSettingChangeSuccess",
+          repository: updatedRepo,
+        };
+      }
+    ),
+    updateAnyoneCanReadRoles: runWithHooks(
+      () => [this.loggedInUserGuard, this.rootRepositoryRemoteSettingsLoader],
+      async (
+        _,
+        args: main.MutationUpdateAnyoneCanReadRolesArgs,
+        { currentUser }
+      ) => {
+        const repository = await this.repositoryService.fetchRepoById(
+          args.repositoryId
+        );
+        if (!repository) {
+          return {
+            __typename: "RepoSettingChangeError",
+            message: "Repo Not Found",
+            type: "REPO_NOT_FOUND_ERROR",
+          };
+        }
+        const repositoryEnabledUserSettingsContext =
+          await this.contextFactory.createContext(
+            RepositoryEnabledUserSettingsContext
+          );
+        const enabledUsers = await repositoryEnabledUserSettingsContext.getAllForRepositorySetting(repository.id, "anyoneCanRead");
+        const enabledUserIds = enabledUsers.map(eu => eu.userId);
+
+        const updatedRepo =
+          await this.repoSettingsService.updateReadAccess(
+            repository,
+            (args?.roleIds ?? []) as Array<string>,
+            enabledUserIds,
+            currentUser
+          );
+        if (!updatedRepo) {
+          return {
+            __typename: "RepoSettingChangeError",
+            message: "Repo Update Error",
+            type: "REPO_UPDATE_ERROR",
+          };
+        }
+        return {
+          __typename: "RepoSettingChangeSuccess",
+          repository: updatedRepo,
+        };
+      }
+    ),
+
+    updateAnyoneCanPushBranches: runWithHooks(
+      () => [this.loggedInUserGuard, this.rootRepositoryRemoteSettingsLoader],
+      async (
+        _,
+        args: main.MutationUpdateAnyoneCanPushBranchesArgs
+      ) => {
+        const repository = await this.repositoryService.fetchRepoById(
+          args.repositoryId
+        );
+        if (!repository) {
+          return {
+            __typename: "RepoSettingChangeError",
+            message: "Repo Not Found",
+            type: "REPO_NOT_FOUND_ERROR",
+          };
+        }
+
+        const updatedRepo =
+          await this.repoSettingsService.updateAnyoneCanPushBranches(
+            repository,
+            args?.anyoneCanPushBranches ?? false,
+          );
+        if (!updatedRepo) {
+          return {
+            __typename: "RepoSettingChangeError",
+            message: "Repo Update Error",
+            type: "REPO_UPDATE_ERROR",
+          };
+        }
+        return {
+          __typename: "RepoSettingChangeSuccess",
+          repository: updatedRepo,
+        };
+      }
+    ),
+    updateAnyoneCanPushBranchesUsers: runWithHooks(
+      () => [this.loggedInUserGuard, this.rootRepositoryRemoteSettingsLoader],
+      async (
+        _,
+        args: main.MutationUpdateAnyoneCanPushBranchesUsersArgs,
+        { currentUser }
+      ) => {
+        const repository = await this.repositoryService.fetchRepoById(
+          args.repositoryId
+        );
+        if (!repository) {
+          return {
+            __typename: "RepoSettingChangeError",
+            message: "Repo Not Found",
+            type: "REPO_NOT_FOUND_ERROR",
+          };
+        }
+
+        const repositoryEnabledRoleSettingsContext =
+          await this.contextFactory.createContext(
+            RepositoryEnabledRoleSettingsContext
+          );
+        const enabledRoles = await repositoryEnabledRoleSettingsContext.getAllForRepositorySetting(repository.id, "anyoneCanPushBranches");
+        const enabledRoleIds = enabledRoles.map(er => er.roleId);
+
+        const updatedRepo =
+          await this.repoSettingsService.updatePushBranchesAccess(
+            repository,
+            enabledRoleIds,
+            (args?.userIds ?? []) as Array<string>,
+            currentUser
+          );
+        if (!updatedRepo) {
+          return {
+            __typename: "RepoSettingChangeError",
+            message: "Repo Update Error",
+            type: "REPO_UPDATE_ERROR",
+          };
+        }
+        return {
+          __typename: "RepoSettingChangeSuccess",
+          repository: updatedRepo,
+        };
+      }
+    ),
+    updateAnyoneCanPushBranchesRoles: runWithHooks(
+      () => [this.loggedInUserGuard, this.rootRepositoryRemoteSettingsLoader],
+      async (
+        _,
+        args: main.MutationUpdateAnyoneCanPushBranchesRolesArgs,
+        { currentUser }
+      ) => {
+        const repository = await this.repositoryService.fetchRepoById(
+          args.repositoryId
+        );
+        if (!repository) {
+          return {
+            __typename: "RepoSettingChangeError",
+            message: "Repo Not Found",
+            type: "REPO_NOT_FOUND_ERROR",
+          };
+        }
+        const repositoryEnabledUserSettingsContext =
+          await this.contextFactory.createContext(
+            RepositoryEnabledUserSettingsContext
+          );
+        const enabledUsers = await repositoryEnabledUserSettingsContext.getAllForRepositorySetting(repository.id, "anyoneCanPushBranches");
+        const enabledUserIds = enabledUsers.map(eu => eu.userId);
+
+        const updatedRepo =
+          await this.repoSettingsService.updatePushBranchesAccess(
+            repository,
+            (args?.roleIds ?? []) as Array<string>,
+            enabledUserIds,
+            currentUser
+          );
+        if (!updatedRepo) {
+          return {
+            __typename: "RepoSettingChangeError",
+            message: "Repo Update Error",
+            type: "REPO_UPDATE_ERROR",
+          };
+        }
+        return {
+          __typename: "RepoSettingChangeSuccess",
+          repository: updatedRepo,
+        };
+      }
+    ),
+    updateAllowExternalUsersToPush: runWithHooks(
+      () => [this.loggedInUserGuard, this.rootRepositoryRemoteSettingsLoader],
+      async (
+        _,
+        args: main.MutationUpdateAllowExternalUsersToPushArgs
+      ) => {
+        const repository = await this.repositoryService.fetchRepoById(
+          args.repositoryId
+        );
+        if (!repository) {
+          return {
+            __typename: "RepoSettingChangeError",
+            message: "Repo Not Found",
+            type: "REPO_NOT_FOUND_ERROR",
+          };
+        }
+
+        const updatedRepo =
+          await this.repoSettingsService.updateAllowExternalUsersToPush(
+            repository,
+            args?.allowExternalUsersToPush ?? false,
+          );
+        if (!updatedRepo) {
+          return {
+            __typename: "RepoSettingChangeError",
+            message: "Repo Update Error",
+            type: "REPO_UPDATE_ERROR",
+          };
+        }
+        return {
+          __typename: "RepoSettingChangeSuccess",
+          repository: updatedRepo,
         };
       }
     ),

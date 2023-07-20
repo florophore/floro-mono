@@ -55,7 +55,9 @@ export default class ProtectedBranchRuleEnabledRoleSettingsContext extends BaseC
         role: true,
       },
       order: {
-        role: "ASC",
+        role: {
+          name: "ASC"
+        },
       },
     });
   }

@@ -108,14 +108,12 @@ async function createWindow() {
         socket.off('kill_oauth');
       });
       socket.on('kill_oauth', () => {
-        console.log("BRO")
         oauthWindow.close();
         oauthWindow.destroy();
         socket.off('login');
         socket.off('complete_signup');
         socket.off('kill_oauth');
       });
-      console.log("BRO")
 
       ipcMain.once('oauth:sendOAuthResult', () => {
         oauthWindow.close();

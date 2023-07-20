@@ -11,7 +11,6 @@ describe('RedisClient', () => {
 
     beforeEach(() => {
         redisClient = container.get(RedisClient);
-        console.log("BRO", redisClient);
     })
 
     test('connects', async () => {

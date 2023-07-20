@@ -127,6 +127,11 @@ const VersionControlPanel = (props: Props) => {
   const { data: repoExistsLocally, isLoading } = useRepoExistsLocally(props.repository);
   const sourceGraphIsShown = useSourceGraphIsShown();
   const isFullShadow = useMemo(() => {
+    if (from == "remote") {
+      if (props.page == "settings") {
+        return true;
+      }
+    }
     if (!repoExistsLocally) {
       return true;
     }
@@ -134,7 +139,7 @@ const VersionControlPanel = (props: Props) => {
       return true;
     }
     return false;
-  }, [sourceGraphIsShown, repoExistsLocally]);
+  }, [sourceGraphIsShown, repoExistsLocally, props.page, from]);
   const { data: cloneState } = useCloneState(props.repository);
 
   const theme = useTheme();

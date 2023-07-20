@@ -294,7 +294,7 @@ const InviteModal = (props: Props) => {
     }
     if (event.code == "ArrowDown") {
       event.preventDefault();
-      if (!selectedUser) {
+      if (!selectedUser || !userResults.map(u => u.id).includes(selectedUser?.id as string)) {
         setSelectedUser(userResults[0] as User);
         return;
       }
@@ -313,7 +313,7 @@ const InviteModal = (props: Props) => {
     }
     if (event.code == "ArrowUp") {
       event.preventDefault();
-      if (!selectedUser) {
+      if (!selectedUser || !userResults.map(u => u.id).includes(selectedUser?.id as string)) {
         setSelectedUser(userResults?.[userResults.length - 1] as User);
         return;
       }

@@ -4,6 +4,7 @@ import {
   Column,
   Relation,
   ManyToOne,
+  JoinColumn,
 } from "typeorm";
 import { BinaryPKBaseEntity } from "./BinaryPKBaseEntity";
 import { Repository } from "./Repository";
@@ -20,12 +21,14 @@ export class RepoEnabledRoleSetting extends BinaryPKBaseEntity {
   @Column("uuid")
   roleId!: string;
 
-  @ManyToOne("User", "enabledRepoRoleSettings")
+  @ManyToOne("OrganizationRole", "enabledRepoRoleSettings")
+  @JoinColumn()
   role?: Relation<OrganizationRole>;
 
   @Column("uuid")
   repositoryId!: string;
 
   @ManyToOne("Repository", "enabledRepoRoleSettings")
+  @JoinColumn()
   repository?: Relation<Repository>;
 }

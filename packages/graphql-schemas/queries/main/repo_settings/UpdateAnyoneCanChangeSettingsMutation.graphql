@@ -1,0 +1,18 @@
+mutation UpdateAnyoneCanChangeSettings($repositoryId: ID!, $anyoneCanChangeSettings: Boolean!) {
+  updateAnyoneCanChangeSettings(repositoryId: $repositoryId, anyoneCanChangeSettings: $anyoneCanChangeSettings) {
+    ... on RepoSettingChangeSuccess {
+      repository {
+        ...RepoWithSettings
+      }
+    }
+    ... on RepoSettingChangeError {
+      message
+      type
+    }
+
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+  }
+}

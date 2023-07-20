@@ -87,6 +87,9 @@ import MergeRequestPermissionsLoader from './resolvers/hooks/loaders/MergeReques
 import RepoSettingsService from './services/repositories/RepoSettingsService';
 import RootRepositoryRemoteSettingsLoader from './resolvers/hooks/loaders/Root/RepositoryID/RootRepositoryRemoteSettingsLoader';
 import RepositoryProtectedBranchesResolverModule from './resolvers/repository/RepositoryProtectedBranchesResolverModule';
+import WriteAccessIdsLoader from './resolvers/hooks/loaders/Repository/WriteAccessIdsLoader';
+import GrantAccessReceiverService from './services/repositories/GrantAccessReceiverService';
+import GrantRepoAccessHandler from './services/events/GrantRepoAccessHandler';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -145,6 +148,7 @@ export default new ContainerModule((bind): void => {
     bind(CommitStateDatasourceLoader).toSelf();
     bind(CommitStatePluginVersionsLoader).toSelf()
     bind(CommitInfoRepositoryLoader).toSelf();
+    bind(WriteAccessIdsLoader).toSelf();
 
     // MERGE REQUEST
     bind(MergeRequestLoader).toSelf();
@@ -178,6 +182,7 @@ export default new ContainerModule((bind): void => {
     bind(BranchService).toSelf();
     bind(RepositoryDatasourceFactoryService).toSelf();
     bind(RepoSettingsService).toSelf();
+    bind(GrantAccessReceiverService).toSelf();
 
     // REFERRALS
     bind(ReferralService).toSelf()
@@ -202,6 +207,9 @@ export default new ContainerModule((bind): void => {
     bind<ReviewStatusChangeEventHandler>("ReviewStatusChangeEventHandler").to(MergeRequestEventService);
     bind<MergeRequestCommentEventHandler>("MergeRequestCommentEventHandler").to(MergeRequestEventService);
     bind<MergeRequestCommentReplyEventHandler>("MergeRequestCommentReplyEventHandler").to(MergeRequestEventService);
+
+    // GRANT ACCESS HANDLER
+    bind<GrantRepoAccessHandler>("GrantRepoAccessHandler").to(GrantAccessReceiverService);
 
     // Controllers
     bind<AuthenticationController>("Controllers").to(AuthenticationController);

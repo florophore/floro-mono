@@ -1,0 +1,18 @@
+mutation UpdateAnyoneCanPushBranchesRoles($repositoryId: ID!, $roleIds: [ID]!) {
+  updateAnyoneCanPushBranchesRoles(repositoryId: $repositoryId, roleIds: $roleIds) {
+    ... on RepoSettingChangeSuccess {
+      repository {
+        ...RepoWithSettings
+      }
+    }
+    ... on RepoSettingChangeError {
+      message
+      type
+    }
+
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+  }
+}

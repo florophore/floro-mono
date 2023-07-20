@@ -1,0 +1,18 @@
+mutation updateAllowExternalUsersToPush($repositoryId: ID!, $allowExternalUsersToPush: Boolean!) {
+  updateAllowExternalUsersToPush(repositoryId: $repositoryId, allowExternalUsersToPush: $allowExternalUsersToPush) {
+    ... on RepoSettingChangeSuccess {
+      repository {
+        ...RepoWithSettings
+      }
+    }
+    ... on RepoSettingChangeError {
+      message
+      type
+    }
+
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+  }
+}

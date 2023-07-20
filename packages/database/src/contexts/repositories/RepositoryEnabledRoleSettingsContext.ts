@@ -53,7 +53,9 @@ export default class RepositoryEnabledRoleSettingsContext extends BaseContext {
         role: true,
       },
       order: {
-        role: 'ASC',
+        role: {
+          name: 'ASC'
+        },
       },
     });
   }

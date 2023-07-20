@@ -1,0 +1,23 @@
+query searchUsersForRepoPushAccess(
+  $repositoryId: ID!
+  $query: String!
+  $excludedUserIds: [String]
+) {
+  searchUsersForRepoPushAccess(repositoryId: $repositoryId, query: $query, excludedUserIds: $excludedUserIds) {
+    ... on SearchUsersForSettingSuccess {
+      users {
+        id
+        firstName
+        lastName
+        username
+        profilePhoto {
+          ...Photo
+        }
+      }
+    }
+    ... on SearchUsersForSettingError {
+      message
+      type
+    }
+  }
+}

@@ -1,0 +1,18 @@
+mutation UpdateAnyoneCanRead($repositoryId: ID!, $anyoneCanRead: Boolean!) {
+  updateAnyoneCanRead(repositoryId: $repositoryId, anyoneCanRead: $anyoneCanRead) {
+    ... on RepoSettingChangeSuccess {
+      repository {
+        ...RepoWithSettings
+      }
+    }
+    ... on RepoSettingChangeError {
+      message
+      type
+    }
+
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+  }
+}

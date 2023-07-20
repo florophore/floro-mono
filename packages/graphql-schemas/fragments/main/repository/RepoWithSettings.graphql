@@ -1,0 +1,109 @@
+fragment RepoWithSettings on Repository {
+  ...Repository
+  organization {
+    ...Organization
+    membership {
+        roles {
+            id
+            name
+            isMutable
+        }
+    }
+    roles {
+        id
+        name
+        isMutable
+    }
+  }
+  user {
+    ...User
+  }
+  repoBranches {
+    id
+    name
+    lastCommit
+    baseBranchId
+    createdBy
+    createdByUsername
+    createdAt
+    updatedAt
+  }
+
+  repoPermissions {
+    canPushBranches
+    canChangeSettings
+    canDeleteBranches
+  }
+
+  defaultBranchId
+
+  anyoneCanRead
+  canReadUsers {
+    id
+    firstName
+    lastName
+    username
+    profilePhoto {
+    ...Photo
+    }
+  }
+  canReadRoles {
+    id
+    name
+  }
+
+  allowExternalUsersToPush
+  anyoneCanPushBranches
+
+  canPushBranchesUsers {
+    id
+    firstName
+    lastName
+    username
+    profilePhoto {
+    ...Photo
+    }
+  }
+  canPushBranchesRoles {
+    id
+    name
+  }
+
+  anyoneCanDeleteBranches
+  canDeleteBranchesUsers {
+    id
+    firstName
+    lastName
+    username
+    profilePhoto {
+        ...Photo
+    }
+  }
+  canDeleteBranchesRoles {
+    id
+    name
+  }
+
+  anyoneCanChangeSettings
+  canChangeSettingsUsers {
+    id
+    firstName
+    lastName
+    username
+    profilePhoto {
+        ...Photo
+    }
+  }
+  canChangeSettingsRoles {
+    id
+    name
+  }
+
+  canTurnOffAnyoneCanChangeSettings
+  canTurnOffAnyoneCanRead
+  protectedBranchRules {
+    id
+    branchId
+    branchName
+  }
+}

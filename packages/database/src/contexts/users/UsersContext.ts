@@ -108,7 +108,7 @@ export default class UsersContext extends BaseContext {
           const usernameQuery = query.substring(1);
           return await qb
             .leftJoinAndSelect("user.profilePhoto", "photo")
-            .where("(user.username ILIKE :query || '%') AND user.id <> ALL(:excluded_ids) AND user.id IN (:included_ids)")
+            .where("(user.username ILIKE :query || '%') AND user.id <> ALL(:excluded_ids) AND user.id IN(:...included_ids)")
             .setParameter("query", usernameQuery.trim().toLowerCase())
             .setParameter("excluded_ids", excludingIds)
             .setParameter("included_ids", includingIds)
@@ -118,7 +118,7 @@ export default class UsersContext extends BaseContext {
         }
         return await qb
           .leftJoinAndSelect("user.profilePhoto", "photo")
-          .where(`(user.first_name || ' '  || user.last_name ILIKE :query || '%') AND user.id <> ALL(:excluded_ids) AND user.id IN (:included_ids)`)
+          .where(`(user.first_name || ' '  || user.last_name ILIKE :query || '%') AND user.id <> ALL(:excluded_ids) AND user.id IN(:...included_ids)`)
           .setParameter("query", query.trim().toLowerCase())
           .setParameter("excluded_ids", excludingIds)
           .setParameter("included_ids", includingIds)

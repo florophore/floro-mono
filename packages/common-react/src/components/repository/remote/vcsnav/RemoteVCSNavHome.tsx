@@ -172,6 +172,10 @@ const RemoteVCSNavHome = (props: Props) => {
     navigate(linkBase + "/mergerequests/create/" + branch.id + "?from=remote");
   }, [linkBase, navigate]);
 
+  const onGoToSettings = useCallback(() => {
+    navigate(linkBase + "/settings?from=remote&plugin=" + (props?.plugin ?? "home"));
+  }, [linkBase, navigate, props.plugin]);
+
   const showMRNotifcation = useMemo(() => {
     if (props?.repository?.openUserBranchesWithoutMergeRequestsCount == undefined) {
       return false;
@@ -220,6 +224,8 @@ const RemoteVCSNavHome = (props: Props) => {
             titleTextSize="small"
           />
           <RepoActionButton
+            onClick={onGoToSettings}
+            isDisabled={!props?.repository?.repoPermissions?.canChangeSettings}
             label={"remote settings"}
             icon={"settings"}
             titleTextSize="small"
