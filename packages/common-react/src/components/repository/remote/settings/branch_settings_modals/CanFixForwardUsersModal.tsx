@@ -16,6 +16,8 @@ import {
   useUpdateAnyoneCanCreateMergeRequestsUsersMutation,
   useSearchUsersForProtectedBranchAccessLazyQuery,
   useUpdateAnyoneWithApprovalCanMergeUsersMutation,
+  useUpdateAnyoneCanRevertUsersMutation,
+  useUpdateAnyoneCanAutofixUsersMutation,
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import debouncer from "lodash.debounce";
 import FindUserSearchDropdown from "../setting_modals/FindUserSearchDropdown";
@@ -213,12 +215,12 @@ export interface Props {
   repository: Repository;
 }
 
-const WithApprovalCanMergeUsersModal = (props: Props) => {
+const CanFixForwardUsersModal = (props: Props) => {
   const theme = useTheme();
   const searchRef = useRef<HTMLInputElement>(null);
   const [userInput, setUserInput] = useState("");
 
-  const [updateUsers, updateUsersRequest] = useUpdateAnyoneWithApprovalCanMergeUsersMutation();
+  const [updateUsers, updateUsersRequest] = useUpdateAnyoneCanAutofixUsersMutation();
 
   const [selectedUser, setSelectedUser] = useState<User | undefined>(undefined);
   const [users, setUsers] = useState<Array<User>>([] as Array<User>);
@@ -232,7 +234,7 @@ const WithApprovalCanMergeUsersModal = (props: Props) => {
     if (props.show) {
       setUserInput("");
       setSelectedUser(undefined);
-      const nextUsers = (props?.repository?.protectedBranchRule?.withApprovalCanMergeUsers ??
+      const nextUsers = (props?.repository?.protectedBranchRule?.canAutofixUsers ??
         []) as Array<User>;
       setUsers(nextUsers);
       if (searchRef.current) {
@@ -242,7 +244,7 @@ const WithApprovalCanMergeUsersModal = (props: Props) => {
     } else {
       setUserInput("");
       setSelectedUser(undefined);
-      const nextUsers = (props?.repository?.protectedBranchRule?.withApprovalCanMergeUsers ??
+      const nextUsers = (props?.repository?.protectedBranchRule?.canAutofixUsers ??
         []) as Array<User>;
       setUsers(nextUsers);
     }
@@ -408,10 +410,10 @@ const WithApprovalCanMergeUsersModal = (props: Props) => {
   }, [users, props.repository?.id, props?.repository?.protectedBranchRule?.id])
 
   useEffect(() => {
-    if (updateUsersRequest?.data?.updateAnyoneWithApprovalCanMergeUsers?.__typename == "ProtectedBranchSettingChangeSuccess") {
+    if (updateUsersRequest?.data?.updateAnyoneCanAutofixUsers?.__typename == "ProtectedBranchSettingChangeSuccess") {
       props?.onDismissModal();
     }
-  }, [updateUsersRequest?.data?.updateAnyoneWithApprovalCanMergeUsers, props?.onDismissModal])
+  }, [updateUsersRequest?.data?.updateAnyoneCanAutofixUsers, props?.onDismissModal])
 
   return (
     <RootLongModal
@@ -421,7 +423,7 @@ const WithApprovalCanMergeUsersModal = (props: Props) => {
       headerSize={"small"}
       headerChildren={
         <HeaderWrapper>
-          <FloroHeaderTitle>{"can merge with approval users"}</FloroHeaderTitle>
+          <FloroHeaderTitle>{"fix forward access users"}</FloroHeaderTitle>
         </HeaderWrapper>
       }
     >
@@ -453,7 +455,7 @@ const WithApprovalCanMergeUsersModal = (props: Props) => {
           <div style={{ width: 468, display: "block", textAlign: "left" }}>
             <InstructionsText>
               {
-                "Search for members to enable merge access after approval by @username, or first name and last name."
+                "Search for members to enable fix forward access by @username, or first name and last name."
               }
             </InstructionsText>
           </div>
@@ -493,7 +495,7 @@ const WithApprovalCanMergeUsersModal = (props: Props) => {
             </InnerContainer>
             <UserLabelContainer>
               <UserLabelBorderEnd style={{ left: -1 }} />
-                <UserLabelText>{"users who can merge approved merge requests"}</UserLabelText>
+                <UserLabelText>{"users who can fix forward changes"}</UserLabelText>
               <UserLabelBorderEnd style={{ right: -1 }} />
             </UserLabelContainer>
           </UserContainer>
@@ -520,4 +522,4 @@ const WithApprovalCanMergeUsersModal = (props: Props) => {
   );
 };
 
-export default React.memo(WithApprovalCanMergeUsersModal);
+export default React.memo(CanFixForwardUsersModal);

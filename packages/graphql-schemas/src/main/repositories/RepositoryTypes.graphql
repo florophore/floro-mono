@@ -65,10 +65,6 @@ type ProtectedBranchRule {
   canCreateMergeRequestsUsers: [User]
   canCreateMergeRequestsRoles: [OrganizationRole]
 
-  anyoneCanMergeMergeRequests: Boolean
-  canMergeMergeRequestsUsers: [User]
-  canMergeMergeRequestsRoles: [OrganizationRole]
-
   anyoneWithApprovalCanMerge: Boolean
   withApprovalCanMergeUsers: [User] # if public, can be anyone
   withApprovalCanMergeRoles: [OrganizationRole]

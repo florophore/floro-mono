@@ -54,7 +54,6 @@ interface BranchRuleUserPermission {
   automaticallyDeletesMergedFeatureBranches: boolean;
   canCreateMergeRequests: boolean;
   canMergeWithApproval: boolean;
-  canMergeMergeRequests: boolean;
   canApproveMergeRequests: boolean;
   canRevert: boolean;
   canAutofix: boolean;
@@ -514,15 +513,6 @@ export default class RepositoryService {
         "anyoneWithApprovalCanMerge"
       );
 
-    const canMergeMergeRequests =
-      await this.repoRBAC.calculateUserProtectedBranchRuleSettingPermission(
-        protectedBranchRule,
-        repository,
-        user,
-        repoPermissions,
-        "anyoneCanMergeMergeRequests"
-      );
-
     const canApproveMergeRequests =
       await this.repoRBAC.calculateUserProtectedBranchRuleSettingPermission(
         protectedBranchRule,
@@ -560,7 +550,6 @@ export default class RepositoryService {
         protectedBranchRule.automaticallyDeleteMergedFeatureBranches ?? false,
       canCreateMergeRequests: canCreateMergeRequests ?? false,
       canMergeWithApproval: canMergeWithApproval ?? false,
-      canMergeMergeRequests: canMergeMergeRequests ?? false,
       canApproveMergeRequests: canApproveMergeRequests ?? false,
       canRevert: canRevert ?? false,
       canAutofix: canAutofix ?? false,

@@ -1,25 +1,13 @@
 import React, {
   useMemo,
-  useCallback,
-  useState,
-  useEffect,
-  useRef,
 } from "react";
 import styled from "@emotion/styled";
-import { useTheme } from "@emotion/react";
 import { Link } from "react-router-dom";
 import {
   Repository,
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
-import { Manifest } from "floro/dist/src/plugins";
-import { RemoteCommitState } from "../hooks/remote-state";
-import TimeAgo from "javascript-time-ago";
-import { useSearchParams } from "react-router-dom";
 
-import en from "javascript-time-ago/locale/en";
-import PaginationToggle from "@floro/storybook/stories/repo-components/PaginationToggle";
 import { useRepoLinkBase } from "../hooks/remote-hooks";
-import { useNavigate } from "react-router";
 import DefaultBranchSetting from "./settings_boxes/DefaultBranchSetting";
 import CanChangeSettingsSetting from "./settings_boxes/CanChangeSettingsSetting";
 import CanReadSetting from "./settings_boxes/CanReadSetting";

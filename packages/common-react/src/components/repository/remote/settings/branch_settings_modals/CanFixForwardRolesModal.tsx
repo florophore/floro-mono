@@ -15,10 +15,13 @@ import {
   useCancelOrganizationInvitationMutation,
   useRejectOrganizationInvitationMutation,
   useUpdateAnyoneCanApproveMergeRequestsRolesMutation,
+  useUpdateAnyoneCanAutofixRolesMutation,
   useUpdateAnyoneCanChangeSettingRolesMutation,
   useUpdateAnyoneCanCreateMergeRequestsRolesMutation,
   useUpdateAnyoneCanPushBranchesRolesMutation,
   useUpdateAnyoneCanReadRolesMutation,
+  useUpdateAnyoneCanRevertRolesMutation,
+  useUpdateAnyoneWithApprovalCanMergeRolesMutation,
   useUpdateOrganizationInvitationMutation,
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import RootLongModal from "../../../../RootLongModal";
@@ -153,18 +156,18 @@ export interface Props {
   repository: Repository;
 }
 
-const CanApproveMergeRequestsRolesModal = (props: Props) => {
+const CanFixForwardRolesModal = (props: Props) => {
   const [assignedRoles, setAssignedRoles] = useState<Set<string>>(new Set([]));
 
   useEffect(() => {
     if (props.show) {
       setAssignedRoles(
-        new Set(props?.repository?.protectedBranchRule?.canApproveMergeRequestsRoles?.map((v) => v?.id as string) ?? [])
+        new Set(props?.repository?.protectedBranchRule?.canAutofixRoles?.map((v) => v?.id as string) ?? [])
       );
     }
-  }, [props?.repository?.protectedBranchRule?.canApproveMergeRequestsRoles, props.show]);
+  }, [props?.repository?.protectedBranchRule?.canAutofixRoles, props.show]);
   const [updateRoles, updateRolesResult] =
-    useUpdateAnyoneCanApproveMergeRequestsRolesMutation();
+    useUpdateAnyoneCanAutofixRolesMutation();
   const onUpdate = useCallback(() => {
     if (!props?.repository?.id || !props?.repository?.protectedBranchRule?.id) {
       return;
@@ -184,13 +187,13 @@ const CanApproveMergeRequestsRolesModal = (props: Props) => {
 
   useEffect(() => {
     if (
-      updateRolesResult?.data?.updateAnyoneCanApproveMergeRequestsRoles?.__typename ==
+      updateRolesResult?.data?.updateAnyoneCanAutofixRoles?.__typename ==
       "ProtectedBranchSettingChangeSuccess"
     ) {
       props.onDismissModal();
     }
   }, [
-    updateRolesResult?.data?.updateAnyoneCanApproveMergeRequestsRoles?.__typename,
+    updateRolesResult?.data?.updateAnyoneCanAutofixRoles?.__typename,
     props.onDismissModal,
   ]);
 
@@ -201,7 +204,7 @@ const CanApproveMergeRequestsRolesModal = (props: Props) => {
       onDismiss={props.onDismissModal}
       headerChildren={
         <HeaderWrapper>
-          <FloroHeaderTitle>{"approve merge request roles"}</FloroHeaderTitle>
+          <FloroHeaderTitle>{"fix forward access roles"}</FloroHeaderTitle>
         </HeaderWrapper>
       }
     >
@@ -264,4 +267,4 @@ const CanApproveMergeRequestsRolesModal = (props: Props) => {
   );
 };
 
-export default React.memo(CanApproveMergeRequestsRolesModal);
+export default React.memo(CanFixForwardRolesModal);

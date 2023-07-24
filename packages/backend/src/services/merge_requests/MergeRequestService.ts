@@ -16,6 +16,7 @@ import RepositoryDatasourceFactoryService from "../repositories/RepoDatasourceFa
 import {
   ApplicationKVState,
   BranchRuleSettings,
+  RemoteSettings,
   canAutoMergeCommitStates,
   getDivergenceOrigin,
   getMergeOriginSha,
@@ -30,11 +31,9 @@ import ReviewerRequestsContext from "@floro/database/src/contexts/merge_requests
 import OrganizationMembersContext from "@floro/database/src/contexts/organizations/OrganizationMembersContext";
 import ReviewStatusesContext from "@floro/database/src/contexts/merge_requests/ReviewStatusesContext";
 import { ReviewerRequest } from "@floro/database/src/entities/ReviewerRequest";
-import { ProtectedBranchRule } from "@floro/database/src/entities/ProtectedBranchRule";
 import { v4 as uuidv4 } from "uuid";
 import UpdatedMergeRequestReviewersEventHandler from "./merge_request_events/UpdatedMergeRequestReviewersEventHandler";
 import ReviewStatusChangeEventHandler from "./merge_request_events/ReviewStatusChangeEventHandler";
-import { ReviewStatus } from "@floro/database/src/entities/ReviewStatus";
 import MergeRequestCommentEventHandler from "./merge_request_events/MergeRequestCommentEventHandler";
 import MergeRequestCommentReplyEventHandler from "./merge_request_events/MergeRequestCommentReplyEventHandler";
 import { MergeRequestComment } from "@floro/database/src/entities/MergeRequestComment";
@@ -451,7 +450,8 @@ export default class MergeRequestService implements BranchPushHandler {
       user,
       branch,
       baseBranch,
-      branchRule
+      branchRule,
+      userRepoSettings
     )
 
     const hasApproval = await this.hasApproval(
@@ -544,10 +544,11 @@ export default class MergeRequestService implements BranchPushHandler {
     branch?: FloroBranch|null,
     baseBranch?: FloroBranch|null,
     branchRuleSetting?: BranchRuleSettings|null,
+    userRepoSettings?: RemoteSettings|null,
     queryRunner?: QueryRunner,
   ): Promise<boolean> {
-    if (branchRuleSetting?.canMergeMergeRequests) {
-      return true;
+    if (!userRepoSettings?.canPushBranches) {
+      return false;
     }
     if (!baseBranch) {
       return false;

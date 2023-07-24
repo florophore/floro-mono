@@ -161,7 +161,7 @@ const CanCreateMergeRequestsRolesModal = (props: Props) => {
         new Set(props?.repository?.protectedBranchRule?.canCreateMergeRequestsRoles?.map((v) => v?.id as string) ?? [])
       );
     }
-  }, [props?.repository?.canReadRoles, props.show]);
+  }, [props?.repository?.protectedBranchRule?.canCreateMergeRequestsRoles, props.show]);
   const [updateRoles, updateRolesResult] =
     useUpdateAnyoneCanCreateMergeRequestsRolesMutation();
   const onUpdate = useCallback(() => {

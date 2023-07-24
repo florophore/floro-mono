@@ -11,6 +11,7 @@ import {
   User,
   OrganizationRole,
   useUpdateAnyoneWithApprovalCanMergeMutation,
+  useUpdateAnyoneCanRevertMutation,
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { ColorPalette } from "@floro/styles/ColorPalette";
 import Checkbox from "@floro/storybook/stories/design-system/Checkbox";
@@ -21,6 +22,8 @@ import CanApproveMergeRequestsUsersModal from "../branch_settings_modals/CanAppr
 import CanApproveMergeRequestsRolesModal from "../branch_settings_modals/CanApproveMergeRequestsRolesModal";
 import WithApprovalCanMergeUsersModal from "../branch_settings_modals/WithApprovalCanMergeUsersModal";
 import WithApprovalCanMergeRolesModal from "../branch_settings_modals/WithApprovalCanMergeRolesModal";
+import CanRevertUsersModal from "../branch_settings_modals/CanRevertUsersModal";
+import CanRevertRolesModal from "../branch_settings_modals/CanRevertRolesModal";
 
 const Container = styled.div`
   margin-top: 24px;
@@ -90,14 +93,14 @@ interface Props {
   repository: Repository;
 }
 
-const WithApprovalCanMergeSetting = (props: Props) => {
-  const [anyoneWithApprovalCanMerge, setAnyoneWithApprovalCanMerge] =
+const CanRevertSetting = (props: Props) => {
+  const [anyoneCanRevert, setAnyoneCanRevert] =
     useState<boolean>(false);
 
   const [showAddUsers, setShowAddUsers] = useState<boolean>(false);
   const [showAddRoles, setShowAddRoles] = useState<boolean>(false);
   const theme = useTheme();
-  const [updateAnyoneWithApprovalCanMergeMergeRequests, updateAnyoneWithApprovalCanMergeMergeRequestsRequest] = useUpdateAnyoneWithApprovalCanMergeMutation();
+  const [updateAnyoneCanRevert, updateAnyoneCanRevertRequest] = useUpdateAnyoneCanRevertMutation();
   const loaderColor = useMemo((): keyof ColorPalette => {
     if (theme.name == "light") {
       return "mediumGray";
@@ -106,23 +109,23 @@ const WithApprovalCanMergeSetting = (props: Props) => {
   }, [theme.name]);
 
   useEffect(() => {
-    setAnyoneWithApprovalCanMerge(
-      props.repository?.protectedBranchRule?.anyoneWithApprovalCanMerge ?? false
+    setAnyoneCanRevert(
+      props.repository?.protectedBranchRule?.anyoneCanRevert ?? false
     );
-  }, [props.repository?.protectedBranchRule?.anyoneCanCreateMergeRequests]);
+  }, [props.repository?.protectedBranchRule?.anyoneCanRevert]);
 
   const onChange = useCallback(() => {
     if (props.repository?.id && props?.repository?.protectedBranchRule?.id) {
-      setAnyoneWithApprovalCanMerge(!anyoneWithApprovalCanMerge);
-      updateAnyoneWithApprovalCanMergeMergeRequests({
+      setAnyoneCanRevert(!anyoneCanRevert);
+      updateAnyoneCanRevert({
         variables: {
           repositoryId: props.repository?.id,
           protectedBranchRuleId: props?.repository?.protectedBranchRule?.id,
-          anyoneWithApprovalCanMerge: !anyoneWithApprovalCanMerge
+          anyoneCanRevert: !anyoneCanRevert
         },
       });
     }
-  }, [anyoneWithApprovalCanMerge, props?.repository?.protectedBranchRule?.id, props.repository]);
+  }, [anyoneCanRevert, props?.repository?.protectedBranchRule?.id, props.repository]);
 
   const onShowAddUsers = useCallback(() => {
     setShowAddUsers(true);
@@ -142,12 +145,12 @@ const WithApprovalCanMergeSetting = (props: Props) => {
 
   return (
     <Container>
-      <WithApprovalCanMergeUsersModal
+      <CanRevertUsersModal
         show={showAddUsers}
         onDismissModal={onHideAddUsers}
         repository={props.repository}
       />
-      <WithApprovalCanMergeRolesModal
+      <CanRevertRolesModal
         show={showAddRoles}
         onDismissModal={onHideAddRoles}
         repository={props.repository}
@@ -155,14 +158,14 @@ const WithApprovalCanMergeSetting = (props: Props) => {
       <MainContainer>
         <LeftContainer>
           <Checkbox
-            isChecked={anyoneWithApprovalCanMerge}
+            isChecked={anyoneCanRevert}
             onChange={onChange}
           />
         </LeftContainer>
         <RightContainer>
           <TitleSpan>
-            <Title>{"Anyone with Approval Can Merge Merge Requests"}</Title>
-            {updateAnyoneWithApprovalCanMergeMergeRequestsRequest.loading && (
+            <Title>{"Anyone with Push Access Can Revert Changes"}</Title>
+            {updateAnyoneCanRevertRequest.loading && (
               <div style={{ marginLeft: 12 }}>
                 <DotsLoader color={loaderColor} size={"small"} />
               </div>
@@ -170,21 +173,21 @@ const WithApprovalCanMergeSetting = (props: Props) => {
           </TitleSpan>
           <SubTitle>
             {
-              "Allow all members with merge request approval to merge their merge requests into this branch."
+              "Allow all members with push access to revert changes on this branch."
             }
           </SubTitle>
-          {!props?.repository?.protectedBranchRule?.anyoneWithApprovalCanMerge && (
+          {!props?.repository?.protectedBranchRule?.anyoneCanRevert && (
             <BottomContainer>
               {props?.repository?.repoType == "org_repo" && (
                 <div style={{ marginTop: 24 }}>
                   <EnabledRoleDisplay
                     repository={props.repository}
                     enabledRoles={
-                      (props?.repository?.protectedBranchRule?.withApprovalCanMergeRoles ??
+                      (props?.repository?.protectedBranchRule?.canRevertRoles ??
                         []) as OrganizationRole[]
                     }
                     onClickShow={onShowAddRoles}
-                    label="roles who with approval can merge merge requests"
+                    label="roles who can revert changes"
                   />
                 </div>
               )}
@@ -192,10 +195,10 @@ const WithApprovalCanMergeSetting = (props: Props) => {
                 <EnabledUserDisplay
                   repository={props.repository}
                   enabledUsers={
-                    (props?.repository?.protectedBranchRule?.withApprovalCanMergeUsers ?? []) as User[]
+                    (props?.repository?.protectedBranchRule?.canRevertUsers ?? []) as User[]
                   }
                   onClickShow={onShowAddUsers}
-                  label="users who with approval can merge merge requests"
+                  label="users who can revert changes"
                 />
               </div>
             </BottomContainer>
@@ -206,4 +209,4 @@ const WithApprovalCanMergeSetting = (props: Props) => {
   );
 };
 
-export default React.memo(WithApprovalCanMergeSetting);
+export default React.memo(CanRevertSetting);

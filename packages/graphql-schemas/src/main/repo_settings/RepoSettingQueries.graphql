@@ -129,22 +129,6 @@ extend type Mutation {
     roleIds: [ID]!
   ): ProtectedBranchSettingChangeResponse
 
-  updateAnyoneCanMergeMergeRequests(
-    repositoryId: ID!
-    protectedBranchRuleId: ID!
-    anyoneCanMergeMergeRequests: Boolean!
-  ): ProtectedBranchSettingChangeResponse
-  updateAnyoneCanMergeMergeRequestsUsers(
-    repositoryId: ID!
-    protectedBranchRuleId: ID!
-    userIds: [ID]!
-  ): ProtectedBranchSettingChangeResponse
-  updateAnyoneCanMergeMergeRequestsRoles(
-    repositoryId: ID!
-    protectedBranchRuleId: ID!
-    roleIds: [ID]!
-  ): ProtectedBranchSettingChangeResponse
-
   updateAnyoneCanApproveMergeRequests(
     repositoryId: ID!
     protectedBranchRuleId: ID!

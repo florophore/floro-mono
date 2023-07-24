@@ -14,7 +14,9 @@ import RequireApprovalToMergeSettings from "./branch_settings_boxes/RequireAppro
 import AutomaticallyDeleteMergedFeatureBranchesSettings from "./branch_settings_boxes/AutomaticallyDeleteMergedFeatureBranchesSettings";
 import CanCreateMergeRequestSetting from "./branch_settings_boxes/CanCreateMergeRequestSetting";
 import CanApproveMergeRequestSetting from "./branch_settings_boxes/CanApproveMergeRequestSetting";
-import WithApprovalCanMergetSetting from "./branch_settings_boxes/WithApprovalCanMergetSetting";
+import WithApprovalCanMergetSetting from "./branch_settings_boxes/WithApprovalCanMergeSetting";
+import CanRevertSetting from "./branch_settings_boxes/CanRevertSetting";
+import CanFixForwardSetting from "./branch_settings_boxes/CanFixForwardSetting";
 
 const Container = styled.div`
   height: 100%;
@@ -153,6 +155,12 @@ const BranchRuleDisplay = (props: Props) => {
         )}
         {showAnySettings && (
           <WithApprovalCanMergetSetting repository={props.repository}/>
+        )}
+        {showAnySettings && (
+          <CanRevertSetting repository={props.repository}/>
+        )}
+        {showAnySettings && (
+          <CanFixForwardSetting repository={props.repository}/>
         )}
       </InnerContainer>
     </Container>

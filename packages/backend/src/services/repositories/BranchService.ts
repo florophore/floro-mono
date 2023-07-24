@@ -26,11 +26,9 @@ import {
   RemoteSettings,
 } from "floro/dist/src/repo";
 import RepoRBACService from "./RepoRBACService";
-import RepositoryService from "./RepositoryService";
 import UsersContext from "@floro/database/src/contexts/users/UsersContext";
 import OrganizationsContext from "@floro/database/src/contexts/organizations/OrganizationsContext";
 import BranchPushHandler from "../events/BranchPushEventHandler";
-import { Branch } from "@floro/database/src/entities/Branch";
 import MergeRequestsContext from "@floro/database/src/contexts/merge_requests/MergeRequestsContext";
 
 export const LICENSE_CODE_LIST = new Set([
@@ -114,8 +112,6 @@ export default class BranchService {
       anyoneCanCreateMergeRequests: true,
       anyoneWithApprovalCanMerge: true,
       requireReapprovalOnPushToMerge: true,
-      anyoneCanMergeMergeRequests:
-        repository.isPrivate && repository.repoType == "user_repo", // by default a private repo user can do anything
       anyoneCanApproveMergeRequests: repository.isPrivate, // limit in public case
       anyoneCanRevert: repository.isPrivate,
       anyoneCanAutofix: repository.isPrivate,

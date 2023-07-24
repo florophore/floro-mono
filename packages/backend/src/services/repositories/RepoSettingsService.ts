@@ -902,8 +902,6 @@ export default class RepoSettingsService {
           anyoneCanCreateMergeRequests: true,
           anyoneWithApprovalCanMerge: true,
           requireReapprovalOnPushToMerge: true,
-          anyoneCanMergeMergeRequests:
-            repository.isPrivate && repository.repoType == "user_repo",
           anyoneCanApproveMergeRequests: repository.isPrivate,
           anyoneCanRevert: repository.isPrivate,
           anyoneCanAutofix: repository.isPrivate,

@@ -56,11 +56,6 @@ export class ProtectedBranchRule extends BinaryPKBaseEntity {
   @Column("boolean")
   @IsDefined()
   @IsBoolean()
-  anyoneCanMergeMergeRequests?: boolean; // means any MR can be merged regardless of approval status
-
-  @Column("boolean")
-  @IsDefined()
-  @IsBoolean()
   anyoneCanApproveMergeRequests?: boolean;
 
   @Column("boolean")
