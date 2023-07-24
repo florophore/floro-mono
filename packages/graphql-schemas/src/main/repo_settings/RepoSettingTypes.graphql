@@ -34,6 +34,23 @@ union RepoSettingChangeResponse =
   | UnAuthenticatedError
 
 
+type ProtectedBranchSettingChangeError {
+  type: String
+  message: String
+}
+
+type ProtectedBranchSettingChangeSuccess {
+  repository: Repository
+  protectedBranchRule: ProtectedBranchRule
+}
+
+union ProtectedBranchSettingChangeResponse =
+    ProtectedBranchSettingChangeSuccess
+  | ProtectedBranchSettingChangeError
+  | RepoSettingAccessError
+  | UnAuthenticatedError
+
+
 type SearchUsersForSettingSuccess {
   users: [User]
 }

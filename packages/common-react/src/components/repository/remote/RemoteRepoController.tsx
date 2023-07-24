@@ -20,6 +20,7 @@ import MergeRequestHistoryDisplay from "./mergerequesthistory/MergeRequestHistor
 import MRHistoryDisplay from "./history/MRHistoryDisplay";
 import MergeRequest from "./mergerequest/MergeRequest";
 import SettingsDisplay from "./settings/SettingsDisplay";
+import BranchRuleDisplay from "./settings/BranchRuleDisplay";
 
 const LoadingContainer = styled.div`
   display: flex;
@@ -105,6 +106,7 @@ const RemoteRepoController = (props: Props) => {
         />
       );
     }
+
     if (props.page == "settings") {
       return (
         <SettingsDisplay
@@ -113,6 +115,16 @@ const RemoteRepoController = (props: Props) => {
         />
       )
     }
+
+    if (props.page == "branch-rule") {
+      return (
+        <BranchRuleDisplay
+          repository={props.repository}
+          plugin={props.plugin ?? "home"}
+        />
+      );
+    }
+
     if (props.page == "merge-requests") {
       return (
         <MergeRequestHistoryDisplay

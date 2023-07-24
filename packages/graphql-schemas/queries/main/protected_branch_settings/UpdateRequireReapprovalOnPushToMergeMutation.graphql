@@ -1,0 +1,34 @@
+mutation UpdateRequireReapprovalOnPushToMerge(
+  $repositoryId: ID!
+  $protectedBranchRuleId: ID!
+  $requireReapprovalOnPushToMerge: Boolean!
+) {
+  updateRequireReapprovalOnPushToMerge(
+    repositoryId: $repositoryId
+    protectedBranchRuleId: $protectedBranchRuleId
+    requireReapprovalOnPushToMerge: $requireReapprovalOnPushToMerge
+  ) {
+    ... on ProtectedBranchSettingChangeSuccess {
+      repository {
+        id
+        protectedBranchRule(protectedBranchRuleId: $protectedBranchRuleId) {
+          ...ProtectedBranchRule
+        }
+      }
+    }
+    ... on ProtectedBranchSettingChangeError {
+      message
+      type
+    }
+
+    ... on RepoSettingAccessError {
+      type
+      message
+    }
+
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+  }
+}

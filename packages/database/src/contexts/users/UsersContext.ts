@@ -64,7 +64,7 @@ export default class UsersContext extends BaseContext {
         }
         return await qb
           .leftJoinAndSelect("user.profilePhoto", "photo")
-          .where(`user.first_name || ' '  || user.last_name ILIKE :query || '%'`)
+          .where(`(user.first_name || ' '  || user.last_name ILIKE :query || '%') OR (user.last_name ILIKE :query || '%')`)
           .setParameter("query", query.trim().toLowerCase())
           .limit(limit)
           .orderBy(`LENGTH(user.first_name || ' ' || user.last_name)`, "ASC")
@@ -90,7 +90,7 @@ export default class UsersContext extends BaseContext {
         }
         return await qb
           .leftJoinAndSelect("user.profilePhoto", "photo")
-          .where(`(user.first_name || ' '  || user.last_name ILIKE :query || '%') AND user.id <> ALL(:ids)`)
+          .where(`((user.first_name || ' '  || user.last_name ILIKE :query || '%') OR (user.last_name ILIKE :query || '%')) AND user.id <> ALL(:ids)`)
           .setParameter("query", query.trim().toLowerCase())
           .setParameter("ids", excludingIds)
           .limit(limit)
@@ -118,7 +118,7 @@ export default class UsersContext extends BaseContext {
         }
         return await qb
           .leftJoinAndSelect("user.profilePhoto", "photo")
-          .where(`(user.first_name || ' '  || user.last_name ILIKE :query || '%') AND user.id <> ALL(:excluded_ids) AND user.id IN(:...included_ids)`)
+          .where(`((user.first_name || ' '  || user.last_name ILIKE :query || '%') OR (user.last_name ILIKE :query || '%')) AND user.id <> ALL(:excluded_ids) AND user.id IN(:...included_ids)`)
           .setParameter("query", query.trim().toLowerCase())
           .setParameter("excluded_ids", excludingIds)
           .setParameter("included_ids", includingIds)

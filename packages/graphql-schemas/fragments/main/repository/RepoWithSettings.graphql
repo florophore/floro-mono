@@ -63,7 +63,7 @@ fragment RepoWithSettings on Repository {
     lastName
     username
     profilePhoto {
-    ...Photo
+      ...Photo
     }
   }
   canPushBranchesRoles {

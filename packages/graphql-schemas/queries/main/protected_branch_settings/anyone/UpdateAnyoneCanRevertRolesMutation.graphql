@@ -1,0 +1,34 @@
+mutation UpdateAnyoneCanRevertRoles(
+  $repositoryId: ID!
+  $protectedBranchRuleId: ID!
+  $roleIds: [ID]!
+) {
+  updateAnyoneCanRevertRoles(
+    repositoryId: $repositoryId
+    protectedBranchRuleId: $protectedBranchRuleId
+    roleIds: $roleIds
+  ) {
+    ... on ProtectedBranchSettingChangeSuccess {
+      repository {
+        id
+        protectedBranchRule(protectedBranchRuleId: $protectedBranchRuleId) {
+          ...ProtectedBranchRule
+        }
+      }
+    }
+    ... on ProtectedBranchSettingChangeError {
+      message
+      type
+    }
+
+    ... on RepoSettingAccessError {
+      type
+      message
+    }
+
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+  }
+}

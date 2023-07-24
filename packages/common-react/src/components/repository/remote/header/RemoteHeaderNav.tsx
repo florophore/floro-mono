@@ -91,6 +91,10 @@ const RemoteHeaderNav = (props: Props) => {
     return null;
   }
 
+  if (props.page == "branch-rule") {
+    return null;
+  }
+
   if (props.page == "history") {
     return (
       <RemoteHistoryHeader

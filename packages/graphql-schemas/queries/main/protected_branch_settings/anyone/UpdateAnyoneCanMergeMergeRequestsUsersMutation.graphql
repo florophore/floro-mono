@@ -1,0 +1,34 @@
+mutation UpdateAnyoneCanMergeMergeRequestsUsers(
+  $repositoryId: ID!
+  $protectedBranchRuleId: ID!
+  $userIds: [ID]!
+) {
+  updateAnyoneCanMergeMergeRequestsUsers(
+    repositoryId: $repositoryId
+    protectedBranchRuleId: $protectedBranchRuleId
+    userIds: $userIds
+  ) {
+    ... on ProtectedBranchSettingChangeSuccess {
+      repository {
+        id
+        protectedBranchRule(protectedBranchRuleId: $protectedBranchRuleId) {
+          ...ProtectedBranchRule
+        }
+      }
+    }
+    ... on ProtectedBranchSettingChangeError {
+      message
+      type
+    }
+
+    ... on RepoSettingAccessError {
+      type
+      message
+    }
+
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+  }
+}

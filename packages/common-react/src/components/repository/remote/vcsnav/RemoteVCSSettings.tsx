@@ -5,7 +5,10 @@ import React, {
   useRef,
   useEffect,
 } from "react";
-import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import {
+  ProtectedBranchRule,
+  Repository,
+} from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import ColorPalette from "@floro/styles/ColorPalette";
@@ -14,11 +17,15 @@ import Button from "@floro/storybook/stories/design-system/Button";
 import BackArrowIconLight from "@floro/common-assets/assets/images/icons/back_arrow.light.svg";
 import BackArrowIconDark from "@floro/common-assets/assets/images/icons/back_arrow.dark.svg";
 import { RemoteCommitState } from "../hooks/remote-state";
-import {useParams, useSearchParams} from 'react-router-dom';
+import { useParams, useSearchParams } from "react-router-dom";
 import SearchInput from "@floro/storybook/stories/design-system/SearchInput";
 import { useRepoLinkBase } from "../hooks/remote-hooks";
 import { useNavigate } from "react-router";
 import { RepoPage } from "../../types";
+import BranchRuleSelector from "@floro/storybook/stories/repo-components/BranchRuleSelector";
+import { Branch } from "floro/dist/src/repo";
+
+import BranchRuleIcon from "@floro/common-assets/assets/images/icons/branch_rule.dark.svg";
 
 const InnerContent = styled.div`
   display: flex;
@@ -48,11 +55,11 @@ const BottomContainer = styled.div`
 `;
 
 const TitleSpan = styled.span`
-    font-size: 1.7rem;
-    font-family: "MavenPro";
-    font-weight: 600;
-    color: ${props => props.theme.colors.titleText};
-    white-space: nowrap;
+  font-size: 1.7rem;
+  font-family: "MavenPro";
+  font-weight: 600;
+  color: ${(props) => props.theme.colors.titleText};
+  white-space: nowrap;
 `;
 
 const TitleRow = styled.div`
@@ -64,9 +71,9 @@ const TitleRow = styled.div`
 `;
 
 const GoBackIcon = styled.img`
-    width: 32px;
-    height: 32px;
-    cursor: pointer;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
 `;
 
 const Row = styled.div`
@@ -134,8 +141,19 @@ const BlurbPlaceholder = styled.span`
   pointer-events: none;
 `;
 
+const ButtonRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+`;
+
 export const getBranchIdFromName = (name: string): string => {
-  return name.toLowerCase().replaceAll(" ", "-").replaceAll(/[[\]'"]/g, "");
+  return name
+    .toLowerCase()
+    .replaceAll(" ", "-")
+    .replaceAll(/[[\]'"]/g, "");
 };
 
 interface Props {
@@ -144,9 +162,11 @@ interface Props {
 }
 
 const RemoteVCSSettings = (props: Props) => {
-
   const theme = useTheme();
   const navigate = useNavigate();
+
+  const [selectedBranchRule, setSelectedBranchRule] =
+    useState<null | ProtectedBranchRule>(null);
 
   const linkBase = useRepoLinkBase(props.repository);
   const homeLink = useMemo(() => {
@@ -164,6 +184,14 @@ const RemoteVCSSettings = (props: Props) => {
     return BackArrowIconDark;
   }, [theme.name]);
 
+  const onSelectBranchRule = useCallback(
+    (branchRule: ProtectedBranchRule | null) => {
+      if (branchRule) {
+        navigate(`${linkBase}/settings/branchrules/${branchRule?.id}?from=remote&plugin=${props.plugin ?? "home"}`);
+      }
+    },
+    [linkBase, props.plugin]
+  );
 
   return (
     <>
@@ -187,6 +215,12 @@ const RemoteVCSSettings = (props: Props) => {
             </div>
           </TitleRow>
           <Row>
+            <BranchRuleSelector
+              size="wide"
+              branchRules={props?.repository?.protectedBranchRules ?? []}
+              branchRule={selectedBranchRule}
+              onChangeBranchRule={onSelectBranchRule}
+            />
           </Row>
         </TopContainer>
         <BottomContainer>
@@ -197,7 +231,34 @@ const RemoteVCSSettings = (props: Props) => {
               flexDirection: "row",
               justifyContent: "center",
             }}
-          ></div>
+          >
+            <Button
+              label={
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    paddingLeft: 24,
+                    paddingRight: 36,
+                  }}
+                >
+                  <img
+                    style={{
+                      height: 32,
+                      width: 32,
+                      marginRight: 16,
+                    }}
+                    src={BranchRuleIcon}
+                  />
+                  <span>{"create branch rule"}</span>
+                </div>
+              }
+              bg={"purple"}
+              size={"extra-big"}
+            />
+          </div>
         </BottomContainer>
       </InnerContent>
     </>

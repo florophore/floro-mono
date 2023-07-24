@@ -29,10 +29,7 @@ import { useSession } from "../../../../session/session-context";
 const Container = styled.div`
   height: 100%;
   max-width: 100%;
-  overflow: scroll;
-  padding: 16px 40px 80px 24px;
   user-select: text;
-
   ::-webkit-scrollbar {
     width: 4px;
     background: ${(props) => props.theme.background};
@@ -42,6 +39,12 @@ const Container = styled.div`
     border-radius: 10px;
     border: ${(props) => props.theme.background};
   }
+`;
+
+const InnerContainer = styled.div`
+  padding: 16px 40px 80px 24px;
+  overflow-y: scroll;
+  height: 100%;
 `;
 
 const TitleContainer = styled.div`
@@ -160,24 +163,26 @@ const SettingsDisplay = (props: Props) => {
 
   return (
     <Container>
-      <TitleContainer>
-        <Title>{"Repo Settings"}</Title>
-        {canChangeApiSettings && (
-          <Link to={apiLink}>
-              <ApiConfigText>{'Configure API Settings'}</ApiConfigText>
-          </Link>
+      <InnerContainer>
+        <TitleContainer>
+          <Title>{"Repo Settings"}</Title>
+          {canChangeApiSettings && (
+            <Link to={apiLink}>
+                <ApiConfigText>{'Configure API Settings'}</ApiConfigText>
+            </Link>
+          )}
+        </TitleContainer>
+        <DefaultBranchSetting repository={props.repository}/>
+        {showChangeSettings && (
+          <CanChangeSettingsSetting repository={props.repository}/>
         )}
-      </TitleContainer>
-      <DefaultBranchSetting repository={props.repository}/>
-      {showChangeSettings && (
-        <CanChangeSettingsSetting repository={props.repository}/>
-      )}
-      {showReadSetting && (
-        <CanReadSetting repository={props.repository}/>
-      )}
-      {showPushSetting && (
-        <CanPushBranchesSetting repository={props.repository}/>
-      )}
+        {showReadSetting && (
+          <CanReadSetting repository={props.repository}/>
+        )}
+        {showPushSetting && (
+          <CanPushBranchesSetting repository={props.repository}/>
+        )}
+      </InnerContainer>
     </Container>
   );
 };

@@ -1,0 +1,34 @@
+mutation UpdateRequireApprovalToMerge(
+  $repositoryId: ID!
+  $protectedBranchRuleId: ID!
+  $requireApprovalToMerge: Boolean!
+) {
+  updateRequireApprovalToMerge(
+    repositoryId: $repositoryId
+    protectedBranchRuleId: $protectedBranchRuleId
+    requireApprovalToMerge: $requireApprovalToMerge
+  ) {
+    ... on ProtectedBranchSettingChangeSuccess {
+      repository {
+        id
+        protectedBranchRule(protectedBranchRuleId: $protectedBranchRuleId) {
+          ...ProtectedBranchRule
+        }
+      }
+    }
+    ... on ProtectedBranchSettingChangeError {
+      message
+      type
+    }
+
+    ... on RepoSettingAccessError {
+      type
+      message
+    }
+
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+  }
+}

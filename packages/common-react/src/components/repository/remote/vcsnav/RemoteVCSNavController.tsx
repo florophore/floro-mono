@@ -11,6 +11,7 @@ import { RepoPage } from "../../types";
 import RemoteVCSMergeRequestsHistory from "./RemoteVCSMergeRequestsHistory";
 import RemoteVCSMergeRequest from "./RemoteVCSMergeRequest";
 import RemoteVCSSettings from "./RemoteVCSSettings";
+import RemoteVCSBranchRuleSettings from "./RemoteVCSBranchRuleSettings";
 
 interface Props {
   repository: Repository;
@@ -30,6 +31,16 @@ const RemoteVCSNavController = (props: Props) => {
         repository={props.repository}
         plugin={props.plugin}
       />
+    );
+  }
+
+  if (props.page == "branch-rule") {
+    return (
+      <RemoteVCSBranchRuleSettings
+        repository={props.repository}
+        plugin={props.plugin}
+      />
+
     );
   }
 

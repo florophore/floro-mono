@@ -1,0 +1,51 @@
+fragment RepoWithBranchRuleSettings on Repository {
+  ...Repository
+  organization {
+    ...Organization
+    membership {
+        roles {
+            id
+            name
+            isMutable
+        }
+        permissions {
+          canModifyOrganizationDeveloperSettings
+        }
+    }
+    roles {
+        id
+        name
+        isMutable
+    }
+  }
+  user {
+    ...User
+  }
+  repoBranches {
+    id
+    name
+    lastCommit
+    baseBranchId
+    createdBy
+    createdByUsername
+    createdAt
+    updatedAt
+  }
+
+  repoPermissions {
+    canPushBranches
+    canChangeSettings
+  }
+
+  defaultBranchId
+
+  allowExternalUsersToPush
+  anyoneCanPushBranches
+
+  protectedBranchRules {
+    id
+    branchId
+    branchName
+  }
+
+}

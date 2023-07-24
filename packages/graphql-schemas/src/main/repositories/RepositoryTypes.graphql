@@ -45,6 +45,7 @@ type Repository {
   canTurnOffAnyoneCanRead: Boolean
 
   protectedBranchRules: [ProtectedBranchRule]
+  protectedBranchRule(protectedBranchRuleId: ID): ProtectedBranchRule
 }
 
 type ProtectedBranchRule {
@@ -63,6 +64,10 @@ type ProtectedBranchRule {
   anyoneCanCreateMergeRequests: Boolean
   canCreateMergeRequestsUsers: [User]
   canCreateMergeRequestsRoles: [OrganizationRole]
+
+  anyoneCanMergeMergeRequests: Boolean
+  canMergeMergeRequestsUsers: [User]
+  canMergeMergeRequestsRoles: [OrganizationRole]
 
   anyoneWithApprovalCanMerge: Boolean
   withApprovalCanMergeUsers: [User] # if public, can be anyone

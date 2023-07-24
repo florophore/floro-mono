@@ -1,0 +1,34 @@
+mutation UpdateAnyoneCanAutofix(
+  $repositoryId: ID!
+  $protectedBranchRuleId: ID!
+  $anyoneCanAutofix: Boolean!
+) {
+  updateAnyoneCanAutofix(
+    repositoryId: $repositoryId
+    protectedBranchRuleId: $protectedBranchRuleId
+    anyoneCanAutofix: $anyoneCanAutofix
+  ) {
+    ... on ProtectedBranchSettingChangeSuccess {
+      repository {
+        id
+        protectedBranchRule(protectedBranchRuleId: $protectedBranchRuleId) {
+          ...ProtectedBranchRule
+        }
+      }
+    }
+    ... on ProtectedBranchSettingChangeError {
+      message
+      type
+    }
+
+    ... on RepoSettingAccessError {
+      type
+      message
+    }
+
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+  }
+}

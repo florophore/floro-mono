@@ -169,7 +169,6 @@ export default class RepoController extends BaseController {
         response.sendStatus(400);
       }
     } catch (e) {
-      console.log("E", e);
       response.sendStatus(400);
     }
   }

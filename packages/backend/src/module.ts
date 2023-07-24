@@ -90,6 +90,8 @@ import RepositoryProtectedBranchesResolverModule from './resolvers/repository/Re
 import WriteAccessIdsLoader from './resolvers/hooks/loaders/Repository/WriteAccessIdsLoader';
 import GrantAccessReceiverService from './services/repositories/GrantAccessReceiverService';
 import GrantRepoAccessHandler from './services/events/GrantRepoAccessHandler';
+import ProtectedBranchRuleLoader from './resolvers/hooks/loaders/Root/ProtectedBranchRuleID/ProtectedBranchRuleLoader';
+import RepositoryRemoteSettingsArgsLoader from './resolvers/hooks/loaders/Repository/RepositoryRemoteSettingsArgsLoader';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -148,7 +150,9 @@ export default new ContainerModule((bind): void => {
     bind(CommitStateDatasourceLoader).toSelf();
     bind(CommitStatePluginVersionsLoader).toSelf()
     bind(CommitInfoRepositoryLoader).toSelf();
+
     bind(WriteAccessIdsLoader).toSelf();
+    bind(ProtectedBranchRuleLoader).toSelf();
 
     // MERGE REQUEST
     bind(MergeRequestLoader).toSelf();
@@ -157,6 +161,7 @@ export default new ContainerModule((bind): void => {
     bind(OpenMergeRequestsLoader).toSelf();
     bind(ClosedMergeRequestsLoader).toSelf();
     bind(MergeRequestPermissionsLoader).toSelf();
+    bind(RepositoryRemoteSettingsArgsLoader).toSelf();
 
     // SERVICES
     bind(AuthenticationService).toSelf();
@@ -192,13 +197,14 @@ export default new ContainerModule((bind): void => {
     bind(MergeRequestEventService).toSelf();
 
     // EVENT HANDLERS
+
     // CREATE USER HANLDER
     bind<CreateUserEventHandler>("CreateUserHandler").to(OrganizationInvitationService);
     bind<CreateUserEventHandler>("CreateUserHandler").to(ReferralService);
 
     // BRANCH PUSH HANLDERS
-
     bind<BranchPushHandler>("BranchPushHandler").to(MergeRequestEventService);
+
     // MERGE REQUESTS
     bind<CreateMergeRequestEventHandler>("CreateMergeRequestEventHandler").to(MergeRequestEventService);
     bind<UpdateMergeRequestEventHandler>("UpdateMergeRequestEventHandler").to(MergeRequestEventService);

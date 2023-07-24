@@ -1,0 +1,34 @@
+mutation UpdateAnyoneWithApprovalCanMerge(
+  $repositoryId: ID!
+  $protectedBranchRuleId: ID!
+  $anyoneWithApprovalCanMerge: Boolean!
+) {
+  updateAnyoneWithApprovalCanMerge(
+    repositoryId: $repositoryId
+    protectedBranchRuleId: $protectedBranchRuleId
+    anyoneWithApprovalCanMerge: $anyoneWithApprovalCanMerge
+  ) {
+    ... on ProtectedBranchSettingChangeSuccess {
+      repository {
+        id
+        protectedBranchRule(protectedBranchRuleId: $protectedBranchRuleId) {
+          ...ProtectedBranchRule
+        }
+      }
+    }
+    ... on ProtectedBranchSettingChangeError {
+      message
+      type
+    }
+
+    ... on RepoSettingAccessError {
+      type
+      message
+    }
+
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+  }
+}

@@ -212,8 +212,6 @@ export interface Props {
   show: boolean;
   onDismissModal: () => void;
   repository: Repository;
-  currentInvitationId?: string | null;
-  currentInvitationQuery?: string | null;
 }
 
 const AddReadAccessUsersModal = (props: Props) => {

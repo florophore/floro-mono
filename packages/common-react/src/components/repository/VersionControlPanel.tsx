@@ -131,6 +131,9 @@ const VersionControlPanel = (props: Props) => {
       if (props.page == "settings") {
         return true;
       }
+      if (props.page == "branch-rule") {
+        return true;
+      }
     }
     if (!repoExistsLocally) {
       return true;

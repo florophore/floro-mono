@@ -16,6 +16,7 @@ import { DataSource } from "floro/dist/src/datasource";
 import { MergeRequest } from "@floro/database/src/entities/MergeRequest";
 import { MergeRequestComment } from "@floro/database/src/entities/MergeRequestComment";
 import { MergeRequestCommentReply } from "@floro/database/src/entities/MergeRequestCommentReply";
+import { ProtectedBranchRule } from "@floro/database/src/entities/ProtectedBranchRule";
 
 @injectable()
 export default class RequestCache {
@@ -791,5 +792,23 @@ export default class RequestCache {
   ): Set<string> {
     const cache = this.getCache(cacheKey);
     return cache[`repo-write-access-ids:${repositoryId}`];
+  }
+
+
+
+  public getProtectedBranchRule(
+    cacheKey: string,
+    protectedBranchRuleId: string,
+  ): ProtectedBranchRule {
+    const cache = this.getCache(cacheKey);
+    return cache[`protected-branch-rule:${protectedBranchRuleId}`] as ProtectedBranchRule;
+  }
+
+  public setProtectedBranchRule(
+    cacheKey: string,
+    protectedBranchRule: ProtectedBranchRule,
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`protected-branch-rule:${protectedBranchRule.id}`] = protectedBranchRule;
   }
 }

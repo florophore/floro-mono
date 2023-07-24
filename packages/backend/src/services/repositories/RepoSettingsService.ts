@@ -1186,6 +1186,30 @@ export default class RepoSettingsService {
     return null;
   }
 
+
+  //public async updateProtectedBranchRuleSetting(
+  //  protectedBranchRule: ProtectedBranchRule,
+  //  settingsName:
+  //    | "disableDirectPushing"
+  //    | "requireApprovalToMerge"
+  //    | "requireReapprovalOnPushToMerge"
+  //    | "automaticallyDeleteMergedFeatureBranches"
+  //    | "anyoneCanCreateMergeRequests"
+  //    | "anyoneWithApprovalCanMerge"
+  //    | "anyoneCanMergeMergeRequests"
+  //    | "anyoneCanApproveMergeRequests"
+  //    | "anyoneCanRevert"
+  //    | "anyoneCanAutofix",
+  //  settingValue: boolean
+  //) {
+  //  const protectedBranchRulesContext = await this.contextFactory.createContext(
+  //    ProtectedBranchRulesContext
+  //  );
+  //  return await protectedBranchRulesContext.updateProtectedBranchRule(protectedBranchRule, {
+  //    [settingsName]: settingValue
+  //  });
+  //}
+
   public async updateBranchRuleDisableDirectPushing(
     repository: Repository,
     branchRuleId: string,

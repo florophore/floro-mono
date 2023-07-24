@@ -1,0 +1,89 @@
+
+fragment ProtectedBranchRule on ProtectedBranchRule {
+  id
+  repositoryId
+
+  branchId
+  branchName
+
+  disableDirectPushing
+  requireApprovalToMerge
+  requireReapprovalOnPushToMerge
+
+  automaticallyDeleteMergedFeatureBranches
+
+  anyoneCanCreateMergeRequests
+  canCreateMergeRequestsUsers {
+    id
+    firstName
+    lastName
+    username
+    profilePhoto {
+      ...Photo
+    }
+  }
+  canCreateMergeRequestsRoles {
+    id
+    name
+  }
+
+  anyoneWithApprovalCanMerge
+  withApprovalCanMergeUsers {
+    id
+    firstName
+    lastName
+    username
+    profilePhoto {
+      ...Photo
+    }
+  }
+  withApprovalCanMergeRoles {
+    id
+    name
+  }
+
+  anyoneCanApproveMergeRequests
+  canApproveMergeRequestsUsers {
+    id
+    firstName
+    lastName
+    username
+    profilePhoto {
+      ...Photo
+    }
+  }
+  canApproveMergeRequestsRoles {
+    id
+    name
+  }
+
+  anyoneCanRevert
+  canRevertUsers {
+    id
+    firstName
+    lastName
+    username
+    profilePhoto {
+      ...Photo
+    }
+  }
+  canRevertRoles {
+    id
+    name
+  }
+
+  anyoneCanAutofix
+  canAutofixUsers {
+    id
+    firstName
+    lastName
+    username
+    profilePhoto {
+      ...Photo
+    }
+  }
+  canAutofixRoles {
+    id
+    name
+  }
+}

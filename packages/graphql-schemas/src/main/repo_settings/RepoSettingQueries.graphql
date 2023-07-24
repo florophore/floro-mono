@@ -1,25 +1,25 @@
 extend type Query {
   searchUsersForRepoReadAccess(
     repositoryId: ID!
-    query: String,
+    query: String
     excludedUserIds: [String]
   ): SearchUsersForSettingResponse
 
   searchUsersForRepoSettingsAccess(
     repositoryId: ID!
-    query: String,
+    query: String
     excludedUserIds: [String]
   ): SearchUsersForSettingResponse
 
   searchUsersForRepoPushAccess(
     repositoryId: ID!
-    query: String,
+    query: String
     excludedUserIds: [String]
   ): SearchUsersForSettingResponse
 
-  searchUsersForRepoForProtectedBranchAccess(
+  searchUsersForProtectedBranchAccess(
     repositoryId: ID!
-    query: String,
+    query: String
     excludedUserIds: [String]
   ): SearchUsersForSettingResponse
 }
@@ -30,16 +30,166 @@ extend type Mutation {
     branchId: String!
   ): CreateBranchRuleReponse
 
-  updateAnyoneCanRead(repositoryId: ID!, anyoneCanRead: Boolean!): RepoSettingChangeResponse
-  updateAnyoneCanReadUsers(repositoryId: ID!, userIds: [ID]!): RepoSettingChangeResponse
-  updateAnyoneCanReadRoles(repositoryId: ID!, roleIds: [ID]!): RepoSettingChangeResponse
+  updateAnyoneCanRead(
+    repositoryId: ID!
+    anyoneCanRead: Boolean!
+  ): RepoSettingChangeResponse
+  updateAnyoneCanReadUsers(
+    repositoryId: ID!
+    userIds: [ID]!
+  ): RepoSettingChangeResponse
+  updateAnyoneCanReadRoles(
+    repositoryId: ID!
+    roleIds: [ID]!
+  ): RepoSettingChangeResponse
 
-  updateAnyoneCanChangeSettings(repositoryId: ID!, anyoneCanChangeSettings: Boolean!): RepoSettingChangeResponse
-  updateAnyoneCanChangeSettingsUsers(repositoryId: ID!, userIds: [ID]!): RepoSettingChangeResponse
-  updateAnyoneCanChangeSettingsRoles(repositoryId: ID!, roleIds: [ID]!): RepoSettingChangeResponse
+  updateAnyoneCanChangeSettings(
+    repositoryId: ID!
+    anyoneCanChangeSettings: Boolean!
+  ): RepoSettingChangeResponse
+  updateAnyoneCanChangeSettingsUsers(
+    repositoryId: ID!
+    userIds: [ID]!
+  ): RepoSettingChangeResponse
+  updateAnyoneCanChangeSettingsRoles(
+    repositoryId: ID!
+    roleIds: [ID]!
+  ): RepoSettingChangeResponse
 
-  updateAnyoneCanPushBranches(repositoryId: ID!, anyoneCanPushBranches: Boolean!): RepoSettingChangeResponse
-  updateAnyoneCanPushBranchesUsers(repositoryId: ID!, userIds: [ID]!): RepoSettingChangeResponse
-  updateAnyoneCanPushBranchesRoles(repositoryId: ID!, roleIds: [ID]!): RepoSettingChangeResponse
-  updateAllowExternalUsersToPush(repositoryId: ID!, allowExternalUsersToPush: Boolean!): RepoSettingChangeResponse
+  updateAnyoneCanPushBranches(
+    repositoryId: ID!
+    anyoneCanPushBranches: Boolean!
+  ): RepoSettingChangeResponse
+  updateAnyoneCanPushBranchesUsers(
+    repositoryId: ID!
+    userIds: [ID]!
+  ): RepoSettingChangeResponse
+  updateAnyoneCanPushBranchesRoles(
+    repositoryId: ID!
+    roleIds: [ID]!
+  ): RepoSettingChangeResponse
+  updateAllowExternalUsersToPush(
+    repositoryId: ID!
+    allowExternalUsersToPush: Boolean!
+  ): RepoSettingChangeResponse
+
+  # PROTECTED BRANCH RULE SETTINGS
+  updateDisableDirectPushing(
+    repositoryId: ID!
+    protectedBranchRuleId: ID!
+    disableDirectPushing: Boolean!
+  ): ProtectedBranchSettingChangeResponse
+
+  updateRequireApprovalToMerge(
+    repositoryId: ID!
+    protectedBranchRuleId: ID!
+    requireApprovalToMerge: Boolean!
+  ): ProtectedBranchSettingChangeResponse
+  updateRequireReapprovalOnPushToMerge(
+    repositoryId: ID!
+    protectedBranchRuleId: ID!
+    requireReapprovalOnPushToMerge: Boolean!
+  ): ProtectedBranchSettingChangeResponse
+
+  updateAutomaticallyDeleteMergedFeatureBranches(
+    repositoryId: ID!
+    protectedBranchRuleId: ID!
+    automaticallyDeleteMergedFeatureBranches: Boolean!
+  ): ProtectedBranchSettingChangeResponse
+
+  updateAnyoneCanCreateMergeRequests(
+    repositoryId: ID!
+    protectedBranchRuleId: ID!
+    anyoneCanCreateMergeRequests: Boolean!
+  ): ProtectedBranchSettingChangeResponse
+  updateAnyoneCanCreateMergeRequestsUsers(
+    repositoryId: ID!
+    protectedBranchRuleId: ID!
+    userIds: [ID]!
+  ): ProtectedBranchSettingChangeResponse
+  updateAnyoneCanCreateMergeRequestsRoles(
+    repositoryId: ID!
+    protectedBranchRuleId: ID!
+    roleIds: [ID]!
+  ): ProtectedBranchSettingChangeResponse
+
+  updateAnyoneWithApprovalCanMerge(
+    repositoryId: ID!
+    protectedBranchRuleId: ID!
+    anyoneWithApprovalCanMerge: Boolean!
+  ): ProtectedBranchSettingChangeResponse
+  updateAnyoneWithApprovalCanMergeUsers(
+    repositoryId: ID!
+    protectedBranchRuleId: ID!
+    userIds: [ID]!
+  ): ProtectedBranchSettingChangeResponse
+  updateAnyoneWithApprovalCanMergeRoles(
+    repositoryId: ID!
+    protectedBranchRuleId: ID!
+    roleIds: [ID]!
+  ): ProtectedBranchSettingChangeResponse
+
+  updateAnyoneCanMergeMergeRequests(
+    repositoryId: ID!
+    protectedBranchRuleId: ID!
+    anyoneCanMergeMergeRequests: Boolean!
+  ): ProtectedBranchSettingChangeResponse
+  updateAnyoneCanMergeMergeRequestsUsers(
+    repositoryId: ID!
+    protectedBranchRuleId: ID!
+    userIds: [ID]!
+  ): ProtectedBranchSettingChangeResponse
+  updateAnyoneCanMergeMergeRequestsRoles(
+    repositoryId: ID!
+    protectedBranchRuleId: ID!
+    roleIds: [ID]!
+  ): ProtectedBranchSettingChangeResponse
+
+  updateAnyoneCanApproveMergeRequests(
+    repositoryId: ID!
+    protectedBranchRuleId: ID!
+    anyoneCanApproveMergeRequests: Boolean!
+  ): ProtectedBranchSettingChangeResponse
+  updateAnyoneCanApproveMergeRequestsUsers(
+    repositoryId: ID!
+    protectedBranchRuleId: ID!
+    userIds: [ID]!
+  ): ProtectedBranchSettingChangeResponse
+  updateAnyoneCanApproveMergeRequestsRoles(
+    repositoryId: ID!
+    protectedBranchRuleId: ID!
+    roleIds: [ID]!
+  ): ProtectedBranchSettingChangeResponse
+
+  updateAnyoneCanRevert(
+    repositoryId: ID!
+    protectedBranchRuleId: ID!
+    anyoneCanRevert: Boolean!
+  ): ProtectedBranchSettingChangeResponse
+  updateAnyoneCanRevertUsers(
+    repositoryId: ID!
+    protectedBranchRuleId: ID!
+    userIds: [ID]!
+  ): ProtectedBranchSettingChangeResponse
+  updateAnyoneCanRevertRoles(
+    repositoryId: ID!
+    protectedBranchRuleId: ID!
+    roleIds: [ID]!
+  ): ProtectedBranchSettingChangeResponse
+
+  updateAnyoneCanAutofix(
+    repositoryId: ID!
+    protectedBranchRuleId: ID!
+    anyoneCanAutofix: Boolean!
+  ): ProtectedBranchSettingChangeResponse
+  updateAnyoneCanAutofixUsers(
+    repositoryId: ID!
+    protectedBranchRuleId: ID!
+    userIds: [ID]!
+  ): ProtectedBranchSettingChangeResponse
+  updateAnyoneCanAutofixRoles(
+    repositoryId: ID!
+    protectedBranchRuleId: ID!
+    roleIds: [ID]!
+  ): ProtectedBranchSettingChangeResponse
 }

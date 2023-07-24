@@ -1,0 +1,20 @@
+query fetchRepoBranchRule(
+  $ownerHandle: String!
+  $repoName: String!
+  $protectedBranchRuleId: ID
+) {
+  fetchRepositoryByName(ownerHandle: $ownerHandle, repoName: $repoName) {
+    ... on FetchRepositorySuccess {
+      repository {
+        ...RepoWithBranchRuleSettings
+        protectedBranchRule(protectedBranchRuleId: $protectedBranchRuleId) {
+            ...ProtectedBranchRule
+        }
+      }
+    }
+    ... on FetchRepositoryError {
+      message
+      type
+    }
+  }
+}

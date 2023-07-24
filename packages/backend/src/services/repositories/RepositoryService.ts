@@ -405,20 +405,20 @@ export default class RepositoryService {
         await repositoryEnabledUserSettingsContext.create({
           settingName: "anyoneCanChangeSettings",
           repositoryId: repository.id,
-          userId: currentUser.id
-        })
+          userId: currentUser.id,
+        });
 
         await repositoryEnabledRoleSettingsContext.create({
           settingName: "anyoneCanChangeSettings",
           repositoryId: repository.id,
-          roleId: adminRole.id
+          roleId: adminRole.id,
         });
 
         if (technicalAdminRole) {
           await repositoryEnabledRoleSettingsContext.create({
             settingName: "anyoneCanChangeSettings",
             repositoryId: repository.id,
-            roleId: technicalAdminRole.id
+            roleId: technicalAdminRole.id,
           });
         }
 
@@ -495,9 +495,8 @@ export default class RepositoryService {
     repository: Repository,
     protectedBranchRule: ProtectedBranchRule,
     repoPermissions: RepoPermissions,
-    user: User | null | undefined,
+    user: User | null | undefined
   ): Promise<BranchRuleUserPermission> {
-
     const canCreateMergeRequests =
       await this.repoRBAC.calculateUserProtectedBranchRuleSettingPermission(
         protectedBranchRule,
@@ -577,33 +576,53 @@ export default class RepositoryService {
       return null;
     }
 
-    const organizationMembersContext = await this.contextFactory.createContext(OrganizationMembersContext);
-    const organizationMemberRolesContext = await this.contextFactory.createContext(OrganizationMemberRolesContext);
-    const membership = repository.repoType == "org_repo" && user ? await organizationMembersContext.getByOrgIdAndUserId(repository.organizationId, user?.id) : null;
-    const roles = membership?.membershipState == "active" ? await organizationMemberRolesContext.getRolesByMemberId(membership?.id) : [];
-    const isAdmin = repository.repoType == "org_repo" && !!roles.find(r => r.presetCode == "admin");
+    const organizationMembersContext = await this.contextFactory.createContext(
+      OrganizationMembersContext
+    );
+    const organizationMemberRolesContext =
+      await this.contextFactory.createContext(OrganizationMemberRolesContext);
+    const membership =
+      repository.repoType == "org_repo" && user
+        ? await organizationMembersContext.getByOrgIdAndUserId(
+            repository.organizationId,
+            user?.id
+          )
+        : null;
+    const roles =
+      membership?.membershipState == "active"
+        ? await organizationMemberRolesContext.getRolesByMemberId(
+            membership?.id
+          )
+        : [];
+    const isAdmin =
+      repository.repoType == "org_repo" &&
+      !!roles.find((r) => r.presetCode == "admin");
 
     let accountInGoodStanding = await this.getAccountStandingOkay(repository);
     // check if user isAdmin
-    const canReadRepo = isAdmin || (!repository.isPrivate && repository.repoType != "org_repo") ||
-      await this.repoRBAC.calculateUserRepositorySettingPermission(
+    const canReadRepo =
+      isAdmin ||
+      (!repository.isPrivate && repository.repoType != "org_repo") ||
+      (await this.repoRBAC.calculateUserRepositorySettingPermission(
         repository,
         user,
         "anyoneCanRead"
-      );
+      ));
     const canPushBranches =
-      isAdmin || await this.repoRBAC.calculateUserRepositorySettingPermission(
+      isAdmin ||
+      (await this.repoRBAC.calculateUserRepositorySettingPermission(
         repository,
         user,
         "anyoneCanPushBranches"
-      );
+      ));
 
     const canChangeSettings =
-      isAdmin || await this.repoRBAC.calculateUserRepositorySettingPermission(
+      isAdmin ||
+      (await this.repoRBAC.calculateUserRepositorySettingPermission(
         repository,
         user,
         "anyoneCanChangeSettings"
-      );
+      ));
 
     const protectedBranchRulesContext = await this.contextFactory.createContext(
       ProtectedBranchRulesContext
@@ -614,12 +633,17 @@ export default class RepositoryService {
     const repoPermissions: RepoPermissions = {
       canReadRepo,
       canPushBranches,
-      canChangeSettings
+      canChangeSettings,
     };
 
     const branchRules = await Promise.all(
       protectedBranchRules.map((branchRule) =>
-        this.fetchProtectedBranchSettingsForUser(repository, branchRule, repoPermissions, user)
+        this.fetchProtectedBranchSettingsForUser(
+          repository,
+          branchRule,
+          repoPermissions,
+          user
+        )
       )
     );
 
@@ -637,12 +661,9 @@ export default class RepositoryService {
     repoId: string,
     queryRunner?: QueryRunner
   ): Promise<Array<FloroBranch & { updatedAt: string; dbId: string }>> {
-    const branchesContext = !!queryRunner ? await this.contextFactory.createContext(
-      BranchesContext,
-      queryRunner
-    ) : await this.contextFactory.createContext(
-      BranchesContext
-    );
+    const branchesContext = !!queryRunner
+      ? await this.contextFactory.createContext(BranchesContext, queryRunner)
+      : await this.contextFactory.createContext(BranchesContext);
     const branches = await branchesContext.getAllByRepoId(repoId);
     return branches?.map((b) => {
       return {
@@ -674,12 +695,16 @@ export default class RepositoryService {
     );
   }
 
-  public getCommitHistoryBetween(commits: Array<Commit>, topSha: string|undefined, bottomSha: string|undefined) {
-    const history =  this.repositoryDatasourceFactoryService.getCommitHistory(
+  public getCommitHistoryBetween(
+    commits: Array<Commit>,
+    topSha: string | undefined,
+    bottomSha: string | undefined
+  ) {
+    const history = this.repositoryDatasourceFactoryService.getCommitHistory(
       commits,
       topSha
     );
-    const out: Array<Commit> = []
+    const out: Array<Commit> = [];
     let current = history[0];
     let index = 0;
     while (current && current?.sha != bottomSha) {
@@ -803,19 +828,26 @@ export default class RepositoryService {
     };
   }
 
-  public async testPluginsAreValid(repository: Repository, pluginList: Array<{name: string, version: string}>): Promise<Array<{
-      name: string,
-      version: string,
-      status: "ok"|"unreleased"|"invalid",
-    }>> {
+  public async testPluginsAreValid(
+    repository: Repository,
+    pluginList: Array<{ name: string; version: string }>
+  ): Promise<
+    Array<{
+      name: string;
+      version: string;
+      status: "ok" | "unreleased" | "invalid";
+    }>
+  > {
     const out: Array<{
-      name: string,
-      version: string,
-      status: "ok"|"unreleased"|"invalid",
+      name: string;
+      version: string;
+      status: "ok" | "unreleased" | "invalid";
     }> = [];
-    const pluginVersionContext = await this.contextFactory.createContext(PluginsVersionsContext);
+    const pluginVersionContext = await this.contextFactory.createContext(
+      PluginsVersionsContext
+    );
     const seen = new Set<string>();
-    for ( const { name, version } of pluginList) {
+    for (const { name, version } of pluginList) {
       const key = `${name}:${version}`;
       if (seen.has(key)) {
         continue;
@@ -825,16 +857,19 @@ export default class RepositoryService {
         out.push({
           name,
           version,
-          status: "invalid"
+          status: "invalid",
         });
         continue;
       }
-      const pluginVersion = await pluginVersionContext.getByNameAndVersion(name, version);
+      const pluginVersion = await pluginVersionContext.getByNameAndVersion(
+        name,
+        version
+      );
       if (!pluginVersion) {
         out.push({
           name,
           version,
-          status: "invalid"
+          status: "invalid",
         });
         continue;
       }
@@ -842,44 +877,50 @@ export default class RepositoryService {
         out.push({
           name,
           version,
-          status: "invalid"
+          status: "invalid",
         });
         continue;
       }
       if (pluginVersion.isPrivate && pluginVersion.ownerType == "org_plugin") {
-        if (repository.repoType != "org_repo" || pluginVersion.organizationId != repository.organizationId) {
+        if (
+          repository.repoType != "org_repo" ||
+          pluginVersion.organizationId != repository.organizationId
+        ) {
           out.push({
             name,
             version,
-            status: "invalid"
+            status: "invalid",
           });
           continue;
         }
       }
 
       if (pluginVersion.isPrivate && pluginVersion.ownerType == "user_plugin") {
-        if (repository.repoType != "user_repo" || pluginVersion.userId != repository.userId) {
+        if (
+          repository.repoType != "user_repo" ||
+          pluginVersion.userId != repository.userId
+        ) {
           out.push({
             name,
             version,
-            status: "invalid"
+            status: "invalid",
           });
           continue;
         }
       }
       if (pluginVersion.state != "released") {
-          out.push({
-            name,
-            version,
-            status: "unreleased"
-          });
-          continue;
+        out.push({
+          name,
+          version,
+          status: "unreleased",
+        });
+        continue;
       }
 
       out.push({
         name,
         version,
-        status: "ok"
+        status: "ok",
       });
     }
     return out;
@@ -890,7 +931,7 @@ export default class RepositoryService {
     user: User,
     branchLeaves: Array<string>,
     branch?: FloroBranch,
-    plugins: Array<{name: string, version: string}> = []
+    plugins: Array<{ name: string; version: string }> = []
   ) {
     const repositoriesContext = await this.contextFactory.createContext(
       RepositoriesContext
@@ -979,7 +1020,10 @@ export default class RepositoryService {
       };
     });
 
-    const hasRemoteBranchCycle = this.branchService.testBranchIsCyclic(branchExchange, branch);
+    const hasRemoteBranchCycle = this.branchService.testBranchIsCyclic(
+      branchExchange,
+      branch
+    );
     const pluginStatuses = await this.testPluginsAreValid(repository, plugins);
 
     return {
@@ -988,7 +1032,7 @@ export default class RepositoryService {
       branches: branchExchange,
       branchHeadLinks,
       hasRemoteBranchCycle,
-      pluginStatuses
+      pluginStatuses,
     };
   }
 
@@ -1125,7 +1169,10 @@ export default class RepositoryService {
     return this.storageAuthenticator.signURL(url, urlPath, 3600);
   }
 
-  public async getBinaryLinksForCommit(repoId: string, sha: string): Promise<Array<{fileName: string, url: string}>> {
+  public async getBinaryLinksForCommit(
+    repoId: string,
+    sha: string
+  ): Promise<Array<{ fileName: string; url: string }>> {
     if (!sha) {
       return [];
     }
@@ -1133,7 +1180,7 @@ export default class RepositoryService {
       await this.contextFactory.createContext(BinaryCommitUtilizationsContext);
     const binaryUtilizations =
       await binaryCommitUtilizationsContext.getAllByRepoAndSha(repoId, sha);
-    const out: Array<{fileName: string, url: string}> = [];
+    const out: Array<{ fileName: string; url: string }> = [];
     const privateCdnUrl = this.mainConfig.privateRoot();
     for (const { binaryFileName } of binaryUtilizations) {
       const urlPath =
@@ -1142,9 +1189,8 @@ export default class RepositoryService {
       const signedUrl = this.storageAuthenticator.signURL(url, urlPath, 3600);
       out.push({
         url: signedUrl,
-        fileName: binaryFileName
+        fileName: binaryFileName,
       });
-
     }
     return out;
   }

@@ -55,6 +55,9 @@ const RepoNavigator = (props: Props): React.ReactElement => {
       if (props.page == "settings") {
         return true;
       }
+      if (props.page == "branch-rule") {
+        return true;
+      }
       if (props.page == "merge-requests") {
         return true;
       }
