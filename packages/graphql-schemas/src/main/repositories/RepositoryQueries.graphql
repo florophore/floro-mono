@@ -21,6 +21,11 @@ extend type Mutation {
     repositoryId: ID!,
     branchId: ID!
   ): IgnoreBranchReponse
+
+  changeDefaultBranch(
+    repositoryId: ID!,
+    branchId: ID!
+  ): ChangeDefaultBranchReponse
 }
 
 

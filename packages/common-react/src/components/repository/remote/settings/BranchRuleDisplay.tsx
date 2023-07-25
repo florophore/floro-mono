@@ -97,9 +97,6 @@ const BranchRuleDisplay = (props: Props) => {
 
   const linkBase = useRepoLinkBase(props.repository);
   const { currentUser } = useSession();
-  const apiLink = useMemo(() => {
-    return linkBase + "/settings/api?from=remote&plugin=" + (props?.plugin ?? "home");
-  }, [linkBase, props.plugin]);
 
   const isUserPrivateRepo = useMemo(() => {
     if (props?.repository?.repoType == "user_repo") {

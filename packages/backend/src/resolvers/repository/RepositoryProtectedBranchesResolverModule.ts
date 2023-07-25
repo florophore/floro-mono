@@ -7,21 +7,9 @@ import LoggedInUserGuard from "../hooks/guards/LoggedInUserGuard";
 import { runWithHooks } from "../hooks/ResolverHook";
 import RootOrganizationMemberPermissionsLoader from "../hooks/loaders/Root/OrganizationID/RootOrganizationMemberPermissionsLoader";
 import RepositoryService from "../../services/repositories/RepositoryService";
-import RepositoryRemoteSettingsLoader from "../hooks/loaders/Repository/RepositoryRemoteSettingsLoader";
 import RepositoryBranchesLoader from "../hooks/loaders/Repository/RepositoryBranchesLoader";
-import RepositoryCommitsLoader from "../hooks/loaders/Repository/RepositoryCommitsLoader";
-import RepositoryCommitHistoryLoader from "../hooks/loaders/Repository/RepositoryCommitHistoryLoader";
 import RootRepositoryLoader from "../hooks/loaders/Root/RepositoryID/RepositoryLoader";
-import RepositoryRevertRangesLoader from "../hooks/loaders/Repository/RepositoryRevertRangesLoader";
-import CommitStateDatasourceLoader from "../hooks/loaders/Repository/CommitStateDatasourceLoader";
-import CommitStatePluginVersionsLoader from "../hooks/loaders/Repository/CommitStatePluginVersionsLoader";
-import CommitStateBinaryRefsLoader from "../hooks/loaders/Repository/CommitStateBinaryRefsLoader";
-import CommitInfoRepositoryLoader from "../hooks/loaders/Repository/CommitInfoRepoLoader";
 import { OrganizationRole } from "@floro/graphql-schemas/build/generated/main-graphql";
-import BranchService from "../../services/repositories/BranchService";
-import MergeRequestService from "../../services/merge_requests/MergeRequestService";
-import OpenMergeRequestsLoader from "../hooks/loaders/MergeRequest/OpenMergeRequestsLoader";
-import ClosedMergeRequestsLoader from "../hooks/loaders/MergeRequest/ClosedMergeRequestsLoader";
 import { User } from "@floro/database/src/entities/User";
 import ProtectedBranchRulesEnabledUserSettingsContext from "@floro/database/src/contexts/repositories/ProtectedBranchRulesEnabledUserSettingsContext";
 import ProtectedBranchRuleEnabledRoleSettingsContext from "@floro/database/src/contexts/repositories/ProtectedBranchRulesEnabledRoleSettingsContext";
@@ -30,18 +18,16 @@ import ProtectedBranchRuleLoader from "../hooks/loaders/Root/ProtectedBranchRule
 import RepoSettingsService from "../../services/repositories/RepoSettingsService";
 import RepoSettingAccessGuard from "../hooks/guards/RepoSettingAccessGuard";
 import RepositoryRemoteSettingsArgsLoader from "../hooks/loaders/Repository/RepositoryRemoteSettingsArgsLoader";
+import ProtectedBranchRulesContext from "@floro/database/src/contexts/repositories/ProtectedBranchRulesContext";
 
 @injectable()
 export default class RepositoryProtectedBranchesResolverModule extends BaseResolverModule {
   public resolvers: Array<keyof this & keyof main.ResolversTypes> = [
-    "Query",
     "Mutation",
     "ProtectedBranchRule",
   ];
   protected repositoryService!: RepositoryService;
   protected repoSettingsService!: RepoSettingsService;
-  protected branchService!: BranchService;
-  protected mergeRequestService!: MergeRequestService;
   protected contextFactory!: ContextFactory;
   protected requestCache!: RequestCache;
 
@@ -50,19 +36,10 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
   protected rootOrganizationMemberPermissionsLoader!: RootOrganizationMemberPermissionsLoader;
   protected repositoryRemoteSettingsArgsLoader!: RepositoryRemoteSettingsArgsLoader;
   protected repositoryBranchesLoader!: RepositoryBranchesLoader;
-  protected repositoryCommitsLoader!: RepositoryCommitsLoader;
-  protected repositoryCommitHistoryLoader!: RepositoryCommitHistoryLoader;
-  protected repositoryRevertRangesLoader!: RepositoryRevertRangesLoader;
   protected rootRepositoryLoader!: RootRepositoryLoader;
-  protected commitStateDatasourceLoader!: CommitStateDatasourceLoader;
-  protected commitStatePluginVersionsLoader!: CommitStatePluginVersionsLoader;
-  protected commitStateBinaryRefsLoader!: CommitStateBinaryRefsLoader;
-  protected commitInfoRepositoryLoader!: CommitInfoRepositoryLoader;
   protected writeAccessIdsLoader!: WriteAccessIdsLoader;
   protected repoSettingAccessGuard!: RepoSettingAccessGuard;
 
-  protected openMergeRequestsLoader!: OpenMergeRequestsLoader;
-  protected closedMergeRequestsLoader!: ClosedMergeRequestsLoader;
   protected protectedBranchRuleLoader!: ProtectedBranchRuleLoader;
 
   constructor(
@@ -77,28 +54,8 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
     repositoryRemoteSettingsArgsLoader: RepositoryRemoteSettingsArgsLoader,
     @inject(RepositoryBranchesLoader)
     repositoryBranchesLoader: RepositoryBranchesLoader,
-    @inject(RepositoryCommitsLoader)
-    repositoryCommitsLoader: RepositoryCommitsLoader,
-    @inject(RepositoryCommitHistoryLoader)
-    repositoryCommitHistoryLoader: RepositoryCommitHistoryLoader,
-    @inject(RepositoryRevertRangesLoader)
-    repositoryRevertRangesLoader: RepositoryRevertRangesLoader,
     @inject(RootRepositoryLoader)
     rootRepositoryLoader: RootRepositoryLoader,
-    @inject(CommitStateDatasourceLoader)
-    commitStateDatasourceLoader: CommitStateDatasourceLoader,
-    @inject(CommitStatePluginVersionsLoader)
-    commitStatePluginVersionsLoader: CommitStatePluginVersionsLoader,
-    @inject(CommitStateBinaryRefsLoader)
-    commitStateBinaryRefsLoader: CommitStateBinaryRefsLoader,
-    @inject(CommitInfoRepositoryLoader)
-    commitInfoRepositoryLoader: CommitInfoRepositoryLoader,
-    @inject(BranchService) branchService: BranchService,
-    @inject(MergeRequestService) mergeRequestService: MergeRequestService,
-    @inject(OpenMergeRequestsLoader)
-    openMergeRequestsLoader: OpenMergeRequestsLoader,
-    @inject(ClosedMergeRequestsLoader)
-    closedMergeRequestsLoader: ClosedMergeRequestsLoader,
     @inject(WriteAccessIdsLoader)
     writeAccessIdsLoader: WriteAccessIdsLoader,
     @inject(RepoSettingAccessGuard)
@@ -112,8 +69,6 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
 
     this.repositoryService = repositoryService;
     this.repoSettingsService = repoSettingsService;
-    this.branchService = branchService;
-    this.mergeRequestService = mergeRequestService;
 
     this.loggedInUserGuard = loggedInUserGuard;
 
@@ -122,19 +77,10 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
 
     this.repositoryRemoteSettingsArgsLoader = repositoryRemoteSettingsArgsLoader;
     this.repositoryBranchesLoader = repositoryBranchesLoader;
-    this.repositoryCommitsLoader = repositoryCommitsLoader;
-    this.repositoryCommitHistoryLoader = repositoryCommitHistoryLoader;
-    this.repositoryRevertRangesLoader = repositoryRevertRangesLoader;
     this.rootRepositoryLoader = rootRepositoryLoader;
-    this.commitStateDatasourceLoader = commitStateDatasourceLoader;
-    this.commitStatePluginVersionsLoader = commitStatePluginVersionsLoader;
-    this.commitStateBinaryRefsLoader = commitStateBinaryRefsLoader;
-    this.commitInfoRepositoryLoader = commitInfoRepositoryLoader;
     this.writeAccessIdsLoader = writeAccessIdsLoader;
     this.repoSettingAccessGuard = repoSettingAccessGuard;
 
-    this.openMergeRequestsLoader = openMergeRequestsLoader;
-    this.closedMergeRequestsLoader = closedMergeRequestsLoader;
     this.protectedBranchRuleLoader = protectedBranchRuleLoader;
   }
 
@@ -477,20 +423,95 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
     ),
   };
 
-  public Query: main.QueryResolvers = {
-    // REPO SETTINGS MUTATIONS
-    // PROTECTED BRANCH SETTINGS MUTATIONS
-    //searchUsersForSetting: runWithHooks(
-    //  () => [this.loggedInUserGuard],
-    //  async (_, { }: main.QuerySearchPluginsForRepositoryArgs, { cacheKey, currentUser}) => {
-    //    return null;
-    //  }
-    //),
-  };
-
   public Mutation: main.MutationResolvers = {
-    // REPO SETTINGS MUTATIONS
-    // PROTECTED BRANCH SETTINGS MUTATIONS
+    createBranchRule: runWithHooks(
+      () => [
+        this.repositoryRemoteSettingsArgsLoader,
+        this.rootRepositoryLoader,
+        this.repoSettingAccessGuard,
+      ],
+      async (_, args: main.MutationCreateBranchRuleArgs, { cacheKey }) => {
+        if (!args.branchId || !args.repositoryId) {
+          return {
+            __typename: "CreateBranchRuleError",
+            message: "Missing Args",
+            type: "MISSING_ARGS_ERROR",
+          };
+        }
+        const cachedRepository =
+          this.requestCache.getRepo(cacheKey, args.repositoryId);
+        if (!cachedRepository) {
+          return {
+            __typename: "CreateBranchRuleError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        const protectedBranchRule = await this.repoSettingsService.createBranchRule(cachedRepository, args.branchId);
+        if (!protectedBranchRule) {
+          return {
+            __typename: "CreateBranchRuleError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        return {
+          __typename: "CreateBranchRuleSuccess",
+          repository: cachedRepository,
+          protectedBranchRule
+        };
+      }
+    ),
+    deleteBranchRule: runWithHooks(
+      () => [
+        this.repositoryRemoteSettingsArgsLoader,
+        this.rootRepositoryLoader,
+        this.repoSettingAccessGuard,
+      ],
+      async (_, args: main.MutationDeleteBranchRuleArgs, { cacheKey }) => {
+
+        if (!args.protectedBranchRuleId || !args.repositoryId) {
+          return {
+            __typename: "DeleteBranchRuleError",
+            message: "Missing Args",
+            type: "MISSING_ARGS_ERROR",
+          };
+        }
+        const protectedBranchRulesContext = await this.contextFactory.createContext(
+          ProtectedBranchRulesContext,
+        );
+        const protectedBranchRule = await protectedBranchRulesContext.getById(args.protectedBranchRuleId);
+        if (!protectedBranchRule) {
+          return {
+            __typename: "DeleteBranchRuleError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        const cachedRepository =
+          this.requestCache.getRepo(cacheKey, args.repositoryId);
+        if (!cachedRepository) {
+          return {
+            __typename: "DeleteBranchRuleError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        const didDelete = await this.repoSettingsService.deleteBranchRule(cachedRepository, args.protectedBranchRuleId);
+        if (!didDelete) {
+          return {
+            __typename: "DeleteBranchRuleError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        return {
+          __typename: "DeleteBranchRuleSuccess",
+          repository: cachedRepository,
+          protectedBranchRule
+        };
+      }
+    ),
     updateDisableDirectPushing: runWithHooks(
       () => [
         this.repositoryRemoteSettingsArgsLoader,
@@ -502,11 +523,10 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
         args: main.MutationUpdateDisableDirectPushingArgs,
         { cacheKey }
       ) => {
-        console.log("HELLO")
         if (!args.protectedBranchRuleId || !args.repositoryId) {
           return {
             __typename: "ProtectedBranchSettingChangeError",
-            message: "Misisng Args",
+            message: "Missing Args",
             type: "MISSING_ARGS_ERROR",
           };
         }
@@ -610,7 +630,6 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
             type: "UNKNOWN_ERROR",
           };
         }
-        //this.repoSettingsService
         return {
           __typename: "ProtectedBranchSettingChangeSuccess",
           repository: cachedRepository,

@@ -27,6 +27,7 @@ import BranchRuleSelector from "@floro/storybook/stories/repo-components/BranchR
 import { Branch } from "floro/dist/src/repo";
 
 import BranchRuleIcon from "@floro/common-assets/assets/images/icons/branch_rule.dark.svg";
+import ConfirmDeleteBranchRuleModal from "../settings/warning_modals/ConfirmDeleteBranchRuleModal";
 
 const InnerContent = styled.div`
   display: flex;
@@ -173,6 +174,26 @@ interface Props {
 const RemoteVCSBranchRuleSettings = (props: Props) => {
   const theme = useTheme();
   const navigate = useNavigate();
+  const [showDeleteBranchRule, setShowDeleteBranchRule] = useState(false);
+
+  const onShowDeleteBranchRule = useCallback(() => {
+    setShowDeleteBranchRule(true);
+  }, []);
+
+  const onHideDeleteBranchRule = useCallback(() => {
+    setShowDeleteBranchRule(false);
+  }, []);
+
+
+  const enableDeleteBranchRule = useMemo(() => {
+    if (!props?.repository?.protectedBranchRule) {
+      return false;
+    }
+    if (props?.repository?.protectedBranchRule?.branchId == props?.repository.defaultBranchId) {
+      return false;
+    }
+    return true;
+  }, [props?.repository.defaultBranchId, props?.repository?.protectedBranchRule])
 
   const selectedBranchRule = useMemo(() => {
     return props?.repository?.protectedBranchRule;
@@ -182,6 +203,11 @@ const RemoteVCSBranchRuleSettings = (props: Props) => {
   const settingsLink = useMemo(() => {
     return `${linkBase}/settings?from=remote&plugin=${props.plugin ?? "home"}`;
   }, [linkBase, props.plugin]);
+
+  const onDeleteBranchRuleSuccess = useCallback(() => {
+    setShowDeleteBranchRule(false);
+    navigate(settingsLink);
+  }, [settingsLink]);
 
   const onGoBack = useCallback(() => {
     navigate(settingsLink);
@@ -205,6 +231,13 @@ const RemoteVCSBranchRuleSettings = (props: Props) => {
 
   return (
     <>
+      <ConfirmDeleteBranchRuleModal
+        show={showDeleteBranchRule}
+        onDismiss={onHideDeleteBranchRule}
+        onSuccess={onDeleteBranchRuleSuccess}
+        repository={props.repository}
+        protectedBranchRule={props.repository?.protectedBranchRule ?? undefined}
+      />
       <InnerContent>
         <TopContainer>
           <TitleRow>
@@ -237,7 +270,7 @@ const RemoteVCSBranchRuleSettings = (props: Props) => {
           <Row>
             <ButtonRow style={{ justifyContent: "flex-end" }}>
               <Link to={settingsLink}>
-                <SettingsLinkText>{'go to settings'}</SettingsLinkText>
+                <SettingsLinkText>{"go to settings"}</SettingsLinkText>
               </Link>
             </ButtonRow>
           </Row>
@@ -255,6 +288,8 @@ const RemoteVCSBranchRuleSettings = (props: Props) => {
               label={"remove branch rule"}
               bg={"red"}
               size={"extra-big"}
+              isDisabled={!enableDeleteBranchRule}
+              onClick={onShowDeleteBranchRule}
             />
           </div>
         </BottomContainer>

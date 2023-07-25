@@ -1,30 +1,18 @@
 import React, {
   useMemo,
-  useCallback,
-  useState,
-  useEffect,
   useRef,
 } from "react";
-import { Plugin } from "@floro/graphql-schemas/build/generated/main-graphql";
 import styled from "@emotion/styled";
-import { useTheme } from "@emotion/react";
 import {
   CommitInfo,
   MergeRequest,
   Repository,
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
-import { Manifest } from "floro/dist/src/plugins";
 import {
-  RemoteCommitState,
   useMergeRequestsFilter,
 } from "../hooks/remote-state";
-import TimeAgo from "javascript-time-ago";
 import { useSearchParams } from "react-router-dom";
 
-import en from "javascript-time-ago/locale/en";
-import PaginationToggle from "@floro/storybook/stories/repo-components/PaginationToggle";
-import { useRepoLinkBase } from "../hooks/remote-hooks";
-import { useNavigate } from "react-router";
 import MergeRequestHistoryRow from "./MergeRequestHistoryRow";
 
 const Container = styled.div`
@@ -133,7 +121,7 @@ const MergeRequestHistoryDisplay = (props: Props) => {
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get('query');
   const hasSearch = useMemo(() => {
-    return searchQuery?.trim() != "";
+    return searchQuery && searchQuery?.trim() != "";
   }, [searchQuery]);
 
   const mergeRequests = useMemo((): Array<MergeRequest> => {

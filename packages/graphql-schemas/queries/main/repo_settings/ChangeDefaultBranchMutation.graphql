@@ -1,0 +1,26 @@
+mutation ChangeDefaultBranch($repositoryId: ID!, $branchId: ID!) {
+  changeDefaultBranch(repositoryId: $repositoryId, branchId: $branchId) {
+    ... on ChangeDefaultBranchSuccess {
+      repository {
+        ...RepoWithSettings
+      }
+      protectedBranchRule {
+          ...ProtectedBranchRule
+      }
+    }
+
+    ... on ChangeDefaultBranchError {
+      message
+      type
+    }
+    ... on RepoSettingAccessError {
+      message
+      type
+    }
+
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+  }
+}

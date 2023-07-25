@@ -729,7 +729,7 @@ export default class RepoController extends BaseController {
         });
       }
     } catch (e) {
-      console.log("E", e);
+      console.log("push binary error", e);
       response.sendStatus(400);
       return;
     }

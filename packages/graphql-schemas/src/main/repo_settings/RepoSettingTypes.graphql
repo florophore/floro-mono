@@ -1,5 +1,6 @@
 type CreateBranchRuleSuccess {
   repository: Repository
+  protectedBranchRule: ProtectedBranchRule
 }
 
 type CreateBranchRuleError {
@@ -10,6 +11,23 @@ type CreateBranchRuleError {
 union CreateBranchRuleReponse =
     CreateBranchRuleSuccess
   | CreateBranchRuleError
+  | RepoSettingAccessError
+  | UnAuthenticatedError
+
+type DeleteBranchRuleSuccess {
+  repository: Repository
+  protectedBranchRule: ProtectedBranchRule
+}
+
+type DeleteBranchRuleError {
+  message: String
+  type: String
+}
+
+union DeleteBranchRuleReponse =
+    DeleteBranchRuleSuccess
+  | DeleteBranchRuleError
+  | RepoSettingAccessError
   | UnAuthenticatedError
 
 

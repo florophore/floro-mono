@@ -1,0 +1,26 @@
+mutation DeleteBranchRule($repositoryId: ID!, $protectedBranchRuleId: ID!) {
+  deleteBranchRule(repositoryId: $repositoryId, protectedBranchRuleId: $protectedBranchRuleId) {
+    ... on DeleteBranchRuleSuccess {
+      repository {
+        ...RepoWithSettings
+      }
+      protectedBranchRule {
+          ...ProtectedBranchRule
+      }
+    }
+
+    ... on DeleteBranchRuleError {
+      message
+      type
+    }
+    ... on RepoSettingAccessError {
+      message
+      type
+    }
+
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+  }
+}

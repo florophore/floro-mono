@@ -20,7 +20,7 @@ const RepoMergeRequestHistoryPage = () => {
   const { filterMR} = useMergeRequestsFilter();
   const searchQuery = searchParams.get('query');
   const hasSearch = useMemo(() => {
-    return searchQuery?.trim() != "";
+    return searchQuery && searchQuery?.trim() != "";
   }, [searchQuery]);
   const id = searchParams.get('id');
   const idParam = useMemo(() => {
@@ -155,6 +155,11 @@ const RepoMergeRequestHistoryPage = () => {
         prefix: '/',
         value: repoValue,
         label: repoLabel,
+        next: {
+          prefix: '/',
+          value: repoValue + '/mergerequests',
+          label: 'merge requests',
+        }
       },
     },
     [handleLabel, handleValue, repoValue, repoLabel],

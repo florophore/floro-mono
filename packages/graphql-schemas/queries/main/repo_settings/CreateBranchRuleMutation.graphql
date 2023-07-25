@@ -1,0 +1,26 @@
+mutation CreateBranchRule($repositoryId: ID!, $branchId: ID!) {
+  createBranchRule(repositoryId: $repositoryId, branchId: $branchId) {
+    ... on CreateBranchRuleSuccess {
+      repository {
+        ...RepoWithSettings
+      }
+      protectedBranchRule {
+          ...ProtectedBranchRule
+      }
+    }
+
+    ... on CreateBranchRuleError {
+      message
+      type
+    }
+    ... on RepoSettingAccessError {
+      message
+      type
+    }
+
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+  }
+}

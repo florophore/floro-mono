@@ -128,6 +128,11 @@ const RepoHomeSettingsPage = () => {
         prefix: '/',
         value: repoValue,
         label: repoLabel,
+        next: {
+          prefix: '/',
+          value: repoValue + '/settings',
+          label: 'settings',
+        }
       },
     },
     [handleLabel, handleValue, repoValue, repoLabel],

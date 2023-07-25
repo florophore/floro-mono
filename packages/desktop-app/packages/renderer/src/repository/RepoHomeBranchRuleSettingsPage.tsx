@@ -130,6 +130,15 @@ const RepoHomeBranchRuleSettingsPage = () => {
         prefix: '/',
         value: repoValue,
         label: repoLabel,
+        next: {
+          prefix: '/',
+          value: repoValue + '/settings',
+          label: 'settings',
+          next: {
+            prefix: '>',
+            label: 'branch rule'
+          }
+        },
       },
     },
     [handleLabel, handleValue, repoValue, repoLabel],

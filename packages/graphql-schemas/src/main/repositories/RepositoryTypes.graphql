@@ -245,3 +245,20 @@ union IgnoreBranchReponse =
     IgnoreBranchSuccess
   | IgnoreBranchError
   | UnAuthenticatedError
+
+
+type ChangeDefaultBranchSuccess {
+  repository: Repository
+  protectedBranchRule: ProtectedBranchRule
+}
+
+type ChangeDefaultBranchError {
+  message: String
+  type: String
+}
+
+union ChangeDefaultBranchReponse =
+    ChangeDefaultBranchSuccess
+  | ChangeDefaultBranchError
+  | RepoSettingAccessError
+  | UnAuthenticatedError

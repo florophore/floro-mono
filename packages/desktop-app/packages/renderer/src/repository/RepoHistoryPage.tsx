@@ -7,9 +7,10 @@ import {useFetchRepositoryHistoryQuery} from '@floro/graphql-schemas/src/generat
 import {useSession} from '@floro/common-react/src/session/session-context';
 import {useUserOrganizations} from '@floro/common-react/src/hooks/offline';
 import RepoController from '@floro/common-react/src/components/repository/RepoController';
+import { RepoPage } from '@floro/common-react/src/components/repository/types';
 
 interface Props {
-  page: "history"|"home"|"settings"|"branch-rules"|"merge-requests"|"merge-request"|"merge-request-review";
+  page: RepoPage;
 }
 
 const RepoHistoryPage = (props: Props) => {
@@ -143,6 +144,10 @@ const RepoHistoryPage = (props: Props) => {
         prefix: '/',
         value: repoValue,
         label: repoLabel,
+        next: {
+          prefix: '>',
+          label: 'history'
+        }
       },
     },
     [handleLabel, handleValue, repoValue, repoLabel],

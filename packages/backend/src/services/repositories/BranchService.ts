@@ -112,9 +112,9 @@ export default class BranchService {
       anyoneCanCreateMergeRequests: true,
       anyoneWithApprovalCanMerge: true,
       requireReapprovalOnPushToMerge: true,
-      anyoneCanApproveMergeRequests: repository.isPrivate, // limit in public case
-      anyoneCanRevert: repository.isPrivate,
-      anyoneCanAutofix: repository.isPrivate,
+      anyoneCanApproveMergeRequests: true, // limit in public case
+      anyoneCanRevert: true,
+      anyoneCanAutofix: true,
       repositoryId: repository?.id,
     });
 

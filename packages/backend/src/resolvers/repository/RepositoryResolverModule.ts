@@ -133,7 +133,8 @@ export default class RepositoryResolverModule extends BaseResolverModule {
     @inject(ClosedMergeRequestsLoader)
     closedMergeRequestsLoader: ClosedMergeRequestsLoader,
     @inject(WriteAccessIdsLoader) writeAccessIdsLoader: WriteAccessIdsLoader,
-    @inject(RepoSettingAccessGuard) repoSettingAccessGuard: RepoSettingAccessGuard
+    @inject(RepoSettingAccessGuard)
+    repoSettingAccessGuard: RepoSettingAccessGuard
   ) {
     super();
     this.contextFactory = contextFactory;
@@ -546,10 +547,15 @@ export default class RepositoryResolverModule extends BaseResolverModule {
               repository.id,
               "anyoneCanRead"
             );
-          const roles =  enabledRoleSettings?.map((s) => s.role as OrganizationRole);
+          const roles = enabledRoleSettings?.map(
+            (s) => s.role as OrganizationRole
+          );
           roles.sort((a, b) => {
-            return (a?.name?.toLowerCase?.() ?? "") >= (b?.name?.toLowerCase?.() ?? "") ?  1: -1;
-          })
+            return (a?.name?.toLowerCase?.() ?? "") >=
+              (b?.name?.toLowerCase?.() ?? "")
+              ? 1
+              : -1;
+          });
           return roles;
         }
         return null;
@@ -648,10 +654,15 @@ export default class RepositoryResolverModule extends BaseResolverModule {
               repository.id,
               "anyoneCanPushBranches"
             );
-          const roles =  enabledRoleSettings?.map((s) => s.role as OrganizationRole);
+          const roles = enabledRoleSettings?.map(
+            (s) => s.role as OrganizationRole
+          );
           roles.sort((a, b) => {
-            return (a?.name?.toLowerCase?.() ?? "") >= (b?.name?.toLowerCase?.() ?? "") ?  1: -1;
-          })
+            return (a?.name?.toLowerCase?.() ?? "") >=
+              (b?.name?.toLowerCase?.() ?? "")
+              ? 1
+              : -1;
+          });
           return roles;
         }
         return null;
@@ -741,10 +752,15 @@ export default class RepositoryResolverModule extends BaseResolverModule {
               repository.id,
               "anyoneCanChangeSettings"
             );
-          const roles =  enabledRoleSettings?.map((s) => s.role as OrganizationRole);
+          const roles = enabledRoleSettings?.map(
+            (s) => s.role as OrganizationRole
+          );
           roles.sort((a, b) => {
-            return (a?.name?.toLowerCase?.() ?? "") >= (b?.name?.toLowerCase?.() ?? "") ?  1: -1;
-          })
+            return (a?.name?.toLowerCase?.() ?? "") >=
+              (b?.name?.toLowerCase?.() ?? "")
+              ? 1
+              : -1;
+          });
           return roles;
         }
         return null;
@@ -773,8 +789,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
               repository.id,
               "anyoneCanChangeSettings"
             );
-          const users = enabledUserSettings
-            ?.map((s) => s.user as User);
+          const users = enabledUserSettings?.map((s) => s.user as User);
           users.sort?.((a, b) => {
             if (!a || !b) {
               return 0;
@@ -982,7 +997,11 @@ export default class RepositoryResolverModule extends BaseResolverModule {
 
     protectedBranchRule: runWithHooks(
       () => [this.repositoryRemoteSettingsLoader],
-      async (repository: main.Repository, args: main.RepositoryProtectedBranchRuleArgs, { cacheKey, currentUser }) => {
+      async (
+        repository: main.Repository,
+        args: main.RepositoryProtectedBranchRuleArgs,
+        { cacheKey, currentUser }
+      ) => {
         if (!currentUser || !repository?.id || !args?.protectedBranchRuleId) {
           return null;
         }
@@ -999,7 +1018,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
             args?.protectedBranchRuleId
           );
           if (branchRule?.repositoryId != repository.id) {
-            return null
+            return null;
           }
           return branchRule;
         }
@@ -1997,6 +2016,58 @@ export default class RepositoryResolverModule extends BaseResolverModule {
   };
 
   public Mutation: main.MutationResolvers = {
+    changeDefaultBranch: runWithHooks(
+      () => [
+        this.loggedInUserGuard,
+        this.rootRepositoryRemoteSettingsLoader,
+        this.repoSettingAccessGuard,
+      ],
+      async (_, args: main.MutationChangeDefaultBranchArgs) => {
+        const repository = await this.repositoryService.fetchRepoById(
+          args.repositoryId
+        );
+        if (!repository || !args.branchId) {
+          return {
+            __typename: "ChangeDefaultBranchError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        const updatedRepo = await this.repoSettingsService.updateDefaultBranch(
+          repository,
+          args.branchId
+        );
+        if (!updatedRepo) {
+          return {
+            __typename: "ChangeDefaultBranchError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+
+        const protectedBranchRulesContext =
+          await this.contextFactory.createContext(
+            ProtectedBranchRulesContext
+          );
+        const protectedBranchRule = await protectedBranchRulesContext.getByRepoAndBranchId(
+          repository.id,
+          args.branchId
+        );
+
+        if (!protectedBranchRule) {
+          return {
+            __typename: "ChangeDefaultBranchError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        return {
+          __typename: "ChangeDefaultBranchSuccess",
+          repository: updatedRepo,
+          protectedBranchRule
+        };
+      }
+    ),
     createUserRepository: runWithHooks(
       () => [this.loggedInUserGuard],
       async (
@@ -2233,7 +2304,11 @@ export default class RepositoryResolverModule extends BaseResolverModule {
     ),
     // SETTING MUTATIONS
     updateAnyoneCanChangeSettings: runWithHooks(
-      () => [this.loggedInUserGuard, this.rootRepositoryRemoteSettingsLoader, this.repoSettingAccessGuard],
+      () => [
+        this.loggedInUserGuard,
+        this.rootRepositoryRemoteSettingsLoader,
+        this.repoSettingAccessGuard,
+      ],
       async (
         _,
         args: main.MutationUpdateAnyoneCanChangeSettingsArgs,
@@ -2271,7 +2346,11 @@ export default class RepositoryResolverModule extends BaseResolverModule {
     ),
 
     updateAnyoneCanChangeSettingsUsers: runWithHooks(
-      () => [this.loggedInUserGuard, this.rootRepositoryRemoteSettingsLoader, this.repoSettingAccessGuard],
+      () => [
+        this.loggedInUserGuard,
+        this.rootRepositoryRemoteSettingsLoader,
+        this.repoSettingAccessGuard,
+      ],
       async (
         _,
         args: main.MutationUpdateAnyoneCanChangeSettingsUsersArgs,
@@ -2292,16 +2371,19 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           await this.contextFactory.createContext(
             RepositoryEnabledRoleSettingsContext
           );
-        const enabledRoles = await repositoryEnabledRoleSettingsContext.getAllForRepositorySetting(repository.id, "anyoneCanChangeSettings");
-        const enabledRoleIds = enabledRoles.map(er => er.roleId);
-
-        const updatedRepo =
-          await this.repoSettingsService.updateSettingsAccess(
-            repository,
-            enabledRoleIds,
-            (args?.userIds ?? []) as Array<string>,
-            currentUser
+        const enabledRoles =
+          await repositoryEnabledRoleSettingsContext.getAllForRepositorySetting(
+            repository.id,
+            "anyoneCanChangeSettings"
           );
+        const enabledRoleIds = enabledRoles.map((er) => er.roleId);
+
+        const updatedRepo = await this.repoSettingsService.updateSettingsAccess(
+          repository,
+          enabledRoleIds,
+          (args?.userIds ?? []) as Array<string>,
+          currentUser
+        );
         if (!updatedRepo) {
           return {
             __typename: "RepoSettingChangeError",
@@ -2317,7 +2399,11 @@ export default class RepositoryResolverModule extends BaseResolverModule {
     ),
 
     updateAnyoneCanChangeSettingsRoles: runWithHooks(
-      () => [this.loggedInUserGuard, this.rootRepositoryRemoteSettingsLoader, this.repoSettingAccessGuard],
+      () => [
+        this.loggedInUserGuard,
+        this.rootRepositoryRemoteSettingsLoader,
+        this.repoSettingAccessGuard,
+      ],
       async (
         _,
         args: main.MutationUpdateAnyoneCanChangeSettingsRolesArgs,
@@ -2338,16 +2424,19 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           await this.contextFactory.createContext(
             RepositoryEnabledUserSettingsContext
           );
-        const enabledUsers = await repositoryEnabledUserSettingsContext.getAllForRepositorySetting(repository.id, "anyoneCanChangeSettings");
-        const enabledUserIds = enabledUsers.map(eu => eu.userId);
-
-        const updatedRepo =
-          await this.repoSettingsService.updateSettingsAccess(
-            repository,
-            (args?.roleIds ?? []) as Array<string>,
-            enabledUserIds,
-            currentUser
+        const enabledUsers =
+          await repositoryEnabledUserSettingsContext.getAllForRepositorySetting(
+            repository.id,
+            "anyoneCanChangeSettings"
           );
+        const enabledUserIds = enabledUsers.map((eu) => eu.userId);
+
+        const updatedRepo = await this.repoSettingsService.updateSettingsAccess(
+          repository,
+          (args?.roleIds ?? []) as Array<string>,
+          enabledUserIds,
+          currentUser
+        );
         if (!updatedRepo) {
           return {
             __typename: "RepoSettingChangeError",
@@ -2362,7 +2451,11 @@ export default class RepositoryResolverModule extends BaseResolverModule {
       }
     ),
     updateAnyoneCanRead: runWithHooks(
-      () => [this.loggedInUserGuard, this.rootRepositoryRemoteSettingsLoader, this.repoSettingAccessGuard],
+      () => [
+        this.loggedInUserGuard,
+        this.rootRepositoryRemoteSettingsLoader,
+        this.repoSettingAccessGuard,
+      ],
       async (
         _,
         args: main.MutationUpdateAnyoneCanReadArgs,
@@ -2379,12 +2472,11 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           };
         }
 
-        const updatedRepo =
-          await this.repoSettingsService.updateAnyoneCanRead(
-            repository,
-            args?.anyoneCanRead ?? false,
-            currentUser
-          );
+        const updatedRepo = await this.repoSettingsService.updateAnyoneCanRead(
+          repository,
+          args?.anyoneCanRead ?? false,
+          currentUser
+        );
         if (!updatedRepo) {
           return {
             __typename: "RepoSettingChangeError",
@@ -2399,7 +2491,11 @@ export default class RepositoryResolverModule extends BaseResolverModule {
       }
     ),
     updateAnyoneCanReadUsers: runWithHooks(
-      () => [this.loggedInUserGuard, this.rootRepositoryRemoteSettingsLoader, this.repoSettingAccessGuard],
+      () => [
+        this.loggedInUserGuard,
+        this.rootRepositoryRemoteSettingsLoader,
+        this.repoSettingAccessGuard,
+      ],
       async (
         _,
         args: main.MutationUpdateAnyoneCanReadUsersArgs,
@@ -2420,16 +2516,19 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           await this.contextFactory.createContext(
             RepositoryEnabledRoleSettingsContext
           );
-        const enabledRoles = await repositoryEnabledRoleSettingsContext.getAllForRepositorySetting(repository.id, "anyoneCanRead");
-        const enabledRoleIds = enabledRoles.map(er => er.roleId);
-
-        const updatedRepo =
-          await this.repoSettingsService.updateReadAccess(
-            repository,
-            enabledRoleIds,
-            (args?.userIds ?? []) as Array<string>,
-            currentUser
+        const enabledRoles =
+          await repositoryEnabledRoleSettingsContext.getAllForRepositorySetting(
+            repository.id,
+            "anyoneCanRead"
           );
+        const enabledRoleIds = enabledRoles.map((er) => er.roleId);
+
+        const updatedRepo = await this.repoSettingsService.updateReadAccess(
+          repository,
+          enabledRoleIds,
+          (args?.userIds ?? []) as Array<string>,
+          currentUser
+        );
         if (!updatedRepo) {
           return {
             __typename: "RepoSettingChangeError",
@@ -2444,7 +2543,11 @@ export default class RepositoryResolverModule extends BaseResolverModule {
       }
     ),
     updateAnyoneCanReadRoles: runWithHooks(
-      () => [this.loggedInUserGuard, this.rootRepositoryRemoteSettingsLoader, this.repoSettingAccessGuard],
+      () => [
+        this.loggedInUserGuard,
+        this.rootRepositoryRemoteSettingsLoader,
+        this.repoSettingAccessGuard,
+      ],
       async (
         _,
         args: main.MutationUpdateAnyoneCanReadRolesArgs,
@@ -2464,16 +2567,19 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           await this.contextFactory.createContext(
             RepositoryEnabledUserSettingsContext
           );
-        const enabledUsers = await repositoryEnabledUserSettingsContext.getAllForRepositorySetting(repository.id, "anyoneCanRead");
-        const enabledUserIds = enabledUsers.map(eu => eu.userId);
-
-        const updatedRepo =
-          await this.repoSettingsService.updateReadAccess(
-            repository,
-            (args?.roleIds ?? []) as Array<string>,
-            enabledUserIds,
-            currentUser
+        const enabledUsers =
+          await repositoryEnabledUserSettingsContext.getAllForRepositorySetting(
+            repository.id,
+            "anyoneCanRead"
           );
+        const enabledUserIds = enabledUsers.map((eu) => eu.userId);
+
+        const updatedRepo = await this.repoSettingsService.updateReadAccess(
+          repository,
+          (args?.roleIds ?? []) as Array<string>,
+          enabledUserIds,
+          currentUser
+        );
         if (!updatedRepo) {
           return {
             __typename: "RepoSettingChangeError",
@@ -2489,11 +2595,12 @@ export default class RepositoryResolverModule extends BaseResolverModule {
     ),
 
     updateAnyoneCanPushBranches: runWithHooks(
-      () => [this.loggedInUserGuard, this.rootRepositoryRemoteSettingsLoader, this.repoSettingAccessGuard],
-      async (
-        _,
-        args: main.MutationUpdateAnyoneCanPushBranchesArgs
-      ) => {
+      () => [
+        this.loggedInUserGuard,
+        this.rootRepositoryRemoteSettingsLoader,
+        this.repoSettingAccessGuard,
+      ],
+      async (_, args: main.MutationUpdateAnyoneCanPushBranchesArgs) => {
         const repository = await this.repositoryService.fetchRepoById(
           args.repositoryId
         );
@@ -2508,7 +2615,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         const updatedRepo =
           await this.repoSettingsService.updateAnyoneCanPushBranches(
             repository,
-            args?.anyoneCanPushBranches ?? false,
+            args?.anyoneCanPushBranches ?? false
           );
         if (!updatedRepo) {
           return {
@@ -2524,7 +2631,11 @@ export default class RepositoryResolverModule extends BaseResolverModule {
       }
     ),
     updateAnyoneCanPushBranchesUsers: runWithHooks(
-      () => [this.loggedInUserGuard, this.rootRepositoryRemoteSettingsLoader, this.repoSettingAccessGuard],
+      () => [
+        this.loggedInUserGuard,
+        this.rootRepositoryRemoteSettingsLoader,
+        this.repoSettingAccessGuard,
+      ],
       async (
         _,
         args: main.MutationUpdateAnyoneCanPushBranchesUsersArgs,
@@ -2545,8 +2656,12 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           await this.contextFactory.createContext(
             RepositoryEnabledRoleSettingsContext
           );
-        const enabledRoles = await repositoryEnabledRoleSettingsContext.getAllForRepositorySetting(repository.id, "anyoneCanPushBranches");
-        const enabledRoleIds = enabledRoles.map(er => er.roleId);
+        const enabledRoles =
+          await repositoryEnabledRoleSettingsContext.getAllForRepositorySetting(
+            repository.id,
+            "anyoneCanPushBranches"
+          );
+        const enabledRoleIds = enabledRoles.map((er) => er.roleId);
 
         const updatedRepo =
           await this.repoSettingsService.updatePushBranchesAccess(
@@ -2569,7 +2684,11 @@ export default class RepositoryResolverModule extends BaseResolverModule {
       }
     ),
     updateAnyoneCanPushBranchesRoles: runWithHooks(
-      () => [this.loggedInUserGuard, this.rootRepositoryRemoteSettingsLoader, this.repoSettingAccessGuard],
+      () => [
+        this.loggedInUserGuard,
+        this.rootRepositoryRemoteSettingsLoader,
+        this.repoSettingAccessGuard,
+      ],
       async (
         _,
         args: main.MutationUpdateAnyoneCanPushBranchesRolesArgs,
@@ -2589,8 +2708,12 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           await this.contextFactory.createContext(
             RepositoryEnabledUserSettingsContext
           );
-        const enabledUsers = await repositoryEnabledUserSettingsContext.getAllForRepositorySetting(repository.id, "anyoneCanPushBranches");
-        const enabledUserIds = enabledUsers.map(eu => eu.userId);
+        const enabledUsers =
+          await repositoryEnabledUserSettingsContext.getAllForRepositorySetting(
+            repository.id,
+            "anyoneCanPushBranches"
+          );
+        const enabledUserIds = enabledUsers.map((eu) => eu.userId);
 
         const updatedRepo =
           await this.repoSettingsService.updatePushBranchesAccess(
@@ -2613,11 +2736,12 @@ export default class RepositoryResolverModule extends BaseResolverModule {
       }
     ),
     updateAllowExternalUsersToPush: runWithHooks(
-      () => [this.loggedInUserGuard, this.rootRepositoryRemoteSettingsLoader, this.repoSettingAccessGuard],
-      async (
-        _,
-        args: main.MutationUpdateAllowExternalUsersToPushArgs
-      ) => {
+      () => [
+        this.loggedInUserGuard,
+        this.rootRepositoryRemoteSettingsLoader,
+        this.repoSettingAccessGuard,
+      ],
+      async (_, args: main.MutationUpdateAllowExternalUsersToPushArgs) => {
         const repository = await this.repositoryService.fetchRepoById(
           args.repositoryId
         );
@@ -2632,7 +2756,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         const updatedRepo =
           await this.repoSettingsService.updateAllowExternalUsersToPush(
             repository,
-            args?.allowExternalUsersToPush ?? false,
+            args?.allowExternalUsersToPush ?? false
           );
         if (!updatedRepo) {
           return {

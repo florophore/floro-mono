@@ -1,11 +1,14 @@
 import React, {
   useMemo,
+  useCallback
 } from "react";
 import styled from "@emotion/styled";
 import { Link } from "react-router-dom";
 import {
+  ProtectedBranchRule,
   Repository,
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import { useNavigate} from "react-router-dom";
 
 import { useRepoLinkBase } from "../hooks/remote-hooks";
 import DefaultBranchSetting from "./settings_boxes/DefaultBranchSetting";
@@ -13,6 +16,8 @@ import CanChangeSettingsSetting from "./settings_boxes/CanChangeSettingsSetting"
 import CanReadSetting from "./settings_boxes/CanReadSetting";
 import CanPushBranchesSetting from "./settings_boxes/CanPushBranchesSetting";
 import { useSession } from "../../../../session/session-context";
+import { useCanAmend } from "../../local/hooks/local-hooks";
+import { Branch } from "floro/dist/src/repo";
 
 const Container = styled.div`
   height: 100%;
@@ -91,10 +96,16 @@ interface Props {
 const SettingsDisplay = (props: Props) => {
 
   const linkBase = useRepoLinkBase(props.repository);
+  const navigate = useNavigate();
   const { currentUser } = useSession();
   const apiLink = useMemo(() => {
     return linkBase + "/settings/api?from=remote&plugin=" + (props?.plugin ?? "home");
   }, [linkBase, props.plugin]);
+
+  const onDefaultBranchCreated = useCallback((branchRule: ProtectedBranchRule) => {
+    const link = linkBase + `/settings/branchrules/${branchRule.id}?from=remote&plugin=` + (props?.plugin ?? "home");
+    navigate(link);
+  }, [linkBase, props?.plugin]);
 
   const showChangeSettings = useMemo(() => {
     if (props?.repository?.repoType == "user_repo") {

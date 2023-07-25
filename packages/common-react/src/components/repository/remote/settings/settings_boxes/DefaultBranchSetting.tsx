@@ -8,6 +8,7 @@ import React, {
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import {
+  ProtectedBranchRule,
   RepoBranch,
   Repository,
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
@@ -24,6 +25,7 @@ import { Branch } from "floro/dist/src/repo";
 import BranchSelector from "@floro/storybook/stories/repo-components/BranchSelector";
 import Button from "@floro/storybook/stories/design-system/Button";
 import { useRepoLinkBase } from "../../hooks/remote-hooks";
+import ConfirmDefaultBranchChangeModal from "../warning_modals/ConfirmDefaultBranchChangeModal";
 
 const Container = styled.div`
   margin-top: 24px;
@@ -77,9 +79,21 @@ const DefaultBranchSetting = (props: Props) => {
     return props.repository?.repoBranches?.find(
       (b) => b?.id == props.repository?.defaultBranchId
     );
-  }, [props.repository?.repoBranches, props.repository?.branchState?.branchId]);
+  }, [
+    props.repository?.repoBranches,
+    props.repository?.defaultBranchId,
+  ]);
 
   const [selectedBranch, setSelectedBranch] = useState<Branch>();
+  const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
+
+  const onShowConfirmModal = useCallback(() => {
+    setShowConfirmModal(true);
+  }, []);
+
+  const onHideConfirmModal = useCallback(() => {
+    setShowConfirmModal(false);
+  }, []);
 
   const onChangeBranch = useCallback((branch: Branch | null) => {
     if (branch) {
@@ -100,25 +114,34 @@ const DefaultBranchSetting = (props: Props) => {
   }, [props.repository?.repoBranches]);
 
   return (
-    <Container>
-      <Title>{"Default Branch"}</Title>
-      <SubTitle>
-        {
-          'Your default branch is the branch displayed by default when viewing your repository remotely. Your default branch should be considered a "merge only" branch. Your default branch cannot have a base branch. Changing the default branch may affect contributors\' ability to push commits, delete branches, revert changes, as well as merge open merge requests.'
-        }
-      </SubTitle>
-      <BottomContainer style={{ marginTop: 12 }}>
-        <BranchSelector
-          size={"mid"}
-          branch={(selectedBranch as Branch) ?? null}
-          branches={(possibleBranches ?? []) as Branch[]}
-          onChangeBranch={onChangeBranch}
-        />
-        {defaultBranch?.id != selectedBranch?.id && (
-          <Button label={"change default"} bg={"purple"} size={"medium"} />
-        )}
-      </BottomContainer>
-    </Container>
+    <>
+      <ConfirmDefaultBranchChangeModal
+        repository={props.repository}
+        selectedDefaultBranch={selectedBranch}
+        onDismiss={onHideConfirmModal}
+        onSuccess={onHideConfirmModal}
+        show={showConfirmModal}
+      />
+      <Container>
+        <Title>{"Default Branch"}</Title>
+        <SubTitle>
+          {
+            'Your default branch is the branch displayed by default when viewing your repository remotely. Your default branch should be considered a "merge only" branch. Your default branch cannot have a base branch. Changing the default branch may affect contributors\' ability to push commits, delete branches, revert changes, as well as merge open merge requests.'
+          }
+        </SubTitle>
+        <BottomContainer style={{ marginTop: 12 }}>
+          <BranchSelector
+            size={"mid"}
+            branch={(selectedBranch as Branch) ?? null}
+            branches={(possibleBranches ?? []) as Branch[]}
+            onChangeBranch={onChangeBranch}
+          />
+          {defaultBranch?.id != selectedBranch?.id && (
+            <Button onClick={onShowConfirmModal} label={"change default"} bg={"purple"} size={"medium"} />
+          )}
+        </BottomContainer>
+      </Container>
+    </>
   );
 };
 

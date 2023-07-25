@@ -26,6 +26,7 @@ import BranchRuleSelector from "@floro/storybook/stories/repo-components/BranchR
 import { Branch } from "floro/dist/src/repo";
 
 import BranchRuleIcon from "@floro/common-assets/assets/images/icons/branch_rule.dark.svg";
+import CreateBranchRuleModal from "../settings/warning_modals/CreateBranchRuleModal";
 
 const InnerContent = styled.div`
   display: flex;
@@ -163,12 +164,23 @@ interface Props {
 
 const RemoteVCSSettings = (props: Props) => {
   const theme = useTheme();
-  const navigate = useNavigate();
 
-  const [selectedBranchRule, setSelectedBranchRule] =
-    useState<null | ProtectedBranchRule>(null);
+  const navigate = useNavigate();
+  const [showCreateBranchRule, setShowCreateBranchRule] = useState(false);
+
+  const onShowDeleteBranchRule = useCallback(() => {
+    setShowCreateBranchRule(true);
+  }, []);
+
+  const onHideDeleteBranchRule = useCallback(() => {
+    setShowCreateBranchRule(false);
+  }, []);
 
   const linkBase = useRepoLinkBase(props.repository);
+  const onBranchRuleCreate = useCallback((branchRule: ProtectedBranchRule) => {
+    setShowCreateBranchRule(false);
+    navigate(`${linkBase}/settings/branchrules/${branchRule?.id}?from=remote&plugin=${props.plugin ?? "home"}`);
+  }, [linkBase]);
   const homeLink = useMemo(() => {
     return `${linkBase}?from=remote&plugin=${props.plugin ?? "home"}`;
   }, [linkBase, props.plugin]);
@@ -184,6 +196,21 @@ const RemoteVCSSettings = (props: Props) => {
     return BackArrowIconDark;
   }, [theme.name]);
 
+
+  const branchRuleBranchIds = useMemo(() => {
+    return new Set(props?.repository?.protectedBranchRules?.map(br => br?.branchId));
+  }, [props?.repository?.protectedBranchRules]);
+
+  const branchesWithoutBranchRules = useMemo((): Array<Branch> => {
+    return props?.repository?.repoBranches?.filter(b => {
+      return !branchRuleBranchIds.has(b?.id as string);
+    }) as Array<Branch> ?? ([] as Array<Branch>);
+  }, [props?.repository?.repoBranches, branchRuleBranchIds]);
+
+  const createBranchRuleEnabled = useMemo(() => {
+    return branchesWithoutBranchRules.length > 0;
+  }, [branchesWithoutBranchRules]);
+
   const onSelectBranchRule = useCallback(
     (branchRule: ProtectedBranchRule | null) => {
       if (branchRule) {
@@ -195,6 +222,12 @@ const RemoteVCSSettings = (props: Props) => {
 
   return (
     <>
+      <CreateBranchRuleModal
+        repository={props.repository}
+        onDismiss={onHideDeleteBranchRule}
+        onSuccess={onBranchRuleCreate}
+        show={showCreateBranchRule}
+      />
       <InnerContent>
         <TopContainer>
           <TitleRow>
@@ -218,7 +251,7 @@ const RemoteVCSSettings = (props: Props) => {
             <BranchRuleSelector
               size="wide"
               branchRules={props?.repository?.protectedBranchRules ?? []}
-              branchRule={selectedBranchRule}
+              branchRule={null}
               onChangeBranchRule={onSelectBranchRule}
             />
           </Row>
@@ -233,6 +266,8 @@ const RemoteVCSSettings = (props: Props) => {
             }}
           >
             <Button
+              onClick={onShowDeleteBranchRule}
+              isDisabled={!createBranchRuleEnabled}
               label={
                 <div
                   style={{

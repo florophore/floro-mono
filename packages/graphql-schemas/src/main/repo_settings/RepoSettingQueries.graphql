@@ -27,8 +27,13 @@ extend type Query {
 extend type Mutation {
   createBranchRule(
     repositoryId: ID!
-    branchId: String!
+    branchId: ID!
   ): CreateBranchRuleReponse
+
+  deleteBranchRule(
+    repositoryId: ID!
+    protectedBranchRuleId: ID!
+  ): DeleteBranchRuleReponse
 
   updateAnyoneCanRead(
     repositoryId: ID!

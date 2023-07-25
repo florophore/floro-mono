@@ -902,9 +902,9 @@ export default class RepoSettingsService {
           anyoneCanCreateMergeRequests: true,
           anyoneWithApprovalCanMerge: true,
           requireReapprovalOnPushToMerge: true,
-          anyoneCanApproveMergeRequests: repository.isPrivate,
-          anyoneCanRevert: repository.isPrivate,
-          anyoneCanAutofix: repository.isPrivate,
+          anyoneCanApproveMergeRequests: true,
+          anyoneCanRevert: true,
+          anyoneCanAutofix: true,
           repositoryId: repository?.id,
         });
       }
@@ -1184,30 +1184,6 @@ export default class RepoSettingsService {
     return null;
   }
 
-
-  //public async updateProtectedBranchRuleSetting(
-  //  protectedBranchRule: ProtectedBranchRule,
-  //  settingsName:
-  //    | "disableDirectPushing"
-  //    | "requireApprovalToMerge"
-  //    | "requireReapprovalOnPushToMerge"
-  //    | "automaticallyDeleteMergedFeatureBranches"
-  //    | "anyoneCanCreateMergeRequests"
-  //    | "anyoneWithApprovalCanMerge"
-  //    | "anyoneCanMergeMergeRequests"
-  //    | "anyoneCanApproveMergeRequests"
-  //    | "anyoneCanRevert"
-  //    | "anyoneCanAutofix",
-  //  settingValue: boolean
-  //) {
-  //  const protectedBranchRulesContext = await this.contextFactory.createContext(
-  //    ProtectedBranchRulesContext
-  //  );
-  //  return await protectedBranchRulesContext.updateProtectedBranchRule(protectedBranchRule, {
-  //    [settingsName]: settingValue
-  //  });
-  //}
-
   public async updateBranchRuleDisableDirectPushing(
     repository: Repository,
     branchRuleId: string,
@@ -1276,11 +1252,41 @@ export default class RepoSettingsService {
     })
   }
 
-  public async deleteBranchRule(repository: Repository, branchRuleId: string) {
-    // block this if repository default branch id
+  public async createBranchRule(repository: Repository, branchId: string): Promise<ProtectedBranchRule|null> {
+    const protectedBranchRulesContext = await this.contextFactory.createContext(
+      ProtectedBranchRulesContext,
+    );
 
+    const branches = await this.repositoryService.getBranches(
+      repository.id,
+    );
+    const branch = branches?.find(b => b.id == branchId);
+    if (!branch) {
+      return null;
+    }
+    const existingBranchRule = await protectedBranchRulesContext.getByRepoAndBranchId(repository.id, branchId);
+    if (existingBranchRule) {
+      return null;
+    }
+
+    return await protectedBranchRulesContext.create({
+      branchId: branch.id,
+      branchName: branch.name,
+      disableDirectPushing: true,
+      requireApprovalToMerge: true,
+      automaticallyDeleteMergedFeatureBranches: true,
+      anyoneCanCreateMergeRequests: true,
+      anyoneWithApprovalCanMerge: true,
+      requireReapprovalOnPushToMerge: true,
+      anyoneCanApproveMergeRequests: true,
+      anyoneCanRevert: true,
+      anyoneCanAutofix: true,
+      repositoryId: repository?.id,
+    });
+  }
+
+  public async deleteBranchRule(repository: Repository, branchRuleId: string): Promise<boolean> {
     const queryRunner = await this.databaseConnection.makeQueryRunner();
-    // unique userIds and roleIds
     try {
       await queryRunner.startTransaction();
       const protectedBranchRulesContext = await this.contextFactory.createContext(
@@ -1289,10 +1295,12 @@ export default class RepoSettingsService {
       );
       const branchRule = await protectedBranchRulesContext.getById(branchRuleId);
       if (!branchRule || branchRule?.repositoryId != repository.id) {
-        return null;
+        await queryRunner.rollbackTransaction();
+        return false;
       }
       if (branchRule.branchId == repository.defaultBranchId) {
-        return null
+        await queryRunner.rollbackTransaction();
+        return false
       }
 
       const protectedBranchRuleEnabledUserSettingsContext =
@@ -1321,7 +1329,5 @@ export default class RepoSettingsService {
         await queryRunner.release();
       }
     }
-
-    //
   }
 }
