@@ -26,7 +26,6 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
     "Mutation",
     "ProtectedBranchRule",
   ];
-  protected repositoryService!: RepositoryService;
   protected repoSettingsService!: RepoSettingsService;
   protected contextFactory!: ContextFactory;
   protected requestCache!: RequestCache;
@@ -45,7 +44,6 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
   constructor(
     @inject(ContextFactory) contextFactory: ContextFactory,
     @inject(RequestCache) requestCache: RequestCache,
-    @inject(RepositoryService) repositoryService: RepositoryService,
     @inject(RepoSettingsService) repoSettingsService: RepoSettingsService,
     @inject(LoggedInUserGuard) loggedInUserGuard: LoggedInUserGuard,
     @inject(RootOrganizationMemberPermissionsLoader)
@@ -67,7 +65,6 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
     this.contextFactory = contextFactory;
     this.requestCache = requestCache;
 
-    this.repositoryService = repositoryService;
     this.repoSettingsService = repoSettingsService;
 
     this.loggedInUserGuard = loggedInUserGuard;

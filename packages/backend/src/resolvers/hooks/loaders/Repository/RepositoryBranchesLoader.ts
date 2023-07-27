@@ -5,6 +5,7 @@ import RequestCache from "../../../../request/RequestCache";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-graphql";
 import RepositoryService from "../../../../services/repositories/RepositoryService";
 import { MergeRequest } from "@floro/graphql-schemas/build/generated/main-graphql";
+import RepoDataService from "../../../../services/repositories/RepoDataService";
 
 @injectable()
 export default class RepositoryBranchesLoader extends LoaderResolverHook<
@@ -13,16 +14,16 @@ export default class RepositoryBranchesLoader extends LoaderResolverHook<
   { currentUser: User | null; cacheKey: string }
 > {
   protected requestCache!: RequestCache;
-  protected repositoryService!: RepositoryService;
+  protected repoDataService!: RepoDataService;
   //protected branches: Array<FloroBranch>
 
   constructor(
     @inject(RequestCache) requestCache: RequestCache,
-    @inject(RepositoryService) repositoryService: RepositoryService
+    @inject(RepoDataService) repoDataService: RepoDataService
   ) {
     super();
     this.requestCache = requestCache;
-    this.repositoryService = repositoryService;
+    this.repoDataService = repoDataService;
   }
 
   public run = runWithHooks<
@@ -41,7 +42,7 @@ export default class RepositoryBranchesLoader extends LoaderResolverHook<
       if (cachedBranches) {
         return;
       }
-      const branches = await this.repositoryService.getBranches(repoId as string) ?? [];
+      const branches = await this.repoDataService.getBranches(repoId as string) ?? [];
       if (branches) {
         this.requestCache.setRepoBranches(cacheKey, repoId as string, branches);
       }

@@ -123,7 +123,6 @@ const MergeRequestHistoryDisplay = (props: Props) => {
   const hasSearch = useMemo(() => {
     return searchQuery && searchQuery?.trim() != "";
   }, [searchQuery]);
-
   const mergeRequests = useMemo((): Array<MergeRequest> => {
     if (filterMR == "open") {
       return (props.repository?.openMergeRequests?.mergeRequests ??

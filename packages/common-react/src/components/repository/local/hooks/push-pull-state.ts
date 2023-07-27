@@ -49,6 +49,10 @@ export const usePushButtonSubTitle = (
       return "(fetch failed)";
     }
 
+    if (fetchInfo.hasOpenMergeRequestConflict) {
+      return "(merge request conflict)";
+    }
+
     if (fetchInfo.branchPushDisabled) {
       return "(branch push disabled)";
     }

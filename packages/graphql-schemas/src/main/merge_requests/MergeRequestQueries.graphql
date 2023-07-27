@@ -1,3 +1,12 @@
+extend type Query {
+  searchUsersForReview(
+    repositoryId: ID!
+    mergeRequestId: ID!
+    query: String,
+    excludedUserIds: [String]
+  ): SearchUsersForReviewResponse
+}
+
 extend type Mutation {
   createMergeRequest(
     title: String!
@@ -77,4 +86,8 @@ extend type Mutation {
     repositoryId: String!,
   ): DeleteMergeRequestCommentReplyResponse
 
+}
+
+extend type Subscription {
+  mergeRequestUpdated(mergeRequestId: ID): MergeRequest
 }

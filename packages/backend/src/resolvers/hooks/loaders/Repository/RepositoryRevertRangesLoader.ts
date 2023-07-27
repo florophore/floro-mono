@@ -5,6 +5,7 @@ import RequestCache from "../../../../request/RequestCache";
 import RepositoryService from "../../../../services/repositories/RepositoryService";
 import { BranchState, CommitState } from "@floro/graphql-schemas/build/generated/main-graphql";
 import RepositoryCommitHistoryLoader from "./RepositoryCommitHistoryLoader";
+import RepoDataService from "../../../../services/repositories/RepoDataService";
 
 @injectable()
 export default class RepositoryRevertRangesLoader extends LoaderResolverHook<
@@ -14,17 +15,17 @@ export default class RepositoryRevertRangesLoader extends LoaderResolverHook<
   { currentUser: User | null; cacheKey: string }
 > {
   protected requestCache!: RequestCache;
-  protected repositoryService!: RepositoryService;
+  protected repoDataService!: RepoDataService;
   protected repositoryCommitHistoryLoader!: RepositoryCommitHistoryLoader;
 
   constructor(
     @inject(RequestCache) requestCache: RequestCache,
-    @inject(RepositoryService) repositoryService: RepositoryService,
+    @inject(RepoDataService) repoDataService: RepoDataService,
     @inject(RepositoryCommitHistoryLoader) repositoryCommitHistoryLoader: RepositoryCommitHistoryLoader
   ) {
     super();
     this.requestCache = requestCache;
-    this.repositoryService = repositoryService;
+    this.repoDataService = repoDataService;
     this.repositoryCommitHistoryLoader = repositoryCommitHistoryLoader;
   }
 
@@ -50,7 +51,7 @@ export default class RepositoryRevertRangesLoader extends LoaderResolverHook<
       if (cachedRevertRanges) {
         return;
       }
-      const ranges = this.repositoryService.getRevertRanges(cachedCommitHistory);
+      const ranges = this.repoDataService.getRevertRanges(cachedCommitHistory);
       if (ranges) {
         this.requestCache.setRepoRevertRanges(cacheKey, branchState.repositoryId, branchState.branchHead, ranges);
       }

@@ -6,6 +6,7 @@ import { Repository } from "@floro/graphql-schemas/src/generated/main-graphql";
 import RepositoryService from "../../../../services/repositories/RepositoryService";
 import RepoRBACService from "../../../../services/repositories/RepoRBACService";
 import { BranchState, CommitState, MergeRequest, ProtectedBranchRule } from "@floro/graphql-schemas/build/generated/main-graphql";
+import RepoDataService from "../../../../services/repositories/RepoDataService";
 
 @injectable()
 export default class RepositoryRemoteSettingsArgsLoader extends LoaderResolverHook<
@@ -14,16 +15,15 @@ export default class RepositoryRemoteSettingsArgsLoader extends LoaderResolverHo
   { currentUser: User | null; cacheKey: string }
 > {
   protected requestCache!: RequestCache;
-  protected repositoryService!: RepositoryService;
-  //protected branches: Array<FloroBranch>
+  protected repoDataService!: RepoDataService;
 
   constructor(
     @inject(RequestCache) requestCache: RequestCache,
-    @inject(RepositoryService) repositoryService: RepositoryService
+    @inject(RepoDataService) repoDataService: RepoDataService
   ) {
     super();
     this.requestCache = requestCache;
-    this.repositoryService = repositoryService;
+    this.repoDataService = repoDataService;
   }
 
   public run = runWithHooks<
@@ -42,7 +42,7 @@ export default class RepositoryRemoteSettingsArgsLoader extends LoaderResolverHo
       if (cachedRemoteSettings) {
         return;
       }
-      const remoteSettings = await this.repositoryService.fetchRepoSettingsForUser(id, currentUser);
+      const remoteSettings = await this.repoDataService.fetchRepoSettingsForUser(id, currentUser);
       if (remoteSettings) {
         this.requestCache.setRepoRemoteSettings(cacheKey, id, remoteSettings);
       }

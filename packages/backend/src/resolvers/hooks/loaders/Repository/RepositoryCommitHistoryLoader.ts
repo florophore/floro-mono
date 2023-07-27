@@ -6,6 +6,7 @@ import { Repository } from "@floro/graphql-schemas/src/generated/main-graphql";
 import RepositoryService from "../../../../services/repositories/RepositoryService";
 import { BranchState, CommitState } from "@floro/graphql-schemas/build/generated/main-graphql";
 import RepositoryCommitsLoader from "./RepositoryCommitsLoader";
+import RepoDataService from "../../../../services/repositories/RepoDataService";
 
 @injectable()
 export default class RepositoryCommitHistoryLoader extends LoaderResolverHook<
@@ -14,18 +15,18 @@ export default class RepositoryCommitHistoryLoader extends LoaderResolverHook<
   { currentUser: User | null; cacheKey: string }
 > {
   protected requestCache!: RequestCache;
-  protected repositoryService!: RepositoryService;
+  protected repoDataService!: RepoDataService;
   protected repositoryCommitsLoader!: RepositoryCommitsLoader;
   //protected branches: Array<FloroBranch>
 
   constructor(
     @inject(RequestCache) requestCache: RequestCache,
-    @inject(RepositoryService) repositoryService: RepositoryService,
+    @inject(RepoDataService) repoDataService: RepoDataService,
     @inject(RepositoryCommitsLoader) repositoryCommitsLoader: RepositoryCommitsLoader
   ) {
     super();
     this.requestCache = requestCache;
-    this.repositoryService = repositoryService;
+    this.repoDataService = repoDataService;
     this.repositoryCommitsLoader = repositoryCommitsLoader;
   }
 
@@ -47,7 +48,7 @@ export default class RepositoryCommitHistoryLoader extends LoaderResolverHook<
         return;
       }
       const cachedCommits = this.requestCache.getRepoCommits(cacheKey, branchState.repositoryId);
-      const commitHistory = this.repositoryService.getCommitHistory(cachedCommits, branchState.branchHead) ?? [];
+      const commitHistory = this.repoDataService.getCommitHistory(cachedCommits, branchState.branchHead) ?? [];
       if (commitHistory) {
         this.requestCache.setRepoCommitHistory(cacheKey, branchState.repositoryId, branchState.branchHead, commitHistory);
       }

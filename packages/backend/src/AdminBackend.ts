@@ -16,6 +16,7 @@ import BaseController from "./controllers/BaseController";
 import RequestCache from "./request/RequestCache";
 import StorageClient from "@floro/storage/src/StorageClient";
 import ApolloRestClientFactory from "./controllers/ApolloRestClientFactory";
+import { QueueService } from "./services/QueueService";
 
 @injectable()
 export default class AdminBackend extends Backend {
@@ -25,6 +26,7 @@ export default class AdminBackend extends Backend {
     @multiInject("AdminResolverModule") adminResolverModules: BaseResolverModule[],
     @multiInject("ResolverModule") resolverModules: BaseResolverModule[],
     @multiInject("Controllers") controllers: BaseController[],
+    @multiInject("QueueServices") queueServics: QueueService[],
     @inject(DatabaseConnection) databaseConnection: DatabaseConnection,
     @inject(RedisClient) redisClient: RedisClient,
     @inject(RedisQueueWorkers) redisQueueWorkers: RedisQueueWorkers,
@@ -38,6 +40,7 @@ export default class AdminBackend extends Backend {
     super(
       resolverModules,
       controllers,
+      queueServics,
       databaseConnection,
       redisClient,
       redisQueueWorkers,

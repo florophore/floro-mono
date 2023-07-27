@@ -1,0 +1,5 @@
+subscription mergeRequestUpdates($mergeRequestId: ID, $idx: Int) {
+  mergeRequestUpdated(mergeRequestId: $mergeRequestId) {
+    ...MergeRequest
+  }
+}

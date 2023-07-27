@@ -55,6 +55,9 @@ import WriteAccessIdsLoader from "../hooks/loaders/Repository/WriteAccessIdsLoad
 import RootRepositoryRemoteSettingsLoader from "../hooks/loaders/Root/RepositoryID/RootRepositoryRemoteSettingsLoader";
 import RepoSettingsService from "../../services/repositories/RepoSettingsService";
 import RepoSettingAccessGuard from "../hooks/guards/RepoSettingAccessGuard";
+import RepoDataService from "../../services/repositories/RepoDataService";
+import OrganizationsContext from "@floro/database/src/contexts/organizations/OrganizationsContext";
+import RepositoryDatasourceFactoryService from "../../services/repositories/RepoDatasourceFactoryService";
 
 const PAGINATION_LIMIT = 10;
 
@@ -70,6 +73,8 @@ export default class RepositoryResolverModule extends BaseResolverModule {
     "CommitInfo",
   ];
   protected repositoryService!: RepositoryService;
+  protected repoDataService!: RepoDataService;
+  protected repositoryDatasourceFactoryService!: RepositoryDatasourceFactoryService;
   protected repoSettingsService!: RepoSettingsService;
   protected branchService!: BranchService;
   protected mergeRequestService!: MergeRequestService;
@@ -100,6 +105,8 @@ export default class RepositoryResolverModule extends BaseResolverModule {
     @inject(ContextFactory) contextFactory: ContextFactory,
     @inject(RequestCache) requestCache: RequestCache,
     @inject(RepositoryService) repositoryService: RepositoryService,
+    @inject(RepoDataService) repoDataService: RepoDataService,
+    @inject(RepositoryDatasourceFactoryService) repositoryDatasourceFactoryService: RepositoryDatasourceFactoryService,
     @inject(RepoSettingsService) repoSettingsService: RepoSettingsService,
     @inject(LoggedInUserGuard) loggedInUserGuard: LoggedInUserGuard,
     @inject(RootOrganizationMemberPermissionsLoader)
@@ -140,6 +147,8 @@ export default class RepositoryResolverModule extends BaseResolverModule {
     this.contextFactory = contextFactory;
     this.requestCache = requestCache;
 
+    this.repoDataService = repoDataService;
+    this.repositoryDatasourceFactoryService = repositoryDatasourceFactoryService;
     this.repositoryService = repositoryService;
     this.repoSettingsService = repoSettingsService;
     this.branchService = branchService;
@@ -1042,7 +1051,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           return null;
         }
 
-        return this.repositoryService.getKVLinkForCommit(
+        return this.repoDataService.getKVLinkForCommit(
           cachedRepo,
           commitInfo as Commit
         );
@@ -1062,7 +1071,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           return null;
         }
 
-        return this.repositoryService.getStateLinkForCommit(
+        return this.repoDataService.getStateLinkForCommit(
           cachedRepo,
           commitInfo as Commit
         );
@@ -1254,8 +1263,8 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         const divergenceOrigin = await getDivergenceOrigin(
           datasource,
           repository.id,
+          baseBranch?.lastCommit ?? undefined,
           branch?.lastCommit ?? undefined,
-          baseBranch?.lastCommit ?? undefined
         );
         const divergenceSha: string = getMergeOriginSha(
           divergenceOrigin
@@ -1270,14 +1279,14 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           false
         );
 
-        const history = this.repositoryService.getCommitHistory(
+        const history = this.repoDataService.getCommitHistory(
           cachedCommits,
           branch?.lastCommit
         );
-        const ranges = this.repositoryService.getRevertRanges(history);
+        const ranges = this.repoDataService.getRevertRanges(history);
         const allPendingCommits = (
           rebaseList.length == 0
-            ? this.repositoryService.getCommitHistoryBetween(
+            ? this.repositoryDatasourceFactoryService.getCommitsInRange(
                 cachedCommits,
                 branch?.lastCommit,
                 divergenceOrigin.fromOrigin ?? undefined
@@ -1292,20 +1301,20 @@ export default class RepositoryResolverModule extends BaseResolverModule {
             .map((commit) => {
               return {
                 ...commit,
-                isReverted: this.repositoryService.isReverted(
+                isReverted: this.repoDataService.isReverted(
                   ranges,
                   commit.idx
                 ),
               };
             });
         } else {
-          const startIdx = allPendingCommits.length - 1 - idx;
+          const startIdx = idx;
           pendingCommits = allPendingCommits
             .slice(startIdx, startIdx + PAGINATION_LIMIT)
             .map((commit) => {
               return {
                 ...commit,
-                isReverted: this.repositoryService.isReverted(
+                isReverted: this.repoDataService.isReverted(
                   ranges,
                   commit.idx
                 ),
@@ -1364,16 +1373,16 @@ export default class RepositoryResolverModule extends BaseResolverModule {
               repositoryId: branchState.repositoryId,
               branchId: branchState.branchId,
               branchHead: branchState.branchHead,
-              isReverted: this.repositoryService.isReverted(
+              isReverted: this.repoDataService.isReverted(
                 ranges,
                 divergeCommit.idx
               ),
               isValid: divergeCommit.isValid ?? true,
-              kvLink: this.repositoryService.getKVLinkForCommit(
+              kvLink: this.repoDataService.getKVLinkForCommit(
                 repository,
                 divergeCommit
               ),
-              stateLink: this.repositoryService.getStateLinkForCommit(
+              stateLink: this.repoDataService.getStateLinkForCommit(
                 repository,
                 divergeCommit
               ),
@@ -1412,7 +1421,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         const branchHeadCommit = cachedCommits.find(
           (c) => c.sha == branchState?.branchHead
         );
-        const branchHistory = this.repositoryService.getCommitHistory(
+        const branchHistory = this.repoDataService.getCommitHistory(
           cachedCommits,
           branchState?.branchHead ?? ""
         );
@@ -1427,11 +1436,11 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         if (!repository) {
           return null;
         }
-        const kvLink = this.repositoryService.getKVLinkForCommit(
+        const kvLink = this.repoDataService.getKVLinkForCommit(
           repository,
           commit
         );
-        const stateLink = this.repositoryService.getStateLinkForCommit(
+        const stateLink = this.repoDataService.getStateLinkForCommit(
           repository,
           commit
         );
@@ -1457,7 +1466,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           repositoryId: branchState.repositoryId,
           branchId: branchState.branchId,
           branchHead: branchState.branchHead,
-          isReverted: this.repositoryService.isReverted(
+          isReverted: this.repoDataService.isReverted(
             revertRanges,
             commit?.idx
           ),
@@ -1511,7 +1520,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
             return commitHistory?.slice(0, PAGINATION_LIMIT).map((commit) => {
               return {
                 ...commit,
-                isReverted: this.repositoryService.isReverted(
+                isReverted: this.repoDataService.isReverted(
                   revertRanges,
                   commit.idx
                 ),
@@ -1527,7 +1536,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
             .map((commit) => {
               return {
                 ...commit,
-                isReverted: this.repositoryService.isReverted(
+                isReverted: this.repoDataService.isReverted(
                   revertRanges,
                   commit.idx
                 ),
@@ -1592,7 +1601,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           return results?.slice(0, PAGINATION_LIMIT).map((commit) => {
             return {
               ...commit,
-              isReverted: this.repositoryService.isReverted(
+              isReverted: this.repoDataService.isReverted(
                 revertRanges,
                 commit.idx
               ),
@@ -1612,7 +1621,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         { id }: main.QueryFetchRepositoryByIdArgs,
         { cacheKey, currentUser }
       ) => {
-        const repository = await this.repositoryService.fetchRepoById(id);
+        const repository = await this.repoDataService.fetchRepoById(id);
         if (!repository?.isPrivate) {
           // cache repo
           return {
@@ -1719,7 +1728,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         { repoName, ownerHandle }: main.QueryFetchRepositoryByNameArgs,
         { cacheKey, currentUser }
       ) => {
-        const repository = await this.repositoryService.fetchRepoByName(
+        const repository = await this.repoDataService.fetchRepoByName(
           ownerHandle ?? "",
           repoName ?? ""
         );
@@ -1829,14 +1838,14 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         args: main.QuerySearchUsersForRepoSettingsAccessArgs,
         { currentUser }
       ) => {
-        const repository = await this.repositoryService.fetchRepoById(
+        const repository = await this.repoDataService.fetchRepoById(
           args.repositoryId
         );
         if (!repository) {
           return null;
         }
         const remoteSettings =
-          await this.repositoryService.fetchRepoSettingsForUser(
+          await this.repoDataService.fetchRepoSettingsForUser(
             args.repositoryId,
             currentUser
           );
@@ -1877,14 +1886,14 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         args: main.QuerySearchUsersForRepoReadAccessArgs,
         { currentUser }
       ) => {
-        const repository = await this.repositoryService.fetchRepoById(
+        const repository = await this.repoDataService.fetchRepoById(
           args.repositoryId
         );
         if (!repository) {
           return null;
         }
         const remoteSettings =
-          await this.repositoryService.fetchRepoSettingsForUser(
+          await this.repoDataService.fetchRepoSettingsForUser(
             args.repositoryId,
             currentUser
           );
@@ -1925,14 +1934,14 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         args: main.QuerySearchUsersForRepoReadAccessArgs,
         { currentUser }
       ) => {
-        const repository = await this.repositoryService.fetchRepoById(
+        const repository = await this.repoDataService.fetchRepoById(
           args.repositoryId
         );
         if (!repository) {
           return null;
         }
         const remoteSettings =
-          await this.repositoryService.fetchRepoSettingsForUser(
+          await this.repoDataService.fetchRepoSettingsForUser(
             args.repositoryId,
             currentUser
           );
@@ -1973,14 +1982,14 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         args: main.QuerySearchUsersForRepoReadAccessArgs,
         { currentUser }
       ) => {
-        const repository = await this.repositoryService.fetchRepoById(
+        const repository = await this.repoDataService.fetchRepoById(
           args.repositoryId
         );
         if (!repository) {
           return null;
         }
         const remoteSettings =
-          await this.repositoryService.fetchRepoSettingsForUser(
+          await this.repoDataService.fetchRepoSettingsForUser(
             args.repositoryId,
             currentUser
           );
@@ -2023,7 +2032,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         this.repoSettingAccessGuard,
       ],
       async (_, args: main.MutationChangeDefaultBranchArgs) => {
-        const repository = await this.repositoryService.fetchRepoById(
+        const repository = await this.repoDataService.fetchRepoById(
           args.repositoryId
         );
         if (!repository || !args.branchId) {
@@ -2215,7 +2224,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
             type: "INVALID_PARAMS_ERROR",
           };
         }
-        const repository = await this.repositoryService.fetchRepoById(
+        const repository = await this.repoDataService.fetchRepoById(
           repositoryId
         );
         if (!repository) {
@@ -2255,10 +2264,10 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         }
 
         const branches =
-          (await this.repositoryService.getBranches(repositoryId as string)) ??
+          (await this.repoDataService.getBranches(repositoryId as string)) ??
           [];
         const remoteSettings =
-          await this.repositoryService.fetchRepoSettingsForUser(
+          await this.repoDataService.fetchRepoSettingsForUser(
             repositoryId,
             currentUser
           );
@@ -2314,7 +2323,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         args: main.MutationUpdateAnyoneCanChangeSettingsArgs,
         { cacheKey, currentUser }
       ) => {
-        const repository = await this.repositoryService.fetchRepoById(
+        const repository = await this.repoDataService.fetchRepoById(
           args.repositoryId
         );
         if (!repository) {
@@ -2356,7 +2365,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         args: main.MutationUpdateAnyoneCanChangeSettingsUsersArgs,
         { currentUser }
       ) => {
-        const repository = await this.repositoryService.fetchRepoById(
+        const repository = await this.repoDataService.fetchRepoById(
           args.repositoryId
         );
         if (!repository) {
@@ -2409,7 +2418,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         args: main.MutationUpdateAnyoneCanChangeSettingsRolesArgs,
         { currentUser }
       ) => {
-        const repository = await this.repositoryService.fetchRepoById(
+        const repository = await this.repoDataService.fetchRepoById(
           args.repositoryId
         );
         if (!repository) {
@@ -2461,7 +2470,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         args: main.MutationUpdateAnyoneCanReadArgs,
         { cacheKey, currentUser }
       ) => {
-        const repository = await this.repositoryService.fetchRepoById(
+        const repository = await this.repoDataService.fetchRepoById(
           args.repositoryId
         );
         if (!repository) {
@@ -2501,7 +2510,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         args: main.MutationUpdateAnyoneCanReadUsersArgs,
         { currentUser }
       ) => {
-        const repository = await this.repositoryService.fetchRepoById(
+        const repository = await this.repoDataService.fetchRepoById(
           args.repositoryId
         );
         if (!repository) {
@@ -2553,7 +2562,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         args: main.MutationUpdateAnyoneCanReadRolesArgs,
         { currentUser }
       ) => {
-        const repository = await this.repositoryService.fetchRepoById(
+        const repository = await this.repoDataService.fetchRepoById(
           args.repositoryId
         );
         if (!repository) {
@@ -2601,7 +2610,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         this.repoSettingAccessGuard,
       ],
       async (_, args: main.MutationUpdateAnyoneCanPushBranchesArgs) => {
-        const repository = await this.repositoryService.fetchRepoById(
+        const repository = await this.repoDataService.fetchRepoById(
           args.repositoryId
         );
         if (!repository) {
@@ -2641,7 +2650,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         args: main.MutationUpdateAnyoneCanPushBranchesUsersArgs,
         { currentUser }
       ) => {
-        const repository = await this.repositoryService.fetchRepoById(
+        const repository = await this.repoDataService.fetchRepoById(
           args.repositoryId
         );
         if (!repository) {
@@ -2694,7 +2703,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         args: main.MutationUpdateAnyoneCanPushBranchesRolesArgs,
         { currentUser }
       ) => {
-        const repository = await this.repositoryService.fetchRepoById(
+        const repository = await this.repoDataService.fetchRepoById(
           args.repositoryId
         );
         if (!repository) {
@@ -2742,7 +2751,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         this.repoSettingAccessGuard,
       ],
       async (_, args: main.MutationUpdateAllowExternalUsersToPushArgs) => {
-        const repository = await this.repositoryService.fetchRepoById(
+        const repository = await this.repoDataService.fetchRepoById(
           args.repositoryId
         );
         if (!repository) {
@@ -2819,7 +2828,51 @@ export default class RepositoryResolverModule extends BaseResolverModule {
                 payload.repositoryUpdated.organizationId as string,
                 currentUser.id
               );
-            return membership?.membershipState == "active";
+            if (membership?.membershipState != "active") {
+              return false;
+            }
+            if (payload?.repositoryUpdated.anyoneCanRead) {
+              return true;
+            }
+
+            const organizationMemberRolesContext =
+              await this.contextFactory.createContext(
+                OrganizationMemberRolesContext
+              );
+            const memberRoles =
+              await organizationMemberRolesContext.getRolesByMember(membership);
+            const isAdmin = !!memberRoles?.find((r) => r.presetCode == "admin");
+            if (isAdmin) {
+              return true;
+            }
+            const roleIds = memberRoles?.map((r) => r.id);
+            const repositoryEnabledRoleSettingsContext =
+              await this.contextFactory.createContext(
+                RepositoryEnabledRoleSettingsContext
+              );
+
+            const repositoryEnabledUserSettingsContext =
+              await this.contextFactory.createContext(
+                RepositoryEnabledUserSettingsContext
+              );
+            const hasUserPermission =
+              await repositoryEnabledUserSettingsContext.hasRepoUserId(
+                payload.repositoryUpdated.id,
+                currentUser.id,
+                "anyoneCanRead"
+              );
+            if (!hasUserPermission) {
+              const hasRoles =
+                await repositoryEnabledRoleSettingsContext.hasRepoRoleIds(
+                  payload.repositoryUpdated.id,
+                  roleIds,
+                  "anyoneCanRead"
+                );
+              if (!hasRoles) {
+                return false;
+              }
+            }
+            return true;
           }
         )
       ) as unknown as SubscriptionSubscribeFn<any, any, any, any>,

@@ -62,6 +62,45 @@ const ButtonRow = styled.div`
   justify-content: space-between;
 `;
 
+const ConflictInfoRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+`;
+
+const NothingToMerge = styled.p`
+  padding: 0;
+  margin: 0;
+  font-weight: 500;
+  font-size: 1.1rem;
+  font-family: "MavenPro";
+  color: ${(props) => props.theme.colors.standardTextLight};
+  font-style: italic;
+`;
+
+const MergeOkay = styled.p`
+  padding: 0;
+  margin: 0;
+  font-weight: 500;
+  font-size: 1.1rem;
+  font-family: "MavenPro";
+  color: ${(props) => props.theme.colors.addedText};
+  font-style: italic;
+`;
+
+const ConflictError = styled.p`
+  padding: 0;
+  margin: 0;
+  font-weight: 500;
+  font-size: 1.1rem;
+  font-family: "MavenPro";
+  color: ${(props) => props.theme.colors.removedText};
+  font-style: italic;
+`;
+
 interface Props {
   repository: Repository;
   apiResponse: ApiResponse;
@@ -182,7 +221,14 @@ const LocalVCSViewMode = (props: Props) => {
       return;
     }
     pullMutation.mutate();
+
   }, [fetchInfo?.canPull]);
+
+  useEffect(() => {
+    if (pushMutation.isSuccess) {
+      setShowConfirmForcePush(false);
+    }
+  }, [pushMutation.isSuccess])
 
   const onConfirmPush = useCallback(() => {
     if (!fetchInfo?.canPushBranch) {
@@ -274,6 +320,17 @@ const LocalVCSViewMode = (props: Props) => {
         )}
       </TopContainer>
       <BottomContainer>
+        <>
+          {fetchInfo?.hasOpenMergeRequestConflict && (
+            <ConflictInfoRow>
+              <ConflictError>
+                {
+                  "Base branch conflicts with the base branch of an open merge request. Either change the base branch or close the merge request."
+                }
+              </ConflictError>
+            </ConflictInfoRow>
+          )}
+        </>
         {!props.apiResponse?.repoState?.isInMergeConflict && (
           <ButtonRow>
             <RepoActionButton

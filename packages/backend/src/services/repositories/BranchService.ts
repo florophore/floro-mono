@@ -30,6 +30,7 @@ import UsersContext from "@floro/database/src/contexts/users/UsersContext";
 import OrganizationsContext from "@floro/database/src/contexts/organizations/OrganizationsContext";
 import BranchPushHandler from "../events/BranchPushEventHandler";
 import MergeRequestsContext from "@floro/database/src/contexts/merge_requests/MergeRequestsContext";
+import RepoDataService from "./RepoDataService";
 
 export const LICENSE_CODE_LIST = new Set([
   "apache_2",
@@ -65,19 +66,22 @@ export interface CreateRepositoryReponse {
 export default class BranchService {
   private databaseConnection!: DatabaseConnection;
   private contextFactory!: ContextFactory;
-  private repoRBAC!: RepoRBACService;
   private branchPushHandlers!: BranchPushHandler[];
+  private repoDataService!: RepoDataService;
+  private repoRBACService!: RepoRBACService;
 
   constructor(
     @inject(DatabaseConnection) databaseConnection: DatabaseConnection,
     @inject(ContextFactory) contextFactory: ContextFactory,
-    @inject(RepoRBACService) repoRBAC: RepoRBACService,
+    @inject(RepoDataService) repoDataService: RepoDataService,
+    @inject(RepoRBACService) repoRBACService: RepoRBACService,
     @multiInject("BranchPushHandler") branchPushHandlers: BranchPushHandler[]
   ) {
     this.databaseConnection = databaseConnection;
     this.contextFactory = contextFactory;
-    this.repoRBAC = repoRBAC;
     this.branchPushHandlers = branchPushHandlers;
+    this.repoDataService = repoDataService;
+    this.repoRBACService = repoRBACService;
   }
 
   // only ever calll this during repo creation
@@ -201,7 +205,7 @@ export default class BranchService {
           },
         };
       }
-      const canPush = await this.repoRBAC.userHasPermissionToPush(
+      const canPush = await this.repoRBACService.userHasPermissionToPush(
         repo,
         user,
         branch.id,
@@ -311,16 +315,14 @@ export default class BranchService {
           );
         }
       }
-
+      await queryRunner.commitTransaction();
       for (const handler of this.branchPushHandlers) {
-        await handler.onBranchChanged(
-          queryRunner,
+        const res = await handler.onBranchChanged(
           updatedRepo,
           user,
           pushedBranch
         );
       }
-      await queryRunner.commitTransaction();
       return {
         action: "BRANCH_PUSHED",
         repository: updatedRepo,
@@ -385,11 +387,23 @@ export default class BranchService {
           baseBranchId: b?.baseBranchId as string,
         } as FloroBranch;
       });
-      const isCyclic = this.testBranchIsCyclic(branchExchange, floroBranch);
+      const isCyclic = this.repoDataService.testBranchIsCyclic(branchExchange, floroBranch);
       if (isCyclic) {
         return null;
       }
+
       const remoteBranch = branches?.find((b) => b.branchId == floroBranch?.id);
+
+      const mergeRequestConetxt = await this.contextFactory.createContext(MergeRequestsContext);
+      const hasOpenMergeRequest =
+        !!remoteBranch?.id &&
+        (await mergeRequestConetxt.repoHasOpenRequestOnBranch(
+          repository.id,
+          remoteBranch?.id
+        ));
+      if (hasOpenMergeRequest && floroBranch?.baseBranchId != remoteBranch?.branchId) {
+        return null;
+      }
       if (floroBranch?.baseBranchId) {
         const baseBranch = branches?.find(
           (b) => b.branchId == floroBranch?.baseBranchId
@@ -424,19 +438,6 @@ export default class BranchService {
     }
   }
 
-  public testBranchIsCyclic(
-    branches: Array<FloroBranch>,
-    branch: FloroBranch | undefined
-  ) {
-    if (!branch?.id || !branch?.baseBranchId) {
-      return false;
-    }
-    const testBranches = [
-      ...branches.filter((b) => b.baseBranchId != branch.id),
-      branch,
-    ];
-    return branchIdIsCyclic(branch.id, testBranches);
-  }
 
   public async getOpenBranchesByUser(
     repository: Repository,

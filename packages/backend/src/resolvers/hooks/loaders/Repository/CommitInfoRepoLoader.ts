@@ -5,6 +5,7 @@ import RequestCache from "../../../../request/RequestCache";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-graphql";
 import RepositoryService from "../../../../services/repositories/RepositoryService";
 import { BranchState, CommitInfo, CommitState } from "@floro/graphql-schemas/build/generated/main-graphql";
+import RepoDataService from "../../../../services/repositories/RepoDataService";
 
 @injectable()
 export default class CommitInfoRepositoryLoader extends LoaderResolverHook<
@@ -13,16 +14,15 @@ export default class CommitInfoRepositoryLoader extends LoaderResolverHook<
   { currentUser: User | null; cacheKey: string }
 > {
   protected requestCache!: RequestCache;
-  protected repositoryService!: RepositoryService;
-  //protected branches: Array<FloroBranch>
+  protected repoDataService!: RepoDataService;
 
   constructor(
     @inject(RequestCache) requestCache: RequestCache,
-    @inject(RepositoryService) repositoryService: RepositoryService
+    @inject(RepoDataService) repoDataService: RepoDataService
   ) {
     super();
     this.requestCache = requestCache;
-    this.repositoryService = repositoryService;
+    this.repoDataService = repoDataService;
   }
 
   public run = runWithHooks<
@@ -41,7 +41,7 @@ export default class CommitInfoRepositoryLoader extends LoaderResolverHook<
       if (cachedRepo) {
         return;
       }
-      const repo = await this.repositoryService.getRepository(id as string);
+      const repo = await this.repoDataService.getRepository(id as string);
       if (repo) {
         this.requestCache.setRepo(cacheKey, repo);
       }

@@ -6,6 +6,7 @@ import {
   MergeRequest,
   MergeRequestEvent,
   Repository,
+  User,
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { Manifest } from "floro/dist/src/plugins";
 import { RemoteCommitState } from "../hooks/remote-state";
@@ -21,6 +22,7 @@ import EditGray from "@floro/common-assets/assets/images/icons/edit.light.svg";
 import en from "javascript-time-ago/locale/en";
 import ColorPalette from "@floro/styles/ColorPalette";
 import InitialProfileDefault from "@floro/storybook/stories/common-components/InitialProfileDefault";
+import UserProfilePhoto from "@floro/storybook/stories/common-components/UserProfilePhoto";
 
 const Container = styled.div`
   max-width: 870px;
@@ -130,13 +132,89 @@ const TimelineRow = (props: Props) => {
 
   const action = useMemo(() => {
     if (props.event.eventName == "CREATE_MERGE_REQUEST") {
-        return `created merge request [${props.mergeRequest.mergeRequestCount}] "${props.mergeRequest.title}" for branch "${props.mergeRequest?.branchState?.name}"`
+      return (
+        <span>
+          {'created merge request '}
+          <b>
+            {`[${props.mergeRequest.mergeRequestCount}] "${props.mergeRequest.title}"`}
+          </b>
+          {' for branch '}
+          <b>
+            {`${props.mergeRequest?.branchState?.name}`}
+          </b>
+        </span>
+      )
+    }
+    if (props.event.eventName == "BRANCH_UDPATED") {
+      return (
+        <span>
+          {'updated '}
+          <b>
+            {`${props.mergeRequest?.branchState?.name}`}
+          </b>
+          {' to commit '}
+          <b>
+            {`(${props.event.branchHeadShaAtEvent?.substring(0, 6)})`}
+          </b>
+        </span>
+      )
+
     }
     if (props.event.eventName == "UPDATED_MERGE_REQUEST_INFO") {
+        const changedTitle = props?.event?.addedTitle != props?.event?.removedTitle;
+        const changedDescription = props?.event?.addedDescription != props?.event?.removedDescription;
+        if (changedTitle && changedDescription) {
+          return (
+            <span>
+              {'changed title from '}
+              <b style={{textDecoration: 'line-through'}}>
+                {props?.event?.removedTitle}
+              </b>
+              {' and changed description from '}
+              <b style={{textDecoration: 'line-through'}}>
+                {props?.event?.removedDescription}
+              </b>
+            </span>
+          );
+        }
+        if (changedTitle) {
+          return (
+            <span>
+              {'changed title from '}
+              <b style={{textDecoration: 'line-through'}}>
+                {props?.event?.removedTitle}
+              </b>
+            </span>
+          );
+        }
+        if (changedDescription) {
+          return (
+            <span>
+              {'changed description from '}
+              <b style={{textDecoration: 'line-through'}}>
+                {props?.event?.removedDescription}
+              </b>
+            </span>
+          );
+        }
         return "updated merge request title & description"
     }
+
+    if (props.event.eventName == "ADDED_REVIEWER") {
+        const reviwerFullName = `${upcaseFirst(props?.event?.reviewerRequest?.requestedReviewerUser?.firstName ?? "")} ${upcaseFirst(props?.event?.reviewerRequest?.requestedReviewerUser?.lastName ?? "")}`
+        return (
+          <span>
+            {'added '}
+            <b>
+              {reviwerFullName}
+            </b>
+            {' as a reviewer'}
+          </span>
+
+        );
+    }
     return props.event.eventName;
-  }, [props.event.eventName, props.mergeRequest?.title, props.mergeRequest?.branchState?.name]);
+  }, [props.event, props.mergeRequest?.branchState?.name]);
 
   const timeAgo = useMemo(() => new TimeAgo("en-US"), []);
 
@@ -148,35 +226,27 @@ const TimelineRow = (props: Props) => {
   }, [timeAgo, props.event?.createdAt]);
 
   const sentence = useMemo(() => {
-    return `${userFullname} ${action} ${elapsedTime}`;
+    return <span>{userFullname} {action} {elapsedTime}</span>;
   }, [userFullname, action, elapsedTime]);
 
   return (
     <Container>
       <LeftColumn>
         <IconContainer>
-            <Icon src={icon}/>
+          <Icon src={icon} />
         </IconContainer>
         {!props.isLast && <Line />}
       </LeftColumn>
       <RightColumn>
-        <div>
-            {props.event?.performedByUser?.profilePhoto?.thumbnailUrl && (
-            <ProfilePic
-                src={props.event?.performedByUser?.profilePhoto?.thumbnailUrl ?? ""}
-            />
-            )}
-
-            {!props.event?.performedByUser?.profilePhoto?.thumbnailUrl && (
-            <InitialProfileDefault
-                size={36}
-                firstName={props.event?.performedByUser?.firstName ?? ""}
-                lastName={props.event?.performedByUser?.lastName ?? ""}
-            />
-            )}
+        <div style={{marginRight: 12}}>
+          <UserProfilePhoto
+            user={props.event?.performedByUser as User}
+            size={36}
+            offlinePhoto={null}
+          />
         </div>
-        <TitleColumn style={{marginBottom: 24}}>
-            <Title style={{marginBottom: 12, marginTop: 4}}>{sentence}</Title>
+        <TitleColumn style={{ marginBottom: 24 }}>
+          <Title style={{ marginBottom: 12, marginTop: 4 }}>{sentence}</Title>
         </TitleColumn>
       </RightColumn>
     </Container>

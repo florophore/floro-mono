@@ -1,0 +1,39 @@
+query SearchUsersForReview(
+  $repositoryId: ID!
+  $mergeRequestId: ID!
+  $query: String!
+  $excludedUserIds: [String]
+) {
+  searchUsersForReview(
+    repositoryId: $repositoryId
+    mergeRequestId: $mergeRequestId
+    query: $query
+    excludedUserIds: $excludedUserIds
+  ) {
+    ... on SearchUsersForReviewSuccess {
+      users {
+        id
+        firstName
+        lastName
+        username
+        profilePhoto {
+          ...Photo
+        }
+      }
+    }
+    ... on SearchUsersForReviewError {
+      message
+      type
+    }
+
+    ... on RepoAccessError {
+      message
+      type
+    }
+
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+  }
+}

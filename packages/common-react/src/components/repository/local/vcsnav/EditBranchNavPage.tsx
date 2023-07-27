@@ -126,6 +126,22 @@ export const getBranchIdFromName = (name: string): string => {
     .replaceAll(/[[\]'"]/g, "");
 };
 
+export const branchIdIsCyclic = (branchId: string, branches: Branch[], visited: Set<string> = new Set()) =>{
+  if (visited.has(branchId)) {
+    return true;
+  }
+  visited.add(branchId);
+  for (const branch of branches) {
+    if (branch?.baseBranchId && branch.baseBranchId == branchId) {
+      const hasCycle = branchIdIsCyclic(branch.id, branches, new Set(Array.from(visited)));
+      if (hasCycle) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 interface Props {
   repository: Repository;
   apiResponse: ApiResponse;
@@ -214,14 +230,18 @@ const EditBranchNavPage = (props: Props) => {
   }, [gridData.pointerMap, branchHead, theme]);
 
   const baseBranches = useMemo(() => {
-    const potentialBranches = getPotentialBaseBranchesForSha(
-      branchHead,
-      sourceGraphResponse?.branches ?? [],
-      sourceGraphResponse?.pointers ?? {}
-    );
-    return potentialBranches?.filter(
-      (v) => v.id != props?.apiResponse?.branch?.id && v.baseBranchId != props.apiResponse?.branch?.id
-    );
+    //return sourceGraphResponse?.branches?.filter(branch => {
+    //  if (branch.id == props?.apiResponse.branch?.id) {
+    //    return false;
+    //  }
+    //  return true;
+    //})
+    return sourceGraphResponse?.branches?.filter(b => {
+      return (
+        props?.apiResponse?.branch?.id != b.id &&
+        !branchIdIsCyclic(b.id, sourceGraphResponse?.branches)
+      );
+    });
   }, [
     branchHead,
     props?.apiResponse?.branch?.id,

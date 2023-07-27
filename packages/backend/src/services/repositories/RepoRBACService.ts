@@ -14,6 +14,7 @@ import { ProtectedBranchRule } from "@floro/database/src/entities/ProtectedBranc
 import ProtectedBranchRuleEnabledUserSettingsContext from "@floro/database/src/contexts/repositories/RepositoryEnabledUserSettingsContext";
 import ProtectedBranchRuleEnabledRoleSettingsContext from "@floro/database/src/contexts/repositories/RepositoryEnabledRoleSettingsContext";
 import { OrganizationMember } from "@floro/database/src/entities/OrganizationMember";
+import MergeRequestsContext from "@floro/database/src/contexts/merge_requests/MergeRequestsContext";
 
 
 export interface RepoPermissions {
@@ -62,7 +63,6 @@ export default class RepoRBACService {
       }
       if (repository.isPrivate && repository.repoType == "user_repo") {
         if (currentUser.id != repository.createdByUserId) {
-          console.log("HERE", currentUser.id, repository.createdByUserId);
           return false;
         }
         return true;
@@ -73,7 +73,6 @@ export default class RepoRBACService {
           OrganizationMembersContext,
           queryRunner
         );
-      console.log("NEXT");
       const membership =
         repository.repoType == "org_repo"
           ? await organizationsMembersContext.getByOrgIdAndUserId(

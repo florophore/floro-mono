@@ -35,7 +35,12 @@ export default class ReviewerRequestsContext extends BaseContext {
         isDeleted: false,
       },
       relations: {
-        requestedReviewerUser: true as any,
+        requestedReviewerUser: {
+          profilePhoto: true
+        },
+        requestedByUser: {
+          profilePhoto: true
+        }
       },
     });
   }

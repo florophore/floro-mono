@@ -1,3 +1,4 @@
+
 import React, { useMemo, useCallback, useState } from "react";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
@@ -6,6 +7,7 @@ import {
   MergeRequest,
   MergeRequestEvent,
   Repository,
+  ReviewerRequest,
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { Manifest } from "floro/dist/src/plugins";
 import { RemoteCommitState } from "../hooks/remote-state";
@@ -16,14 +18,15 @@ import CommitMediumGray from "@floro/common-assets/assets/images/repo_icons/comm
 
 import en from "javascript-time-ago/locale/en";
 import TimelineRow from "./TimelineRow";
+import ReviewerRow from "./ReviewerRow";
 
 const Container = styled.div`
-  max-width: 870px;
+  max-width: 400px;
   display: flex;
   flex-direction: column;
 `;
 const FakeContainer = styled.div`
-  max-width: 870px;
+  max-width: 400px;
   display: flex;
   flex-direction: row;
 `;
@@ -57,38 +60,20 @@ interface Props {
   mergeRequest: MergeRequest;
 }
 
-const Timeline = (props: Props) => {
-  const filteredEvents = useMemo(() => {
-    return props.mergeRequest?.timelineEvents?.filter((event) => {
-      if (event?.eventName == "UPDATED_MERGE_REQUEST_INFO") {
-        const changedTitle = event?.addedTitle != event?.removedTitle;
-        const changedDescription = event?.addedDescription != event?.removedDescription;
-        if (!changedTitle && !changedDescription) {
-          return false;
-        }
-      }
-      return true;
-    }) ?? [];
-  }, [props.mergeRequest?.timelineEvents]);
+const Reviewers = (props: Props) => {
+  const reviewerRequests = useMemo(() => {
+    return (props.mergeRequest?.reviewerRequests ?? []) as Array<ReviewerRequest>;
+  }, [props.mergeRequest?.reviewerRequests]);
+  console.log("YO", props.mergeRequest)
   return (
     <Container>
-      <FakeContainer>
-        <LeftColumn>
-            <div style={{width: 32}}></div>
-            <Line/>
-        </LeftColumn>
-        <RightColumn>
-            <div style={{height: 48}}></div>
-        </RightColumn>
-      </FakeContainer>
-      {filteredEvents?.map((mergeEvent, index) => {
+      {reviewerRequests?.map((reviewerRequest: ReviewerRequest, index) => {
         return (
-          <TimelineRow
+          <ReviewerRow
             key={index}
-            event={mergeEvent as MergeRequestEvent}
-            mergeRequest={props.mergeRequest}
             repository={props.repository}
-            isLast={(index + 1) == (props.mergeRequest?.timelineEvents?.length ?? 0)}
+            reviwerRequest={reviewerRequest}
+            mergeRequest={props?.mergeRequest}
           />
         );
       })}
@@ -96,4 +81,4 @@ const Timeline = (props: Props) => {
   );
 };
 
-export default React.memo(Timeline);
+export default React.memo(Reviewers);

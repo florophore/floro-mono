@@ -3,7 +3,7 @@ import OuterNavigator from '@floro/common-react/src/components/outer-navigator/O
 import {useNavigationAnimator} from '@floro/common-react/src/navigation/navigation-animator';
 import {useLinkTitle} from '@floro/common-react/src/components/header_links/HeaderLink';
 import {useParams, useSearchParams} from 'react-router-dom';
-import {FetchRepositoryByNameDocument, Repository, useFetchRepositoryMergeRequestQuery, useFetchRepositoryProposedMergeRequestQuery, useProposedMergeRequestRepositoryUpdatesSubscription, useRepositoryUpdatesSubscription} from '@floro/graphql-schemas/src/generated/main-client-graphql';
+import {FetchRepositoryByNameDocument, Repository, useFetchRepositoryMergeRequestQuery, useFetchRepositoryProposedMergeRequestQuery, useMergeRequestUpdatesSubscription, useProposedMergeRequestRepositoryUpdatesSubscription, useRepositoryUpdatesSubscription} from '@floro/graphql-schemas/src/generated/main-client-graphql';
 import {useSession} from '@floro/common-react/src/session/session-context';
 import {useUserOrganizations} from '@floro/common-react/src/hooks/offline';
 import RepoController from '@floro/common-react/src/components/repository/RepoController';
@@ -45,6 +45,12 @@ const RepoCreateMergeRequestPage = () => {
     fetchPolicy: 'cache-and-network'
   });
 
+  const subs = useMergeRequestUpdatesSubscription({
+    variables: {
+      mergeRequestId,
+      idx
+    }
+  });
 
   const [offlineRepo, setOfflineRepo] = useState<Repository|null>(null);
   const repository = useMemo(() => {

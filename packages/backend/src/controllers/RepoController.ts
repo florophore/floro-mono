@@ -42,6 +42,7 @@ import { Manifest, manifestListToSchemaMap } from "floro/dist/src/plugins";
 import { makeDataSource } from "floro/dist/src/datasource";
 import OrganizationsContext from "@floro/database/src/contexts/organizations/OrganizationsContext";
 import BranchService from "../services/repositories/BranchService";
+import RepoDataService from "../services/repositories/RepoDataService";
 
 @injectable()
 export default class RepoController extends BaseController {
@@ -52,7 +53,7 @@ export default class RepoController extends BaseController {
   public repoAccessor: RepoAccessor;
   public binaryAccessor: BinaryAccessor;
   public repoRBAC: RepoRBACService;
-  public repositoryService: RepositoryService;
+  public repoDataService!: RepoDataService;
   public storageAuthenticator!: StorageAuthenticator;
   public databaseConnection!: DatabaseConnection;
   public branchService!: BranchService;
@@ -66,7 +67,7 @@ export default class RepoController extends BaseController {
     @inject(RepoAccessor) repoAccessor: RepoAccessor,
     @inject(BinaryAccessor) binaryAccessor: BinaryAccessor,
     @inject(RepoRBACService) repoRBAC: RepoRBACService,
-    @inject(RepositoryService) repositoryService: RepositoryService,
+    @inject(RepoDataService) repoDataService: RepoDataService,
     @inject(StorageAuthenticator) storageAuthenticator: StorageAuthenticator,
     @inject(BranchService) branchService: BranchService
   ) {
@@ -79,7 +80,7 @@ export default class RepoController extends BaseController {
     this.repoAccessor = repoAccessor;
     this.binaryAccessor = binaryAccessor;
     this.repoRBAC = repoRBAC;
-    this.repositoryService = repositoryService;
+    this.repoDataService = repoDataService;
     this.storageAuthenticator = storageAuthenticator;
     this.branchService = branchService;
   }
@@ -111,7 +112,7 @@ export default class RepoController extends BaseController {
         session.user
       );
       if (canPull) {
-        const cloneInfo = await this.repositoryService.fetchCloneInfo(
+        const cloneInfo = await this.repoDataService.fetchCloneInfo(
           repo.id,
           session.user
         );
@@ -157,7 +158,7 @@ export default class RepoController extends BaseController {
         session.user
       );
       if (canPull) {
-        const pullInfo = await this.repositoryService.fetchPullInfo(
+        const pullInfo = await this.repoDataService.fetchPullInfo(
           repo.id,
           session.user,
           branchLeaves,
@@ -201,7 +202,7 @@ export default class RepoController extends BaseController {
         session.user
       );
       if (canPull && sha) {
-        const commit = await this.repositoryService.getCommit(repo.id, sha);
+        const commit = await this.repoDataService.getCommit(repo.id, sha);
         response.send({
           exists: !!commit,
         });
@@ -242,7 +243,7 @@ export default class RepoController extends BaseController {
         session.user
       );
       if (canPull && fileName) {
-        const binary = await this.repositoryService.getBinary(
+        const binary = await this.repoDataService.getBinary(
           repo.id,
           fileName
         );
@@ -291,7 +292,7 @@ export default class RepoController extends BaseController {
       );
       if (canPull && sha) {
         // get commit list
-        const commit = await this.repositoryService.getCommit(repo.id, sha);
+        const commit = await this.repoDataService.getCommit(repo.id, sha);
         if (commit) {
           const privateCdnUrl = this.mainConfig.privateRoot();
           //const expiration = new Date().getTime() + (3600*1000);
@@ -345,7 +346,7 @@ export default class RepoController extends BaseController {
       );
       if (canPull && sha) {
         // get commit list
-        const commit = await this.repositoryService.getCommit(repo.id, sha);
+        const commit = await this.repoDataService.getCommit(repo.id, sha);
         if (commit) {
           const privateCdnUrl = this.mainConfig.privateRoot();
           //const expiration = new Date().getTime() + (3600*1000);
@@ -402,7 +403,7 @@ export default class RepoController extends BaseController {
       );
       if (canPull && sha) {
         // get commit list
-        const commit = await this.repositoryService.getCommit(repo.id, sha);
+        const commit = await this.repoDataService.getCommit(repo.id, sha);
         if (commit) {
           const privateCdnUrl = this.mainConfig.privateRoot();
           //const expiration = new Date().getTime() + (3600*1000);
@@ -461,7 +462,7 @@ export default class RepoController extends BaseController {
             response.sendStatus(400);
             return;
           }
-          const binary = await this.repositoryService.getBinary(
+          const binary = await this.repoDataService.getBinary(
             repo.id,
             fileName
           );
@@ -523,7 +524,7 @@ export default class RepoController extends BaseController {
       );
       if (canPull && fileName) {
         // get commit list
-        const binary = await this.repositoryService.getBinary(
+        const binary = await this.repoDataService.getBinary(
           repo.id,
           fileName
         );
@@ -798,7 +799,7 @@ export default class RepoController extends BaseController {
       let parentIdx: number = -1;
       let parentId: string | undefined;
       if (commitData.parent) {
-        const parentCommit = await this.repositoryService.getCommit(
+        const parentCommit = await this.repoDataService.getCommit(
           repoId,
           commitData.parent
         );
@@ -814,7 +815,7 @@ export default class RepoController extends BaseController {
         commitData.historicalParent != commitData.parent &&
         commitData.historicalParent
       ) {
-        const historicalParentCommit = await this.repositoryService.getCommit(
+        const historicalParentCommit = await this.repoDataService.getCommit(
           repoId,
           commitData.historicalParent
         );
@@ -1140,6 +1141,7 @@ export default class RepoController extends BaseController {
         stateByteSize,
         isValid,
         username: commitData.username,
+        originalSha: commitData.originalSha,
         userId: commitData.userId,
         authorUsername: commitData.authorUsername ?? commitData?.username,
         authorUserId: commitData.authorUserId ?? commitData?.userId,
@@ -1258,6 +1260,15 @@ export default class RepoController extends BaseController {
         response.sendStatus(400);
         return;
       }
+      const canPush = await this.repoRBAC.userHasPermissionToPush(
+        repo,
+        session.user,
+        branch.id,
+      );
+      if (!canPush) {
+        response.sendStatus(400);
+        return;
+      }
       const branchResult = await this.branchService.pushBranch(branch, repoId, session.user);
       if (branchResult.action != "BRANCH_PUSHED") {
         response.sendStatus(400);
@@ -1268,7 +1279,7 @@ export default class RepoController extends BaseController {
           );
         return;
       }
-      const pullInfo = await this.repositoryService.fetchPullInfo(
+      const pullInfo = await this.repoDataService.fetchPullInfo(
         repoId,
         session.user,
         []

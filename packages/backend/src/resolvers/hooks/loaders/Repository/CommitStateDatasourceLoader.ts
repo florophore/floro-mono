@@ -12,6 +12,7 @@ import {
 } from "@floro/graphql-schemas/build/generated/main-graphql";
 import RootRepositoryLoader from "../Root/RepositoryID/RepositoryLoader";
 import RepositoryRemoteSettingsLoader from "./RepositoryRemoteSettingsLoader";
+import RepoDataService from "../../../../services/repositories/RepoDataService";
 
 @injectable()
 export default class CommitStateDatasourceLoader extends LoaderResolverHook<
@@ -20,7 +21,7 @@ export default class CommitStateDatasourceLoader extends LoaderResolverHook<
   { currentUser: User | null; cacheKey: string }
 > {
   protected requestCache!: RequestCache;
-  protected repositoryService!: RepositoryService;
+  protected repoDataService!: RepoDataService;
   protected repositoryDatasourceFactoryService!: RepositoryDatasourceFactoryService;
   protected repositoryCommitsLoader!: RepositoryCommitsLoader;
   protected repositoryLoader!: RootRepositoryLoader;
@@ -28,7 +29,7 @@ export default class CommitStateDatasourceLoader extends LoaderResolverHook<
 
   constructor(
     @inject(RequestCache) requestCache: RequestCache,
-    @inject(RepositoryService) repositoryService: RepositoryService,
+    @inject(RepoDataService) repoDataService: RepoDataService,
     @inject(RepositoryDatasourceFactoryService)
     repositoryDatasourceFactoryService: RepositoryDatasourceFactoryService,
     @inject(RepositoryCommitsLoader)
@@ -38,7 +39,7 @@ export default class CommitStateDatasourceLoader extends LoaderResolverHook<
   ) {
     super();
     this.requestCache = requestCache;
-    this.repositoryService = repositoryService;
+    this.repoDataService = repoDataService;
     this.repositoryDatasourceFactoryService =
       repositoryDatasourceFactoryService;
     this.repositoryCommitsLoader = repositoryCommitsLoader;
@@ -102,7 +103,7 @@ export default class CommitStateDatasourceLoader extends LoaderResolverHook<
       );
       const branches = cachedBranches
         ? cachedBranches
-        : (await this.repositoryService.getBranches(
+        : (await this.repoDataService.getBranches(
             commitState.repositoryId as string
           )) ?? [];
       if (!cachedBranches && branches) {

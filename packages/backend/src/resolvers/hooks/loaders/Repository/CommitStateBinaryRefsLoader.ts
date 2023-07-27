@@ -12,6 +12,7 @@ import {
 } from "@floro/graphql-schemas/build/generated/main-graphql";
 import RootRepositoryLoader from "../Root/RepositoryID/RepositoryLoader";
 import RepositoryRemoteSettingsLoader from "./RepositoryRemoteSettingsLoader";
+import RepoDataService from "../../../../services/repositories/RepoDataService";
 
 @injectable()
 export default class CommitStateBinaryRefsLoader extends LoaderResolverHook<
@@ -20,16 +21,15 @@ export default class CommitStateBinaryRefsLoader extends LoaderResolverHook<
   { currentUser: User | null; cacheKey: string }
 > {
   protected requestCache!: RequestCache;
-  protected repositoryService!: RepositoryService;
-  protected repositoryLoader!: RootRepositoryLoader;
+  protected repoDataService!: RepoDataService;
 
   constructor(
     @inject(RequestCache) requestCache: RequestCache,
-    @inject(RepositoryService) repositoryService: RepositoryService
+    @inject(RepoDataService) repoDataService: RepoDataService
   ) {
     super();
     this.requestCache = requestCache;
-    this.repositoryService = repositoryService;
+    this.repoDataService = repoDataService;
   }
 
   public run = runWithHooks<
@@ -52,7 +52,7 @@ export default class CommitStateBinaryRefsLoader extends LoaderResolverHook<
         return;
       }
       const binaryRefs =
-        await this.repositoryService.getBinaryLinksForCommit(
+        await this.repoDataService.getBinaryLinksForCommit(
           commitState.repositoryId,
           commitState.sha
         );

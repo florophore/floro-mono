@@ -26,6 +26,7 @@ import StorageClient from "@floro/storage/src/StorageClient";
 import RequestCache from "./request/RequestCache";
 import ApolloRestClientFactory from "./controllers/ApolloRestClientFactory";
 import { Context } from "graphql-ws";
+import { QueueService } from "./services/QueueService";
 
 const isProduction = process.env.NODE_ENV === "production";
 const isTest = process.env.NODE_ENV === "test";
@@ -37,6 +38,7 @@ export default class Backend {
   public controllers: BaseController[];
   public storageClient!: StorageClient;
   public requestCache!: RequestCache;
+  public queueServics!: QueueService[];
 
   protected httpServer: Server;
   private databaseConnection!: DatabaseConnection;
@@ -49,6 +51,7 @@ export default class Backend {
   constructor(
     @multiInject("ResolverModule") resolverModules: BaseResolverModule[],
     @multiInject("Controllers") controllers: BaseController[],
+    @multiInject("QueueServices") queueServics: QueueService[],
     @inject(DatabaseConnection) databaseConnection: DatabaseConnection,
     @inject(RedisClient) redisClient: RedisClient,
     @inject(RedisQueueWorkers) redisQueueWorkers: RedisQueueWorkers,
@@ -62,6 +65,7 @@ export default class Backend {
   ) {
     this.resolverModules = resolverModules;
     this.controllers = controllers;
+    this.queueServics = queueServics;
     this.httpServer = httpServer;
     this.databaseConnection = databaseConnection;
     this.redisClient = redisClient;
@@ -93,6 +97,10 @@ export default class Backend {
     this.redisClient.startRedis();
     this.redisQueueWorkers.start();
     const pubsub = this.redisPubSubFactory.create();
+    this.queueServics.forEach((queueService) => {
+      queueService.setRedisPubsub(pubsub);
+      queueService.startQueueWorker(this.redisClient);
+    });
     this.resolverModules.forEach((resolverModule) => {
       resolverModule.setRedisPubsub(pubsub);
     });

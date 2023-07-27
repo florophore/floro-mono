@@ -21,23 +21,25 @@ import BranchService from "./BranchService";
 import RepositoryService from "./RepositoryService";
 import OrganizationRolesContext from "@floro/database/src/contexts/organizations/OrganizationRolesContext";
 import GrantRepoAccessHandler from "../events/GrantRepoAccessHandler";
+import { MergeRequest } from "@floro/database/src/entities/MergeRequest";
+import RepoDataService from "./RepoDataService";
 
 @injectable()
 export default class RepoSettingsService {
   private databaseConnection!: DatabaseConnection;
   private contextFactory!: ContextFactory;
-  private repositoryService!: RepositoryService;
+  private repoDataService!: RepoDataService;
   private grantAccessHandlers!: GrantRepoAccessHandler[];
 
   constructor(
     @inject(DatabaseConnection) databaseConnection: DatabaseConnection,
     @inject(ContextFactory) contextFactory: ContextFactory,
-    @inject(RepositoryService) repositoryService: RepositoryService,
+    @inject(RepoDataService) repoDataService: RepoDataService,
     @multiInject("GrantRepoAccessHandler") grantAccessHandlers: GrantRepoAccessHandler[]
   ) {
     this.databaseConnection = databaseConnection;
     this.contextFactory = contextFactory;
-    this.repositoryService = repositoryService;
+    this.repoDataService = repoDataService;
     this.grantAccessHandlers = grantAccessHandlers;
   }
 
@@ -335,34 +337,34 @@ export default class RepoSettingsService {
     );
   }
 
-  public async searchUsersForRepoDeleteAccess(
-    repository: Repository,
-    query: string,
-    excludedUserIds: string[]
-  ) {
-    if (repository.repoType == "user_repo") {
-      if (repository.isPrivate || !repository.allowExternalUsersToPush) {
-        return [];
-      }
-      const usersContext = await this.contextFactory.createContext(
-        UsersContext
-      );
-      const writeAcessUserIds = await this.getWriteAccessUserIds(repository);
-      return await usersContext.searchUsersIncludingIdsAndExcludingIds(
-        query,
-        writeAcessUserIds,
-        excludedUserIds
-      );
-    }
+  //public async searchUsersForRepoDeleteAccess(
+  //  repository: Repository,
+  //  query: string,
+  //  excludedUserIds: string[]
+  //) {
+  //  if (repository.repoType == "user_repo") {
+  //    if (repository.isPrivate || !repository.allowExternalUsersToPush) {
+  //      return [];
+  //    }
+  //    const usersContext = await this.contextFactory.createContext(
+  //      UsersContext
+  //    );
+  //    const writeAcessUserIds = await this.getWriteAccessUserIds(repository);
+  //    return await usersContext.searchUsersIncludingIdsAndExcludingIds(
+  //      query,
+  //      writeAcessUserIds,
+  //      excludedUserIds
+  //    );
+  //  }
 
-    const writeAccessUserIds = await this.getWriteAccessUserIds(repository);
-    const usersContext = await this.contextFactory.createContext(UsersContext);
-    return await usersContext.searchUsersIncludingIdsAndExcludingIds(
-      query,
-      writeAccessUserIds,
-      excludedUserIds
-    );
-  }
+  //  const writeAccessUserIds = await this.getWriteAccessUserIds(repository);
+  //  const usersContext = await this.contextFactory.createContext(UsersContext);
+  //  return await usersContext.searchUsersIncludingIdsAndExcludingIds(
+  //    query,
+  //    writeAccessUserIds,
+  //    excludedUserIds
+  //  );
+  //}
 
   public async searchUsersForRepoProtectedBranchSettingAccess(
     repository: Repository,
@@ -395,17 +397,22 @@ export default class RepoSettingsService {
 
   public async searchUsersThatCanApproveMergeRequest(
     repository: Repository,
-    mergeRequestUser: User,
-    baseBranchId: string,
-    excludedUserIds: string,
+    mergeRequest: MergeRequest,
+    excludedUserIds: Array<string>,
     query: string
   ) {
+
+    const branches = await this.repoDataService.getBranches(
+      repository.id,
+    );
+    const branch = branches.find((b) => b.id == mergeRequest.branchId);
+    const baseBranchId = branch?.baseBranchId;
     const protectedBranchRulesContext = await this.contextFactory.createContext(
       ProtectedBranchRulesContext
     );
     const branchRule = await protectedBranchRulesContext.getByRepoAndBranchId(
       repository.id,
-      baseBranchId
+      baseBranchId ?? ''
     );
     const writeAcessUserIds = await this.getWriteAccessUserIds(repository);
 
@@ -414,7 +421,7 @@ export default class RepoSettingsService {
       return await usersContext.searchUsersIncludingIdsAndExcludingIds(
         query,
         writeAcessUserIds,
-        [...excludedUserIds, mergeRequestUser.id]
+        [...excludedUserIds, mergeRequest.openedByUserId]
       );
     }
 
@@ -422,7 +429,7 @@ export default class RepoSettingsService {
       return await usersContext.searchUsersIncludingIdsAndExcludingIds(
         query,
         writeAcessUserIds,
-        [...excludedUserIds, mergeRequestUser.id]
+        [...excludedUserIds, mergeRequest.openedByUserId]
       );
     }
 
@@ -479,7 +486,7 @@ export default class RepoSettingsService {
     return await usersContext.searchUsersIncludingIdsAndExcludingIds(
       query,
       userIdsWithApprovalPermission,
-      [...excludedUserIds, mergeRequestUser.id]
+      [...excludedUserIds, mergeRequest.openedByUserId]
     );
   }
 
@@ -874,7 +881,7 @@ export default class RepoSettingsService {
       // check for existence of branch (if not exist, then delete)
       // check for existence of baseBranchRule
 
-      const branches = await this.repositoryService.getBranches(
+      const branches = await this.repoDataService.getBranches(
         repository.id,
         queryRunner
       );
@@ -1257,7 +1264,7 @@ export default class RepoSettingsService {
       ProtectedBranchRulesContext,
     );
 
-    const branches = await this.repositoryService.getBranches(
+    const branches = await this.repoDataService.getBranches(
       repository.id,
     );
     const branch = branches?.find(b => b.id == branchId);

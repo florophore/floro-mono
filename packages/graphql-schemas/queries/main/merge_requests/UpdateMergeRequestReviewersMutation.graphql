@@ -1,14 +1,12 @@
-mutation UpdateMergeRequest(
-  $title: String!
-  $description: String!
+mutation UpdateMergeRequestReviewers(
   $mergeRequestId: String!
   $repositoryId: String!
+  $reviewerIds: [String]
 ) {
-  updateMergeRequestInfo(
-    title: $title
-    description: $description
+  updateMergeRequestReviewers(
     mergeRequestId: $mergeRequestId
     repositoryId: $repositoryId
+    reviewerIds: $reviewerIds
   ) {
     ... on UnAuthenticatedError {
       type
@@ -18,12 +16,35 @@ mutation UpdateMergeRequest(
       type
       message
     }
-    ... on UpdateMergeRequestInfoSuccess {
+    ... on UpdateMergeRequestReviewersSuccess {
       repository {
         ...Repository
       }
       mergeRequest {
         ...SimpleMergeRequest
+        reviewerRequests {
+          id
+          updatedAt
+          createdAt
+          requestedByUser {
+            id
+            username
+            firstName
+            lastName
+            profilePhoto {
+              ...Photo
+            }
+          }
+          requestedReviewerUser {
+            id
+            username
+            firstName
+            lastName
+            profilePhoto {
+              ...Photo
+            }
+          }
+        }
         timelineEvents {
           id
           eventName
@@ -70,7 +91,7 @@ mutation UpdateMergeRequest(
         }
       }
     }
-    ... on UpdateMergeRequestInfoError {
+    ... on UpdateMergeRequestReviewersError {
       message
       type
     }

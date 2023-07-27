@@ -23,6 +23,26 @@ export class MergeRequestEvent extends BinaryPKBaseEntity {
   subeventName!: string;
 
   @Column("varchar")
+  @IsString()
+  @IsOptional()
+  addedTitle?: string;
+
+  @Column("text")
+  @IsString()
+  @IsOptional()
+  addedDescription?: string;
+
+  @Column("varchar")
+  @IsString()
+  @IsOptional()
+  removedTitle?: string;
+
+  @Column("text")
+  @IsString()
+  @IsOptional()
+  removedDescription?: string;
+
+  @Column("varchar")
   @IsOptional()
   @IsString()
   eventGroupingId!: string;

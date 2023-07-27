@@ -43,6 +43,14 @@ export default class MergeRequestEventsContext extends BaseContext {
       relations: {
         performedByUser: {
           profilePhoto: true
+        },
+        reviewerRequest: {
+          requestedReviewerUser: {
+            profilePhoto: true
+          },
+          requestedByUser: {
+            profilePhoto: true
+          }
         }
       }
     });

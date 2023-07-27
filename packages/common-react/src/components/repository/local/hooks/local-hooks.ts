@@ -1,7 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import axios from "axios";
-import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import { Repository, useExchangeSessionMutation } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { ApiResponse, Branch, BranchesMetaState, CloneFile, FetchInfo, SourceGraphResponse } from "floro/dist/src/repo";
 import { SourceCommitNode } from "floro/dist/src/sourcegraph";
 import { Manifest } from "floro/dist/src/plugins";
@@ -95,20 +95,20 @@ export const useCanMoveWIP = (repository: Repository, sha?: string|null) => {
 export const useCanAutoMerge = (repository: Repository, sha?: string|null) => {
   return useQuery(
     "repo-can-automerge:" + repository.id + ":sha:" + sha,
-    async (): Promise<{canAutoMergeOnTopOfCurrentState: boolean, canAutoMergeOnUnStagedState: boolean}> => {
+    async (): Promise<{canAutoMergeOnTopOfCurrentState: boolean, canAutoMergeOnUnStagedState: boolean, isMerged: boolean}> => {
       try {
         if (!repository.id) {
-          return {canAutoMergeOnTopOfCurrentState: false, canAutoMergeOnUnStagedState: false};
+          return {canAutoMergeOnTopOfCurrentState: false, canAutoMergeOnUnStagedState: false, isMerged: false};
         }
         if (!sha) {
-          return {canAutoMergeOnTopOfCurrentState: false, canAutoMergeOnUnStagedState: false};
+          return {canAutoMergeOnTopOfCurrentState: false, canAutoMergeOnUnStagedState: false, isMerged: false};
         }
         const result = await axios.get(
           `http://localhost:63403/repo/${repository.id}/sha/${sha}/canautomerge`
         );
         return result?.data ?? null;
       } catch (e) {
-        return {canAutoMergeOnTopOfCurrentState: false, canAutoMergeOnUnStagedState: false};
+        return {canAutoMergeOnTopOfCurrentState: false, canAutoMergeOnUnStagedState: false, isMerged: false};
       }
     }, {
       cacheTime: 0
@@ -770,9 +770,10 @@ export const usePluginUninstallCheck = (
 };
 
 export const useRepoManifestList = (
-  repository: Repository
+  repository: Repository,
+  apiResult?: ApiResponse|undefined|null
 ) => {
-  return useQuery(
+  const query =  useQuery(
     "manifest-list:" +
       repository.id,
     async (): Promise<Array<Manifest>> => {
@@ -792,6 +793,10 @@ export const useRepoManifestList = (
       cacheTime: 0,
     }
   );
+  useEffect(() => {
+    query.refetch();
+  }, [apiResult])
+  return query;
 };
 
 export const usePluginManifestList = (

@@ -43,6 +43,9 @@ import AbortWhite from "@floro/common-assets/assets/images/repo_icons/abort.whit
 import AbortGray from "@floro/common-assets/assets/images/repo_icons/abort.gray.svg";
 import AbortMediumGray from "@floro/common-assets/assets/images/repo_icons/abort.medium_gray.svg";
 import { useMergeRequestNavContext } from "../mergerequest/MergeRequestContext";
+import ReviewSearch from "../mergerequest/review_search/ReviewSearch";
+import ProposedMRHistoryDisplay from "../history/ProposedMRHistoryDisplay";
+import Reviewers from "../mergerequest/Reviewers";
 
 const InnerContent = styled.div`
   display: flex;
@@ -478,6 +481,10 @@ const RemoteVCSMergeRequest = (props: Props) => {
     if (!props?.repository?.mergeRequest?.id) {
       return false;
     }
+    if (title == props?.repository?.mergeRequest.title && description == props?.repository?.mergeRequest?.description) {
+      setIsEditting(false);
+      return;
+    }
     updateMergeRequest({
       variables: {
         repositoryId: props?.repository?.id,
@@ -552,9 +559,17 @@ const RemoteVCSMergeRequest = (props: Props) => {
                   <LabelSpan>{"Has conflicts"}</LabelSpan>
                 </Row>
               )}
-              <Row style={{ marginBottom: 12 }}>
-                <SubTitleSpan>{"Reviewers"}</SubTitleSpan>
-              </Row>
+              {props.repository?.mergeRequest && (
+                <>
+                  <Row style={{ marginBottom: 12 }}>
+                    <SubTitleSpan>{"Reviewers"}</SubTitleSpan>
+                  </Row>
+                  <ReviewSearch
+                    repository={props.repository}
+                    mergeRequest={props.repository?.mergeRequest}
+                  />
+                </>
+              )}
             </>
           )}
           {isEditting && (
@@ -599,6 +614,12 @@ const RemoteVCSMergeRequest = (props: Props) => {
                   />
                 </TextAreaBlurbBox>
               </Row>
+              {props.repository.mergeRequest && (
+                <Reviewers
+                  repository={props.repository}
+                  mergeRequest={props.repository.mergeRequest}
+                />
+              )}
             </>
           )}
         </TopContainer>

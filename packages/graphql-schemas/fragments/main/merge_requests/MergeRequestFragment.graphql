@@ -94,7 +94,7 @@ fragment MergeRequest on MergeRequest {
     id
     eventName
     subeventName
-    branchHeadShaAtCreate
+    branchHeadShaAtEvent
     eventGroupingId
     createdAt
     performedByUser {
@@ -104,6 +104,33 @@ fragment MergeRequest on MergeRequest {
       lastName
       profilePhoto {
         ...Photo
+      }
+    }
+    addedTitle
+    addedDescription
+    removedTitle
+    removedDescription
+    reviewerRequest {
+      id
+      updatedAt
+      createdAt
+      requestedByUser {
+        id
+        username
+        firstName
+        lastName
+        profilePhoto {
+          ...Photo
+        }
+      }
+      requestedReviewerUser {
+        id
+        username
+        firstName
+        lastName
+        profilePhoto {
+          ...Photo
+        }
       }
     }
   }

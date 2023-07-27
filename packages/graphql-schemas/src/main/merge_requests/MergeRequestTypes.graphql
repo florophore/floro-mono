@@ -47,7 +47,7 @@ type MergeRequestEvent {
   id: ID
   eventName: String
   subeventName: String
-  branchHeadShaAtCreate: String
+  branchHeadShaAtEvent: String
   eventGroupingId: String
   performedByUser: User
   reviewerRequest: ReviewerRequest
@@ -55,6 +55,10 @@ type MergeRequestEvent {
   reply: MergeRequestCommentReply
   reviewStatus: ReviewStatus
   createdAt: DateTime
+  addedTitle: String
+  addedDescription: String
+  removedTitle: String
+  removedDescription: String
 }
 
 type MergeRequestPermissions {
@@ -90,7 +94,6 @@ type MergeRequest {
   commits(idx: Int): [CommitInfo]
   timelineEvents: [MergeRequestEvent]
   mergeRequestPermissions: MergeRequestPermissions
-  potentialReviewers(query: String): [User]
 }
 
 type MergeRequestAccessError {
@@ -317,3 +320,18 @@ union DeleteMergeRequestCommentReplyResponse =
   | MergeRequestAccessError
   | MergeRequestCommentAccessError
   | MergeRequestCommentReplyAccessError
+
+type SearchUsersForReviewSuccess {
+  users: [User]
+}
+
+type SearchUsersForReviewError {
+  message: String
+  type: String
+}
+
+union SearchUsersForReviewResponse =
+    SearchUsersForReviewSuccess
+  | SearchUsersForReviewError
+  | UnAuthenticatedError
+  | RepoAccessError

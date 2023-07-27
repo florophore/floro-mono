@@ -20,7 +20,6 @@ export default class CommitStatePluginVersionsLoader extends LoaderResolverHook<
   { currentUser: User | null; cacheKey: string }
 > {
   protected requestCache!: RequestCache;
-  protected repositoryService!: RepositoryService;
   protected repositoryDatasourceFactoryService!: RepositoryDatasourceFactoryService;
   protected repositoryCommitsLoader!: RepositoryCommitsLoader;
   protected repositoryLoader!: RootRepositoryLoader;
@@ -28,13 +27,11 @@ export default class CommitStatePluginVersionsLoader extends LoaderResolverHook<
 
   constructor(
     @inject(RequestCache) requestCache: RequestCache,
-    @inject(RepositoryService) repositoryService: RepositoryService,
     @inject(RepositoryDatasourceFactoryService)
     repositoryDatasourceFactoryService: RepositoryDatasourceFactoryService
   ) {
     super();
     this.requestCache = requestCache;
-    this.repositoryService = repositoryService;
     this.repositoryDatasourceFactoryService =
       repositoryDatasourceFactoryService;
   }

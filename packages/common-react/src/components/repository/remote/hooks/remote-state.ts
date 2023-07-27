@@ -264,6 +264,7 @@ export const useComparisonState = (
     mode,
     page,
     repository?.branchState?.proposedMergeRequest?.divergenceState,
+    repository?.mergeRequest?.divergenceState,
   ]);
 
   const beforeRemoteCommitState = useRemoteCommitState(beforeCommitState);

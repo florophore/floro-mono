@@ -78,22 +78,20 @@ export default class MergeRequestEventService
   }
 
   public async onBranchChanged(
-    queryRunner: QueryRunner,
     repository: Repository,
     byUser: User,
     branch: Branch
   ): Promise<void> {
-    if (!branch?.id) {
+    if (!branch?.branchId) {
       return;
     }
     const mergeRequestsContext = await this.contextFactory.createContext(
       MergeRequestsContext,
-      queryRunner
     );
     const mergeRequestExists =
       await mergeRequestsContext.repoHasOpenRequestOnBranch(
         repository?.id,
-        branch?.id
+        branch?.branchId
       );
     if (!mergeRequestExists) {
       return;
@@ -101,7 +99,7 @@ export default class MergeRequestEventService
     const mergeRequest =
       await mergeRequestsContext.getOpenMergeRequestByBranchNameAndRepo(
         repository.id,
-        branch?.id
+        branch?.branchId
       );
     if (!mergeRequest) {
       return;
@@ -109,14 +107,18 @@ export default class MergeRequestEventService
 
     const mergeRequestEventsContext = await this.contextFactory.createContext(
       MergeRequestEventsContext,
-      queryRunner
     );
-    await mergeRequestEventsContext.create({
-      eventName: "BRANCH_UDPATED",
-      mergeRequestId: mergeRequest.id,
-      performedByUserId: byUser.id,
-      branchHeadShaAtEvent: branch?.lastCommit ?? undefined,
-    });
+    try {
+
+      const event = await mergeRequestEventsContext.create({
+        eventName: "BRANCH_UDPATED",
+        mergeRequestId: mergeRequest.id,
+        performedByUserId: byUser.id,
+        branchHeadShaAtEvent: branch?.lastCommit ?? undefined,
+      });
+    } catch(e) {
+      console.log("E", e);
+    }
     // EMAIL all reviewers
   }
 
@@ -125,7 +127,9 @@ export default class MergeRequestEventService
     byUser: User,
     baseBranchId: string | undefined,
     branchHead: string | undefined,
-    mergeRequest: MergeRequest
+    mergeRequest: MergeRequest,
+    removedTitle: string,
+    removedDescription: string,
   ): Promise<void> {
     const mergeRequestEventsContext = await this.contextFactory.createContext(
       MergeRequestEventsContext,
@@ -136,6 +140,10 @@ export default class MergeRequestEventService
       mergeRequestId: mergeRequest.id,
       performedByUserId: byUser.id,
       branchHeadShaAtEvent: branchHead,
+      addedTitle: mergeRequest.title,
+      addedDescription: mergeRequest.description,
+      removedTitle,
+      removedDescription
     });
   }
 

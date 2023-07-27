@@ -92,6 +92,8 @@ import GrantAccessReceiverService from './services/repositories/GrantAccessRecei
 import GrantRepoAccessHandler from './services/events/GrantRepoAccessHandler';
 import ProtectedBranchRuleLoader from './resolvers/hooks/loaders/Root/ProtectedBranchRuleID/ProtectedBranchRuleLoader';
 import RepositoryRemoteSettingsArgsLoader from './resolvers/hooks/loaders/Repository/RepositoryRemoteSettingsArgsLoader';
+import RepoDataService from './services/repositories/RepoDataService';
+import { QueueService } from './services/QueueService';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -188,6 +190,7 @@ export default new ContainerModule((bind): void => {
     bind(RepositoryDatasourceFactoryService).toSelf();
     bind(RepoSettingsService).toSelf();
     bind(GrantAccessReceiverService).toSelf();
+    bind(RepoDataService).toSelf();
 
     // REFERRALS
     bind(ReferralService).toSelf()
@@ -203,7 +206,8 @@ export default new ContainerModule((bind): void => {
     bind<CreateUserEventHandler>("CreateUserHandler").to(ReferralService);
 
     // BRANCH PUSH HANLDERS
-    bind<BranchPushHandler>("BranchPushHandler").to(MergeRequestEventService);
+    bind<BranchPushHandler>("BranchPushHandler").to(MergeRequestService).inSingletonScope();
+    bind<BranchPushHandler>("BranchPushHandler").to(MergeRequestEventService).inSingletonScope();
 
     // MERGE REQUESTS
     bind<CreateMergeRequestEventHandler>("CreateMergeRequestEventHandler").to(MergeRequestEventService);
@@ -216,6 +220,10 @@ export default new ContainerModule((bind): void => {
 
     // GRANT ACCESS HANDLER
     bind<GrantRepoAccessHandler>("GrantRepoAccessHandler").to(GrantAccessReceiverService);
+
+
+    // QUEUE SERVICES
+    bind<QueueService>("QueueServices").to(MergeRequestService).inSingletonScope();
 
     // Controllers
     bind<AuthenticationController>("Controllers").to(AuthenticationController);

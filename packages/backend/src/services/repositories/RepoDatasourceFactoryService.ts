@@ -124,8 +124,8 @@ export default class RepositoryDatasourceFactoryService {
     const divergenceOrigin = await getDivergenceOrigin(
       tmpDataSource,
       repository.id,
-      branch?.lastCommit as string,
       mergeIntoSha,
+      branch?.lastCommit as string,
     );
     const divergenceSha = getMergeOriginSha(divergenceOrigin);
     const shas = [branch.lastCommit, mergeIntoSha, divergenceSha]?.filter(v => !!v);
@@ -348,12 +348,12 @@ export default class RepositoryDatasourceFactoryService {
   public getCommitsInRange(commits: Array<Commit>, sha: string, divergenceSha?: string) {
     const history = this.getCommitHistory(commits, sha);
     const out: Array<Commit> = [];
-    for (let i = history.length - 1; i >= 0; --i) {
+    for (let i = 0; i < history.length; ++i) {
       const commit = history[i];
-      out.push(commit);
       if (commit.sha == divergenceSha) {
         break;
       }
+      out.push(commit);
     }
     return out;
   }

@@ -362,6 +362,9 @@ const LocalVCSCompareMode = (props: Props) => {
     if (fetchInfo?.branchPushDisabled || pushInfoLoading) {
       return true;
     }
+    if (canAutoMergeQuery?.data?.isMerged && comparison?.comparisonDirection == "backward") {
+      return true;
+    }
     if (comparison?.against == "branch" || comparison?.against == "sha") {
       if (
         (comparisonShaIsAncestor || comparisonShaIsNone) &&
@@ -387,12 +390,14 @@ const LocalVCSCompareMode = (props: Props) => {
     }
     return true;
   }, [
+    comparison?.comparisonDirection,
     fetchInfo?.branchPushDisabled,
     pushInfoLoading,
     comparison?.against,
     comparisonShaIsAncestor,
     comparisonShaIsChildAncestor,
     comparisonShaIsNone,
+    canAutoMergeQuery?.data?.isMerged,
     canAutoMergeQuery?.data?.canAutoMergeOnTopOfCurrentState,
     canAutoMergeQuery?.data?.canAutoMergeOnUnStagedState,
     props.apiResponse.isWIP,
@@ -494,11 +499,11 @@ const LocalVCSCompareMode = (props: Props) => {
               {(comparison?.against == "branch" ||
                 comparison?.against == "sha") && (
                 <MergeInfoRow>
-                  {(comparisonShaIsAncestor || comparisonShaIsNone ) &&
+                  {(comparisonShaIsAncestor || comparisonShaIsNone || (canAutoMergeQuery.data?.isMerged && comparison?.comparisonDirection == "backward")) &&
                     !canAutoMergeQuery.isLoading && (
                       <NothingToMerge>{"Nothing to merge"}</NothingToMerge>
                     )}
-                  {!(comparisonShaIsAncestor || comparisonShaIsNone ) &&
+                  {!(comparisonShaIsAncestor || comparisonShaIsNone ) && !(canAutoMergeQuery.data?.isMerged && comparison?.comparisonDirection == "backward") &&
                     !canAutoMergeQuery.isLoading && (
                       <>
                         {!comparisonShaIsChildAncestor &&

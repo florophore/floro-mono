@@ -118,6 +118,23 @@ const MRHistoryDisplay = (props: Props) => {
   const [searchParams] = useSearchParams();
   const container = useRef<HTMLDivElement>(null);
 
+  const idxString = searchParams.get('idx');
+  const idx = useMemo(() => {
+    try {
+      if (!idxString) {
+        return null;
+      }
+      const idxInt = parseInt(idxString);
+      if (Number.isNaN(idxInt)) {
+        return null
+      }
+      return idxInt;
+    } catch(e) {
+      return null;
+    }
+  }, [idxString]);
+
+
   const theme = useTheme();
 
   const commits = useMemo(() => {
@@ -145,59 +162,38 @@ const MRHistoryDisplay = (props: Props) => {
   );
 
   const showNewer = useMemo(() => {
-    if (
-      !props.repository?.mergeRequest?.commits?.[0]
-    ) {
-      return false;
-    }
-    return (
-      props.repository?.mergeRequest?.commits?.[0]
-        ?.sha != props.repository?.mergeRequest?.branchState?.branchHead
-    );
+    return !!idx;
   }, [
-    props.repository?.mergeRequest?.commits,
-    props.repository?.mergeRequest?.branchState?.branchHead,
+    idx,
   ]);
 
   const showOlder = useMemo(() => {
-    const commitsLength = props?.repository?.mergeRequest?.commits?.length ?? 0;
-    if (commitsLength <= 1) {
-      return false;
-    }
-    const lastCommit = props?.repository?.mergeRequest?.commits?.[commitsLength -  1];
-    if (!lastCommit) {
-      return false;
-    }
-    return lastCommit.idx != 0;
-  }, [props.repository?.mergeRequest?.commits]);
+    return (idx ?? 0) + 10 < (props.repository?.mergeRequest?.commitsCount ?? 0);
+  }, [props.repository?.mergeRequest?.commits, props.repository?.mergeRequest?.commitsCount, idx]);
 
   const newerIdx = useMemo(() => {
     if (!showNewer) {
       return null;
     }
-    return Math.min(
-      (props.repository?.mergeRequest?.commits?.[0]
-        ?.idx ?? 0) + PAGINATION_SIZE,
-      (props.repository?.mergeRequest?.commitsCount ?? 0) - 1
+    return Math.max(
+      (idx ?? 0) - PAGINATION_SIZE,
+      0
     );
   }, [
     showNewer,
-    props.repository?.mergeRequest?.commits?.[0],
     props.repository?.mergeRequest?.commitsCount,
+    idx
   ]);
 
   const olderIdx = useMemo(() => {
     if (!showOlder) {
       return null;
     }
-
-    const commitsLength = props?.repository?.mergeRequest?.commits?.length ?? 0;
-    const lastCommit = props?.repository?.mergeRequest?.commits?.[commitsLength -  1];
-    return Math.max(
-      (lastCommit?.idx ?? 0) - 1,
-      0
+    return Math.min(
+      (idx ?? 0) + 10,
+      props.repository?.mergeRequest?.commitsCount ?? 0
     );
-  }, [showOlder, props.repository?.mergeRequest?.commits?.[0], props.repository?.mergeRequest?.commitsCount])
+  }, [showOlder, props.repository?.mergeRequest?.commitsCount, idx])
 
   const onShowOlder = useCallback(() => {
     if (!showOlder) {
@@ -210,10 +206,7 @@ const MRHistoryDisplay = (props: Props) => {
     if (!showNewer) {
       return;
     }
-    if (!newerIdx) {
-      return;
-    }
-    navigate(commitsLink + "&idx=" + newerIdx);
+    navigate(commitsLink + "&idx=" + newerIdx ?? 0);
   }, [showNewer, newerIdx, commitsLink]);
 
   const index = searchParams.get('idx');

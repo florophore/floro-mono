@@ -118,7 +118,7 @@ const LocalSideNavigator = (props: Props): React.ReactElement => {
   const { compareFrom } = useLocalVCSNavContext();
 
   const { data: apiResponse } = useCurrentRepoState(props.repository);
-  const repoManifestList = useRepoManifestList(props.repository);
+  const repoManifestList = useRepoManifestList(props.repository, apiResponse);
   const devPluginsRequest = useRepoDevPlugins(props.repository);
 
   const apiManifestList = useMemo(() => {
@@ -163,7 +163,7 @@ const LocalSideNavigator = (props: Props): React.ReactElement => {
     return apiResponse?.applicationState?.plugins ?? [];
   }, [
     apiResponse?.repoState?.commandMode,
-    apiResponse?.applicationState,
+    apiResponse?.applicationState?.plugins,
     apiResponse?.beforeState,
     compareFrom,
   ]);
