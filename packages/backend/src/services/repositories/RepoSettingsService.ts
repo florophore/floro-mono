@@ -337,35 +337,6 @@ export default class RepoSettingsService {
     );
   }
 
-  //public async searchUsersForRepoDeleteAccess(
-  //  repository: Repository,
-  //  query: string,
-  //  excludedUserIds: string[]
-  //) {
-  //  if (repository.repoType == "user_repo") {
-  //    if (repository.isPrivate || !repository.allowExternalUsersToPush) {
-  //      return [];
-  //    }
-  //    const usersContext = await this.contextFactory.createContext(
-  //      UsersContext
-  //    );
-  //    const writeAcessUserIds = await this.getWriteAccessUserIds(repository);
-  //    return await usersContext.searchUsersIncludingIdsAndExcludingIds(
-  //      query,
-  //      writeAcessUserIds,
-  //      excludedUserIds
-  //    );
-  //  }
-
-  //  const writeAccessUserIds = await this.getWriteAccessUserIds(repository);
-  //  const usersContext = await this.contextFactory.createContext(UsersContext);
-  //  return await usersContext.searchUsersIncludingIdsAndExcludingIds(
-  //    query,
-  //    writeAccessUserIds,
-  //    excludedUserIds
-  //  );
-  //}
-
   public async searchUsersForRepoProtectedBranchSettingAccess(
     repository: Repository,
     query: string,

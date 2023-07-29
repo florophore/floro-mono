@@ -23,7 +23,7 @@ const Image = styled.img`
 
 export interface Props {
   size: number;
-  user: User|null;
+  user: User|null|undefined;
   offlinePhoto: string|null;
 }
 
@@ -70,6 +70,16 @@ const UserProfilePhoto = (props: Props): React.ReactElement => {
       setOfflinePhoto(pictureUrl);
     }
   }, [pictureUrl])
+
+  if (!props?.user) {
+    return (
+      <InitialProfileDefault
+        firstName={"?"}
+        lastName={"?"}
+        size={props.size}
+      />
+    );
+  }
   if (!props.user?.firstName && offlinePhoto) {
     return (
       <ImageWrapper style={{ height: props.size, width: props.size }}>

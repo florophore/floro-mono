@@ -21,39 +21,11 @@ import TimelineRow from "./TimelineRow";
 import ReviewerRow from "./ReviewerRow";
 
 const Container = styled.div`
-  max-width: 400px;
+  max-width: 468px;
   display: flex;
   flex-direction: column;
+  width: 100%;
 `;
-const FakeContainer = styled.div`
-  max-width: 400px;
-  display: flex;
-  flex-direction: row;
-`;
-
-const LeftColumn = styled.div`
-    display: flex;
-    flex-direction: column;
-`;
-
-const RightColumn = styled.div`
-    display: flex;
-    flex-direction: column;
-    margin-left: 24px;
-    flex-grow: 1;
-`;
-
-const Line = styled.div`
-    width: 2px;
-    flex-grow: 1;
-    background: ${props => props.theme.colors.contrastTextLight};
-    align-self: center;
-    border-radius: 16px;
-    margin-top: 8px;
-    margin-bottom: 8px;
-`;
-
-
 
 interface Props {
   repository: Repository;
@@ -64,7 +36,6 @@ const Reviewers = (props: Props) => {
   const reviewerRequests = useMemo(() => {
     return (props.mergeRequest?.reviewerRequests ?? []) as Array<ReviewerRequest>;
   }, [props.mergeRequest?.reviewerRequests]);
-  console.log("YO", props.mergeRequest)
   return (
     <Container>
       {reviewerRequests?.map((reviewerRequest: ReviewerRequest, index) => {

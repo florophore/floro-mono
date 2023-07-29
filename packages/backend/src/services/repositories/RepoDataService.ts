@@ -159,7 +159,8 @@ export default class RepoDataService {
     repository: Repository,
     protectedBranchRule: ProtectedBranchRule,
     repoPermissions: RepoPermissions,
-    user: User | null | undefined
+    user: User | null | undefined,
+    queryRunner?: QueryRunner
   ): Promise<BranchRuleUserPermission> {
     const canCreateMergeRequests =
       await this.repoRBAC.calculateUserProtectedBranchRuleSettingPermission(
@@ -167,7 +168,8 @@ export default class RepoDataService {
         repository,
         user,
         repoPermissions,
-        "anyoneCanCreateMergeRequests"
+        "anyoneCanCreateMergeRequests",
+        queryRunner
       );
     const canMergeWithApproval =
       await this.repoRBAC.calculateUserProtectedBranchRuleSettingPermission(
@@ -175,7 +177,8 @@ export default class RepoDataService {
         repository,
         user,
         repoPermissions,
-        "anyoneWithApprovalCanMerge"
+        "anyoneWithApprovalCanMerge",
+        queryRunner
       );
 
     const canApproveMergeRequests =
@@ -184,7 +187,8 @@ export default class RepoDataService {
         repository,
         user,
         repoPermissions,
-        "anyoneCanApproveMergeRequests"
+        "anyoneCanApproveMergeRequests",
+        queryRunner
       );
 
     const canRevert =
@@ -193,7 +197,8 @@ export default class RepoDataService {
         repository,
         user,
         repoPermissions,
-        "anyoneCanRevert"
+        "anyoneCanRevert",
+        queryRunner
       );
 
     const canAutofix =
@@ -202,7 +207,8 @@ export default class RepoDataService {
         repository,
         user,
         repoPermissions,
-        "anyoneCanAutofix"
+        "anyoneCanAutofix",
+        queryRunner
       );
 
     return {
@@ -223,7 +229,8 @@ export default class RepoDataService {
 
   public async fetchRepoSettingsForUser(
     repoId: string,
-    user?: User | null | undefined
+    user?: User | null | undefined,
+    queryRunner?: QueryRunner
   ): Promise<RemoteSettings | null> {
     const repository = await this.fetchRepoById(repoId);
     if (!repository) {
@@ -231,7 +238,8 @@ export default class RepoDataService {
     }
 
     const organizationMembersContext = await this.contextFactory.createContext(
-      OrganizationMembersContext
+      OrganizationMembersContext,
+      queryRunner
     );
     const organizationMemberRolesContext =
       await this.contextFactory.createContext(OrganizationMemberRolesContext);
@@ -260,14 +268,16 @@ export default class RepoDataService {
       (await this.repoRBAC.calculateUserRepositorySettingPermission(
         repository,
         user,
-        "anyoneCanRead"
+        "anyoneCanRead",
+        queryRunner
       ));
     const canPushBranches =
       isAdmin ||
       (await this.repoRBAC.calculateUserRepositorySettingPermission(
         repository,
         user,
-        "anyoneCanPushBranches"
+        "anyoneCanPushBranches",
+        queryRunner
       ));
 
     const canChangeSettings =
@@ -275,11 +285,13 @@ export default class RepoDataService {
       (await this.repoRBAC.calculateUserRepositorySettingPermission(
         repository,
         user,
-        "anyoneCanChangeSettings"
+        "anyoneCanChangeSettings",
+        queryRunner
       ));
 
     const protectedBranchRulesContext = await this.contextFactory.createContext(
-      ProtectedBranchRulesContext
+      ProtectedBranchRulesContext,
+      queryRunner
     );
     const protectedBranchRules =
       await protectedBranchRulesContext.getProtectedBranchesForRepo(repoId);
@@ -296,7 +308,8 @@ export default class RepoDataService {
           repository,
           branchRule,
           repoPermissions,
-          user
+          user,
+          queryRunner
         )
       )
     );

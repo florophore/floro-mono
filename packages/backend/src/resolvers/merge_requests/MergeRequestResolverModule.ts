@@ -19,6 +19,7 @@ import { MergeRequest as DBMergeRequest } from "@floro/database/src/entities/Mer
 import {
   CommitInfo,
   MergeRequest,
+  PluginVersion,
 } from "@floro/graphql-schemas/build/generated/main-graphql";
 import RepositoryDatasourceFactoryService from "../../services/repositories/RepoDatasourceFactoryService";
 import RepositoryBranchesLoader from "../hooks/loaders/Repository/RepositoryBranchesLoader";
@@ -44,6 +45,9 @@ import OrganizationMembersContext from "@floro/database/src/contexts/organizatio
 import OrganizationMemberRolesContext from "@floro/database/src/contexts/organizations/OrganizationMemberRolesContext";
 import RepositoryEnabledRoleSettingsContext from "@floro/database/src/contexts/repositories/RepositoryEnabledRoleSettingsContext";
 import RepositoryEnabledUserSettingsContext from "@floro/database/src/contexts/repositories/RepositoryEnabledUserSettingsContext";
+import ReviewerStatusesContext from "@floro/database/src/contexts/merge_requests/ReviewStatusesContext";
+import MergeRequestCommentsContext from "@floro/database/src/contexts/merge_requests/MergeRequestCommentsContext";
+import MergeRequestCommentsLoader from "../hooks/loaders/MergeRequest/MergeRequestCommentsLoader";
 
 const PAGINATION_LIMIT = 10;
 
@@ -81,6 +85,7 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
   protected openMergeRequestsLoader!: OpenMergeRequestsLoader;
   protected closedMergeRequestsLoader!: ClosedMergeRequestsLoader;
   protected mergeRequestPermissionsLoader!: MergeRequestPermissionsLoader;
+  protected mergeRequestCommentsLoader!: MergeRequestCommentsLoader;
 
   constructor(
     @inject(ContextFactory) contextFactory: ContextFactory,
@@ -116,7 +121,8 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
     mergeRequestPermissionsLoader: MergeRequestPermissionsLoader,
     @inject(RepoDataService)
     repoDataService: RepoDataService,
-    @inject(RepoSettingsService) repoSettingsService: RepoSettingsService
+    @inject(RepoSettingsService) repoSettingsService: RepoSettingsService,
+    @inject(MergeRequestCommentsLoader) mergeRequestCommentsLoader: MergeRequestCommentsLoader,
   ) {
     super();
     this.requestCache = requestCache;
@@ -142,6 +148,7 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
     this.mergeRequestCommentReplyLoader = mergeRequestCommentReplyLoader;
     this.mergeRequestLoader = mergeRequestLoader;
     this.mergeRequestPermissionsLoader = mergeRequestPermissionsLoader;
+    this.mergeRequestCommentsLoader = mergeRequestCommentsLoader;
 
     this.openMergeRequestsLoader = openMergeRequestsLoader;
     this.closedMergeRequestsLoader = closedMergeRequestsLoader;
@@ -284,6 +291,56 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
             mergeRequest.id
           );
         return openReviewerRequests;
+      }
+    ),
+
+    reviewStatuses: runWithHooks(
+      () => [],
+      async (mergeRequest: MergeRequest, _, { cacheKey }) => {
+        if (!mergeRequest?.id) {
+          return [];
+        }
+        const reviewerStatusesContext = await this.contextFactory.createContext(
+          ReviewerStatusesContext
+        );
+        return await reviewerStatusesContext.getMergeRequestReviewStatuses(
+          mergeRequest.id
+        );
+      }
+    ),
+    comments: runWithHooks(
+      () => [this.mergeRequestCommentsLoader],
+      async (mergeRequest: MergeRequest, _, { cacheKey }) => {
+        if (!mergeRequest?.id) {
+          return [];
+        }
+        const comments = this.requestCache.getMergeRequestComments(cacheKey, mergeRequest.id);
+        if (!comments) {
+          return [];
+        }
+        return comments;
+      }
+    ),
+    commentPluginVersions: runWithHooks(
+      () => [this.mergeRequestCommentsLoader],
+      async (mergeRequest: MergeRequest, _, { cacheKey }) => {
+        if (!mergeRequest?.id) {
+          return [];
+        }
+        const comments = this.requestCache.getMergeRequestComments(cacheKey, mergeRequest.id);
+        if (!comments) {
+          return [];
+        }
+        const pluginVersions = comments?.filter(v => !!v.pluginVersion)?.map(v => v.pluginVersion);
+        const uniquePluginVersions: Array<PluginVersion> = [];
+        const seen = new Set<string>([]);
+        for (const pluginVersion of pluginVersions) {
+          if (!seen.has(pluginVersion.id)) {
+            seen.add(pluginVersion.id);
+            uniquePluginVersions.push(pluginVersion);
+          }
+        }
+        return uniquePluginVersions;
       }
     ),
     commits: runWithHooks(
@@ -707,6 +764,7 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
             (args.reviewerIds?.filter?.((v) => typeof v == "string") ??
               []) as Array<string>
           );
+        console.log("RES", result);
         this.requestCache.deleteMergeRequest(cacheKey, mergeRequest);
         if (result.action == "UPDATE_MERGE_REQUEST_REVIEWERS_SUCCESS") {
           this.pubsub?.publish?.(`MERGE_REQUEST_UPDATED:${mergeRequest.id}`, {
@@ -888,7 +946,8 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
           repository,
           currentUser,
           args.text,
-          args.pluginName ?? undefined
+          args.pluginName ?? undefined,
+          args.pluginVersionId ?? undefined
         );
         this.requestCache.deleteMergeRequest(cacheKey, mergeRequest);
         if (result.action == "COMMENT_CREATED") {
@@ -947,7 +1006,7 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
 
         const mergeRequestComment = this.requestCache.getMergeRequestComment(
           cacheKey,
-          args.mergeRequestId
+          args.mergeRequestCommentId
         );
 
         const result = await this.mergeRequestService.updateMergeRequestComment(
@@ -989,8 +1048,7 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
           message: result.error?.message ?? "Unknown Error",
           type: result.error?.type ?? "UNKNOWN_ERROR",
         };
-      }
-    ),
+    }),
     deleteMergeRequestComment: runWithHooks(
       () => [
         this.loggedInUserGuard,
@@ -1018,7 +1076,7 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
 
         const mergeRequestComment = this.requestCache.getMergeRequestComment(
           cacheKey,
-          args.mergeRequestId
+          args.mergeRequestCommentId
         );
 
         const result = await this.mergeRequestService.deleteMergeRequestComment(
@@ -1088,7 +1146,7 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
 
         const mergeRequestComment = this.requestCache.getMergeRequestComment(
           cacheKey,
-          args.mergeRequestId
+          args.mergeRequestCommentId
         );
 
         const result =
@@ -1162,7 +1220,7 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
 
         const mergeRequestComment = this.requestCache.getMergeRequestComment(
           cacheKey,
-          args.mergeRequestId
+          args.mergeRequestCommentId
         );
 
         const mergeRequestCommentReply =
@@ -1248,7 +1306,7 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
 
         const mergeRequestComment = this.requestCache.getMergeRequestComment(
           cacheKey,
-          args.mergeRequestId
+          args.mergeRequestCommentId
         );
 
         const mergeRequestCommentReply =

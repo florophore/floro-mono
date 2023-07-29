@@ -7,8 +7,8 @@ import MergeRequestCommentRepliesContext from "@floro/database/src/contexts/merg
 
 @injectable()
 export default class MergeRequestCommentReplyLoader extends LoaderResolverHook<
-  { mergeRequestCommentReplyId: string },
   unknown,
+  { mergeRequestCommentReplyId: string },
   { cacheKey: string }
 > {
   protected requestCache!: RequestCache;
@@ -24,17 +24,17 @@ export default class MergeRequestCommentReplyLoader extends LoaderResolverHook<
   }
 
   public run = runWithHooks<
-    { mergeRequestCommentReplyId: string },
     unknown,
+    { mergeRequestCommentReplyId: string },
     { cacheKey: string },
     void
   >(
     () => [],
-    async ({ mergeRequestCommentReplyId }, _, { cacheKey }): Promise<void> => {
+    async (_, { mergeRequestCommentReplyId }, { cacheKey }): Promise<void> => {
       if (!mergeRequestCommentReplyId) {
         return;
       }
-      const cachedMergeRequestCommentReply = this.requestCache.getMergeRequestComment(cacheKey, mergeRequestCommentReplyId);
+      const cachedMergeRequestCommentReply = this.requestCache.getMergeRequestCommentReply(cacheKey, mergeRequestCommentReplyId);
       if (cachedMergeRequestCommentReply) {
         return;
       }

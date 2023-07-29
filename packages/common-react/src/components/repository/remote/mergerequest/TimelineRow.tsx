@@ -213,6 +213,28 @@ const TimelineRow = (props: Props) => {
 
         );
     }
+    if (props.event.eventName == "ADDED_COMMENT") {
+      return "added a comment"
+    }
+    if (props.event.eventName == "ADDED_COMMENT_REPLY") {
+      return "replied to a comment"
+    }
+
+    if (props.event.eventName == "UPDATED_COMMENT") {
+      return "updated their comment"
+    }
+
+    if (props.event.eventName == "UPDATED_COMMENT_REPLY") {
+      return "updated their reply"
+    }
+
+    if (props.event.eventName == "DELETED_COMMENT") {
+      return "deleted their comment"
+    }
+
+    if (props.event.eventName == "DELETED_COMMENT_REPLY") {
+      return "deleted their reply"
+    }
     return props.event.eventName;
   }, [props.event, props.mergeRequest?.branchState?.name]);
 

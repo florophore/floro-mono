@@ -90,6 +90,15 @@ fragment MergeRequest on MergeRequest {
       }
     }
   }
+  commentPluginVersions {
+    id
+    name
+    displayName
+    lightIcon
+    darkIcon
+    selectedLightIcon
+    selectedDarkIcon
+  }
   timelineEvents {
     id
     eventName

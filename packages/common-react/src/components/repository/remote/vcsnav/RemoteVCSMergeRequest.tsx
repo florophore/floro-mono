@@ -14,6 +14,9 @@ import {
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 
+import CheckMarkWhite from "@floro/common-assets/assets/images/icons/check.dark.svg";
+import XMarkWhite from "@floro/common-assets/assets/images/icons/x_cross.white.svg"
+import MergeIconWhite from "@floro/common-assets/assets/images/repo_icons/merge.white.svg";
 import BackArrowIconLight from "@floro/common-assets/assets/images/icons/back_arrow.light.svg";
 import BackArrowIconDark from "@floro/common-assets/assets/images/icons/back_arrow.dark.svg";
 import {
@@ -279,6 +282,14 @@ const SubTitleSpan = styled.span`
   white-space: nowrap;
 `;
 
+const ButtonRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+`;
+
 export const getBranchIdFromName = (name: string): string => {
   return name
     .toLowerCase()
@@ -381,8 +392,8 @@ const RemoteVCSMergeRequest = (props: Props) => {
 
   const onGoBack = useCallback(() => {
     if (isEditting) {
-        setIsEditting(false);
-        return;
+      setIsEditting(false);
+      return;
     }
     if (reviewPage == "commits") {
       setReviewPage("none");
@@ -451,16 +462,18 @@ const RemoteVCSMergeRequest = (props: Props) => {
 
   //}, [branch, title, description, mergeError]);
 
-
-  const [updateMergeRequest, updateMergeRequestRequest] = useUpdateMergeRequestMutation();
+  const [updateMergeRequest, updateMergeRequestRequest] =
+    useUpdateMergeRequestMutation();
 
   const disableUpdate = useMemo(() => {
-    if (!props?.repository?.mergeRequest?.mergeRequestPermissions?.canEditInfo) {
+    if (
+      !props?.repository?.mergeRequest?.mergeRequestPermissions?.canEditInfo
+    ) {
       return false;
     }
-   // if (mergeError) {
-   //   return true;
-   // }
+    // if (mergeError) {
+    //   return true;
+    // }
     if (title?.trim() == "") {
       return true;
     }
@@ -468,8 +481,11 @@ const RemoteVCSMergeRequest = (props: Props) => {
       return true;
     }
     return false;
-
-  }, [title, description, props?.repository?.mergeRequest?.mergeRequestPermissions?.canEditInfo]);
+  }, [
+    title,
+    description,
+    props?.repository?.mergeRequest?.mergeRequestPermissions?.canEditInfo,
+  ]);
 
   const onUpdate = useCallback(() => {
     if (disableUpdate) {
@@ -481,7 +497,10 @@ const RemoteVCSMergeRequest = (props: Props) => {
     if (!props?.repository?.mergeRequest?.id) {
       return false;
     }
-    if (title == props?.repository?.mergeRequest.title && description == props?.repository?.mergeRequest?.description) {
+    if (
+      title == props?.repository?.mergeRequest.title &&
+      description == props?.repository?.mergeRequest?.description
+    ) {
       setIsEditting(false);
       return;
     }
@@ -491,16 +510,24 @@ const RemoteVCSMergeRequest = (props: Props) => {
         mergeRequestId: props?.repository?.mergeRequest.id,
         title,
         description,
-      }
+      },
     });
-
-  }, [disableUpdate, props?.repository?.id, props?.repository?.mergeRequest?.id, title, description]);
+  }, [
+    disableUpdate,
+    props?.repository?.id,
+    props?.repository?.mergeRequest?.id,
+    title,
+    description,
+  ]);
 
   useEffect(() => {
-    if (updateMergeRequestRequest?.data?.updateMergeRequestInfo?.__typename == "UpdateMergeRequestInfoSuccess") {
+    if (
+      updateMergeRequestRequest?.data?.updateMergeRequestInfo?.__typename ==
+      "UpdateMergeRequestInfoSuccess"
+    ) {
       setIsEditting(false);
     }
-  }, [updateMergeRequestRequest?.data?.updateMergeRequestInfo])
+  }, [updateMergeRequestRequest?.data?.updateMergeRequestInfo]);
 
   return (
     <>
@@ -568,6 +595,10 @@ const RemoteVCSMergeRequest = (props: Props) => {
                     repository={props.repository}
                     mergeRequest={props.repository?.mergeRequest}
                   />
+                  <Reviewers
+                    repository={props.repository}
+                    mergeRequest={props.repository.mergeRequest}
+                  />
                 </>
               )}
             </>
@@ -614,12 +645,6 @@ const RemoteVCSMergeRequest = (props: Props) => {
                   />
                 </TextAreaBlurbBox>
               </Row>
-              {props.repository.mergeRequest && (
-                <Reviewers
-                  repository={props.repository}
-                  mergeRequest={props.repository.mergeRequest}
-                />
-              )}
             </>
           )}
         </TopContainer>
@@ -632,6 +657,100 @@ const RemoteVCSMergeRequest = (props: Props) => {
               justifyContent: "center",
             }}
           >
+            {!isEditting && (
+              <div
+                style={{
+                  display: "block",
+                  flexDirection: "column",
+                  width: "100%"
+                }}
+              >
+                  <ButtonRow>
+                    <Button
+                      label={
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            paddingLeft: 24,
+                            paddingRight: 36,
+                          }}
+                        >
+                          <img
+                            style={{
+                              height: 32,
+                              width: 32,
+                              marginRight: 16,
+                            }}
+                            src={CheckMarkWhite}
+                          />
+                          <span>{"approve"}</span>
+                        </div>
+                      }
+                      bg={"teal"}
+                      size={"extra-big"}
+                    />
+                    <div style={{width: 48}}/>
+                    <Button
+                      label={
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            paddingLeft: 24,
+                            paddingRight: 36,
+                          }}
+                        >
+                          <img
+                            style={{
+                              height: 28,
+                              width: 28,
+                              marginRight: 16,
+                            }}
+                            src={XMarkWhite}
+                          />
+                          <span>{"block"}</span>
+                        </div>
+                      }
+                      bg={"red"}
+                      size={"extra-big"}
+                    />
+                  </ButtonRow>
+                  <ButtonRow style={{marginTop: 24}}>
+                    <Button
+                      label={
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            paddingLeft: 24,
+                            paddingRight: 36,
+                          }}
+                        >
+                          <img
+                            style={{
+                              height: 32,
+                              width: 32,
+                              marginRight: 16,
+                            }}
+                            src={MergeIconWhite}
+                          />
+                          <span>{"merge branch & close"}</span>
+                        </div>
+                      }
+                      bg={"purple"}
+                      size={"extra-big"}
+                      isDisabled
+                    />
+                  </ButtonRow>
+              </div>
+            )}
             {isEditting && (
               <Button
                 onClick={onUpdate}

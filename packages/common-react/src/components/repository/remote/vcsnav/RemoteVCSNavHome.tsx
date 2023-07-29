@@ -114,6 +114,15 @@ const RemoteVCSNavHome = (props: Props) => {
     props.repository?.branchState?.commitState?.sha,
   ]);
 
+  const homeLinkWithoutSha = useMemo(() => {
+    return `${linkBase}?from=remote&plugin=${props?.plugin ?? "home"}`;
+  }, [
+    linkBase,
+    props.plugin,
+    props.repository?.branchState?.branchId,
+    props.repository?.branchState?.commitState?.sha,
+  ]);
+
   const mergeRequestsLink = useMemo(() => {
     if (props.repository?.branchState?.commitState?.sha) {
       return `${linkBase}/mergerequests?from=remote&plugin=${props?.plugin ?? "home"}&sha=${
@@ -146,10 +155,10 @@ const RemoteVCSNavHome = (props: Props) => {
   const onChangeBranch = useCallback(
     (branch: RepoBranch | null) => {
       if (branch?.id) {
-        navigate(homeLink + "&branch=" + branch?.id);
+        navigate(homeLinkWithoutSha + "&branch=" + branch?.id);
       }
     },
-    [linkBase, homeLink]
+    [linkBase, homeLinkWithoutSha]
   );
 
   const onGoToDefaultBranch = useCallback(() => {

@@ -1279,51 +1279,18 @@ export default class MergeRequestService
           },
         };
       }
-      if (repository.repoType == "org_repo") {
-        const organizationsMembersContext =
-          await this.contextFactory.createContext(OrganizationMembersContext);
-        const membership =
-          await organizationsMembersContext.getByOrgIdAndUserId(
-            repository.organizationId,
-            user.id
-          );
-        if (membership?.membershipState != "active") {
-          return {
-            action: "INVALID_REVIEWER_ERROR",
-            error: {
-              type: "INVALID_REVIEWER_ERROR",
-              message: "Invalid Reviewer",
-            },
-          };
-        }
-      } else {
-        if (reviewerId != repository?.userId) {
-          // in personal repos only the user can approve or review
-          return {
-            action: "INVALID_REVIEWER_ERROR",
-            error: {
-              type: "INVALID_REVIEWER_ERROR",
-              message: "Invalid Reviewer",
-            },
-          };
-        }
-      }
-
-      const reviewerRepoSettings =
-        await this.repoDataService.fetchRepoSettingsForUser(
-          repository.id,
-          reviewerUser
-        );
-
-      const branchRule: BranchRuleSettings | undefined | null = !!baseBranch
-        ? reviewerRepoSettings?.branchRules.find(
-            (b) => b?.branchId == baseBranch?.id
-          )
-        : null;
-
-      const canApproveMergeRequests =
-        branchRule?.canApproveMergeRequests ?? true;
-      if (!canApproveMergeRequests) {
+      const userSettings = await this.repoDataService.fetchRepoSettingsForUser(
+        mergeRequest.repositoryId,
+        reviewerUser
+      );
+      const canApprove =
+        userSettings?.branchRules.find(
+          (b) => baseBranch && b.branchId == baseBranch.id
+        )?.canApproveMergeRequests ??
+        userSettings?.canPushBranches ??
+        false;
+      console.log("CAN APPROVE", canApprove)
+      if (!canApprove) {
         return {
           action: "INVALID_REVIEWER_ERROR",
           error: {
@@ -1918,7 +1885,8 @@ export default class MergeRequestService
     repository: Repository,
     user: User,
     text: string,
-    pluginName?: string
+    pluginName?: string,
+    pluginVersionId?: string
   ): Promise<CreateMergeRequestCommentResponse> {
     if ((text ?? "")?.trim() == "") {
       // ERROR
@@ -1930,14 +1898,14 @@ export default class MergeRequestService
         },
       };
     }
-    if (repository.repoType == "org_repo") {
-      const organizationsMembersContext =
-        await this.contextFactory.createContext(OrganizationMembersContext);
-      const membership = await organizationsMembersContext.getByOrgIdAndUserId(
-        repository.organizationId,
-        user.id
-      );
-      if (repository.isPrivate && membership?.membershipState != "active") {
+
+    const userRepoSettings =
+      await this.repoDataService.fetchRepoSettingsForUser(
+        repository.id,
+        user
+    );
+
+    if (!userRepoSettings?.canReadRepo) {
         return {
           action: "INVALID_COMMENTER_ERROR",
           error: {
@@ -1945,18 +1913,6 @@ export default class MergeRequestService
             message: "Invalid commenter",
           },
         };
-      }
-    } else if (repository.isPrivate) {
-      if (user.id != repository?.userId) {
-        // in personal repos only the user can approve or review
-        return {
-          action: "INVALID_COMMENTER_ERROR",
-          error: {
-            type: "INVALID_COMMENTER_ERROR",
-            message: "Invalid commenter",
-          },
-        };
-      }
     }
 
     const branches = await this.repoDataService.getBranches(repository.id);
@@ -1974,8 +1930,24 @@ export default class MergeRequestService
         repository.id,
         pendingCommits?.map((c) => c.sha as string)
       );
+    const pluginListIds = new Set(pluginList.map(pv => pv.id));
     const pluginNames = pluginList.map((p) => p.name);
-    if (pluginName && !pluginNames.includes(pluginName)) {
+    if (pluginName == "home" && pluginVersionId) {
+      return {
+        action: "INVALID_PLUGIN_COMMENT_ERROR",
+        error: {
+          type: "INVALID_PLUGIN_COMMENT_ERROR",
+          message: "Invalid plugin in comment",
+        },
+      };
+    }
+    if (
+      pluginName &&
+      pluginName != "home" &&
+      (!pluginVersionId ||
+        !pluginNames.includes(pluginName) ||
+        !pluginListIds.has(pluginVersionId))
+    ) {
       return {
         action: "INVALID_PLUGIN_COMMENT_ERROR",
         error: {
@@ -2002,6 +1974,7 @@ export default class MergeRequestService
         userId: user.id,
         mergeRequestId: mergeRequest.id,
         pluginName,
+        pluginVersionId
       });
       for (const mergeRequestCommentEventHandler of this
         .mergeRequestCommentEventHandlers) {
@@ -2074,14 +2047,14 @@ export default class MergeRequestService
         },
       };
     }
-    if (repository.repoType == "org_repo") {
-      const organizationsMembersContext =
-        await this.contextFactory.createContext(OrganizationMembersContext);
-      const membership = await organizationsMembersContext.getByOrgIdAndUserId(
-        repository.organizationId,
-        user.id
-      );
-      if (repository.isPrivate && membership?.membershipState != "active") {
+
+    const userRepoSettings =
+      await this.repoDataService.fetchRepoSettingsForUser(
+        repository.id,
+        user
+    );
+
+    if (!userRepoSettings?.canReadRepo) {
         return {
           action: "INVALID_COMMENTER_ERROR",
           error: {
@@ -2089,18 +2062,6 @@ export default class MergeRequestService
             message: "Invalid commenter",
           },
         };
-      }
-    } else if (repository.isPrivate) {
-      if (user.id != repository?.userId) {
-        // in personal repos only the user can approve or review
-        return {
-          action: "INVALID_COMMENTER_ERROR",
-          error: {
-            type: "INVALID_COMMENTER_ERROR",
-            message: "Invalid commenter",
-          },
-        };
-      }
     }
 
     const branches = await this.repoDataService.getBranches(repository.id);
@@ -2184,14 +2145,14 @@ export default class MergeRequestService
         },
       };
     }
-    if (repository.repoType == "org_repo") {
-      const organizationsMembersContext =
-        await this.contextFactory.createContext(OrganizationMembersContext);
-      const membership = await organizationsMembersContext.getByOrgIdAndUserId(
-        repository.organizationId,
-        user.id
-      );
-      if (repository.isPrivate && membership?.membershipState != "active") {
+
+    const userRepoSettings =
+      await this.repoDataService.fetchRepoSettingsForUser(
+        repository.id,
+        user
+    );
+
+    if (!userRepoSettings?.canReadRepo) {
         return {
           action: "INVALID_COMMENTER_ERROR",
           error: {
@@ -2199,18 +2160,6 @@ export default class MergeRequestService
             message: "Invalid commenter",
           },
         };
-      }
-    } else if (repository.isPrivate) {
-      if (user.id != repository?.userId) {
-        // in personal repos only the user can approve or review
-        return {
-          action: "INVALID_COMMENTER_ERROR",
-          error: {
-            type: "INVALID_COMMENTER_ERROR",
-            message: "Invalid commenter",
-          },
-        };
-      }
     }
 
     const branches = await this.repoDataService.getBranches(repository.id);
@@ -2293,14 +2242,13 @@ export default class MergeRequestService
         },
       };
     }
-    if (repository.repoType == "org_repo") {
-      const organizationsMembersContext =
-        await this.contextFactory.createContext(OrganizationMembersContext);
-      const membership = await organizationsMembersContext.getByOrgIdAndUserId(
-        repository.organizationId,
-        user.id
-      );
-      if (repository.isPrivate && membership?.membershipState != "active") {
+    const userRepoSettings =
+      await this.repoDataService.fetchRepoSettingsForUser(
+        repository.id,
+        user
+    );
+
+    if (!userRepoSettings?.canReadRepo) {
         return {
           action: "INVALID_COMMENTER_ERROR",
           error: {
@@ -2308,18 +2256,6 @@ export default class MergeRequestService
             message: "Invalid commenter",
           },
         };
-      }
-    } else if (repository.isPrivate) {
-      if (user.id != repository?.userId) {
-        // in personal repos only the user can approve or review
-        return {
-          action: "INVALID_COMMENTER_ERROR",
-          error: {
-            type: "INVALID_COMMENTER_ERROR",
-            message: "Invalid commenter",
-          },
-        };
-      }
     }
 
     const branches = await this.repoDataService.getBranches(repository.id);
@@ -2424,14 +2360,13 @@ export default class MergeRequestService
         },
       };
     }
-    if (repository.repoType == "org_repo") {
-      const organizationsMembersContext =
-        await this.contextFactory.createContext(OrganizationMembersContext);
-      const membership = await organizationsMembersContext.getByOrgIdAndUserId(
-        repository.organizationId,
-        user.id
-      );
-      if (repository.isPrivate && membership?.membershipState != "active") {
+    const userRepoSettings =
+      await this.repoDataService.fetchRepoSettingsForUser(
+        repository.id,
+        user
+    );
+
+    if (!userRepoSettings?.canReadRepo) {
         return {
           action: "INVALID_COMMENTER_ERROR",
           error: {
@@ -2439,18 +2374,6 @@ export default class MergeRequestService
             message: "Invalid commenter",
           },
         };
-      }
-    } else if (repository.isPrivate) {
-      if (user.id != repository?.userId) {
-        // in personal repos only the user can approve or review
-        return {
-          action: "INVALID_COMMENTER_ERROR",
-          error: {
-            type: "INVALID_COMMENTER_ERROR",
-            message: "Invalid commenter",
-          },
-        };
-      }
     }
 
     const branches = await this.repoDataService.getBranches(repository.id);
@@ -2545,14 +2468,13 @@ export default class MergeRequestService
         },
       };
     }
-    if (repository.repoType == "org_repo") {
-      const organizationsMembersContext =
-        await this.contextFactory.createContext(OrganizationMembersContext);
-      const membership = await organizationsMembersContext.getByOrgIdAndUserId(
-        repository.organizationId,
-        user.id
-      );
-      if (repository.isPrivate && membership?.membershipState != "active") {
+    const userRepoSettings =
+      await this.repoDataService.fetchRepoSettingsForUser(
+        repository.id,
+        user
+    );
+
+    if (!userRepoSettings?.canReadRepo) {
         return {
           action: "INVALID_COMMENTER_ERROR",
           error: {
@@ -2560,18 +2482,6 @@ export default class MergeRequestService
             message: "Invalid commenter",
           },
         };
-      }
-    } else if (repository.isPrivate) {
-      if (user.id != repository?.userId) {
-        // in personal repos only the user can approve or review
-        return {
-          action: "INVALID_COMMENTER_ERROR",
-          error: {
-            type: "INVALID_COMMENTER_ERROR",
-            message: "Invalid commenter",
-          },
-        };
-      }
     }
 
     const branches = await this.repoDataService.getBranches(repository.id);
@@ -2631,5 +2541,4 @@ export default class MergeRequestService
       }
     }
   }
-
 }

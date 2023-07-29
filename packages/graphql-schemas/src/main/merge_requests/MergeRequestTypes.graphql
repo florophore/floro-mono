@@ -91,6 +91,7 @@ type MergeRequest {
   reviewStatuses: [ReviewStatus]
   reviewerRequests: [ReviewerRequest]
   comments: [MergeRequestComment]
+  commentPluginVersions: [PluginVersion]
   commits(idx: Int): [CommitInfo]
   timelineEvents: [MergeRequestEvent]
   mergeRequestPermissions: MergeRequestPermissions

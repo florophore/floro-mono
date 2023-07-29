@@ -286,6 +286,9 @@ export default class RepoRBACService {
       if (!repoPermissions.canPushBranches) {
         return false;
       }
+      if (protectedBranchRule[settingName]) {
+        return true;
+      }
       const protectedBranchRuleEnabledUserSettingsContext =
         await this.contextFactory.createContext(
           ProtectedBranchRuleEnabledUserSettingsContext,

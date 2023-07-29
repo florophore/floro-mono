@@ -239,7 +239,7 @@ const OrgHome = (props: Props) => {
                     <MemberSettingsTab />
                   </div>
                 )}
-                {props?.organization?.membership?.permissions?.canModifyBilling && (
+                {props?.organization?.membership?.permissions?.canModifyOrganizationSettings && (
                   <div style={{ marginTop: 16, display: "flex" }}>
                     <OrgSettingsTab />
                   </div>

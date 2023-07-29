@@ -6,6 +6,7 @@ import { User } from "./User";
 import { MergeRequest } from "./MergeRequest";
 import { MergeRequestCommentReply } from "./MergeRequestCommentReply";
 import { MergeRequestEvent } from "./MergeRequestEvent";
+import { PluginVersion } from "./PluginVersion";
 
 @Entity("merge_request_comments")
 export class MergeRequestComment extends BinaryPKBaseEntity {
@@ -32,6 +33,14 @@ export class MergeRequestComment extends BinaryPKBaseEntity {
 
   @Column("uuid")
   userId!: string;
+
+  @Column("uuid")
+  @IsOptional()
+  pluginVersionId?: string;
+
+  @ManyToOne("PluginVersion", "mergeRequestComments")
+  @JoinColumn()
+  pluginVersion!: Relation<PluginVersion>;
 
   @ManyToOne("User", "mergeRequestComments")
   @JoinColumn()

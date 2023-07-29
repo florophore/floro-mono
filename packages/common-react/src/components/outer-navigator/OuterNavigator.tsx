@@ -244,7 +244,7 @@ const OuterNavigator = (props: Props) => {
             onMouseLeave={onMouseLeaveSearch}
           >
             <SearchInput
-              placeholder="search repos, users, plugins..."
+              placeholder="search repos, orgs, plugins..."
               value={searchTerm}
               onTextChanged={setSearchTerm}
               onFocus={onFocusSearch}

@@ -94,6 +94,7 @@ import ProtectedBranchRuleLoader from './resolvers/hooks/loaders/Root/ProtectedB
 import RepositoryRemoteSettingsArgsLoader from './resolvers/hooks/loaders/Repository/RepositoryRemoteSettingsArgsLoader';
 import RepoDataService from './services/repositories/RepoDataService';
 import { QueueService } from './services/QueueService';
+import MergeRequestCommentsLoader from './resolvers/hooks/loaders/MergeRequest/MergeRequestCommentsLoader';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -113,6 +114,7 @@ export default new ContainerModule((bind): void => {
     bind(MergeRequestAccessGuard).toSelf();
     bind(MergeRequestCommentAccessGuard).toSelf();
     bind(MergeRequestCommentReplyAccessGuard).toSelf();
+    bind(MergeRequestCommentsLoader).toSelf()
 
     // LOADERS
     //ROOT LOADERS

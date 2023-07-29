@@ -1,0 +1,121 @@
+mutation CreateMergeRequestCommentReply(
+  $mergeRequestId: String!
+  $mergeRequestCommentId: String!
+  $repositoryId: String!
+  $text: String!
+) {
+  createMergeRequestCommentReply(
+    mergeRequestId: $mergeRequestId
+    mergeRequestCommentId: $mergeRequestCommentId,
+    repositoryId: $repositoryId
+    text: $text
+  ) {
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+    ... on RepoAccessError {
+      type
+      message
+    }
+    ... on MergeRequestAccessError {
+      message
+      type
+    }
+    ... on CreateMergeRequestCommentReplySuccess {
+      mergeRequest {
+        ...SimpleMergeRequest
+        comments {
+          id
+          text
+          pluginName
+          branchHeadShaAtCreate
+          updatedAt
+          createdAt
+          user {
+            id
+            username
+            firstName
+            lastName
+            profilePhoto {
+              ...Photo
+            }
+          }
+          replies {
+            id
+            text
+            branchHeadShaAtCreate
+            updatedAt
+            createdAt
+            user {
+              id
+              username
+              firstName
+              lastName
+              profilePhoto {
+                ...Photo
+              }
+            }
+          }
+        }
+        commentPluginVersions {
+          id
+          name
+          displayName
+          lightIcon
+          darkIcon
+          selectedLightIcon
+          selectedDarkIcon
+        }
+        timelineEvents {
+          id
+          eventName
+          subeventName
+          branchHeadShaAtEvent
+          eventGroupingId
+          createdAt
+          performedByUser {
+            id
+            username
+            firstName
+            lastName
+            profilePhoto {
+              ...Photo
+            }
+          }
+          addedTitle
+          addedDescription
+          removedTitle
+          removedDescription
+          reviewerRequest {
+            id
+            updatedAt
+            createdAt
+            requestedByUser {
+              id
+              username
+              firstName
+              lastName
+              profilePhoto {
+                ...Photo
+              }
+            }
+            requestedReviewerUser {
+              id
+              username
+              firstName
+              lastName
+              profilePhoto {
+                ...Photo
+              }
+            }
+          }
+        }
+      }
+    }
+    ... on CreateMergeRequestCommentReplyError {
+      message
+      type
+    }
+  }
+}

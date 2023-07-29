@@ -1,0 +1,121 @@
+mutation DeleteMergeRequestCommentReply(
+  $mergeRequestCommentReplyId: String!
+  $mergeRequestCommentId: String!
+  $mergeRequestId: String!
+  $repositoryId: String!
+) {
+  deleteMergeRequestCommentReply(
+    mergeRequestCommentReplyId: $mergeRequestCommentReplyId
+    mergeRequestCommentId: $mergeRequestCommentId,
+    mergeRequestId: $mergeRequestId
+    repositoryId: $repositoryId
+  ) {
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+    ... on RepoAccessError {
+      type
+      message
+    }
+    ... on MergeRequestAccessError {
+      message
+      type
+    }
+    ... on DeleteMergeRequestCommentReplySuccess {
+      mergeRequest {
+        ...SimpleMergeRequest
+        comments {
+          id
+          text
+          pluginName
+          branchHeadShaAtCreate
+          updatedAt
+          createdAt
+          user {
+            id
+            username
+            firstName
+            lastName
+            profilePhoto {
+              ...Photo
+            }
+          }
+          replies {
+            id
+            text
+            branchHeadShaAtCreate
+            updatedAt
+            createdAt
+            user {
+              id
+              username
+              firstName
+              lastName
+              profilePhoto {
+                ...Photo
+              }
+            }
+          }
+        }
+        commentPluginVersions {
+          id
+          name
+          displayName
+          lightIcon
+          darkIcon
+          selectedLightIcon
+          selectedDarkIcon
+        }
+        timelineEvents {
+          id
+          eventName
+          subeventName
+          branchHeadShaAtEvent
+          eventGroupingId
+          createdAt
+          performedByUser {
+            id
+            username
+            firstName
+            lastName
+            profilePhoto {
+              ...Photo
+            }
+          }
+          addedTitle
+          addedDescription
+          removedTitle
+          removedDescription
+          reviewerRequest {
+            id
+            updatedAt
+            createdAt
+            requestedByUser {
+              id
+              username
+              firstName
+              lastName
+              profilePhoto {
+                ...Photo
+              }
+            }
+            requestedReviewerUser {
+              id
+              username
+              firstName
+              lastName
+              profilePhoto {
+                ...Photo
+              }
+            }
+          }
+        }
+      }
+    }
+    ... on DeleteMergeRequestCommentReplyError {
+      message
+      type
+    }
+  }
+}

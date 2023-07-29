@@ -49,6 +49,7 @@ extend type Mutation {
     repositoryId: String!,
     text: String!,
     pluginName: String,
+    pluginVersionId: ID
   ): CreateMergeRequestCommentResponse
 
   updateMergeRequestComment(

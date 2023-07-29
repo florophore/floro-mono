@@ -33,9 +33,9 @@ export interface Props {
 
 const findFirstChar = (str: string) => {
     for (let i = 0; i < str.length; ++i) {
-        if (/[A-z]/.test(str[i])) return str[i].toUpperCase(); 
+        if (/[A-z]/.test(str[i])) return str[i].toUpperCase();
     }
-    return "";
+    return str?.[0] ?? "";
 }
 
 const InitialProfileDefault = (props: Props): React.ReactElement => {

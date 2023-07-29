@@ -147,7 +147,6 @@ const ReviewSearch = (props: Props) => {
   }, [inputIsEmpty, searchReviewersResult?.data]);
 
   const onChooseUser = useCallback((user: User) => {
-    console.log("HELLO", user);
     if (updatedReviewersMutation.loading) {
       return;
     }

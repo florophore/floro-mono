@@ -6,6 +6,7 @@ import { Organization } from "./Organization";
 import { User } from "./User";
 import { Plugin } from "./Plugin";
 import { PluginVersionDependency } from "./PluginVersionDependency";
+import { MergeRequestComment } from "./MergeRequestComment";
 
 @Entity("plugin_versions")
 export class PluginVersion extends BinaryPKBaseEntity {
@@ -145,4 +146,7 @@ export class PluginVersion extends BinaryPKBaseEntity {
 
   @OneToMany("PluginVersionDependency", "dependencyPluginVersion")
   dependents?: Relation<PluginVersionDependency>[];
+
+  @OneToMany("MergeRequestComment", "pluginVersion")
+  mergeRequestComments?: Relation<MergeRequestComment>[];
 }

@@ -3,11 +3,12 @@ import { LoaderResolverHook, runWithHooks } from "../../ResolverHook";
 import RequestCache from "../../../../request/RequestCache";
 import ContextFactory from "@floro/database/src/contexts/ContextFactory";
 import MergeRequestCommentsContext from "@floro/database/src/contexts/merge_requests/MergeRequestCommentsContext";
+import { MergeRequest } from "@floro/graphql-schemas/src/generated/main-graphql";
 
 @injectable()
-export default class MergeRequestCommentLoader extends LoaderResolverHook<
+export default class MergeRequestCommentsLoader extends LoaderResolverHook<
+  MergeRequest,
   unknown,
-  { mergeRequestCommentId: string },
   { cacheKey: string }
 > {
   protected requestCache!: RequestCache;
@@ -23,24 +24,24 @@ export default class MergeRequestCommentLoader extends LoaderResolverHook<
   }
 
   public run = runWithHooks<
+    MergeRequest,
     unknown,
-    { mergeRequestCommentId: string },
     { cacheKey: string },
     void
   >(
     () => [],
-    async (_, { mergeRequestCommentId }, { cacheKey }): Promise<void> => {
-      if (!mergeRequestCommentId) {
+    async (mergeRequest, _, { cacheKey }): Promise<void> => {
+      if (!mergeRequest?.id) {
         return;
       }
-      const cachedMergeRequestComment = this.requestCache.getMergeRequestComment(cacheKey, mergeRequestCommentId);
-      if (cachedMergeRequestComment) {
+      const cachedMergeRequestComments = this.requestCache.getMergeRequestComments(cacheKey, mergeRequest.id);
+      if (cachedMergeRequestComments) {
         return;
       }
       const mergeRequestCommentsContext = await this.contextFactory.createContext(MergeRequestCommentsContext);
-      const mergeRequestComment = await mergeRequestCommentsContext.getById(mergeRequestCommentId);
-      if (mergeRequestComment) {
-        this.requestCache.setMergeRequestComment(cacheKey, mergeRequestComment);
+      const mergeRequestComments = await mergeRequestCommentsContext.getMergeRequestComments(mergeRequest.id);
+      if (mergeRequestComments) {
+        this.requestCache.setMergeRequestComments(cacheKey, mergeRequest.id, mergeRequestComments);
       }
     }
   );

@@ -676,6 +676,22 @@ export default class RequestCache {
     const cache = this.getCache(cacheKey);
     cache[`merge-request-comment:${mergeRequestComment.id}`] = mergeRequestComment;
   }
+  public getMergeRequestComments(
+    cacheKey: string,
+    mergeRequestId: string,
+  ): Array<MergeRequestComment> {
+    const cache = this.getCache(cacheKey);
+    return cache[`merge-request-comments:${mergeRequestId}`] as Array<MergeRequestComment>;
+  }
+
+  public setMergeRequestComments(
+    cacheKey: string,
+    mergeRequestId: string,
+    mergeRequestComments: Array<MergeRequestComment>,
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`merge-request-comments:${mergeRequestId}`] = mergeRequestComments;
+  }
 
   public deleteMergeRequestComment(
     cacheKey: string,

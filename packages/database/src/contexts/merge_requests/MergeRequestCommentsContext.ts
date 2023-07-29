@@ -43,4 +43,38 @@ export default class MergeRequestCommentsContext extends BaseContext {
     }
     return await this.queryRunner.manager.save(MergeRequestComment, mergeRequestComment);
   }
+
+  public async getMergeRequestComments(
+    mergeRequestId: string
+  ): Promise<Array<MergeRequestComment>> {
+    const comments = await this.queryRunner.manager.find(MergeRequestComment, {
+      where: {
+        mergeRequestId,
+        isDeleted: false,
+      },
+      order: {
+        createdAt: 'ASC',
+        replies: {
+          createdAt: 'ASC',
+        }
+      },
+      relations: {
+        user: {
+          profilePhoto: true
+        },
+        pluginVersion: true,
+        replies: {
+          user: {
+            profilePhoto: true
+          }
+        }
+      }
+    });
+    return comments?.map?.(c => {
+      return {
+        ...c,
+        replies: c.replies.filter(r => !r.isDeleted)
+      }
+    }) as Array<MergeRequestComment> ?? [];
+  }
 }

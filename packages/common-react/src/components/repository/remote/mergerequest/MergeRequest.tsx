@@ -1,5 +1,5 @@
 
-import React, { useMemo, useCallback, useState } from "react";
+import React, { useMemo, useCallback, useState, useRef } from "react";
 import {
   Plugin,
 } from "@floro/graphql-schemas/build/generated/main-graphql";
@@ -14,12 +14,14 @@ import EditIconLight from "@floro/common-assets/assets/images/icons/edit.light.s
 import EditIconDark from "@floro/common-assets/assets/images/icons/edit.dark.svg";
 import { useMergeRequestNavContext } from "./MergeRequestContext";
 import Timeline from "./Timeline";
+import CreateComment from "./comments/CreateComment";
+import MainPageComments from "./comments/MainPageComments";
 
 const Container = styled.div`
   height: 100%;
   max-width: 100%;
   overflow: scroll;
-  padding: 24px 40px 48px 24px;
+  padding: 24px 40px 80px 24px;
   user-select: text;
 
   ::-webkit-scrollbar {
@@ -181,12 +183,15 @@ interface Props {
 }
 
 const MergeRequest = (props: Props) => {
-
   const theme = useTheme();
-  const { isEditting, setIsEditting} = useMergeRequestNavContext();
+  const { isEditting, setIsEditting } = useMergeRequestNavContext();
+  const container = useRef<HTMLDivElement>(null);
+  const [commentText, setCommentText] = useState("");
 
   const onEdit = useCallback(() => {
-    if (!props?.repository?.mergeRequest?.mergeRequestPermissions?.canEditInfo) {
+    if (
+      !props?.repository?.mergeRequest?.mergeRequestPermissions?.canEditInfo
+    ) {
       return;
     }
     setIsEditting(true);
@@ -194,16 +199,14 @@ const MergeRequest = (props: Props) => {
 
   const editIcon = useMemo(() => {
     if (theme.name == "light") {
-        return EditIconLight;
+      return EditIconLight;
     }
 
     return EditIconDark;
   }, [theme.name]);
 
-
-
   return (
-    <Container>
+    <Container ref={container}>
       <BigSectionContainer style={{ marginBottom: 24 }}>
         <LineWrapRow>
           <Title>{props.repository?.mergeRequest?.title ?? ""}</Title>
@@ -212,7 +215,7 @@ const MergeRequest = (props: Props) => {
               ?.canEditInfo && <EditIcon src={editIcon} onClick={onEdit} />}
         </LineWrapRow>
       </BigSectionContainer>
-      <BigSectionContainer style={{marginBottom: 24}}>
+      <BigSectionContainer style={{ marginBottom: 24 }}>
         <SectionRow>
           <SectionTitleWrapper>
             <SectionTitle>{"Description"}</SectionTitle>
@@ -230,9 +233,9 @@ const MergeRequest = (props: Props) => {
           mergeRequest={props.repository.mergeRequest}
         />
       )}
-      <BigSectionContainer style={{ marginBottom: 24 }}>
-          <ConversationTitle>{"Conversation"}</ConversationTitle>
-      </BigSectionContainer>
+      {props?.repository?.mergeRequest && (
+        <MainPageComments container={container} repository={props.repository}/>
+      )}
     </Container>
   );
 };
