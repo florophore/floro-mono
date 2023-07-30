@@ -119,7 +119,6 @@ const InvitationContainer = styled.div`
 `;
 
 const TopGradient = styled.div`
-  background-color: red;
   width: 263px;
   position: absolute;
   top: 60.2px;
@@ -131,14 +130,13 @@ const TopGradient = styled.div`
 `;
 
 const BottomGradiuent = styled.div`
-  background-color: red;
   width: 263px;
   position: absolute;
   bottom: 0px;
   height: 16px;
   background: linear-gradient(
     ${(props) => props.theme.gradients.backgroundNoOpacity},
-    ${(props) => props.theme.gradients.backgroundNoOpacity}
+    ${(props) => props.theme.gradients.backgroundFullOpacity}
   );
 `;
 

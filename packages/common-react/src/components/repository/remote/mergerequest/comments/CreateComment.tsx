@@ -112,6 +112,7 @@ interface Props {
   parentRef?: React.RefObject<HTMLElement>;
   isLoading: boolean;
   onCreate: () => void;
+  extendTextarea?: boolean;
 }
 
 const CreateComment = (props: Props) => {
@@ -200,11 +201,14 @@ const CreateComment = (props: Props) => {
         style={
           isDisabled
             ? {
+                marginLeft: props.extendTextarea ? 0 : 56,
                 background: disabledColor,
                 borderColor: disabledBorderColor,
                 cursor: "not-allowed",
               }
-            : {}
+            : {
+              marginLeft: props.extendTextarea ? 0 : 56
+            }
         }
       >
         <GrowCommentContainer style={{ maxHeight: props?.maxHeight ?? 220 }}>

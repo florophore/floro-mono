@@ -16,6 +16,12 @@ import CommitGray from "@floro/common-assets/assets/images/repo_icons/commit.gra
 import MergeRequestWhite from "@floro/common-assets/assets/images/repo_icons/merge_request.white.svg";
 import MergeRequestGray from "@floro/common-assets/assets/images/repo_icons/merge_request.gray.svg";
 
+import ConversationLight from "@floro/common-assets/assets/images/icons/conversation.light.svg";
+import ConversationDark from "@floro/common-assets/assets/images/icons/conversation.dark.svg";
+
+import TrashLight from "@floro/common-assets/assets/images/icons/trash.light.darker.svg";
+import TrashDark from "@floro/common-assets/assets/images/icons/trash.dark.svg";
+
 import EditWhite from "@floro/common-assets/assets/images/icons/edit.dark.svg";
 import EditGray from "@floro/common-assets/assets/images/icons/edit.light.svg";
 
@@ -116,6 +122,48 @@ const TimelineRow = (props: Props) => {
         return EditGray;
         }
         return EditWhite;
+    }
+
+    if (props.event.eventName == "ADDED_COMMENT") {
+      if (theme.name == "light") {
+        return ConversationLight;
+      }
+      return ConversationDark;
+    }
+
+    if (props.event.eventName == "ADDED_COMMENT_REPLY") {
+      if (theme.name == "light") {
+        return ConversationLight;
+      }
+      return ConversationDark;
+    }
+
+    if (props.event.eventName == "UPDATED_COMMENT") {
+      if (theme.name == "light") {
+        return ConversationLight;
+      }
+      return ConversationDark;
+    }
+
+    if (props.event.eventName == "UPDATED_COMMENT_REPLY") {
+      if (theme.name == "light") {
+        return ConversationLight;
+      }
+      return ConversationDark;
+    }
+
+    if (props.event.eventName == "DELETED_COMMENT") {
+      if (theme.name == "light") {
+        return TrashLight;
+      }
+      return TrashDark;
+    }
+
+    if (props.event.eventName == "DELETED_COMMENT_REPLY") {
+      if (theme.name == "light") {
+        return TrashLight;
+      }
+      return TrashDark;
     }
     if (theme.name == "light") {
       return CommitGray;

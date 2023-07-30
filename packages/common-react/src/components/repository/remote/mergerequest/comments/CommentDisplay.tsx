@@ -32,7 +32,7 @@ const Container = styled.div`
   border: 2px solid ${(props) => props.theme.colors.contrastTextLight};
   padding: 16px 8px;
   border-radius: 8px;
-  margin-bottom: 36px;
+  margin-bottom: 16px;
 `;
 
 const TopContainer = styled.div`

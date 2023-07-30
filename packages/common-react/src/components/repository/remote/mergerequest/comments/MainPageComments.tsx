@@ -174,6 +174,20 @@ const MergeRequestComments = (props: Props) => {
 
   }, [props?.repository?.mergeRequest?.comments])
 
+  const pluginCommentMatrix = useMemo(() => {
+    return presentPluginOrder?.map(pluginName => {
+      const pluginVersion = pluginDisplayMap[pluginName];
+      const displayName = pluginVersion.displayName;
+      const icon = theme.name == "light" ? pluginVersion.selectedLightIcon ?? pluginVersion?.lightIcon :  pluginVersion.selectedDarkIcon ?? pluginVersion?.darkIcon;
+      const comments = pluginComments.filter(c => c?.pluginName == pluginName);
+      return {
+        displayName,
+        icon,
+        comments
+      }
+    })?.filter(p => p.comments.length > 0);
+  }, [pluginComments, pluginDisplayMap, presentPluginOrder, theme.name])
+
   const onCreate = useCallback(() => {
     if (!props?.repository?.id || !props?.repository?.mergeRequest?.id) {
       return;
@@ -206,10 +220,51 @@ const MergeRequestComments = (props: Props) => {
       <ConversationTitle style={{ marginBottom: 24 }}>
         {"Conversation"}
       </ConversationTitle>
+      {homeComments?.length > 0 && (
+        <>
+          <ConversationRow>
+            <ConversationRowIcon src={homeIcon}/>
+            <ConversationRowTitle>{'Home'}</ConversationRowTitle>
+          </ConversationRow>
+          <div>
+            {homeComments?.map((comment, index) => {
+              return (
+                <CommentDisplay
+                  repository={props.repository}
+                  mergeRequest={props.repository.mergeRequest as MergeRequest}
+                  comment={comment as MergeRequestComment}
+                  key={index}
+                />
+              );
+            })}
+          </div>
+        </>
+      )}
+      {pluginCommentMatrix?.map((plugin, index) => {
+        return (
+          <div key={index}>
+            <ConversationRow>
+              <ConversationRowIcon src={plugin.icon as string}/>
+              <ConversationRowTitle>{plugin.displayName}</ConversationRowTitle>
+            </ConversationRow>
+            <div>
+              {plugin.comments?.map((comment, innerIndex) => {
+                return (
+                  <CommentDisplay
+                    repository={props.repository}
+                    mergeRequest={props.repository.mergeRequest as MergeRequest}
+                    comment={comment as MergeRequestComment}
+                    key={innerIndex}
+                  />
+                );
+              })}
+            </div>
+          </div>
+        )
+      })}
       <ConversationRow>
         <ConversationRowIcon src={conversationIcon}/>
         <ConversationRowTitle>{'Review Conversation'}</ConversationRowTitle>
-
       </ConversationRow>
       <div>
         {noPluginComments?.map((comment, index) => {
