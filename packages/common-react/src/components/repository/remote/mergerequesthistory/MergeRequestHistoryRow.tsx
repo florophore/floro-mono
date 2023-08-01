@@ -79,7 +79,6 @@ const RevertedPill = styled.div`
   height: 24px;
   width: 100px;
   border-radius: 12px;
-  background: ${(props) => props.theme.colors.revertedBackground};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -172,6 +171,26 @@ const MergeRequestHistoryRow = (props: Props) => {
   }, [props.repository?.branchState, linkBase]);
 
 
+  const reviewText = useMemo(() => {
+    if (props?.mergeRequest?.approvalStatus == 'approved') {
+      return 'approved';
+    }
+    if (props?.mergeRequest?.approvalStatus == 'blocked') {
+      return 'blocked';
+    }
+    return 'pending';
+  }, [props?.mergeRequest?.approvalStatus])
+
+  const reviewColor = useMemo(() => {
+    if (props?.mergeRequest?.approvalStatus == 'approved') {
+      return ColorPalette.teal;
+    }
+    if (props?.mergeRequest?.approvalStatus == 'blocked') {
+      return theme.name == "light" ? ColorPalette.red : ColorPalette.lightRed;
+    }
+    return ColorPalette.gray;
+  }, [props?.mergeRequest?.approvalStatus, theme.name])
+
   return (
     <Container>
       <TopRow>
@@ -181,9 +200,9 @@ const MergeRequestHistoryRow = (props: Props) => {
         <div style={{height: 36}}></div>
       </TopRow>
       <ShaRow>
-        <StatusTitle>{"Status: "}</StatusTitle>
-        <RevertedPill style={{ marginLeft: 8 }}>
-            <RevertTitle>{"blocked"}</RevertTitle>
+        <StatusTitle>{"Review Status: "}</StatusTitle>
+        <RevertedPill style={{ marginLeft: 8, background: reviewColor }}>
+            <RevertTitle>{reviewText}</RevertTitle>
         </RevertedPill>
       </ShaRow>
       <UserRow>

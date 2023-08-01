@@ -10,6 +10,8 @@ import {
   useProposedMergeRequestRepositoryUpdatesSubscription,
   useCreateMergeRequestMutation,
   useUpdateMergeRequestMutation,
+  useUpdateMergeRequestStatusMutation,
+  useDeleteMergeRequestStatusMutation,
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
@@ -31,6 +33,9 @@ import { useNavigate } from "react-router";
 import ColorPalette from "@floro/styles/ColorPalette";
 import Input from "@floro/storybook/stories/design-system/Input";
 import Button from "@floro/storybook/stories/design-system/Button";
+import RepoUndoReviewButton from "@floro/storybook/stories/repo-components/RepoUndoReviewButton";
+
+import TrashIconWhite from "@floro/common-assets/assets/images/icons/trash.dark.svg";
 
 import BranchIconLight from "@floro/common-assets/assets/images/icons/branch_icon.light.svg";
 import BranchIconDark from "@floro/common-assets/assets/images/icons/branch_icon.dark.svg";
@@ -215,6 +220,13 @@ const Icon = styled.img`
   height: 32px;
   margin-right: 12px;
 `;
+const ReviewCircle = styled.div`
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  margin-right: 15px;
+  margin-left: 5px;
+`;
 
 const LabelSpan = styled.span`
   font-size: 1.1rem;
@@ -235,45 +247,6 @@ const ValueSpan = styled.span`
   overflow: hidden;
 `;
 
-const MergeInfoRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  width: 100%;
-  justify-content: flex-end;
-  margin-bottom: 16px;
-`;
-
-const NothingToMerge = styled.p`
-  padding: 0;
-  margin: 0;
-  font-weight: 500;
-  font-size: 1.1rem;
-  font-family: "MavenPro";
-  color: ${(props) => props.theme.colors.standardTextLight};
-  font-style: italic;
-`;
-
-const MergeOkay = styled.p`
-  padding: 0;
-  margin: 0;
-  font-weight: 500;
-  font-size: 1.1rem;
-  font-family: "MavenPro";
-  color: ${(props) => props.theme.colors.addedText};
-  font-style: italic;
-`;
-
-const MergeError = styled.p`
-  padding: 0;
-  margin: 0;
-  font-weight: 500;
-  font-size: 1.1rem;
-  font-family: "MavenPro";
-  color: ${(props) => props.theme.colors.removedText};
-  font-style: italic;
-`;
-
 const SubTitleSpan = styled.span`
   font-size: 1.4rem;
   font-family: "MavenPro";
@@ -288,6 +261,23 @@ const ButtonRow = styled.div`
   align-items: center;
   width: 100%;
   justify-content: space-between;
+`;
+
+const ClosedPill = styled.div`
+  height: 24px;
+  width: 100px;
+  border-radius: 12px;
+  background: ${(props) => props.theme.colors.pluginTitle};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const ClosedTitle = styled.div`
+  font-family: "MavenPro";
+  font-weight: 600;
+  font-size: 1rem;
+  color: ${ColorPalette.white};
 `;
 
 export const getBranchIdFromName = (name: string): string => {
@@ -307,6 +297,8 @@ const RemoteVCSMergeRequest = (props: Props) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const { isEditting, setIsEditting } = useMergeRequestNavContext();
+  const [updateStatus, updateStatusMutation] = useUpdateMergeRequestStatusMutation();
+  const [deleteStatus, deleteStatusMutation] = useDeleteMergeRequestStatusMutation();
 
   const branchIcon = useMemo(() => {
     if (theme.name == "light") {
@@ -335,6 +327,70 @@ const RemoteVCSMergeRequest = (props: Props) => {
     }
     return AbortWhite;
   }, [theme.name]);
+
+  const reviewStatus = useMemo(() => {
+    if (
+      props?.repository?.mergeRequest?.mergeRequestPermissions
+        ?.requireApprovalToMerge &&
+      props?.repository?.mergeRequest?.mergeRequestPermissions
+        ?.requireReapprovalOnPushToMerge
+    ) {
+      const reviews = props?.repository?.mergeRequest?.reviewStatuses?.filter(
+        (rs) => {
+          return (
+            rs?.branchHeadShaAtUpdate ==
+            props?.repository?.mergeRequest?.branchState?.commitState?.sha
+          );
+        }
+      );
+      const hasBlock = reviews?.find((r) => r?.approvalStatus == "blocked");
+      if (hasBlock) {
+        return "blocked";
+      }
+      const hasApproval = reviews?.find((r) => r?.approvalStatus == "approved");
+      if (hasApproval) {
+        return "approved";
+      }
+      return "pending";
+    }
+    const reviews = props?.repository?.mergeRequest?.reviewStatuses;
+    const hasBlock = reviews?.find((r) => r?.approvalStatus == "blocked");
+    if (hasBlock) {
+      return "blocked";
+    }
+    const hasApproval = reviews?.find((r) => r?.approvalStatus == "approved");
+    if (hasApproval) {
+      return "approved";
+    }
+    return "pending";
+  }, [
+    props?.repository?.mergeRequest,
+    props?.repository?.mergeRequest?.reviewStatuses,
+    props?.repository?.mergeRequest?.branchState?.commitState,
+    props?.repository?.mergeRequest?.mergeRequestPermissions,
+  ]);
+
+  const reviewStatusColor = useMemo(() => {
+    if (reviewStatus == "blocked") {
+      return theme.name == "light" ? ColorPalette.red : ColorPalette.lightRed;
+    }
+    if (reviewStatus == "approved") {
+      return ColorPalette.teal;
+    }
+
+    return ColorPalette.gray;
+  }, [reviewStatus, theme.name]);
+
+  const reviewStatusText = useMemo(() => {
+    if (reviewStatus == "blocked") {
+      return "Blocked";
+    }
+    if (reviewStatus == "approved") {
+      return "Approved";
+    }
+
+    return "Pending Review";
+  }, [reviewStatus, theme.name]);
 
   const linkBase = useRepoLinkBase(props.repository);
   const { reviewPage, setReviewPage } = useMergeRequestReviewPage();
@@ -434,34 +490,6 @@ const RemoteVCSMergeRequest = (props: Props) => {
     );
   }, [props.repository?.repoBranches, branch]);
 
-  //const mergeError = useMemo(() => {
-  //  if (!branch?.baseBranchId) {
-  //    return "No base branch for branch " + branch?.name;
-  //  }
-  //  if (!props.repository?.branchState?.proposedMergeRequest?.canCreateMergeRequest) {
-  //    return "Invalid permissions";
-  //  }
-
-  //  if (props.repository?.branchState?.proposedMergeRequest?.isMerged) {
-  //    return "Branch already merged";
-  //  }
-  //  return null;
-  //}, [props.repository?.branchState?.proposedMergeRequest, branch])
-
-  //const disableCreate = useMemo(() => {
-  //  if (mergeError) {
-  //    return true;
-  //  }
-  //  if (title?.trim() == "") {
-  //    return true;
-  //  }
-  //  if (description?.trim() == "") {
-  //    return true;
-  //  }
-  //  return false;
-
-  //}, [branch, title, description, mergeError]);
-
   const [updateMergeRequest, updateMergeRequestRequest] =
     useUpdateMergeRequestMutation();
 
@@ -471,9 +499,6 @@ const RemoteVCSMergeRequest = (props: Props) => {
     ) {
       return false;
     }
-    // if (mergeError) {
-    //   return true;
-    // }
     if (title?.trim() == "") {
       return true;
     }
@@ -486,6 +511,53 @@ const RemoteVCSMergeRequest = (props: Props) => {
     description,
     props?.repository?.mergeRequest?.mergeRequestPermissions?.canEditInfo,
   ]);
+
+  const onApprove = useCallback(() => {
+    if (!props?.repository?.id) {
+      return false;
+    }
+    if (!props?.repository?.mergeRequest?.id) {
+      return false;
+    }
+    updateStatus({
+      variables: {
+        repositoryId: props?.repository?.id,
+        mergeRequestId: props?.repository?.mergeRequest.id,
+        approvalStatus: "approved"
+      }
+    })
+  }, [props?.repository?.mergeRequest?.id, props?.repository?.id]);
+
+  const onBlock = useCallback(() => {
+    if (!props?.repository?.id) {
+      return false;
+    }
+    if (!props?.repository?.mergeRequest?.id) {
+      return false;
+    }
+    updateStatus({
+      variables: {
+        repositoryId: props?.repository?.id,
+        mergeRequestId: props?.repository?.mergeRequest.id,
+        approvalStatus: "blocked"
+      }
+    })
+  }, [props?.repository?.mergeRequest?.id, props?.repository?.id]);
+
+  const onDeleteStatus = useCallback(() => {
+    if (!props?.repository?.id) {
+      return false;
+    }
+    if (!props?.repository?.mergeRequest?.id) {
+      return false;
+    }
+    deleteStatus({
+      variables: {
+        repositoryId: props?.repository?.id,
+        mergeRequestId: props?.repository?.mergeRequest.id,
+      }
+    })
+  }, [props?.repository?.mergeRequest?.id, props?.repository?.id]);
 
   const onUpdate = useCallback(() => {
     if (disableUpdate) {
@@ -586,15 +658,38 @@ const RemoteVCSMergeRequest = (props: Props) => {
                   <LabelSpan>{"Has conflicts"}</LabelSpan>
                 </Row>
               )}
+              <Row style={{ marginTop: 16, justifyContent: "space-between" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "flex-start",
+                    alignItems: "center",
+                  }}
+                >
+                  <ReviewCircle style={{ background: reviewStatusColor }} />
+                  <LabelSpan>{reviewStatusText}</LabelSpan>
+                </div>
+                {props?.repository?.mergeRequest?.isOpen && (
+                  <ClosedPill>
+                    <ClosedTitle>{"open"}</ClosedTitle>
+                  </ClosedPill>
+                )}
+              </Row>
               {props.repository?.mergeRequest && (
                 <>
-                  <Row style={{ marginBottom: 12 }}>
+                  <Row style={{ marginBottom: 0 }}>
                     <SubTitleSpan>{"Reviewers"}</SubTitleSpan>
                   </Row>
-                  <ReviewSearch
-                    repository={props.repository}
-                    mergeRequest={props.repository?.mergeRequest}
-                  />
+                  {props?.repository?.mergeRequest?.mergeRequestPermissions
+                    ?.canEditReviewers &&
+                    (props?.repository?.mergeRequest?.reviewerRequests
+                      ?.length ?? 0) <= 3 && (
+                      <ReviewSearch
+                        repository={props.repository}
+                        mergeRequest={props.repository?.mergeRequest}
+                      />
+                    )}
                   <Reviewers
                     repository={props.repository}
                     mergeRequest={props.repository.mergeRequest}
@@ -662,93 +757,209 @@ const RemoteVCSMergeRequest = (props: Props) => {
                 style={{
                   display: "block",
                   flexDirection: "column",
-                  width: "100%"
+                  width: "100%",
                 }}
               >
-                  <ButtonRow>
-                    <Button
-                      label={
-                        <div
-                          style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            paddingLeft: 24,
-                            paddingRight: 36,
-                          }}
-                        >
-                          <img
-                            style={{
-                              height: 32,
-                              width: 32,
-                              marginRight: 16,
-                            }}
-                            src={CheckMarkWhite}
+                {props?.repository?.mergeRequest?.mergeRequestPermissions
+                  ?.canReview && (
+                  <>
+                    {props?.repository?.mergeRequest?.mergeRequestPermissions
+                      ?.hasApproved && (
+                      <RepoUndoReviewButton
+                        onClick={onDeleteStatus}
+                        isLoading={deleteStatusMutation.loading}
+                        isApproved={true}
+                      />
+                    )}
+                    {props?.repository?.mergeRequest?.mergeRequestPermissions
+                      ?.hasBlocked && (
+                      <RepoUndoReviewButton
+                        onClick={onDeleteStatus}
+                        isLoading={deleteStatusMutation.loading}
+                        isApproved={false}
+                      />
+                    )}
+                    {!props?.repository?.mergeRequest?.mergeRequestPermissions
+                      ?.hasApproved &&
+                      !props?.repository?.mergeRequest?.mergeRequestPermissions
+                        ?.hasBlocked && (
+                        <ButtonRow>
+                          <Button
+                            isLoading={updateStatusMutation.loading}
+                            onClick={onApprove}
+                            label={
+                              <div
+                                style={{
+                                  display: "flex",
+                                  flexDirection: "row",
+                                  justifyContent: "space-between",
+                                  alignItems: "center",
+                                  width: "100%",
+                                  paddingLeft: 24,
+                                  paddingRight: 36,
+                                }}
+                              >
+                                <img
+                                  style={{
+                                    height: 32,
+                                    width: 32,
+                                    marginRight: 16,
+                                  }}
+                                  src={CheckMarkWhite}
+                                />
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    width: "100%",
+                                    marginRight: 16,
+                                  }}
+                                >
+                                  <span>{"approve"}</span>
+                                </div>
+                              </div>
+                            }
+                            bg={"teal"}
+                            size={"extra-big"}
                           />
-                          <span>{"approve"}</span>
-                        </div>
-                      }
-                      bg={"teal"}
-                      size={"extra-big"}
-                    />
-                    <div style={{width: 48}}/>
-                    <Button
-                      label={
-                        <div
-                          style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            paddingLeft: 24,
-                            paddingRight: 36,
-                          }}
-                        >
-                          <img
-                            style={{
-                              height: 28,
-                              width: 28,
-                              marginRight: 16,
-                            }}
-                            src={XMarkWhite}
+                          <div style={{ width: 48 }} />
+                          <Button
+                            isLoading={updateStatusMutation.loading}
+                            onClick={onBlock}
+                            label={
+                              <div
+                                style={{
+                                  display: "flex",
+                                  flexDirection: "row",
+                                  justifyContent: "space-between",
+                                  alignItems: "center",
+                                  width: "100%",
+                                  paddingLeft: 24,
+                                  paddingRight: 36,
+                                }}
+                              >
+                                <img
+                                  style={{
+                                    height: 28,
+                                    width: 28,
+                                    marginRight: 16,
+                                  }}
+                                  src={XMarkWhite}
+                                />
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    width: "100%",
+                                    marginRight: 16,
+                                  }}
+                                >
+                                  <span>{"block"}</span>
+                                </div>
+                              </div>
+                            }
+                            bg={"red"}
+                            size={"extra-big"}
                           />
-                          <span>{"block"}</span>
-                        </div>
-                      }
-                      bg={"red"}
-                      size={"extra-big"}
-                    />
-                  </ButtonRow>
-                  <ButtonRow style={{marginTop: 24}}>
-                    <Button
-                      label={
-                        <div
-                          style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            paddingLeft: 24,
-                            paddingRight: 36,
-                          }}
-                        >
-                          <img
+                        </ButtonRow>
+                      )}
+                  </>
+                )}
+                {props?.repository?.mergeRequest?.isOpen &&
+                  !!props.repository?.mergeRequest?.mergeRequestPermissions
+                    ?.canClose && (
+                    <ButtonRow style={{ marginTop: 24 }}>
+                      <Button
+                        label={
+                          <div
                             style={{
-                              height: 32,
-                              width: 32,
-                              marginRight: 16,
+                              display: "flex",
+                              flexDirection: "row",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              width: "100%",
+                              paddingLeft: 24,
+                              paddingRight: 36,
                             }}
-                            src={MergeIconWhite}
-                          />
-                          <span>{"merge branch & close"}</span>
-                        </div>
-                      }
-                      bg={"purple"}
-                      size={"extra-big"}
-                      isDisabled
-                    />
-                  </ButtonRow>
+                          >
+                            <img
+                              style={{
+                                height: 32,
+                                width: 32,
+                                marginRight: 16,
+                              }}
+                              src={TrashIconWhite}
+                            />
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "row",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                width: "100%",
+                                marginRight: 16,
+                              }}
+                            >
+                              <span>{"close merge request"}</span>
+                            </div>
+                          </div>
+                        }
+                        bg={"gray"}
+                        size={"extra-big"}
+                      />
+                    </ButtonRow>
+                  )}
+                {props?.repository?.mergeRequest?.mergeRequestPermissions
+                  ?.allowedToMerge &&
+                  props?.repository?.mergeRequest?.isOpen &&
+                  !!props.repository?.mergeRequest?.mergeRequestPermissions
+                    ?.canClose && (
+                    <ButtonRow style={{ marginTop: 24 }}>
+                      <Button
+                        label={
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "row",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              width: "100%",
+                              paddingLeft: 24,
+                              paddingRight: 36,
+                            }}
+                          >
+                            <img
+                              style={{
+                                height: 32,
+                                width: 32,
+                                marginRight: 16,
+                              }}
+                              src={MergeIconWhite}
+                            />
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "row",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                width: "100%",
+                                marginRight: 16,
+                              }}
+                            >
+                              <span>{"merge branch & close"}</span>
+                            </div>
+                          </div>
+                        }
+                        bg={"purple"}
+                        size={"extra-big"}
+                        isDisabled={!props?.repository?.mergeRequest?.canMerge}
+                      />
+                    </ButtonRow>
+                  )}
               </div>
             )}
             {isEditting && (

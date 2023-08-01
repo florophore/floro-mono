@@ -58,6 +58,11 @@ export default class ReviewerStatusesContext extends BaseContext {
         mergeRequestId,
         isDeleted: false,
       },
+      relations: {
+        user: {
+          profilePhoto: true
+        },
+      },
     });
   }
 

@@ -249,7 +249,25 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
         };
       }
     ),
-
+    canMerge: runWithHooks(
+      () => [this.mergeRequestPermissionsLoader],
+      async (mergeRequest: MergeRequest, _, { cacheKey }) => {
+        if (!mergeRequest?.id) {
+          return null;
+        }
+        const permission = this.requestCache.getMergeRequestPermissions(
+          cacheKey,
+          mergeRequest?.id
+        );
+        if (permission?.allowedToMerge && permission.canClose && mergeRequest?.isConflictFree && mergeRequest?.isOpen) {
+          if (permission.requireApprovalToMerge) {
+            return (permission.hasApproval ?? false) && !(permission?.hasBlocked ?? false);
+          }
+          return true;
+        }
+        return false;
+      }
+    ),
     mergeRequestPermissions: runWithHooks(
       () => [this.mergeRequestPermissionsLoader],
       async (mergeRequest: MergeRequest, _, { cacheKey }) => {

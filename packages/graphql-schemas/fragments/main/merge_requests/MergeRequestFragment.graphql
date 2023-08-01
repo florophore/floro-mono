@@ -13,6 +13,8 @@ fragment MergeRequest on MergeRequest {
   description
   createdAt
   isOpen
+  wasClosedWithoutMerging
+  approvalStatus
   isMerged
   canMerge
   isConflictFree
@@ -145,14 +147,17 @@ fragment MergeRequest on MergeRequest {
   }
   mergeRequestPermissions {
     hasApproval
+    hasBlock
     canEditInfo
     canEditReviewers
     canRemoveSelfFromReviewers
-    canBlock
-    canApprove
+    canReview
+    hasApproved
+    hasBlocked
     allowedToMerge
     canClose
-    canDeleteBranch
+    requireReapprovalOnPushToMerge
+    requireApprovalToMerge
   }
   divergenceState {
     sha

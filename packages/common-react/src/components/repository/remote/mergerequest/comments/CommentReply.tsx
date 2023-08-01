@@ -96,7 +96,7 @@ const EdittingText = styled.span`
 const AuthorTitle = styled.h3`
   font-family: "MavenPro";
   font-weight: 600;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   color: ${(props) => props.theme.colors.contrastText};
 `;
 
@@ -232,7 +232,7 @@ const CommentReply = (props: Props) => {
         <CommentDisplayBox style={{ flexGrow: 1 }}>
           <CommentDisplayInnerContainer>
             <MetaDataRow>
-              <MetaDataControlRow>
+              <MetaDataControlRow style={{marginRight: 12}}>
                 <AuthorTitle>{userFullname}</AuthorTitle>
                 {session?.user?.id == props.reply?.user?.id && (
                   <>

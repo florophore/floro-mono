@@ -212,7 +212,7 @@ export default class MergeRequestEventService
       mergeRequestId: mergeRequest.id,
       performedByUserId: byUser.id,
       branchHeadShaAtEvent: branchHead,
-      reviewerRequestId: reviewStatus.id,
+      reviewStatusId: reviewStatus.id,
     });
     // EMAIL
   }
@@ -235,7 +235,7 @@ export default class MergeRequestEventService
       mergeRequestId: mergeRequest.id,
       performedByUserId: byUser.id,
       branchHeadShaAtEvent: branchHead,
-      reviewerRequestId: reviewStatus.id,
+      reviewStatusId: reviewStatus.id,
     });
     // EMAIL
   }
@@ -258,7 +258,7 @@ export default class MergeRequestEventService
       mergeRequestId: mergeRequest.id,
       performedByUserId: byUser.id,
       branchHeadShaAtEvent: branchHead,
-      reviewerRequestId: reviewStatus.id,
+      reviewStatusId: reviewStatus.id,
     });
   }
 

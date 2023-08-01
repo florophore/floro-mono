@@ -1,12 +1,10 @@
-mutation UpdateMergeRequestReviewers(
+mutation CloseMergeRequest(
   $mergeRequestId: String!
   $repositoryId: String!
-  $reviewerIds: [String]
 ) {
-  updateMergeRequestReviewers(
+  closeMergeRequest(
     mergeRequestId: $mergeRequestId
     repositoryId: $repositoryId
-    reviewerIds: $reviewerIds
   ) {
     ... on UnAuthenticatedError {
       type
@@ -16,35 +14,12 @@ mutation UpdateMergeRequestReviewers(
       type
       message
     }
-    ... on UpdateMergeRequestReviewersSuccess {
+    ... on CloseMergeRequestSuccess {
       repository {
         ...Repository
       }
       mergeRequest {
         ...SimpleMergeRequest
-        reviewerRequests {
-          id
-          updatedAt
-          createdAt
-          requestedByUser {
-            id
-            username
-            firstName
-            lastName
-            profilePhoto {
-              ...Photo
-            }
-          }
-          requestedReviewerUser {
-            id
-            username
-            firstName
-            lastName
-            profilePhoto {
-              ...Photo
-            }
-          }
-        }
         mergeRequestPermissions {
           hasApproval
           hasBlock
@@ -105,7 +80,7 @@ mutation UpdateMergeRequestReviewers(
         }
       }
     }
-    ... on UpdateMergeRequestReviewersError {
+    ... on CloseMergeRequestError {
       message
       type
     }

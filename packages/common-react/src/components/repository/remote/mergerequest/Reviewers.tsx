@@ -43,7 +43,7 @@ const Reviewers = (props: Props) => {
           <ReviewerRow
             key={index}
             repository={props.repository}
-            reviwerRequest={reviewerRequest}
+            reviewerRequest={reviewerRequest}
             mergeRequest={props?.mergeRequest}
           />
         );

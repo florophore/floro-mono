@@ -1,12 +1,10 @@
-mutation UpdateMergeRequestReviewers(
+mutation DeleteMergeRequestStatus(
   $mergeRequestId: String!
   $repositoryId: String!
-  $reviewerIds: [String]
 ) {
-  updateMergeRequestReviewers(
+  deleteMergeRequestStatus(
     mergeRequestId: $mergeRequestId
     repositoryId: $repositoryId
-    reviewerIds: $reviewerIds
   ) {
     ... on UnAuthenticatedError {
       type
@@ -16,35 +14,12 @@ mutation UpdateMergeRequestReviewers(
       type
       message
     }
-    ... on UpdateMergeRequestReviewersSuccess {
+    ... on DeleteMergeRequestReviewStatusSuccess {
       repository {
         ...Repository
       }
       mergeRequest {
         ...SimpleMergeRequest
-        reviewerRequests {
-          id
-          updatedAt
-          createdAt
-          requestedByUser {
-            id
-            username
-            firstName
-            lastName
-            profilePhoto {
-              ...Photo
-            }
-          }
-          requestedReviewerUser {
-            id
-            username
-            firstName
-            lastName
-            profilePhoto {
-              ...Photo
-            }
-          }
-        }
         mergeRequestPermissions {
           hasApproval
           hasBlock
@@ -58,6 +33,22 @@ mutation UpdateMergeRequestReviewers(
           canClose
           requireReapprovalOnPushToMerge
           requireApprovalToMerge
+        }
+        reviewStatuses {
+          id
+          approvalStatus
+          branchHeadShaAtUpdate
+          updatedAt
+          createdAt
+          user {
+            id
+            username
+            firstName
+            lastName
+            profilePhoto {
+              ...Photo
+            }
+          }
         }
         timelineEvents {
           id
@@ -105,7 +96,7 @@ mutation UpdateMergeRequestReviewers(
         }
       }
     }
-    ... on UpdateMergeRequestReviewersError {
+    ... on DeleteMergeRequestReviewStatusError {
       message
       type
     }

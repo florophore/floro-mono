@@ -9,6 +9,7 @@ import { useSession } from "../../../../../session/session-context";
 import UserProfilePhoto from "@floro/storybook/stories/common-components/UserProfilePhoto";
 import Button from "@floro/storybook/stories/design-system/Button";
 import ColorPalette from "@floro/styles/ColorPalette";
+import { useOfflinePhoto, useOfflinePhotoMap } from "../../../../../offline/OfflinePhotoContext";
 
 const Container = styled.div`
   width: 100%;
@@ -117,10 +118,11 @@ interface Props {
 
 const CreateComment = (props: Props) => {
   const theme = useTheme();
-  const { session } = useSession();
+  const { session, currentUser } = useSession();
 
   const growWrap = useRef<HTMLDivElement>(null);
   const growTextarea = useRef<HTMLTextAreaElement>(null);
+  const offlinePhoto = useOfflinePhoto(currentUser?.profilePhoto ?? null);
 
   useEffect(() => {
     if (growWrap?.current) {
@@ -188,7 +190,7 @@ const CreateComment = (props: Props) => {
           <div style={{ marginLeft: -8 }}>
             <UserProfilePhoto
               user={session?.user}
-              offlinePhoto={null}
+              offlinePhoto={offlinePhoto}
               size={40}
             />
           </div>

@@ -53,6 +53,7 @@ interface BranchRuleUserPermission {
   branchName: string;
   directPushingDisabled: boolean;
   requiresApprovalToMerge: boolean;
+  requireReapprovalOnPushToMerge: boolean;
   automaticallyDeletesMergedFeatureBranches: boolean;
   canCreateMergeRequests: boolean;
   canMergeWithApproval: boolean;
@@ -217,6 +218,8 @@ export default class RepoDataService {
       directPushingDisabled: protectedBranchRule.disableDirectPushing ?? false,
       requiresApprovalToMerge:
         protectedBranchRule.requireApprovalToMerge ?? false,
+      requireReapprovalOnPushToMerge:
+        protectedBranchRule.requireReapprovalOnPushToMerge ?? false,
       automaticallyDeletesMergedFeatureBranches:
         protectedBranchRule.automaticallyDeleteMergedFeatureBranches ?? false,
       canCreateMergeRequests: canCreateMergeRequests ?? false,

@@ -2,28 +2,14 @@ import React, { useMemo, useCallback, useState } from "react";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import {
-  CommitInfo,
   MergeRequest,
-  MergeRequestEvent,
   Repository,
   ReviewerRequest,
   User,
   useUpdateMergeRequestReviewersMutation,
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
-import { Manifest } from "floro/dist/src/plugins";
-import { RemoteCommitState } from "../hooks/remote-state";
-import TimeAgo from "javascript-time-ago";
-import CommitWhite from "@floro/common-assets/assets/images/repo_icons/commit.white.svg";
-import CommitGray from "@floro/common-assets/assets/images/repo_icons/commit.gray.svg";
-import MergeRequestWhite from "@floro/common-assets/assets/images/repo_icons/merge_request.white.svg";
-import MergeRequestGray from "@floro/common-assets/assets/images/repo_icons/merge_request.gray.svg";
 
-import EditWhite from "@floro/common-assets/assets/images/icons/edit.dark.svg";
-import EditGray from "@floro/common-assets/assets/images/icons/edit.light.svg";
-
-import en from "javascript-time-ago/locale/en";
 import ColorPalette from "@floro/styles/ColorPalette";
-import InitialProfileDefault from "@floro/storybook/stories/common-components/InitialProfileDefault";
 import UserProfilePhoto from "@floro/storybook/stories/common-components/UserProfilePhoto";
 import DotsLoader from "@floro/storybook/stories/design-system/DotsLoader";
 import { useSession } from "../../../../session/session-context";
@@ -93,7 +79,7 @@ const StatusCircle = styled.div`
 `;
 
 const StatusText = styled.p`
-  margin-left: 8px;
+  margin-right: 8px;
   font-family: "MavenPro";
   font-weight: 600;
   font-size: 1rem;
@@ -112,9 +98,10 @@ const RemoveText = styled.p`
   margin-left: 8px;
   font-family: "MavenPro";
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 1.05rem;
   color: ${(props) => props.theme.colors.warningTextColor};
   cursor: pointer;
+  margin-top: 1px;
 `;
 
 const upcaseFirst = (str: string) => {
@@ -124,7 +111,7 @@ const upcaseFirst = (str: string) => {
 
 interface Props {
   repository: Repository;
-  reviwerRequest: ReviewerRequest;
+  reviewerRequest: ReviewerRequest;
   mergeRequest: MergeRequest;
 }
 
@@ -143,7 +130,7 @@ const ReviewerRow = (props: Props) => {
     useUpdateMergeRequestReviewersMutation();
 
   const onRemoveUser = useCallback(() => {
-    const user = props?.reviwerRequest?.requestedReviewerUser;
+    const user = props?.reviewerRequest?.requestedReviewerUser;
     if (updatedReviewersMutation.loading) {
       return;
     }
@@ -165,22 +152,51 @@ const ReviewerRow = (props: Props) => {
       }
     })
   }, [reviewerIds,
-    props?.reviwerRequest?.requestedByUser?.id,
+    props?.reviewerRequest?.requestedByUser?.id,
     props.repository?.id,
     props.mergeRequest?.id,
     updatedReviewersMutation.loading
   ]);
 
   const usernameDisplay = useMemo(() => {
-    return "@" + props.reviwerRequest.requestedReviewerUser?.username;
+    return "@" + props.reviewerRequest.requestedReviewerUser?.username;
 
-  }, [props.reviwerRequest.requestedReviewerUser]);
+  }, [props.reviewerRequest.requestedReviewerUser]);
 
-  const firstName = useMemo(() => upcaseFirst(props.reviwerRequest.requestedReviewerUser?.firstName ?? ""), [props.reviwerRequest.requestedReviewerUser?.firstName]);
-  const lastName = useMemo(() => upcaseFirst(props.reviwerRequest.requestedReviewerUser?.lastName ?? ""), [props.reviwerRequest.requestedReviewerUser?.lastName]);
+  const firstName = useMemo(() => upcaseFirst(props.reviewerRequest.requestedReviewerUser?.firstName ?? ""), [props.reviewerRequest.requestedReviewerUser?.firstName]);
+  const lastName = useMemo(() => upcaseFirst(props.reviewerRequest.requestedReviewerUser?.lastName ?? ""), [props.reviewerRequest.requestedReviewerUser?.lastName]);
   const reviewStatus = useMemo((): 'approved'|'blocked'|'pending' => {
+    if (props.mergeRequest?.mergeRequestPermissions?.requireApprovalToMerge && props?.mergeRequest?.mergeRequestPermissions?.requireReapprovalOnPushToMerge) {
+      const filteredReviewStatus = props?.mergeRequest?.reviewStatuses?.filter(rs => {
+        return rs?.branchHeadShaAtUpdate == props?.mergeRequest?.branchState?.commitState?.sha;
+      });
+      const status =  filteredReviewStatus?.find(rs => rs?.user?.id == props?.reviewerRequest?.requestedReviewerUser?.id);
+      if (!status) {
+        return 'pending';
+      }
+      if(status.approvalStatus == "approved") {
+        return 'approved';
+      }
+      if(status.approvalStatus == "blocked") {
+        return 'blocked';
+      }
+      return 'pending';
+    }
+
+    const status = props?.mergeRequest?.reviewStatuses?.find(
+      (rs) => rs?.user?.id == props?.reviewerRequest?.requestedReviewerUser?.id
+    );
+    if (!status) {
+      return 'pending';
+    }
+    if(status.approvalStatus == "approved") {
+      return 'approved';
+    }
+    if(status.approvalStatus == "blocked") {
+      return 'blocked';
+    }
     return 'pending';
-  }, [props.reviwerRequest, props.mergeRequest?.reviewStatuses])
+  }, [props.reviewerRequest, props.mergeRequest?.reviewStatuses, props.mergeRequest?.mergeRequestPermissions, props?.mergeRequest?.branchState?.commitState?.sha])
 
   const reviewText = useMemo(() => {
     if (reviewStatus == 'approved') {
@@ -210,19 +226,19 @@ const ReviewerRow = (props: Props) => {
     if (!session?.user) {
       return false;
     }
-    if (props?.reviwerRequest?.requestedByUser?.id == session?.user?.id) {
-      return true;
+    if (props?.reviewerRequest?.requestedByUser?.id == session?.user?.id) {
+      return reviewStatus == 'pending';
     }
-    if (props?.reviwerRequest?.requestedReviewerUser?.id == session?.user?.id) {
-      return true;
+    if (props?.reviewerRequest?.requestedReviewerUser?.id == session?.user?.id) {
+      return reviewStatus == 'pending';
     }
     return false;
-  }, [props?.reviwerRequest, session?.user]);
+  }, [props?.reviewerRequest, session?.user, reviewStatus]);
 
   return (
     <Container>
       <LeftRow>
-        <UserProfilePhoto user={props.reviwerRequest.requestedReviewerUser as User} size={48} offlinePhoto={null}/>
+        <UserProfilePhoto user={props.reviewerRequest.requestedReviewerUser as User} size={48} offlinePhoto={null}/>
         <LeftColumn style={{marginLeft: 16}}>
           <NameTitle>{userFullname}</NameTitle>
           <HandleTitle>{usernameDisplay}</HandleTitle>
@@ -231,8 +247,8 @@ const ReviewerRow = (props: Props) => {
       <RightRow>
         <RightColumn>
           <StatusBlock>
-            <StatusCircle style={{backgroundColor: reviewColor}}/>
             <StatusText>{reviewText}</StatusText>
+            <StatusCircle style={{backgroundColor: reviewColor}}/>
           </StatusBlock>
           <DeleteBlock>
             {showDeleteBlock && (

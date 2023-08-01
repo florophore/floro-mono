@@ -1,12 +1,12 @@
-mutation UpdateMergeRequestReviewers(
+mutation UpdateMergeRequestStatus(
   $mergeRequestId: String!
   $repositoryId: String!
-  $reviewerIds: [String]
+  $approvalStatus: String
 ) {
-  updateMergeRequestReviewers(
+  updateMergeRequestStatus(
     mergeRequestId: $mergeRequestId
     repositoryId: $repositoryId
-    reviewerIds: $reviewerIds
+    approvalStatus: $approvalStatus
   ) {
     ... on UnAuthenticatedError {
       type
@@ -16,35 +16,12 @@ mutation UpdateMergeRequestReviewers(
       type
       message
     }
-    ... on UpdateMergeRequestReviewersSuccess {
+    ... on UpdateMergeRequestReviewStatusSuccess {
       repository {
         ...Repository
       }
       mergeRequest {
         ...SimpleMergeRequest
-        reviewerRequests {
-          id
-          updatedAt
-          createdAt
-          requestedByUser {
-            id
-            username
-            firstName
-            lastName
-            profilePhoto {
-              ...Photo
-            }
-          }
-          requestedReviewerUser {
-            id
-            username
-            firstName
-            lastName
-            profilePhoto {
-              ...Photo
-            }
-          }
-        }
         mergeRequestPermissions {
           hasApproval
           hasBlock
@@ -58,6 +35,22 @@ mutation UpdateMergeRequestReviewers(
           canClose
           requireReapprovalOnPushToMerge
           requireApprovalToMerge
+        }
+        reviewStatuses {
+          id
+          approvalStatus
+          branchHeadShaAtUpdate
+          updatedAt
+          createdAt
+          user {
+            id
+            username
+            firstName
+            lastName
+            profilePhoto {
+              ...Photo
+            }
+          }
         }
         timelineEvents {
           id
@@ -105,7 +98,7 @@ mutation UpdateMergeRequestReviewers(
         }
       }
     }
-    ... on UpdateMergeRequestReviewersError {
+    ... on UpdateMergeRequestReviewStatusError {
       message
       type
     }

@@ -25,6 +25,12 @@ import TrashDark from "@floro/common-assets/assets/images/icons/trash.dark.svg";
 import EditWhite from "@floro/common-assets/assets/images/icons/edit.dark.svg";
 import EditGray from "@floro/common-assets/assets/images/icons/edit.light.svg";
 
+import OrgMemberLight from "@floro/common-assets/assets/images/icons/members.light.svg";
+import OrgMemberDark from "@floro/common-assets/assets/images/icons/members.dark.svg";
+
+import CircleCheckMarkLight from "@floro/common-assets/assets/images/icons/teal_check_mark_circle.light.svg";
+import RedXCircle from "@floro/common-assets/assets/images/icons/red_x_circle.dark.svg";
+
 import en from "javascript-time-ago/locale/en";
 import ColorPalette from "@floro/styles/ColorPalette";
 import InitialProfileDefault from "@floro/storybook/stories/common-components/InitialProfileDefault";
@@ -69,6 +75,11 @@ const Icon = styled.img`
   width: 20px;
 `;
 
+const FullIcon = styled.img`
+  height: 100%;
+  width: 100%;
+`;
+
 const Title = styled.h1`
   font-family: "MavenPro";
   font-weight: 500;
@@ -88,12 +99,6 @@ const Line = styled.div`
   margin-bottom: 8px;
 `;
 
-const ProfilePic = styled.img`
-  height: 32px;
-  width: 32px;
-  border-radius: 50%;
-  margin-right: 12px;
-`;
 
 const upcaseFirst = (str: string) => {
   const rest = str.substring(1);
@@ -165,11 +170,40 @@ const TimelineRow = (props: Props) => {
       }
       return TrashDark;
     }
+
+    if (props.event.eventName == "ADDED_REVIEWER") {
+      if (theme.name == "light") {
+        return OrgMemberLight;
+      }
+      return OrgMemberDark;
+    }
+
+    if (props.event.eventName == "ADDED_REVIEW_STATUS" && props?.event?.subeventName == "approved") {
+      return CircleCheckMarkLight;
+    }
+    if (props.event.eventName == "ADDED_REVIEW_STATUS" && props?.event?.subeventName == "blocked") {
+      return RedXCircle;
+    }
+
+    if (props?.event?.eventName == "DELETED_REVIEW_STATUS") {
+      if (theme.name == "light") {
+        return TrashLight;
+      }
+      return TrashDark;
+    }
     if (theme.name == "light") {
       return CommitGray;
     }
     return CommitWhite;
   }, [theme.name, props.event.eventName]);
+
+
+  const showFullIcon = useMemo(() => {
+    if (props.event.eventName == "ADDED_REVIEW_STATUS") {
+      return true;
+    }
+    return false;
+  }, [props.event]);
 
   const firstName = useMemo(() => upcaseFirst(props.event.performedByUser?.firstName ?? ""), [props.event.performedByUser?.firstName]);
   const lastName = useMemo(() => upcaseFirst(props.event.performedByUser?.lastName ?? ""), [props.event.performedByUser?.lastName]);
@@ -258,9 +292,48 @@ const TimelineRow = (props: Props) => {
             </b>
             {' as a reviewer'}
           </span>
-
         );
     }
+
+    if (props.event.eventName == "ADDED_REVIEW_STATUS" && props?.event?.subeventName == "approved") {
+        return (
+          <span>
+            <b>
+              {'Approved'}
+            </b>
+            {' merge request for '}
+            <b>
+              {`(${props.event.branchHeadShaAtEvent?.substring(0, 6)})`}
+            </b>
+          </span>
+        );
+    }
+
+    if (props.event.eventName == "ADDED_REVIEW_STATUS" && props?.event?.subeventName == "blocked") {
+        return (
+          <span>
+            <b>
+              {'Blocked'}
+            </b>
+            {' merge request for '}
+            <b>
+              {`(${props.event.branchHeadShaAtEvent?.substring(0, 6)})`}
+            </b>
+          </span>
+        );
+    }
+    if (props.event.eventName == 'DELETED_REVIEW_STATUS') {
+        return (
+          <span>
+            {'removed review for '}
+            <b>
+              {`(${props.event.branchHeadShaAtEvent?.substring(0, 6)})`}
+            </b>
+          </span>
+        );
+
+    }
+
     if (props.event.eventName == "ADDED_COMMENT") {
       return "added a comment"
     }
@@ -303,7 +376,12 @@ const TimelineRow = (props: Props) => {
     <Container>
       <LeftColumn>
         <IconContainer>
-          <Icon src={icon} />
+          {!showFullIcon && (
+            <Icon src={icon} />
+          )}
+          {showFullIcon && (
+            <FullIcon src={icon} />
+          )}
         </IconContainer>
         {!props.isLast && <Line />}
       </LeftColumn>

@@ -63,14 +63,17 @@ type MergeRequestEvent {
 
 type MergeRequestPermissions {
   hasApproval: Boolean
+  hasBlock: Boolean
   canEditInfo: Boolean
   canEditReviewers: Boolean
   canRemoveSelfFromReviewers: Boolean
-  canBlock: Boolean
-  canApprove: Boolean
+  canReview: Boolean
+  hasApproved: Boolean
+  hasBlocked: Boolean
   allowedToMerge: Boolean
   canClose: Boolean
-  canDeleteBranch: Boolean
+  requireReapprovalOnPushToMerge: Boolean
+  requireApprovalToMerge: Boolean
 }
 
 type MergeRequest {
@@ -81,6 +84,8 @@ type MergeRequest {
   divergenceState: CommitState
   openedByUser: User
   isOpen: Boolean
+  wasClosedWithoutMerging: Boolean
+  approvalStatus: String
   isMerged: Boolean
   canMerge: Boolean
   isConflictFree: Boolean

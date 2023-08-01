@@ -26,6 +26,16 @@ export class MergeRequest extends BinaryPKBaseEntity {
   @IsBoolean()
   isOpen!: boolean;
 
+  @Column("varchar")
+  @IsOptional()
+  @IsString()
+  approvalStatus?: string;
+
+  @Column("boolean")
+  @IsOptional()
+  @IsBoolean()
+  wasClosedWithoutMerging?: boolean;
+
   @Column("boolean")
   @IsOptional()
   @IsBoolean()
