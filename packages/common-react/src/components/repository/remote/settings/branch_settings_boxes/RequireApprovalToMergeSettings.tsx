@@ -185,7 +185,7 @@ const RequireApprovalToMergeSettings = (props: Props) => {
           </TitleSpan>
           <SubTitle>
             {
-              "Require all merge requests to get peer approval in order to merge."
+              "Require all merge requests to get peer approval in order to merge. Note: Admins are always able to merge regardless of approval status."
             }
           </SubTitle>
         </RightContainer>

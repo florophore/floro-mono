@@ -1,14 +1,12 @@
 import { injectable, inject, multiInject } from "inversify";
-import { Job, Queue, Worker, UnrecoverableError, QueueScheduler, QueueEvents } from "bullmq";
+import { Job, Queue, Worker } from "bullmq";
 
 import DatabaseConnection from "@floro/database/src/connection/DatabaseConnection";
 import ContextFactory from "@floro/database/src/contexts/ContextFactory";
-import RepositoryService from "../repositories/RepositoryService";
 import { Repository } from "@floro/database/src/entities/Repository";
 import { User } from "@floro/database/src/entities/User";
 import BranchPushHandler from "../events/BranchPushEventHandler";
 import { QueryRunner } from "typeorm";
-import RepoRBACService from "../repositories/RepoRBACService";
 import MergeRequestsContext from "@floro/database/src/contexts/merge_requests/MergeRequestsContext";
 import MergeRequestCommentsContext from "@floro/database/src/contexts/merge_requests/MergeRequestCommentsContext";
 import MergeRequestCommentRepliesContext from "@floro/database/src/contexts/merge_requests/MergeRequestCommentRepliesContext";
@@ -52,6 +50,8 @@ export interface CreateMergeRequestResponse {
     | "MERGE_REQUEST_CREATED"
     | "INVALID_PARAMS_ERROR"
     | "NO_BRANCH_ERROR"
+    | "NO_BASE_BRANCH_ERROR"
+    | "ALREADY_MERGED_ERROR"
     | "INVALID_PERMISSIONS_ERROR"
     | "MERGE_REQUEST_ALREADY_EXISTS_FOR_BRANCH"
     | "LOG_ERROR";
@@ -279,7 +279,6 @@ export default class MergeRequestService
   private databaseConnection!: DatabaseConnection;
   private contextFactory!: ContextFactory;
   private repoDataService!: RepoDataService;
-  private repoRBAC!: RepoRBACService;
   private repositoryDatasourceFactoryService!: RepositoryDatasourceFactoryService;
   private createMergeRequestEventHandlers!: CreateMergeRequestEventHandler[];
   private updateMergeRequestEventHandlers!: UpdateMergeRequestEventHandler[];
@@ -295,7 +294,6 @@ export default class MergeRequestService
     @inject(RepoDataService) repoDataService: RepoDataService,
     @inject(RepositoryDatasourceFactoryService)
     repositoryDatasourceFactoryService: RepositoryDatasourceFactoryService,
-    @inject(RepoRBACService) repoRBAC: RepoRBACService,
     @inject(RedisClient) redisClient: RedisClient,
     @multiInject("CreateMergeRequestEventHandler")
     createMergeRequestEventHandlers: CreateMergeRequestEventHandler[],
@@ -317,7 +315,6 @@ export default class MergeRequestService
     this.repoDataService = repoDataService;
     this.repositoryDatasourceFactoryService =
       repositoryDatasourceFactoryService;
-    this.repoRBAC = repoRBAC;
     this.createMergeRequestEventHandlers = createMergeRequestEventHandlers;
     this.updateMergeRequestEventHandlers = updateMergeRequestEventHandlers;
     this.closeMergeRequestEventHandlers = closeMergeRequestEventHandlers;
@@ -352,7 +349,7 @@ export default class MergeRequestService
     return mergeRequest;
   }
 
-  public getMergeRequestPaginatedResut(
+  public getMergeRequestPaginatedResult(
     mergeRequests: Array<MergeRequest>,
     id?: string | null,
     query?: string | null
@@ -372,7 +369,7 @@ export default class MergeRequestService
     for (i = 0; i < mergeRequests?.length; ++i) {
       if (!isSearch) {
         if (!found && id && mergeRequests[i].id == id) {
-          lastId = mergeRequests?.[i - 1]?.id ?? null;
+          lastId = mergeRequests?.[i - MERGE_REQUEST_LIMIT]?.id ?? null;
           found = true;
         }
         if (found) {
@@ -530,7 +527,6 @@ export default class MergeRequestService
       mergeRequest,
       repository,
       user,
-      branch,
       baseBranch,
       branchRuleSetting,
       userRepoSettings
@@ -659,7 +655,6 @@ export default class MergeRequestService
     mergeRequest: MergeRequest,
     repository: Repository,
     user: User,
-    branch?: FloroBranch | null,
     baseBranch?: FloroBranch | null,
     branchRuleSetting?: BranchRuleSettings | null,
     userRepoSettings?: RemoteSettings | null,
@@ -674,18 +669,38 @@ export default class MergeRequestService
     if (!baseBranch) {
       return false;
     }
+    if (repository.repoType == "org_repo") {
+      const organizationsMembersContext = await this.contextFactory.createContext(
+        OrganizationMembersContext,
+        queryRunner
+      );
+      const membership = await organizationsMembersContext.getByOrgIdAndUserId(
+        repository.organizationId,
+        user.id
+      );
+      const organizationMemberRolesContext =
+        await this.contextFactory.createContext(OrganizationMemberRolesContext);
+      const roles =
+        membership?.membershipState == "active"
+          ? await organizationMemberRolesContext.getRolesByMemberId(
+              membership?.id
+            )
+          : [];
+      const isAdmin =
+        repository.repoType == "org_repo" &&
+        !!roles.find((r) => r.presetCode == "admin");
+      if (isAdmin) {
+        return true;
+      }
+    }
+
+    if (repository.repoType == "user_repo") {
+      return repository.userId == user?.id;
+    }
     if (branchRuleSetting) {
       return branchRuleSetting?.canMergeWithApproval ?? false;
     }
-    //if (branchRuleSetting?.canMergeWithApproval) {
-    //  return await this.hasApproval(
-    //    mergeRequest,
-    //    repository,
-    //    branch,
-    //    baseBranch,
-    //    queryRunner
-    //  );
-    //}
+
     return await this.getCanClose(mergeRequest, repository, user, queryRunner);
   }
 
@@ -994,6 +1009,17 @@ export default class MergeRequestService
       ? branches?.find((b) => b.id == branch?.baseBranchId)
       : null;
 
+    const dbBaseBranch = branches?.find((b) => !!baseBranch && b.id == baseBranch?.id);
+    if (!dbBaseBranch || !baseBranch) {
+      return {
+        action: "NO_BASE_BRANCH_ERROR",
+        error: {
+          type: "NO_BASE_BRANCH_ERROR",
+          message: "Missing base branch",
+        },
+      };
+    }
+
     const userRepoSettings =
       await this.repoDataService.fetchRepoSettingsForUser(repository.id, user);
     const branchRule: BranchRuleSettings | undefined | null = !!baseBranch
@@ -1009,7 +1035,7 @@ export default class MergeRequestService
         },
       };
     }
-    const datasource = await this.getMergeRequestDataSource(
+    const datasource = await this.getMergeRequestDataSourceForBaseBranch(
       repository,
       branch,
       baseBranch
@@ -1021,7 +1047,19 @@ export default class MergeRequestService
       branch?.lastCommit ?? undefined
     );
     const divergenceSha: string = getMergeOriginSha(divergenceOrigin) as string;
-    const isMerged = !!divergenceSha && divergenceSha === branch?.lastCommit;
+    const isMerged =
+      divergenceOrigin?.rebaseShas?.length == 0 &&
+      (divergenceOrigin?.intoLastCommonAncestor == branch?.lastCommit ||
+        divergenceOrigin?.trueOrigin == baseBranch?.lastCommit);
+    if (isMerged) {
+      return {
+        action: "ALREADY_MERGED_ERROR",
+        error: {
+          type: "ALREADY_MERGED_ERROR",
+          message: "Already merged",
+        },
+      };
+    }
     let isConflictFree = isMerged || divergenceSha === baseBranch?.lastCommit;
     if (!isConflictFree) {
       const divergenceState = (await datasource.readCommitApplicationState?.(
@@ -1082,6 +1120,7 @@ export default class MergeRequestService
         branchHeadShaAtCreate: branch?.lastCommit as string,
         branchId,
         dbBranchId: branch?.dbId,
+        dbBaseBranchId: dbBaseBranch?.dbId,
         repositoryId: repository?.id,
         organizationId: repository?.organizationId,
         userId: repository?.userId,
@@ -1303,6 +1342,7 @@ export default class MergeRequestService
         {
           isOpen: false,
           branchHeadShaAtClose: branch?.lastCommit ?? undefined,
+          wasClosedWithoutMerging: true
         }
       );
       if (!mergeRequest) {
@@ -1881,6 +1921,9 @@ export default class MergeRequestService
           if (!queueMergeRequest) {
             return;
           }
+          if (!queueMergeRequest.isOpen) {
+            return;
+          }
           const branches = await this.repoDataService.getBranches(
             queueMergeRequest.repositoryId
           );
@@ -1915,8 +1958,11 @@ export default class MergeRequestService
             !!floroBranch?.baseBranchId
               ? branches?.find((b) => b.id == floroBranch?.baseBranchId)
               : null;
+          if (!baseBranch) {
+            return;
+          }
 
-          const datasource = await this.getMergeRequestDataSource(
+          const datasource = await this.getMergeRequestDataSourceForBaseBranch(
             repository,
             floroBranch,
             baseBranch
@@ -1930,8 +1976,13 @@ export default class MergeRequestService
           const divergenceSha: string = getMergeOriginSha(
             divergenceOrigin
           ) as string;
-          const isMerged =
-            !!divergenceSha && divergenceSha === floroBranch?.lastCommit;
+
+        const isMerged =
+          divergenceOrigin?.rebaseShas?.length == 0 &&
+          (divergenceOrigin?.intoLastCommonAncestor == floroBranch?.lastCommit ||
+            divergenceOrigin?.trueOrigin == baseBranch?.lastCommit);
+          //const isMerged =
+          //  !!divergenceSha && divergenceSha === floroBranch?.lastCommit;
           let isConflictFree =
             isMerged || divergenceSha === baseBranch?.lastCommit;
           if (!isConflictFree) {
@@ -1997,7 +2048,6 @@ export default class MergeRequestService
     const mergeRequestsContext = await this.contextFactory.createContext(
       MergeRequestsContext,
     );
-    // CHECK FOR BASE BRANCH BASE
     const branches = await this.repoDataService.getBranches(
       repository.id,
     );
@@ -2037,7 +2087,7 @@ export default class MergeRequestService
     await this.addtoQueue({ jobId: mergeRequest.id, mergeRequest });
   }
 
-  public async getMergeRequestDataSource(
+  public async getBranchDataSource(
     repository: Repository,
     branch: FloroBranch,
     baseBranch?: FloroBranch | null
@@ -2053,6 +2103,27 @@ export default class MergeRequestService
     return await this.repositoryDatasourceFactoryService.getDatasource(
       repository,
       branch,
+      commits,
+      pluginList
+    );
+  }
+
+  public async getMergeRequestDataSourceForBaseBranch(
+    repository: Repository,
+    branch: FloroBranch,
+    baseBranch: FloroBranch
+  ) {
+    const commits = await this.repoDataService.getCommits(repository.id);
+    const pluginList =
+      await this.repositoryDatasourceFactoryService.getMergePluginList(
+        repository,
+        branch,
+        commits,
+        baseBranch?.lastCommit ?? undefined
+      );
+    return await this.repositoryDatasourceFactoryService.getDatasource(
+      repository,
+      baseBranch,
       commits,
       pluginList
     );

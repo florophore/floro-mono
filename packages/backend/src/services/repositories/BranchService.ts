@@ -317,7 +317,7 @@ export default class BranchService {
       }
       await queryRunner.commitTransaction();
       for (const handler of this.branchPushHandlers) {
-        const res = await handler.onBranchChanged(
+        await handler.onBranchChanged(
           updatedRepo,
           user,
           pushedBranch
@@ -394,7 +394,7 @@ export default class BranchService {
 
       const remoteBranch = branches?.find((b) => b.branchId == floroBranch?.id);
 
-      const mergeRequestConetxt = await this.contextFactory.createContext(MergeRequestsContext);
+      const mergeRequestConetxt = await this.contextFactory.createContext(MergeRequestsContext, queryRunner);
       const hasOpenMergeRequest =
         !!remoteBranch?.id &&
         (await mergeRequestConetxt.repoHasOpenRequestOnBranch(
@@ -495,5 +495,47 @@ export default class BranchService {
     return openUserBranches.sort((a, b) => {
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
+  }
+
+  public async canDeleteBranch(repository: Repository, floroBranch: FloroBranch, queryRunner: QueryRunner) {
+    if (repository.defaultBranchId == floroBranch.id) {
+      return false;
+    }
+
+    const mergeRequestsContext = await this.contextFactory.createContext(
+      MergeRequestsContext,
+      queryRunner
+    );
+    const branchesContext = await this.contextFactory.createContext(
+      BranchesContext,
+      queryRunner
+    );
+
+    const protectedBranchRulesContext = await this.contextFactory.createContext(
+      ProtectedBranchRulesContext,
+      queryRunner
+    );
+    const hasBranchRule = await protectedBranchRulesContext.getByRepoAndBranchId(repository.id, floroBranch.id);
+    if (hasBranchRule) {
+      return false;
+    }
+    const hasOpenMergeRequest =
+      !!floroBranch?.id &&
+      (await mergeRequestsContext.repoHasOpenRequestOnBranch(
+        repository.id,
+        floroBranch?.id
+      ));
+
+    if (hasOpenMergeRequest) {
+      return false;
+    }
+
+    const branches = await branchesContext.getAllByRepoId(repository.id);
+    for (const branch of branches) {
+      if (branch.baseBranchId == floroBranch.id) {
+        return false;
+      }
+    }
+    return true;
   }
 }

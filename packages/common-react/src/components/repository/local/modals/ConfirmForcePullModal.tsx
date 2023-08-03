@@ -80,6 +80,7 @@ export interface Props {
   onConfirm: () => void;
   show?: boolean;
   repository: Repository;
+  isLoading: boolean;
 }
 
 const ConfirmForcePullModal = (props: Props) => {
@@ -123,6 +124,7 @@ const ConfirmForcePullModal = (props: Props) => {
             label={"force pull"}
             bg={"purple"}
             size={"medium"}
+            isLoading={props.isLoading}
           />
         </BottomContentContainer>
       </ContentContainer>

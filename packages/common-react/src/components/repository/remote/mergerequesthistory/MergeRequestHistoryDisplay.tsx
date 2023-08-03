@@ -1,6 +1,7 @@
 import React, {
   useMemo,
   useRef,
+  useCallback
 } from "react";
 import styled from "@emotion/styled";
 import {
@@ -14,6 +15,7 @@ import {
 import { useSearchParams } from "react-router-dom";
 
 import MergeRequestHistoryRow from "./MergeRequestHistoryRow";
+import PaginationToggle from "@floro/storybook/stories/repo-components/PaginationToggle";
 
 const Container = styled.div`
   height: 100%;
@@ -118,7 +120,7 @@ interface Props {
 const MergeRequestHistoryDisplay = (props: Props) => {
   const container = useRef<HTMLDivElement>(null);
   const { filterMR } = useMergeRequestsFilter();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const searchQuery = searchParams.get('query');
   const hasSearch = useMemo(() => {
     return searchQuery && searchQuery?.trim() != "";
@@ -135,6 +137,46 @@ const MergeRequestHistoryDisplay = (props: Props) => {
     props.repository?.openMergeRequests,
     props?.repository?.closedMergeRequests,
   ]);
+
+  const paginatation = useMemo(() => {
+    if (filterMR == "open") {
+      return props.repository?.openMergeRequests;
+    }
+    return props.repository?.closedMergeRequests;
+  }, [
+    filterMR,
+    props.repository?.openMergeRequests,
+    props.repository?.closedMergeRequests,
+  ]);
+
+  const showPaginator = useMemo(() => {
+    if (paginatation?.nextId || paginatation?.lastId) {
+      return true;
+    }
+    return false;
+  }, [paginatation?.lastId, paginatation?.nextId]);
+
+  const onNext = useCallback(() => {
+    if (!paginatation?.nextId) {
+      return;
+    }
+    setSearchParams({
+      id: paginatation?.nextId,
+      filter_mr: filterMR,
+
+    });
+  }, [paginatation?.nextId, filterMR]);
+
+  const onNewer = useCallback(() => {
+    if (!paginatation?.lastId) {
+      return;
+    }
+    setSearchParams({
+      id: paginatation?.lastId,
+      filter_mr: filterMR
+    });
+
+  }, [paginatation?.lastId, filterMR]);
 
   const hasNone = useMemo(() => {
     return mergeRequests?.length == 0;
@@ -180,6 +222,24 @@ const MergeRequestHistoryDisplay = (props: Props) => {
         );
       })}
     </div>
+    {showPaginator && (
+      <div
+        style={{
+          marginTop: 24,
+          marginBottom: 48,
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <PaginationToggle
+          onNewer={onNewer}
+          onOlder={onNext}
+          newerDisabled={!paginatation?.lastId}
+          olderDisabled={!paginatation?.nextId}
+        />
+      </div>
+    )}
   </Container>
   );
 };

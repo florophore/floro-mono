@@ -36,6 +36,7 @@ import BranchService from "../../services/repositories/BranchService";
 import IgnoredBranchNotificationsContext from "@floro/database/src/contexts/merge_requests/IgnoredBranchNotificationsContext";
 import MergeRequestService from "../../services/merge_requests/MergeRequestService";
 import {
+  ApplicationKVState,
   EMPTY_COMMIT_STATE,
   canAutoMergeCommitStates,
   getCommitState,
@@ -452,7 +453,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         if (!cachedOpenMergeRequests) {
           return null;
         }
-        return this.mergeRequestService.getMergeRequestPaginatedResut(
+        return this.mergeRequestService.getMergeRequestPaginatedResult(
           cachedOpenMergeRequests,
           id,
           openQuery
@@ -492,7 +493,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         if (!cachedClosedMergeRequests) {
           return null;
         }
-        return this.mergeRequestService.getMergeRequestPaginatedResut(
+        return this.mergeRequestService.getMergeRequestPaginatedResult(
           cachedClosedMergeRequests,
           id,
           closedQuery
@@ -1248,6 +1249,9 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         const baseBranch = cachedBranches?.find(
           (b) => b.id == branchState.baseBranchId
         );
+        if (!baseBranch) {
+          return null;
+        }
         const baseBranchRule = cachedRemoteSettings?.branchRules?.find(
           (b) => b.branchId == baseBranch?.id
         );
@@ -1255,7 +1259,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           baseBranchRule?.canCreateMergeRequests ?? true;
 
         const datasource =
-          await this.mergeRequestService.getMergeRequestDataSource(
+          await this.mergeRequestService.getMergeRequestDataSourceForBaseBranch(
             repository,
             branch,
             baseBranch
@@ -1269,8 +1273,38 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         const divergenceSha: string = getMergeOriginSha(
           divergenceOrigin
         ) as string;
+
         const isMerged =
-          !!divergenceSha && divergenceOrigin.trueOrigin === branch?.lastCommit;
+          divergenceOrigin?.rebaseShas?.length == 0 &&
+          (divergenceOrigin?.intoLastCommonAncestor == branch?.lastCommit ||
+            divergenceOrigin?.trueOrigin == baseBranch?.lastCommit);
+        let isConflictFree = isMerged || divergenceSha === baseBranch?.lastCommit;
+        if (!isConflictFree) {
+          const divergenceState =
+            (await datasource.readCommitApplicationState?.(
+              repository.id,
+              divergenceSha
+            )) ?? (EMPTY_COMMIT_STATE as ApplicationKVState);
+          const branchState =
+            (await datasource.readCommitApplicationState?.(
+              repository.id,
+              branch?.lastCommit as string
+            )) ?? (EMPTY_COMMIT_STATE as ApplicationKVState);
+          const baseBranchState =
+            (await datasource.readCommitApplicationState?.(
+              repository.id,
+              baseBranch?.lastCommit as string
+            )) ?? (EMPTY_COMMIT_STATE as ApplicationKVState);
+          const canAutoMerge = await canAutoMergeCommitStates(
+            datasource,
+            branchState,
+            baseBranchState,
+            divergenceState
+          );
+          if (canAutoMerge) {
+            isConflictFree = true;
+          }
+        }
         const rebaseList = await getMergeRebaseCommitList(
           datasource,
           repository.id,
@@ -1284,21 +1318,27 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           branch?.lastCommit
         );
         const ranges = this.repoDataService.getRevertRanges(history);
-        const allPendingCommits = (
+        const allPendingCommits =
           rebaseList.length == 0
-            ? this.repositoryDatasourceFactoryService.getCommitsInRange(
-                cachedCommits,
-                branch?.lastCommit,
-                divergenceOrigin.fromOrigin ?? undefined
-              )
-            : rebaseList
-        )?.map((c: CommitData | Commit) => commitMap[c.sha as string]);
+            ? this.repositoryDatasourceFactoryService
+                .getCommitsInRange(
+                  cachedCommits,
+                  branch?.lastCommit,
+                  divergenceOrigin.fromOrigin ?? undefined
+                )
+                ?.map((c: CommitData | Commit) => commitMap[c.sha as string])
+            : rebaseList?.map(
+                (c: CommitData | Commit) => commitMap[c.originalSha as string]
+              ).sort((a, b) => b.idx - a.idx);
 
         let pendingCommits: Array<CommitInfo>;
         if (idx === undefined || idx === null) {
           pendingCommits = allPendingCommits
             ?.slice(0, PAGINATION_LIMIT)
             .map((commit) => {
+              if (!commit?.id) {
+                console.log("commit", commit)
+              }
               return {
                 ...commit,
                 isReverted: this.repoDataService.isReverted(
@@ -1321,28 +1361,6 @@ export default class RepositoryResolverModule extends BaseResolverModule {
               };
             });
         }
-
-        const fromCommitState = await getCommitState(
-          datasource,
-          repository.id,
-          branch?.lastCommit ?? null
-        );
-        const intoCommitState = await getCommitState(
-          datasource,
-          repository.id,
-          baseBranch?.lastCommit ?? null
-        );
-        const originCommitState = await getCommitState(
-          datasource,
-          repository.id,
-          divergenceSha
-        );
-        const isConflictFree = await canAutoMergeCommitStates(
-          datasource,
-          fromCommitState ?? EMPTY_COMMIT_STATE,
-          intoCommitState ?? EMPTY_COMMIT_STATE,
-          originCommitState ?? EMPTY_COMMIT_STATE
-        );
 
         const canMerge = isConflictFree && !isMerged;
         const divergeCommit = divergenceOrigin

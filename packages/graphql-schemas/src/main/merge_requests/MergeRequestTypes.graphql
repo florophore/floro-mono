@@ -59,6 +59,7 @@ type MergeRequestEvent {
   addedDescription: String
   removedTitle: String
   removedDescription: String
+  mergeSha: String
 }
 
 type MergeRequestPermissions {
@@ -88,10 +89,12 @@ type MergeRequest {
   approvalStatus: String
   isMerged: Boolean
   canMerge: Boolean
+  nothingToMerge: Boolean
   isConflictFree: Boolean
   mergeRequestCount: Int
   createdAt: DateTime
   commitsCount: Int
+  mergeSha: String
 
   reviewStatuses: [ReviewStatus]
   reviewerRequests: [ReviewerRequest]
@@ -163,6 +166,23 @@ type CloseMergeRequestError {
 union CloseMergeRequestResponse =
     CloseMergeRequestSuccess
   | CloseMergeRequestError
+  | UnAuthenticatedError
+  | RepoAccessError
+  | MergeRequestAccessError
+
+type MergeMergeRequestSuccess {
+  repository: Repository
+  mergeRequest: MergeRequest
+}
+
+type MergeMergeRequestError {
+  message: String
+  type: String
+}
+
+union MergeMergeRequestResponse =
+    MergeMergeRequestSuccess
+  | MergeMergeRequestError
   | UnAuthenticatedError
   | RepoAccessError
   | MergeRequestAccessError

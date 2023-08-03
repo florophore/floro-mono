@@ -72,6 +72,7 @@ mutation UpdateMergeRequestComment(
           eventName
           subeventName
           branchHeadShaAtEvent
+          mergeSha
           eventGroupingId
           createdAt
           performedByUser {

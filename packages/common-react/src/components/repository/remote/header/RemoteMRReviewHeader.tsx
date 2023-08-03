@@ -202,6 +202,7 @@ const RemoteMRReviewHeader = (props: Props) => {
     return (props.repository?.mergeRequest?.commitsCount ?? 0) - idx;
   }, [idx, props.repository?.mergeRequest?.commitsCount]);
 
+
   return (
     <>
       <Container>

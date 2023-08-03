@@ -26,6 +26,9 @@ import BranchIconDark from "@floro/common-assets/assets/images/icons/branch_icon
 import MergeIconLight from "@floro/common-assets/assets/images/repo_icons/merge.gray.svg";
 import MergeIconDark from "@floro/common-assets/assets/images/repo_icons/merge.white.svg";
 
+import MergeWhite from "@floro/common-assets/assets/images/repo_icons/merge.white.svg";
+import MergeGray from "@floro/common-assets/assets/images/repo_icons/merge.gray.svg";
+
 import ResolveWhite from '@floro/common-assets/assets/images/repo_icons/resolve.white.svg';
 import ResolveGray from '@floro/common-assets/assets/images/repo_icons/resolve.gray.svg';
 import ResolveMediumGray from '@floro/common-assets/assets/images/repo_icons/resolve.medium_gray.svg';
@@ -317,6 +320,13 @@ const RemoteCreateMergeRequest = (props: Props) => {
     return MergeIconDark;
   }, [theme.name]);
 
+  const nothingToPushIcon = useMemo(() => {
+    if (theme.name == "light") {
+      return MergeGray;
+    }
+    return MergeWhite;
+  }, [theme.name]);
+
   const resolveIcon = useMemo(() => {
     if (theme.name == "light") {
       return ResolveGray;
@@ -332,16 +342,6 @@ const RemoteCreateMergeRequest = (props: Props) => {
     return AbortWhite;
 
   }, [theme.name])
-
-  //useEffect(() => {
-  //    setUrlSearchParams({
-  //      query: searchText,
-  //      plugin: props.plugin,
-  //      branch: branch ?? props?.repository?.branchState?.branchId ?? "",
-  //      from: "remote"
-  //    });
-
-  //}, [searchText, isFocused])
 
   const linkBase = useRepoLinkBase(props.repository);
   const { reviewPage, setReviewPage } = useMergeRequestReviewPage();
@@ -371,13 +371,13 @@ const RemoteCreateMergeRequest = (props: Props) => {
     if (title == "" && props?.repository?.branchState?.proposedMergeRequest?.suggestedTitle != "") {
       setTitle(props?.repository?.branchState?.proposedMergeRequest?.suggestedTitle ?? "");
     }
-  }, [title, props?.repository?.branchState?.proposedMergeRequest?.suggestedTitle])
+  }, [props?.repository?.branchState?.proposedMergeRequest?.suggestedTitle])
 
   useEffect(() => {
     if (description == "" && props?.repository?.branchState?.proposedMergeRequest?.suggestedDescription != "") {
       setDescription(props?.repository?.branchState?.proposedMergeRequest?.suggestedDescription ?? "");
     }
-  }, [description, props?.repository?.branchState?.proposedMergeRequest?.suggestedDescription])
+  }, [props?.repository?.branchState?.proposedMergeRequest?.suggestedDescription])
 
   const onFocusMessage = useCallback(() => {
     setIsMessageFocused(true);
@@ -527,13 +527,19 @@ const RemoteCreateMergeRequest = (props: Props) => {
               {!baseBranch?.name && <ValueSpan>{"None"}</ValueSpan>}
             </RightRow>
           </Row>
-          {props.repository?.branchState?.proposedMergeRequest?.isConflictFree && (
+          {props?.repository?.branchState?.proposedMergeRequest?.isMerged && (
+            <Row style={{marginTop: 16, justifyContent: "flex-start"}}>
+                <Icon src={nothingToPushIcon} />
+                <LabelSpan style={{fontStyle: "italic"}}>{"Nothing to Merge"}</LabelSpan>
+            </Row>
+          )}
+          {!props?.repository?.branchState?.proposedMergeRequest?.isMerged && props.repository?.branchState?.proposedMergeRequest?.isConflictFree && (
             <Row style={{marginTop: 16, justifyContent: "flex-start"}}>
                 <Icon src={resolveIcon} />
                 <LabelSpan>{"No Conflicts"}</LabelSpan>
             </Row>
           )}
-          {!props.repository?.branchState?.proposedMergeRequest?.isConflictFree && (
+          {!props?.repository?.branchState?.proposedMergeRequest?.isMerged && !props.repository?.branchState?.proposedMergeRequest?.isConflictFree && (
             <Row style={{marginTop: 16, justifyContent: "flex-start"}}>
                 <Icon src={abortIcon} />
                 <LabelSpan>{"Has Conflicts"}</LabelSpan>

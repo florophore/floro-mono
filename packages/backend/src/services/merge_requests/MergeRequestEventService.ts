@@ -23,6 +23,7 @@ import MergeRequestCommentReplyEventHandler from "./merge_request_events/MergeRe
 import { MergeRequestCommentReply } from "@floro/database/src/entities/MergeRequestCommentReply";
 import MergeRequestEventsContext from "@floro/database/src/contexts/merge_requests/MergeRequestEventsContext";
 import { MergeRequestEvent } from "@floro/graphql-schemas/build/generated/main-graphql";
+import MergedMergeRequestEventHandler from "./merge_request_events/MergedMergeRequestEventHandler";
 
 @injectable()
 export default class MergeRequestEventService
@@ -34,7 +35,8 @@ export default class MergeRequestEventService
     UpdatedMergeRequestReviewersEventHandler,
     ReviewStatusChangeEventHandler,
     MergeRequestCommentEventHandler,
-    MergeRequestCommentReplyEventHandler
+    MergeRequestCommentReplyEventHandler,
+    MergedMergeRequestEventHandler
 {
   private databaseConnection!: DatabaseConnection;
   private contextFactory!: ContextFactory;
@@ -163,6 +165,26 @@ export default class MergeRequestEventService
       mergeRequestId: mergeRequest.id,
       performedByUserId: byUser.id,
       branchHeadShaAtEvent: branchHead,
+    });
+  }
+
+  public async onMergeRequestMerged(
+    queryRunner: QueryRunner,
+    byUser: User,
+    baseBranchId: string | undefined,
+    branchHead: string | undefined,
+    mergeRequest: MergeRequest
+  ): Promise<void> {
+    const mergeRequestEventsContext = await this.contextFactory.createContext(
+      MergeRequestEventsContext,
+      queryRunner
+    );
+    await mergeRequestEventsContext.create({
+      eventName: "MERGED_MERGE_REQUEST",
+      mergeRequestId: mergeRequest.id,
+      performedByUserId: byUser.id,
+      branchHeadShaAtEvent: branchHead,
+      mergeSha: mergeRequest.mergeSha
     });
   }
 

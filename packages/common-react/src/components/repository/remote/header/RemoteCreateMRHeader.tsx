@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import Button from "@floro/storybook/stories/design-system/Button";
+import {useSearchParams} from 'react-router-dom';
 
 import WarningLight from "@floro/common-assets/assets/images/icons/warning.light.svg";
 import WarningDark from "@floro/common-assets/assets/images/icons/warning.dark.svg";
@@ -82,6 +83,22 @@ interface Props {
 const RemoteCreateMRHeader = (props: Props) => {
   const theme = useTheme();
   const { compareFrom, setCompareFrom } = useRemoteCompareFrom();
+  const [searchParams] = useSearchParams();
+  const idxString = searchParams.get('idx');
+  const idx = useMemo(() => {
+    try {
+      if (!idxString) {
+        return null;
+      }
+      const idxInt = parseInt(idxString);
+      if (Number.isNaN(idxInt)) {
+        return null
+      }
+      return idxInt;
+    } catch(e) {
+      return null;
+    }
+  }, [idxString]);
 
   const warning = useMemo(() => {
     if (theme.name == "light") {
@@ -168,12 +185,11 @@ const RemoteCreateMRHeader = (props: Props) => {
   }, []);
 
   const commitIdx = useMemo(() => {
-    const commit = props?.repository?.branchState?.proposedMergeRequest?.pendingCommits?.[0];
-    if (!commit) {
-      return 0
+    if (!idx) {
+      return props.repository?.branchState?.proposedMergeRequest?.pendingCommitsCount ?? 0;
     }
-    return (commit?.idx ?? 0) + 1;
-  }, [props.repository?.branchState?.proposedMergeRequest?.pendingCommits]);
+    return (props.repository?.branchState?.proposedMergeRequest?.pendingCommitsCount ?? 0) - idx;
+  }, [idx, props.repository?.branchState?.proposedMergeRequest?.pendingCommitsCount]);
 
   return (
     <>

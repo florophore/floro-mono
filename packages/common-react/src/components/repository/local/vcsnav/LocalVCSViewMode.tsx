@@ -224,6 +224,13 @@ const LocalVCSViewMode = (props: Props) => {
 
   }, [fetchInfo?.canPull]);
 
+
+  useEffect(() => {
+    if (pullMutation.isSuccess) {
+      setShowConfirmForcePull(false);
+    }
+  }, [pullMutation.isSuccess])
+
   useEffect(() => {
     if (pushMutation.isSuccess) {
       setShowConfirmForcePush(false);
@@ -368,12 +375,14 @@ const LocalVCSViewMode = (props: Props) => {
         onDismiss={onCloseForcePull}
         onConfirm={onConfirmPull}
         repository={props.repository}
+        isLoading={pullMutation.isLoading}
       />
       <ConfirmForcePushModal
         show={showConfirmForcePush}
         onDismiss={onCloseForcePush}
         onConfirm={onConfirmPush}
         repository={props.repository}
+        isLoading={pushMutation.isLoading}
       />
     </InnerContent>
   );

@@ -123,9 +123,11 @@ type CommitInfo {
 
 type BranchState {
   branchId: ID
+  branchName: String
   repositoryId: String
   defaultBranchId: String
   baseBranchId: String
+  baseBranchName: String
   name: String
   branchHead: String
   updatedAt: String
@@ -142,6 +144,7 @@ type ProposedMergeRequest {
   isConflictFree: Boolean
   isMerged: Boolean
   canMerge: Boolean
+  nothingToMerge: Boolean
   existingMergeRequest: MergeRequest
   canCreateMergeRequest: Boolean
   pendingCommits: [CommitInfo]

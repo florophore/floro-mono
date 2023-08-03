@@ -95,6 +95,10 @@ import RepositoryRemoteSettingsArgsLoader from './resolvers/hooks/loaders/Reposi
 import RepoDataService from './services/repositories/RepoDataService';
 import { QueueService } from './services/QueueService';
 import MergeRequestCommentsLoader from './resolvers/hooks/loaders/MergeRequest/MergeRequestCommentsLoader';
+import MergeService from './services/merge_requests/MergeService';
+import MergedMergeRequestEventHandler from './services/merge_requests/merge_request_events/MergedMergeRequestEventHandler';
+import PreMergeCommitQueue from './services/merge_requests/PreMergeCommitQueue';
+import CommitService from './services/merge_requests/CommitService';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -193,6 +197,7 @@ export default new ContainerModule((bind): void => {
     bind(RepoSettingsService).toSelf();
     bind(GrantAccessReceiverService).toSelf();
     bind(RepoDataService).toSelf();
+    bind(CommitService).toSelf();
 
     // REFERRALS
     bind(ReferralService).toSelf()
@@ -200,6 +205,8 @@ export default new ContainerModule((bind): void => {
     // MERGE REQUESTS
     bind(MergeRequestService).toSelf();
     bind(MergeRequestEventService).toSelf();
+    bind(MergeService).toSelf();
+    bind(PreMergeCommitQueue).toSelf();
 
     // EVENT HANDLERS
 
@@ -210,6 +217,7 @@ export default new ContainerModule((bind): void => {
     // BRANCH PUSH HANLDERS
     bind<BranchPushHandler>("BranchPushHandler").to(MergeRequestService).inSingletonScope();
     bind<BranchPushHandler>("BranchPushHandler").to(MergeRequestEventService).inSingletonScope();
+    bind<BranchPushHandler>("BranchPushHandler").to(PreMergeCommitQueue).inSingletonScope();
 
     // MERGE REQUESTS
     bind<CreateMergeRequestEventHandler>("CreateMergeRequestEventHandler").to(MergeRequestEventService);
@@ -219,6 +227,7 @@ export default new ContainerModule((bind): void => {
     bind<ReviewStatusChangeEventHandler>("ReviewStatusChangeEventHandler").to(MergeRequestEventService);
     bind<MergeRequestCommentEventHandler>("MergeRequestCommentEventHandler").to(MergeRequestEventService);
     bind<MergeRequestCommentReplyEventHandler>("MergeRequestCommentReplyEventHandler").to(MergeRequestEventService);
+    bind<MergedMergeRequestEventHandler>("MergedMergeRequestEventHandler").to(MergeRequestEventService);
 
     // GRANT ACCESS HANDLER
     bind<GrantRepoAccessHandler>("GrantRepoAccessHandler").to(GrantAccessReceiverService);
@@ -226,6 +235,7 @@ export default new ContainerModule((bind): void => {
 
     // QUEUE SERVICES
     bind<QueueService>("QueueServices").to(MergeRequestService).inSingletonScope();
+    bind<QueueService>("QueueServices").to(PreMergeCommitQueue).inSingletonScope();
 
     // Controllers
     bind<AuthenticationController>("Controllers").to(AuthenticationController);

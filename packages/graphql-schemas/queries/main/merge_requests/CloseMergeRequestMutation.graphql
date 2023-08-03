@@ -39,6 +39,7 @@ mutation CloseMergeRequest(
           eventName
           subeventName
           branchHeadShaAtEvent
+          mergeSha
           eventGroupingId
           createdAt
           performedByUser {

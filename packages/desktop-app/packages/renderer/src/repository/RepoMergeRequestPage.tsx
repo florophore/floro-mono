@@ -166,6 +166,11 @@ const RepoCreateMergeRequestPage = () => {
         prefix: '/',
         value: repoValue,
         label: repoLabel,
+        next: {
+          prefix: '/',
+          value: repoValue + '/mergerequests',
+          label: 'merge requests',
+        },
       },
     },
     [handleLabel, handleValue, repoValue, repoLabel],

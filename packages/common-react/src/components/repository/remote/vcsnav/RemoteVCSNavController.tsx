@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { ComparisonState, RemoteCommitState, useMergeRequestReviewPage } from "../hooks/remote-state";

@@ -1,16 +1,28 @@
-import React, { useMemo, useState, useCallback, useEffect } from "react";
 
-import RootModal from "../../../RootModal";
+
+import React, { useMemo, useState, useCallback, useEffect } from "react";
+import RootModal from "../../../../RootModal";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 // eslint-disable-next-line import/no-named-as-default
 import ColorPalette from "@floro/styles/ColorPalette";
+import {
+  PluginVersion,
+  Plugin,
+  useReleaseOrgPluginMutation,
+  useReleaseUserPluginMutation,
+  useChangeDefaultBranchMutation,
+  ProtectedBranchRule,
+  useDeleteBranchRuleMutation,
+  MergeRequest,
+  useCloseMergeRequestMutation,
+} from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import Button from "@floro/storybook/stories/design-system/Button";
+import TealHexagonWarningLight from "@floro/common-assets/assets/images/icons/teal_hexagon_warning.light.svg";
 import RedHexagonWarningLight from "@floro/common-assets/assets/images/icons/red_hexagon_warning.light.svg";
 import RedHexagonWarningDark from "@floro/common-assets/assets/images/icons/red_hexagon_warning.dark.svg";
 import { Repository } from "@floro/graphql-schemas/build/generated/main-client-graphql";
-import { ApiResponse } from "floro/dist/src/repo";
-import { useCheckoutCommitSha } from "../hooks/local-hooks";
+import { Branch } from "floro/dist/src/repo";
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -68,6 +80,16 @@ const PromptText = styled.p`
   color: ${(props) => props.theme.colors.promptText};
 `;
 
+const IncompatibleVersion = styled.p`
+  padding: 0;
+  margin: 8px 0 0 0;
+  font-size: 1.4rem;
+  font-family: "MavenPro";
+  font-weight: 600;
+  text-align: center;
+  color: ${(props) => props.theme.colors.warningTextColor};
+`;
+
 const BottomContentContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -77,26 +99,46 @@ const BottomContentContainer = styled.div`
 
 export interface Props {
   onDismiss: () => void;
-  onConfirm: () => void;
   show?: boolean;
   repository: Repository;
-  isLoading: boolean;
+  mergeRequest: MergeRequest;
 }
 
-const ConfirmForcePushModal = (props: Props) => {
+const CloseMergeRequestModal = (props: Props) => {
   const theme = useTheme();
   const icon = useMemo(() => {
     return theme.name == "light"
       ? RedHexagonWarningLight
       : RedHexagonWarningDark;
   }, [theme.name]);
+
+  const [closeMergeRequest, closeMergeRequestMutation] = useCloseMergeRequestMutation();
+
   const title = useMemo(() => {
     return (
       <HeaderContainer>
-        <HeaderTitle>{"force push"}</HeaderTitle>
+        <HeaderTitle>{"close merge request"}</HeaderTitle>
       </HeaderContainer>
     );
   }, []);
+
+  const onChange = useCallback(() => {
+    if (!props.repository.id || !props?.mergeRequest?.id) {
+      return;
+    }
+    closeMergeRequest({
+      variables: {
+        repositoryId: props?.repository?.id,
+        mergeRequestId: props?.mergeRequest?.id,
+      },
+    });
+  }, [props.repository.id, props?.mergeRequest?.id]);
+
+  useEffect(() => {
+    if (closeMergeRequestMutation?.data?.closeMergeRequest?.__typename == "CloseMergeRequestSuccess") {
+      props?.onDismiss();
+    }
+  }, [props?.onDismiss, closeMergeRequestMutation?.data?.closeMergeRequest])
 
   return (
     <RootModal
@@ -109,8 +151,15 @@ const ConfirmForcePushModal = (props: Props) => {
         <TopContentContainer>
           <WarningIcon src={icon} />
           <PromptText>
-            {`Pushing will overwrite the latest remote branch head. This will likely result in conflicts and require manual resolution if others are working on the same branch.`}
+            {`Are you sure you want to close this merge request?`}
           </PromptText>
+          {props?.mergeRequest?.approvalStatus != "pending" && (
+            <PromptText>
+              {
+                "You will have to have your merge request re-reviewed if you decide to open a new merge request against this branch."
+              }
+            </PromptText>
+          )}
         </TopContentContainer>
         <BottomContentContainer>
           <Button
@@ -120,11 +169,11 @@ const ConfirmForcePushModal = (props: Props) => {
             size={"medium"}
           />
           <Button
-            onClick={props.onConfirm}
-            label={"force push"}
+            label={"confirm"}
             bg={"purple"}
             size={"medium"}
-            isLoading={props.isLoading}
+            onClick={onChange}
+            isLoading={closeMergeRequestMutation.loading}
           />
         </BottomContentContainer>
       </ContentContainer>
@@ -132,4 +181,4 @@ const ConfirmForcePushModal = (props: Props) => {
   );
 };
 
-export default React.memo(ConfirmForcePushModal);
+export default React.memo(CloseMergeRequestModal);

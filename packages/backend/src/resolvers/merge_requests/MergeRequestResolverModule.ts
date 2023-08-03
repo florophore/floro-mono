@@ -31,13 +31,6 @@ import MergeRequestEventService from "../../services/merge_requests/MergeRequest
 import MergeRequestPermissionsLoader from "../hooks/loaders/MergeRequest/MergeRequestPermissionsLoader";
 import RepoSettingsService from "../../services/repositories/RepoSettingsService";
 import ReviewerRequestsContext from "@floro/database/src/contexts/merge_requests/ReviewerRequestsContext";
-import {
-  ApplicationKVState,
-  EMPTY_COMMIT_STATE,
-  canAutoMergeCommitStates,
-  getDivergenceOrigin,
-  getMergeOriginSha,
-} from "floro/dist/src/repo";
 import RepoDataService from "../../services/repositories/RepoDataService";
 import { withFilter } from "graphql-subscriptions";
 import { SubscriptionSubscribeFn } from "@floro/graphql-schemas/build/generated/admin-graphql";
@@ -48,6 +41,8 @@ import RepositoryEnabledUserSettingsContext from "@floro/database/src/contexts/r
 import ReviewerStatusesContext from "@floro/database/src/contexts/merge_requests/ReviewStatusesContext";
 import MergeRequestCommentsContext from "@floro/database/src/contexts/merge_requests/MergeRequestCommentsContext";
 import MergeRequestCommentsLoader from "../hooks/loaders/MergeRequest/MergeRequestCommentsLoader";
+import BranchesContext from "@floro/database/src/contexts/repositories/BranchesContext";
+import MergeService from "../../services/merge_requests/MergeService";
 
 const PAGINATION_LIMIT = 10;
 
@@ -62,6 +57,7 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
   protected contextFactory!: ContextFactory;
   protected requestCache!: RequestCache;
   protected mergeRequestService!: MergeRequestService;
+  protected mergeService!: MergeService;
   protected mergeRequestEventService!: MergeRequestEventService;
   protected repoDataService!: RepoDataService;
   protected repositoryDatasourceFactoryService!: RepositoryDatasourceFactoryService;
@@ -93,6 +89,7 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
     @inject(RepositoryDatasourceFactoryService)
     repositoryDatasourceFactoryService: RepositoryDatasourceFactoryService,
     @inject(MergeRequestService) mergeRequestService: MergeRequestService,
+    @inject(MergeService) mergeService: MergeService,
     @inject(MergeRequestEventService)
     mergeRequestEventService: MergeRequestEventService,
     @inject(LoggedInUserGuard) loggedInUserGuard: LoggedInUserGuard,
@@ -128,6 +125,7 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
     this.requestCache = requestCache;
     this.contextFactory = contextFactory;
     this.mergeRequestService = mergeRequestService;
+    this.mergeService = mergeService;
     this.mergeRequestEventService = mergeRequestEventService;
     this.repoDataService = repoDataService;
     this.repositoryDatasourceFactoryService =
@@ -225,6 +223,29 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
         if (!repository) {
           return null;
         }
+        if (!dbMergeRequest?.isOpen) {
+
+          const branchesContext = await this.contextFactory.createContext(
+            BranchesContext,
+          );
+          const branch = await branchesContext.getById(dbMergeRequest.dbBranchId);
+          if (!branch) {
+            return null;
+          }
+          const baseBranch = await branchesContext.getById(dbMergeRequest.dbBaseBranchId);
+          return {
+            branchId: branch.id,
+            branchName: branch.name,
+            updatedAt: branch.updatedAt,
+            baseBranchId: branch?.baseBranchId,
+            baseBranchName: baseBranch?.name,
+            defaultBranchId: repository.defaultBranchId,
+            name: branch.name,
+            branchHead: branch.lastCommit ?? null,
+            repositoryId: repository.id,
+          };
+
+        }
         const cachedBranches = this.requestCache.getRepoBranches(
           cacheKey,
           dbMergeRequest.repositoryId
@@ -238,10 +259,16 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
         if (!branch) {
           return null;
         }
+        const branchesContext = await this.contextFactory.createContext(
+          BranchesContext,
+        );
+        const baseBranch = await branchesContext.getById(dbMergeRequest.dbBaseBranchId);
         return {
           branchId: branch.id,
+          branchName: branch.name,
           updatedAt: branch.updatedAt,
           baseBranchId: branch?.baseBranchId,
+          baseBranchName: baseBranch?.name,
           defaultBranchId: repository.defaultBranchId,
           name: branch.name,
           branchHead: branch.lastCommit ?? null,
@@ -250,8 +277,8 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
       }
     ),
     canMerge: runWithHooks(
-      () => [this.mergeRequestPermissionsLoader],
-      async (mergeRequest: MergeRequest, _, { cacheKey }) => {
+      () => [this.rootRepositoryLoader, this.mergeRequestPermissionsLoader],
+      async (mergeRequest: MergeRequest, _, { cacheKey, currentUser }) => {
         if (!mergeRequest?.id) {
           return null;
         }
@@ -260,6 +287,39 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
           mergeRequest?.id
         );
         if (permission?.allowedToMerge && permission.canClose && mergeRequest?.isConflictFree && mergeRequest?.isOpen) {
+          const dbMergeRequest = mergeRequest as DBMergeRequest;
+          const repository = this.requestCache.getRepo(
+            cacheKey,
+            dbMergeRequest?.repositoryId
+          );
+          if (repository.repoType == "org_repo") {
+            const organizationsMembersContext = await this.contextFactory.createContext(
+              OrganizationMembersContext,
+            );
+            const membership = currentUser?.id
+              ? await organizationsMembersContext.getByOrgIdAndUserId(
+                  repository.organizationId,
+                  currentUser?.id
+                )
+              : null;
+            const organizationMemberRolesContext =
+              await this.contextFactory.createContext(OrganizationMemberRolesContext);
+            const roles =
+              membership?.membershipState == "active"
+                ? await organizationMemberRolesContext.getRolesByMemberId(
+                    membership?.id
+                  )
+                : [];
+            const isAdmin =
+              repository.repoType == "org_repo" &&
+              !!roles.find((r) => r.presetCode == "admin");
+            if (isAdmin) {
+              return true;
+            }
+          }
+          if (repository.repoType == "user_repo") {
+            return repository.userId == currentUser?.id;
+          }
           if (permission.requireApprovalToMerge) {
             return (permission.hasApproval ?? false) && !(permission?.hasBlocked ?? false);
           }
@@ -284,7 +344,6 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
     timelineEvents: runWithHooks(
       () => [],
       async (mergeRequest: MergeRequest, _, { cacheKey }) => {
-        //const timelineEvents = this.mergeRequest
         if (!mergeRequest?.id) {
           return [];
         }
@@ -296,7 +355,6 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
     reviewerRequests: runWithHooks(
       () => [],
       async (mergeRequest: MergeRequest, _, { cacheKey }) => {
-        //const timelineEvents = this.mergeRequest
         if (!mergeRequest?.id) {
           return [];
         }
@@ -386,6 +444,47 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
           commitMap[commit.sha as string] = commit;
         }
 
+        // REDO THIS FROM HERE
+        if (!dbMergeRequest?.isOpen) {
+
+          const history = this.repoDataService.getCommitHistory(
+            cachedCommits,
+            dbMergeRequest?.branchHeadShaAtClose
+          );
+          const ranges = this.repoDataService.getRevertRanges(history);
+
+          const allPendingCommits = this.repositoryDatasourceFactoryService
+            .getCommitsInRange(
+              cachedCommits,
+              dbMergeRequest?.branchHeadShaAtClose,
+              dbMergeRequest.divergenceSha ?? undefined
+            )
+            ?.map((c: Commit) => commitMap[c.sha as string]);
+
+          let pendingCommits: Array<CommitInfo>;
+          if (idx === undefined || idx === null) {
+            pendingCommits = allPendingCommits
+              ?.slice(0, PAGINATION_LIMIT)
+              .map((commit) => {
+                return {
+                  ...commit,
+                  isReverted: this.repoDataService.isReverted(ranges, commit.idx),
+                };
+              });
+          } else {
+            const startIdx = idx;
+            pendingCommits = allPendingCommits
+              .slice(startIdx, startIdx + PAGINATION_LIMIT)
+              .map((commit) => {
+                return {
+                  ...commit,
+                  isReverted: this.repoDataService.isReverted(ranges, commit.idx),
+                };
+              });
+          }
+          return pendingCommits;
+        }
+
         const cachedBranches = this.requestCache.getRepoBranches(
           cacheKey,
           dbMergeRequest.repositoryId
@@ -462,6 +561,16 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
           const commit = cachedCommits[i];
           commitMap[commit.sha as string] = commit;
         }
+        if (!dbMergeRequest.isOpen) {
+
+          const allPendingCommits =
+            this.repositoryDatasourceFactoryService.getCommitsInRange(
+              cachedCommits,
+              dbMergeRequest?.branchHeadShaAtClose,
+              dbMergeRequest.divergenceSha
+            );
+          return allPendingCommits.length;
+        }
 
         const cachedBranches = this.requestCache.getRepoBranches(
           cacheKey,
@@ -492,6 +601,7 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
         _,
         { cacheKey }
       ) => {
+
         const dbMergeRequest = mergeRequest as DBMergeRequest;
 
         if (!dbMergeRequest?.repositoryId) {
@@ -518,6 +628,49 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
         for (let i = 0; i < cachedCommits.length; ++i) {
           const commit = cachedCommits[i];
           commitMap[commit.sha as string] = commit;
+        }
+
+        if (!mergeRequest.isOpen) {
+
+          const history = this.repoDataService.getCommitHistory(
+            cachedCommits,
+            dbMergeRequest?.branchHeadShaAtClose
+          );
+          const ranges = this.repoDataService.getRevertRanges(history);
+          const divergeCommit = commitMap[dbMergeRequest.divergenceSha ?? ''];
+          if (!divergeCommit) {
+            return null;
+          }
+          return {
+              sha: divergeCommit.sha,
+              originalSha: divergeCommit.originalSha,
+              message: divergeCommit.message,
+              username: divergeCommit.username,
+              userId: divergeCommit.userId,
+              authorUsername: divergeCommit.authorUsername,
+              authorUserId: divergeCommit.authorUserId,
+              authorUser: divergeCommit.authorUser,
+              user: divergeCommit.user,
+              idx: divergeCommit.idx,
+              updatedAt: divergeCommit.updatedAt,
+              repositoryId: dbMergeRequest.repositoryId,
+              branchId: dbMergeRequest.dbBranchId,
+              branchHead: dbMergeRequest?.branchHeadShaAtClose,
+              isReverted: this.repoDataService.isReverted(
+                ranges,
+                divergeCommit.idx
+              ),
+              isValid: divergeCommit.isValid ?? true,
+              kvLink: this.repoDataService.getKVLinkForCommit(
+                repository,
+                divergeCommit
+              ),
+              stateLink: this.repoDataService.getStateLinkForCommit(
+                repository,
+                divergeCommit
+              ),
+              lastUpdatedAt: divergeCommit?.updatedAt?.toISOString(),
+          }
         }
 
         const cachedBranches = this.requestCache.getRepoBranches(
@@ -751,6 +904,68 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
         };
       }
     ),
+    mergeMergeRequest: runWithHooks(
+      () => [
+        this.loggedInUserGuard,
+        this.repoAccessGuard,
+        this.rootRepositoryLoader,
+        this.mergeRequestLoader,
+        this.mergeRequestAccessGuard,
+      ],
+      async (
+        _,
+        args: main.MutationCloseMergeRequestArgs,
+        { currentUser, cacheKey }
+      ) => {
+        const repository = this.requestCache.getRepo(
+          cacheKey,
+          args.repositoryId
+        );
+
+        const mergeRequest = this.requestCache.getMergeRequest(
+          cacheKey,
+          args.mergeRequestId
+        );
+
+        const result = await this.mergeService.mergeMergeRequest(
+          repository,
+          mergeRequest,
+          currentUser
+        );
+        this.requestCache.deleteMergeRequest(cacheKey, mergeRequest);
+        if (result.action == "MERGE_REQUEST_MERGED") {
+          this.pubsub?.publish?.(`MERGE_REQUEST_UPDATED:${mergeRequest.id}`, {
+            mergeRequestUpdated: result.mergeRequest
+          });
+
+          this.pubsub?.publish?.(`REPOSITORY_UPDATED:${repository.id}`, {
+            repositoryUpdated: result.repository
+          });
+          return {
+            __typename: "MergeMergeRequestSuccess",
+            repository: repository,
+            mergeRequest: result.mergeRequest,
+          };
+        }
+        if (result.action == "LOG_ERROR") {
+          console.error(
+            result.error?.type,
+            result?.error?.message,
+            result?.error?.meta
+          );
+          return {
+            __typename: "MergeMergeRequestError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        return {
+          __typename: "MergeMergeRequestError",
+          message: result.error?.message ?? "Unknown Error",
+          type: result.error?.type ?? "UNKNOWN_ERROR",
+        };
+      }
+    ),
     updateMergeRequestReviewers: runWithHooks(
       () => [
         this.loggedInUserGuard,
@@ -782,7 +997,6 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
             (args.reviewerIds?.filter?.((v) => typeof v == "string") ??
               []) as Array<string>
           );
-        console.log("RES", result);
         this.requestCache.deleteMergeRequest(cacheKey, mergeRequest);
         if (result.action == "UPDATE_MERGE_REQUEST_REVIEWERS_SUCCESS") {
           this.pubsub?.publish?.(`MERGE_REQUEST_UPDATED:${mergeRequest.id}`, {

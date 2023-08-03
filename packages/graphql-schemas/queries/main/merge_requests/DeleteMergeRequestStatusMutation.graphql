@@ -55,6 +55,7 @@ mutation DeleteMergeRequestStatus(
           eventName
           subeventName
           branchHeadShaAtEvent
+          mergeSha
           eventGroupingId
           createdAt
           performedByUser {

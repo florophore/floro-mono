@@ -24,7 +24,7 @@ const RepoMergeRequestHistoryPage = () => {
   }, [searchQuery]);
   const id = searchParams.get('id');
   const idParam = useMemo(() => {
-    if (hasSearch) {
+    if (!hasSearch) {
       return id;
     }
     return null;

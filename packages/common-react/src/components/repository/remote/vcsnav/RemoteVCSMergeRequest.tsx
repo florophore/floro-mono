@@ -12,6 +12,7 @@ import {
   useUpdateMergeRequestMutation,
   useUpdateMergeRequestStatusMutation,
   useDeleteMergeRequestStatusMutation,
+  useMergeMergeRequestMutation,
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
@@ -45,6 +46,9 @@ import MergeIconDark from "@floro/common-assets/assets/images/repo_icons/merge.w
 
 import ResolveWhite from "@floro/common-assets/assets/images/repo_icons/resolve.white.svg";
 import ResolveGray from "@floro/common-assets/assets/images/repo_icons/resolve.gray.svg";
+
+import MergeWhite from "@floro/common-assets/assets/images/repo_icons/merge.white.svg";
+import MergeGray from "@floro/common-assets/assets/images/repo_icons/merge.gray.svg";
 import ResolveMediumGray from "@floro/common-assets/assets/images/repo_icons/resolve.medium_gray.svg";
 
 import AbortWhite from "@floro/common-assets/assets/images/repo_icons/abort.white.svg";
@@ -54,6 +58,8 @@ import { useMergeRequestNavContext } from "../mergerequest/MergeRequestContext";
 import ReviewSearch from "../mergerequest/review_search/ReviewSearch";
 import ProposedMRHistoryDisplay from "../history/ProposedMRHistoryDisplay";
 import Reviewers from "../mergerequest/Reviewers";
+import CloseMergeRequestModal from "../mergerequest/modals/CloseMergeRequestModal";
+import MergeMergeRequestModal from "../mergerequest/modals/MergeMergeRequestModal";
 
 const InnerContent = styled.div`
   display: flex;
@@ -297,8 +303,27 @@ const RemoteVCSMergeRequest = (props: Props) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const { isEditting, setIsEditting } = useMergeRequestNavContext();
+  const [showCloseModal, setShowCloseModal] = useState(false);
+  const [showMergeModal, setShowMergeModal] = useState(false);
   const [updateStatus, updateStatusMutation] = useUpdateMergeRequestStatusMutation();
   const [deleteStatus, deleteStatusMutation] = useDeleteMergeRequestStatusMutation();
+  const [merge, mergeMutation] = useMergeMergeRequestMutation();
+
+  const onClose = useCallback(() => {
+    setShowCloseModal(true);
+  }, []);
+
+  const onHideClose = useCallback(() => {
+    setShowCloseModal(false);
+  }, []);
+
+  const onCloseMergeModal = useCallback(() => {
+    setShowMergeModal(true);
+  }, []);
+
+  const onHideMergeModal = useCallback(() => {
+    setShowMergeModal(false);
+  }, []);
 
   const branchIcon = useMemo(() => {
     if (theme.name == "light") {
@@ -312,6 +337,13 @@ const RemoteVCSMergeRequest = (props: Props) => {
       return MergeIconLight;
     }
     return MergeIconDark;
+  }, [theme.name]);
+
+  const nothingToPushIcon = useMemo(() => {
+    if (theme.name == "light") {
+      return MergeGray;
+    }
+    return MergeWhite;
   }, [theme.name]);
 
   const resolveIcon = useMemo(() => {
@@ -381,6 +413,20 @@ const RemoteVCSMergeRequest = (props: Props) => {
     return ColorPalette.gray;
   }, [reviewStatus, theme.name]);
 
+  const closedReviewStatusColor = useMemo(() => {
+    if (props?.repository?.mergeRequest?.wasClosedWithoutMerging) {
+      return theme.name == "light" ? ColorPalette.red : ColorPalette.lightRed;
+    }
+    return ColorPalette.teal;
+  }, [props?.repository?.mergeRequest?.wasClosedWithoutMerging, theme.name]);
+
+  const closedReviewStatusText = useMemo(() => {
+    if (props?.repository?.mergeRequest?.wasClosedWithoutMerging) {
+      return 'closed';
+    }
+    return 'merged';
+  }, [props?.repository?.mergeRequest?.wasClosedWithoutMerging, theme.name]);
+
   const reviewStatusText = useMemo(() => {
     if (reviewStatus == "blocked") {
       return "Blocked";
@@ -388,22 +434,26 @@ const RemoteVCSMergeRequest = (props: Props) => {
     if (reviewStatus == "approved") {
       return "Approved";
     }
+    if (!props?.repository?.mergeRequest?.isOpen) {
+      return 'Unreviewed';
+    }
 
     return "Pending Review";
-  }, [reviewStatus, theme.name]);
+  }, [reviewStatus, theme.name, props?.repository?.mergeRequest?.isOpen]);
 
   const linkBase = useRepoLinkBase(props.repository);
   const { reviewPage, setReviewPage } = useMergeRequestReviewPage();
   const backLink = useMemo(() => {
+    const mrFilter = props?.repository?.mergeRequest?.isOpen ? "open" : "closed";
     if (!props.repository?.mergeRequest?.branchState?.branchId) {
       return `${linkBase}/mergerequests?from=remote&plugin=${
         props?.plugin ?? "home"
-      }`;
+      }&filter_mr=${mrFilter}`;
     }
     return `${linkBase}/mergerequests?from=remote&branch=${
       props.repository?.mergeRequest?.branchState?.branchId
-    }&plugin=${props.plugin ?? "home"}`;
-  }, [props.repository?.mergeRequest?.branchState, linkBase, props.plugin]);
+    }&plugin=${props.plugin ?? "home"}&filter_mr=${mrFilter}`;
+  }, [props.repository?.mergeRequest?.branchState, linkBase, props.plugin, props?.repository?.mergeRequest?.isOpen]);
   const textareaContainer = useRef<HTMLDivElement>(null);
   const textarea = useRef<HTMLTextAreaElement>(null);
   const [isMessageFocused, setIsMessageFocused] = useState(false);
@@ -420,7 +470,7 @@ const RemoteVCSMergeRequest = (props: Props) => {
     if (title == "" && props?.repository?.mergeRequest?.title != "") {
       setTitle(props?.repository?.mergeRequest?.title ?? "");
     }
-  }, [title, props?.repository?.mergeRequest?.title]);
+  }, [ props?.repository?.mergeRequest?.title]);
 
   useEffect(() => {
     if (
@@ -429,7 +479,7 @@ const RemoteVCSMergeRequest = (props: Props) => {
     ) {
       setDescription(props?.repository?.mergeRequest?.description ?? "");
     }
-  }, [description, props?.repository?.mergeRequest?.description]);
+  }, [props?.repository?.mergeRequest?.description]);
 
   const onFocusMessage = useCallback(() => {
     setIsMessageFocused(true);
@@ -481,15 +531,6 @@ const RemoteVCSMergeRequest = (props: Props) => {
     props.repository?.mergeRequest?.branchState?.branchId,
   ]);
 
-  const baseBranch = useMemo(() => {
-    if (!branch?.baseBranchId) {
-      return null;
-    }
-    return props.repository?.repoBranches?.find(
-      (b) => b?.id == branch?.baseBranchId
-    );
-  }, [props.repository?.repoBranches, branch]);
-
   const [updateMergeRequest, updateMergeRequestRequest] =
     useUpdateMergeRequestMutation();
 
@@ -511,6 +552,33 @@ const RemoteVCSMergeRequest = (props: Props) => {
     description,
     props?.repository?.mergeRequest?.mergeRequestPermissions?.canEditInfo,
   ]);
+
+  const requireMergeWarning = useMemo(() => {
+    if (props?.repository?.mergeRequest?.approvalStatus == "approved") {
+      return false;
+    }
+    if (props?.repository?.isPrivate && props.repository?.repoType == "user_repo") {
+      return false;
+    }
+    return true;
+  }, [])
+
+  const onMerge = useCallback(() => {
+    if (requireMergeWarning) {
+      setShowMergeModal(true);
+      return;
+    }
+
+    if (!props.repository.id || !props?.repository?.mergeRequest?.id) {
+      return;
+    }
+    merge({
+      variables: {
+        repositoryId: props?.repository?.id,
+        mergeRequestId: props?.repository?.mergeRequest?.id,
+      },
+    });
+  }, [requireMergeWarning, props.repository.id, props?.repository?.mergeRequest?.id]);
 
   const onApprove = useCallback(() => {
     if (!props?.repository?.id) {
@@ -603,6 +671,22 @@ const RemoteVCSMergeRequest = (props: Props) => {
 
   return (
     <>
+      {props?.repository?.mergeRequest && (
+        <CloseMergeRequestModal
+          repository={props.repository}
+          mergeRequest={props?.repository.mergeRequest}
+          show={showCloseModal}
+          onDismiss={onHideClose}
+        />
+      )}
+      {props?.repository?.mergeRequest && (
+        <MergeMergeRequestModal
+          repository={props.repository}
+          mergeRequest={props?.repository.mergeRequest}
+          show={showMergeModal}
+          onDismiss={onHideMergeModal}
+        />
+      )}
       <InnerContent>
         <TopContainer>
           <TitleRow>
@@ -630,8 +714,13 @@ const RemoteVCSMergeRequest = (props: Props) => {
                   <LabelSpan>{"From Branch:"}</LabelSpan>
                 </LeftRow>
                 <RightRow>
-                  {branch?.name && <ValueSpan>{branch?.name}</ValueSpan>}
-                  {!branch?.name && <ValueSpan>{"None"}</ValueSpan>}
+                  {props?.repository?.mergeRequest?.branchState?.branchName && (
+                    <ValueSpan>
+                      {props?.repository?.mergeRequest?.branchState?.branchName}
+                    </ValueSpan>
+                  )}
+                  {!props?.repository?.mergeRequest?.branchState
+                    ?.branchName && <ValueSpan>{"None"}</ValueSpan>}
                 </RightRow>
               </Row>
               <Row style={{ marginTop: 16, justifyContent: "flex-start" }}>
@@ -640,23 +729,50 @@ const RemoteVCSMergeRequest = (props: Props) => {
                   <LabelSpan>{"Merging Into:"}</LabelSpan>
                 </LeftRow>
                 <RightRow>
-                  {baseBranch?.name && (
-                    <ValueSpan>{baseBranch?.name}</ValueSpan>
+                  {props?.repository?.mergeRequest?.branchState
+                    ?.baseBranchName && (
+                    <ValueSpan>
+                      {
+                        props?.repository?.mergeRequest?.branchState
+                          ?.baseBranchName
+                      }
+                    </ValueSpan>
                   )}
-                  {!baseBranch?.name && <ValueSpan>{"None"}</ValueSpan>}
+                  {!props?.repository?.mergeRequest?.branchState
+                    ?.baseBranchName && <ValueSpan>{"None"}</ValueSpan>}
                 </RightRow>
               </Row>
-              {props.repository?.mergeRequest?.isConflictFree && (
-                <Row style={{ marginTop: 16, justifyContent: "flex-start" }}>
-                  <Icon src={resolveIcon} />
-                  <LabelSpan>{"No conflicts"}</LabelSpan>
-                </Row>
-              )}
-              {!props.repository?.mergeRequest?.isConflictFree && (
-                <Row style={{ marginTop: 16, justifyContent: "flex-start" }}>
-                  <Icon src={abortIcon} />
-                  <LabelSpan>{"Has conflicts"}</LabelSpan>
-                </Row>
+              {props?.repository?.mergeRequest?.isOpen && (
+                <>
+                  {props?.repository?.mergeRequest?.isMerged && (
+                    <Row
+                      style={{ marginTop: 16, justifyContent: "flex-start" }}
+                    >
+                      <Icon src={nothingToPushIcon} />
+                      <LabelSpan style={{ fontStyle: "italic" }}>
+                        {"Nothing to Merge"}
+                      </LabelSpan>
+                    </Row>
+                  )}
+                  {!props?.repository?.mergeRequest?.isMerged &&
+                    props.repository?.mergeRequest?.isConflictFree && (
+                      <Row
+                        style={{ marginTop: 16, justifyContent: "flex-start" }}
+                      >
+                        <Icon src={resolveIcon} />
+                        <LabelSpan>{"No conflicts"}</LabelSpan>
+                      </Row>
+                    )}
+                  {!props?.repository?.mergeRequest?.isMerged &&
+                    !props.repository?.mergeRequest?.isConflictFree && (
+                      <Row
+                        style={{ marginTop: 16, justifyContent: "flex-start" }}
+                      >
+                        <Icon src={abortIcon} />
+                        <LabelSpan>{"Has conflicts"}</LabelSpan>
+                      </Row>
+                    )}
+                </>
               )}
               <Row style={{ marginTop: 16, justifyContent: "space-between" }}>
                 <div
@@ -671,31 +787,39 @@ const RemoteVCSMergeRequest = (props: Props) => {
                   <LabelSpan>{reviewStatusText}</LabelSpan>
                 </div>
                 {props?.repository?.mergeRequest?.isOpen && (
-                  <ClosedPill>
+                  <ClosedPill style={{ background: ColorPalette.orange }}>
                     <ClosedTitle>{"open"}</ClosedTitle>
                   </ClosedPill>
                 )}
+                {!props?.repository?.mergeRequest?.isOpen && (
+                  <ClosedPill style={{ background: closedReviewStatusColor }}>
+                    <ClosedTitle>{closedReviewStatusText}</ClosedTitle>
+                  </ClosedPill>
+                )}
               </Row>
-              {props.repository?.mergeRequest && (
-                <>
-                  <Row style={{ marginBottom: 0 }}>
-                    <SubTitleSpan>{"Reviewers"}</SubTitleSpan>
-                  </Row>
-                  {props?.repository?.mergeRequest?.mergeRequestPermissions
-                    ?.canEditReviewers &&
-                    (props?.repository?.mergeRequest?.reviewerRequests
-                      ?.length ?? 0) <= 3 && (
-                      <ReviewSearch
-                        repository={props.repository}
-                        mergeRequest={props.repository?.mergeRequest}
-                      />
-                    )}
-                  <Reviewers
-                    repository={props.repository}
-                    mergeRequest={props.repository.mergeRequest}
-                  />
-                </>
-              )}
+              {props.repository?.mergeRequest &&
+                (props.repository?.mergeRequest?.isOpen ||
+                  (props?.repository?.mergeRequest?.reviewerRequests?.length ??
+                    0) > 0) && (
+                  <>
+                    <Row style={{ marginBottom: 0 }}>
+                      <SubTitleSpan>{"Reviewers"}</SubTitleSpan>
+                    </Row>
+                    {props?.repository?.mergeRequest?.mergeRequestPermissions
+                      ?.canEditReviewers &&
+                      (props?.repository?.mergeRequest?.reviewerRequests
+                        ?.length ?? 0) <= 2 && (
+                        <ReviewSearch
+                          repository={props.repository}
+                          mergeRequest={props.repository?.mergeRequest}
+                        />
+                      )}
+                    <Reviewers
+                      repository={props.repository}
+                      mergeRequest={props.repository.mergeRequest}
+                    />
+                  </>
+                )}
             </>
           )}
           {isEditting && (
@@ -874,6 +998,7 @@ const RemoteVCSMergeRequest = (props: Props) => {
                     ?.canClose && (
                     <ButtonRow style={{ marginTop: 24 }}>
                       <Button
+                        onClick={onClose}
                         label={
                           <div
                             style={{
@@ -920,6 +1045,8 @@ const RemoteVCSMergeRequest = (props: Props) => {
                     ?.canClose && (
                     <ButtonRow style={{ marginTop: 24 }}>
                       <Button
+                        onClick={onMerge}
+                        isLoading={mergeMutation.loading}
                         label={
                           <div
                             style={{
@@ -950,13 +1077,20 @@ const RemoteVCSMergeRequest = (props: Props) => {
                                 marginRight: 16,
                               }}
                             >
-                              <span>{"merge branch & close"}</span>
+                              <span>
+                                {props?.repository?.mergeRequest?.isMerged
+                                  ? "nothing to merge"
+                                  : "merge branch & close"}
+                              </span>
                             </div>
                           </div>
                         }
                         bg={"purple"}
                         size={"extra-big"}
-                        isDisabled={!props?.repository?.mergeRequest?.canMerge}
+                        isDisabled={
+                          !props?.repository?.mergeRequest?.canMerge ||
+                          !!props?.repository?.mergeRequest?.isMerged
+                        }
                       />
                     </ButtonRow>
                   )}

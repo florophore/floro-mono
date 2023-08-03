@@ -19,7 +19,6 @@ import { Manifest } from "floro/dist/src/plugins";
 import PluginsVersionsContext from "@floro/database/src/contexts/plugins/PluginVersionsContext";
 import { SourceCommitNode } from "floro/dist/src/sourcegraph";
 import PluginCommitUtilizationsContext from "@floro/database/src/contexts/repositories/PluginCommitUtilizationsContext";
-import { User } from "@floro/database/src/entities/User";
 
 @injectable()
 export default class RepositoryDatasourceFactoryService {
@@ -210,7 +209,6 @@ export default class RepositoryDatasourceFactoryService {
     branch: FloroBranch,
     commits: Array<Commit>,
     pluginVersions: Array<PluginVersion>,
-    user?: User
   ): Promise<DataSource> {
     const pluginMap: { [pluginVersionName: string]: Manifest } = {};
     const commitMap: { [sha: string]: Commit } = {};
@@ -276,9 +274,11 @@ export default class RepositoryDatasourceFactoryService {
         if (memoizedCommitData[sha]) {
           return memoizedCommitData[sha];
         }
-        const commitData = await this.repoAccessor.readCommit(repository, sha);
-        memoizedCommitData[sha] = commitData;
-        return memoizedCommitData[sha];
+        const commitData = await this.repoAccessor.readCommit(repository, sha) ?? null;
+        if (sha) {
+          memoizedCommitData[sha] = commitData;
+        }
+        return memoizedCommitData[sha] ?? null;
       },
       readCommits: async (): Promise<Array<SourceCommitNode>> => {
         return commits as Array<SourceCommitNode>;

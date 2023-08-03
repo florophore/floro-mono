@@ -205,8 +205,11 @@ const ReviewerRow = (props: Props) => {
     if (reviewStatus == 'blocked') {
       return 'blocked';
     }
+    if (!props.mergeRequest?.isOpen) {
+      return 'requested';
+    }
     return 'pending';
-  }, [reviewStatus])
+  }, [reviewStatus, props.mergeRequest])
 
   const reviewColor = useMemo(() => {
     if (reviewStatus == 'approved') {
@@ -223,6 +226,9 @@ const ReviewerRow = (props: Props) => {
   }, [firstName, lastName]);
 
   const showDeleteBlock = useMemo(() => {
+    if (!props?.mergeRequest?.isOpen) {
+      return false;
+    }
     if (!session?.user) {
       return false;
     }
@@ -233,7 +239,7 @@ const ReviewerRow = (props: Props) => {
       return reviewStatus == 'pending';
     }
     return false;
-  }, [props?.reviewerRequest, session?.user, reviewStatus]);
+  }, [props?.reviewerRequest, session?.user, reviewStatus, props?.mergeRequest?.isOpen]);
 
   return (
     <Container>

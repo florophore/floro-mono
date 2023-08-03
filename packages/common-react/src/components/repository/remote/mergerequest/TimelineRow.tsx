@@ -15,6 +15,7 @@ import CommitWhite from "@floro/common-assets/assets/images/repo_icons/commit.wh
 import CommitGray from "@floro/common-assets/assets/images/repo_icons/commit.gray.svg";
 import MergeRequestWhite from "@floro/common-assets/assets/images/repo_icons/merge_request.white.svg";
 import MergeRequestGray from "@floro/common-assets/assets/images/repo_icons/merge_request.gray.svg";
+import MergeWhite from "@floro/common-assets/assets/images/repo_icons/merge.white.svg";
 
 import ConversationLight from "@floro/common-assets/assets/images/icons/conversation.light.svg";
 import ConversationDark from "@floro/common-assets/assets/images/icons/conversation.dark.svg";
@@ -191,6 +192,15 @@ const TimelineRow = (props: Props) => {
       }
       return TrashDark;
     }
+
+    if (props?.event?.eventName == "CLOSED_MERGE_REQUEST") {
+      return TrashDark;
+    }
+
+    if (props?.event?.eventName == "MERGED_MERGE_REQUEST") {
+      return MergeWhite;
+    }
+
     if (theme.name == "light") {
       return CommitGray;
     }
@@ -334,6 +344,30 @@ const TimelineRow = (props: Props) => {
 
     }
 
+    if (props.event.eventName == 'CLOSED_MERGE_REQUEST') {
+        return (
+          <span>
+            {`closed merge request [${props?.mergeRequest?.mergeRequestCount}] `}
+          </span>
+        );
+    }
+
+    if (props.event.eventName == 'MERGED_MERGE_REQUEST') {
+        return (
+          <span>
+            {'merged '}
+            <b>
+              {`(${props.event.branchHeadShaAtEvent?.substring(0, 6)})`}
+            </b>
+            {' into '}
+            <b>
+              {`${props.mergeRequest?.branchState?.baseBranchName} (${props.event.mergeSha?.substring(0, 6)})`}
+            </b>
+            {` and closed merge request [${props?.mergeRequest?.mergeRequestCount}] `}
+          </span>
+        );
+    }
+
     if (props.event.eventName == "ADDED_COMMENT") {
       return "added a comment"
     }
@@ -372,10 +406,22 @@ const TimelineRow = (props: Props) => {
     return <span>{userFullname} {action} {elapsedTime}</span>;
   }, [userFullname, action, elapsedTime]);
 
+  const iconContainerBackground = useMemo(() => {
+    if (props?.event?.eventName == "MERGED_MERGE_REQUEST") {
+      return theme.name == "light" ? ColorPalette.purple: ColorPalette.purple;
+    }
+
+    if (props?.event?.eventName == "CLOSED_MERGE_REQUEST") {
+      return theme.name == "light" ? ColorPalette.red: ColorPalette.lightRed;
+    }
+
+    return theme.name == "light" ? ColorPalette.lightGray : ColorPalette.mediumGray
+  }, [props?.event?.eventName, theme?.name])
+
   return (
     <Container>
       <LeftColumn>
-        <IconContainer>
+        <IconContainer style={{background: iconContainerBackground}}>
           {!showFullIcon && (
             <Icon src={icon} />
           )}

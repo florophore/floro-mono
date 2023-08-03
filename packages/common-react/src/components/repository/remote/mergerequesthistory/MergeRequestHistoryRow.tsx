@@ -23,6 +23,7 @@ import ColorPalette from "@floro/styles/ColorPalette";
 import { Link } from "react-router-dom";
 import { useRepoLinkBase } from "../hooks/remote-hooks";
 import InitialProfileDefault from "@floro/storybook/stories/common-components/InitialProfileDefault";
+import UserProfilePhoto from "@floro/storybook/stories/common-components/UserProfilePhoto";
 
 const Container = styled.div`
   width: 100%;
@@ -191,33 +192,55 @@ const MergeRequestHistoryRow = (props: Props) => {
     return ColorPalette.gray;
   }, [props?.mergeRequest?.approvalStatus, theme.name])
 
+  const closedText = useMemo(() => {
+    if (props?.mergeRequest?.wasClosedWithoutMerging) {
+      return 'closed';
+    }
+    return 'merged';
+  }, [props?.mergeRequest?.approvalStatus])
+
+  const closeColor = useMemo(() => {
+    if (props?.mergeRequest?.wasClosedWithoutMerging) {
+      return theme.name == "light" ? ColorPalette.red : ColorPalette.lightRed;
+    }
+    return theme.name == "light" ? ColorPalette.purple : ColorPalette.lightPurple;
+  }, [props?.mergeRequest?.wasClosedWithoutMerging, theme.name])
+
   return (
     <Container>
       <TopRow>
         <Link to={link}>
-          <CommitTitle>{`[${props.mergeRequest.mergeRequestCount}] `+ props.mergeRequest.title}</CommitTitle>
+          <CommitTitle>
+            {`[${props.mergeRequest.mergeRequestCount}] ` +
+              props.mergeRequest.title}
+          </CommitTitle>
         </Link>
-        <div style={{height: 36}}></div>
+        <div style={{ height: 36 }}></div>
       </TopRow>
       <ShaRow>
-        <StatusTitle>{"Review Status: "}</StatusTitle>
-        <RevertedPill style={{ marginLeft: 8, background: reviewColor }}>
+        {props.mergeRequest.isOpen && (
+          <>
+          <StatusTitle>{"Review Status: "}</StatusTitle>
+          <RevertedPill style={{ marginTop: 4, marginLeft: 8, background: reviewColor }}>
             <RevertTitle>{reviewText}</RevertTitle>
-        </RevertedPill>
+          </RevertedPill>
+          </>
+        )}
+        {!props.mergeRequest.isOpen && (
+          <>
+          <StatusTitle>{"Status: "}</StatusTitle>
+          <RevertedPill style={{ marginTop: 4, marginLeft: 8, background: closeColor }}>
+            <RevertTitle>{closedText}</RevertTitle>
+          </RevertedPill>
+          </>
+        )}
       </ShaRow>
       <UserRow>
-        {props.mergeRequest?.openedByUser?.profilePhoto?.thumbnailUrl && (
-          <ProfilePhoto
-            src={props.mergeRequest?.openedByUser?.profilePhoto?.thumbnailUrl ?? ""}
-          />
-        )}
-        {!props.mergeRequest?.openedByUser?.profilePhoto?.thumbnailUrl && (
-          <InitialProfileDefault
-            size={36}
-            firstName={props.mergeRequest?.openedByUser?.firstName ?? ""}
-            lastName={props.mergeRequest?.openedByUser?.lastName ?? ""}
-          />
-        )}
+        <UserProfilePhoto
+          offlinePhoto={null}
+          user={props.mergeRequest?.openedByUser}
+          size={36}
+        />
         <TimeTextRow
           style={{
             justifyContent: "flex-end",

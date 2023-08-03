@@ -59,6 +59,11 @@ export class MergeRequest extends BinaryPKBaseEntity {
   @Column("varchar")
   @IsOptional()
   @IsString()
+  mergeSha!: string;
+
+  @Column("varchar")
+  @IsOptional()
+  @IsString()
   divergenceSha!: string;
 
   @Column("varchar")
@@ -103,6 +108,9 @@ export class MergeRequest extends BinaryPKBaseEntity {
   @ManyToOne("Repository", "mergeRequests")
   @JoinColumn()
   repository!: Relation<Organization>;
+
+  @Column("uuid")
+  dbBaseBranchId!: string;
 
   @Column("uuid")
   dbBranchId!: string;

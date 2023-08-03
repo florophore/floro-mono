@@ -27,6 +27,11 @@ extend type Mutation {
     repositoryId: String!
   ): CloseMergeRequestResponse
 
+  mergeMergeRequest(
+    mergeRequestId: String!
+    repositoryId: String!
+  ): MergeMergeRequestResponse
+
   updateMergeRequestReviewers(
     mergeRequestId: String!
     repositoryId: String!,
