@@ -155,8 +155,6 @@ export default class PreMergeCommitQueue implements BranchPushHandler, QueueServ
           divergenceOrigin?.rebaseShas?.length == 0 &&
           (divergenceOrigin?.intoLastCommonAncestor == floroBranch?.lastCommit ||
             divergenceOrigin?.trueOrigin == baseBranch?.lastCommit);
-          //const isMerged =
-          //  !!divergenceSha && divergenceSha === floroBranch?.lastCommit;
           let isConflictFree =
             isMerged || divergenceSha === baseBranch?.lastCommit;
           if (!isConflictFree) {

@@ -1112,15 +1112,18 @@ export const usePushBranch = (repository: Repository) => {
 export const usePullBranch = (repository: Repository) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (): Promise<FetchInfo> => {
-      const result = await axios.post<FetchInfo>(
+    mutationFn: async (): Promise<{fetchInfo: FetchInfo, apiResponse: ApiResponse}> => {
+      const result = await axios.post<{fetchInfo: FetchInfo, apiResponse: ApiResponse}>(
         `http://localhost:63403/repo/${repository.id}/pull`,
       );
       return result?.data ?? null;
     },
-    onSuccess: (fetchInfo: FetchInfo) => {
+    onSuccess: ({fetchInfo, apiResponse}: {fetchInfo: FetchInfo, apiResponse: ApiResponse}) => {
       if (fetchInfo) {
         queryClient.setQueryData(["repo-fetch-info:" + repository.id], fetchInfo);
+      }
+      if (apiResponse) {
+        queryClient.setQueryData(["repo-current:" + repository.id], apiResponse);
       }
     }
   });

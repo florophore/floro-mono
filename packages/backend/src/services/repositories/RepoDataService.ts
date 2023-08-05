@@ -397,6 +397,7 @@ export default class RepoDataService {
     }
     for (const commit of commitHistory) {
       if (commit?.revertFromSha && commit?.revertToSha) {
+        console.log("BRO", commit)
         const commitFrom = commitMap[commit?.revertFromSha];
         const commitTo = commitMap[commit?.revertToSha];
         out.push({

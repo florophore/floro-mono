@@ -57,21 +57,17 @@ export default class CommitStateDatasourceLoader extends LoaderResolverHook<
     async (
       commitState: CommitState,
       _,
-      { cacheKey }
+      { cacheKey, currentUser }
     ): Promise<void> => {
       if (!commitState?.repositoryId || !commitState?.sha) {
         return;
       }
+      if (!currentUser) {
+        return
+      }
       const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(cacheKey, commitState?.repositoryId);
       if (!cachedRemoteSettings.canPushBranches) {
         return;
-      }
-      const userBranchRule = cachedRemoteSettings.branchRules?.find(
-        (rule) => rule.branchId == commitState.branchId
-      );
-      if (!userBranchRule) {
-        // TODO: Add this in later
-        //return;
       }
       const cachedRepository = this.requestCache.getRepo(
         cacheKey,

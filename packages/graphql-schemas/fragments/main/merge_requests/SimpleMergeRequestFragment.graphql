@@ -16,7 +16,6 @@ fragment SimpleMergeRequest on MergeRequest {
   isMerged
   canMerge
   isConflictFree
-  nothingToMerge
   mergeRequestCount
   wasClosedWithoutMerging
   approvalStatus

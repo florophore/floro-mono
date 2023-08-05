@@ -68,6 +68,27 @@ export default class MergeRequestsContext extends BaseContext {
     });
   }
 
+  public async getAllClosedMergeRequestsForUser(
+    repositoryId: string,
+    userId: string
+  ): Promise<MergeRequest[]> {
+    return await this.queryRunner.manager.find(MergeRequest, {
+      where: {
+        repositoryId,
+        isOpen: false,
+        openedByUserId: userId
+      },
+      order: {
+        mergeRequestCount: 'ASC'
+      },
+      relations: {
+        openedByUser: {
+          profilePhoto: true
+        }
+      }
+    });
+  }
+
   public async getOpenMergeRequestByBranchNameAndRepo(
     repositoryId: string,
     branchId: string,

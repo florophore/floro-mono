@@ -89,7 +89,6 @@ type MergeRequest {
   approvalStatus: String
   isMerged: Boolean
   canMerge: Boolean
-  nothingToMerge: Boolean
   isConflictFree: Boolean
   mergeRequestCount: Int
   createdAt: DateTime

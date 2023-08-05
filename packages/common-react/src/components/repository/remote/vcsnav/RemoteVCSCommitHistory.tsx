@@ -2,7 +2,7 @@ import React, {
   useMemo,
   useCallback,
 } from "react";
-import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import { Repository, useAutofixCommitMutation, useRevertCommitMutation } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import ColorPalette from "@floro/styles/ColorPalette";
@@ -24,6 +24,7 @@ import RedXCircleDark from "@floro/common-assets/assets/images/icons/red_x_circl
 
 import TimeAgo from "javascript-time-ago";
 import { RepoPage } from "../../types";
+import UserProfilePhoto from "@floro/storybook/stories/common-components/UserProfilePhoto";
 
 const InnerContent = styled.div`
   display: flex;
@@ -283,8 +284,23 @@ const RemoteVCSCommitHistory = (props: Props) => {
   const navigate = useNavigate();
   const linkBase = useRepoLinkBase(props.repository);
   const [searchParams] = useSearchParams();
-  const searchQuery = searchParams.get("query");
-  const index = searchParams.get('idx');
+  const sha = searchParams.get('sha');
+  const searchQuery = searchParams.get('query');
+  const idxString = searchParams.get('idx');
+  const idx = useMemo(() => {
+    try {
+      if (!idxString) {
+        return null;
+      }
+      const idxInt = parseInt(idxString);
+      if (Number.isNaN(idxInt)) {
+        return null
+      }
+      return idxInt;
+    } catch(e) {
+      return null;
+    }
+  }, [idxString]);
   const historyLink = useMemo(() => {
     let link;
     if (!props.repository?.branchState?.branchId) {
@@ -295,11 +311,11 @@ const RemoteVCSCommitHistory = (props: Props) => {
     link = `${linkBase}/history?from=remote&branch=${
       props.repository?.branchState?.branchId
     }&plugin=${props.plugin ?? "home"}&query=${searchQuery ?? ""}`;
-    if (index) {
-      return link + "&idx=" + index;
+    if (idx) {
+      return link + "&idx=" + idx;
     }
     return link;
-  }, [props.repository?.branchState, linkBase, props.plugin, searchQuery, index]);
+  }, [props.repository?.branchState, linkBase, props.plugin, searchQuery, idx]);
 
   const homeLink = useMemo(() => {
     if (!props.repository?.branchState?.branchId) {
@@ -318,6 +334,64 @@ const RemoteVCSCommitHistory = (props: Props) => {
     linkBase,
     props.plugin,
   ]);
+
+  const [revert, revertMutation] = useRevertCommitMutation();
+  const [autofix, auotfixMutation] = useAutofixCommitMutation();
+
+  const onRevert = useCallback(() => {
+    if (
+      !props?.repository?.id ||
+      !props?.repository?.branchState?.branchId ||
+      !props.repository.branchState?.commitState?.sha
+    ) {
+      return;
+    }
+    revert({
+      variables: {
+        repositoryId: props?.repository?.id,
+        branchId: props?.repository?.branchState?.branchId,
+        reversionSha: props.repository.branchState?.commitState?.sha,
+        sha,
+        searchQuery,
+        idx,
+      },
+    });
+  }, [
+    props?.repository?.id,
+    props?.repository?.branchState?.branchId,
+    props.repository.branchState?.commitState,
+    sha,
+    searchQuery,
+    idx,
+  ]);
+
+  const onAutofix = useCallback(() => {
+    if (
+      !props?.repository?.id ||
+      !props?.repository?.branchState?.branchId ||
+      !props.repository.branchState?.commitState?.sha
+    ) {
+      return;
+    }
+    autofix({
+      variables: {
+        repositoryId: props?.repository?.id,
+        branchId: props?.repository?.branchState?.branchId,
+        reversionSha: props.repository.branchState?.commitState?.sha,
+        sha,
+        searchQuery,
+        idx,
+      },
+    });
+  }, [
+    props?.repository?.id,
+    props?.repository?.branchState?.branchId,
+    props.repository.branchState?.commitState,
+    sha,
+    searchQuery,
+    idx,
+  ]);
+
 
   const onGoBack = useCallback(() => {
     navigate(historyLink);
@@ -433,13 +507,9 @@ const RemoteVCSCommitHistory = (props: Props) => {
                   alignItems: "center",
                 }}
               >
-                <ProfilePhoto
-                  style={{ marginRight: 8 }}
-                  src={
-                    props.repository.branchState?.commitState?.user
-                      ?.profilePhoto?.thumbnailUrl ?? ""
-                  }
-                />
+                <div style={{marginRight: 8}}>
+                  <UserProfilePhoto user={props.repository.branchState?.commitState?.user} size={36} offlinePhoto={null}                />
+                </div>
                 <UserTextRow>
                   <UsernameText>{username}</UsernameText>
                 </UserTextRow>
@@ -457,13 +527,9 @@ const RemoteVCSCommitHistory = (props: Props) => {
             </UserRow>
             {showAuthor && (
               <UserRow style={{ marginTop: 8 }}>
-                <ProfilePhoto
-                  style={{ marginRight: 8 }}
-                  src={
-                    props.repository.branchState?.commitState?.authorUser
-                      ?.profilePhoto?.thumbnailUrl ?? ""
-                  }
-                />
+                <div style={{marginRight: 8}}>
+                  <UserProfilePhoto user={props.repository.branchState?.commitState?.authorUser} size={36} offlinePhoto={null}                />
+                </div>
                 <UserTextRow style={{ alignItems: "center" }}>
                   <UsernameText>{authorUsername}</UsernameText>
                   <ElapseText style={{ fontSize: "1.1rem" }}>
@@ -513,6 +579,8 @@ const RemoteVCSCommitHistory = (props: Props) => {
               }
               label={"revert sha"}
               icon={"revert"}
+              onClick={onRevert}
+              isLoading={revertMutation.loading}
             />
             <RepoActionButton
               label={"fix forward"}
@@ -520,6 +588,8 @@ const RemoteVCSCommitHistory = (props: Props) => {
               isDisabled={
                 !props?.repository?.branchState?.commitState?.canAutoFix
               }
+              onClick={onAutofix}
+              isLoading={auotfixMutation.loading}
             />
           </ButtonRow>
         </TopContainer>

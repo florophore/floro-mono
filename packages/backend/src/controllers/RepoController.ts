@@ -1135,6 +1135,8 @@ export default class RepoController extends BaseController {
         idx: commitData?.idx as number,
         mergeBase: commitData?.mergeBase as string,
         mergeRevertSha: commitData?.mergeRevertSha as string,
+        revertFromSha: commitData?.revertFromSha as string,
+        revertToSha: commitData?.revertToSha as string,
         byteSize,
         diffByteSize,
         kvByteSize,

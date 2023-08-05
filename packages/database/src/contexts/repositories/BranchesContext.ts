@@ -30,6 +30,7 @@ export default class BranchesContext extends BaseContext {
     return await this.queryRunner.manager.findOneBy(Branch, {
       branchId,
       repositoryId,
+      isDeleted: false
     });
   }
 

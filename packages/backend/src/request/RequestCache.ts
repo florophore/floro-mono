@@ -759,6 +759,23 @@ export default class RequestCache {
     return cache[`open-repo-merge-requests:${repositoryId}`];
   }
 
+  public setUserClosedRepoMergeRequests(
+    cacheKey: string,
+    repositoryId: string,
+    mergeRequests: Array<MergeRequest>
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`user-closed-repo-merge-requests:${repositoryId}`] = mergeRequests;
+  }
+
+  public getUserClosedRepoMergeRequests(
+    cacheKey: string,
+    repositoryId: string,
+  ): Array<MergeRequest> {
+    const cache = this.getCache(cacheKey);
+    return cache[`user-closed-repo-merge-requests:${repositoryId}`];
+  }
+
   public setClosedRepoMergeRequests(
     cacheKey: string,
     repositoryId: string,

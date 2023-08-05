@@ -136,6 +136,10 @@ type BranchState {
   commitSearch(searchQuery: String): [CommitInfo]
   commitsSize: Int
   proposedMergeRequest(idx: Int): ProposedMergeRequest
+
+  #can delete
+  #has open mr
+  #open MR
 }
 
 type ProposedMergeRequest {
@@ -144,7 +148,6 @@ type ProposedMergeRequest {
   isConflictFree: Boolean
   isMerged: Boolean
   canMerge: Boolean
-  nothingToMerge: Boolean
   existingMergeRequest: MergeRequest
   canCreateMergeRequest: Boolean
   pendingCommits: [CommitInfo]
@@ -231,7 +234,7 @@ type FetchRepositoryError {
   type: String
 }
 
-union FetchRepositoryReponse =
+union FetchRepositoryResponse =
     FetchRepositorySuccess
   | FetchRepositoryError
 
@@ -244,7 +247,7 @@ type IgnoreBranchError {
   type: String
 }
 
-union IgnoreBranchReponse =
+union IgnoreBranchResponse =
     IgnoreBranchSuccess
   | IgnoreBranchError
   | UnAuthenticatedError
@@ -260,8 +263,40 @@ type ChangeDefaultBranchError {
   type: String
 }
 
-union ChangeDefaultBranchReponse =
+union ChangeDefaultBranchResponse =
     ChangeDefaultBranchSuccess
   | ChangeDefaultBranchError
+  | RepoSettingAccessError
+  | UnAuthenticatedError
+
+
+type RevertCommitSuccess {
+  repository: Repository
+}
+
+type RevertCommitError {
+  message: String
+  type: String
+}
+
+union RevertCommitResponse =
+    RevertCommitSuccess
+  | RevertCommitError
+  | RepoSettingAccessError
+  | UnAuthenticatedError
+
+
+type AutofixCommitSuccess {
+  repository: Repository
+}
+
+type AutofixCommitError {
+  message: String
+  type: String
+}
+
+union AutofixCommitResponse =
+    AutofixCommitSuccess
+  | AutofixCommitError
   | RepoSettingAccessError
   | UnAuthenticatedError

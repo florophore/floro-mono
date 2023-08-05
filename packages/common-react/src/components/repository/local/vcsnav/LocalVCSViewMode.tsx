@@ -201,7 +201,7 @@ const LocalVCSViewMode = (props: Props) => {
     if (!fetchInfo?.canPushBranch) {
       return;
     }
-    if (fetchInfo?.hasConflict) {
+    if (fetchInfo?.hasConflict || fetchInfo?.remoteAhead) {
       setShowConfirmForcePush(true);
       return;
     }

@@ -99,6 +99,8 @@ import MergeService from './services/merge_requests/MergeService';
 import MergedMergeRequestEventHandler from './services/merge_requests/merge_request_events/MergedMergeRequestEventHandler';
 import PreMergeCommitQueue from './services/merge_requests/PreMergeCommitQueue';
 import CommitService from './services/merge_requests/CommitService';
+import UserClosedMergeRequestsLoader from './resolvers/hooks/loaders/MergeRequest/UserClosedMergeRequestsLoader';
+import RevertService from './services/repositories/RevertService';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -170,6 +172,7 @@ export default new ContainerModule((bind): void => {
     bind(ClosedMergeRequestsLoader).toSelf();
     bind(MergeRequestPermissionsLoader).toSelf();
     bind(RepositoryRemoteSettingsArgsLoader).toSelf();
+    bind(UserClosedMergeRequestsLoader).toSelf();
 
     // SERVICES
     bind(AuthenticationService).toSelf();
@@ -198,6 +201,7 @@ export default new ContainerModule((bind): void => {
     bind(GrantAccessReceiverService).toSelf();
     bind(RepoDataService).toSelf();
     bind(CommitService).toSelf();
+    bind(RevertService).toSelf();
 
     // REFERRALS
     bind(ReferralService).toSelf()

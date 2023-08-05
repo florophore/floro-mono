@@ -234,14 +234,14 @@ export default class MergeRequestResolverModule extends BaseResolverModule {
           }
           const baseBranch = await branchesContext.getById(dbMergeRequest.dbBaseBranchId);
           return {
-            branchId: branch.id,
+            branchId: branch.branchId,
             branchName: branch.name,
             updatedAt: branch.updatedAt,
             baseBranchId: branch?.baseBranchId,
             baseBranchName: baseBranch?.name,
             defaultBranchId: repository.defaultBranchId,
             name: branch.name,
-            branchHead: branch.lastCommit ?? null,
+            branchHead: dbMergeRequest?.branchHeadShaAtClose ?? null,
             repositoryId: repository.id,
           };
 

@@ -1,6 +1,6 @@
 extend type Query {
-  fetchRepositoryByName(ownerHandle: String, repoName: String): FetchRepositoryReponse
-  fetchRepositoryById(id: ID!): FetchRepositoryReponse
+  fetchRepositoryByName(ownerHandle: String, repoName: String): FetchRepositoryResponse
+  fetchRepositoryById(id: ID!): FetchRepositoryResponse
 }
 
 extend type Mutation {
@@ -20,12 +20,30 @@ extend type Mutation {
   ignoreBranch(
     repositoryId: ID!,
     branchId: ID!
-  ): IgnoreBranchReponse
+  ): IgnoreBranchResponse
 
   changeDefaultBranch(
     repositoryId: ID!,
     branchId: ID!
-  ): ChangeDefaultBranchReponse
+  ): ChangeDefaultBranchResponse
+
+  revertCommit(
+    repositoryId: ID!,
+    branchId: ID!
+    sha: String!
+  ): RevertCommitResponse
+
+  autofixCommit(
+    repositoryId: ID!,
+    branchId: ID!
+    sha: String!
+  ): AutofixCommitResponse
+
+  # autofix
+  # revert
+  # merge
+  # delete
+
 }
 
 

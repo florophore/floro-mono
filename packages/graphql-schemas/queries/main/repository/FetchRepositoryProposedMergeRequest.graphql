@@ -48,7 +48,6 @@ query fetchRepositoryProposedMergeRequest(
             isConflictFree
             isMerged
             canMerge
-            nothingToMerge
             canCreateMergeRequest
             existingMergeRequest {
               id

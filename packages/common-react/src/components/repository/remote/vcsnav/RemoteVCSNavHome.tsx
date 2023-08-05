@@ -253,10 +253,26 @@ const RemoteVCSNavHome = (props: Props) => {
         )}
       </TopContainer>
       <BottomContainer>
+
+        <ButtonRow>
+          <Button
+            label="merge branch"
+            bg={"purple"}
+            size={"extra-big"}
+            isDisabled={true}
+          />
+          <div style={{width: 48}}></div>
+          <Button
+            label="delete branch"
+            bg={"red"}
+            size={"extra-big"}
+            isDisabled={true}
+          />
+        </ButtonRow>
         {(cloneState?.state != "none" || !repoExistsLocally) &&
           !isLoading &&
           !cloneStateLoading && (
-            <ButtonRow>
+            <ButtonRow style={{marginTop: 24}}>
               <Button
                 label="clone repository"
                 bg={"orange"}

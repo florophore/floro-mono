@@ -1,0 +1,159 @@
+mutation revertCommit(
+  $repositoryId: ID!
+  $branchId: ID!
+  $reversionSha: String!,
+  $sha: ID,
+  $idx: Int,
+  $searchQuery: String
+) {
+  revertCommit(repositoryId: $repositoryId, branchId: $branchId, sha: $reversionSha) {
+    ... on RevertCommitSuccess {
+      repository {
+        ...Repository
+        organization {
+          ...Organization
+        }
+        user {
+          ...User
+        }
+        branchState(branchId: $branchId) {
+          branchId
+          name
+          branchHead
+          defaultBranchId
+          name
+          commitsSize
+          updatedAt
+          commitSearch(searchQuery: $searchQuery) {
+            sha
+            message
+            idx
+            username
+            authorUsername
+            timestamp
+            isReverted
+            isValid
+            updatedAt
+            authorUser {
+              id
+              username
+              firstName
+              lastName
+              profilePhoto {
+                ...Photo
+              }
+            }
+            user {
+              id
+              username
+              firstName
+              lastName
+              profilePhoto {
+                ...Photo
+              }
+            }
+          }
+          commits(idx: $idx, searchQuery: $searchQuery) {
+            sha
+            message
+            idx
+            username
+            authorUsername
+            timestamp
+            isReverted
+            isValid
+            updatedAt
+            authorUser {
+              id
+              username
+              firstName
+              lastName
+              profilePhoto {
+                ...Photo
+              }
+            }
+            user {
+              id
+              username
+              firstName
+              lastName
+              profilePhoto {
+                ...Photo
+              }
+            }
+          }
+          commitState(sha: $sha) {
+            sha
+            kvLink
+            stateLink
+            isReverted
+            isValid
+            message
+            lastUpdatedAt
+            canRevert
+            canAutoFix
+            binaryRefs {
+              fileName
+              url
+            }
+            pluginVersions {
+              id
+              name
+              displayName
+              version
+              darkIcon
+              lightIcon
+              selectedLightIcon
+              selectedDarkIcon
+              manifest
+              entryUrl
+            }
+            authorUser {
+              id
+              username
+              firstName
+              lastName
+              profilePhoto {
+                ...Photo
+              }
+            }
+            user {
+              id
+              username
+              firstName
+              lastName
+              profilePhoto {
+                ...Photo
+              }
+            }
+          }
+        }
+        repoBranches {
+          id
+          name
+          lastCommit
+          baseBranchId
+          createdBy
+          createdByUsername
+          createdAt
+          updatedAt
+        }
+      }
+    }
+    ... on RevertCommitError {
+      message
+      type
+    }
+
+    ... on RepoSettingAccessError {
+      message
+      type
+    }
+
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+  }
+}
+

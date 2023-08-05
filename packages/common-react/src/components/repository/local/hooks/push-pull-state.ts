@@ -69,6 +69,14 @@ export const usePushButtonSubTitle = (
       return "(push base branch first)";
     }
 
+    if (fetchInfo.hasConflict) {
+      return "(remote conflict. force push required)";
+    }
+
+    if (fetchInfo.remoteAhead) {
+      return "(remote ahead. force push required)";
+    }
+
     if (fetchInfo.nothingToPush) {
       return "(nothing to push)";
     }
@@ -83,10 +91,6 @@ export const usePushButtonSubTitle = (
 
     if (fetchInfo?.hasInvalidPlugins) {
       return "(cannot push invalid plugins)";
-    }
-
-    if (fetchInfo.nothingToPush) {
-      return "(force push required)";
     }
 
     return null;

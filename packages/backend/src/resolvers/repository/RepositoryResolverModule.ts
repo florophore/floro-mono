@@ -59,6 +59,8 @@ import RepoSettingAccessGuard from "../hooks/guards/RepoSettingAccessGuard";
 import RepoDataService from "../../services/repositories/RepoDataService";
 import OrganizationsContext from "@floro/database/src/contexts/organizations/OrganizationsContext";
 import RepositoryDatasourceFactoryService from "../../services/repositories/RepoDatasourceFactoryService";
+import UserClosedMergeRequestsLoader from "../hooks/loaders/MergeRequest/UserClosedMergeRequestsLoader";
+import RevertService from "../../services/repositories/RevertService";
 
 const PAGINATION_LIMIT = 10;
 
@@ -79,6 +81,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
   protected repoSettingsService!: RepoSettingsService;
   protected branchService!: BranchService;
   protected mergeRequestService!: MergeRequestService;
+  protected revertService!: RevertService;
   protected contextFactory!: ContextFactory;
   protected requestCache!: RequestCache;
 
@@ -100,6 +103,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
   protected repoSettingAccessGuard!: RepoSettingAccessGuard;
 
   protected openMergeRequestsLoader!: OpenMergeRequestsLoader;
+  protected userClosedMergeRequestsLoader!: UserClosedMergeRequestsLoader;
   protected closedMergeRequestsLoader!: ClosedMergeRequestsLoader;
 
   constructor(
@@ -107,7 +111,8 @@ export default class RepositoryResolverModule extends BaseResolverModule {
     @inject(RequestCache) requestCache: RequestCache,
     @inject(RepositoryService) repositoryService: RepositoryService,
     @inject(RepoDataService) repoDataService: RepoDataService,
-    @inject(RepositoryDatasourceFactoryService) repositoryDatasourceFactoryService: RepositoryDatasourceFactoryService,
+    @inject(RepositoryDatasourceFactoryService)
+    repositoryDatasourceFactoryService: RepositoryDatasourceFactoryService,
     @inject(RepoSettingsService) repoSettingsService: RepoSettingsService,
     @inject(LoggedInUserGuard) loggedInUserGuard: LoggedInUserGuard,
     @inject(RootOrganizationMemberPermissionsLoader)
@@ -140,20 +145,25 @@ export default class RepositoryResolverModule extends BaseResolverModule {
     openMergeRequestsLoader: OpenMergeRequestsLoader,
     @inject(ClosedMergeRequestsLoader)
     closedMergeRequestsLoader: ClosedMergeRequestsLoader,
+    @inject(UserClosedMergeRequestsLoader)
+    userClosedMergeRequestsLoader: UserClosedMergeRequestsLoader,
     @inject(WriteAccessIdsLoader) writeAccessIdsLoader: WriteAccessIdsLoader,
     @inject(RepoSettingAccessGuard)
-    repoSettingAccessGuard: RepoSettingAccessGuard
+    repoSettingAccessGuard: RepoSettingAccessGuard,
+    @inject(RevertService) revertService: RevertService
   ) {
     super();
     this.contextFactory = contextFactory;
     this.requestCache = requestCache;
 
     this.repoDataService = repoDataService;
-    this.repositoryDatasourceFactoryService = repositoryDatasourceFactoryService;
+    this.repositoryDatasourceFactoryService =
+      repositoryDatasourceFactoryService;
     this.repositoryService = repositoryService;
     this.repoSettingsService = repoSettingsService;
     this.branchService = branchService;
     this.mergeRequestService = mergeRequestService;
+    this.revertService = revertService;
 
     this.loggedInUserGuard = loggedInUserGuard;
 
@@ -177,6 +187,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
 
     this.openMergeRequestsLoader = openMergeRequestsLoader;
     this.closedMergeRequestsLoader = closedMergeRequestsLoader;
+    this.userClosedMergeRequestsLoader = userClosedMergeRequestsLoader;
   }
 
   public Repository: main.RepositoryResolvers = {
@@ -239,6 +250,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
       () => [
         this.repositoryBranchesLoader,
         this.repositoryRemoteSettingsLoader,
+        this.userClosedMergeRequestsLoader,
       ],
       async (
         repository: main.Repository,
@@ -261,6 +273,15 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           return [];
         }
 
+        const cachedUserClosedMergeRequests =
+          this.requestCache.getUserClosedRepoMergeRequests(
+            cacheKey,
+            repository.id
+          );
+        if (!cachedUserClosedMergeRequests) {
+          return [];
+        }
+
         const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
           cacheKey,
           repository.id
@@ -273,13 +294,31 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         if (cachedOpenUserBranches) {
           return cachedOpenUserBranches;
         }
-        const openUserBranches = await this.branchService.getOpenBranchesByUser(
-          repository as Repository,
-          currentUser,
-          cachedBranches,
-          cachedRemoteSettings,
-          filterIgnored ?? true
+
+        // RESULTS ARE ASC ON MERGE COUNT SO LAST COMMIT ALWAYS WINS
+        const closedBranchIdMap = cachedUserClosedMergeRequests.reduce(
+          (acc, mr) => {
+            return {
+              ...acc,
+              [mr.branchId as string]: mr.branchHeadShaAtClose,
+            };
+          },
+          {}
         );
+        const openUserBranches = (
+          await this.branchService.getOpenBranchesByUser(
+            repository as Repository,
+            currentUser,
+            cachedBranches,
+            cachedRemoteSettings,
+            filterIgnored ?? true
+          )
+        )?.filter((b) => {
+          if (!closedBranchIdMap[b.id]) {
+            return true;
+          }
+          return closedBranchIdMap[b.id] != b.lastCommit;
+        });
         if (openUserBranches) {
           this.requestCache.setOpenUserBranches(
             cacheKey,
@@ -295,6 +334,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
       () => [
         this.repositoryBranchesLoader,
         this.repositoryRemoteSettingsLoader,
+        this.userClosedMergeRequestsLoader,
       ],
       async (repository: main.Repository, _, { currentUser, cacheKey }) => {
         if (!currentUser) {
@@ -316,13 +356,40 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           repository.id
         );
 
-        const openUserBranches = await this.branchService.getOpenBranchesByUser(
-          repository as Repository,
-          currentUser,
-          cachedBranches,
-          cachedRemoteSettings,
-          false
+        const cachedUserClosedMergeRequests =
+          this.requestCache.getUserClosedRepoMergeRequests(
+            cacheKey,
+            repository.id
+          );
+        if (!cachedUserClosedMergeRequests) {
+          return 0;
+        }
+
+        // RESULTS ARE ASC ON MERGE COUNT SO LAST COMMIT ALWAYS WINS
+        const closedBranchIdMap = cachedUserClosedMergeRequests.reduce(
+          (acc, mr) => {
+            return {
+              ...acc,
+              [mr.branchId as string]: mr.branchHeadShaAtClose,
+            };
+          },
+          {}
         );
+
+        const openUserBranches = (
+          await this.branchService.getOpenBranchesByUser(
+            repository as Repository,
+            currentUser,
+            cachedBranches,
+            cachedRemoteSettings,
+            false
+          )
+        )?.filter((b) => {
+          if (!closedBranchIdMap[b.id]) {
+            return true;
+          }
+          return closedBranchIdMap[b.id] != b.lastCommit;
+        });
         return openUserBranches?.length ?? 0;
       }
     ),
@@ -344,6 +411,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         if (!cachedOpenMergeRequests) {
           return [];
         }
+
         const branchesWithMergeOpenMergeRequests = new Set(
           cachedOpenMergeRequests.map((mergeRequest) => {
             return mergeRequest.branchId;
@@ -1132,13 +1200,15 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         const userBranchRule = cachedRemoteSettings.branchRules?.find(
           (rule) => rule.branchId == commitState.branchId
         );
-        if (!userBranchRule?.canAutofix) {
-          return false;
+        if (userBranchRule) {
+          if (!userBranchRule?.canAutofix) {
+            return false;
+          }
         }
         if (!commitState.sha) {
           return false;
         }
-        if (!commitState.canRevert) {
+        if (commitState.isReverted) {
           return false;
         }
 
@@ -1153,7 +1223,8 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         return await getCanAutofixReversionIfNotWIP(
           cachedDataSource,
           commitState.repositoryId,
-          commitState.sha
+          commitState.sha,
+          currentUser as any
         );
       }
     ),
@@ -1173,13 +1244,15 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         const userBranchRule = cachedRemoteSettings.branchRules?.find(
           (rule) => rule.branchId == commitState.branchId
         );
-        if (!userBranchRule?.canRevert) {
-          return false;
+        if (userBranchRule) {
+          if (!userBranchRule?.canRevert) {
+            return false;
+          }
         }
         if (!commitState.sha) {
           return false;
         }
-        if (!commitState.canRevert) {
+        if (commitState.isReverted) {
           return false;
         }
 
@@ -1194,7 +1267,8 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         return await getCanRevert(
           cachedDataSource,
           commitState.repositoryId,
-          commitState.sha
+          commitState.sha,
+          currentUser as any
         );
       }
     ),
@@ -1268,7 +1342,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           datasource,
           repository.id,
           baseBranch?.lastCommit ?? undefined,
-          branch?.lastCommit ?? undefined,
+          branch?.lastCommit ?? undefined
         );
         const divergenceSha: string = getMergeOriginSha(
           divergenceOrigin
@@ -1278,7 +1352,8 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           divergenceOrigin?.rebaseShas?.length == 0 &&
           (divergenceOrigin?.intoLastCommonAncestor == branch?.lastCommit ||
             divergenceOrigin?.trueOrigin == baseBranch?.lastCommit);
-        let isConflictFree = isMerged || divergenceSha === baseBranch?.lastCommit;
+        let isConflictFree =
+          isMerged || divergenceSha === baseBranch?.lastCommit;
         if (!isConflictFree) {
           const divergenceState =
             (await datasource.readCommitApplicationState?.(
@@ -1327,24 +1402,20 @@ export default class RepositoryResolverModule extends BaseResolverModule {
                   divergenceOrigin.fromOrigin ?? undefined
                 )
                 ?.map((c: CommitData | Commit) => commitMap[c.sha as string])
-            : rebaseList?.map(
-                (c: CommitData | Commit) => commitMap[c.originalSha as string]
-              ).sort((a, b) => b.idx - a.idx);
+            : rebaseList
+                ?.map(
+                  (c: CommitData | Commit) => commitMap[c.originalSha as string]
+                )
+                .sort((a, b) => b.idx - a.idx);
 
         let pendingCommits: Array<CommitInfo>;
         if (idx === undefined || idx === null) {
           pendingCommits = allPendingCommits
             ?.slice(0, PAGINATION_LIMIT)
             .map((commit) => {
-              if (!commit?.id) {
-                console.log("commit", commit)
-              }
               return {
                 ...commit,
-                isReverted: this.repoDataService.isReverted(
-                  ranges,
-                  commit.idx
-                ),
+                isReverted: this.repoDataService.isReverted(ranges, commit.idx),
               };
             });
         } else {
@@ -1354,10 +1425,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
             .map((commit) => {
               return {
                 ...commit,
-                isReverted: this.repoDataService.isReverted(
-                  ranges,
-                  commit.idx
-                ),
+                isReverted: this.repoDataService.isReverted(ranges, commit.idx),
               };
             });
         }
@@ -2073,13 +2141,12 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         }
 
         const protectedBranchRulesContext =
-          await this.contextFactory.createContext(
-            ProtectedBranchRulesContext
+          await this.contextFactory.createContext(ProtectedBranchRulesContext);
+        const protectedBranchRule =
+          await protectedBranchRulesContext.getByRepoAndBranchId(
+            repository.id,
+            args.branchId
           );
-        const protectedBranchRule = await protectedBranchRulesContext.getByRepoAndBranchId(
-          repository.id,
-          args.branchId
-        );
 
         if (!protectedBranchRule) {
           return {
@@ -2088,10 +2155,14 @@ export default class RepositoryResolverModule extends BaseResolverModule {
             type: "UNKNOWN_ERROR",
           };
         }
+
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${repository.id}`, {
+          repositoryUpdated: updatedRepo
+        });
         return {
           __typename: "ChangeDefaultBranchSuccess",
           repository: updatedRepo,
-          protectedBranchRule
+          protectedBranchRule,
         };
       }
     ),
@@ -2795,6 +2866,231 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         return {
           __typename: "RepoSettingChangeSuccess",
           repository: updatedRepo,
+        };
+      }
+    ),
+    revertCommit: runWithHooks(
+      () => [this.loggedInUserGuard, this.repoSettingAccessGuard],
+      async (
+        _,
+        { repositoryId, sha, branchId }: main.MutationRevertCommitArgs,
+        { currentUser }
+      ) => {
+        const repository = await this.repoDataService.fetchRepoById(
+          repositoryId
+        );
+        if (!repository) {
+          return {
+            __typename: "RevertCommitError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+
+        const branches =
+          (await this.repoDataService.getBranches(repositoryId as string)) ??
+          [];
+        const branch = branches.find((b) => b.id == branchId);
+        if (!branch?.lastCommit) {
+          return {
+            __typename: "RevertCommitError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        const baseBranch = branches.find(
+          (b) => !!branch?.baseBranchId && b.id == branch.baseBranchId
+        );
+        const remoteSettings =
+          await this.repoDataService.fetchRepoSettingsForUser(
+            repositoryId,
+            currentUser
+          );
+        const branchRule = remoteSettings?.branchRules.find(
+          (br) => br.branchId == branchId
+        );
+
+        if (!remoteSettings?.canPushBranches) {
+          return {
+            __typename: "RevertCommitError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        if (branchRule && !branchRule?.canAutofix) {
+          return {
+            __typename: "RevertCommitError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+
+        const commits = await this.repoDataService.getCommits(repositoryId);
+        const commit = commits?.find((c) => c.sha == sha);
+        if (!commit) {
+          return {
+            __typename: "RevertCommitError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+
+        console.log("FUCK SHIT STACK")
+        const history = this.repoDataService.getCommitHistory(
+          commits,
+          branch?.lastCommit
+        );
+        console.log("NO ALIVE")
+
+
+        const ranges = this.repoDataService.getRevertRanges(history);
+        console.log("WTF", commit);
+        const isReverted = this.repoDataService.isReverted(ranges, commit.idx);
+        if (isReverted) {
+          return {
+            __typename: "RevertCommitError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        console.log("REVERT TIME")
+        const result = await this.revertService.revertBranch(repository, sha, branch, baseBranch, currentUser);
+        if (result.action == "BRANCH_REVERTED") {
+          this.pubsub?.publish?.(`REPOSITORY_UPDATED:${repository.id}`, {
+            repositoryUpdated: result.repository
+          });
+          return {
+            __typename: "RevertCommitSuccess",
+            repository: result.repository
+          }
+        }
+
+        if (result.action == "LOG_ERROR") {
+          console.error(
+            result.error?.type,
+            result?.error?.message,
+            result?.error?.meta
+          );
+          return {
+            __typename: "RevertCommitError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        return {
+          __typename: "RevertCommitError",
+          message: result.error?.message ?? "Unknown Error",
+          type: result.error?.type ?? "UNKNOWN_ERROR",
+        };
+      }
+    ),
+    autofixCommit: runWithHooks(
+      () => [this.loggedInUserGuard, this.repoSettingAccessGuard],
+      async (
+        _,
+        { repositoryId, sha, branchId }: main.MutationAutofixCommitArgs,
+        { currentUser }
+      ) => {
+        const repository = await this.repoDataService.fetchRepoById(
+          repositoryId
+        );
+
+        if (!repository) {
+          return {
+            __typename: "AutofixCommitError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+
+        const branches =
+          (await this.repoDataService.getBranches(repositoryId as string)) ??
+          [];
+        const branch = branches.find((b) => b.id == branchId);
+        if (!branch?.lastCommit) {
+          return {
+            __typename: "AutofixCommitError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        const baseBranch = branches.find(
+          (b) => !!branch?.baseBranchId && b.id == branch.baseBranchId
+        );
+        const remoteSettings =
+          await this.repoDataService.fetchRepoSettingsForUser(
+            repositoryId,
+            currentUser
+          );
+        const branchRule = remoteSettings?.branchRules.find(
+          (br) => br.branchId == branchId
+        );
+
+        if (!remoteSettings?.canPushBranches) {
+          return {
+            __typename: "AutofixCommitError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        if (branchRule && !branchRule?.canAutofix) {
+          return {
+            __typename: "AutofixCommitError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+
+        const commits = await this.repoDataService.getCommits(repositoryId);
+        const commit = commits?.find((c) => c.sha == sha);
+        if (!commit) {
+          return {
+            __typename: "AutofixCommitError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        const history = this.repoDataService.getCommitHistory(
+          commits,
+          branch?.lastCommit
+        );
+
+        const ranges = this.repoDataService.getRevertRanges(history);
+        const isReverted = this.repoDataService.isReverted(ranges, commit.idx);
+        if (isReverted) {
+          return {
+            __typename: "AutofixCommitError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        const result = await this.revertService.autofixBranch(repository, sha, branch, baseBranch, currentUser);
+        if (result.action == "BRANCH_AUTOFIXED") {
+          this.pubsub?.publish?.(`REPOSITORY_UPDATED:${repository.id}`, {
+            repositoryUpdated: result.repository
+          });
+          return {
+            __typename: "AutofixCommitSuccess",
+            repository: result.repository
+          }
+        }
+
+        if (result.action == "LOG_ERROR") {
+          console.error(
+            result.error?.type,
+            result?.error?.message,
+            result?.error?.meta
+          );
+          return {
+            __typename: "AutofixCommitError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        return {
+          __typename: "AutofixCommitError",
+          message: result.error?.message ?? "Unknown Error",
+          type: result.error?.type ?? "UNKNOWN_ERROR",
         };
       }
     ),

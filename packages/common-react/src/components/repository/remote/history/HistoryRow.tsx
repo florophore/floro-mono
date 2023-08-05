@@ -44,6 +44,7 @@ const ShaRow = styled.div`
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
+  margin-top: 8px;
 `;
 
 const CommitTitle = styled.div`

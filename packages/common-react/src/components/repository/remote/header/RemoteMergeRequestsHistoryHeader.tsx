@@ -187,14 +187,6 @@ const RemoteMergeRequestsHistoryHeader = (props: Props) => {
         />
       </LeftContainer>
       <RightContainer>
-        <Link to={branchesLink}>
-          <BranchHistoryContainer>
-            <BranchHistoryWrapper>
-              <BranchHistoryIcon src={BranchBlue} />
-              <BranchText>{openBranchText}</BranchText>
-            </BranchHistoryWrapper>
-          </BranchHistoryContainer>
-        </Link>
       </RightContainer>
     </Container>
   );
