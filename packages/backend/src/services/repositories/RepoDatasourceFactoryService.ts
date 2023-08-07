@@ -12,6 +12,7 @@ import {
   getDivergenceOrigin,
   getMergeOriginSha,
 } from "floro/dist/src/repo";
+import { QueryRunner } from "typeorm";
 import { DataSource, makeDataSource } from "floro/dist/src/datasource";
 import { CommitData } from "floro/dist/src/sequenceoperations";
 import { PluginVersion } from "@floro/database/src/entities/PluginVersion";
@@ -37,7 +38,8 @@ export default class RepositoryDatasourceFactoryService {
     repository: Repository,
     branch: FloroBranch,
     commits: Array<Commit>,
-    revertSha: string
+    revertSha: string,
+    queryRunner?: QueryRunner
   ) {
     const commitMap: { [sha: string]: Commit } = {};
     for (const commit of commits) {
@@ -60,10 +62,12 @@ export default class RepositoryDatasourceFactoryService {
       : [];
 
     const pluginUtiltizationContext = await this.contextFactory.createContext(
-      PluginCommitUtilizationsContext
+      PluginCommitUtilizationsContext,
+      queryRunner
     );
     const pluginVersionContext = await this.contextFactory.createContext(
-      PluginsVersionsContext
+      PluginsVersionsContext,
+      queryRunner
     );
     const seenPluginVerions: Array<string> = [];
     for (const sha of shas) {
@@ -86,7 +90,8 @@ export default class RepositoryDatasourceFactoryService {
     repository: Repository,
     branch: FloroBranch,
     commits: Array<Commit>,
-    mergeIntoSha?: string
+    mergeIntoSha?: string,
+    queryRunner?: QueryRunner
   ) {
     const commitMap: { [sha: string]: Commit } = {};
     for (const commit of commits) {
@@ -129,10 +134,12 @@ export default class RepositoryDatasourceFactoryService {
     const divergenceSha = getMergeOriginSha(divergenceOrigin);
     const shas = [branch.lastCommit, mergeIntoSha, divergenceSha]?.filter(v => !!v);
     const pluginUtiltizationContext = await this.contextFactory.createContext(
-      PluginCommitUtilizationsContext
+      PluginCommitUtilizationsContext,
+      queryRunner
     );
     const pluginVersionContext = await this.contextFactory.createContext(
-      PluginsVersionsContext
+      PluginsVersionsContext,
+      queryRunner
     );
     const seenPluginVerions: Array<string> = [];
     for (const sha of shas) {
@@ -153,13 +160,16 @@ export default class RepositoryDatasourceFactoryService {
 
   public async getPluginList(
     repositoryId: string,
-    sha: string
+    sha: string,
+    queryRunner?: QueryRunner
   ) {
     const pluginUtiltizationContext = await this.contextFactory.createContext(
-      PluginCommitUtilizationsContext
+      PluginCommitUtilizationsContext,
+      queryRunner
     );
     const pluginVersionContext = await this.contextFactory.createContext(
-      PluginsVersionsContext
+      PluginsVersionsContext,
+      queryRunner
     );
     const seenPluginVerions: Array<string> = [];
     if (sha) {
@@ -177,13 +187,16 @@ export default class RepositoryDatasourceFactoryService {
   }
   public async getPluginListForCommitList(
     repositoryId: string,
-    shaList: Array<string>
+    shaList: Array<string>,
+    queryRunner?: QueryRunner
   ) {
     const pluginUtiltizationContext = await this.contextFactory.createContext(
-      PluginCommitUtilizationsContext
+      PluginCommitUtilizationsContext,
+      queryRunner
     );
     const pluginVersionContext = await this.contextFactory.createContext(
-      PluginsVersionsContext
+      PluginsVersionsContext,
+      queryRunner
     );
     const seenPluginVerions: Array<string> = [];
     for (const sha of shaList) {
@@ -209,6 +222,7 @@ export default class RepositoryDatasourceFactoryService {
     branch: FloroBranch,
     commits: Array<Commit>,
     pluginVersions: Array<PluginVersion>,
+    queryRunner?: QueryRunner
   ): Promise<DataSource> {
     const pluginMap: { [pluginVersionName: string]: Manifest } = {};
     const commitMap: { [sha: string]: Commit } = {};
@@ -227,7 +241,8 @@ export default class RepositoryDatasourceFactoryService {
     const memoizedCommitHistory = {};
 
     const pluginsContext = await this.contextFactory.createContext(
-      PluginsVersionsContext
+      PluginsVersionsContext,
+      queryRunner
     );
 
     const repoState: RepoState = {

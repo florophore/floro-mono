@@ -302,7 +302,7 @@ const RemoteVCSMergeRequestsHistory = (props: Props) => {
               <Row>
                 <SearchInput
                   value={searchQuery ?? ""}
-                  placeholder={"search mearch requests"}
+                  placeholder={filterMR == "open" ? "search open merge requests" : "search closed merge requests"}
                   onTextChanged={setSearchText}
                   width={464}
                   showClear

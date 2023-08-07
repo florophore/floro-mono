@@ -39,11 +39,15 @@ extend type Mutation {
     sha: String!
   ): AutofixCommitResponse
 
-  # autofix
-  # revert
-  # merge
-  # delete
+  deleteBranch(
+    repositoryId: ID!,
+    branchId: ID!
+  ): DeleteBranchResponse
 
+  mergeBranch(
+    repositoryId: ID!,
+    branchId: ID!
+  ): MergeBranchResponse
 }
 
 

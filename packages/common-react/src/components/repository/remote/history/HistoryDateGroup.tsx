@@ -68,6 +68,8 @@ interface Props {
   homeLink: string;
   onSelect?: (sha: string, idx: number) => void;
   hideSelect?: boolean;
+  plugin?: string;
+  isMergeRequest?: boolean;
 }
 
 const HistoryDateGroup = (props: Props) => {
@@ -106,6 +108,8 @@ const HistoryDateGroup = (props: Props) => {
                     homeLink={props.homeLink}
                     onSelect={props.onSelect}
                     hideSelect={props.hideSelect}
+                    plugin={props.plugin}
+                    isMergeRequest={props.isMergeRequest}
                   />
                 )
               })}

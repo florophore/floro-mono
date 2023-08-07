@@ -284,6 +284,7 @@ const HistoryDisplay = (props: Props) => {
             key={index}
             homeLink={homeLink}
             onSelect={onSelect}
+            plugin={props.plugin}
           />
         );
       })}

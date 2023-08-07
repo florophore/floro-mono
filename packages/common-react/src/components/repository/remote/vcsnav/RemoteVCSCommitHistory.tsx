@@ -1,6 +1,7 @@
 import React, {
   useMemo,
   useCallback,
+  useState
 } from "react";
 import { Repository, useAutofixCommitMutation, useRevertCommitMutation } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import styled from "@emotion/styled";
@@ -25,6 +26,8 @@ import RedXCircleDark from "@floro/common-assets/assets/images/icons/red_x_circl
 import TimeAgo from "javascript-time-ago";
 import { RepoPage } from "../../types";
 import UserProfilePhoto from "@floro/storybook/stories/common-components/UserProfilePhoto";
+import ConfirmRevertCommitModal from "../modals/ConfirmRevertCommitModal";
+import ConfirmAutofixCommitModal from "../modals/ConfirmAutofixCommitModal";
 
 const InnerContent = styled.div`
   display: flex;
@@ -284,7 +287,6 @@ const RemoteVCSCommitHistory = (props: Props) => {
   const navigate = useNavigate();
   const linkBase = useRepoLinkBase(props.repository);
   const [searchParams] = useSearchParams();
-  const sha = searchParams.get('sha');
   const searchQuery = searchParams.get('query');
   const idxString = searchParams.get('idx');
   const idx = useMemo(() => {
@@ -335,63 +337,23 @@ const RemoteVCSCommitHistory = (props: Props) => {
     props.plugin,
   ]);
 
-  const [revert, revertMutation] = useRevertCommitMutation();
-  const [autofix, auotfixMutation] = useAutofixCommitMutation();
+  const [showRevert, setShowRevert] = useState(false);
+  const onShowRevert = useCallback(() => {
+    setShowRevert(true);
+  }, []);
 
-  const onRevert = useCallback(() => {
-    if (
-      !props?.repository?.id ||
-      !props?.repository?.branchState?.branchId ||
-      !props.repository.branchState?.commitState?.sha
-    ) {
-      return;
-    }
-    revert({
-      variables: {
-        repositoryId: props?.repository?.id,
-        branchId: props?.repository?.branchState?.branchId,
-        reversionSha: props.repository.branchState?.commitState?.sha,
-        sha,
-        searchQuery,
-        idx,
-      },
-    });
-  }, [
-    props?.repository?.id,
-    props?.repository?.branchState?.branchId,
-    props.repository.branchState?.commitState,
-    sha,
-    searchQuery,
-    idx,
-  ]);
+  const onHideRevert = useCallback(() => {
+    setShowRevert(false);
+  }, []);
 
-  const onAutofix = useCallback(() => {
-    if (
-      !props?.repository?.id ||
-      !props?.repository?.branchState?.branchId ||
-      !props.repository.branchState?.commitState?.sha
-    ) {
-      return;
-    }
-    autofix({
-      variables: {
-        repositoryId: props?.repository?.id,
-        branchId: props?.repository?.branchState?.branchId,
-        reversionSha: props.repository.branchState?.commitState?.sha,
-        sha,
-        searchQuery,
-        idx,
-      },
-    });
-  }, [
-    props?.repository?.id,
-    props?.repository?.branchState?.branchId,
-    props.repository.branchState?.commitState,
-    sha,
-    searchQuery,
-    idx,
-  ]);
+  const [showAutofix, setShowAutofix] = useState(false);
+  const onShowAutofix = useCallback(() => {
+    setShowAutofix(true);
+  }, []);
 
+  const onHideAutofix = useCallback(() => {
+    setShowAutofix(false);
+  }, []);
 
   const onGoBack = useCallback(() => {
     navigate(historyLink);
@@ -468,8 +430,32 @@ const RemoteVCSCommitHistory = (props: Props) => {
     redXIcon,
   ]);
 
+  const branch = useMemo(() => {
+    return props?.repository?.repoBranches?.find(
+      (b) => b?.id == props?.repository?.branchState?.branchId
+    );
+  }, [props?.repository?.branchState, props?.repository?.repoBranches])
+
   return (
     <>
+      {branch && props?.repository?.branchState?.commitState && (
+        <ConfirmRevertCommitModal
+          repository={props.repository}
+          branch={branch}
+          show={showRevert}
+          onDismiss={onHideRevert}
+          commit={props?.repository?.branchState?.commitState}
+        />
+      )}
+      {branch && props?.repository?.branchState?.commitState && (
+        <ConfirmAutofixCommitModal
+          repository={props.repository}
+          branch={branch}
+          show={showAutofix}
+          onDismiss={onHideAutofix}
+          commit={props?.repository?.branchState?.commitState}
+        />
+      )}
       <InnerContent>
         <TopContainer>
           <TitleRow>
@@ -507,8 +493,12 @@ const RemoteVCSCommitHistory = (props: Props) => {
                   alignItems: "center",
                 }}
               >
-                <div style={{marginRight: 8}}>
-                  <UserProfilePhoto user={props.repository.branchState?.commitState?.user} size={36} offlinePhoto={null}                />
+                <div style={{ marginRight: 8 }}>
+                  <UserProfilePhoto
+                    user={props.repository.branchState?.commitState?.user}
+                    size={36}
+                    offlinePhoto={null}
+                  />
                 </div>
                 <UserTextRow>
                   <UsernameText>{username}</UsernameText>
@@ -527,8 +517,12 @@ const RemoteVCSCommitHistory = (props: Props) => {
             </UserRow>
             {showAuthor && (
               <UserRow style={{ marginTop: 8 }}>
-                <div style={{marginRight: 8}}>
-                  <UserProfilePhoto user={props.repository.branchState?.commitState?.authorUser} size={36} offlinePhoto={null}                />
+                <div style={{ marginRight: 8 }}>
+                  <UserProfilePhoto
+                    user={props.repository.branchState?.commitState?.authorUser}
+                    size={36}
+                    offlinePhoto={null}
+                  />
                 </div>
                 <UserTextRow style={{ alignItems: "center" }}>
                   <UsernameText>{authorUsername}</UsernameText>
@@ -572,26 +566,26 @@ const RemoteVCSCommitHistory = (props: Props) => {
               </BlurbText>
             </BlurbBox>
           </div>
-          <ButtonRow style={{ marginTop: 24 }}>
-            <RepoActionButton
-              isDisabled={
-                !props?.repository?.branchState?.commitState?.canRevert
-              }
-              label={"revert sha"}
-              icon={"revert"}
-              onClick={onRevert}
-              isLoading={revertMutation.loading}
-            />
-            <RepoActionButton
-              label={"fix forward"}
-              icon={"auto-fix"}
-              isDisabled={
-                !props?.repository?.branchState?.commitState?.canAutoFix
-              }
-              onClick={onAutofix}
-              isLoading={auotfixMutation.loading}
-            />
-          </ButtonRow>
+          {props?.repository?.repoPermissions?.canPushBranches && (
+            <ButtonRow style={{ marginTop: 24 }}>
+              <RepoActionButton
+                isDisabled={
+                  !props?.repository?.branchState?.commitState?.canRevert
+                }
+                label={"revert sha"}
+                icon={"revert"}
+                onClick={onShowRevert}
+              />
+              <RepoActionButton
+                label={"fix forward"}
+                icon={"auto-fix"}
+                isDisabled={
+                  !props?.repository?.branchState?.commitState?.canAutoFix
+                }
+                onClick={onShowAutofix}
+              />
+            </ButtonRow>
+          )}
         </TopContainer>
         <BottomContainer>
           <div

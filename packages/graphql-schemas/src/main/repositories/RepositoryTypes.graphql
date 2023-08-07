@@ -136,10 +136,18 @@ type BranchState {
   commitSearch(searchQuery: String): [CommitInfo]
   commitsSize: Int
   proposedMergeRequest(idx: Int): ProposedMergeRequest
+  noIdPresent: Boolean
+  isMerged: Boolean
+  isConflictFree: Boolean
 
   #can delete
   #has open mr
   #open MR
+  canDelete: Boolean
+  canMergeDirectly: Boolean
+  hasOpenMergeRequest: Boolean
+  openMergeRequest: MergeRequest
+  showMergeAndDeleteOptions: Boolean
 }
 
 type ProposedMergeRequest {
@@ -188,6 +196,8 @@ type CommitState {
 
   user: User
   authorUser: User
+
+  isOffBranch: Boolean
 }
 
 type CreateUserRepositorySuccess {
@@ -298,5 +308,37 @@ type AutofixCommitError {
 union AutofixCommitResponse =
     AutofixCommitSuccess
   | AutofixCommitError
+  | RepoSettingAccessError
+  | UnAuthenticatedError
+
+
+type DeleteBranchSuccess {
+  repository: Repository
+}
+
+type DeleteBranchError {
+  message: String
+  type: String
+}
+
+union DeleteBranchResponse =
+    DeleteBranchSuccess
+  | DeleteBranchError
+  | RepoSettingAccessError
+  | UnAuthenticatedError
+
+
+type MergeBranchSuccess {
+  repository: Repository
+}
+
+type MergeBranchError {
+  message: String
+  type: String
+}
+
+union MergeBranchResponse =
+    MergeBranchSuccess
+  | MergeBranchError
   | RepoSettingAccessError
   | UnAuthenticatedError

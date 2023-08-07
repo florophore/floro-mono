@@ -5,7 +5,11 @@ import React, {
   useRef,
   useEffect,
 } from "react";
-import { RepoBranch, Repository, useIgnoreBranchMutation } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import {
+  RepoBranch,
+  Repository,
+  useIgnoreBranchMutation,
+} from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { Link, useSearchParams } from "react-router-dom";
 import styled from "@emotion/styled";
 import { css } from "@emotion/css";
@@ -38,9 +42,11 @@ import { useNavigate } from "react-router-dom";
 import { Branch } from "floro/dist/src/repo";
 import RepoActionButton from "@floro/storybook/stories/repo-components/RepoActionButton";
 import CopyFromIcon from "@floro/common-assets/assets/images/icons/copy.dark.svg";
-import CreateMergeRequest from '@floro/storybook/stories/repo-components/CreateMergeRequest';
+import CreateMergeRequest from "@floro/storybook/stories/repo-components/CreateMergeRequest";
 import { link } from "fs";
 import { RepoPage } from "../../types";
+import DeleteBranchModal from "../modals/DeleteBranchModal";
+import MergeBranchModal from "../modals/MergeBranchModal";
 
 const InnerContent = styled.div`
   display: flex;
@@ -125,16 +131,18 @@ const RemoteVCSNavHome = (props: Props) => {
 
   const mergeRequestsLink = useMemo(() => {
     if (props.repository?.branchState?.commitState?.sha) {
-      return `${linkBase}/mergerequests?from=remote&plugin=${props?.plugin ?? "home"}&sha=${
-        props.repository?.branchState?.commitState?.sha
-      }`;
+      return `${linkBase}/mergerequests?from=remote&plugin=${
+        props?.plugin ?? "home"
+      }&sha=${props.repository?.branchState?.commitState?.sha}`;
     }
-    return `${linkBase}/mergerequests?from=remote&plugin=${props?.plugin ?? "home"}`;
+    return `${linkBase}/mergerequests?from=remote&plugin=${
+      props?.plugin ?? "home"
+    }`;
   }, [linkBase, props.plugin]);
 
   const onClickMergeRequests = useCallback(() => {
     navigate(mergeRequestsLink);
-  }, [mergeRequestsLink, navigate])
+  }, [mergeRequestsLink, navigate]);
 
   const branchlessLink = useMemo(() => {
     return `${linkBase}?from=remote&plugin=${props?.plugin ?? "home"}`;
@@ -152,6 +160,16 @@ const RemoteVCSNavHome = (props: Props) => {
     }`;
   }, [linkBase, props.plugin, props.repository?.branchState?.branchId]);
 
+  const openMergeRequestLink = useMemo(() => {
+    return `${linkBase}/mergerequests/${
+      props?.repository?.branchState?.openMergeRequest?.id
+    }?from=remote&plugin=${props?.plugin ?? "home"}`;
+  }, [
+    linkBase,
+    props.plugin,
+    props.repository?.branchState?.openMergeRequest?.id,
+  ]);
+
   const onChangeBranch = useCallback(
     (branch: RepoBranch | null) => {
       if (branch?.id) {
@@ -165,28 +183,40 @@ const RemoteVCSNavHome = (props: Props) => {
     navigate(defaultBranchLink);
   }, [defaultBranchLink]);
 
-  const onIgnore = useCallback((branch: RepoBranch) => {
-    if (ignoreBranchRequest.loading || !props.repository?.id || !branch?.id) {
-      return;
-    }
-    ignoreBranch({
-      variables: {
-        repositoryId: props.repository.id,
-        branchId: branch.id,
+  const onIgnore = useCallback(
+    (branch: RepoBranch) => {
+      if (ignoreBranchRequest.loading || !props.repository?.id || !branch?.id) {
+        return;
       }
-    })
-  }, [ignoreBranchRequest.loading, props.repository])
+      ignoreBranch({
+        variables: {
+          repositoryId: props.repository.id,
+          branchId: branch.id,
+        },
+      });
+    },
+    [ignoreBranchRequest.loading, props.repository]
+  );
 
-  const onCreateMergeRequest = useCallback((branch: RepoBranch) => {
-    navigate(linkBase + "/mergerequests/create/" + branch.id + "?from=remote");
-  }, [linkBase, navigate]);
+  const onCreateMergeRequest = useCallback(
+    (branch: RepoBranch) => {
+      navigate(
+        linkBase + "/mergerequests/create/" + branch.id + "?from=remote"
+      );
+    },
+    [linkBase, navigate]
+  );
 
   const onGoToSettings = useCallback(() => {
-    navigate(linkBase + "/settings?from=remote&plugin=" + (props?.plugin ?? "home"));
+    navigate(
+      linkBase + "/settings?from=remote&plugin=" + (props?.plugin ?? "home")
+    );
   }, [linkBase, navigate, props.plugin]);
 
   const showMRNotifcation = useMemo(() => {
-    if (props?.repository?.openUserBranchesWithoutMergeRequestsCount == undefined) {
+    if (
+      props?.repository?.openUserBranchesWithoutMergeRequestsCount == undefined
+    ) {
       return false;
     }
     return props?.repository?.openUserBranchesWithoutMergeRequestsCount > 0;
@@ -199,92 +229,195 @@ const RemoteVCSNavHome = (props: Props) => {
     return props?.repository?.openUserMergeRequestsCount > 0;
   }, [props?.repository?.openUserMergeRequestsCount]);
 
+  const [showDeleteBranch, setShowDeleteBranch] = useState(false);
+
+  const onShowDeleteBranch = useCallback(() => {
+    setShowDeleteBranch(true);
+  }, []);
+
+  const onHideDeleteBranch = useCallback(() => {
+    setShowDeleteBranch(false);
+  }, []);
+
+  const [showMergeBranch, setShowMergeBranch] = useState(false);
+
+  const onShowMergeBranch = useCallback(() => {
+    setShowMergeBranch(true);
+  }, []);
+
+  const onHideMergeBranch = useCallback(() => {
+    setShowMergeBranch(false);
+  }, []);
+
+  const branch = useMemo(() => {
+    return props?.repository?.repoBranches?.find(
+      (b) => b?.id == props?.repository?.branchState?.branchId
+    );
+  }, [props?.repository?.branchState, props?.repository?.repoBranches]);
+
+  const baseBranch = useMemo(() => {
+    if (!branch?.baseBranchId) {
+      return null;
+    }
+    return props?.repository?.repoBranches?.find(
+      (b) => b?.id == branch?.baseBranchId
+    );
+  }, [branch, props?.repository?.repoBranches]);
+
+  const onDeleteBranchSuccess = useCallback(() => {
+    setShowDeleteBranch(false);
+    navigate(branchlessLink);
+  }, [branchlessLink]);
+
+  const onMergeBranchSuccess = useCallback(() => {
+    setShowMergeBranch(false);
+    navigate(`${branchlessLink}&branch=${baseBranch?.id}`);
+  }, [branchlessLink, baseBranch?.id]);
+
   return (
-    <InnerContent>
-      <TopContainer>
-        <RemoteCurrentInfo
+    <>
+      {branch && baseBranch && (
+        <MergeBranchModal
+          show={showMergeBranch}
+          branch={branch as Branch}
+          baseBranch={baseBranch as Branch}
           repository={props.repository}
-          remoteCommitState={props.remoteCommitState}
-          onChangeBranch={onChangeBranch}
-          defaultBranchLink={defaultBranchLink}
-          currentHeadLink={branchHeadLink}
-          showBackButton={
-            props?.repository?.branchState?.branchId !=
-            props?.repository?.branchState?.defaultBranchId
-          }
-          onGoBack={onGoToDefaultBranch}
+          onDismiss={onHideMergeBranch}
+          onSuccess={onMergeBranchSuccess}
         />
-        <ButtonRow style={{ marginTop: 24 }}>
-          <RepoActionButton
-            onClick={onClickMergeRequests}
-            showNotification={showMRNotifcation}
-            notificationCount={props?.repository?.openUserBranchesWithoutMergeRequestsCount ?? 0}
-            showSecondaryNotification={showMRSecondaryNotifcation}
-            secondaryNotificationCount={props?.repository?.openUserMergeRequestsCount ?? 0}
-            label={"merge requests"}
-            icon={"merge-request"}
-            size="large"
+      )}
+      <DeleteBranchModal
+        show={showDeleteBranch}
+        branch={branch as Branch}
+        repository={props.repository}
+        onDismiss={onHideDeleteBranch}
+        onSuccess={onDeleteBranchSuccess}
+      />
+      <InnerContent>
+        <TopContainer>
+          <RemoteCurrentInfo
+            repository={props.repository}
+            remoteCommitState={props.remoteCommitState}
+            onChangeBranch={onChangeBranch}
+            defaultBranchLink={defaultBranchLink}
+            currentHeadLink={branchHeadLink}
+            showBackButton={
+              props?.repository?.branchState?.branchId !=
+              props?.repository?.branchState?.defaultBranchId
+            }
+            onGoBack={onGoToDefaultBranch}
+            showMergeRequest={
+              !!props?.repository?.branchState?.hasOpenMergeRequest
+            }
+            mergeRequest={
+              props?.repository?.branchState?.openMergeRequest ?? undefined
+            }
+            mergeRequestLink={openMergeRequestLink}
+            isOffBranch={props?.repository?.branchState?.commitState?.isOffBranch ?? false}
+            isMerged={props?.repository?.branchState?.isMerged ?? false}
+            isConflictFree={props?.repository?.branchState?.isConflictFree ?? false}
           />
-        </ButtonRow>
-        <ButtonRow style={{ marginTop: 24 }}>
-          <RepoActionButton
-            label={"copy from repository"}
-            icon={"copy"}
-            titleTextSize="small"
-          />
-          <RepoActionButton
-            onClick={onGoToSettings}
-            isDisabled={!props?.repository?.repoPermissions?.canChangeSettings}
-            label={"remote settings"}
-            icon={"settings"}
-            titleTextSize="small"
-          />
-        </ButtonRow>
-        {props?.repository?.openUserBranchesWithoutMergeRequests?.[0] && (
           <ButtonRow style={{ marginTop: 24 }}>
-            <CreateMergeRequest
-              onIgnore={onIgnore}
-              onCreate={onCreateMergeRequest}
-              homeLink={branchlessLink}
-              branch={props.repository.openUserBranchesWithoutMergeRequests[0]}
-              ignoreLoading={ignoreBranchRequest.loading}
+            <RepoActionButton
+              onClick={onClickMergeRequests}
+              showNotification={showMRNotifcation}
+              notificationCount={
+                props?.repository?.openUserBranchesWithoutMergeRequestsCount ??
+                0
+              }
+              showSecondaryNotification={showMRSecondaryNotifcation}
+              secondaryNotificationCount={
+                props?.repository?.openUserMergeRequestsCount ?? 0
+              }
+              label={"merge requests"}
+              icon={"merge-request"}
+              size="large"
             />
           </ButtonRow>
-        )}
-      </TopContainer>
-      <BottomContainer>
-
-        <ButtonRow>
-          <Button
-            label="merge branch"
-            bg={"purple"}
-            size={"extra-big"}
-            isDisabled={true}
-          />
-          <div style={{width: 48}}></div>
-          <Button
-            label="delete branch"
-            bg={"red"}
-            size={"extra-big"}
-            isDisabled={true}
-          />
-        </ButtonRow>
-        {(cloneState?.state != "none" || !repoExistsLocally) &&
-          !isLoading &&
-          !cloneStateLoading && (
-            <ButtonRow style={{marginTop: 24}}>
-              <Button
-                label="clone repository"
-                bg={"orange"}
-                size={"extra-big"}
-                onClick={cloneRepo}
-                isLoading={cloneRepoMutation.isLoading}
-                isDisabled={!isDaemonConnected}
+          {props?.repository?.repoPermissions?.canChangeSettings && (
+            <ButtonRow style={{ marginTop: 24 }}>
+              <RepoActionButton
+                label={"copy from repository"}
+                icon={"copy"}
+                titleTextSize="small"
+              />
+              <RepoActionButton
+                onClick={onGoToSettings}
+                isDisabled={
+                  !props?.repository?.repoPermissions?.canChangeSettings
+                }
+                label={"remote settings"}
+                icon={"settings"}
+                titleTextSize="small"
               />
             </ButtonRow>
           )}
-      </BottomContainer>
-    </InnerContent>
+          {!props?.repository?.repoPermissions?.canChangeSettings && (
+            <ButtonRow style={{ marginTop: 24 }}>
+              <RepoActionButton
+                label={"copy from repository"}
+                icon={"copy"}
+                size="large"
+              />
+            </ButtonRow>
+          )}
+          {props?.repository?.openUserBranchesWithoutMergeRequests?.[0] && (
+            <ButtonRow style={{ marginTop: 24 }}>
+              <CreateMergeRequest
+                onIgnore={onIgnore}
+                onCreate={onCreateMergeRequest}
+                homeLink={branchlessLink}
+                branch={
+                  props.repository.openUserBranchesWithoutMergeRequests[0]
+                }
+                ignoreLoading={ignoreBranchRequest.loading}
+              />
+            </ButtonRow>
+          )}
+        </TopContainer>
+        <BottomContainer>
+          {props?.repository?.branchState?.showMergeAndDeleteOptions && !props?.repository?.branchState?.commitState?.isOffBranch && (
+            <ButtonRow>
+              <Button
+                label="merge branch"
+                bg={"purple"}
+                size={"extra-big"}
+                isDisabled={!props?.repository?.branchState?.canMergeDirectly}
+                onClick={onShowMergeBranch}
+              />
+              <div style={{ width: 48 }}></div>
+              <Button
+                label="delete branch"
+                bg={"red"}
+                size={"extra-big"}
+                isDisabled={
+                  !(
+                    props?.repository?.branchState?.canDelete &&
+                    props?.repository?.branchState?.branchHead ==
+                      props?.repository?.branchState?.commitState?.sha
+                  )
+                }
+                onClick={onShowDeleteBranch}
+              />
+            </ButtonRow>
+          )}
+          {(cloneState?.state != "none" || !repoExistsLocally) &&
+            !isLoading &&
+            !cloneStateLoading && (
+              <ButtonRow style={{ marginTop: 24 }}>
+                <Button
+                  label="clone repository"
+                  bg={"orange"}
+                  size={"extra-big"}
+                  onClick={cloneRepo}
+                  isLoading={cloneRepoMutation.isLoading}
+                  isDisabled={!isDaemonConnected}
+                />
+              </ButtonRow>
+            )}
+        </BottomContainer>
+      </InnerContent>
+    </>
   );
 };
 

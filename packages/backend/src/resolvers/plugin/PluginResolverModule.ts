@@ -22,6 +22,7 @@ import PluginsContext from "@floro/database/src/contexts/plugins/PluginsContext"
 import PluginsVersionsContext from "@floro/database/src/contexts/plugins/PluginVersionsContext";
 import RootRepositoryLoader from "../hooks/loaders/Root/RepositoryID/RepositoryLoader";
 import { User } from "@floro/database/src/entities/User";
+import RepoDataService from "../../services/repositories/RepoDataService";
 
 @injectable()
 export default class PluginResolverModule extends BaseResolverModule {
@@ -35,6 +36,7 @@ export default class PluginResolverModule extends BaseResolverModule {
   protected config!: MainConfig;
   protected contextFactory!: ContextFactory;
   protected requestCache!: RequestCache;
+  protected repoDataService!: RepoDataService;
 
   protected loggedInUserGuard!: LoggedInUserGuard;
   protected pluginRegistryService!: PluginRegistryService;
@@ -47,6 +49,7 @@ export default class PluginResolverModule extends BaseResolverModule {
     @inject(MainConfig) config: MainConfig,
     @inject(RequestCache) requestCache: RequestCache,
     @inject(PluginRegistryService) pluginRegistryService: PluginRegistryService,
+    @inject(RepoDataService) repoDataService: RepoDataService,
     @inject(LoggedInUserGuard) loggedInUserGuard: LoggedInUserGuard,
     @inject(PluginSearchService) pluginSearchService: PluginSearchService,
     @inject(RootOrganizationMemberPermissionsLoader)
@@ -57,6 +60,8 @@ export default class PluginResolverModule extends BaseResolverModule {
     this.contextFactory = contextFactory;
     this.config = config;
     this.requestCache = requestCache;
+    this.repoDataService = repoDataService;
+
     this.pluginRegistryService = pluginRegistryService;
     this.pluginSearchService = pluginSearchService;
 
@@ -193,50 +198,16 @@ export default class PluginResolverModule extends BaseResolverModule {
             plugins: [],
           };
         }
-        if (repository.isPrivate && repository.repoType == "user_repo") {
-          if (context?.currentUser?.id != repository?.userId) {
-            return {
-              __typename: "PluginSearchResult",
-              plugins: [],
-            };
-          }
-        }
-        if (repository.repoType == "org_repo") {
-          const organizationContext = await this.contextFactory.createContext(
-            OrganizationsContext
+        const remoteSettings =
+          await this.repoDataService.fetchRepoSettingsForUser(
+            repositoryId,
+            context.currentUser
           );
-          const organization = await organizationContext.getById(
-            repository.organizationId
-          );
-          if (!organization) {
-            return {
-              __typename: "PluginSearchResult",
-              plugins: [],
-            };
-          }
-          const organizationMembersContext =
-            await this.contextFactory.createContext(OrganizationMembersContext);
-          const membership =
-            await organizationMembersContext.getByOrgIdAndUserId(
-              repository.organizationId,
-              context?.currentUser?.id ?? ""
-            );
-          if (membership) {
-            this.requestCache.setOrganizationMembership(
-              context.cacheKey,
-              organization,
-              context.currentUser,
-              membership
-            );
-          }
-          if (repository.isPrivate) {
-            if (!membership || membership?.membershipState != "active") {
-              return {
-                __typename: "PluginSearchResult",
-                plugins: [],
-              };
-            }
-          }
+        if (!remoteSettings?.canReadRepo) {
+          return {
+            __typename: "PluginSearchResult",
+            plugins: [],
+          };
         }
         const plugins = await this.pluginSearchService.searchPluginsForRepo(
           query ?? "",

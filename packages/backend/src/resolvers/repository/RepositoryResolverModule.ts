@@ -61,6 +61,10 @@ import OrganizationsContext from "@floro/database/src/contexts/organizations/Org
 import RepositoryDatasourceFactoryService from "../../services/repositories/RepoDatasourceFactoryService";
 import UserClosedMergeRequestsLoader from "../hooks/loaders/MergeRequest/UserClosedMergeRequestsLoader";
 import RevertService from "../../services/repositories/RevertService";
+import BranchStateRepositoryLoader from "../hooks/loaders/Repository/BranchStateRepoLoader";
+import BranchesContext from "@floro/database/src/contexts/repositories/BranchesContext";
+import MergeService from "../../services/merge_requests/MergeService";
+import CommitsContext from "@floro/database/src/contexts/repositories/CommitsContext";
 
 const PAGINATION_LIMIT = 10;
 
@@ -81,6 +85,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
   protected repoSettingsService!: RepoSettingsService;
   protected branchService!: BranchService;
   protected mergeRequestService!: MergeRequestService;
+  protected mergeService!: MergeService;
   protected revertService!: RevertService;
   protected contextFactory!: ContextFactory;
   protected requestCache!: RequestCache;
@@ -99,6 +104,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
   protected commitStatePluginVersionsLoader!: CommitStatePluginVersionsLoader;
   protected commitStateBinaryRefsLoader!: CommitStateBinaryRefsLoader;
   protected commitInfoRepositoryLoader!: CommitInfoRepositoryLoader;
+  protected branchStateRepositoryLoader!: BranchStateRepositoryLoader;
   protected writeAccessIdsLoader!: WriteAccessIdsLoader;
   protected repoSettingAccessGuard!: RepoSettingAccessGuard;
 
@@ -139,8 +145,11 @@ export default class RepositoryResolverModule extends BaseResolverModule {
     commitStateBinaryRefsLoader: CommitStateBinaryRefsLoader,
     @inject(CommitInfoRepositoryLoader)
     commitInfoRepositoryLoader: CommitInfoRepositoryLoader,
+    @inject(BranchStateRepositoryLoader)
+    branchStateRepositoryLoader: BranchStateRepositoryLoader,
     @inject(BranchService) branchService: BranchService,
     @inject(MergeRequestService) mergeRequestService: MergeRequestService,
+    @inject(MergeService) mergeService: MergeService,
     @inject(OpenMergeRequestsLoader)
     openMergeRequestsLoader: OpenMergeRequestsLoader,
     @inject(ClosedMergeRequestsLoader)
@@ -163,6 +172,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
     this.repoSettingsService = repoSettingsService;
     this.branchService = branchService;
     this.mergeRequestService = mergeRequestService;
+    this.mergeService = mergeService;
     this.revertService = revertService;
 
     this.loggedInUserGuard = loggedInUserGuard;
@@ -182,6 +192,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
     this.commitStatePluginVersionsLoader = commitStatePluginVersionsLoader;
     this.commitStateBinaryRefsLoader = commitStateBinaryRefsLoader;
     this.commitInfoRepositoryLoader = commitInfoRepositoryLoader;
+    this.branchStateRepositoryLoader = branchStateRepositoryLoader;
     this.writeAccessIdsLoader = writeAccessIdsLoader;
     this.repoSettingAccessGuard = repoSettingAccessGuard;
 
@@ -226,6 +237,9 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           name: branch.name,
           branchHead: branch.lastCommit ?? null,
           repositoryId: repository.id,
+          noIdPresent: !branchId,
+          isConflictFree: branch.isConflictFree,
+          isMerged: branch.isMerged,
         };
       }
     ),
@@ -1511,10 +1525,59 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           cachedCommits,
           branchState?.branchHead ?? ""
         );
-        const commit =
-          branchHistory.find((c) => c.sha == sha) ?? branchHeadCommit;
+        let commit: Commit|null|undefined =
+          branchHistory.find((c) => c.sha == sha);
         if (!commit) {
-          return null;
+          if (branchState.noIdPresent && sha) {
+            const commitsContext = await this.contextFactory.createContext(CommitsContext);
+            commit = await commitsContext.getCommitBySha(branchState.repositoryId, sha)
+            if (!commit) {
+              return null;
+            }
+            const repository = await this.repositoryService.getRepository(
+              branchState.repositoryId
+            );
+            if (!repository) {
+              return null;
+            }
+            const kvLink = this.repoDataService.getKVLinkForCommit(
+              repository,
+              commit
+            );
+            const stateLink = this.repoDataService.getStateLinkForCommit(
+              repository,
+              commit
+            );
+
+            return {
+              sha: commit.sha,
+              originalSha: commit.originalSha,
+              message: commit.message,
+              username: commit.username,
+              userId: commit.userId,
+              authorUsername: commit.authorUsername,
+              authorUserId: commit.authorUserId,
+              authorUser: commit.authorUser,
+              user: commit.user,
+              idx: commit.idx,
+              updatedAt: commit.updatedAt,
+              repositoryId: branchState.repositoryId,
+              branchId: branchState.branchId,
+              branchHead: branchState.branchHead,
+              isReverted: false,
+              isValid: commit.isValid ?? true,
+              kvLink,
+              stateLink,
+              lastUpdatedAt: commit?.updatedAt?.toISOString(),
+              isOffBranch: true
+            };
+          }
+          if (branchHeadCommit) {
+            commit = branchHeadCommit
+          }
+          if (!commit) {
+            return null;
+          }
         }
         const repository = await this.repositoryService.getRepository(
           branchState.repositoryId
@@ -1560,6 +1623,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           kvLink,
           stateLink,
           lastUpdatedAt: commit?.updatedAt?.toISOString(),
+          isOffBranch: false
         };
       }
     ),
@@ -1695,6 +1759,272 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           });
         }
         return [];
+      }
+    ),
+    canDelete: runWithHooks(
+      () => [
+        this.branchStateRepositoryLoader,
+        this.repositoryRemoteSettingsLoader,
+      ],
+      async (branchState: main.BranchState, _, { cacheKey, currentUser }) => {
+        if (!currentUser) {
+          return false;
+        }
+        if (!branchState.repositoryId) {
+          return false;
+        }
+
+        const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
+          cacheKey,
+          branchState.repositoryId
+        );
+        if (!cachedRemoteSettings?.canPushBranches) {
+          return false;
+        }
+
+        const repository = this.requestCache.getRepo(
+          cacheKey,
+          branchState.repositoryId
+        );
+        if (!repository) {
+          return false;
+        }
+        const cachedBranches = this.requestCache.getRepoBranches(
+          cacheKey,
+          repository.id
+        );
+        const floroBranch = cachedBranches.find(
+          (b) => b.id == branchState.branchId
+        );
+        if (!floroBranch) {
+          return false;
+        }
+        const branchRuleSettings = cachedRemoteSettings?.branchRules?.find(
+          (br) => br.branchId == floroBranch.id
+        );
+        if (branchRuleSettings) {
+          return false;
+        }
+        return await this.branchService.canDeleteBranch(
+          repository,
+          floroBranch
+        );
+      }
+    ),
+    canMergeDirectly: runWithHooks(
+      () => [
+        this.branchStateRepositoryLoader,
+        this.repositoryRemoteSettingsLoader,
+      ],
+      async (branchState: main.BranchState, _, { cacheKey, currentUser }) => {
+        if (!currentUser) {
+          return false;
+        }
+        if (!branchState.repositoryId) {
+          return false;
+        }
+
+        const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
+          cacheKey,
+          branchState.repositoryId
+        );
+        if (!cachedRemoteSettings?.canPushBranches) {
+          return false;
+        }
+
+        const repository = this.requestCache.getRepo(
+          cacheKey,
+          branchState.repositoryId
+        );
+        if (!repository) {
+          return false;
+        }
+
+        const cachedBranches = this.requestCache.getRepoBranches(
+          cacheKey,
+          repository.id
+        );
+        const floroBranch = cachedBranches.find(
+          (b) => b.id == branchState.branchId
+        );
+        if (!floroBranch) {
+          return false;
+        }
+        if (floroBranch.id == repository.defaultBranchId) {
+          return false;
+        }
+        const baseBranch = cachedBranches.find(
+          (b) => b.id == floroBranch.baseBranchId
+        );
+        if (!baseBranch) {
+          return false;
+        }
+
+        const mergeRequestsContext = await this.contextFactory.createContext(
+          MergeRequestsContext
+        );
+
+        const branchHasOpenRequest =
+          await mergeRequestsContext.repoHasOpenRequestOnBranch(
+            repository.id,
+            floroBranch.id
+          );
+        if (branchHasOpenRequest) {
+          return false;
+        }
+        const branchRuleSettings = cachedRemoteSettings?.branchRules?.find(
+          (br) => br.branchId == baseBranch.id
+        );
+        if (branchRuleSettings && branchRuleSettings?.requiresApprovalToMerge) {
+          return false;
+        }
+        const branchesContext = await this.contextFactory.createContext(
+          BranchesContext
+        );
+        const remoteBranch = await branchesContext.getByRepoAndBranchId(
+          repository.id,
+          floroBranch?.id
+        );
+        return (!remoteBranch?.isMerged &&
+          (remoteBranch?.isConflictFree ?? false)) as boolean;
+      }
+    ),
+    hasOpenMergeRequest: runWithHooks(
+      () => [this.branchStateRepositoryLoader],
+      async (branchState: main.BranchState, _, { cacheKey, currentUser }) => {
+        if (!currentUser) {
+          return false;
+        }
+        if (!branchState.repositoryId) {
+          return false;
+        }
+
+        const repository = this.requestCache.getRepo(
+          cacheKey,
+          branchState.repositoryId
+        );
+        if (!repository) {
+          return false;
+        }
+
+        const cachedBranches = this.requestCache.getRepoBranches(
+          cacheKey,
+          repository.id
+        );
+        const floroBranch = cachedBranches.find(
+          (b) => b.id == branchState.branchId
+        );
+        if (!floroBranch) {
+          return false;
+        }
+        const mergeRequestsContext = await this.contextFactory.createContext(
+          MergeRequestsContext
+        );
+
+        const branchHasOpenRequest =
+          await mergeRequestsContext.repoHasOpenRequestOnBranch(
+            repository.id,
+            floroBranch.id
+          );
+        return branchHasOpenRequest;
+      }
+    ),
+
+    openMergeRequest: runWithHooks(
+      () => [this.branchStateRepositoryLoader],
+      async (branchState: main.BranchState, _, { cacheKey, currentUser }) => {
+        if (!currentUser) {
+          return null;
+        }
+        if (!branchState.repositoryId) {
+          return null;
+        }
+
+        const repository = this.requestCache.getRepo(
+          cacheKey,
+          branchState.repositoryId
+        );
+        if (!repository) {
+          return null;
+        }
+
+        const cachedBranches = this.requestCache.getRepoBranches(
+          cacheKey,
+          repository.id
+        );
+        const floroBranch = cachedBranches.find(
+          (b) => b.id == branchState.branchId
+        );
+        if (!floroBranch) {
+          return null;
+        }
+        const mergeRequestsContext = await this.contextFactory.createContext(
+          MergeRequestsContext
+        );
+
+        const branchHasOpenRequest =
+          await mergeRequestsContext.repoHasOpenRequestOnBranch(
+            repository.id,
+            floroBranch.id
+          );
+        if (!branchHasOpenRequest) {
+          return null;
+        }
+        return await mergeRequestsContext?.getOpenMergeRequestByBranchNameAndRepo(
+          repository.id,
+          floroBranch.id
+        );
+      }
+    ),
+    showMergeAndDeleteOptions: runWithHooks(
+      () => [
+        this.branchStateRepositoryLoader,
+        this.repositoryRemoteSettingsLoader,
+      ],
+      async (branchState: main.BranchState, _, { cacheKey, currentUser }) => {
+        if (!currentUser) {
+          return false;
+        }
+        if (!branchState.repositoryId) {
+          return false;
+        }
+
+        const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
+          cacheKey,
+          branchState.repositoryId
+        );
+        if (!cachedRemoteSettings?.canPushBranches) {
+          return false;
+        }
+
+        const repository = this.requestCache.getRepo(
+          cacheKey,
+          branchState.repositoryId
+        );
+        if (!repository) {
+          return false;
+        }
+
+        const cachedBranches = this.requestCache.getRepoBranches(
+          cacheKey,
+          repository.id
+        );
+        const floroBranch = cachedBranches.find(
+          (b) => b.id == branchState.branchId
+        );
+        if (!floroBranch) {
+          return false;
+        }
+        if (floroBranch.id == repository.defaultBranchId) {
+          return false;
+        }
+        const branchRuleSettings = cachedRemoteSettings?.branchRules?.find(
+          (br) => br.branchId == floroBranch.id
+        );
+        if (branchRuleSettings && branchRuleSettings?.requiresApprovalToMerge) {
+          return false;
+        }
+        return true;
       }
     ),
   };
@@ -2157,7 +2487,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         }
 
         this.pubsub?.publish?.(`REPOSITORY_UPDATED:${repository.id}`, {
-          repositoryUpdated: updatedRepo
+          repositoryUpdated: updatedRepo,
         });
         return {
           __typename: "ChangeDefaultBranchSuccess",
@@ -2935,16 +3265,12 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           };
         }
 
-        console.log("FUCK SHIT STACK")
         const history = this.repoDataService.getCommitHistory(
           commits,
           branch?.lastCommit
         );
-        console.log("NO ALIVE")
-
 
         const ranges = this.repoDataService.getRevertRanges(history);
-        console.log("WTF", commit);
         const isReverted = this.repoDataService.isReverted(ranges, commit.idx);
         if (isReverted) {
           return {
@@ -2953,16 +3279,21 @@ export default class RepositoryResolverModule extends BaseResolverModule {
             type: "UNKNOWN_ERROR",
           };
         }
-        console.log("REVERT TIME")
-        const result = await this.revertService.revertBranch(repository, sha, branch, baseBranch, currentUser);
+        const result = await this.revertService.revertBranch(
+          repository,
+          sha,
+          branch,
+          baseBranch,
+          currentUser
+        );
         if (result.action == "BRANCH_REVERTED") {
           this.pubsub?.publish?.(`REPOSITORY_UPDATED:${repository.id}`, {
-            repositoryUpdated: result.repository
+            repositoryUpdated: result.repository,
           });
           return {
             __typename: "RevertCommitSuccess",
-            repository: result.repository
-          }
+            repository: result.repository,
+          };
         }
 
         if (result.action == "LOG_ERROR") {
@@ -3064,15 +3395,21 @@ export default class RepositoryResolverModule extends BaseResolverModule {
             type: "UNKNOWN_ERROR",
           };
         }
-        const result = await this.revertService.autofixBranch(repository, sha, branch, baseBranch, currentUser);
+        const result = await this.revertService.autofixBranch(
+          repository,
+          sha,
+          branch,
+          baseBranch,
+          currentUser
+        );
         if (result.action == "BRANCH_AUTOFIXED") {
           this.pubsub?.publish?.(`REPOSITORY_UPDATED:${repository.id}`, {
-            repositoryUpdated: result.repository
+            repositoryUpdated: result.repository,
           });
           return {
             __typename: "AutofixCommitSuccess",
-            repository: result.repository
-          }
+            repository: result.repository,
+          };
         }
 
         if (result.action == "LOG_ERROR") {
@@ -3089,6 +3426,209 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         }
         return {
           __typename: "AutofixCommitError",
+          message: result.error?.message ?? "Unknown Error",
+          type: result.error?.type ?? "UNKNOWN_ERROR",
+        };
+      }
+    ),
+
+    deleteBranch: runWithHooks(
+      () => [this.loggedInUserGuard, this.repoSettingAccessGuard],
+      async (
+        _,
+        { repositoryId, branchId }: main.MutationDeleteBranchArgs,
+        { currentUser }
+      ) => {
+        const repository = await this.repoDataService.fetchRepoById(
+          repositoryId
+        );
+
+        if (!repository) {
+          return {
+            __typename: "DeleteBranchError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        const remoteSettings =
+          await this.repoDataService.fetchRepoSettingsForUser(
+            repositoryId,
+            currentUser
+          );
+        if (!remoteSettings?.canPushBranches) {
+          return {
+            __typename: "DeleteBranchError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        const branches =
+          (await this.repoDataService.getBranches(repositoryId as string)) ??
+          [];
+        const branch = branches.find((b) => b.id == branchId);
+        if (!branch) {
+          return {
+            __typename: "DeleteBranchError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        const canDelete = await this.branchService.canDeleteBranch(
+          repository,
+          branch
+        );
+        if (!canDelete) {
+          return {
+            __typename: "DeleteBranchError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        const updatedBranch = await this.branchService.deleteBranch(
+          repository,
+          branch
+        );
+        if (!updatedBranch) {
+          return {
+            __typename: "DeleteBranchError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${repository.id}`, {
+          repositoryUpdated: repository,
+        });
+        return {
+          __typename: "DeleteBranchSuccess",
+          repository,
+        };
+      }
+    ),
+    mergeBranch: runWithHooks(
+      () => [this.loggedInUserGuard, this.repoSettingAccessGuard],
+      async (
+        _,
+        { repositoryId, branchId }: main.MutationMergeBranchArgs,
+        { currentUser }
+      ) => {
+        const repository = await this.repoDataService.fetchRepoById(
+          repositoryId
+        );
+
+        if (!repository) {
+          return {
+            __typename: "MergeBranchError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        const remoteSettings =
+          await this.repoDataService.fetchRepoSettingsForUser(
+            repositoryId,
+            currentUser
+          );
+        if (!remoteSettings?.canPushBranches) {
+          return {
+            __typename: "MergeBranchError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        const branches =
+          (await this.repoDataService.getBranches(repositoryId as string)) ??
+          [];
+        const floroBranch = branches.find((b) => b.id == branchId);
+        if (!floroBranch) {
+          return {
+            __typename: "MergeBranchError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        const baseBranch = branches.find(
+          (b) => !!floroBranch?.baseBranchId && b.id == floroBranch.baseBranchId
+        );
+        if (!baseBranch) {
+          return {
+            __typename: "MergeBranchError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+
+        const mergeRequestsContext = await this.contextFactory.createContext(
+          MergeRequestsContext
+        );
+
+        const branchHasOpenRequest =
+          await mergeRequestsContext.repoHasOpenRequestOnBranch(
+            repository.id,
+            floroBranch.id
+          );
+        if (branchHasOpenRequest) {
+          return {
+            __typename: "MergeBranchError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+
+        const branchRuleSettings = remoteSettings?.branchRules?.find(
+          (br) => br.branchId == baseBranch.id
+        );
+        if (branchRuleSettings && branchRuleSettings?.requiresApprovalToMerge) {
+          return {
+            __typename: "MergeBranchError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        const branchesContext = await this.contextFactory.createContext(
+          BranchesContext
+        );
+        const remoteBranch = await branchesContext.getByRepoAndBranchId(
+          repository.id,
+          floroBranch?.id
+        );
+        const canMerge = (!remoteBranch?.isMerged &&
+          (remoteBranch?.isConflictFree ?? false)) as boolean;
+        if (!canMerge) {
+          return {
+            __typename: "MergeBranchError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        const result = await this.mergeService.mergeBranch(
+          repository,
+          floroBranch,
+          currentUser
+        );
+
+        if (result.action == "BRANCH_MERGED") {
+          this.pubsub?.publish?.(`REPOSITORY_UPDATED:${repository.id}`, {
+            repositoryUpdated: result.repository,
+          });
+          return {
+            __typename: "MergeBranchSuccess",
+            repository: result.repository,
+          };
+        }
+
+        if (result.action == "LOG_ERROR") {
+          console.error(
+            result.error?.type,
+            result?.error?.message,
+            result?.error?.meta
+          );
+          return {
+            __typename: "MergeBranchError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        return {
+          __typename: "MergeBranchError",
           message: result.error?.message ?? "Unknown Error",
           type: result.error?.type ?? "UNKNOWN_ERROR",
         };

@@ -7,7 +7,10 @@ import BranchIconDark from "@floro/common-assets/assets/images/icons/branch_icon
 import CommitIconLight from "@floro/common-assets/assets/images/icons/commit_icon.light.svg";
 import CommitIconDark from "@floro/common-assets/assets/images/icons/commit_icon.dark.svg";
 
-import { Repository } from "@floro/graphql-schemas/build/generated/main-graphql";
+import {
+  MergeRequest,
+  Repository,
+} from "@floro/graphql-schemas/build/generated/main-graphql";
 
 import BackArrowIconLight from "@floro/common-assets/assets/images/icons/back_arrow.light.svg";
 import BackArrowIconDark from "@floro/common-assets/assets/images/icons/back_arrow.dark.svg";
@@ -15,8 +18,21 @@ import BackArrowIconDark from "@floro/common-assets/assets/images/icons/back_arr
 import WarningIconLight from "@floro/common-assets/assets/images/icons/warning.light.svg";
 import WarningIconDark from "@floro/common-assets/assets/images/icons/warning.dark.svg";
 
+import MergeIconLight from "@floro/common-assets/assets/images/repo_icons/merge.gray.svg";
+import MergeIconDark from "@floro/common-assets/assets/images/repo_icons/merge.white.svg";
+
+import ResolveWhite from "@floro/common-assets/assets/images/repo_icons/resolve.white.svg";
+import ResolveGray from "@floro/common-assets/assets/images/repo_icons/resolve.gray.svg";
+
+import AbortWhite from "@floro/common-assets/assets/images/repo_icons/abort.white.svg";
+import AbortGray from "@floro/common-assets/assets/images/repo_icons/abort.gray.svg";
+
 import { Manifest } from "floro/dist/src/plugins";
-import { ApiStoreInvalidity, Branch, RenderedApplicationState } from "floro/dist/src/repo";
+import {
+  ApiStoreInvalidity,
+  Branch,
+  RenderedApplicationState,
+} from "floro/dist/src/repo";
 import { Link } from "react-router-dom";
 import BranchSelector from "../BranchSelector";
 import TimeAgo from "javascript-time-ago";
@@ -167,18 +183,23 @@ const BranchHeadNotification = styled.div`
   width: 16px;
   border-radius: 50%;
   border: 1px solid ${ColorPalette.white};
-  background: ${props => props.theme.colors.warningTextColor};
-`
-
+  background: ${(props) => props.theme.colors.warningTextColor};
+`;
 
 export interface Props {
   repository: Repository;
   remoteCommitState: RemoteCommitState;
   showBackButton?: boolean;
   onGoBack?: () => void;
-  onChangeBranch: (branch: Branch|null) => void;
+  onChangeBranch: (branch: Branch | null) => void;
   defaultBranchLink?: string;
   currentHeadLink?: string;
+  mergeRequest?: MergeRequest|undefined;
+  mergeRequestLink?: string;
+  showMergeRequest?: boolean;
+  isOffBranch?: boolean;
+  isMerged?: boolean;
+  isConflictFree?: boolean;
 }
 
 const RemoteCurrentInfo = (props: Props): React.ReactElement => {
@@ -206,13 +227,18 @@ const RemoteCurrentInfo = (props: Props): React.ReactElement => {
 
   const commitShaShort = useMemo(() => {
     if (props.repository?.branchState?.commitState?.sha) {
-      return props.repository?.branchState?.commitState?.sha?.substring?.(0, 4) ?? null;
+      return (
+        props.repository?.branchState?.commitState?.sha?.substring?.(0, 4) ??
+        null
+      );
     }
     return null;
   }, [props.repository?.branchState?.commitState]);
 
   const branch = useMemo(() => {
-    return props.repository?.repoBranches?.find(b => b?.id == props.repository?.branchState?.branchId)
+    return props.repository?.repoBranches?.find(
+      (b) => b?.id == props.repository?.branchState?.branchId
+    );
   }, [props.repository?.repoBranches, props.repository?.branchState?.branchId]);
 
   const defaultBranchIsMatching = useMemo(() => {
@@ -220,22 +246,30 @@ const RemoteCurrentInfo = (props: Props): React.ReactElement => {
       props.repository?.branchState?.defaultBranchId ==
       props.repository?.branchState?.branchId
     );
-  }, [props.repository?.branchState?.branchId, props.repository?.branchState?.defaultBranchId]);
+  }, [
+    props.repository?.branchState?.branchId,
+    props.repository?.branchState?.defaultBranchId,
+  ]);
 
   const branchHeadIsMatching = useMemo(() => {
     if (!props?.repository?.branchState?.commitState?.sha) {
       return true;
     }
-    if (props?.repository?.branchState?.commitState?.sha != props?.repository?.branchState?.branchHead) {
+    if (
+      props?.repository?.branchState?.commitState?.sha !=
+      props?.repository?.branchState?.branchHead
+    ) {
       return false;
     }
     return true;
-  }, [props?.repository?.branchState?.commitState])
+  }, [props?.repository?.branchState?.commitState]);
   const baseBranch = useMemo(() => {
     if (!branch?.baseBranchId) {
-        return null;
+      return null;
     }
-    return props.repository?.repoBranches?.find(b => b?.id == branch?.baseBranchId)
+    return props.repository?.repoBranches?.find(
+      (b) => b?.id == branch?.baseBranchId
+    );
   }, [props.repository?.repoBranches, branch]);
 
   const timeAgo = useMemo(() => new TimeAgo("en-US"), []);
@@ -243,8 +277,35 @@ const RemoteCurrentInfo = (props: Props): React.ReactElement => {
     if (!props?.repository?.branchState?.commitState?.lastUpdatedAt) {
       return null;
     }
-    return timeAgo.format(new Date(props?.repository?.branchState?.commitState?.lastUpdatedAt as string));
+    return timeAgo.format(
+      new Date(
+        props?.repository?.branchState?.commitState?.lastUpdatedAt as string
+      )
+    );
   }, [timeAgo, props?.repository?.branchState?.commitState?.lastUpdatedAt]);
+
+
+  const mergeIcon = useMemo(() => {
+    if (theme.name == "light") {
+      return MergeIconLight;
+    }
+    return MergeIconDark;
+  }, [theme.name]);
+
+
+  const resolveIcon = useMemo(() => {
+    if (theme.name == "light") {
+      return ResolveGray;
+    }
+    return ResolveWhite;
+  }, [theme.name]);
+
+  const abortIcon = useMemo(() => {
+    if (theme.name == "light") {
+      return AbortGray;
+    }
+    return AbortWhite;
+  }, [theme.name]);
 
   return (
     <Container>
@@ -291,20 +352,32 @@ const RemoteCurrentInfo = (props: Props): React.ReactElement => {
           onChangeBranch={props.onChangeBranch}
         />
       </Row>
-      <Row>
-        <LeftRow>
-          <Icon src={branchIcon} />
-          <LabelSpan>{"Base branch:"}</LabelSpan>
-        </LeftRow>
-        <RightRow>
-          {baseBranch?.name && <ValueSpan>{baseBranch?.name}</ValueSpan>}
-          {!baseBranch?.name && <ValueSpan>{"None"}</ValueSpan>}
-        </RightRow>
-      </Row>
+      {props?.isOffBranch && (
+        <Row>
+          <LeftRow>
+            <Icon src={branchIcon} />
+            <LabelSpan style={{ color: theme.colors.warningTextColor }}>
+              {"No branch"}
+            </LabelSpan>
+          </LeftRow>
+        </Row>
+      )}
+      {!props?.isOffBranch && (
+        <Row>
+          <LeftRow>
+            <Icon src={branchIcon} />
+            <LabelSpan>{"Base branch:"}</LabelSpan>
+          </LeftRow>
+          <RightRow>
+            {baseBranch?.name && <ValueSpan>{baseBranch?.name}</ValueSpan>}
+            {!baseBranch?.name && <ValueSpan>{"None"}</ValueSpan>}
+          </RightRow>
+        </Row>
+      )}
       <Row style={{ marginTop: 12 }}>
         <LeftRow>
           <Icon src={commitIcon} />
-          <LabelSpan>Last commit:</LabelSpan>
+          <LabelSpan>Commit:</LabelSpan>
         </LeftRow>
         <RightRow>
           {props.repository?.branchState?.commitState && (
@@ -322,7 +395,28 @@ const RemoteCurrentInfo = (props: Props): React.ReactElement => {
           )}
         </RightRow>
       </Row>
-
+      {!props?.repository?.branchState?.commitState?.isOffBranch && baseBranch && (
+        <Row style={{marginTop: 12}}>
+          {props?.isMerged && (
+            <LeftRow>
+              <Icon src={mergeIcon} />
+              <LabelSpan>Nothing to merge</LabelSpan>
+            </LeftRow>
+          )}
+          {!props?.isMerged && props?.isConflictFree && (
+            <LeftRow>
+              <Icon src={resolveIcon} />
+              <LabelSpan>No conflicts</LabelSpan>
+            </LeftRow>
+          )}
+          {!props?.isMerged && !props?.isConflictFree && (
+            <LeftRow>
+              <Icon src={abortIcon} />
+              <LabelSpan>Has conflicts</LabelSpan>
+            </LeftRow>
+          )}
+        </Row>
+      )}
       {(!defaultBranchIsMatching || !branchHeadIsMatching) && (
         <Row
           style={{
@@ -339,9 +433,14 @@ const RemoteCurrentInfo = (props: Props): React.ReactElement => {
               </Link>
             )}
             {!branchHeadIsMatching && props.currentHeadLink && (
-              <Link style={{position: 'relative'}} to={props.currentHeadLink}>
-                <LinkLabelSpan>{"Go to branch head"}</LinkLabelSpan>
-                <BranchHeadNotification/>
+              <Link style={{ position: "relative" }} to={props.currentHeadLink}>
+                {!props?.isOffBranch && (
+                  <LinkLabelSpan>{"Go to branch head"}</LinkLabelSpan>
+                )}
+                {props?.isOffBranch && (
+                  <LinkLabelSpan>{"Go to default branch head"}</LinkLabelSpan>
+                )}
+                <BranchHeadNotification />
               </Link>
             )}
           </LeftRow>
@@ -389,6 +488,13 @@ const RemoteCurrentInfo = (props: Props): React.ReactElement => {
               )}
             </TimeTextRow>
           )}
+        </Row>
+      )}
+      {props?.showMergeRequest && !!props.mergeRequestLink && (
+        <Row>
+          <Link to={props.mergeRequestLink}>
+            <LinkLabelSpan>{`Go to open merge request "${props?.mergeRequest?.title}" [${props?.mergeRequest?.mergeRequestCount}]`}</LinkLabelSpan>
+          </Link>
         </Row>
       )}
     </Container>

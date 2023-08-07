@@ -487,7 +487,7 @@ export default class RequestCache {
   public setRepoBranches(
     cacheKey: string,
     repoId: string,
-    branches: Array<FloroBranch & { updatedAt: string; dbId: string }>
+    branches: Array<FloroBranch & { updatedAt: string; dbId: string, isConflictFree: boolean, isMerged: boolean }>
   ) {
     const cache = this.getCache(cacheKey);
     cache[`repo-branches:${repoId}`] = branches;
@@ -496,10 +496,10 @@ export default class RequestCache {
   public getRepoBranches(
     cacheKey: string,
     repoId: string
-  ): Array<FloroBranch & { updatedAt: string; dbId: string }> {
+  ): Array<FloroBranch & { updatedAt: string; dbId: string, isConflictFree: boolean, isMerged: boolean }> {
     const cache = this.getCache(cacheKey);
     return cache[`repo-branches:${repoId}`] as Array<
-      FloroBranch & { updatedAt: string; dbId: string }
+      FloroBranch & { updatedAt: string; dbId: string, isConflictFree: boolean, isMerged: boolean }
     >;
   }
 

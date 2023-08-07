@@ -101,6 +101,7 @@ import PreMergeCommitQueue from './services/merge_requests/PreMergeCommitQueue';
 import CommitService from './services/merge_requests/CommitService';
 import UserClosedMergeRequestsLoader from './resolvers/hooks/loaders/MergeRequest/UserClosedMergeRequestsLoader';
 import RevertService from './services/repositories/RevertService';
+import BranchStateRepositoryLoader from './resolvers/hooks/loaders/Repository/BranchStateRepoLoader';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -160,6 +161,7 @@ export default new ContainerModule((bind): void => {
     bind(CommitStateDatasourceLoader).toSelf();
     bind(CommitStatePluginVersionsLoader).toSelf()
     bind(CommitInfoRepositoryLoader).toSelf();
+    bind(BranchStateRepositoryLoader).toSelf();
 
     bind(WriteAccessIdsLoader).toSelf();
     bind(ProtectedBranchRuleLoader).toSelf();

@@ -16,6 +16,10 @@ query fetchRepositoryHistory(
         user {
           ...User
         }
+        repoPermissions {
+          canPushBranches
+          canChangeSettings
+        }
         branchState(branchId: $branchId) {
           branchId
           name

@@ -6,6 +6,7 @@ import { useQuery, useMutation, useQueryClient } from "react-query";
 import { ApplicationKVState, RenderedApplicationState } from "./polyfill-floro";
 
 import { useParams } from "react-router-dom";
+import { RepoPage } from "../../types";
 
 export const useRemoteRenderedState = (commitState?: CommitState|null) => {
   return useQuery(
@@ -45,7 +46,7 @@ export const useRemoteKVState = (commitState?: CommitState|null) => {
   );
 };
 
-export const useRepoLinkBase = (repository: Repository, page?: string) => {
+export const useRepoLinkBase = (repository: Repository, page?: RepoPage) => {
   const params = useParams();
   const ownerHandle = params?.["ownerHandle"] ?? "";
   const repoName = params?.["repoName"] ?? "";
@@ -58,7 +59,7 @@ export const useRepoLinkBase = (repository: Repository, page?: string) => {
     if (page == "merge-request") {
       return "mergerequests/" + mergeRequestId;
     }
-    return page;
+    return "";
   }, [page, branchId,mergeRequestId])
   const suffix = !page || page == "home" ? "" : `/${pageSuffix}`
   return useMemo(() => {

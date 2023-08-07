@@ -1,0 +1,36 @@
+mutation deleteBranch(
+  $repositoryId: ID!
+  $branchId: ID!
+) {
+  deleteBranch(repositoryId: $repositoryId, branchId: $branchId) {
+    ... on DeleteBranchSuccess {
+      repository {
+        id
+        repoBranches {
+          id
+          name
+          lastCommit
+          baseBranchId
+          createdBy
+          createdByUsername
+          createdAt
+          updatedAt
+        }
+      }
+    }
+    ... on DeleteBranchError {
+      message
+      type
+    }
+
+    ... on RepoSettingAccessError {
+      message
+      type
+    }
+
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+  }
+}

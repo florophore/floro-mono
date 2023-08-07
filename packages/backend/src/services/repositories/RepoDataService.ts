@@ -330,7 +330,7 @@ export default class RepoDataService {
   public async getBranches(
     repoId: string,
     queryRunner?: QueryRunner
-  ): Promise<Array<FloroBranch & { updatedAt: string; dbId: string }>> {
+  ): Promise<Array<FloroBranch & { updatedAt: string; dbId: string, isMerged: boolean, isConflictFree: boolean }>> {
     const branchesContext = !!queryRunner
       ? await this.contextFactory.createContext(BranchesContext, queryRunner)
       : await this.contextFactory.createContext(BranchesContext);
@@ -346,6 +346,8 @@ export default class RepoDataService {
         baseBranchId: b?.baseBranchId as string,
         updatedAt: b.updatedAt.toISOString(),
         dbId: b.id,
+        isConflictFree: b.isConflictFree,
+        isMerged: b.isMerged
       };
     });
   }

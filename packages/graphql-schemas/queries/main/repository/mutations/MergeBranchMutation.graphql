@@ -1,0 +1,27 @@
+mutation mergeBranch(
+  $repositoryId: ID!
+  $branchId: ID!
+  $sha: ID
+) {
+  mergeBranch(repositoryId: $repositoryId, branchId: $branchId) {
+    ... on MergeBranchSuccess {
+      repository {
+        ...CurrentRepository
+      }
+    }
+    ... on MergeBranchError {
+      message
+      type
+    }
+
+    ... on RepoSettingAccessError {
+      message
+      type
+    }
+
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+  }
+}

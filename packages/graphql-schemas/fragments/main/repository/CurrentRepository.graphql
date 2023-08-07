@@ -18,12 +18,26 @@ fragment CurrentRepository on Repository {
     name
     commitsSize
     updatedAt
+    isMerged
+    isConflictFree
+
+    canDelete
+    canMergeDirectly
+    hasOpenMergeRequest
+    showMergeAndDeleteOptions
+    openMergeRequest {
+      id
+      title
+      mergeRequestCount
+    }
+
     commitState(sha: $sha) {
       sha
       kvLink
       stateLink
       isReverted
       isValid
+      isOffBranch
       message
       lastUpdatedAt
       binaryRefs {

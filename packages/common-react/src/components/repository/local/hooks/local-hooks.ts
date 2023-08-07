@@ -2,12 +2,13 @@ import { useMemo, useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import axios from "axios";
 import { Repository, useExchangeSessionMutation } from "@floro/graphql-schemas/src/generated/main-client-graphql";
-import { ApiResponse, Branch, BranchesMetaState, CloneFile, FetchInfo, SourceGraphResponse } from "floro/dist/src/repo";
+import { ApiResponse, Branch, BranchesMetaState, CloneFile, FetchInfo, RemoteSettings, SourceGraphResponse } from "floro/dist/src/repo";
 import { SourceCommitNode } from "floro/dist/src/sourcegraph";
 import { Manifest } from "floro/dist/src/plugins";
 import { useSession } from "../../../../session/session-context";
 import { SourceGraph } from './SourceGraph';
 import { useSocketEvent } from '../../../../pubsub/socket';
+import { Settings } from 'http2';
 
 
 export interface ClientSourceGraph {
@@ -1080,6 +1081,28 @@ export const useFetchInfo = (repository: Repository) => {
         }
         const result = await axios.get<FetchInfo>(
           `http://localhost:63403/repo/${repository.id}/fetchinfo`
+        );
+        return result?.data ?? null;
+      } catch (e) {
+        return null;
+      }
+    },
+    {
+      cacheTime: 0,
+    }
+  );
+};
+
+export const useRepoRemoteSettings = (repository: Repository) => {
+  return useQuery(
+    "repo-remote-settings:" + repository.id,
+    async (): Promise< RemoteSettings | null> => {
+      try {
+        if (!repository.id) {
+          return null;
+        }
+        const result = await axios.get<RemoteSettings>(
+          `http://localhost:63403/repo/${repository.id}/settings`
         );
         return result?.data ?? null;
       } catch (e) {

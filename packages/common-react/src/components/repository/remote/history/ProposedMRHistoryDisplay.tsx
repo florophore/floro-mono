@@ -237,6 +237,7 @@ const ProposedMRHistoryDisplay = (props: Props) => {
             key={index}
             homeLink={homeLink}
             hideSelect
+            isMergeRequest
           />
         );
       })}

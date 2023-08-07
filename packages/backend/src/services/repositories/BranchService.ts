@@ -24,6 +24,11 @@ import {
   getBranchIdFromName,
   branchIdIsCyclic,
   RemoteSettings,
+  getDivergenceOrigin,
+  getMergeOriginSha,
+  EMPTY_COMMIT_STATE,
+  ApplicationKVState,
+  canAutoMergeCommitStates,
 } from "floro/dist/src/repo";
 import RepoRBACService from "./RepoRBACService";
 import UsersContext from "@floro/database/src/contexts/users/UsersContext";
@@ -31,6 +36,9 @@ import OrganizationsContext from "@floro/database/src/contexts/organizations/Org
 import BranchPushHandler from "../events/BranchPushEventHandler";
 import MergeRequestsContext from "@floro/database/src/contexts/merge_requests/MergeRequestsContext";
 import RepoDataService from "./RepoDataService";
+import { Commit } from "@floro/database/src/entities/Commit";
+import RepositoryDatasourceFactoryService from "./RepoDatasourceFactoryService";
+import { Branch } from "@floro/database/src/entities/Branch";
 
 export const LICENSE_CODE_LIST = new Set([
   "apache_2",
@@ -69,12 +77,15 @@ export default class BranchService {
   private branchPushHandlers!: BranchPushHandler[];
   private repoDataService!: RepoDataService;
   private repoRBACService!: RepoRBACService;
+  private repositoryDatasourceFactoryService!: RepositoryDatasourceFactoryService;
 
   constructor(
     @inject(DatabaseConnection) databaseConnection: DatabaseConnection,
     @inject(ContextFactory) contextFactory: ContextFactory,
     @inject(RepoDataService) repoDataService: RepoDataService,
     @inject(RepoRBACService) repoRBACService: RepoRBACService,
+    @inject(RepositoryDatasourceFactoryService)
+    repositoryDatasourceFactoryService: RepositoryDatasourceFactoryService,
     @multiInject("BranchPushHandler") branchPushHandlers: BranchPushHandler[]
   ) {
     this.databaseConnection = databaseConnection;
@@ -82,6 +93,8 @@ export default class BranchService {
     this.branchPushHandlers = branchPushHandlers;
     this.repoDataService = repoDataService;
     this.repoRBACService = repoRBACService;
+    this.repositoryDatasourceFactoryService =
+      repositoryDatasourceFactoryService;
   }
 
   // only ever calll this during repo creation
@@ -317,11 +330,7 @@ export default class BranchService {
       }
       await queryRunner.commitTransaction();
       for (const handler of this.branchPushHandlers) {
-        await handler.onBranchChanged(
-          updatedRepo,
-          user,
-          pushedBranch
-        );
+        await handler.onBranchChanged(updatedRepo, user, pushedBranch);
       }
       return {
         action: "BRANCH_PUSHED",
@@ -387,36 +396,52 @@ export default class BranchService {
           baseBranchId: b?.baseBranchId as string,
         } as FloroBranch;
       });
-      const isCyclic = this.repoDataService.testBranchIsCyclic(branchExchange, floroBranch);
+      const isCyclic = this.repoDataService.testBranchIsCyclic(
+        branchExchange,
+        floroBranch
+      );
       if (isCyclic) {
         return null;
       }
 
       const remoteBranch = branches?.find((b) => b.branchId == floroBranch?.id);
 
-      const mergeRequestConetxt = await this.contextFactory.createContext(MergeRequestsContext, queryRunner);
+      const mergeRequestConetxt = await this.contextFactory.createContext(
+        MergeRequestsContext,
+        queryRunner
+      );
       const hasOpenMergeRequest =
         !!remoteBranch?.id &&
         (await mergeRequestConetxt.repoHasOpenRequestOnBranch(
           repository.id,
           remoteBranch?.id
         ));
-      if (hasOpenMergeRequest && floroBranch?.baseBranchId != remoteBranch?.branchId) {
+      if (
+        hasOpenMergeRequest &&
+        floroBranch?.baseBranchId != remoteBranch?.branchId
+      ) {
         return null;
       }
+      let baseBranch: Branch|undefined;
       if (floroBranch?.baseBranchId) {
-        const baseBranch = branches?.find(
+        baseBranch = branches?.find(
           (b) => b.branchId == floroBranch?.baseBranchId
         );
         if (!baseBranch) {
           return null;
         }
       }
+      let floroBaseBranch = branchExchange.find(b => b.id == floroBranch?.baseBranchId)
+
+      const commits = await commitsContext.getAllByRepoId(repository.id);
+      const { isMerged, isConflictFree } = await this.getConflictState(repository, floroBranch, floroBaseBranch, commits, queryRunner);
       // check commit exists
       if (remoteBranch) {
         const updatedBranch = await branchesContext.updateBranch(remoteBranch, {
           baseBranchId: floroBranch?.baseBranchId ?? undefined,
           lastCommit: floroBranch?.lastCommit ?? undefined,
+          isMerged,
+          isConflictFree
         });
         return updatedBranch;
       }
@@ -431,13 +456,14 @@ export default class BranchService {
         createdAt: floroBranch.createdAt,
         organizationId: repository?.organizationId,
         repositoryId: repository?.id,
+        isMerged,
+        isConflictFree
       });
       return createdBranch;
     } catch (e: any) {
       return null;
     }
   }
-
 
   public async getOpenBranchesByUser(
     repository: Repository,
@@ -452,6 +478,9 @@ export default class BranchService {
       );
     const mergeRequestsContext = await this.contextFactory.createContext(
       MergeRequestsContext
+    );
+    const branchesContext = await this.contextFactory.createContext(
+      BranchesContext
     );
     const userBranches = branches?.filter((branch) => {
       return branch.createdBy == user.id;
@@ -490,6 +519,10 @@ export default class BranchService {
       if (branchHasOpenRequest) {
         continue;
       }
+      const remoteBranch = await branchesContext.getByRepoAndBranchId(repository.id, branch.id);
+      if (remoteBranch?.isMerged) {
+        continue;
+      }
       openUserBranches.push(branch);
     }
     return openUserBranches.sort((a, b) => {
@@ -497,7 +530,11 @@ export default class BranchService {
     });
   }
 
-  public async canDeleteBranch(repository: Repository, floroBranch: FloroBranch, queryRunner: QueryRunner) {
+  public async canDeleteBranch(
+    repository: Repository,
+    floroBranch: FloroBranch,
+    queryRunner?: QueryRunner
+  ) {
     if (repository.defaultBranchId == floroBranch.id) {
       return false;
     }
@@ -515,7 +552,11 @@ export default class BranchService {
       ProtectedBranchRulesContext,
       queryRunner
     );
-    const hasBranchRule = await protectedBranchRulesContext.getByRepoAndBranchId(repository.id, floroBranch.id);
+    const hasBranchRule =
+      await protectedBranchRulesContext.getByRepoAndBranchId(
+        repository.id,
+        floroBranch.id
+      );
     if (hasBranchRule) {
       return false;
     }
@@ -537,5 +578,106 @@ export default class BranchService {
       }
     }
     return true;
+  }
+
+  public async deleteBranch(
+    repository: Repository,
+    floroBranch: FloroBranch,
+    queryRunner?: QueryRunner
+  ): Promise<Branch|null> {
+    const branchesContext = await this.contextFactory.createContext(
+      BranchesContext,
+      queryRunner
+    );
+    const remoteBranch = await branchesContext.getByRepoAndBranchId(repository.id, floroBranch.id);
+    if (!remoteBranch) {
+      return null;
+    }
+    return await branchesContext.updateBranch(remoteBranch, {
+      isDeleted: true
+    });
+  }
+
+  public async getDataSourceForBaseBranch(
+    repository: Repository,
+    branch: FloroBranch,
+    baseBranch: FloroBranch,
+    commits: Commit[],
+    queryRunner?: QueryRunner
+  ) {
+    const pluginList =
+      await this.repositoryDatasourceFactoryService.getMergePluginList(
+        repository,
+        branch,
+        commits,
+        baseBranch?.lastCommit ?? undefined,
+        queryRunner
+      );
+    return await this.repositoryDatasourceFactoryService.getDatasource(
+      repository,
+      baseBranch,
+      commits,
+      pluginList,
+      queryRunner
+    );
+  }
+
+  public async getConflictState(
+    repository: Repository,
+    floroBranch: FloroBranch,
+    baseBranch: FloroBranch|undefined,
+    commits: Commit[],
+    queryRunner?: QueryRunner
+  ): Promise<{isMerged: boolean, isConflictFree: boolean}> {
+    if (!baseBranch) {
+      return { isMerged: false, isConflictFree: false}
+    }
+    const datasource = await this.getDataSourceForBaseBranch(
+      repository,
+      floroBranch,
+      baseBranch,
+      commits,
+      queryRunner
+    );
+    const divergenceOrigin = await getDivergenceOrigin(
+      datasource,
+      repository.id,
+      baseBranch?.lastCommit ?? undefined,
+      floroBranch?.lastCommit ?? undefined
+    );
+    const divergenceSha: string = getMergeOriginSha(divergenceOrigin) as string;
+
+    const isMerged =
+      divergenceOrigin?.rebaseShas?.length == 0 &&
+      (divergenceOrigin?.intoLastCommonAncestor == floroBranch?.lastCommit ||
+        divergenceOrigin?.trueOrigin == baseBranch?.lastCommit);
+    let isConflictFree = isMerged || divergenceSha === baseBranch?.lastCommit;
+    if (!isConflictFree) {
+      const divergenceState =
+        (await datasource.readCommitApplicationState?.(
+          repository.id,
+          divergenceSha
+        )) ?? (EMPTY_COMMIT_STATE as ApplicationKVState);
+      const branchState =
+        (await datasource.readCommitApplicationState?.(
+          repository.id,
+          floroBranch?.lastCommit as string
+        )) ?? (EMPTY_COMMIT_STATE as ApplicationKVState);
+      const baseBranchState =
+        (await datasource.readCommitApplicationState?.(
+          repository.id,
+          baseBranch?.lastCommit as string
+        )) ?? (EMPTY_COMMIT_STATE as ApplicationKVState);
+      const canAutoMerge = await canAutoMergeCommitStates(
+        datasource,
+        baseBranchState,
+        branchState,
+        divergenceState
+      );
+      if (canAutoMerge) {
+        isConflictFree = true;
+      }
+    }
+    return { isMerged, isConflictFree };
   }
 }

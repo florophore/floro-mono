@@ -20,6 +20,8 @@ import RedXCircleDark from "@floro/common-assets/assets/images/icons/red_x_circl
 import ColorPalette from "@floro/styles/ColorPalette";
 import { Link } from "react-router-dom";
 import InitialProfileDefault from "@floro/storybook/stories/common-components/InitialProfileDefault";
+import { useSearchParams} from "react-router-dom";
+import { useRepoLinkBase } from "../hooks/remote-hooks";
 
 const Container = styled.div`
   width: 100%;
@@ -142,9 +144,37 @@ interface Props {
   homeLink: string;
   onSelect?: (sha: string, idx: number) => void;
   hideSelect?: boolean;
+  plugin?: string;
+  isMergeRequest?: boolean;
 }
 const HistoryRow = (props: Props) => {
   const theme = useTheme();
+
+  const [searchParams] = useSearchParams();
+  const index = searchParams.get('idx');
+  const searchQuery = searchParams.get("query");
+  const linkBase = useRepoLinkBase(props.repository);
+
+  const historyLink = useMemo(() => {
+    if (!props.repository?.branchState?.branchId) {
+      return `${linkBase}/history?from=remote&plugin=${props?.plugin ?? "home"}&query=${searchQuery ?? ""}`;
+    }
+    return `${linkBase}/history?from=remote&branch=${
+      props.repository?.branchState?.branchId
+    }&plugin=${props.plugin ?? "home"}&query=${searchQuery ?? ""}`;
+  }, [props.repository?.branchState, linkBase, props.plugin, searchQuery]);
+
+  const mrShaLink = useMemo(() => {
+    return (linkBase + "?from=remote&sha=" + props?.commit?.sha);
+  }, [historyLink, index, props?.commit?.sha]);
+
+  const shaLink = useMemo(() => {
+    if (!index) {
+      return (historyLink + "&sha=" + props?.commit?.sha);
+    } else {
+      return (historyLink + "&sha=" + props?.commit?.sha + "&idx=" + index);
+    }
+  }, [historyLink, index, props?.commit?.sha]);
 
   const shaTitle = useMemo(() => {
     return `(${props.commit.sha?.substring(0, 6)})`;
@@ -205,7 +235,7 @@ const HistoryRow = (props: Props) => {
   return (
     <Container>
       <TopRow>
-        <Link to={props.homeLink + "&sha=" + props.commit.sha}>
+        <Link to={props?.isMergeRequest ? mrShaLink : shaLink}>
           <CommitTitle>{props.commit?.message}</CommitTitle>
         </Link>
         {!props.hideSelect && (

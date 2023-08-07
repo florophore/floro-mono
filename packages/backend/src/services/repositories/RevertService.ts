@@ -150,7 +150,6 @@ export default class RevertService {
       const updatedBranch = await branchesContext.updateBranch(remoteBranch, {
         lastCommit: revertedCommit.sha
       });
-      console.log("WTHAT", updatedBranch)
       if (!updatedBranch) {
         await queryRunner.rollbackTransaction();
         return {

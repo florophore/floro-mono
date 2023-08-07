@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Repository, useRepositoryUpdatesSubscription } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import React, { useMemo, useCallback, useEffect, useState } from "react";
+import { Repository, useMergeBranchMutation, useRepositoryUpdatesSubscription } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import styled from "@emotion/styled";
 import CurrentInfo from "@floro/storybook/stories/repo-components/CurrentInfo";
 import RepoActionButton from "@floro/storybook/stories/repo-components/RepoActionButton";
@@ -10,6 +10,7 @@ import {
   useFetchInfo,
   usePullBranch,
   usePushBranch,
+  useRepoRemoteSettings,
   useUpdateCurrentCommand,
 } from "../hooks/local-hooks";
 import {
@@ -265,6 +266,85 @@ const LocalVCSViewMode = (props: Props) => {
     props.apiResponse.isWIP,
   ]);
 
+  const pushDisclaimer = useMemo(() => {
+    if (pushInfoLoading) {
+      return null;
+    }
+
+    if (fetchInfo?.hasOpenMergeRequestConflict) {
+      return (
+        <ConflictInfoRow>
+          <ConflictError>
+            {
+              "Base branch conflicts with the base branch of an open merge request. Either change the base branch or close the merge request."
+            }
+          </ConflictError>
+        </ConflictInfoRow>
+      );
+    }
+    if (fetchInfo?.baseBranchRequiresPush) {
+      return (
+          <ConflictInfoRow>
+            <ConflictError>
+              {
+                "Push your base branch first in order to push your current branch."
+              }
+            </ConflictError>
+          </ConflictInfoRow>
+      );
+    }
+
+    if (!fetchInfo?.userHasPermissionToPush) {
+      return (
+          <ConflictInfoRow>
+            <ConflictError>
+              {
+                "You do not have push permissions for this repository."
+              }
+            </ConflictError>
+          </ConflictInfoRow>
+      );
+    }
+
+    if (fetchInfo?.containsDevPlugins) {
+      return (
+          <ConflictInfoRow>
+            <ConflictError>
+              {
+                "Point your branch head to a sha that does not have any references to development plugins in its commit history."
+              }
+            </ConflictError>
+          </ConflictInfoRow>
+      );
+    }
+
+    if (fetchInfo?.hasUnreleasedPlugins) {
+      return (
+        <ConflictInfoRow>
+          <ConflictError>
+            {
+              "Point your branch head to a sha that does not have any references to unreleased plugins in its commit history. Alternatively, if possible, you can release the plugins and then push."
+            }
+          </ConflictError>
+        </ConflictInfoRow>
+      );
+    }
+
+    if (fetchInfo?.hasInvalidPlugins) {
+      return (
+        <ConflictInfoRow>
+          <ConflictError>
+            {
+              "You cannot push invalid plugins. Invalid plugins may be plugins that this repository does not have permission to incorporate remotely or plugins that have not been registered remotely."
+            }
+          </ConflictError>
+        </ConflictInfoRow>
+      );
+    }
+    return null;
+
+  }, [fetchInfo, pushInfoLoading]);
+
   return (
     <InnerContent>
       <TopContainer>
@@ -328,15 +408,7 @@ const LocalVCSViewMode = (props: Props) => {
       </TopContainer>
       <BottomContainer>
         <>
-          {fetchInfo?.hasOpenMergeRequestConflict && (
-            <ConflictInfoRow>
-              <ConflictError>
-                {
-                  "Base branch conflicts with the base branch of an open merge request. Either change the base branch or close the merge request."
-                }
-              </ConflictError>
-            </ConflictInfoRow>
-          )}
+          {pushDisclaimer}
         </>
         {!props.apiResponse?.repoState?.isInMergeConflict && (
           <ButtonRow>

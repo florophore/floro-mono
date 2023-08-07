@@ -189,6 +189,10 @@ export default class PreMergeCommitQueue implements BranchPushHandler, QueueServ
             if (!remoteBranch) {
               return;
             }
+            branchesContext.updateBranch(remoteBranch, {
+              isConflictFree,
+              isMerged
+            })
             const usersContext = await this.contextFactory.createContext(UsersContext)
             const user = await usersContext.getById(remoteBranch.createdById);
             if (!user) {

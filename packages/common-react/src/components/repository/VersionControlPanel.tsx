@@ -135,9 +135,9 @@ const VersionControlPanel = (props: Props) => {
         return true;
       }
     }
-    if (!repoExistsLocally) {
-      return true;
-    }
+    //if (!repoExistsLocally) {
+    //  return false;
+    //}
     if (sourceGraphIsShown) {
       return true;
     }

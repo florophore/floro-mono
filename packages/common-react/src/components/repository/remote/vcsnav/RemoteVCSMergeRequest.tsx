@@ -16,6 +16,7 @@ import {
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
+import { Link } from "react-router-dom";
 
 import CheckMarkWhite from "@floro/common-assets/assets/images/icons/check.dark.svg";
 import XMarkWhite from "@floro/common-assets/assets/images/icons/x_cross.white.svg"
@@ -441,7 +442,35 @@ const RemoteVCSMergeRequest = (props: Props) => {
     return "Pending Review";
   }, [reviewStatus, theme.name, props?.repository?.mergeRequest?.isOpen]);
 
+  const branchIsAlive = useMemo(() => {
+    return !!props?.repository?.repoBranches?.find(
+      (b) => b?.id == props?.repository?.mergeRequest?.branchState?.branchId
+    );
+  }, [props?.repository?.repoBranches, props?.repository?.mergeRequest?.branchState?.branchId]);
+
+  const baseBranchIsAlive = useMemo(() => {
+    return !!props?.repository?.repoBranches?.find(
+      (b) => b?.id == props?.repository?.mergeRequest?.branchState?.baseBranchId
+    );
+  }, [props?.repository?.repoBranches, props?.repository?.mergeRequest?.branchState?.baseBranchId]);
+
   const linkBase = useRepoLinkBase(props.repository);
+  const homeBranchLink = useMemo(() => {
+    return `${linkBase}?from=remote&branch=${
+      props.repository?.mergeRequest?.branchState?.branchId
+    }&plugin=${props.plugin ?? "home"}`;
+  }, [linkBase, props?.plugin, props?.repository?.mergeRequest?.branchState?.branchId]);
+
+  const homeBaseBranchLink = useMemo(() => {
+    return `${linkBase}?from=remote&branch=${
+      props.repository?.mergeRequest?.branchState?.baseBranchId
+    }&plugin=${props.plugin ?? "home"}`;
+  }, [
+    linkBase,
+    props?.plugin,
+    props?.repository?.mergeRequest?.branchState?.baseBranchId,
+  ]);
+
   const { reviewPage, setReviewPage } = useMergeRequestReviewPage();
   const backLink = useMemo(() => {
     const mrFilter = props?.repository?.mergeRequest?.isOpen ? "open" : "closed";
@@ -715,9 +744,20 @@ const RemoteVCSMergeRequest = (props: Props) => {
                 </LeftRow>
                 <RightRow>
                   {props?.repository?.mergeRequest?.branchState?.branchName && (
-                    <ValueSpan>
-                      {props?.repository?.mergeRequest?.branchState?.branchName}
-                    </ValueSpan>
+                    <>
+                      {baseBranchIsAlive && (
+                        <Link to={homeBranchLink}>
+                          <ValueSpan style={{color: theme.colors.linkColor, fontWeight: 700}}>
+                            {props?.repository?.mergeRequest?.branchState?.branchName}
+                          </ValueSpan>
+                        </Link>
+                      )}
+                      {!baseBranchIsAlive && (
+                        <ValueSpan>
+                          {props?.repository?.mergeRequest?.branchState?.branchName}
+                        </ValueSpan>
+                      )}
+                    </>
                   )}
                   {!props?.repository?.mergeRequest?.branchState
                     ?.branchName && <ValueSpan>{"None"}</ValueSpan>}
@@ -731,12 +771,27 @@ const RemoteVCSMergeRequest = (props: Props) => {
                 <RightRow>
                   {props?.repository?.mergeRequest?.branchState
                     ?.baseBranchName && (
-                    <ValueSpan>
-                      {
-                        props?.repository?.mergeRequest?.branchState
-                          ?.baseBranchName
-                      }
-                    </ValueSpan>
+                      <>
+                      {baseBranchIsAlive && (
+                        <Link to={homeBaseBranchLink}>
+                          <ValueSpan style={{color: theme.colors.linkColor, fontWeight: 700}}>
+                            {
+                              props?.repository?.mergeRequest?.branchState
+                                ?.baseBranchName
+                            }
+                          </ValueSpan>
+                        </Link>
+                      )}
+                      {!baseBranchIsAlive && (
+
+                        <ValueSpan>
+                          {
+                            props?.repository?.mergeRequest?.branchState
+                              ?.baseBranchName
+                          }
+                        </ValueSpan>
+                      )}
+                      </>
                   )}
                   {!props?.repository?.mergeRequest?.branchState
                     ?.baseBranchName && <ValueSpan>{"None"}</ValueSpan>}

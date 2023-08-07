@@ -22,6 +22,7 @@ import BranchSelector from "@floro/storybook/stories/repo-components/BranchSelec
 import SelectedShaDisplay from "@floro/storybook/stories/repo-components/SelectedShaDisplay";
 import {
   useCanMoveWIP,
+  useRepoRemoteSettings,
   useSourceGraph,
   useUpdateBranch,
 } from "../hooks/local-hooks";
@@ -229,13 +230,13 @@ const EditBranchNavPage = (props: Props) => {
     return getColorForRow(theme, sourceCommit.row);
   }, [gridData.pointerMap, branchHead, theme]);
 
+  const { data: remoteSettings } = useRepoRemoteSettings(props.repository);
+
+
   const baseBranches = useMemo(() => {
-    //return sourceGraphResponse?.branches?.filter(branch => {
-    //  if (branch.id == props?.apiResponse.branch?.id) {
-    //    return false;
-    //  }
-    //  return true;
-    //})
+    if (props?.apiResponse?.branch?.id == remoteSettings?.defaultBranchId) {
+      return [];
+    }
     return sourceGraphResponse?.branches?.filter(b => {
       return (
         props?.apiResponse?.branch?.id != b.id &&
@@ -244,6 +245,7 @@ const EditBranchNavPage = (props: Props) => {
     });
   }, [
     branchHead,
+    remoteSettings?.defaultBranchId,
     props?.apiResponse?.branch?.id,
     sourceGraphResponse?.branches,
     sourceGraphResponse?.pointers,

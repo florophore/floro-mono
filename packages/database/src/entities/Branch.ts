@@ -85,6 +85,16 @@ export class Branch extends BaseEntity {
   @JoinColumn()
   createdBy?: Relation<User>;
 
+  @Column("boolean")
+  @IsOptional()
+  @IsBoolean()
+  isConflictFree!: boolean;
+
+  @Column("boolean")
+  @IsOptional()
+  @IsBoolean()
+  isMerged!: boolean;
+
   @Column("uuid")
   @IsOptional()
   organizationId?: string;
