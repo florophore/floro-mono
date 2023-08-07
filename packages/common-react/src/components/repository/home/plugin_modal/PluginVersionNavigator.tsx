@@ -48,7 +48,6 @@ export interface Props {
 }
 
 const PluginVersionList = (props: Props) => {
-  console.log("PV", props.versions)
   const versions = useMemo(() => {
     const currentVersion = props.apiResponse.applicationState.plugins?.find(({key}) => key == props?.versions[0].name);
     return props.versions.filter((v, index) => {

@@ -232,6 +232,9 @@ const RemoteHomeRead = (props: Props) => {
           </>
         );
       }
+      if ((props?.remoteCommitState?.renderedState?.description?.length ?? 0) == 0) {
+        return "No description";
+      }
       return (
         <>
           {props.remoteCommitState.renderedState.description.map(
@@ -265,9 +268,6 @@ const RemoteHomeRead = (props: Props) => {
           )}
         </>
       );
-    }
-    if ((props?.remoteCommitState?.renderedState?.description?.length ?? 0) == 0) {
-      return "No description";
     }
     return props?.remoteCommitState?.renderedState.description.join(" ");
   }, [

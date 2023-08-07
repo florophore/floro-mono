@@ -1049,6 +1049,7 @@ export default class MergeRequestService
     const divergenceSha: string = getMergeOriginSha(divergenceOrigin) as string;
     const isMerged =
       divergenceOrigin?.rebaseShas?.length == 0 &&
+      baseBranch?.lastCommit != null && !!branch?.lastCommit &&
       (divergenceOrigin?.intoLastCommonAncestor == branch?.lastCommit ||
         divergenceOrigin?.trueOrigin == baseBranch?.lastCommit);
     if (isMerged) {
@@ -1979,10 +1980,9 @@ export default class MergeRequestService
 
         const isMerged =
           divergenceOrigin?.rebaseShas?.length == 0 &&
+          baseBranch?.lastCommit != null && !!floroBranch?.lastCommit &&
           (divergenceOrigin?.intoLastCommonAncestor == floroBranch?.lastCommit ||
             divergenceOrigin?.trueOrigin == baseBranch?.lastCommit);
-          //const isMerged =
-          //  !!divergenceSha && divergenceSha === floroBranch?.lastCommit;
           let isConflictFree =
             isMerged || divergenceSha === baseBranch?.lastCommit;
           if (!isConflictFree) {

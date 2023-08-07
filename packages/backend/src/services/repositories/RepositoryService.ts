@@ -153,6 +153,8 @@ export default class RepositoryService {
           };
         }
         await this.repoAccessor.initInitialRepoFoldersAndFiles(repository);
+        // add branch
+        await this.branchService.initMainBranch(queryRunner, repository, user);
         await queryRunner.commitTransaction();
         return {
           action: "REPO_CREATED",

@@ -1364,6 +1364,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
 
         const isMerged =
           divergenceOrigin?.rebaseShas?.length == 0 &&
+          baseBranch?.lastCommit != null && !!branch?.lastCommit &&
           (divergenceOrigin?.intoLastCommonAncestor == branch?.lastCommit ||
             divergenceOrigin?.trueOrigin == baseBranch?.lastCommit);
         let isConflictFree =

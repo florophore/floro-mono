@@ -108,9 +108,7 @@ export default class RevertService {
         }
       };
     }
-    console.log("ADDING THIS", revertedCommit);
     const didWriteCommit = await this.commitService.writeCommit(repository, revertedCommit);
-    console.log("DID WRITE??", didWriteCommit);
     if (!didWriteCommit) {
         return {
           action: "LOG_ERROR",
@@ -227,7 +225,6 @@ export default class RevertService {
       };
     }
     const autofixCommit = await getAutoFixCommit(datasource, repository.id, reversionSha, user as any);
-    console.log("AF", autofixCommit)
     if (!autofixCommit) {
       return {
         action: "LOG_ERROR",
@@ -277,7 +274,6 @@ export default class RevertService {
       const updatedBranch = await branchesContext.updateBranch(remoteBranch, {
         lastCommit: autofixCommit.sha
       });
-      console.log("WTHAT 2", updatedBranch)
       if (!updatedBranch) {
         await queryRunner.rollbackTransaction();
         return {

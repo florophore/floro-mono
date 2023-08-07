@@ -195,8 +195,12 @@ export default class MergeService {
     );
     const divergenceSha: string = getMergeOriginSha(divergenceOrigin) as string;
     const isMerged =
-      !!divergenceSha && divergenceSha === floroBranch?.lastCommit;
-    let isConflictFree = isMerged || divergenceSha === baseBranch?.lastCommit;
+      divergenceOrigin?.rebaseShas?.length == 0 &&
+      baseBranch?.lastCommit != null && !!floroBranch?.lastCommit &&
+      (divergenceOrigin?.intoLastCommonAncestor == floroBranch?.lastCommit ||
+        divergenceOrigin?.trueOrigin == baseBranch?.lastCommit);
+      let isConflictFree =
+        isMerged || divergenceSha === baseBranch?.lastCommit;
     if (!isConflictFree) {
       const divergenceState =
         (await datasource.readCommitApplicationState?.(
@@ -549,8 +553,12 @@ export default class MergeService {
     );
     const divergenceSha: string = getMergeOriginSha(divergenceOrigin) as string;
     const isMerged =
-      !!divergenceSha && divergenceSha === floroBranch?.lastCommit;
-    let isConflictFree = isMerged || divergenceSha === baseBranch?.lastCommit;
+      divergenceOrigin?.rebaseShas?.length == 0 &&
+      baseBranch?.lastCommit != null && !!floroBranch?.lastCommit &&
+      (divergenceOrigin?.intoLastCommonAncestor == floroBranch?.lastCommit ||
+        divergenceOrigin?.trueOrigin == baseBranch?.lastCommit);
+      let isConflictFree =
+        isMerged || divergenceSha === baseBranch?.lastCommit;
     if (!isConflictFree) {
       const divergenceState =
         (await datasource.readCommitApplicationState?.(

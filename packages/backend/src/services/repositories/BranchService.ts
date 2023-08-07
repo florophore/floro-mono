@@ -123,13 +123,13 @@ export default class BranchService {
     const branchRule = await protectedBranchRulesContext.create({
       branchId: mainBranch.branchId,
       branchName: mainBranch.name,
-      disableDirectPushing: true,
-      requireApprovalToMerge: true,
+      disableDirectPushing: !(repository.isPrivate && repository.repoType == "user_repo"),
+      requireApprovalToMerge: !(repository.isPrivate && repository.repoType == "user_repo"),
       automaticallyDeleteMergedFeatureBranches: true,
       anyoneCanCreateMergeRequests: true,
       anyoneWithApprovalCanMerge: true,
       requireReapprovalOnPushToMerge: true,
-      anyoneCanApproveMergeRequests: true, // limit in public case
+      anyoneCanApproveMergeRequests: true,
       anyoneCanRevert: true,
       anyoneCanAutofix: true,
       repositoryId: repository?.id,
@@ -649,6 +649,7 @@ export default class BranchService {
 
     const isMerged =
       divergenceOrigin?.rebaseShas?.length == 0 &&
+      baseBranch?.lastCommit != null && !!floroBranch?.lastCommit &&
       (divergenceOrigin?.intoLastCommonAncestor == floroBranch?.lastCommit ||
         divergenceOrigin?.trueOrigin == baseBranch?.lastCommit);
     let isConflictFree = isMerged || divergenceSha === baseBranch?.lastCommit;

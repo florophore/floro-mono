@@ -7,8 +7,6 @@ import React, {
 } from "react";
 import {
   Repository,
-  useProposedMergeRequestRepositoryUpdatesSubscription,
-  useCreateMergeRequestMutation,
   useUpdateMergeRequestMutation,
   useUpdateMergeRequestStatusMutation,
   useDeleteMergeRequestStatusMutation,
@@ -318,10 +316,6 @@ const RemoteVCSMergeRequest = (props: Props) => {
     setShowCloseModal(false);
   }, []);
 
-  const onCloseMergeModal = useCallback(() => {
-    setShowMergeModal(true);
-  }, []);
-
   const onHideMergeModal = useCallback(() => {
     setShowMergeModal(false);
   }, []);
@@ -360,6 +354,12 @@ const RemoteVCSMergeRequest = (props: Props) => {
     }
     return AbortWhite;
   }, [theme.name]);
+
+
+  const isPrivateUserRepo = useMemo(() => {
+    return props?.repository?.isPrivate && props?.repository?.repoType == "user_repo";
+
+  }, [props?.repository?.isPrivate, props?.repository?.repoType]);
 
   const reviewStatus = useMemo(() => {
     if (
@@ -438,9 +438,15 @@ const RemoteVCSMergeRequest = (props: Props) => {
     if (!props?.repository?.mergeRequest?.isOpen) {
       return 'Unreviewed';
     }
+    if (isPrivateUserRepo) {
+      if (props?.repository?.mergeRequest?.isOpen) {
+        return "Self Reviewing"
+      }
+      return "Self Reviewed"
+    }
 
     return "Pending Review";
-  }, [reviewStatus, theme.name, props?.repository?.mergeRequest?.isOpen]);
+  }, [isPrivateUserRepo, reviewStatus, theme.name, props?.repository?.mergeRequest?.isOpen]);
 
   const branchIsAlive = useMemo(() => {
     return !!props?.repository?.repoBranches?.find(
@@ -745,14 +751,14 @@ const RemoteVCSMergeRequest = (props: Props) => {
                 <RightRow>
                   {props?.repository?.mergeRequest?.branchState?.branchName && (
                     <>
-                      {baseBranchIsAlive && (
+                      {branchIsAlive && (
                         <Link to={homeBranchLink}>
                           <ValueSpan style={{color: theme.colors.linkColor, fontWeight: 700}}>
                             {props?.repository?.mergeRequest?.branchState?.branchName}
                           </ValueSpan>
                         </Link>
                       )}
-                      {!baseBranchIsAlive && (
+                      {!branchIsAlive && (
                         <ValueSpan>
                           {props?.repository?.mergeRequest?.branchState?.branchName}
                         </ValueSpan>
@@ -852,7 +858,7 @@ const RemoteVCSMergeRequest = (props: Props) => {
                   </ClosedPill>
                 )}
               </Row>
-              {props.repository?.mergeRequest &&
+              {!isPrivateUserRepo && props.repository?.mergeRequest &&
                 (props.repository?.mergeRequest?.isOpen ||
                   (props?.repository?.mergeRequest?.reviewerRequests?.length ??
                     0) > 0) && (

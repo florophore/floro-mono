@@ -145,7 +145,10 @@ export const usePullButtonSubTitle = (
     }
 
     if (fetchInfo.pullCanMergeWip && fetchInfo?.canPull) {
-      return "(will merge wip)";
+      if (isWIP) {
+        return "(will merge wip)";
+      }
+      return "(safe to pull)";
     }
 
     if (fetchInfo.hasConflict) {
