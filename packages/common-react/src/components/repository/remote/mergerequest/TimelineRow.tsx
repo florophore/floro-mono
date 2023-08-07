@@ -36,6 +36,8 @@ import en from "javascript-time-ago/locale/en";
 import ColorPalette from "@floro/styles/ColorPalette";
 import InitialProfileDefault from "@floro/storybook/stories/common-components/InitialProfileDefault";
 import UserProfilePhoto from "@floro/storybook/stories/common-components/UserProfilePhoto";
+import { useRepoLinkBase } from "../hooks/remote-hooks";
+import { Link } from "react-router-dom";
 
 const Container = styled.div`
   max-width: 870px;
@@ -115,6 +117,11 @@ interface Props {
 
 const TimelineRow = (props: Props) => {
   const theme = useTheme();
+
+  const linkBase = useRepoLinkBase(props.repository, "home");
+  const homeLink = useMemo(() => {
+    return linkBase + "?from=remote"
+  }, [linkBase]);
 
   const icon = useMemo(() => {
     if (props.event.eventName == "CREATE_MERGE_REQUEST") {
@@ -234,6 +241,12 @@ const TimelineRow = (props: Props) => {
           <b>
             {`${props.mergeRequest?.branchState?.name}`}
           </b>
+          {' '}
+          <Link to={homeLink + "&sha=" + props.event.branchHeadShaAtEvent}>
+            <b style={{color: theme.colors.linkColor}}>
+              {`(${props.event.branchHeadShaAtEvent?.substring(0, 6)})`}
+            </b>
+          </Link>
         </span>
       )
     }
@@ -245,9 +258,11 @@ const TimelineRow = (props: Props) => {
             {`${props.mergeRequest?.branchState?.name}`}
           </b>
           {' to commit '}
-          <b>
-            {`(${props.event.branchHeadShaAtEvent?.substring(0, 6)})`}
-          </b>
+          <Link to={homeLink + "&sha=" + props.event.branchHeadShaAtEvent}>
+            <b style={{color: theme.colors.linkColor}}>
+              {`(${props.event.branchHeadShaAtEvent?.substring(0, 6)})`}
+            </b>
+          </Link>
         </span>
       )
 
@@ -356,13 +371,20 @@ const TimelineRow = (props: Props) => {
         return (
           <span>
             {'merged '}
-            <b>
-              {`(${props.event.branchHeadShaAtEvent?.substring(0, 6)})`}
-            </b>
+            <Link to={homeLink + "&sha=" + props.event.branchHeadShaAtEvent}>
+              <b style={{color: theme.colors.linkColor}}>
+                {`(${props.event.branchHeadShaAtEvent?.substring(0, 6)})`}
+              </b>
+            </Link>
             {' into '}
             <b>
-              {`${props.mergeRequest?.branchState?.baseBranchName} (${props.event.mergeSha?.substring(0, 6)})`}
+              {`${props.mergeRequest?.branchState?.baseBranchName} `}
             </b>
+            <Link to={homeLink + "&sha=" + props.event.mergeSha}>
+              <b style={{color: theme.colors.linkColor}}>
+              {`(${props.event.mergeSha?.substring(0, 6)})`}
+              </b>
+            </Link>
             {` and closed merge request [${props?.mergeRequest?.mergeRequestCount}] `}
           </span>
         );
@@ -391,7 +413,7 @@ const TimelineRow = (props: Props) => {
       return "deleted their reply"
     }
     return props.event.eventName;
-  }, [props.event, props.mergeRequest?.branchState?.name]);
+  }, [props.event, props.mergeRequest?.branchState?.name, theme]);
 
   const timeAgo = useMemo(() => new TimeAgo("en-US"), []);
 

@@ -267,7 +267,7 @@ const LocalVCSViewMode = (props: Props) => {
   ]);
 
   const pushDisclaimer = useMemo(() => {
-    if (pushInfoLoading) {
+    if (pushInfoLoading || fetchInfo?.fetchFailed) {
       return null;
     }
 
@@ -343,7 +343,7 @@ const LocalVCSViewMode = (props: Props) => {
     }
     return null;
 
-  }, [fetchInfo, pushInfoLoading]);
+  }, [fetchInfo, fetchInfo?.fetchFailed, pushInfoLoading]);
 
   return (
     <InnerContent>
