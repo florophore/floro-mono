@@ -128,6 +128,7 @@ const createPartialPluginVersionFromManifest = (
     __typename: "PluginVersion",
     name: manifest.name,
     version: manifest.version,
+    managedCopy: !!manifest?.managedCopy,
     displayName: manifest.displayName,
     description: manifest.description,
     codeDocsUrl: manifest?.codeDocsUrl,
@@ -136,6 +137,7 @@ const createPartialPluginVersionFromManifest = (
     darkIcon: icons.darkIcon,
     selectedLightIcon: icons.selectedLightIcon,
     selectedDarkIcon: icons.selectedDarkIcon,
+    manifest: JSON.stringify(manifest)
   };
   const pluginDependencies: Array<PluginVersion> = [];
   for (const pluginName in manifest.imports) {

@@ -28,6 +28,7 @@ export class PluginUploadStream {
   public version?: string|null;
   public displayName?: string;
   public description?: string;
+  public managedCopy?: boolean;
 
   public originalManifest?: Manifest;
 
@@ -183,6 +184,12 @@ export class PluginUploadStream {
         return;
       }
       this.displayName = this.originalManifest?.displayName as string;
+      if (this.originalManifest?.managedCopy && (typeof this.originalManifest?.managedCopy != "boolean")) {
+        this.hasErrors = true;
+        this.errorMessage = "managedCopy should be a boolean.";
+        return;
+      }
+      this.managedCopy = this.originalManifest?.managedCopy ?? false;
 
       // release
       delete this.entryMap["floro/floro.manifest.json"];

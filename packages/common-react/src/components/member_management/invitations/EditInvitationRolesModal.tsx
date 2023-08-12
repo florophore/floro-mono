@@ -1,20 +1,12 @@
 import React, { useMemo, useState, useCallback, useEffect } from "react";
 
-import RootModal from "../../RootModal";
 import styled from "@emotion/styled";
-import { useTheme } from "@emotion/react";
 // eslint-disable-next-line import/no-named-as-default
 import ColorPalette from "@floro/styles/ColorPalette";
 import Button from "@floro/storybook/stories/design-system/Button";
-import RedHexagonWarningLight from "@floro/common-assets/assets/images/icons/red_hexagon_warning.light.svg";
-import RedHexagonWarningDark from "@floro/common-assets/assets/images/icons/red_hexagon_warning.dark.svg";
-import { Repository } from "@floro/graphql-schemas/build/generated/main-client-graphql";
-import { ApiResponse } from "floro/dist/src/repo";
 import {
   Organization,
   OrganizationInvitation,
-  useCancelOrganizationInvitationMutation,
-  useRejectOrganizationInvitationMutation,
   useUpdateOrganizationInvitationMutation,
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import RootLongModal from "../../RootLongModal";

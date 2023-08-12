@@ -11,6 +11,7 @@ export interface Props {
   showExitIcon?: boolean;
   headerChildren?: React.ReactElement | React.ReactElement[];
   headerSize?: "small"|"normal";
+  width?: number;
 }
 
 const RootModal = (props: Props) => {
@@ -23,6 +24,7 @@ const RootModal = (props: Props) => {
       showExitIcon={props?.showExitIcon}
       disableBackgroundDismiss={props?.disableBackgroundDismiss}
       headerSize={props?.headerSize}
+      width={props?.width}
     >
       {props?.children}
     </LongModal>,

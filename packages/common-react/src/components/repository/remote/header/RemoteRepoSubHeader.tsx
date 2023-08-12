@@ -16,6 +16,10 @@ import { Branch } from "floro/dist/src/repo";
 import HistoryBlue from "@floro/common-assets/assets/images/repo_icons/history.blue.svg";
 import { useRepoLinkBase } from "../hooks/remote-hooks";
 
+import CopyLight from '@floro/common-assets/assets/images/repo_icons/copy.purple.svg';
+import CopyDark from '@floro/common-assets/assets/images/repo_icons/copy.light_purple.svg';
+import { useCopyPasteContext } from "../../copypaste/CopyPasteContext";
+
 const Container = styled.div`
   display: flex;
   flex-direction: row;
@@ -95,6 +99,26 @@ const CommitHistoryIcon = styled.img`
   width: 24px;
 `;
 
+const CopyRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const CopyIcon = styled.img`
+  height: 24px;
+  width: 24px;
+`;
+
+const CopyText = styled.span`
+  color: ${(props) => props.theme.colors.titleText};
+  font-weight: 600;
+  font-size: 1.2rem;
+  font-family: "MavenPro";
+  margin-left: 8px;
+`;
+
+
 interface Props {
   repository: Repository;
   plugin?: string;
@@ -103,10 +127,19 @@ interface Props {
 
 const RemoteRepoSubHeader = (props: Props) => {
   const theme = useTheme();
+
+  const { isSelectMode } = useCopyPasteContext("remote");
   const loaderColor = useMemo(
     () => (theme.name == "light" ? "purple" : "lightPurple"),
     [theme.name]
   );
+
+  const copyIcon = useMemo(() => {
+    if (theme.name == "light") {
+      return CopyLight;
+    }
+    return CopyDark;
+  }, [theme.name])
 
   const linkBase = useRepoLinkBase(props.repository, "home");
 
@@ -153,12 +186,20 @@ const RemoteRepoSubHeader = (props: Props) => {
             )}
           </LeftContainer>
           <RightContainer>
-            <Link to={historyLink}>
-              <CommitHistoryWrapper>
-                <CommitHistoryIcon src={HistoryBlue}/>
-                <CommitText>{`${commitText}`}</CommitText>
-              </CommitHistoryWrapper>
-            </Link>
+            {!isSelectMode && (
+              <Link to={historyLink}>
+                <CommitHistoryWrapper>
+                  <CommitHistoryIcon src={HistoryBlue}/>
+                  <CommitText>{`${commitText}`}</CommitText>
+                </CommitHistoryWrapper>
+              </Link>
+            )}
+            {isSelectMode && (
+              <CopyRow>
+                <CopyIcon src={copyIcon}/>
+                <CopyText>{'copy mode'}</CopyText>
+              </CopyRow>
+            )}
           </RightContainer>
         </Container>
     </>

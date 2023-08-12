@@ -97,7 +97,7 @@ const Checkbox = (props: Props) => {
       return `2px solid ${ColorPalette.lightPurple}`;
     }
     return `2px solid ${theme.colors.checkboxBorder}`
-  }, [theme.name, isFocused, isHovering]);
+  }, [theme, isFocused, isHovering]);
 
   return (
     <CheckBoxContainer style={{border}}>

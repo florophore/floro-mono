@@ -200,6 +200,7 @@ export interface Props {
   isOffBranch?: boolean;
   isMerged?: boolean;
   isConflictFree?: boolean;
+  isCopyMode?: boolean;
 }
 
 const RemoteCurrentInfo = (props: Props): React.ReactElement => {
@@ -340,18 +341,39 @@ const RemoteCurrentInfo = (props: Props): React.ReactElement => {
           <GoBackIcon src={backArrowIcon} onClick={props.onGoBack} />
         )}
       </Row>
-      <Row
-        style={{
-          marginBottom: 24,
-        }}
-      >
-        <BranchSelector
-          size={"mid"}
-          branch={(branch as Branch) ?? null}
-          branches={(props.repository?.repoBranches ?? []) as Branch[]}
-          onChangeBranch={props.onChangeBranch}
-        />
-      </Row>
+      {!props.isCopyMode && (
+        <Row
+          style={{
+            marginBottom: 24,
+          }}
+        >
+          <BranchSelector
+            size={"mid"}
+            branch={(branch as Branch) ?? null}
+            branches={(props.repository?.repoBranches ?? []) as Branch[]}
+            onChangeBranch={props.onChangeBranch}
+          />
+        </Row>
+      )}
+      {props.isCopyMode && (
+        <Row
+          style={{
+            marginTop: 12,
+            marginBottom: 12,
+          }}
+        >
+          <LeftRow>
+            <Icon src={branchIcon} />
+            <LabelSpan>
+              {"Branch"}
+            </LabelSpan>
+          </LeftRow>
+          <RightRow>
+            {branch?.name && <ValueSpan>{branch?.name}</ValueSpan>}
+            {!branch?.name && <ValueSpan>{"None"}</ValueSpan>}
+          </RightRow>
+        </Row>
+      )}
       {props?.isOffBranch && (
         <Row>
           <LeftRow>
@@ -395,7 +417,7 @@ const RemoteCurrentInfo = (props: Props): React.ReactElement => {
           )}
         </RightRow>
       </Row>
-      {!props?.repository?.branchState?.commitState?.isOffBranch && baseBranch && (
+      {!props?.repository?.branchState?.commitState?.isOffBranch && baseBranch && !props.isCopyMode && (
         <Row style={{marginTop: 12}}>
           {props?.isMerged && (
             <LeftRow>
@@ -417,7 +439,7 @@ const RemoteCurrentInfo = (props: Props): React.ReactElement => {
           )}
         </Row>
       )}
-      {(!defaultBranchIsMatching || !branchHeadIsMatching) && (
+      {(!defaultBranchIsMatching || !branchHeadIsMatching) && !props.isCopyMode && (
         <Row
           style={{
             marginTop: 12,
@@ -466,7 +488,7 @@ const RemoteCurrentInfo = (props: Props): React.ReactElement => {
           )}
         </Row>
       )}
-      {defaultBranchIsMatching && branchHeadIsMatching && (
+      {defaultBranchIsMatching && branchHeadIsMatching &&  !props.isCopyMode && (
         <Row style={{ marginTop: 12, marginBottom: 12, width: "100%" }}>
           {elapsedTime && (
             <TimeTextRow
@@ -490,7 +512,7 @@ const RemoteCurrentInfo = (props: Props): React.ReactElement => {
           )}
         </Row>
       )}
-      {props?.showMergeRequest && !!props.mergeRequestLink && (
+      {props?.showMergeRequest && !!props.mergeRequestLink && !props.isCopyMode && (
         <Row>
           <Link to={props.mergeRequestLink}>
             <LinkLabelSpan>{`Go to open merge request "${props?.mergeRequest?.title}" [${props?.mergeRequest?.mergeRequestCount}]`}</LinkLabelSpan>

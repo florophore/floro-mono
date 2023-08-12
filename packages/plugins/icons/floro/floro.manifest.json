@@ -1,8 +1,9 @@
 {
-  "version": "0.0.15",
+  "version": "0.0.17",
   "name": "icons",
   "displayName": "Icons",
   "description": "A plugin for mapping colors to icons.",
+  "managedCopy": true,
   "icon": {
     "light": "./icons_icon.unselected.light.svg",
     "dark": "./icons_icon.unselected.dark.svg",

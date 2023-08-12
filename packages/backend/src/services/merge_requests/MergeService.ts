@@ -256,8 +256,9 @@ export default class MergeService {
           )
         : [];
     const isAdmin =
-      repository.repoType == "org_repo" &&
-      !!roles.find((r) => r.presetCode == "admin");
+      (repository.repoType == "org_repo" &&
+        !!roles.find((r) => r.presetCode == "admin")) ||
+      (repository?.repoType == "user_repo" && repository.userId == user.id);
 
     const allowedToMerge = await this.mergeRequestService.getAllowedToMerge(
       mergeRequest,
@@ -285,7 +286,7 @@ export default class MergeService {
         floroBranch,
         baseBranch
       );
-      if (hasBlock) {
+      if (hasBlock && !isAdmin) {
         return {
           action: "MERGING_BLOCKED_ERROR",
           error: {
@@ -300,7 +301,7 @@ export default class MergeService {
         floroBranch,
         baseBranch
       );
-      if (!hasApproval) {
+      if (!hasApproval && !isAdmin) {
         return {
           action: "REQUIRES_APPROVAL_ERROR",
           error: {

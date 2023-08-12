@@ -9,6 +9,7 @@ import { ApiResponse } from "floro/dist/src/repo";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { useUpdatePluginState } from "../local/hooks/local-hooks";
 import { useLocalVCSNavContext } from "../local/vcsnav/LocalVCSContext";
+import { useCopyPasteContext } from "../copypaste/CopyPasteContext";
 
 interface Props {
   pluginName: string;
@@ -68,6 +69,7 @@ const LocalPluginController = (props: Props) => {
   const [hasSentFirstData, setHasSetFirstData] = useState(false);
   const [ackId, setAckId] = useState<string | null>(null);
   const { compareFrom } = useLocalVCSNavContext();
+  const { isSelectMode, copyInstructions, setCopyInstructions } = useCopyPasteContext("local");
 
   const updatePluginState = useUpdatePluginState(
     props.pluginName,
@@ -98,6 +100,29 @@ const LocalPluginController = (props: Props) => {
     props.pluginName,
     props.apiResponse.schemaMap,
   ]);
+
+  const isCopyMode = useMemo(() => {
+    if (!manifest?.managedCopy) {
+      return false;
+    }
+    if (!isSelectMode) {
+      return false;
+    }
+    if (!manifest.name || !copyInstructions[manifest.name].isManualCopy) {
+      return false;
+    }
+    return true;
+  }, [manifest, isSelectMode, copyInstructions]);
+
+  const copyList = useMemo(() => {
+    if (!isCopyMode) {
+      return [];
+    }
+    if (!manifest?.name) {
+      return [];
+    }
+    return copyInstructions[manifest.name].manualCopyList;
+  }, [isCopyMode, copyInstructions, manifest])
 
   const iframeUri = useMemo(() => {
     if (!manifest) {
@@ -244,7 +269,9 @@ const LocalPluginController = (props: Props) => {
       binaryUrls,
       compareFrom: props?.apiResponse?.repoState?.commandMode == "compare" ? compareFrom : "none",
       commandMode: props?.apiResponse?.repoState?.commandMode ?? "view",
-      binaryMap
+      binaryMap,
+      isCopyMode,
+      copyList
     };
   }, [
     changeset,
@@ -254,7 +281,9 @@ const LocalPluginController = (props: Props) => {
     binaryUrls,
     props?.apiResponse?.repoState?.commandMode,
     props?.apiResponse?.repoState?.comparison,
-    binaryMap
+    binaryMap,
+    isCopyMode,
+    copyList
   ]);
 
   useEffect(() => {
@@ -285,6 +314,7 @@ const LocalPluginController = (props: Props) => {
     }
   }, [pluginState,
     props?.apiResponse?.repoState?.comparison,
+    isCopyMode
   ]);
 
   useEffect(() => {
@@ -292,6 +322,21 @@ const LocalPluginController = (props: Props) => {
       setAckId(updatePluginState?.data?.id);
     }
   }, [updatePluginState?.data?.id]);
+
+  const onUpdateCopyInstructions = useCallback((manualCopyList: Array<string>) => {
+    if (!isCopyMode || !manifest?.name || !Array.isArray(manualCopyList)) {
+      return;
+    }
+    const copyInstruction = copyInstructions[manifest.name];
+    const nextCopyInstructions = {
+      ...copyInstructions,
+      [manifest.name]: {
+        ...copyInstruction,
+        manualCopyList
+      }
+    };
+    setCopyInstructions(nextCopyInstructions);
+  }, [isCopyMode, copyInstructions, manifest?.name])
 
   useEffect(() => {
     const incoming = {};
@@ -364,6 +409,11 @@ const LocalPluginController = (props: Props) => {
             pluginName: data?.pluginName,
           });
         }
+        if (id && state.command == "update-copy") {
+          if (isCopyMode) {
+            onUpdateCopyInstructions(state.data as Array<string>)
+          }
+        }
         delete incoming[data.id];
       }
     };
@@ -371,7 +421,7 @@ const LocalPluginController = (props: Props) => {
     return () => {
       window.removeEventListener("message", onMessage, true);
     };
-  }, [props.pluginName, onToggleVCSContainer, props.onToggleCommandMode]);
+  }, [props.pluginName, onToggleVCSContainer, props.onToggleCommandMode, isCopyMode, onUpdateCopyInstructions]);
 
   if (!iframeUri) {
     return null;

@@ -152,7 +152,7 @@ export default class RepositoryService {
             },
           };
         }
-        await this.repoAccessor.initInitialRepoFoldersAndFiles(repository);
+        await this.repoAccessor.initInitialRepoFoldersAndFiles(repository, null, user);
         // add branch
         await this.branchService.initMainBranch(queryRunner, repository, user);
         await queryRunner.commitTransaction();
@@ -183,7 +183,7 @@ export default class RepositoryService {
             },
           };
         }
-        await this.repoAccessor.initInitialRepoFoldersAndFiles(repository);
+        await this.repoAccessor.initInitialRepoFoldersAndFiles(repository, null, user);
         // add branch
         await this.branchService.initMainBranch(queryRunner, repository, user);
         // add branch rule
@@ -291,7 +291,7 @@ export default class RepositoryService {
             },
           };
         }
-        await this.repoAccessor.initInitialRepoFoldersAndFiles(repository);
+        await this.repoAccessor.initInitialRepoFoldersAndFiles(repository, organization);
         await this.branchService.initMainBranch(
           queryRunner,
           repository,
@@ -376,7 +376,7 @@ export default class RepositoryService {
             },
           };
         }
-        await this.repoAccessor.initInitialRepoFoldersAndFiles(repository);
+        await this.repoAccessor.initInitialRepoFoldersAndFiles(repository, organization);
         await this.branchService.initMainBranch(
           queryRunner,
           repository,

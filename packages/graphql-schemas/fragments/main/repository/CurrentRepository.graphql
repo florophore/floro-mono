@@ -55,6 +55,7 @@ fragment CurrentRepository on Repository {
         selectedDarkIcon
         manifest
         entryUrl
+        managedCopy
       }
       authorUser {
         id

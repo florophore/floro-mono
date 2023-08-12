@@ -630,8 +630,9 @@ export default class MergeRequestService
           )
         : [];
     const isAdmin =
-      repository.repoType == "org_repo" &&
-      !!roles.find((r) => r.presetCode == "admin");
+      (repository.repoType == "org_repo" &&
+        !!roles.find((r) => r.presetCode == "admin")) ||
+      (repository.repoType == "user_repo" && repository.userId == user.id);
     if (isAdmin) {
       return true;
     }

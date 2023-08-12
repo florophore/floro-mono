@@ -11,6 +11,7 @@ import LocalPluginController from "../plugin/LocalPluginController";
 import { useLocalVCSNavContext } from "./vcsnav/LocalVCSContext";
 import { useSourceGraphIsShown } from "../ui-state-hook";
 import SourceGraphMount from "../sourcegraph/SourceGraphMount";
+import { useCopyPasteContext } from "../copypaste/CopyPasteContext";
 
 const LoadingContainer = styled.div`
   display: flex;
@@ -60,12 +61,13 @@ const LocalRepoController = (props: Props) => {
   );
   const { data } = useCurrentRepoState(props.repository);
   const { setCompareFrom, setSubAction } = useLocalVCSNavContext();
+  const { isSelectMode } = useCopyPasteContext("local");
 
   const updateCommandState = useUpdateCurrentCommand(props.repository);
   const showSourceGraph = useSourceGraphIsShown();
 
   const onToggleCommandMode = useCallback(() => {
-    if (showSourceGraph) {
+    if (showSourceGraph || isSelectMode) {
       return;
     }
     if (data?.repoState?.commandMode == "edit") {
@@ -75,7 +77,7 @@ const LocalRepoController = (props: Props) => {
     } else if (data?.repoState?.commandMode == "compare") {
       updateCommandState.mutate("view")
     }
-  }, [data?.repoState?.commandMode, updateCommandState, showSourceGraph]);
+  }, [data?.repoState?.commandMode, updateCommandState, showSourceGraph, isSelectMode]);
 
   const onToggleBranches = useCallback(() => {
     if (data?.repoState?.commandMode != "view") {

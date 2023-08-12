@@ -320,8 +320,6 @@ export type SchemaRoot = {
 
 
 
-type ValueOf<T> = T[keyof T];
-
 interface Packet {
   id: string;
   chunk: string;
@@ -677,33 +675,6 @@ function getPluginNameFromQuery(query: string|null): keyof SchemaRoot|null {
   return pluginName as keyof SchemaRoot;
 }
 
-export const useCopyApi = (pointer: ValueOf<QueryTypes>|null) => {
-  const { copyList, saveCopyList, isCopyMode } = useFloroContext();
-  const isCopied = useMemo(() => {
-    if (!pointer) {
-      return false;
-    }
-    return copyList.includes(pointer);
-  }, [copyList, pointer]);
-
-  const toggleCopy = useCallback(() => {
-    if (!isCopyMode || !pointer) {
-      return;
-    }
-    if (!isCopied) {
-      const nextList = [...copyList, pointer];
-      saveCopyList(nextList);
-    } else {
-      const nextList = copyList.filter(copiedPointer => copiedPointer != pointer);
-      saveCopyList(nextList);
-    }
-  }, [isCopied, isCopyMode, copyList, pointer])
-  return {
-    isCopied,
-    toggleCopy
-  }
-}
-
 const getCounterArrowBalanance = (str: string): number => {
   let counter = 0;
   for (let i = 0; i < str.length; ++i) {
@@ -905,6 +876,7 @@ const updateObjectInStateMap = (
 };
 
 
+type ValueOf<T> = T[keyof T];
 export type QueryTypes = {
   ['$(theme).stateVariants.id<?>']: `$(theme).stateVariants.id<${string}>`;
   ['$(theme).themeColors.id<?>']: `$(theme).themeColors.id<${string}>`;
@@ -1850,7 +1822,7 @@ export const useUploadFile = () => {
       setStatus("in_progress");
       setProgress(0);
       setUploadObject(
-        startUploadFile(file, pluginState.binaryUrls.upload + (!pluginState.binaryUrls?.binaryToken ? "" : "?token=" + pluginState.binaryUrls?.binaryToken), onProgress)
+        startUploadFile(file, pluginState.binaryUrls.upload + "?token=" + pluginState.binaryUrls?.binaryToken, onProgress)
       );
     },
     [status, pluginState.binaryUrls.upload, pluginState.binaryUrls?.binaryToken, onProgress]
@@ -1865,7 +1837,7 @@ export const useUploadFile = () => {
         return;
       }
       setUploadObject(
-        startUploadBlob(data, type, pluginState.binaryUrls.upload + (!pluginState.binaryUrls?.binaryToken ? "" : "?token=" + pluginState.binaryUrls?.binaryToken), onProgress)
+        startUploadBlob(data, type, pluginState.binaryUrls.upload+ "?token=" + pluginState.binaryUrls?.binaryToken, onProgress)
       );
       setStatus("in_progress");
       setProgress(0);
@@ -1918,10 +1890,11 @@ export const useBinaryRef = (fileRef?: FileRef|null) => {
       if (pluginState.binaryMap[fileRef]) {
         return (
           pluginState.binaryMap[fileRef] +
-          (!pluginState.binaryUrls?.binaryToken ? "" : "?token=" + pluginState.binaryUrls?.binaryToken)
+          "?token=" +
+          pluginState.binaryUrls?.binaryToken
         );
       }
-      return `${pluginState.binaryUrls.download}/${fileRef}` + (!pluginState.binaryUrls?.binaryToken ? "" : "?token=" + pluginState.binaryUrls?.binaryToken);
+      return `${pluginState.binaryUrls.download}/${fileRef}` + "?token=" + pluginState.binaryUrls?.binaryToken;
     }, [
       fileRef,
       pluginState.binaryMap?.[fileRef ?? ""],
@@ -2018,3 +1991,31 @@ export const useBinaryData = <K extends keyof BinaryReturn>(
 
   return { isLoading, status, data };
 };
+
+// COPY API
+export const useCopyApi = (pointer: ValueOf<QueryTypes>|null) => {
+  const { copyList, saveCopyList, isCopyMode } = useFloroContext();
+  const isCopied = useMemo(() => {
+    if (!pointer) {
+      return false;
+    }
+    return copyList.includes(pointer);
+  }, [copyList, pointer]);
+
+  const toggleCopy = useCallback(() => {
+    if (!isCopyMode || !pointer) {
+      return;
+    }
+    if (!isCopied) {
+      const nextList = [...copyList, pointer];
+      saveCopyList(nextList);
+    } else {
+      const nextList = copyList.filter(copiedPointer => copiedPointer != pointer);
+      saveCopyList(nextList);
+    }
+  }, [isCopied, isCopyMode, copyList, pointer])
+  return {
+    isCopied,
+    toggleCopy
+  }
+}

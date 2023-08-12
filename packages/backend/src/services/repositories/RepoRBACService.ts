@@ -61,8 +61,13 @@ export default class RepoRBACService {
           return false;
         }
       }
+      if (!repository.isPrivate && repository.repoType == "user_repo") {
+        if (currentUser.id != repository.userId) {
+          return false;
+        }
+      }
       if (repository.isPrivate && repository.repoType == "user_repo") {
-        if (currentUser.id != repository.createdByUserId) {
+        if (currentUser.id != repository.userId) {
           return false;
         }
         return true;

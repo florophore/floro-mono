@@ -1648,3 +1648,55 @@ export const getApiDiff = (
     store,
   };
 };
+
+// next must be subset
+export const objectIsSubsetOfObject = (current: object, next: object): boolean => {
+  if (typeof current != "object") {
+    return false;
+  }
+  if (typeof next != "object") {
+    return false;
+  }
+  const nested: Array<[object, object]> = [];
+  for (const prop in current) {
+    if (!!current[prop] && !next[prop]) {
+      return false;
+    }
+    if (!current[prop] && !!next[prop]) {
+      continue;
+    }
+    if (typeof current[prop] == "object" && typeof next[prop] == "object") {
+      nested.push([current[prop], next[prop]]);
+      continue;
+    }
+    if (current[prop] != next[prop]) {
+      return false;
+    }
+  }
+  return nested.reduce((match, [c, n]) => {
+    if (!match) {
+      return false;
+    }
+    return objectIsSubsetOfObject(c, n);
+  }, true);
+};
+
+
+export const pluginManifestIsSubsetOfManifest = async (
+  datasource: DataSource,
+  currentSchemaMap: { [key: string]: Manifest },
+  nextSchemaMap: { [key: string]: Manifest },
+  disableDownloads = false
+): Promise<boolean> => {
+  const oldRootSchema = await getRootSchemaMap(datasource, currentSchemaMap, disableDownloads);
+  const nextRootSchema = await getRootSchemaMap(datasource, nextSchemaMap, disableDownloads);
+
+  if (!oldRootSchema) {
+    return false;
+  }
+
+  if (!nextRootSchema) {
+    return false;
+  }
+  return objectIsSubsetOfObject(oldRootSchema, nextRootSchema);
+};

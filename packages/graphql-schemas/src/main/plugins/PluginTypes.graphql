@@ -43,6 +43,7 @@ type PluginVersion {
   state: String
   pluginDependencies: [PluginVersion]
   pluginId: ID
+  managedCopy: Boolean
 
   createdAt: DateTime
   updatedAt: DateTime

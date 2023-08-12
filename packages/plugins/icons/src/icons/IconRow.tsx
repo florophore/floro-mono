@@ -4,6 +4,7 @@ import {
   SchemaTypes,
   makeQueryRef,
   useBinaryData,
+  useCopyApi,
   useExtractQueryArgs,
   useFloroContext,
   useHasConflict,
@@ -212,7 +213,8 @@ const IconRow = (props: Props) => {
   const wasRemoved = useWasRemoved(props.iconRef, true);
   const wasAdded = useWasAdded(props.iconRef, true);
   const hasConflict = useHasConflict(props.iconRef, false);
-  const { commandMode, compareFrom } = useFloroContext();
+  const { commandMode, compareFrom, isCopyMode } = useFloroContext();
+  const { isCopied, toggleCopy} = useCopyApi(props.iconRef);
   const controls = useDragControls();
 
   const motionState = useMemo(() => {
@@ -431,15 +433,13 @@ const IconRow = (props: Props) => {
             </>
           )}
         </TitleRow>
-        {commandMode == "edit" && false && (
+        {commandMode == "view" && isCopyMode && (
           <IncludeVariantsWrapper>
             <IncludeVariantsText>{"Copy Icon"}</IncludeVariantsText>
             <Checkbox
-              disabled={commandMode != "edit"}
-              isChecked={false}
-              onChange={function (isChecked: boolean): void {
-                throw new Error("Function not implemented.");
-              }}
+              disabled={!isCopyMode}
+              isChecked={isCopied}
+              onChange={toggleCopy}
             />
           </IncludeVariantsWrapper>
         )}

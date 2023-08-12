@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback, useEffect, useState } from "react";
-import { Repository, useMergeBranchMutation, useRepositoryUpdatesSubscription } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import { PluginVersion, Repository, useMergeBranchMutation, useRepositoryUpdatesSubscription } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import styled from "@emotion/styled";
 import CurrentInfo from "@floro/storybook/stories/repo-components/CurrentInfo";
 import RepoActionButton from "@floro/storybook/stories/repo-components/RepoActionButton";
@@ -10,6 +10,8 @@ import {
   useFetchInfo,
   usePullBranch,
   usePushBranch,
+  useRepoDevPlugins,
+  useRepoManifestList,
   useRepoRemoteSettings,
   useUpdateCurrentCommand,
 } from "../hooks/local-hooks";
@@ -27,6 +29,11 @@ import CopyFromIcon from "@floro/common-assets/assets/images/icons/copy.dark.svg
 import {
   useSearchParams,
 } from "react-router-dom";
+import { useCopyPasteContext } from "../../copypaste/CopyPasteContext";
+import CopyPasteModal from "../../copypaste/copy_modal/CopyPasteModal";
+import { Manifest } from "floro/dist/src/plugins";
+import { transformLocalManifestToPartialPlugin } from "../hooks/manifest-transforms";
+import PluginSelectRow from "../../home/plugin_editor/PluginSelectRow";
 
 const InnerContent = styled.div`
   display: flex;
@@ -102,6 +109,23 @@ const ConflictError = styled.p`
   font-style: italic;
 `;
 
+const Row = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+  margin-top: 24px;
+`;
+
+const SubTitleSpan = styled.span`
+  font-size: 1.4rem;
+  font-family: "MavenPro";
+  font-weight: 500;
+  color: ${(props) => props.theme.colors.contrastTextLight};
+  white-space: nowrap;
+`;
+
 interface Props {
   repository: Repository;
   apiResponse: ApiResponse;
@@ -113,6 +137,10 @@ const LocalVCSViewMode = (props: Props) => {
     useState(false);
   const [showConfirmForcePull, setShowConfirmForcePull] = useState(false);
   const [showConfirmForcePush, setShowConfirmForcePush] = useState(false);
+  const { isCopyEnabled, setShowCopyPaste, isSelectMode, setSelectedRepoInfo, setCopyInstructions, setIsSelectMode, copyInstructions } = useCopyPasteContext("local");
+  const onShowCopy = useCallback(() => {
+    setShowCopyPaste(true);
+  }, []);
   const { setSubAction } = useLocalVCSNavContext();
   const onCloseBillingModal = useCallback(() => {
     setShowBillingModal(false);
@@ -345,118 +373,243 @@ const LocalVCSViewMode = (props: Props) => {
 
   }, [fetchInfo, fetchInfo?.fetchFailed, pushInfoLoading]);
 
+
+  const repoManifestList = useRepoManifestList(props.repository, props.apiResponse);
+  const devPluginsRequest = useRepoDevPlugins(props.repository);
+
+  const apiManifestList = useMemo(() => {
+    return repoManifestList?.data ?? [];
+  }, [
+    props.apiResponse?.applicationState,
+    repoManifestList
+  ]);
+
+  const manifestList = useMemo(() => {
+    const devManifestList: Array<Manifest> = [];
+    for (const pluginName in devPluginsRequest?.data ?? {}) {
+      const versions = devPluginsRequest?.data?.[pluginName] ?? {};
+      for (const version in versions) {
+        if (versions?.[version]?.manifest) {
+          devManifestList.push(versions?.[version]?.manifest);
+        }
+      }
+    }
+    return [...(apiManifestList ?? []), ...devManifestList];
+  }, [apiManifestList, devPluginsRequest]);
+
+
+  const plugins = useMemo(() => {
+    return props?.apiResponse?.applicationState?.plugins ?? [];
+  }, [
+    props?.apiResponse?.applicationState?.plugins,
+  ]);
+
+  const installedPluginVersions = useMemo(() => {
+    if (!manifestList || !props?.apiResponse) {
+      return [];
+    }
+    return plugins
+      .map((pluginKV) => {
+        const manifest = manifestList.find(
+          (v) => v.name == pluginKV.key && v.version == pluginKV.value
+        );
+        if (!manifest) {
+          return null;
+        }
+        return transformLocalManifestToPartialPlugin(
+          pluginKV.key,
+          pluginKV.value,
+          manifest as Manifest,
+          manifestList
+        );
+      })
+      ?.filter((v) => v?.versions?.[0] != null)?.map(p => p?.versions?.[0] as PluginVersion) as Array<PluginVersion>;
+  }, [manifestList, plugins]);
+
+  const onFinishCopyPaste = useCallback(() => {
+    setShowCopyPaste(true);
+    setIsSelectMode(false);
+  }, []);
+
+  const onCancelCopyPaste = useCallback(() => {
+    setIsSelectMode(false);
+    setCopyInstructions({});
+    setSelectedRepoInfo(null);
+  }, []);
+
+  const selectablePluginVersions = useMemo(() => {
+    return installedPluginVersions.filter(p => p.name && !!copyInstructions[p.name]?.isManualCopy);
+  }, [copyInstructions, installedPluginVersions]);
+
   return (
-    <InnerContent>
-      <TopContainer>
-        <CurrentInfo
-          respository={props.repository}
-          showWIP
-          isMerge
-          mergeDirection={props.apiResponse?.repoState?.merge?.direction}
-          mergeCommit={props.apiResponse.mergeCommit}
-          showBranchButtons={!props.apiResponse?.repoState?.isInMergeConflict}
-          isWIP={props.apiResponse.isWIP}
-          branch={props.apiResponse.branch}
-          baseBranch={props.apiResponse.baseBranch}
-          lastCommit={props.apiResponse.lastCommit}
-          onShowBranches={onShowBranches}
-          onShowEditBranch={onShowEditBranch}
-          isEditBranchDisabled={
-            fetchInfo?.branchPushDisabled || pushInfoLoading
-          }
+    <>
+      <CopyPasteModal
+        client="local"
+        pluginVersions={installedPluginVersions}
+        fromRepository={props.repository}
+        stateMap={props.apiResponse.applicationState.store}
+      />
+      <InnerContent>
+        <TopContainer>
+          <CurrentInfo
+            respository={props.repository}
+            showWIP
+            isMerge
+            mergeDirection={props.apiResponse?.repoState?.merge?.direction}
+            mergeCommit={props.apiResponse.mergeCommit}
+            showBranchButtons={!props.apiResponse?.repoState?.isInMergeConflict}
+            isWIP={props.apiResponse.isWIP}
+            branch={props.apiResponse.branch}
+            baseBranch={props.apiResponse.baseBranch}
+            lastCommit={props.apiResponse.lastCommit}
+            onShowBranches={onShowBranches}
+            onShowEditBranch={onShowEditBranch}
+            isEditBranchDisabled={
+              fetchInfo?.branchPushDisabled || pushInfoLoading
+            }
+            isCopyMode={isSelectMode}
+          />
+          {!isSelectMode && (
+            <>
+              {!props.apiResponse?.repoState?.isInMergeConflict && (
+                <>
+                  <ButtonRow style={{ marginTop: 24 }}>
+                    <RepoActionButton
+                      onClick={updateToCompareMode}
+                      isLoading={updateCommand.isLoading}
+                      label={"compare"}
+                      icon={"compare"}
+                    />
+                    <RepoActionButton
+                      label={"sha graph"}
+                      icon={"source-graph"}
+                      onClick={onShowSourceGraph}
+                    />
+                  </ButtonRow>
+                  <ButtonRow style={{ marginTop: 24 }}>
+                    <RepoActionButton
+                      label={"copy from repository"}
+                      icon={"copy"}
+                      titleTextSize="small"
+                      isDisabled={
+                        !isCopyEnabled || installedPluginVersions.length == 0
+                      }
+                      onClick={onShowCopy}
+                    />
+                    <RepoActionButton
+                      label={"local settings"}
+                      icon={"settings"}
+                      titleTextSize="small"
+                    />
+                  </ButtonRow>
+                </>
+              )}
+              {props.apiResponse?.repoState?.isInMergeConflict && (
+                <ButtonRow style={{ marginTop: 24 }}>
+                  <RepoActionButton
+                    size={"large"}
+                    onClick={updateToCompareMode}
+                    isLoading={updateCommand.isLoading}
+                    label={"manage merge conflict"}
+                    icon={"merge"}
+                  />
+                </ButtonRow>
+              )}
+            </>
+          )}
+          {isSelectMode && (
+            <>
+                <Row style={{ marginBottom: 0 }}>
+                  <SubTitleSpan>{"Selectable Plugins"}</SubTitleSpan>
+                </Row>
+                <div style={{width: "100%", marginTop: 12}}>
+                  {selectablePluginVersions?.map((pluginVersion, index) => {
+                    return (
+                      <PluginSelectRow
+                        pluginVersion={pluginVersion}
+                        repository={props.repository}
+                        key={index}
+                      />
+                    );
+                  })}
+                </div>
+            </>
+          )}
+        </TopContainer>
+        <BottomContainer>
+          {!isSelectMode && (
+            <>
+              <>{pushDisclaimer}</>
+              {!props.apiResponse?.repoState?.isInMergeConflict && (
+                <ButtonRow>
+                  <RepoActionButton
+                    label={"pull remote"}
+                    icon={"pull"}
+                    subTitle={pullSubTitle ?? ""}
+                    isDisabled={!isPullEnabled}
+                    isLoading={pushInfoLoading || pullMutation.isLoading}
+                    onClick={onPull}
+                  />
+                  <RepoActionButton
+                    label={"push local"}
+                    icon={"push"}
+                    subTitle={pushSubTitle ?? ""}
+                    isDisabled={!isPushEnabled}
+                    isLoading={pushInfoLoading || pushMutation.isLoading}
+                    onClick={onPush}
+                  />
+                </ButtonRow>
+              )}
+            </>
+          )}
+          {isSelectMode && (
+            <>
+              <ButtonRow style={{marginBottom: 16}}>
+                <RepoActionButton
+                  label={"cancel copy and paste"}
+                  icon={"copy-cancel"}
+                  size={"large"}
+                  onClick={onCancelCopyPaste}
+                />
+              </ButtonRow>
+              <ButtonRow>
+                <RepoActionButton
+                  label={"finish copy and paste"}
+                  icon={"copy-check"}
+                  size={"large"}
+                  onClick={onFinishCopyPaste}
+                />
+              </ButtonRow>
+            </>
+          )}
+        </BottomContainer>
+        <UpdateBillingModal
+          show={showBillingModal}
+          onDismiss={onCloseBillingModal}
+          repository={props.repository}
         />
-        {!props.apiResponse?.repoState?.isInMergeConflict && (
-          <>
-            <ButtonRow style={{ marginTop: 24 }}>
-              <RepoActionButton
-                onClick={updateToCompareMode}
-                isLoading={updateCommand.isLoading}
-                label={"compare"}
-                icon={"compare"}
-              />
-              <RepoActionButton
-                label={"sha graph"}
-                icon={"source-graph"}
-                onClick={onShowSourceGraph}
-              />
-            </ButtonRow>
-            <ButtonRow style={{ marginTop: 24 }}>
-              <RepoActionButton
-                label={"copy from repository"}
-                icon={"copy"}
-                titleTextSize="small"
-              />
-              <RepoActionButton
-                label={"local settings"}
-                icon={"settings"}
-                titleTextSize="small"
-              />
-            </ButtonRow>
-          </>
-        )}
-        {props.apiResponse?.repoState?.isInMergeConflict && (
-          <ButtonRow style={{ marginTop: 24 }}>
-            <RepoActionButton
-              size={"large"}
-              onClick={updateToCompareMode}
-              isLoading={updateCommand.isLoading}
-              label={"manage merge conflict"}
-              icon={"merge"}
-            />
-          </ButtonRow>
-        )}
-      </TopContainer>
-      <BottomContainer>
-        <>
-          {pushDisclaimer}
-        </>
-        {!props.apiResponse?.repoState?.isInMergeConflict && (
-          <ButtonRow>
-            <RepoActionButton
-              label={"pull remote"}
-              icon={"pull"}
-              subTitle={pullSubTitle ?? ""}
-              isDisabled={!isPullEnabled}
-              isLoading={pushInfoLoading || pullMutation.isLoading}
-              onClick={onPull}
-            />
-            <RepoActionButton
-              label={"push local"}
-              icon={"push"}
-              subTitle={pushSubTitle ?? ""}
-              isDisabled={!isPushEnabled}
-              isLoading={pushInfoLoading || pushMutation.isLoading}
-              onClick={onPush}
-            />
-          </ButtonRow>
-        )}
-      </BottomContainer>
-      <UpdateBillingModal
-        show={showBillingModal}
-        onDismiss={onCloseBillingModal}
-        repository={props.repository}
-      />
-      <ConfirmMergeWIPModal
-        show={showConfirmMergePullModal}
-        onDismiss={onCloseConfirmMergePullModal}
-        onConfirm={onConfirmPull}
-        repository={props.repository}
-      />
-      <ConfirmForcePullModal
-        show={showConfirmForcePull}
-        onDismiss={onCloseForcePull}
-        onConfirm={onConfirmPull}
-        repository={props.repository}
-        isLoading={pullMutation.isLoading}
-      />
-      <ConfirmForcePushModal
-        show={showConfirmForcePush}
-        onDismiss={onCloseForcePush}
-        onConfirm={onConfirmPush}
-        repository={props.repository}
-        isLoading={pushMutation.isLoading}
-      />
-    </InnerContent>
+        <ConfirmMergeWIPModal
+          show={showConfirmMergePullModal}
+          onDismiss={onCloseConfirmMergePullModal}
+          onConfirm={onConfirmPull}
+          repository={props.repository}
+        />
+        <ConfirmForcePullModal
+          show={showConfirmForcePull}
+          onDismiss={onCloseForcePull}
+          onConfirm={onConfirmPull}
+          repository={props.repository}
+          isLoading={pullMutation.isLoading}
+        />
+        <ConfirmForcePushModal
+          show={showConfirmForcePush}
+          onDismiss={onCloseForcePush}
+          onConfirm={onConfirmPush}
+          repository={props.repository}
+          isLoading={pushMutation.isLoading}
+        />
+      </InnerContent>
+    </>
   );
 };
 

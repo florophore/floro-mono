@@ -6,6 +6,7 @@ import { useDaemonIsConnected } from "../pubsub/socket";
 import { useSession } from "../session/session-context";
 import { useIsOnline } from "./offline";
 import axios from 'axios';
+import { RepoInfo } from 'floro/dist/src/repo';
 
 export const useCurrentUserRepos = () => {
   const { currentUser } = useSession();
@@ -96,6 +97,24 @@ export const useLocalRepos = () => {
     try {
       const response =  await axios.get("http://localhost:63403/repos")
       return response?.data?.repos ?? [];
+    } catch(e) {
+      return []
+    }
+  });
+  return response?.data ?? [];
+}
+
+export const useLocalReposInfos = (): Array<RepoInfo> => {
+  const daemonIsRunning = useDaemonIsConnected();
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    queryClient.refetchQueries({queryKey: ["local-repos-info"]});
+  }, [daemonIsRunning]);
+
+  const response = useQuery("local-repos-info", async (): Promise<Array<RepoInfo>> => {
+    try {
+      const response =  await axios.get("http://localhost:63403/repos/info")
+      return response?.data?.repoInfos ?? [];
     } catch(e) {
       return []
     }

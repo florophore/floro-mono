@@ -13,6 +13,11 @@ import WarningDark from "@floro/common-assets/assets/images/icons/warning.dark.s
 import DualToggle from "@floro/storybook/stories/design-system/DualToggle";
 import { useLocalVCSNavContext } from "./vcsnav/LocalVCSContext";
 import ColorPalette from "@floro/styles/ColorPalette";
+import { useCopyPasteContext } from "../copypaste/CopyPasteContext";
+
+
+import CopyLight from '@floro/common-assets/assets/images/repo_icons/copy.purple.svg';
+import CopyDark from '@floro/common-assets/assets/images/repo_icons/copy.light_purple.svg';
 
 const Container = styled.div`
   display: flex;
@@ -73,6 +78,27 @@ const ChangeDot = styled.div`
   border-radius: 50%;
 `;
 
+const CopyRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const CopyIcon = styled.img`
+  height: 24px;
+  width: 24px;
+`;
+
+const CopyText = styled.span`
+  color: ${(props) => props.theme.colors.titleText};
+  font-weight: 600;
+  font-size: 1.2rem;
+  font-family: "MavenPro";
+  margin-left: 8px;
+`;
+
+
+
 interface Props {
   repository: Repository;
   plugin?: string;
@@ -84,6 +110,14 @@ const LocalRepoSubHeader = (props: Props) => {
     () => (theme.name == "light" ? "purple" : "lightPurple"),
     [theme.name]
   );
+
+  const copyIcon = useMemo(() => {
+    if (theme.name == "light") {
+      return CopyLight;
+    }
+    return CopyDark;
+  }, [theme.name])
+  const { isSelectMode } = useCopyPasteContext("local");
   const { data: repoData } = useCurrentRepoState(props.repository);
   const updateCommand = useUpdateCurrentCommand(props.repository);
   const { compareFrom, setCompareFrom } = useLocalVCSNavContext();
@@ -250,12 +284,22 @@ const LocalRepoSubHeader = (props: Props) => {
               </>
             )}
           </LeftContainer>
-          <Button
-            label={"edit"}
-            bg={"orange"}
-            size={"small"}
-            onClick={updateToEditMode}
-          />
+          {!isSelectMode && (
+            <Button
+              label={"edit"}
+              bg={"orange"}
+              size={"small"}
+              onClick={updateToEditMode}
+            />
+          )}
+          {isSelectMode && (
+            <>
+            <CopyRow>
+              <CopyIcon src={copyIcon}/>
+              <CopyText>{'copy mode'}</CopyText>
+            </CopyRow>
+            </>
+          )}
         </Container>
       )}
       {repoData?.repoState?.commandMode == "edit" && (

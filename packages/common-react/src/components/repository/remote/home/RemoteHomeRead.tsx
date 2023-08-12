@@ -269,6 +269,9 @@ const RemoteHomeRead = (props: Props) => {
         </>
       );
     }
+    if (props?.remoteCommitState?.renderedState.description.join(" ") == "") {
+      return "No description";
+    }
     return props?.remoteCommitState?.renderedState.description.join(" ");
   }, [
     props?.remoteCommitState?.renderedState.description,

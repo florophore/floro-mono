@@ -294,7 +294,7 @@ export const DarkTheme: ColorTheme = {
         titleText: palette.lightPurple,
         promptText: palette.white,
         disableOverlay: palette.gray,
-        checkboxBorder: palette.mediumGray,
+        checkboxBorder: palette.lightGray,
         checkboxFill: palette.gray,
         radioBorder: palette.white,
         radioFill: palette.white,

@@ -8,6 +8,8 @@ import {
   CommitData,
 } from "floro/dist/src/sequenceoperations";
 import { ApplicationKVState } from 'floro/dist/src/repo';
+import { Organization } from '@floro/database/src/entities/Organization';
+import { User } from '@floro/database/src/entities/User';
 
 @injectable()
 export default class RepoAccessor {
@@ -183,7 +185,7 @@ export default class RepoAccessor {
     return await this.driver.zipDirectory(path);
   }
 
-  public async initInitialRepoFoldersAndFiles(repo: Repository) {
+  public async initInitialRepoFoldersAndFiles(repo: Repository, organization?: Organization|null, user?: User|null) {
     await this.makeRepoPath(repo);
     const commitsDirPath = path.join(
       this.getRepoPath(repo),
@@ -201,6 +203,11 @@ export default class RepoAccessor {
       this.getRepoPath(repo),
       "current.json"
     );
+
+    const infoJsonPath = path.join(
+      this.getRepoPath(repo),
+      "info.json"
+    );
     await Promise.all([
       this.driver.mkdir(commitsDirPath),
       this.driver.mkdir(commitsKvsPath),
@@ -217,6 +224,19 @@ export default class RepoAccessor {
             isInMergeConflict: false,
             merge: null,
             comparison: null,
+          })
+        )
+      ),
+      this.driver.write(
+        infoJsonPath,
+        Buffer.from(
+          JSON.stringify({
+            id: repo.id,
+            name: repo.name,
+            repoType: repo.repoType,
+            userId: user?.id,
+            organizationId: organization?.id,
+            ownerHandle: repo?.repoType == "user_repo" ? user?.username : organization?.handle,
           })
         )
       )

@@ -1,5 +1,5 @@
 
-import { IsBoolean, IsDefined, IsIn, IsSemVer, IsString, IsUrl, IsUUID, ValidateIf } from "class-validator";
+import { IsBoolean, IsDefined, IsIn, IsOptional, IsSemVer, IsString, IsUrl, IsUUID, ValidateIf } from "class-validator";
 import { Entity, Column, Relation, JoinColumn, ManyToOne, OneToMany } from "typeorm";
 import { BinaryPKBaseEntity } from "./BinaryPKBaseEntity";
 import { Organization } from "./Organization";
@@ -36,6 +36,11 @@ export class PluginVersion extends BinaryPKBaseEntity {
   @IsString()
   @IsDefined()
   displayName!: string;
+
+  @Column("boolean")
+  @IsBoolean()
+  @IsOptional()
+  managedCopy!: boolean;
 
   @Column("varchar")
   @IsIn(["user_plugin", "org_plugin"])

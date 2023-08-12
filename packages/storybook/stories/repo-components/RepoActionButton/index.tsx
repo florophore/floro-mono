@@ -81,6 +81,15 @@ import MergeRequestMediumGray from '@floro/common-assets/assets/images/repo_icon
 import CopyWhite from '@floro/common-assets/assets/images/repo_icons/copy.white.svg';
 import CopyGray from '@floro/common-assets/assets/images/repo_icons/copy.gray.svg';
 import CopyMediumGray from '@floro/common-assets/assets/images/repo_icons/copy.medium_gray.svg';
+
+import CopyCheckWhite from '@floro/common-assets/assets/images/repo_icons/copy_check.white.svg';
+import CopyCheckGray from '@floro/common-assets/assets/images/repo_icons/copy_check.gray.svg';
+import CopyCheckMediumGray from '@floro/common-assets/assets/images/repo_icons/copy_check.medium_gray.svg';
+
+import CopyCancelWhite from '@floro/common-assets/assets/images/repo_icons/copy_cancel.white.svg';
+import CopyCancelGray from '@floro/common-assets/assets/images/repo_icons/copy_cancel.gray.svg';
+import CopyCancelMediumGray from '@floro/common-assets/assets/images/repo_icons/copy_cancel.medium_gray.svg';
+
 import { isPropertySignature } from 'typescript';
 
 export interface ButtonProps {
@@ -97,6 +106,8 @@ export interface ButtonProps {
     | "compare"
     | "settings"
     | "copy"
+    | "copy-check"
+    | "copy-cancel"
     | "stash"
     | "stash-pop"
     | "discard"
@@ -323,6 +334,20 @@ const RepoActionButton = ({
           return theme.name == "light" ? PushGray : PushMediumGray;
         }
         return theme.name == "light" ? PushGray : PushWhite;
+      }
+
+      if (icon == "copy-check") {
+        if (isDisabled && !isLoading) {
+          return theme.name == "light" ? CopyCheckGray : CopyCheckMediumGray;
+        }
+        return theme.name == "light" ? CopyCheckGray : CopyCheckWhite;
+      }
+
+      if (icon == "copy-cancel") {
+        if (isDisabled && !isLoading) {
+          return theme.name == "light" ? CopyCancelGray : CopyCancelMediumGray;
+        }
+        return theme.name == "light" ? CopyCancelGray : CopyCancelWhite;
       }
 
     }, [[size, isDisabled, isLoading, theme.name, icon]]);

@@ -85,6 +85,50 @@ export default class RepoController extends BaseController {
     this.branchService = branchService;
   }
 
+  @Get("/api/repo/:repoId/info")
+  public async getInfo(request, response) {
+    const repoId = request?.params?.repoId;
+    if (!repoId) {
+      response.sendStatus(404);
+      return;
+    }
+    const sessionKey = request.headers["session_key"];
+    const session = await this.sessionStore.fetchSession(sessionKey);
+    if (!session?.user) {
+      response.sendStatus(403);
+      return;
+    }
+    try {
+      const repositoriesContext = await this.contextFactory.createContext(
+        RepositoriesContext
+      );
+      const repo = await repositoriesContext.getById(repoId);
+      if (!repo) {
+        response.sendStatus(404);
+        return;
+      }
+      const canPull = await this.repoRBAC.userHasPermissionToPullOrClone(
+        repo,
+        session.user
+      );
+      if (canPull) {
+        const info = {
+            id: repo.id,
+            name: repo.name,
+            repoType: repo.repoType,
+            userId: repo.userId,
+            organizationId: repo.organizationId,
+            ownerHandle: repo?.repoType == "user_repo" ? repo.user?.username : repo.organization?.handle,
+        }
+        response.send(info);
+      } else {
+        response.sendStatus(400);
+      }
+    } catch (e) {
+      response.sendStatus(400);
+    }
+  }
+
   @Get("/api/repo/:repoId/clone")
   public async getBranchCommits(request, response) {
     const repoId = request?.params?.repoId;

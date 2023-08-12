@@ -11,6 +11,7 @@ fragment PluginVersion on PluginVersion {
   createdAt
   updatedAt
   pluginId
+  managedCopy
 
   isBackwardsCompatible
   previousReleaseVersion

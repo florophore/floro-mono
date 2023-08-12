@@ -11,6 +11,7 @@ import { useUpdatePluginState } from "../local/hooks/local-hooks";
 import { useLocalVCSNavContext } from "../local/vcsnav/LocalVCSContext";
 import { ComparisonState, RemoteCommitState, useBeforeCommitState, useMainCommitState, useRemoteCompareFrom, useViewMode } from "../remote/hooks/remote-state";
 import { RepoPage } from "../types";
+import { useCopyPasteContext } from "../copypaste/CopyPasteContext";
 
 
 
@@ -68,6 +69,7 @@ const RemotePluginController = (props: Props) => {
   const [hasLoaded, setHasLoaded] = useState(false);
   const [hasSentFirstData, setHasSetFirstData] = useState(false);
   const [ackId, setAckId] = useState<string | null>(null);
+  const { isSelectMode, copyInstructions, setCopyInstructions } = useCopyPasteContext("remote");
 
   const { compareFrom } = useRemoteCompareFrom();
   const beforeCommitState = useBeforeCommitState(props.repository, props.page);
@@ -106,6 +108,29 @@ const RemotePluginController = (props: Props) => {
   ]);
 
   const commitState = useMainCommitState(props.page, props.repository);
+
+  const isCopyMode = useMemo(() => {
+    if (!manifest?.managedCopy) {
+      return false;
+    }
+    if (!isSelectMode) {
+      return false;
+    }
+    if (!manifest.name || !copyInstructions[manifest.name].isManualCopy) {
+      return false;
+    }
+    return true;
+  }, [manifest, isSelectMode, copyInstructions]);
+
+  const copyList = useMemo(() => {
+    if (!isCopyMode) {
+      return [];
+    }
+    if (!manifest?.name) {
+      return [];
+    }
+    return copyInstructions[manifest.name].manualCopyList;
+  }, [isCopyMode, copyInstructions, manifest])
 
   const iframeUri = useMemo(() => {
 
@@ -253,7 +278,9 @@ const RemotePluginController = (props: Props) => {
       binaryUrls,
       compareFrom: viewMode == "view" ? "none" :  compareFrom,
       commandMode: viewMode,
-      binaryMap
+      binaryMap,
+      isCopyMode,
+      copyList
     };
   }, [
     applicationState,
@@ -262,7 +289,9 @@ const RemotePluginController = (props: Props) => {
     binaryMap,
     changeset,
     compareFrom,
-    viewMode
+    viewMode,
+    isCopyMode,
+    copyList
   ]);
 
   useEffect(() => {
@@ -292,6 +321,21 @@ const RemotePluginController = (props: Props) => {
       setAckId(updatePluginState?.data?.id);
     }
   }, [updatePluginState?.data?.id]);
+
+  const onUpdateCopyInstructions = useCallback((manualCopyList: Array<string>) => {
+    if (!isCopyMode || !manifest?.name || !Array.isArray(manualCopyList)) {
+      return;
+    }
+    const copyInstruction = copyInstructions[manifest.name];
+    const nextCopyInstructions = {
+      ...copyInstructions,
+      [manifest.name]: {
+        ...copyInstruction,
+        manualCopyList
+      }
+    };
+    setCopyInstructions(nextCopyInstructions);
+  }, [isCopyMode, copyInstructions, manifest?.name])
 
   useEffect(() => {
     const incoming = {};
@@ -365,6 +409,11 @@ const RemotePluginController = (props: Props) => {
           //  pluginName: data?.pluginName,
           //});
         }
+        if (id && state.command == "update-copy") {
+          if (isCopyMode) {
+            onUpdateCopyInstructions(state.data as Array<string>)
+          }
+        }
         delete incoming[data.id];
       }
     };
@@ -372,7 +421,7 @@ const RemotePluginController = (props: Props) => {
     return () => {
       window.removeEventListener("message", onMessage, true);
     };
-  }, [props.pluginName, onToggleVCSContainer]);
+  }, [props.pluginName, onToggleVCSContainer, isCopyMode, onUpdateCopyInstructions]);
 
   if (!iframeUri) {
     return null;

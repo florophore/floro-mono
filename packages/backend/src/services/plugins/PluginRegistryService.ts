@@ -422,6 +422,7 @@ export default class PluginRegistryService {
       );
       const writeManifest = {
         ...pluginUploadStream.originalManifest,
+        managedCopy: pluginUploadStream.managedCopy,
         imports: writeImports,
         icon: {
           light: `${publicCdnUrl}/plugins/${pluginUploadStream.uuid}/floro/${pluginUploadStream.lightIconPath}`,
@@ -520,6 +521,7 @@ export default class PluginRegistryService {
           codeDocsUrl: pluginUploadStream.originalManifest?.codeDocsUrl,
           description: pluginUploadStream.description,
           displayName: pluginUploadStream.displayName,
+          managedCopy: pluginUploadStream.managedCopy,
           lightIcon: writeManifest.icon.light,
           darkIcon: writeManifest.icon.dark,
           selectedLightIcon: writeManifest.icon.selected.light,

@@ -2,9 +2,9 @@ import { useMemo, useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import axios from "axios";
 import { Repository, useExchangeSessionMutation } from "@floro/graphql-schemas/src/generated/main-client-graphql";
-import { ApiResponse, Branch, BranchesMetaState, CloneFile, FetchInfo, RemoteSettings, SourceGraphResponse } from "floro/dist/src/repo";
+import { ApiResponse, Branch, BranchesMetaState, CloneFile, FetchInfo, RemoteSettings, RepoInfo, SourceGraphResponse } from "floro/dist/src/repo";
 import { SourceCommitNode } from "floro/dist/src/sourcegraph";
-import { Manifest } from "floro/dist/src/plugins";
+import { CopyInstructions, Manifest, PluginElement } from "floro/dist/src/plugins";
 import { useSession } from "../../../../session/session-context";
 import { SourceGraph } from './SourceGraph';
 import { useSocketEvent } from '../../../../pubsub/socket';
@@ -18,7 +18,7 @@ export interface ClientSourceGraph {
   branchesMetaState: BranchesMetaState;
 }
 
-export const useCurrentRepoState = (repository: Repository) => {
+export const useCurrentRepoState = (repository: Repository|RepoInfo) => {
   return useQuery(
     "repo-current:" + repository.id,
     async (): Promise<ApiResponse | null> => {
@@ -771,7 +771,7 @@ export const usePluginUninstallCheck = (
 };
 
 export const useRepoManifestList = (
-  repository: Repository,
+  repository: Repository|RepoInfo,
   apiResult?: ApiResponse|undefined|null
 ) => {
   const query =  useQuery(
@@ -871,6 +871,10 @@ export const useCanUpdatePluginInRepo = (
 export const usePossibleDevPlugins = (repository: Repository): Array<string> => {
   const { currentUser } = useSession();
   return useMemo(() => {
+    // may want to consider this one day
+    ///const allOrgPublicPlugins = currentUser?.organizations?.flatMap(
+    ///  (o) => o?.publicPlugins
+    ///) ?? [];
     if (repository.repoType == "user_repo") {
       return [
         ...(currentUser?.privatePlugins ?? []),
@@ -880,21 +884,20 @@ export const usePossibleDevPlugins = (repository: Repository): Array<string> => 
     if (!repository?.organization?.id) {
       return [];
     }
-    const organization = currentUser?.organizations?.find(
-      (o) => o?.id == repository?.organization?.id
-    );
+    const organization = repository?.organization;
     if (!organization) {
       return [];
     }
     return [
       ...(organization?.privatePlugins ?? []),
       ...(organization?.publicPlugins ?? []),
+      ...(currentUser?.publicPlugins ?? []),
     ].map((p) => p?.name as string);
   }, [repository, currentUser]);
 };
 
 export const useRepoDevPlugins = (
-  repository: Repository
+  repository: Repository|RepoInfo
 ) => {
   const pluginNames = usePossibleDevPlugins(repository);
   return useQuery(
@@ -1245,4 +1248,42 @@ export const useCloneState = (repository: Repository) => {
       }
     }
   );
+};
+
+export const usePaste = (fromRepo: Repository, intoRepoInfo: RepoInfo) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn:
+    async ({
+      fromSchemaMap,
+      fromStateMap,
+      pluginsToAdd,
+      copyInstructions
+    }: {
+      fromSchemaMap: { [pluginName: string]: Manifest },
+      fromStateMap: { [pluginName: string]: object },
+      pluginsToAdd: Array<PluginElement>,
+      copyInstructions: CopyInstructions
+    }
+    ): Promise<ApiResponse> => {
+      const result = await axios.post<ApiResponse>(
+        `http://localhost:63403/repo/${intoRepoInfo.id}/paste`,
+        {
+          fromRepoId: fromRepo.id,
+          fromSchemaMap,
+          fromStateMap,
+          pluginsToAdd,
+          copyInstructions
+        }
+      );
+      return result?.data as ApiResponse;
+    },
+    onSuccess: (apiResponse) => {
+      queryClient.setQueryData(
+        ["repo-current:" + intoRepoInfo.id],
+        apiResponse
+      );
+    },
+  });
+
 };

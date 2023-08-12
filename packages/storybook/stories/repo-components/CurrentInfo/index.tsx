@@ -135,6 +135,7 @@ export interface Props {
   lastCommit?: CommitData;
   mergeCommit?: CommitData;
   showBranchButtons?: boolean;
+  isCopyMode?: boolean;
   onShowBranches?: () => void;
   onShowEditBranch?: () => void;
   onSwitchToTheirs?: () => void;
@@ -331,7 +332,7 @@ const CurrentInfo = (props: Props): React.ReactElement => {
           </Row>
         </>
       )}
-      {props.showBranchButtons && (
+      {props.showBranchButtons && !props.isCopyMode && (
         <ButtonRow style={{ marginTop: 16 }}>
           <Button
             label={"branches"}
