@@ -434,7 +434,7 @@ const RemoteVCSNavHome = (props: Props) => {
           {isSelectMode && (
             <>
                 <Row style={{ marginBottom: 0 }}>
-                  <SubTitleSpan>{"Selectable Plugins"}</SubTitleSpan>
+                  <SubTitleSpan>{"Copy Selectable Plugins"}</SubTitleSpan>
                 </Row>
                 <div style={{width: "100%", marginTop: 12}}>
                   {selectablePluginVersions?.map((pluginVersion, index) => {

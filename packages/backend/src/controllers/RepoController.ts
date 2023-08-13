@@ -118,6 +118,7 @@ export default class RepoController extends BaseController {
             repoType: repo.repoType,
             userId: repo.userId,
             organizationId: repo.organizationId,
+            isPrivate: repo.isPrivate,
             ownerHandle: repo?.repoType == "user_repo" ? repo.user?.username : repo.organization?.handle,
         }
         response.send(info);

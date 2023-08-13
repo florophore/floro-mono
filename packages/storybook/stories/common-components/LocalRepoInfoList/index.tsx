@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useMemo} from "react";
 import styled from "@emotion/styled";
 import { RepoInfo } from "floro/dist/src/repo";
 import LocalRepoRow from "./LocalRepoRow";
+import { Repository } from "@floro/graphql-schemas/build/generated/main-graphql";
 
 const SectionContainer = styled.div`
   width: 100%;
@@ -46,9 +47,28 @@ const UnReleasedText = styled.p`
 export interface Props {
   repoInfos: RepoInfo[];
   onSelectRepoInfo: (repoInfo: RepoInfo) => void;
+  fromRepository: Repository;
 }
 
 const LocalRepoInfoList = (props: Props) => {
+
+  const repoInfos = useMemo(() => {
+    if (!props.fromRepository.isPrivate) {
+      return props.repoInfos;
+    }
+    return props?.repoInfos.filter(repoInfo => {
+      if (!repoInfo.isPrivate) {
+        return true;
+      }
+      if (repoInfo.repoType == "user_repo" && props.fromRepository?.repoType == "user_repo") {
+        return repoInfo.userId == props?.fromRepository?.user?.id;
+      }
+      if (repoInfo.repoType == "org_repo" && props.fromRepository?.repoType == "org_repo") {
+        return repoInfo.organizationId == props?.fromRepository?.organization?.id;
+      }
+      return false;
+    })
+  }, [props.fromRepository, props.repoInfos])
 
   return (
     <SectionContainer>
@@ -59,7 +79,7 @@ const LocalRepoInfoList = (props: Props) => {
         </div>
       </TopRow>
       <DependencyBox>
-        {props.repoInfos?.map((repoInfo, index) => {
+        {repoInfos?.map((repoInfo, index) => {
           return (
             <LocalRepoRow
               repoInfo={repoInfo}

@@ -110,6 +110,7 @@ const CopyPasteModal = (props: Props) => {
           <LocalRepoInfoList
             repoInfos={repoInfos}
             onSelectRepoInfo={setSelectedRepoInfo}
+            fromRepository={props.fromRepository}
           />
         )}
         {selectedRepoInfo && (
