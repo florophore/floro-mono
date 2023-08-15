@@ -122,8 +122,7 @@ const StateVariantEditItem = (props: Props) => {
           {
             id: stateVariant.id,
             name: name.trimStart(),
-          },
-          true
+          }
         );
       }
     }, 100);
