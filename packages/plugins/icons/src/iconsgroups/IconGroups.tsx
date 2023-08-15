@@ -27,7 +27,7 @@ interface Props {
 }
 
 const IconGroups = (props: Props) => {
-  const [iconGroups, setIconGroups, isLoading, save] =
+  const [iconGroups, setIconGroups, save] =
     useFloroState("$(icons).iconGroups") ?? [];
   const [isDragging, setIsDragging] = useState(false);
   const { applicationState, commandMode } = useFloroContext();
@@ -49,7 +49,7 @@ const IconGroups = (props: Props) => {
             makeQueryRef("$(icons).iconGroups.id<?>", v.id)
           );
         });
-        setIconGroups(remap, false);
+        setIconGroups(remap);
       }
     },
     [applicationState]
@@ -59,22 +59,22 @@ const IconGroups = (props: Props) => {
     (value: SchemaTypes["$(icons).iconGroups.id<?>"]) => {
       if (iconGroups) {
         const remap = iconGroups.filter(v => v.id != value.id);
-        setIconGroups(remap, true);
+        setIconGroups(remap);
       }
     },
     [iconGroups]
   );
 
-  useEffect(() => {
-    if (
-      props.isEditGroups &&
-      !isDragging &&
-      iconGroups &&
-      commandMode == "edit"
-    ) {
-      save();
-    }
-  }, [isDragging, iconGroups, props.isEditGroups]);
+  //useEffect(() => {
+  //  if (
+  //    props.isEditGroups &&
+  //    !isDragging &&
+  //    iconGroups &&
+  //    commandMode == "edit"
+  //  ) {
+  //    save();
+  //  }
+  //}, [isDragging, iconGroups, props.isEditGroups]);
 
   return (
     <Container>

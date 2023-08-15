@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import styled from "@emotion/styled";
 import CurrentInfo from "@floro/storybook/stories/repo-components/CurrentInfo";
@@ -6,6 +6,7 @@ import RepoActionButton from "@floro/storybook/stories/repo-components/RepoActio
 import { ApiResponse } from "floro/dist/src/repo";
 import { useLocalVCSNavContext } from "./LocalVCSContext";
 import {
+  useClearPluginStorage,
   usePopStashedChanges,
   useStashChanges,
   useUpdateCurrentCommand,
@@ -47,14 +48,29 @@ const ButtonRow = styled.div`
   justify-content: space-between;
 `;
 
+const ClearStorageLink = styled.span`
+  font-size: 1.2rem;
+  font-family: "MavenPro";
+  font-weight: 600;
+  color: ${(props) => props.theme.colors.linkColor};
+  text-decoration: underline;
+  cursor: pointer;
+`;
+
 interface Props {
   repository: Repository;
   apiResponse: ApiResponse;
+  plugin: string;
 }
 
 const LocalVCSEditMode = (props: Props) => {
   const { setSubAction } = useLocalVCSNavContext();
   const [showDiscard, setShowDiscard] = useState(false);
+
+  const clearStorageMutation =  useClearPluginStorage(props.plugin, props.repository);
+  const onClearStorage = useCallback(() => {
+    clearStorageMutation.mutate({});
+  }, []);
 
   const onShowDiscard = useCallback(() => {
     setShowDiscard(true);
@@ -108,6 +124,13 @@ const LocalVCSEditMode = (props: Props) => {
     };
   }, []);
 
+  const showClearStorage = useMemo(() => {
+    if (!props.plugin || !props?.apiResponse?.storageMap?.[props.plugin]) {
+      return false;
+    }
+    return JSON.stringify(props?.apiResponse?.storageMap?.[props.plugin]) != JSON.stringify({});
+  }, [props.apiResponse?.storageMap, props.plugin])
+
   return (
     <InnerContent>
       <TopContainer>
@@ -151,6 +174,13 @@ const LocalVCSEditMode = (props: Props) => {
               label={"manage merge conflict"}
               icon={"merge"}
             />
+          </ButtonRow>
+        )}
+        {showClearStorage && (
+          <ButtonRow style={{ marginTop: 24, justifyContent: "flex-end" }}>
+            <ClearStorageLink onClick={onClearStorage}>
+              {'clear plugin storage'}
+            </ClearStorageLink>
           </ButtonRow>
         )}
       </TopContainer>

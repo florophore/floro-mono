@@ -312,17 +312,6 @@ const ThemeDefCell = (props: Props) => {
     return EditDark;
   }, [theme.name, props.themeObject.backgroundColor.hexcode]);
 
-  const onSelect = useCallback((
-    colorPaletteColorShadeRef: PointerTypes["$(palette).colorPalettes.id<?>.colorShades.id<?>"]
-    ) => {
-    if (themeDefinition) {
-      setThemeDefinition({
-        ...themeDefinition,
-        paletteColorShade: colorPaletteColorShadeRef,
-      }, true)
-    }
-  }, [themeDefinition, themeDefinitions]);
-
   const warningIcon = useMemo(() => {
     if (theme.name == "light") {
       return WarningLight;

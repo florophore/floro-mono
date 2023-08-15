@@ -71,7 +71,7 @@ const ThemeEditList = () => {
   const [newThemeName, setNewThemeName] = useState("");
   const [newThemeColor, setNewThemeColor] = useState("#FFFFFF");
   const [newThemeAlpha, setNewThemeAlpha] = useState(255);
-  const [themes, setThemes, isLoading, save] = useFloroState("$(theme).themes", [], false);
+  const [themes, setThemes, isLoading] = useFloroState("$(theme).themes", [], false);
 
   const isInvalid = useIsFloroInvalid("$(palette).shades");
 
@@ -84,7 +84,7 @@ const ThemeEditList = () => {
             makeQueryRef("$(theme).themes.id<?>", v.id)
           );
         });
-        setThemes(remap, false);
+        setThemes(remap);
       }
     },
     [applicationState]
@@ -94,7 +94,7 @@ const ThemeEditList = () => {
     (shade: SchemaTypes["$(palette).shades.id<?>"]) => {
       const values = themes?.filter((s) => s.id != shade.id);
       if (values) {
-        setThemes(values, true);
+        setThemes(values);
       }
     },
     [themes]
@@ -126,9 +126,8 @@ const ThemeEditList = () => {
       return;
     }
     setThemes([...themes, { id: newId, name: newThemeName, backgroundColor: {
-      alpha: newThemeAlpha,
       hexcode: newThemeColor,
-    } }], true);
+    } }]);
     setNewThemeName("");
     setNewThemeColor("#FFFFFF");
     setNewThemeAlpha(255);
@@ -141,12 +140,6 @@ const ThemeEditList = () => {
   const onDragEnd = useCallback(() => {
     setIsDragging(false);
   }, []);
-
-  useEffect(() => {
-    if (!isDragging) {
-      save();
-    }
-  }, [isDragging]);
 
   const warningIcon = useMemo(() => {
     if (theme.name == "light") {

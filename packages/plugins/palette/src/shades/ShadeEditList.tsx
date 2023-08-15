@@ -58,7 +58,7 @@ const ShadeEditList = () => {
   const { applicationState } = useFloroContext();
   const [isDragging, setIsDragging] = useState(false);
   const [newShadeName, setNewShadeName] = useState("");
-  const [shades, setShades, isLoading, save] = useFloroState(
+  const [shades, setShades, save] = useFloroState(
     "$(palette).shades",
     [
       {
@@ -87,7 +87,7 @@ const ShadeEditList = () => {
             makeQueryRef("$(palette).shades.id<?>", v.id)
           );
         });
-        setShades(remap, false);
+        setShades(remap);
       }
     },
     [applicationState]
@@ -97,7 +97,7 @@ const ShadeEditList = () => {
     (shade: SchemaTypes["$(palette).shades.id<?>"]) => {
       const values = shades?.filter((s) => s.id != shade.id);
       if (values) {
-        setShades(values, true);
+        setShades(values);
       }
     },
     [shades]
@@ -128,9 +128,9 @@ const ShadeEditList = () => {
     if (!newId || !newShadeName || !canAddNewName || !shades) {
       return;
     }
-    setShades([...shades, { id: newId, name: newShadeName }], true);
+    setShades([...shades, { id: newId, name: newShadeName }]);
     setNewShadeName("");
-  }, [newShadeName, newId, canAddNewName, isLoading, shades]);
+  }, [newShadeName, newId, canAddNewName, shades]);
 
   const onDragStart = useCallback(() => {
     setIsDragging(true);

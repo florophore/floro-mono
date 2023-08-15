@@ -365,7 +365,7 @@ const ThemeDefCell = (props: Props) => {
       setThemeDefinition({
         ...themeDefinition,
         paletteColorShade: colorPaletteColorShadeRef,
-      }, true)
+      })
     }
   }, [themeDefinition, themeDefinitions, setThemeDefinition]);
 
@@ -397,8 +397,7 @@ const ThemeDefCell = (props: Props) => {
           {
             ...themeDefinition,
             alpha,
-          },
-          true
+          }
         );
       }
     },

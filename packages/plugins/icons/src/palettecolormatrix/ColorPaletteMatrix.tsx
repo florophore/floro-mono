@@ -55,7 +55,6 @@ const ColorPaletteMatrix = (props: Props) => {
   const container = useRef<HTMLDivElement>(null);
   const [newColorName, setNewColorName] = useState("");
   const [colorPalettes, setColorPalettes] = useFloroState("$(palette).colorPalettes")
-  const { applicationState, saveState} = useFloroContext();
   const newId = useMemo((): string | null => {
     if (!newColorName || (newColorName?.trim?.() ?? "") == "") {
       return null;
@@ -90,8 +89,7 @@ const ColorPaletteMatrix = (props: Props) => {
       return;
     }
     setColorPalettes(
-      [{ id: newId, name: newColorName, colorShades: [] }, ...colorPalettes],
-      true
+      [{ id: newId, name: newColorName, colorShades: [] }, ...colorPalettes]
     );
     setNewColorName("");
   }, [newColorName, newId, canAddNewName, colorPalettes]);

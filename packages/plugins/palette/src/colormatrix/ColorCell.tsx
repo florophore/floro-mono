@@ -152,7 +152,7 @@ interface Props {
 
 const ColorRow = (props: Props) => {
   const theme = useTheme();
-  const { commandMode, changeset } = useFloroContext();
+  const { commandMode } = useFloroContext();
   const shadeRef = useQueryRef("$(palette).shades.id<?>", props.shade.id);
   const inputRef = useRef<HTMLInputElement>(null);
   const colorCircle = useRef<HTMLDivElement>(null);
@@ -165,11 +165,10 @@ const ColorRow = (props: Props) => {
     paletteCellRef,
     {
       id: shadeRef,
-      hexcode: undefined,
-      alpha: 0xff,
-    },
-    false
+      hexcode: undefined
+    }
   );
+
 
   const wasRemoved = useWasRemoved(paletteCellRef, false);
   const wasAdded = useWasAdded(paletteCellRef, false);
@@ -223,7 +222,7 @@ const ColorRow = (props: Props) => {
         setPaletteColor({
           ...paletteColor,
           hexcode: inputRef.current.value?.toUpperCase(),
-        }, false);
+        });
     }
   }, [paletteColor]);
 
@@ -233,7 +232,7 @@ const ColorRow = (props: Props) => {
         setPaletteColor({
           ...paletteColor,
           hexcode: undefined
-        }, true);
+        });
     }
   }, [paletteColor]);
 
@@ -242,7 +241,7 @@ const ColorRow = (props: Props) => {
         setPaletteColor({
           ...paletteColor,
           hexcode: inputRef.current.value?.toUpperCase(),
-        }, true);
+        });
     }
     setIsEdittingHex(false);
   }, [paletteColor])
@@ -252,7 +251,7 @@ const ColorRow = (props: Props) => {
         setPaletteColor({
           ...paletteColor,
           hexcode: event.target.value?.toUpperCase(),
-        }, false);
+        });
     }
   }, [paletteColor])
 

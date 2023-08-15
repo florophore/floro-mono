@@ -242,38 +242,14 @@ const ThemeDefVariantCell = (props: Props) => {
   const themeColorRef = useQueryRef("$(theme).themeColors.id<?>", themeColorId);
   const themeObject = useReferencedObject(themeRef);
   const stateVariant = useReferencedObject(stateVariantRef);
-  const colorCircle = useRef<HTMLDivElement>(null);
 
-  const [variantDefinition, setVariantDefinition] = useFloroState(
+  const variantDefinition = useReferencedObject(
     props.variantDefinitionRef
   );
-
-  const paletteColorShade = useReferencedObject(
-    variantDefinition?.paletteColorShade
-  );
-  const [paletteColorId, paletteShadeRef] = useExtractQueryArgs(
-    variantDefinition?.paletteColorShade
-  );
-  const paletteColorRef = useQueryRef(
-    "$(palette).colorPalettes.id<?>",
-    paletteColorId
-  );
-  const paletteColor = useReferencedObject(paletteColorRef);
-  const shade = useReferencedObject(paletteShadeRef);
-  const themeDefinitions = useReferencedObject("$(theme).themeColors");
 
   const wasRemoved = useWasRemoved(props.variantDefinitionRef, false);
   const wasAdded = useWasAdded(props.variantDefinitionRef, false);
   const hasConflict = useHasConflict(props.variantDefinitionRef, false);
-  const [showPicker, setShowPicker] = useState(false);
-
-  const onShowPicker = useCallback(() => {
-    setShowPicker(true);
-  }, []);
-
-  const onHidePicker = useCallback(() => {
-    setShowPicker(false);
-  }, []);
 
   const contrastColor = useMemo(() => {
     if (!themeObject?.backgroundColor) {
@@ -309,7 +285,6 @@ const ThemeDefVariantCell = (props: Props) => {
       return theme.colors.addedBackground;
     }
     return contrastColor;
-    //return theme.colors.colorPaletteCard;
   }, [
     contrastColor,
     wasAdded,

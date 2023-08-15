@@ -160,7 +160,7 @@ const ColorRow = (props: Props) => {
     "$(palette).colorPalettes.id<?>",
     props.colorPalette.id
   );
-  const [colorPalette, setColorPalette] = useFloroState(colorPaletteRef);
+  const [colorPalette] = useFloroState(colorPaletteRef);
   const isInvalid = useIsFloroInvalid(colorPaletteRef, false);
   const wasRemoved = useWasRemoved(colorPaletteRef, false);
   const wasAdded = useWasAdded(colorPaletteRef, false);
@@ -217,28 +217,27 @@ const ColorRow = (props: Props) => {
     return DraggerDark;
   }, [theme.name]);
 
-  let nameTimeout = useRef<NodeJS.Timer>();
-  useEffect(() => {
-    if (nameTimeout?.current) {
-      clearTimeout(nameTimeout?.current);
-    }
-    nameTimeout.current = setTimeout(() => {
-      if (colorPalette) {
-        setColorPalette(
-          {
-            id: colorPalette.id,
-            name: name.trimStart(),
-            colorShades: colorPalette?.colorShades,
-          },
-          true
-        );
-      }
-    }, 100);
+  //let nameTimeout = useRef<NodeJS.Timer>();
+  //useEffect(() => {
+  //  if (nameTimeout?.current) {
+  //    clearTimeout(nameTimeout?.current);
+  //  }
+  //  nameTimeout.current = setTimeout(() => {
+  //    if (colorPalette) {
+  //      setColorPalette(
+  //        {
+  //          id: colorPalette.id,
+  //          name: name.trimStart(),
+  //          colorShades: colorPalette?.colorShades,
+  //        },
+  //      );
+  //    }
+  //  }, 100);
 
-    return () => {
-      clearTimeout(nameTimeout.current);
-    }
-  }, [name]);
+  //  return () => {
+  //    clearTimeout(nameTimeout.current);
+  //  }
+  //}, [name]);
 
   const onRemove = useCallback(() => {
     if (colorPalette) {

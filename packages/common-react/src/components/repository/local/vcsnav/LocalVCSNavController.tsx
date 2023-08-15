@@ -14,6 +14,7 @@ import SourceGraphNav from "./SourceGraphNav";
 
 interface Props {
   repository: Repository;
+  plugin: string;
 }
 
 const LocalVCSNavController = (props: Props) => {
@@ -42,7 +43,8 @@ const LocalVCSNavController = (props: Props) => {
     }
   }
   if (data?.repoState.commandMode == "view") {
-    return <LocalVCSViewMode apiResponse={data} repository={props.repository} />;
+
+    return <LocalVCSViewMode apiResponse={data} repository={props.repository} plugin={props.plugin}/>;
   }
 
   if (data?.repoState.commandMode == "compare") {
@@ -53,7 +55,7 @@ const LocalVCSNavController = (props: Props) => {
   }
 
   if (data?.repoState.commandMode == "edit") {
-    return <LocalVCSEditMode apiResponse={data} repository={props.repository} />;
+    return <LocalVCSEditMode apiResponse={data} repository={props.repository} plugin={props.plugin} />;
   }
   return null;
 };

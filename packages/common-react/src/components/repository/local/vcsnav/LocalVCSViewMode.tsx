@@ -12,7 +12,7 @@ import {
   usePushBranch,
   useRepoDevPlugins,
   useRepoManifestList,
-  useRepoRemoteSettings,
+  useClearPluginStorage,
   useUpdateCurrentCommand,
 } from "../hooks/local-hooks";
 import {
@@ -126,9 +126,20 @@ const SubTitleSpan = styled.span`
   white-space: nowrap;
 `;
 
+const ClearStorageLink = styled.span`
+  font-size: 1.2rem;
+  font-family: "MavenPro";
+  font-weight: 600;
+  color: ${(props) => props.theme.colors.linkColor};
+  text-decoration: underline;
+  cursor: pointer;
+`;
+
+
 interface Props {
   repository: Repository;
   apiResponse: ApiResponse;
+  plugin: string;
 }
 
 const LocalVCSViewMode = (props: Props) => {
@@ -138,6 +149,10 @@ const LocalVCSViewMode = (props: Props) => {
   const [showConfirmForcePull, setShowConfirmForcePull] = useState(false);
   const [showConfirmForcePush, setShowConfirmForcePush] = useState(false);
   const { isCopyEnabled, setShowCopyPaste, isSelectMode, setSelectedRepoInfo, setCopyInstructions, setIsSelectMode, copyInstructions } = useCopyPasteContext("local");
+  const clearStorageMutation =  useClearPluginStorage(props.plugin, props.repository);
+  const onClearStorage = useCallback(() => {
+    clearStorageMutation.mutate({});
+  }, []);
   const onShowCopy = useCallback(() => {
     setShowCopyPaste(true);
   }, []);
@@ -441,6 +456,13 @@ const LocalVCSViewMode = (props: Props) => {
     return installedPluginVersions.filter(p => p.name && !!copyInstructions[p.name]?.isManualCopy);
   }, [copyInstructions, installedPluginVersions]);
 
+  const showClearStorage = useMemo(() => {
+    if (!props?.apiResponse?.storageMap?.[props.plugin]) {
+      return false;
+    }
+    return JSON.stringify(props?.apiResponse?.storageMap?.[props.plugin]) != JSON.stringify({});
+  }, [props.apiResponse?.storageMap, props.plugin])
+
   return (
     <>
       <CopyPasteModal
@@ -502,6 +524,13 @@ const LocalVCSViewMode = (props: Props) => {
                       titleTextSize="small"
                     />
                   </ButtonRow>
+                  {showClearStorage && (
+                    <ButtonRow style={{ marginTop: 24, justifyContent: "flex-end" }}>
+                      <ClearStorageLink onClick={onClearStorage}>
+                        {'clear plugin storage'}
+                      </ClearStorageLink>
+                    </ButtonRow>
+                  )}
                 </>
               )}
               {props.apiResponse?.repoState?.isInMergeConflict && (

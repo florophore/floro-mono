@@ -293,7 +293,7 @@ const VersionControlPanel = (props: Props) => {
               <RemoteVCSNavController plugin={props.plugin} page={props.page} repository={props.repository} remoteCommitState={props.remoteCommitState} comparisonState={props.comparisonState} />
             )}
             {from == "local" && (
-              <LocalVCSNavController repository={props.repository} />
+              <LocalVCSNavController plugin={props.plugin} repository={props.repository} />
             )}
           </NavigationWrapper>
         </InnerContainerContent>

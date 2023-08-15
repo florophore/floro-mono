@@ -285,14 +285,14 @@ const ThemeDefVariantCell = (props: Props) => {
 
     const darkDistance = getColorDistance(
       ColorPalette.mediumGray,
-      themeObject.backgroundColor.hexcode
+      themeObject?.backgroundColor?.hexcode
     );
 
     if (lightDistance <= darkDistance) {
       return ColorPalette.mediumGray;
     }
     return ColorPalette.white;
-  }, [themeObject.backgroundColor, theme])
+  }, [themeObject?.backgroundColor, theme])
 
   const cardBorderColor = useMemo(() => {
     if (hasConflict) {
@@ -311,12 +311,12 @@ const ThemeDefVariantCell = (props: Props) => {
   const titleColor = useMemo(() => {
     const lightDistance = getColorDistance(
       ColorPalette.white,
-      themeObject.backgroundColor.hexcode
+      themeObject?.backgroundColor?.hexcode
     );
 
     const darkDistance = getColorDistance(
       ColorPalette.mediumGray,
-      themeObject.backgroundColor.hexcode
+      themeObject?.backgroundColor?.hexcode
     );
     if (hasConflict) {
 
@@ -341,11 +341,11 @@ const ThemeDefVariantCell = (props: Props) => {
         return ColorPalette.mediumGray;
       }
       return ColorPalette.white
-  }, [wasAdded, wasRemoved, wasRemoved, hasConflict, theme, commandMode, themeObject.backgroundColor.hexcode]);
+  }, [wasAdded, wasRemoved, wasRemoved, hasConflict, theme, commandMode, themeObject?.backgroundColor?.hexcode]);
 
 
   const editIcon = useMemo(() => {
-    if (!themeObject.backgroundColor) {
+    if (!themeObject?.backgroundColor) {
       if (theme.name == 'dark') {
         return EditDark;
       }
@@ -353,19 +353,19 @@ const ThemeDefVariantCell = (props: Props) => {
     }
     const lightDistance = getColorDistance(
       ColorPalette.white,
-      themeObject.backgroundColor.hexcode
+      themeObject?.backgroundColor?.hexcode
     );
 
     const darkDistance = getColorDistance(
       ColorPalette.mediumGray,
-      themeObject.backgroundColor.hexcode
+      themeObject?.backgroundColor?.hexcode
     );
 
     if (lightDistance <= darkDistance) {
       return EditLight;
     }
     return EditDark;
-  }, [theme.name, themeObject.backgroundColor.hexcode]);
+  }, [theme.name, themeObject?.backgroundColor?.hexcode]);
 
   const onSelect = useCallback((
     colorPaletteColorShadeRef: PointerTypes["$(palette).colorPalettes.id<?>.colorShades.id<?>"]
@@ -374,7 +374,7 @@ const ThemeDefVariantCell = (props: Props) => {
       setVariantDefinition({
         ...variantDefinition,
         paletteColorShade: colorPaletteColorShadeRef,
-      }, true)
+      })
     }
   }, [variantDefinition, setVariantDefinition]);
 
@@ -384,19 +384,19 @@ const ThemeDefVariantCell = (props: Props) => {
       setVariantDefinition({
         ...variantDefinition,
         paletteColorShade: undefined,
-      }, true)
+      })
     }
   }, [setVariantDefinition, applicationState]);
 
   const xIcon = useMemo(() => {
     const lightDistance = getColorDistance(
       ColorPalette.white,
-      themeObject.backgroundColor.hexcode
+      themeObject?.backgroundColor?.hexcode
     );
 
     const darkDistance = getColorDistance(
       ColorPalette.mediumGray,
-      themeObject.backgroundColor.hexcode
+      themeObject?.backgroundColor?.hexcode
     );
 
     if (lightDistance <= darkDistance) {
@@ -426,8 +426,7 @@ const ThemeDefVariantCell = (props: Props) => {
           {
             ...variantDefinition,
             alpha,
-          },
-          true
+          }
         );
       }
     },
@@ -451,14 +450,14 @@ const ThemeDefVariantCell = (props: Props) => {
         <Card
           style={{
             borderColor: cardBorderColor,
-            background: themeObject.backgroundColor.hexcode,
+            background: themeObject?.backgroundColor?.hexcode ?? 'transparent',
           }}
         >
           <CardInterior>
             {!!paletteColorShade && (
               <>
                 <ColorDisplayCircle style={{ borderColor: contrastColor,
-                  background: themeObject.backgroundColor.hexcode,
+                  background: themeObject?.backgroundColor.hexcode,
                  }}>
                     {paletteColorShade?.hexcode && (
                       <ColorCircle
@@ -514,13 +513,13 @@ const ThemeDefVariantCell = (props: Props) => {
         onSelect={onSelect}
         isVariant
       />
-      {!!paletteColorShade?.hexcode && themeObject.backgroundColor.hexcode && commandMode == "edit" && (
+      {!!paletteColorShade?.hexcode && themeObject?.backgroundColor?.hexcode && commandMode == "edit" && (
         <OpacityPicker
           show={showOpacityPicker}
           onDismiss={onHideOpacityPicker}
           alpha={variantDefinition?.alpha ?? 0}
           hexcode={paletteColorShade.hexcode}
-          themeHex={themeObject.backgroundColor.hexcode}
+          themeHex={themeObject?.backgroundColor?.hexcode}
           onChange={onChangeOpacity}
         />
       )}

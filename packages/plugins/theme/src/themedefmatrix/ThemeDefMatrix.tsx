@@ -77,7 +77,7 @@ const ThemeDefMatrix = (props: Props) => {
   const { commandMode, applicationState } = useFloroContext();
   const input = useRef<HTMLInputElement>(null);
 
-  const [themeColors, setThemeColors, isLoading, save] = useFloroState("$(theme).themeColors");
+  const [themeColors, setThemeColors] = useFloroState("$(theme).themeColors");
 
   const [isDragging, setIsDragging] = useState(false);
   const [newColorName, setNewColorName] = useState("");
@@ -93,7 +93,7 @@ const ThemeDefMatrix = (props: Props) => {
               makeQueryRef("$(theme).themeColors.id<?>", v.id)
             );
           });
-        setThemeColors(remap, false);
+        setThemeColors(remap);
       }
     },
     [applicationState]
@@ -103,7 +103,7 @@ const ThemeDefMatrix = (props: Props) => {
     (shade: SchemaTypes["$(theme).themeColors.id<?>"]) => {
       const values = applicationState?.theme?.themeColors?.filter((s) => s.id != shade.id);
       if (values) {
-        setThemeColors(values, true);
+        setThemeColors(values);
       }
     },
     [applicationState?.theme?.themeColors]
@@ -145,10 +145,9 @@ const ThemeDefMatrix = (props: Props) => {
         },
         ...themeColors,
       ],
-      true
     );
     setNewColorName("");
-  }, [newColorName, newId, canAddNewName, isLoading, themeColors]);
+  }, [newColorName, newId, canAddNewName, themeColors]);
 
   const onDragStart = useCallback(() => {
     setIsDragging(true);
@@ -173,11 +172,11 @@ const ThemeDefMatrix = (props: Props) => {
     }, 600);
   }, [props.onScrollToBottom]);
 
-  useEffect(() => {
-    if (!isDragging) {
-      save();
-    }
-  }, [isDragging]);
+  //useEffect(() => {
+  //  if (!isDragging) {
+  //    save();
+  //  }
+  //}, [isDragging]);
 
 
   return (

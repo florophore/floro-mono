@@ -3,7 +3,7 @@ import { CommitState, Repository } from "@floro/graphql-schemas/src/generated/ma
 import { Manifest } from "floro/dist/src/plugins";
 import axios from "axios";
 import { useQuery, useMutation, useQueryClient } from "react-query";
-import { ApplicationKVState, RenderedApplicationState } from "./polyfill-floro";
+import { ApplicationKVState, DataSource, RenderedApplicationState, TypeStruct, getRootSchemaForPlugin, getRootSchemaMap } from "./polyfill-floro";
 
 import { useParams } from "react-router-dom";
 import { RepoPage } from "../../types";
@@ -71,4 +71,30 @@ export const useRepoLinkBase = (repository: Repository, page?: RepoPage) => {
     }
     return `/repo/@/${repository?.organization?.handle}/${repository?.name}${suffix}`;
   }, [repository, ownerHandle, suffix]);
+};
+
+
+export const useRootSchemaMap = (manifest: Manifest|null, schemaMap: {[name: string]: Manifest}) => {
+  const datasource = useMemo(
+    () =>
+      ({
+        getPluginManifest: async (pluginName: string) => {
+          return schemaMap[pluginName];
+        },
+      } as DataSource),
+    [schemaMap]
+  );
+  return useQuery(
+    "root-schema-map:" + manifest?.name ?? "none" + ":" + manifest?.version ?? "none",
+    async (): Promise<{ [key: string]: TypeStruct } | null> => {
+      if (!manifest) {
+        return {};
+      }
+      const result = await getRootSchemaMap(datasource, schemaMap, true);
+      return result;
+    },
+    {
+      cacheTime: !manifest ? 0 : 300000,
+    }
+  );
 };

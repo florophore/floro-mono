@@ -59,7 +59,7 @@ const StateVariantEditList = () => {
   const { applicationState } = useFloroContext();
   const [isDragging, setIsDragging] = useState(false);
   const [newVariantName, setNewVariantName] = useState("");
-  const [stateVariants, setStateVariants, isLoading, save] = useFloroState("$(theme).stateVariants");
+  const [stateVariants, setStateVariants] = useFloroState("$(theme).stateVariants");
 
   const isInvalid = useIsFloroInvalid("$(theme).stateVariants");
 
@@ -72,7 +72,7 @@ const StateVariantEditList = () => {
             makeQueryRef("$(theme).stateVariants.id<?>", v.id)
           );
         });
-        setStateVariants(remap, false);
+        setStateVariants(remap);
       }
     },
     [applicationState]
@@ -82,7 +82,7 @@ const StateVariantEditList = () => {
     (stateVariant: SchemaTypes["$(theme).stateVariants.id<?>"]) => {
       const values = stateVariants?.filter((s) => s.id != stateVariant.id);
       if (values) {
-        setStateVariants(values, true);
+        setStateVariants(values);
       }
     },
     [stateVariants]
@@ -113,9 +113,9 @@ const StateVariantEditList = () => {
     if (!newId || !newVariantName || !canAddNewName || !stateVariants) {
       return;
     }
-    setStateVariants([...stateVariants, { id: newId, name: newVariantName }], true);
+    setStateVariants([...stateVariants, { id: newId, name: newVariantName }]);
     setNewVariantName("");
-  }, [newVariantName, newId, canAddNewName, isLoading, stateVariants]);
+  }, [newVariantName, newId, canAddNewName, stateVariants]);
 
   const onDragStart = useCallback(() => {
     setIsDragging(true);
@@ -124,12 +124,6 @@ const StateVariantEditList = () => {
   const onDragEnd = useCallback(() => {
     setIsDragging(false);
   }, []);
-
-  useEffect(() => {
-    if (!isDragging) {
-      save();
-    }
-  }, [isDragging]);
 
   const warningIcon = useMemo(() => {
     if (theme.name == "light") {

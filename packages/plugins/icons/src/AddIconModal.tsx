@@ -555,7 +555,6 @@ const AddIconModal = (props: Props) => {
       if (applicationState && edittingHex != null) {
         const colorShade = getReferencedObject(applicationState, colorRef);
         colorShade.hexcode = edittingHex?.substring(0, 7);
-        colorShade.alpha = 255;
         saveState("palette", applicationState);
         setShowAddHexToPalette(false);
         setAddedColors({
@@ -572,7 +571,6 @@ const AddIconModal = (props: Props) => {
         const colorRef = addedColors[hexVal];
         const colorShade = getReferencedObject(applicationState, colorRef);
         colorShade.hexcode = undefined;
-        colorShade.alpha = 255;
         saveState("palette", applicationState);
         delete addedColors[hexVal];
         setAddedColors({...addedColors});

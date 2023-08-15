@@ -186,7 +186,7 @@ const ThemeRow = (props: Props) => {
     "$(theme).themeColors.id<?>",
     props.themeColor.id
   );
-  const [themeColor, setThemeColor, , save] = useFloroState(themeColorRef);
+  const [themeColor, setThemeColor] = useFloroState(themeColorRef);
   const isInvalid = useIsFloroInvalid(themeColorRef, false);
   const wasRemoved = useWasRemoved(themeColorRef, false);
   const wasAdded = useWasAdded(themeColorRef, false);
@@ -257,8 +257,7 @@ const ThemeRow = (props: Props) => {
             includeVariants: themeColor?.includeVariants,
             themeDefinitions: themeColor.themeDefinitions,
             variants: themeColor?.variants ?? []
-          },
-          true
+          }
         );
       }
     }, 100);
@@ -289,7 +288,7 @@ const ThemeRow = (props: Props) => {
       setThemeColor({
         ...themeColor,
         includeVariants
-      }, true);
+      });
     }
   }, [props.themeColor, themeColor]);
 

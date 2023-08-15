@@ -207,7 +207,7 @@ const Group = (props: Props) => {
   const wasAdded = useWasAdded(iconGroupRef, true);
   const hasConflict = useHasConflict(iconGroupRef, true);
 
-  const [iconGroup, setIconGroup, isLoading, save] =
+  const [iconGroup, setIconGroup] =
     useFloroState(iconGroupRef);
   const [icons, setIcons] = useState<
     SchemaTypes["$(icons).iconGroups.id<?>.icons"]
@@ -231,7 +231,7 @@ const Group = (props: Props) => {
       if (icons && iconGroup && applicationState) {
         const filteredIcons = icons.filter((v) => v.id != icon.id);
         setIcons(filteredIcons);
-        setIconGroup({ ...iconGroup, icons: filteredIcons }, true);
+        setIconGroup({ ...iconGroup, icons: filteredIcons });
       }
     },
     [iconGroup, icons, applicationState]
@@ -367,18 +367,18 @@ const Group = (props: Props) => {
     setIsDragging(false);
   }, []);
 
-  useEffect(() => {
-    if (
-      !isDragging &&
-      iconGroup &&
-      commandMode == "edit" &&
-      icons != props.iconGroup.icons &&
-      icons
-    ) {
-      iconGroup.icons = icons;
-      save();
-    }
-  }, [isDragging]);
+  //useEffect(() => {
+  //  if (
+  //    !isDragging &&
+  //    iconGroup &&
+  //    commandMode == "edit" &&
+  //    icons != props.iconGroup.icons &&
+  //    icons
+  //  ) {
+  //    iconGroup.icons = icons;
+  //    save();
+  //  }
+  //}, [isDragging]);
 
   const isDisplayingIcons = useMemo(() => {
     if (

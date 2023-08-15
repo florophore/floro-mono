@@ -279,8 +279,7 @@ const ShadeEditItem = (props: ShadeItemProps) => {
             id: themeObject.id,
             name: name.trimStart(),
             backgroundColor: themeObject.backgroundColor
-          },
-          true
+          }
         );
       }
     }, 100);
@@ -310,7 +309,7 @@ const ShadeEditItem = (props: ShadeItemProps) => {
             ...themeObject.backgroundColor,
             hexcode: inputRef.current.value?.toUpperCase(),
           }
-        }, false);
+        });
     }
   }, [themeObject]);
 
@@ -323,9 +322,8 @@ const ShadeEditItem = (props: ShadeItemProps) => {
             ...themeObject.backgroundColor,
             hexcode: inputRef.current.value?.toUpperCase(),
           }
-        }, true);
+        });
     }
-    //setIsEdittingHex(false);
   }, [themeObject])
 
   const onChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
@@ -336,7 +334,7 @@ const ShadeEditItem = (props: ShadeItemProps) => {
             ...themeObject.backgroundColor,
             hexcode: event.target.value?.toUpperCase(),
           }
-        }, false);
+        });
     }
   }, [themeObject])
 

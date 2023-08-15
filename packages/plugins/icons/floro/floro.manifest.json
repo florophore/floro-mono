@@ -1,5 +1,5 @@
 {
-  "version": "0.0.17",
+  "version": "0.0.20",
   "name": "icons",
   "displayName": "Icons",
   "description": "A plugin for mapping colors to icons.",
@@ -13,8 +13,8 @@
     }
   },
   "imports": {
-    "theme": "0.0.15",
-    "palette": "0.0.15"
+    "theme": "0.0.20",
+    "palette": "0.0.20"
   },
   "types": {
     "Icon": {

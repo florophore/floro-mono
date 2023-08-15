@@ -12,11 +12,12 @@ import { useLocalVCSNavContext } from "../local/vcsnav/LocalVCSContext";
 import { ComparisonState, RemoteCommitState, useBeforeCommitState, useMainCommitState, useRemoteCompareFrom, useViewMode } from "../remote/hooks/remote-state";
 import { RepoPage } from "../types";
 import { useCopyPasteContext } from "../copypaste/CopyPasteContext";
+import { useRootSchemaMap } from "../remote/hooks/remote-hooks";
 
 
 
 interface Packet {
-  id: string;
+  id: number;
   chunk: string;
   index: number;
   totalPackets: number;
@@ -28,10 +29,10 @@ const sendMessage = (
   iframe: HTMLIFrameElement,
   event: string,
   data: object,
-  id?: string
+  id?: number
 ) => {
   if (!id) {
-    id = Math.random().toString(16).substring(2);
+    id = 0;
   }
   const dataString = JSON.stringify({ data, event });
   const totalPackets = Math.floor(dataString.length / MAX_DATA_SIZE);
@@ -70,15 +71,12 @@ const RemotePluginController = (props: Props) => {
   const [hasSentFirstData, setHasSetFirstData] = useState(false);
   const [ackId, setAckId] = useState<string | null>(null);
   const { isSelectMode, copyInstructions, setCopyInstructions } = useCopyPasteContext("remote");
+  const updateCounter = useRef(0);
 
   const { compareFrom } = useRemoteCompareFrom();
   const beforeCommitState = useBeforeCommitState(props.repository, props.page);
   const viewMode = useViewMode(props.page);
 
-  const updatePluginState = useUpdatePluginState(
-    props.pluginName,
-    props.repository
-  );
   const onToggleVCSContainer = useCallback(() => {
     props.onSetIsExpanded(!props.isExpanded);
   }, [props.isExpanded, props.onSetIsExpanded]);
@@ -106,6 +104,21 @@ const RemotePluginController = (props: Props) => {
     props.remoteCommitState.schemaMap,
     props.pluginName,
   ]);
+
+  const schemaMap = useMemo(() => {
+    if (viewMode == "compare" && compareFrom == "before") {
+      return props.comparisonState.beforeRemoteCommitState.schemaMap;
+    }
+    return props.remoteCommitState.schemaMap;
+  }, [
+    viewMode,
+    compareFrom,
+    props.comparisonState.beforeRemoteCommitState.schemaMap,
+    props.remoteCommitState.schemaMap,
+  ]);
+
+
+  const rootSchemaMapRequest = useRootSchemaMap(manifest, schemaMap)
 
   const commitState = useMainCommitState(props.page, props.repository);
 
@@ -280,7 +293,9 @@ const RemotePluginController = (props: Props) => {
       commandMode: viewMode,
       binaryMap,
       isCopyMode,
-      copyList
+      copyList,
+      rootSchemaMap: rootSchemaMapRequest?.data,
+      clientStorage: {}
     };
   }, [
     applicationState,
@@ -291,11 +306,13 @@ const RemotePluginController = (props: Props) => {
     compareFrom,
     viewMode,
     isCopyMode,
-    copyList
+    copyList,
+    rootSchemaMapRequest?.data
   ]);
 
   useEffect(() => {
     if (hasLoaded && !hasSentFirstData && iframeRef.current) {
+      updateCounter.current += 2;
       sendMessage(iframeRef.current, "load", pluginState);
       setHasSetFirstData(true);
     }
@@ -304,7 +321,8 @@ const RemotePluginController = (props: Props) => {
   useEffect(() => {
     if (ackId) {
       if (iframeRef.current) {
-        sendMessage(iframeRef.current, "ack", pluginState, ackId);
+        updateCounter.current += 2;
+        sendMessage(iframeRef.current, "ack", pluginState, updateCounter.current);
       }
       setAckId(null);
     }
@@ -312,15 +330,10 @@ const RemotePluginController = (props: Props) => {
 
   useEffect(() => {
     if (iframeRef.current && hasLoaded && hasSentFirstData) {
+        updateCounter.current += 2;
         sendMessage(iframeRef.current, "update", pluginState);
     }
   }, [pluginState]);
-
-  useEffect(() => {
-    if (updatePluginState?.data?.id) {
-      setAckId(updatePluginState?.data?.id);
-    }
-  }, [updatePluginState?.data?.id]);
 
   const onUpdateCopyInstructions = useCallback((manualCopyList: Array<string>) => {
     if (!isCopyMode || !manifest?.name || !Array.isArray(manualCopyList)) {
@@ -350,7 +363,8 @@ const RemotePluginController = (props: Props) => {
         | "toggle-before"
         | "toggle-after"
         | "toggle-compare-mode"
-        | "toggle-branches";
+        | "toggle-branches"
+        | "clear-client-storage";
     }) => {
       if (data == "ready") {
         setHasLoaded(true);
@@ -358,6 +372,9 @@ const RemotePluginController = (props: Props) => {
       }
       if (data == "toggle-vcs") {
         onToggleVCSContainer();
+        return;
+      }
+      if (data == "clear-client-storage") {
         return;
       }
       //if (data == "toggle-command-mode") {
@@ -401,13 +418,8 @@ const RemotePluginController = (props: Props) => {
           incoming[data.id].data.join("")
         );
         const id = data.id;
-        if (id && state.command == "save") {
-            // do no update anything
-          //updatePluginState.mutate({
-          //  state: state?.data,
-          //  id,
-          //  pluginName: data?.pluginName,
-          //});
+        if (updateCounter.current < id) {
+          updateCounter.current = id +1;
         }
         if (id && state.command == "update-copy") {
           if (isCopyMode) {

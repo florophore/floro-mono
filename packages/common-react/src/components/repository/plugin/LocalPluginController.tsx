@@ -7,9 +7,10 @@ import React, {
 } from "react";
 import { ApiResponse } from "floro/dist/src/repo";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
-import { useUpdatePluginState } from "../local/hooks/local-hooks";
+import { useClearPluginStorage, useUpdatePluginState, useUpdatePluginStorage } from "../local/hooks/local-hooks";
 import { useLocalVCSNavContext } from "../local/vcsnav/LocalVCSContext";
 import { useCopyPasteContext } from "../copypaste/CopyPasteContext";
+import { useRootSchemaMap } from "../remote/hooks/remote-hooks";
 
 interface Props {
   pluginName: string;
@@ -25,7 +26,7 @@ interface Props {
 }
 
 interface Packet {
-  id: string;
+  id: number;
   chunk: string;
   index: number;
   totalPackets: number;
@@ -37,10 +38,10 @@ const sendMessage = (
   iframe: HTMLIFrameElement,
   event: string,
   data: object,
-  id?: string
+  id?: number
 ) => {
   if (!id) {
-    id = Math.random().toString(16).substring(2);
+    id = 0;
   }
   const dataString = JSON.stringify({ data, event });
   const totalPackets = Math.floor(dataString.length / MAX_DATA_SIZE);
@@ -67,14 +68,28 @@ const LocalPluginController = (props: Props) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [hasLoaded, setHasLoaded] = useState(false);
   const [hasSentFirstData, setHasSetFirstData] = useState(false);
-  const [ackId, setAckId] = useState<string | null>(null);
+  const [ackId, setAckId] = useState<number | null>(null);
   const { compareFrom } = useLocalVCSNavContext();
   const { isSelectMode, copyInstructions, setCopyInstructions } = useCopyPasteContext("local");
+  const updateCounter = useRef(0);
+  const clientUpdateCounter = useRef(1);
 
   const updatePluginState = useUpdatePluginState(
     props.pluginName,
-    props.repository
+    props.repository,
+    clientUpdateCounter
   );
+
+  const updatePluginClientStorage = useUpdatePluginStorage(
+    props.pluginName,
+    props.repository,
+    clientUpdateCounter
+  );
+
+  const clearStorageMutation =  useClearPluginStorage(props.pluginName, props.repository);
+  const onClearStorage = useCallback(() => {
+    clearStorageMutation.mutate({});
+  }, []);
   const onToggleVCSContainer = useCallback(() => {
     props.onSetIsExpanded(!props.isExpanded);
   }, [props.isExpanded, props.onSetIsExpanded]);
@@ -100,6 +115,18 @@ const LocalPluginController = (props: Props) => {
     props.pluginName,
     props.apiResponse.schemaMap,
   ]);
+
+  const schemaMap = useMemo(() => {
+    if (!manifest) {
+      return {};
+    }
+    const keys = [manifest.name, ...Object.keys(manifest.imports)];
+    const out = {};
+    for (const key of keys) {
+      out[key] = props.apiResponse.schemaMap[key];
+    }
+    return out;
+  }, [props.apiResponse.schemaMap, manifest])
 
   const isCopyMode = useMemo(() => {
     if (!manifest?.managedCopy) {
@@ -205,6 +232,7 @@ const LocalPluginController = (props: Props) => {
     props?.apiResponse?.repoState?.comparison,
   ])
 
+  const rootSchemaMapRequest = useRootSchemaMap(manifest, schemaMap)
 
   const conflictList = useMemo(() => {
     if (!props?.apiResponse?.repoState?.isInMergeConflict) {
@@ -258,7 +286,13 @@ const LocalPluginController = (props: Props) => {
     props?.apiResponse?.applicationState?.binaries,
     props?.apiResponse?.beforeState?.binaries,
     compareFrom,
-  ])
+  ]);
+  const clientStorage = useMemo(() => {
+    if (!manifest?.name) {
+      return {};
+    }
+    return props.apiResponse.storageMap?.[manifest?.name] ?? {};
+  }, [manifest?.name, props.apiResponse.storageMap]);
 
   const pluginState = useMemo(() => {
     return {
@@ -271,7 +305,9 @@ const LocalPluginController = (props: Props) => {
       commandMode: props?.apiResponse?.repoState?.commandMode ?? "view",
       binaryMap,
       isCopyMode,
-      copyList
+      copyList,
+      rootSchemaMap: rootSchemaMapRequest?.data,
+      clientStorage
     };
   }, [
     changeset,
@@ -283,12 +319,15 @@ const LocalPluginController = (props: Props) => {
     props?.apiResponse?.repoState?.comparison,
     binaryMap,
     isCopyMode,
-    copyList
+    copyList,
+    rootSchemaMapRequest?.data,
+    clientStorage
   ]);
 
   useEffect(() => {
     if (hasLoaded && !hasSentFirstData && iframeRef.current) {
-      sendMessage(iframeRef.current, "load", pluginState);
+      updateCounter.current += 2;
+      sendMessage(iframeRef.current, "load", pluginState, updateCounter.current);
       setHasSetFirstData(true);
     }
   }, [hasLoaded, hasSentFirstData, pluginState,
@@ -298,7 +337,8 @@ const LocalPluginController = (props: Props) => {
   useEffect(() => {
     if (ackId) {
       if (iframeRef.current) {
-        sendMessage(iframeRef.current, "ack", pluginState, ackId);
+        updateCounter.current += 2;
+        sendMessage(iframeRef.current, "ack", pluginState, updateCounter.current);
       }
       setAckId(null);
     }
@@ -310,10 +350,12 @@ const LocalPluginController = (props: Props) => {
 
   useEffect(() => {
     if (iframeRef.current && hasLoaded && hasSentFirstData) {
-        sendMessage(iframeRef.current, "update", pluginState);
+        updateCounter.current += 2;
+        sendMessage(iframeRef.current, "update", pluginState, updateCounter.current);
     }
   }, [pluginState,
     props?.apiResponse?.repoState?.comparison,
+    hasLoaded && hasSentFirstData,
     isCopyMode
   ]);
 
@@ -336,7 +378,7 @@ const LocalPluginController = (props: Props) => {
       }
     };
     setCopyInstructions(nextCopyInstructions);
-  }, [isCopyMode, copyInstructions, manifest?.name])
+  }, [isCopyMode, copyInstructions, manifest?.name]);
 
   useEffect(() => {
     const incoming = {};
@@ -351,7 +393,8 @@ const LocalPluginController = (props: Props) => {
         | "toggle-before"
         | "toggle-after"
         | "toggle-compare-mode"
-        | "toggle-branches";
+        | "toggle-branches"
+        | "clear-client-storage";
     }) => {
       if (data == "ready") {
         setHasLoaded(true);
@@ -385,6 +428,10 @@ const LocalPluginController = (props: Props) => {
         props.onToggleBranches();
         return;
       }
+      if (data == "clear-client-storage") {
+        onClearStorage();
+        return;
+      }
 
       if (typeof data == "string") {
         return;
@@ -403,15 +450,37 @@ const LocalPluginController = (props: Props) => {
         );
         const id = data.id;
         if (id && state.command == "save") {
-          updatePluginState.mutate({
-            state: state?.data,
-            id,
-            pluginName: data?.pluginName,
-          });
+          if (updateCounter.current < id) {
+            updateCounter.current = id +1;
+          }
+          clientUpdateCounter.current = id;
+          if (props.apiResponse.repoState?.commandMode == "edit") {
+            updatePluginState.mutate({
+              state: state?.data,
+              id,
+              pluginName: data?.pluginName,
+            });
+          }
         }
         if (id && state.command == "update-copy") {
+          if (updateCounter.current < id) {
+            updateCounter.current = id +1;
+          }
+          clientUpdateCounter.current = id;
           if (isCopyMode) {
             onUpdateCopyInstructions(state.data as Array<string>)
+          }
+        }
+        if (id && state.command == "update-client-storage") {
+          if (updateCounter.current < id) {
+            updateCounter.current = id +1;
+          }
+          clientUpdateCounter.current = id;
+          if (props.apiResponse.repoState?.commandMode == "edit") {
+            updatePluginClientStorage.mutate({
+              storage: state.data as object,
+              id
+            })
           }
         }
         delete incoming[data.id];
@@ -421,9 +490,9 @@ const LocalPluginController = (props: Props) => {
     return () => {
       window.removeEventListener("message", onMessage, true);
     };
-  }, [props.pluginName, onToggleVCSContainer, props.onToggleCommandMode, isCopyMode, onUpdateCopyInstructions]);
+  }, [props.pluginName, onToggleVCSContainer, props.onToggleCommandMode, isCopyMode, props.apiResponse.repoState?.commandMode, onUpdateCopyInstructions]);
 
-  if (!iframeUri) {
+  if (!iframeUri || !pluginState.rootSchemaMap?.[props.pluginName]) {
     return null;
   }
   return (

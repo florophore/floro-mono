@@ -158,7 +158,7 @@ const IconHeader = (props: Props) => {
   const { commandMode} = useFloroContext();
   const isSearching = useMemo(() => props.searchText.trim() != "", [props.searchText]);
   const [newGroupName, setNewGroupName] = useState("");
-  const [iconGroups, setIconGroups, isLoading, save] = useFloroState("$(icons).iconGroups", [], false);
+  const [iconGroups, setIconGroups] = useFloroState("$(icons).iconGroups", [], false);
 
   const { fileRef, status, uploadFile, uploadBlob } = useUploadFile();
 
@@ -326,10 +326,9 @@ const IconHeader = (props: Props) => {
     }
     setIconGroups(
       [...iconGroups, { id: newId, name: newGroupName, icons: [] }, ],
-      true
     );
     setNewGroupName("");
-  }, [newGroupName, newId, canAddNewName, isLoading, iconGroups]);
+  }, [newGroupName, newId, canAddNewName, iconGroups]);
 
   return (
     <div>

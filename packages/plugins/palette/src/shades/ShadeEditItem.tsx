@@ -95,7 +95,6 @@ const ShadeEditItem = (props: ShadeItemProps) => {
   const [shade, setShade] = useFloroState(shadeQuery);
   const controls = useDragControls();
   const isInvalid = useIsFloroInvalid(shadeQuery);
-  const [name, setName] = useState(shade?.name ?? "");
 
   const xIcon = useMemo(() => {
     if (theme.name == "light") {
@@ -111,27 +110,15 @@ const ShadeEditItem = (props: ShadeItemProps) => {
     return DraggerDark;
   }, [theme.name]);
 
-  let nameTimeout = useRef<NodeJS.Timer>();
-  useEffect(() => {
-    if (nameTimeout?.current) {
-      clearTimeout(nameTimeout?.current);
+  const onChangeName = useCallback((name: string) => {
+    if (!shade?.id) {
+      return;
     }
-    nameTimeout.current = setTimeout(() => {
-      if (shade) {
-        setShade(
-          {
-            id: shade.id,
-            name: name.trimStart(),
-          },
-          true
-        );
-      }
-    }, 100);
-
-    return () => {
-      clearTimeout(nameTimeout.current);
-    }
-  }, [name]);
+    setShade({
+      ...shade,
+      name
+    });
+  }, [shade, setShade]);
 
   const onRemove = useCallback(() => {
     if (shade) {
@@ -183,10 +170,10 @@ const ShadeEditItem = (props: ShadeItemProps) => {
 
         {false && (
         <Input
-          value={name ?? ""}
+          value={shade?.name ?? ""}
           label={"shade name"}
           placeholder={shade?.id ?? ""}
-          onTextChanged={setName}
+          onTextChanged={onChangeName}
           isValid={!isInvalid}
         />
         )}

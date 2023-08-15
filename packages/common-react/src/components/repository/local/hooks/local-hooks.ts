@@ -295,10 +295,10 @@ export const useUpdatePlugins = (repository: Repository) => {
   });
 };
 
-export const useUpdatePluginState = (pluginName: string, repository: Repository) => {
+export const useUpdatePluginState = (pluginName: string, repository: Repository, refCount: React.MutableRefObject<number>) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ state, id, pluginName: pluginNameToUpdate}: {state: unknown, id: string, pluginName: string}): Promise<{id: string, result: ApiResponse}> => {
+    mutationFn: async ({ state, id, pluginName: pluginNameToUpdate}: {state: unknown, id: number, pluginName: string}): Promise<{id: number, result: ApiResponse}> => {
       const result = await axios.post<ApiResponse>(
         `http://localhost:63403/repo/${repository.id}/plugin/${pluginName}/state`,
         {
@@ -311,11 +311,62 @@ export const useUpdatePluginState = (pluginName: string, repository: Repository)
         result: result?.data
       }
     },
-    onSuccess: ({result}) => {
+    onSuccess: ({result, id}) => {
+      if (refCount?.current && refCount?.current > id) {
+        return;
+      }
       queryClient.setQueryData(["repo-current:" + repository.id], result);
     }
   });
 };
+
+export const useClearPluginStorage = (pluginName: string, repository: Repository, refCount?: React.MutableRefObject<number>) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({id}: {id?: number}): Promise<{id?: number, result: ApiResponse}> => {
+      const result = await axios.post<ApiResponse>(
+        `http://localhost:63403/repo/${repository.id}/plugin/${pluginName}/storage/clear`,
+        {}
+      );
+      return {
+        id,
+        result: result?.data
+      }
+    },
+    onSuccess: ({id, result}) => {
+      if (refCount?.current && id && refCount?.current > id) {
+        return;
+      }
+      queryClient.setQueryData(["repo-current:" + repository.id], result);
+    }
+  });
+};
+
+export const useUpdatePluginStorage = (pluginName: string, repository: Repository, refCount: React.MutableRefObject<number>) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ storage, id}: {storage: object, id: number}): Promise<{id: number, result: ApiResponse}> => {
+      const result = await axios.post<ApiResponse>(
+        `http://localhost:63403/repo/${repository.id}/plugin/${pluginName}/storage`,
+        {
+          storage,
+        }
+      );
+      return {
+        id,
+        result: result?.data
+      }
+    },
+    onSuccess: ({result, id}) => {
+      if (refCount?.current && refCount?.current > id) {
+        return;
+      }
+      queryClient.setQueryData(["repo-current:" + repository.id], result);
+    }
+  });
+};
+
+
 
 export const useCreateBranch = (repository: Repository) => {
   const queryClient = useQueryClient();

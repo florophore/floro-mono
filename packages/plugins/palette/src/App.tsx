@@ -32,7 +32,7 @@ const Layout = () => {
 
   const container = useRef<HTMLDivElement>(null);
   const [showShadeEdit, setShowShadeEdit] = useState(false);
-  const { commandMode, applicationState } = useFloroContext();
+  const { commandMode } = useFloroContext();
 
   const onShowShadeList = useCallback(() => {
     if (container?.current) {

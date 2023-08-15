@@ -74,7 +74,7 @@ const ColorPaletteMatrix = (props: Props) => {
   const { commandMode, applicationState } = useFloroContext();
   const input = useRef<HTMLInputElement>(null);
 
-  const [colorPalettes, setColorPalettes, isLoading, save] = useFloroState("$(palette).colorPalettes")
+  const [colorPalettes, setColorPalettes, save] = useFloroState("$(palette).colorPalettes")
 
   const [isDragging, setIsDragging] = useState(false);
   const [newColorName, setNewColorName] = useState("");
@@ -89,7 +89,7 @@ const ColorPaletteMatrix = (props: Props) => {
               makeQueryRef("$(palette).colorPalettes.id<?>", v.id)
             );
           });
-        setColorPalettes(remap, false);
+        setColorPalettes(remap);
       }
     },
     [applicationState]
@@ -99,7 +99,7 @@ const ColorPaletteMatrix = (props: Props) => {
     (shade: SchemaTypes["$(palette).colorPalettes.id<?>"]) => {
       const values = colorPalettes?.filter((s) => s.id != shade.id);
       if (values) {
-        setColorPalettes(values, true);
+        setColorPalettes(values);
       }
     },
     [colorPalettes]
@@ -132,10 +132,9 @@ const ColorPaletteMatrix = (props: Props) => {
     }
     setColorPalettes(
       [{ id: newId, name: newColorName, colorShades: [] }, ...colorPalettes],
-      true
     );
     setNewColorName("");
-  }, [newColorName, newId, canAddNewName, isLoading, colorPalettes]);
+  }, [newColorName, newId, canAddNewName, colorPalettes]);
 
   const onDragStart = useCallback(() => {
     setIsDragging(true);

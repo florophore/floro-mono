@@ -357,11 +357,23 @@ export interface ConflictList {
   };
 }
 
+export interface DivergenceOrigin {
+  trueOrigin: string|null;
+  fromOrigin: string|null;
+  intoOrigin: string|null;
+  fromLastCommonAncestor: string|null;
+  intoLastCommonAncestor: string|null;
+  basedOn: "into" | "from";
+  rebaseShas: Array<string>;
+}
+
 export interface ApiResponse {
   repoState: RepoState;
   applicationState: RenderedApplicationState;
+  kvState: ApplicationKVState;
   schemaMap: { [key: string]: Manifest };
   beforeState?: RenderedApplicationState;
+  beforeKvState?: ApplicationKVState;
   beforeApiStoreInvalidity?: ApiStoreInvalidity;
   beforeManifests?: Array<Manifest>;
   beforeSchemaMap?: { [pluginName: string]: Manifest };
@@ -376,6 +388,9 @@ export interface ApiResponse {
   stashSize?: number;
   conflictResolution?: ConflictList;
   checkedOutBranchIds: Array<string>;
+  binaryToken: string;
+  divergenceOrigin?: DivergenceOrigin;
+  divergenceSha?: string;
 }
 
 export interface SourceGraphResponse {

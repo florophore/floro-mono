@@ -101,7 +101,6 @@ const ThemeRow = (props: Props) => {
     }
   }, [props.onNoTheme, props.themingHex])
 
-  const themeColor = useReferencedObject(themeColorRef);
   const defaultThemeRef = makeQueryRef("$(theme).themes.id<?>", props.defaultIconTheme);
   const defaultThemeColorDefRef = makeQueryRef(
     "$(theme).themeColors.id<?>.themeDefinitions.id<?>",
