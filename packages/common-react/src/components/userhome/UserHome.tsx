@@ -185,7 +185,9 @@ const UserHome = () => {
                 <UserSettingsTab />
               </div>
               <div style={{ marginTop: 16, display: "flex" }}>
-                <DevSettingsTab />
+                <Link to={'/home/local/api'}>
+                  <DevSettingsTab />
+                </Link>
               </div>
               <div style={{ marginTop: 16, display: "flex" }}>
                 <Link to={'/home/plugins'}>

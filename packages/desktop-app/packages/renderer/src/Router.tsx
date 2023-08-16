@@ -20,6 +20,9 @@ import OrganizationInvitationsPage from './member_management/OrganizationInvitat
 import OrganizationRolesPage from './member_management/OrganizationRolesPage';
 import RepoHomeSettingsPage from './repository/RepoHomeSettingsPage';
 import RepoHomeBranchRuleSettingsPage from './repository/RepoHomeBranchRuleSettingsPage';
+import UserLocalApiHome from './apikeys/UserLocalApiHome';
+import UserRemoteApiHome from './apikeys/UserRemoteApiHome';
+import UserLocalWebhookHome from './apikeys/UserLocalWebhookHome';
 
 const Router = (): React.ReactElement => {
     const location = useLocation();
@@ -35,14 +38,41 @@ const Router = (): React.ReactElement => {
           <Route path="/home/plugins/:plugin/v/:version" element={<UserPluginsPage />} />
           <Route path="/home/plugins/:plugin" element={<UserPluginsPage />} />
           <Route path="/home/plugins" element={<UserPluginsPage />} />
+
+          <Route path="/home/settings" element={<UserPluginsPage />} />
+
+          <Route path="/home/local/api" element={<UserLocalApiHome />} />
+          <Route path="/home/local/webhooks" element={<UserLocalWebhookHome />} />
+          <Route path="/home/remote/api" element={<UserRemoteApiHome/>} />
+          <Route path="/home/remote/webhooks" element={<UserLocalApiHome />} />
+
           <Route path="/org/@/:handle" element={<OrganizationPage />} />
           <Route path="/org/@/:handle/create-repo" element={<CreateOrgRepoPage/>} />
           <Route path="/org/@/:handle/members" element={<OrganizationMembersPage/>} />
           <Route path="/org/@/:handle/invitations" element={<OrganizationInvitationsPage/>} />
           <Route path="/org/@/:handle/roles" element={<OrganizationRolesPage/>} />
+
+          <Route path="/org/@/:handle/api" element={<OrganizationRolesPage/>} />
+          <Route path="/org/@/:handle/webhooks" element={<OrganizationRolesPage/>} />
+
+          <Route path="/org/@/:handle/settings" element={<OrganizationRolesPage/>} />
+
+          <Route path="/org/@/:handle/billing/overview" element={<OrganizationRolesPage/>} />
+          <Route path="/org/@/:handle/billing/payment-details" element={<OrganizationRolesPage/>} />
+          <Route path="/org/@/:handle/billing/invoices" element={<OrganizationRolesPage/>} />
+
+          <Route path="/user/@/:handle" element={<UserPluginsPage />} />
+          <Route path="/user/@/:handle/plugins" element={<UserPluginsPage />} />
+          <Route path="/user/@/:handle/plugins/:plugin/v/:version" element={<UserPluginsPage />} />
+          <Route path="/user/@/:handle/plugins/:plugin" element={<UserPluginsPage />} />
+
+          <Route path="/org/@/:handle/plugins/:plugin/v/:version" element={<UserPluginsPage />} />
+          <Route path="/org/@/:handle/plugins/:plugin" element={<UserPluginsPage />} />
+
           <Route path="/repo/@/:ownerHandle/:repoName/history" element={<RepoHistoryPage page={'history'}/>} />
           <Route path="/repo/@/:ownerHandle/:repoName/settings" element={<RepoHomeSettingsPage/>} />
           <Route path="/repo/@/:ownerHandle/:repoName/settings/api" element={<RepoHomeSettingsPage/>} />
+          <Route path="/repo/@/:ownerHandle/:repoName/settings/webhooks" element={<RepoHomeSettingsPage/>} />
           <Route path="/repo/@/:ownerHandle/:repoName/settings/branchrules/:branchRuleId" element={<RepoHomeBranchRuleSettingsPage/>} />
           <Route path="/repo/@/:ownerHandle/:repoName/mergerequests/create/:branchId" element={<RepoCreateMergeRequestPage/>} />
           <Route path="/repo/@/:ownerHandle/:repoName/mergerequests/:mergeRequestId/review" element={<RepoMergeRequestPage/>} />
