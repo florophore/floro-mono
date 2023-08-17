@@ -10,6 +10,10 @@ import { RepoEnabledRoleSetting } from "./RepoEnabledRoleSetting";
 import { RepoEnabledUserSetting } from "./RepoEnabledUserSetting";
 import { MergeRequest } from "./MergeRequest";
 import { IgnoredBranchNotification } from "./IgnoredBranchNotification";
+import { RepositoryEnabledApiKey } from "./RepositoryEnabledApiKey";
+import { RepositoryEnabledWebhookKey } from "./RepositoryEnabledWebhookKey";
+import { ApiEvent } from "./ApiEvent";
+import { WebhookEvent } from "./WebhookEvent";
 
 @Entity("repositories")
 export class Repository extends BinaryPKBaseEntity {
@@ -130,4 +134,20 @@ export class Repository extends BinaryPKBaseEntity {
   @OneToMany("IgnoredBranchNotification", "repository")
   @JoinColumn()
   ignoredBranchNotifications?: Relation<IgnoredBranchNotification>[];
+
+  @OneToMany("ApiEvent", "repository")
+  @JoinColumn()
+  apiEvents?: Relation<ApiEvent>[];
+
+  @OneToMany("RepositoryEnabledApiKey", "repository")
+  @JoinColumn()
+  repositoryEnabledApiKeys?: Relation<RepositoryEnabledApiKey>[];
+
+  @OneToMany("RepositoryEnabledWebhookKey", "repository")
+  @JoinColumn()
+  repositoryEnabledWebhookKeys?: Relation<RepositoryEnabledWebhookKey>[];
+
+  @OneToMany("WebhookEvent", "repository")
+  @JoinColumn()
+  webhookEvents?: Relation<WebhookEvent>[];
 }

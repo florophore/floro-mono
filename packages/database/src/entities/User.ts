@@ -21,6 +21,10 @@ import { ReviewStatus } from "./ReviewStatus";
 import { MergeRequestEvent } from "./MergeRequestEvent";
 import { IgnoredBranchNotification } from "./IgnoredBranchNotification";
 import { RepoEnabledRoleSetting } from "./RepoEnabledRoleSetting";
+import { ApiKey } from "./ApiKey";
+import { WebhookKey } from "./WebhookKey";
+import { RepositoryEnabledWebhookKey } from "./RepositoryEnabledWebhookKey";
+import { RepositoryEnabledApiKey } from "./RepositoryEnabledApiKey";
 
 @Entity("users")
 export class User extends BinaryPKBaseEntity {
@@ -150,4 +154,36 @@ export class User extends BinaryPKBaseEntity {
   @OneToMany("IgnoredBranchNotification", "user")
   @JoinColumn()
   ignoredBranchNotifications?: Relation<IgnoredBranchNotification>[];
+
+  @OneToMany("ApiKey", "createdByUser")
+  @JoinColumn()
+  createdApiKeys?: Relation<ApiKey>[];
+
+  @OneToMany("ApiKey", "user")
+  @JoinColumn()
+  apiKeys?: Relation<ApiKey>[];
+
+  @OneToMany("WebhookKey", "createdByUser")
+  @JoinColumn()
+  createdWebhookKeys?: Relation<WebhookKey>[];
+
+  @OneToMany("WebhookKey", "user")
+  @JoinColumn()
+  webhookKeys?: Relation<WebhookKey>[];
+
+  @OneToMany("RepositoryEnabledApiKey", "createdByUser")
+  @JoinColumn()
+  createdRepositoryEnabledApiKeys?: Relation<RepositoryEnabledApiKey>[];
+
+  @OneToMany("RepositoryEnabledApiKey", "user")
+  @JoinColumn()
+  repositoryEnabledApiKeys?: Relation<RepositoryEnabledApiKey>[];
+
+  @OneToMany("RepositoryEnabledWebhookKey", "createdByUser")
+  @JoinColumn()
+  createdRepositoryEnabledWebhookKeys?: Relation<RepositoryEnabledWebhookKey>[];
+
+  @OneToMany("RepositoryEnabledWebhookKey", "user")
+  @JoinColumn()
+  repositoryEnabledWebhookKeys?: Relation<RepositoryEnabledWebhookKey>[];
 }

@@ -33,6 +33,10 @@ import { PluginVersion } from "./PluginVersion";
 import { Branch } from "./Branch";
 import { Commit } from "./Commit";
 import { MergeRequest } from "./MergeRequest";
+import { ApiKey } from "./ApiKey";
+import { WebhookKey } from "./WebhookKey";
+import { RepositoryEnabledWebhookKey } from "./RepositoryEnabledWebhookKey";
+import { RepositoryEnabledApiKey } from "./RepositoryEnabledApiKey";
 
 @Entity("organizations")
 export class Organization extends BinaryPKBaseEntity {
@@ -169,4 +173,20 @@ export class Organization extends BinaryPKBaseEntity {
   @OneToMany("MergeRequest", "organization")
   @JoinColumn()
   mergeRequests?: Relation<MergeRequest>[];
+
+  @OneToMany("ApiKey", "organization")
+  @JoinColumn()
+  apiKeys?: Relation<ApiKey>[];
+
+  @OneToMany("WebhookKey", "organization")
+  @JoinColumn()
+  webhookKeys?: Relation<WebhookKey>[];
+
+  @OneToMany("RepositoryEnabledApiKey", "organization")
+  @JoinColumn()
+  repositoryEnabledApiKeys?: Relation<RepositoryEnabledApiKey>[];
+
+  @OneToMany("RepositoryEnabledWebhookKey", "organization")
+  @JoinColumn()
+  repositoryEnabledWebhookKeys?: Relation<RepositoryEnabledWebhookKey>[];
 }
