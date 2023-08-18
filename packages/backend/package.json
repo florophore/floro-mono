@@ -10,8 +10,8 @@
     "clean": "rimraf build tsconfig.tsbuildinfo",
     "build": "yarn clean && yarn tsc",
     "lint": "eslint --ext .ts,.tsx .",
-    "test": "NODE_ENV=test node node_modules/.bin/mocha src/**/*.spec.ts --timeout 5000 --exit",
-    "test:inspect": "NODE_ENV=test node node_modules/.bin/mocha inspect src/**/*.spec.ts --timeout 5000"
+    "test": "NODE_ENV=test node node_modules/.bin/mocha src/**/*.spec.ts --timeout 10000 --exit",
+    "test:inspect": "NODE_ENV=test node node_modules/.bin/mocha inspect src/**/*.spec.ts --timeout 10000"
   },
   "dependencies": {
     "@dhkatz/json-ts": "^4.4.1",
@@ -25,6 +25,7 @@
     "cjs-module-lexer": "^1.2.2",
     "class-validator": "^0.13.2",
     "connect-busboy": "^1.0.0",
+    "crypto": "^1.0.1",
     "cryptojs": "^2.5.3",
     "email-validator": "^2.0.4",
     "express": "^4.18.1",

@@ -35,6 +35,8 @@ import OrganizationRolesContext from "@floro/database/src/contexts/organizations
 import OrganizationMemberCountLoader from "../hooks/loaders/Organization/OrganizationMemberCountLoader";
 import RepositoryService from "../../services/repositories/RepositoryService";
 import RepoRBACService from "../../services/repositories/RepoRBACService";
+import ApiKeysContext from "@floro/database/src/contexts/api_keys/ApiKeysContext";
+import WebhookKeysContext from "@floro/database/src/contexts/api_keys/WebhookKeysContext";
 
 @injectable()
 export default class OrganizationResolverModule extends BaseResolverModule {
@@ -797,6 +799,72 @@ export default class OrganizationResolverModule extends BaseResolverModule {
           privateCount + publicCount
         );
         return privateCount + publicCount;
+      }
+    ),
+    apiKeys: runWithHooks(
+      () => [this.organizationMemberPermissionsLoader],
+      async (
+        organization,
+        _,
+        { currentUser, cacheKey }
+      ) => {
+        if (!currentUser) {
+          return null;
+        }
+        if (!organization.id) {
+          return null;
+        }
+        const organizationMembership =
+          this.requestCache.getOrganizationMembership(
+            cacheKey,
+            organization.id as string,
+            currentUser.id
+          );
+        if (organizationMembership?.membershipState != "active") {
+          return null;
+        }
+        const permissions = this.requestCache.getMembershipPermissions(
+          cacheKey,
+          organizationMembership.id
+        );
+        if (!permissions.canModifyOrganizationDeveloperSettings) {
+          return null;
+        }
+        const apiKeysContext = await this.contextFactory.createContext(ApiKeysContext);
+        return await apiKeysContext.getOrganizationApiKeys(organization.id)
+      }
+    ),
+    webhookKeys: runWithHooks(
+      () => [this.organizationMemberPermissionsLoader],
+      async (
+        organization,
+        _,
+        { currentUser, cacheKey }
+      ) => {
+        if (!currentUser) {
+          return null;
+        }
+        if (!organization.id) {
+          return null;
+        }
+        const organizationMembership =
+          this.requestCache.getOrganizationMembership(
+            cacheKey,
+            organization.id as string,
+            currentUser.id
+          );
+        if (organizationMembership?.membershipState != "active") {
+          return null;
+        }
+        const permissions = this.requestCache.getMembershipPermissions(
+          cacheKey,
+          organizationMembership.id
+        );
+        if (!permissions.canModifyOrganizationDeveloperSettings) {
+          return null;
+        }
+        const webhookKeysContext = await this.contextFactory.createContext(WebhookKeysContext);
+        return await webhookKeysContext.getOrganizationWebhookKeys(organization.id);
       }
     ),
   };

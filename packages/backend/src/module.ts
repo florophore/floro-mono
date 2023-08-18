@@ -102,6 +102,16 @@ import CommitService from './services/merge_requests/CommitService';
 import UserClosedMergeRequestsLoader from './resolvers/hooks/loaders/MergeRequest/UserClosedMergeRequestsLoader';
 import RevertService from './services/repositories/RevertService';
 import BranchStateRepositoryLoader from './resolvers/hooks/loaders/Repository/BranchStateRepoLoader';
+import ApiKeyService from './services/api_keys/ApiKeyService';
+import WebhookKeyService from './services/api_keys/WebhookKeyService';
+import WebhookKeyResolverModule from './resolvers/api_keys/WebhookKeyResolverModule';
+import ApiKeyResolverModule from './resolvers/api_keys/ApiKeyResolverModule';
+import ApiKeyLoader from './resolvers/hooks/loaders/ApiKey/ApiKeyLoader';
+import WebhookKeyLoader from './resolvers/hooks/loaders/ApiKey/WebhookKeyLoader';
+import OrgApiKeyGuard from './resolvers/hooks/guards/OrgApiKeyGuard';
+import OrgWebhookKeyGuard from './resolvers/hooks/guards/OrgWebhookKeyGuard';
+import UserApiKeyGuard from './resolvers/hooks/guards/UserApiKeyGuard';
+import UserWebhookKeyGuard from './resolvers/hooks/guards/UserWebhookKeyGuard';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -176,6 +186,15 @@ export default new ContainerModule((bind): void => {
     bind(RepositoryRemoteSettingsArgsLoader).toSelf();
     bind(UserClosedMergeRequestsLoader).toSelf();
 
+    // API KEYs
+    bind(ApiKeyLoader).toSelf();
+    bind(WebhookKeyLoader).toSelf();
+
+    bind(OrgApiKeyGuard).toSelf();
+    bind(OrgWebhookKeyGuard).toSelf();
+    bind(UserApiKeyGuard).toSelf();
+    bind(UserWebhookKeyGuard).toSelf();
+
     // SERVICES
     bind(AuthenticationService).toSelf();
     bind(UsersService).toSelf();
@@ -213,6 +232,10 @@ export default new ContainerModule((bind): void => {
     bind(MergeRequestEventService).toSelf();
     bind(MergeService).toSelf();
     bind(PreMergeCommitQueue).toSelf();
+
+    // API KEYS
+    bind(ApiKeyService).toSelf();
+    bind(WebhookKeyService).toSelf();
 
     // EVENT HANDLERS
 
@@ -263,6 +286,8 @@ export default new ContainerModule((bind): void => {
     bind<PluginVersionResolverModule>("ResolverModule").to(PluginVersionResolverModule);
     bind<MergeRequestResolverModule>("ResolverModule").to(MergeRequestResolverModule);
     bind<RepositoryProtectedBranchesResolverModule>("ResolverModule").to(RepositoryProtectedBranchesResolverModule);
+    bind<ApiKeyResolverModule>("ResolverModule").to(ApiKeyResolverModule);
+    bind<WebhookKeyResolverModule>("ResolverModule").to(WebhookKeyResolverModule);
 
     // ADMIN MODULES OVERRIDE WITH AdminResolverModule
     bind<AdminUsersResolverModule>("AdminResolverModule").to(AdminUsersResolverModule);

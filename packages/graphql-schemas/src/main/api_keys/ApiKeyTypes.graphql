@@ -1,0 +1,80 @@
+type ApiKey {
+    id: ID
+    keyName: String
+    keyType: String
+    secret: String
+    isEnabled: Boolean
+}
+
+type WebhookKey {
+    id: ID
+    domain: String
+    keyType: String
+    secret: String
+    txtRecord: String
+    defaultSubdomain: String
+    defaultProtocol: String
+    defaultPort: Int
+    isEnabled: Boolean
+    isVerified: Boolean
+}
+
+type UserApiKeySuccess {
+  user: User
+  apiKey: ApiKey
+}
+
+type UserApiKeyError {
+  type: String
+  message: String
+}
+
+union UserApiKeyResponse =
+    UserApiKeySuccess
+  | UserApiKeyError
+  | UnAuthenticatedError
+
+type UserWebhookKeySuccess {
+  user: User
+  webhookKey: WebhookKey
+}
+
+type UserWebhookKeyError {
+  type: String
+  message: String
+}
+
+union UserWebhookKeyResponse =
+    UserWebhookKeySuccess
+  | UserWebhookKeyError
+  | UnAuthenticatedError
+
+type OrganizationApiKeySuccess {
+  organization: Organization
+  apiKey: ApiKey
+}
+
+type OrganizationApiKeyError {
+  type: String
+  message: String
+}
+
+union OrganizationApiKeyResponse =
+    OrganizationApiKeySuccess
+  | OrganizationApiKeyError
+  | UnAuthenticatedError
+
+type OrganizationWebhookKeySuccess {
+  organization: Organization
+  webhookKey: WebhookKey
+}
+
+type OrganizationWebhookKeyError {
+    type: String
+    message: String
+}
+
+union OrganizationWebhookKeyResponse =
+    OrganizationWebhookKeySuccess
+  | OrganizationWebhookKeyError
+  | UnAuthenticatedError

@@ -10,13 +10,15 @@ import sizeof from "object-sizeof";
 import { OrganizationInvitation } from "@floro/database/src/entities/OrganizationInvitation";
 import { Repository } from "@floro/database/src/entities/Repository";
 import { Branch as FloroBranch, RemoteSettings} from "floro/dist/src/repo";
-import { MergeRequestPermissions, PluginVersion, RepositoryBranchStateArgs } from "@floro/graphql-schemas/build/generated/main-graphql";
+import { MergeRequestPermissions, PluginVersion } from "@floro/graphql-schemas/build/generated/main-graphql";
 import { Commit } from "@floro/database/src/entities/Commit";
 import { DataSource } from "floro/dist/src/datasource";
 import { MergeRequest } from "@floro/database/src/entities/MergeRequest";
 import { MergeRequestComment } from "@floro/database/src/entities/MergeRequestComment";
 import { MergeRequestCommentReply } from "@floro/database/src/entities/MergeRequestCommentReply";
 import { ProtectedBranchRule } from "@floro/database/src/entities/ProtectedBranchRule";
+import { ApiKey } from "@floro/database/src/entities/ApiKey";
+import { WebhookKey } from "@floro/database/src/entities/WebhookKey";
 
 @injectable()
 export default class RequestCache {
@@ -828,7 +830,6 @@ export default class RequestCache {
   }
 
 
-
   public getProtectedBranchRule(
     cacheKey: string,
     protectedBranchRuleId: string,
@@ -843,5 +844,37 @@ export default class RequestCache {
   ) {
     const cache = this.getCache(cacheKey);
     cache[`protected-branch-rule:${protectedBranchRule.id}`] = protectedBranchRule;
+  }
+
+  public getApiKey(
+    cacheKey: string,
+    apiKeyId: string,
+  ): ApiKey {
+    const cache = this.getCache(cacheKey);
+    return cache[`api-key:${apiKeyId}`] as ApiKey;
+  }
+
+  public setApiKey(
+    cacheKey: string,
+    apiKey: ApiKey,
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`api-key:${apiKey.id}`] = apiKey;
+  }
+
+  public getWebhookKey(
+    cacheKey: string,
+    apiKeyId: string,
+  ): WebhookKey {
+    const cache = this.getCache(cacheKey);
+    return cache[`webhook-key:${apiKeyId}`] as WebhookKey;
+  }
+
+  public setWebhookKey(
+    cacheKey: string,
+    apiKey: WebhookKey,
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`webhook-key:${apiKey.id}`] = apiKey;
   }
 }

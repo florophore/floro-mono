@@ -28,6 +28,9 @@ type Organization {
   publicPlugins: [Plugin]
   privatePlugins: [Plugin]
   pluginCount: Int
+
+  apiKeys: [ApiKey]
+  webhookKeys: [WebhookKey]
 }
 
 type PaginatedOrganizationMembers {

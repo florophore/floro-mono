@@ -18,11 +18,8 @@ import {
 } from "typeorm";
 import { BinaryPKBaseEntity } from "./BinaryPKBaseEntity";
 import { Organization } from "./Organization";
-import { OrganizationInvitationRole } from "./OrganizationInvitationRole";
-import { OrganizationMember } from "./OrganizationMember";
 import { User } from "./User";
 import { RepositoryEnabledApiKey } from "./RepositoryEnabledApiKey";
-import { RepositoryEnabledWebhookKey } from "./RepositoryEnabledWebhookKey";
 import { ApiEvent } from "./ApiEvent";
 
 @Entity("api_keys")

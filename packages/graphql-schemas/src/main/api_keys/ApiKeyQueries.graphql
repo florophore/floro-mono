@@ -1,0 +1,25 @@
+extend type Mutation {
+    createUserApiKey(keyName: String!): UserApiKeyResponse
+    regenerateUserApiKey(apiKeyId: ID!): UserApiKeyResponse
+    updateUserApiKeyEnabled(apiKeyId: ID!, isEnabled: Boolean!): UserApiKeyResponse
+    deleteUserApiKey(apiKeyId: ID!): UserApiKeyResponse
+
+    createOrganizationApiKey(organizationId: ID!, keyName: String!): OrganizationApiKeyResponse
+    regenerateOrganizationApiKey(organizationId: ID!, apiKeyId: ID!): OrganizationApiKeyResponse
+    deleteOrganizationApiKey(organizationId: ID!, apiKeyId: ID!): OrganizationApiKeyResponse
+    updateOrganizationApiKeyEnabled(organizationId: ID!, apiKeyId: ID!, isEnabled: Boolean!): OrganizationApiKeyResponse
+
+    createUserWebhookKey(domain: String!, defaultSubdomain: String, defaultProtocol: String, defaultPort: Int): UserWebhookKeyResponse
+    updateUserWebhookKey(webhookKeyId: ID!, defaultSubdomain: String, defaultProtocol: String, defaultPort: Int): UserWebhookKeyResponse
+    verifyUserWebhookKey(webhookKeyId: ID!): UserWebhookKeyResponse
+    regenerateUserWebhookKey(webhookKeyId: ID!): UserWebhookKeyResponse
+    deleteUserWebhookKey(webhookKeyId: ID!): UserWebhookKeyResponse
+    updateUserWebhookKeyEnabled(webhookKeyId: ID!, isEnabled: Boolean!): UserWebhookKeyResponse
+
+    createOrganizationWebhookKey(organizationId: ID!, domain: String!, defaultSubdomain: String, defaultProtocol: String, defaultPort: Int): OrganizationWebhookKeyResponse
+    updateOrganizationWebhookKey(organizationId: ID!, webhookKeyId: ID!, defaultSubdomain: String, defaultProtocol: String, defaultPort: Int): OrganizationWebhookKeyResponse
+    verifyOrganizationWebhookKey(organizationId: ID!, webhookKeyId: ID!): OrganizationWebhookKeyResponse
+    regenerateOrganizationWebhookKey(organizationId: ID!, webhookKeyId: ID!): OrganizationWebhookKeyResponse
+    deleteOrganizationWebhookKey(organizationId: ID!, webhookKeyId: ID!): OrganizationWebhookKeyResponse
+    updateOrganizationWebhookKeyEnabled(organizationId: ID!, webhookKeyId: ID!, isEnabled: Boolean!): OrganizationWebhookKeyResponse
+}
