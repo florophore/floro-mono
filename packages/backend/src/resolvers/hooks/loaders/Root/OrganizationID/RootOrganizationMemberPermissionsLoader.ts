@@ -64,6 +64,7 @@ export default class RootOrganizationMemberPermissionsLoader extends LoaderResol
         this.organizationPermissionsService.calculatePermissions(
           cachedRoles ?? []
         );
+
       this.requestCache.setMembershipPermissions(
         context.cacheKey,
         membership,

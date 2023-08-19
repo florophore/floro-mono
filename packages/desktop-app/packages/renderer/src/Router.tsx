@@ -23,6 +23,9 @@ import RepoHomeBranchRuleSettingsPage from './repository/RepoHomeBranchRuleSetti
 import UserLocalApiHome from './apikeys/UserLocalApiHome';
 import UserRemoteApiHome from './apikeys/UserRemoteApiHome';
 import UserLocalWebhookHome from './apikeys/UserLocalWebhookHome';
+import UserRemoteWebhookHome from './apikeys/UserRemoteWebhookHome';
+import OrgRemoteApiHome from './apikeys/OrgRemoteApiHome';
+import OrgRemoteWebhookHome from './apikeys/OrgRemoteWebhookHome';
 
 const Router = (): React.ReactElement => {
     const location = useLocation();
@@ -44,7 +47,7 @@ const Router = (): React.ReactElement => {
           <Route path="/home/local/api" element={<UserLocalApiHome />} />
           <Route path="/home/local/webhooks" element={<UserLocalWebhookHome />} />
           <Route path="/home/remote/api" element={<UserRemoteApiHome/>} />
-          <Route path="/home/remote/webhooks" element={<UserLocalApiHome />} />
+          <Route path="/home/remote/webhooks" element={<UserRemoteWebhookHome />} />
 
           <Route path="/org/@/:handle" element={<OrganizationPage />} />
           <Route path="/org/@/:handle/create-repo" element={<CreateOrgRepoPage/>} />
@@ -52,8 +55,8 @@ const Router = (): React.ReactElement => {
           <Route path="/org/@/:handle/invitations" element={<OrganizationInvitationsPage/>} />
           <Route path="/org/@/:handle/roles" element={<OrganizationRolesPage/>} />
 
-          <Route path="/org/@/:handle/api" element={<OrganizationRolesPage/>} />
-          <Route path="/org/@/:handle/webhooks" element={<OrganizationRolesPage/>} />
+          <Route path="/org/@/:handle/remote/api" element={<OrgRemoteApiHome/>} />
+          <Route path="/org/@/:handle/remote/webhooks" element={<OrgRemoteWebhookHome/>} />
 
           <Route path="/org/@/:handle/settings" element={<OrganizationRolesPage/>} />
 

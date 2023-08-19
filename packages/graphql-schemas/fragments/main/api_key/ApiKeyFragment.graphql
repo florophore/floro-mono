@@ -1,0 +1,6 @@
+fragment ApiKey on ApiKey {
+  id
+  keyName
+  secret
+  isEnabled
+}

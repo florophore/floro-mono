@@ -1,7 +1,6 @@
 type ApiKey {
     id: ID
     keyName: String
-    keyType: String
     secret: String
     isEnabled: Boolean
 }
@@ -9,7 +8,6 @@ type ApiKey {
 type WebhookKey {
     id: ID
     domain: String
-    keyType: String
     secret: String
     txtRecord: String
     defaultSubdomain: String
@@ -17,6 +15,7 @@ type WebhookKey {
     defaultPort: Int
     isEnabled: Boolean
     isVerified: Boolean
+    dnsVerificationCode: String
 }
 
 type UserApiKeySuccess {

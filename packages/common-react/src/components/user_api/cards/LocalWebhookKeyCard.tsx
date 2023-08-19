@@ -1,17 +1,13 @@
-import React, { useMemo, useCallback, useState } from "react";
+import React, { useMemo, useCallback, useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
-import UserProfilePhoto from "@floro/storybook/stories/common-components/UserProfilePhoto";
-import {
-  Organization,
-  OrganizationMember,
-} from "@floro/graphql-schemas/src/generated/main-client-graphql";
-import ColorPalette from "@floro/styles/ColorPalette";
-import TimeAgo from "javascript-time-ago";
 import Button from "@floro/storybook/stories/design-system/Button";
-import { ApiKey, WebhookKey } from "floro/dist/src/apikeys";
+import { WebhookKey } from "floro/dist/src/apikeys";
 import SecretDisplay from "../SecretDisplay";
 
+
+import EditLight from "@floro/common-assets/assets/images/icons/edit.light.svg"
+import EditDark from "@floro/common-assets/assets/images/icons/edit.dark.svg"
 
 import TrashLight from "@floro/common-assets/assets/images/icons/trash.light.darker.svg"
 import TrashDark from "@floro/common-assets/assets/images/icons/trash.dark.svg"
@@ -19,8 +15,10 @@ import TrashDark from "@floro/common-assets/assets/images/icons/trash.dark.svg"
 import RefreshLight from "@floro/common-assets/assets/images/icons/refresh.light.svg";
 import RefreshDark from "@floro/common-assets/assets/images/icons/refresh.dark.svg";
 import DotsLoader from "@floro/storybook/stories/design-system/DotsLoader";
-import { useDeleteApiKey, useDeleteWebhookKey, useRegenerateApiKey, useRegenerateWebhookKey } from "../local-api-hooks";
+import {  useDeleteWebhookKey, useRegenerateWebhookKey } from "../local-api-hooks";
 import UpdateLocalWebhookDomainModal from "../modals/UpdateLocalWebhookDomainModal";
+import ConfirmDeleteKey from "../modals/ConfirmDeleteKey";
+import ConfirmRegenerateKey from "../modals/ConfirmRegenerateKey";
 
 const Container = styled.div`
   margin-top: 14px;
@@ -44,7 +42,7 @@ const IconRow = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  width: 72px;
+  width: 108px;
 `;
 
 const KeyTitle = styled.h4`
@@ -100,6 +98,29 @@ export interface Props {
 const LocalWebhookKeyCard = (props: Props): React.ReactElement => {
   const theme = useTheme();
   const [showUpdate, setShowUpdate] = useState(false);
+  const [showEditMode, setShowEditMode] = useState(false);
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [showConfirmRegenerate, setShowConfirmRegenerate] = useState(false);
+
+  const onToggleEditMode = useCallback(() => {
+    setShowEditMode(!showEditMode);
+  }, [showEditMode])
+
+  const onShowConfirmDelete = useCallback(() => {
+    setShowConfirmDelete(true);
+  }, []);
+
+  const onHideConfirmDelete = useCallback(() => {
+    setShowConfirmDelete(false);
+  }, []);
+
+  const onShowConfirmRegenerate = useCallback(() => {
+    setShowConfirmRegenerate(true);
+  }, []);
+
+  const onHideConfirmRegenerate = useCallback(() => {
+    setShowConfirmRegenerate(false);
+  }, []);
 
   const onShowUpdate = useCallback(() => {
     setShowUpdate(true);
@@ -108,6 +129,7 @@ const LocalWebhookKeyCard = (props: Props): React.ReactElement => {
   const onHideUpdate = useCallback(() => {
     setShowUpdate(false);
   }, []);
+
 
   const regenerateKeyMutation = useRegenerateWebhookKey();
   const deleteKeyMutation = useDeleteWebhookKey();
@@ -123,6 +145,13 @@ const LocalWebhookKeyCard = (props: Props): React.ReactElement => {
         id: props.localWebhookKey.id
     })
   }, [props.localWebhookKey]);
+
+  const editIcon = useMemo(() => {
+    if (theme.name == "light") {
+        return EditLight;
+    }
+    return EditDark;
+  }, [theme.name]);
 
   const trashIcon = useMemo(() => {
     if (theme.name == "light") {
@@ -160,8 +189,36 @@ const LocalWebhookKeyCard = (props: Props): React.ReactElement => {
     props?.localWebhookKey?.defaultPort,
   ]);
 
+  useEffect(() => {
+    if (deleteKeyMutation.isSuccess) {
+      deleteKeyMutation.reset();
+      setShowConfirmDelete(false);
+    }
+  }, [deleteKeyMutation.isSuccess])
+
+  useEffect(() => {
+    if (regenerateKeyMutation.isSuccess) {
+      regenerateKeyMutation.reset();
+      setShowConfirmRegenerate(false);
+    }
+  }, [regenerateKeyMutation.isSuccess])
+
   return (
     <>
+      <ConfirmDeleteKey
+        show={showConfirmDelete}
+        onDismiss={onHideConfirmDelete}
+        onConfirm={onDeleteKey}
+        keyName={props.localWebhookKey.domain}
+        isLoading={deleteKeyMutation.isLoading}
+      />
+      <ConfirmRegenerateKey
+        show={showConfirmRegenerate}
+        onDismiss={onHideConfirmRegenerate}
+        onConfirm={onRegenKey}
+        keyName={props.localWebhookKey.domain}
+        isLoading={regenerateKeyMutation.isLoading}
+      />
       <UpdateLocalWebhookDomainModal
         onDismissModal={onHideUpdate}
         show={showUpdate}
@@ -174,22 +231,25 @@ const LocalWebhookKeyCard = (props: Props): React.ReactElement => {
       >
         <TopRow>
           <KeyTitle>{props.localWebhookKey.domain}</KeyTitle>
-          <IconRow>
-            {!isLoading && (
-              <>
-                <Icon onClick={onRegenKey} src={refreshIcon} />
-                <Icon onClick={onDeleteKey} src={trashIcon} />
-              </>
-            )}
-            {isLoading && (
-              <>
-                <DotsLoader
-                  size="small"
-                  color={theme.name == "light" ? "gray" : "white"}
-                />
-              </>
-            )}
-          </IconRow>
+          {showEditMode && (
+            <IconRow>
+              {!isLoading && (
+                <>
+                  <Icon onClick={onShowUpdate} src={editIcon} />
+                  <Icon onClick={onShowConfirmRegenerate} src={refreshIcon} />
+                  <Icon onClick={onShowConfirmDelete} src={trashIcon} />
+                </>
+              )}
+              {isLoading && (
+                <>
+                  <DotsLoader
+                    size="small"
+                    color={theme.name == "light" ? "gray" : "white"}
+                  />
+                </>
+              )}
+            </IconRow>
+          )}
         </TopRow>
         <div>
           <DefaultTitle>
@@ -200,7 +260,7 @@ const LocalWebhookKeyCard = (props: Props): React.ReactElement => {
         <ButtonRow>
           <DefaultTitle style={{ padding: 0 }}>{"secret: "}</DefaultTitle>
           <SecretDisplay secret={props.localWebhookKey.secret} />
-          <Button label={"edit"} bg={"orange"} size={"small"} onClick={onShowUpdate} />
+          <Button onClick={onToggleEditMode} label={!showEditMode ? "edit" : "done"} bg={!showEditMode ? "orange" : "gray"} size={"small"} />
         </ButtonRow>
       </Container>
     </>

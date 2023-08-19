@@ -1,0 +1,12 @@
+fragment WebhookKey on WebhookKey {
+  id
+  domain
+  secret
+  isEnabled
+  txtRecord
+  defaultSubdomain
+  defaultProtocol
+  defaultPort
+  isEnabled
+  isVerified
+}

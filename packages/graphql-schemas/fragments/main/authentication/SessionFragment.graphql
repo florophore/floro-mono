@@ -3,6 +3,12 @@ fragment Session on Session {
   clientKey
   user {
     ...User
+    apiKeys {
+      ...ApiKey
+    }
+    webhookKeys {
+      ...WebhookKey
+    }
   }
   authenticationCredentials {
     ...UserAuthCredential
@@ -10,5 +16,4 @@ fragment Session on Session {
   expiresAt
   expiresAt
   createdAt
-  exchangeHistory
 }

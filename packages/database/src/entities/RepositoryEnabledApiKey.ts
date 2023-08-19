@@ -49,7 +49,7 @@ export class RepositoryEnabledApiKey extends BinaryPKBaseEntity {
   user?: Relation<User>;
 
   @Column("uuid")
-  createByUserId!: string;
+  createdByUserId!: string;
 
   @ManyToOne("User", "createdRepositoryEnabledApiKeys")
   @JoinColumn({ name: "created_by_user_id" })

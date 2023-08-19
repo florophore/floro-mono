@@ -1,0 +1,20 @@
+mutation UpdateOrganizationApiKeyEnabled($organizationId: ID!, $apiKeyId: ID!, $isEnabled: Boolean!) {
+    updateOrganizationApiKeyEnabled(organizationId: $organizationId, apiKeyId: $apiKeyId, isEnabled: $isEnabled) {
+        ... on OrganizationApiKeySuccess {
+            organization {
+                id
+                apiKeys {
+                    ...ApiKey
+                }
+            }
+        }
+        ... on OrganizationApiKeyError {
+            type
+            message
+        }
+        ... on UnAuthenticatedError {
+            type
+            message
+        }
+    }
+}

@@ -65,7 +65,7 @@ export class ApiKey extends BinaryPKBaseEntity {
   user?: Relation<User>;
 
   @Column("uuid")
-  createByUserId!: string;
+  createdByUserId!: string;
 
   @ManyToOne("User", "createdApiKeys")
   @JoinColumn({ name: "created_by_user_id" })

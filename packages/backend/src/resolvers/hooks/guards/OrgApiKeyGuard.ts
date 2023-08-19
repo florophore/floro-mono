@@ -58,7 +58,7 @@ export default class OrgApiKeyGuard extends GuardResolverHook<
       const organizationMembership =
         this.requestCache.getOrganizationMembership(
           context.cacheKey,
-          context.organizationId as string,
+          args.organizationId as string,
           context.currentUser.id
         );
       if (organizationMembership?.membershipState != "active") {

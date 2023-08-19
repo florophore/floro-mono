@@ -77,5 +77,11 @@ fragment CurrentUser on User {
       }
     }
   }
+  apiKeys {
+    ...ApiKey
+  }
+  webhookKeys {
+    ...WebhookKey
+  }
 }
 

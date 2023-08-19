@@ -1,0 +1,20 @@
+mutation CreateUserWebhookKey($domain: String!, $defaultSubdomain: String, $defaultProtocol: String, $defaultPort: Int) {
+    createUserWebhookKey(domain: $domain, defaultSubdomain: $defaultSubdomain, defaultProtocol: $defaultProtocol, defaultPort: $defaultPort) {
+        ... on UserWebhookKeySuccess {
+            user {
+                id
+                webhookKeys {
+                    ...WebhookKey
+                }
+            }
+        }
+        ... on UserWebhookKeyError {
+            type
+            message
+        }
+        ... on UnAuthenticatedError {
+            type
+            message
+        }
+    }
+}

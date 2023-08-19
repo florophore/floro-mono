@@ -11,7 +11,7 @@ export default class RootOrganizationMemberRolesLoader extends LoaderResolverHoo
     protected requestCache!: RequestCache;
     private contextFactory!: ContextFactory;
     private rootOrganizationMemberLoader!: RootOrganizationMemberLoader;
-  
+
     constructor(
       @inject(ContextFactory) contextFactory: ContextFactory,
       @inject(RequestCache) requestCache: RequestCache,
@@ -29,7 +29,7 @@ export default class RootOrganizationMemberRolesLoader extends LoaderResolverHoo
         if (!context.currentUser) {
             return;
         }
-        const membership = this.requestCache.getOrganizationMembership(context.cacheKey, organizationId as string, context.currentUser.id); 
+        const membership = this.requestCache.getOrganizationMembership(context.cacheKey, organizationId as string, context.currentUser.id);
         if (!membership) {
             return;
         }
@@ -37,7 +37,7 @@ export default class RootOrganizationMemberRolesLoader extends LoaderResolverHoo
         if (cachedRoles) {
             return;
         }
-        const organizationMemberRolesContext = await this.contextFactory.createContext(OrganizationMemberRolesContext); 
+        const organizationMemberRolesContext = await this.contextFactory.createContext(OrganizationMemberRolesContext);
         const roles = await organizationMemberRolesContext.getRolesByMember(membership);
         this.requestCache.setMembershipRoles(context.cacheKey, membership, roles);
     });

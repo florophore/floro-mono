@@ -1,0 +1,20 @@
+mutation RegenerateUserWebhookKey($webhookKeyId: ID!) {
+    regenerateUserWebhookKey(webhookKeyId: $webhookKeyId) {
+        ... on UserWebhookKeySuccess {
+            user {
+                id
+                webhookKeys {
+                    ...WebhookKey
+                }
+            }
+        }
+        ... on UserWebhookKeyError {
+            type
+            message
+        }
+        ... on UnAuthenticatedError {
+            type
+            message
+        }
+    }
+}

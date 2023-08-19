@@ -1,10 +1,11 @@
-
-import React, { useCallback, useState, useEffect, useMemo } from "react";
+import React, { useCallback, useState } from "react";
 import styled from "@emotion/styled";
 import UserApiController from "@floro/storybook/stories/common-components/UserApiController";
-import { useTheme } from "@emotion/react";
 import { useDaemonIsConnected } from "../../pubsub/socket";
-import { useNavigate } from "react-router-dom";
+import { useSession } from "../../session/session-context";
+import RemoteUserApiKeyCard from "./cards/RemoteUserApiKeyCard";
+import { ApiKey } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import CreateRemoteUserApiKeyModal from "./modals/CreateRemoteUserApiKeyModal";
 
 const Container = styled.div`
   flex: 1;
@@ -28,17 +29,48 @@ const NoKeysTitle = styled.h1`
 `;
 
 const UserRemoteApi = () => {
-    const isDaemonConnected  = useDaemonIsConnected();
+  const isDaemonConnected = useDaemonIsConnected();
+  const { currentUser } = useSession();
+  const [showCreate, setShowCreate] = useState(false);
 
-    return (
-      <UserApiController isDaemonConnected={!!isDaemonConnected} page={"remote-api"}>
+  const onShowCreate = useCallback(() => {
+    setShowCreate(true);
+  }, []);
+  const onHideCreate = useCallback(() => {
+    setShowCreate(false);
+  }, []);
+
+  return (
+    <>
+      <CreateRemoteUserApiKeyModal
+        show={showCreate}
+        onDismissModal={onHideCreate}
+        apiKeys={(currentUser?.apiKeys ?? []) as Array<ApiKey>}
+      />
+      <UserApiController
+        onClickCreateApiKey={onShowCreate}
+        isDaemonConnected={!!isDaemonConnected}
+        page={"remote-api"}
+      >
         <Container>
           <Title>{"Remote API Keys"}</Title>
-          <div style={{ marginTop: 24, marginBottom: 24 }}>
-            <NoKeysTitle>{'No Remote Api Keys Added Yet'}</NoKeysTitle>
-          </div>
+          {(currentUser?.apiKeys?.length ?? 0) == 0 && (
+            <div style={{ marginTop: 24, marginBottom: 24 }}>
+              <NoKeysTitle>{"No Remote Api Keys Added Yet"}</NoKeysTitle>
+            </div>
+          )}
+          {(currentUser?.apiKeys?.length ?? 0) > 0 && (
+            <div style={{ marginTop: 24, marginBottom: 24 }}>
+              {currentUser?.apiKeys?.map((apiKey, index) => {
+                return (
+                  <RemoteUserApiKeyCard key={index} apiKey={apiKey as ApiKey} />
+                );
+              })}
+            </div>
+          )}
         </Container>
       </UserApiController>
-    );
-}
+    </>
+  );
+};
 export default React.memo(UserRemoteApi);

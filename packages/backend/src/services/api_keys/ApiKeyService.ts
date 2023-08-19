@@ -71,7 +71,7 @@ export default class ApiKeyService {
       const apiKey = await apiKeysContexts.create({
         secret,
         userId: user.id,
-        createByUserId: user.id,
+        createdByUserId: user.id,
         keyType: "user_key",
         keyName,
         isEnabled: true,
@@ -138,7 +138,7 @@ export default class ApiKeyService {
       }
       const apiKey = await apiKeysContexts.create({
         secret,
-        createByUserId: user.id,
+        createdByUserId: user.id,
         organizationId: organization.id as string,
         keyType: "org_key",
         keyName,

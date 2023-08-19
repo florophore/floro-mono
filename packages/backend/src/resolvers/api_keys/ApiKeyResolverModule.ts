@@ -9,15 +9,16 @@ import RootOrganizationMemberPermissionsLoader from "../hooks/loaders/Root/Organ
 import PhotoUploadService from "../../services/photos/PhotoUploadService";
 import MainConfig from "@floro/config/src/MainConfig";
 import ApiKeyService from "../../services/api_keys/ApiKeyService";
-import { Organization as DbOrganization } from "@floro/database/src/entities/Organization";
 import ApiKeyLoader from "../hooks/loaders/ApiKey/ApiKeyLoader";
 import OrgApiKeyGuard from "../hooks/guards/OrgApiKeyGuard";
 import UserApiKeyGuard from "../hooks/guards/UserApiKeyGuard";
+import DNSHelper from "../../utils/DNSHelper";
 
 @injectable()
 export default class ApiKeyResolverModule extends BaseResolverModule {
   public resolvers: Array<keyof this & keyof main.ResolversTypes> = [
     "Mutation",
+    "WebhookKey",
   ];
   protected mainConfig!: MainConfig;
   protected photoUploadService!: PhotoUploadService;
@@ -56,6 +57,25 @@ export default class ApiKeyResolverModule extends BaseResolverModule {
     this.orgApiKeyGuard = orgApiKeyGuard;
     this.userApiKeyGuard = userApiKeyGuard;
   }
+
+  public WebhookKey: main.WebhookKeyResolvers = {
+    txtRecord: (webhookKey) => {
+      if (webhookKey.isVerified) {
+        return null;
+      }
+      if (!webhookKey.id) {
+      }
+      return DNSHelper.getVerificationKey(
+        webhookKey as { id: string; dnsVerificationCode: string }
+      );
+    },
+    dnsVerificationCode: (webhookKey) => {
+      if (webhookKey.isVerified) {
+        return null;
+      }
+      return webhookKey.dnsVerificationCode ?? null;
+    },
+  };
 
   public Mutation: main.MutationResolvers = {
     createUserApiKey: runWithHooks(
@@ -184,7 +204,11 @@ export default class ApiKeyResolverModule extends BaseResolverModule {
     ),
     regenerateOrganizationApiKey: runWithHooks(
       () => [this.loggedInUserGuard, this.apiKeyLoader, this.orgApiKeyGuard],
-      async (_, args: main.MutationRegenerateOrganizationApiKeyArgs, { cacheKey}) => {
+      async (
+        _,
+        args: main.MutationRegenerateOrganizationApiKeyArgs,
+        { cacheKey }
+      ) => {
         const organization = this.requestCache.getOrganization(
           cacheKey,
           args.organizationId
@@ -200,9 +224,16 @@ export default class ApiKeyResolverModule extends BaseResolverModule {
     ),
     updateUserApiKeyEnabled: runWithHooks(
       () => [this.loggedInUserGuard, this.apiKeyLoader, this.userApiKeyGuard],
-      async (_, args: main.MutationUpdateUserApiKeyEnabledArgs, { cacheKey, currentUser }) => {
+      async (
+        _,
+        args: main.MutationUpdateUserApiKeyEnabledArgs,
+        { cacheKey, currentUser }
+      ) => {
         const apiKey = this.requestCache.getApiKey(cacheKey, args.apiKeyId);
-        const updatedApiKey = await this.apiKeyService.updateApiKeyIsEnabled(apiKey, args.isEnabled);
+        const updatedApiKey = await this.apiKeyService.updateApiKeyIsEnabled(
+          apiKey,
+          args.isEnabled
+        );
         return {
           __typename: "UserApiKeySuccess",
           user: currentUser,
@@ -212,13 +243,20 @@ export default class ApiKeyResolverModule extends BaseResolverModule {
     ),
     updateOrganizationApiKeyEnabled: runWithHooks(
       () => [this.loggedInUserGuard, this.apiKeyLoader, this.orgApiKeyGuard],
-      async (_, args: main.MutationUpdateOrganizationApiKeyEnabledArgs, { cacheKey}) => {
+      async (
+        _,
+        args: main.MutationUpdateOrganizationApiKeyEnabledArgs,
+        { cacheKey }
+      ) => {
         const organization = this.requestCache.getOrganization(
           cacheKey,
           args.organizationId
         );
         const apiKey = this.requestCache.getApiKey(cacheKey, args.apiKeyId);
-        const updatedApiKey = await this.apiKeyService.updateApiKeyIsEnabled(apiKey, args.isEnabled);
+        const updatedApiKey = await this.apiKeyService.updateApiKeyIsEnabled(
+          apiKey,
+          args.isEnabled
+        );
         return {
           __typename: "OrganizationApiKeySuccess",
           organization,
@@ -228,7 +266,11 @@ export default class ApiKeyResolverModule extends BaseResolverModule {
     ),
     deleteUserApiKey: runWithHooks(
       () => [this.loggedInUserGuard, this.apiKeyLoader, this.userApiKeyGuard],
-      async (_, args: main.MutationDeleteUserApiKeyArgs, { cacheKey, currentUser}) => {
+      async (
+        _,
+        args: main.MutationDeleteUserApiKeyArgs,
+        { cacheKey, currentUser }
+      ) => {
         const apiKey = this.requestCache.getApiKey(cacheKey, args.apiKeyId);
         const updatedApiKey = await this.apiKeyService.deleteApiKey(apiKey);
         return {
@@ -240,7 +282,11 @@ export default class ApiKeyResolverModule extends BaseResolverModule {
     ),
     deleteOrganizationApiKey: runWithHooks(
       () => [this.loggedInUserGuard, this.apiKeyLoader, this.orgApiKeyGuard],
-      async (_, args: main.MutationDeleteOrganizationApiKeyArgs, { cacheKey}) => {
+      async (
+        _,
+        args: main.MutationDeleteOrganizationApiKeyArgs,
+        { cacheKey }
+      ) => {
         const organization = this.requestCache.getOrganization(
           cacheKey,
           args.organizationId

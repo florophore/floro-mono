@@ -13,11 +13,12 @@ export default class DNSHelper {
 
   public static async hasDnsVerificationRecord(webhookKey: WebhookKey) {
     const quotedKey = `"${this.getVerificationKey(webhookKey)}"`;
+    const unquotedKey = `${this.getVerificationKey(webhookKey)}`;
     const txtRecords = await this.getTxtRecords(webhookKey.domain ?? "");
-    return !!txtRecords.find((v) => v.value == quotedKey);
+    return !!txtRecords.find((v) => v.value == quotedKey || v.value == unquotedKey);
   }
 
-  public static getVerificationKey(webhookKey: WebhookKey) {
-    return `floro-site-verification=${webhookKey.id}:${webhookKey.dnsVerificationCode}`;
+  public static getVerificationKey(webhookKey: {id: string, dnsVerificationCode: string}) {
+    return `floro-site-verification=${webhookKey.dnsVerificationCode}`;
   }
 }

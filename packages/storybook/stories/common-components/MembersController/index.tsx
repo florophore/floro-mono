@@ -1,8 +1,6 @@
 import React, { useMemo } from "react";
 import SideNavWrapper from "../navs/SideNavWrapper";
-import {
-  Organization,
-} from "@floro/graphql-schemas/build/generated/main-graphql";
+import { Organization } from "@floro/graphql-schemas/build/generated/main-graphql";
 import styled from "@emotion/styled";
 import Button from "../../design-system/Button";
 import { useTheme } from "@emotion/react";
@@ -129,8 +127,8 @@ const MembersController = (props: Props) => {
         <RelativeWrapper>
           <Container>
             <TopWrapper>
-              <RowContainer>
-                <Link to={`/org/@/${props?.organization?.handle}/members`}>
+              <Link to={`/org/@/${props?.organization?.handle}/members`}>
+                <RowContainer>
                   <DisplayName
                     style={{
                       color:
@@ -139,11 +137,12 @@ const MembersController = (props: Props) => {
                           : theme.colors.unselectedPluginRow,
                     }}
                   >{`Members (${memberCount})`}</DisplayName>
-                </Link>
-              </RowContainer>
-              {(props.organization?.membership?.permissions?.canModifyInvites) && (
-                <RowContainer>
-                  <Link to={`/org/@/${props?.organization?.handle}/invitations`}>
+                </RowContainer>
+              </Link>
+              {props.organization?.membership?.permissions
+                ?.canModifyInvites && (
+                <Link to={`/org/@/${props?.organization?.handle}/invitations`}>
+                  <RowContainer>
                     <DisplayName
                       style={{
                         color:
@@ -152,12 +151,13 @@ const MembersController = (props: Props) => {
                             : theme.colors.unselectedPluginRow,
                       }}
                     >{`Invitations (${invitedCount})`}</DisplayName>
-                  </Link>
-                </RowContainer>
+                  </RowContainer>
+                </Link>
               )}
-              {(props.organization?.membership?.permissions?.canModifyOrganizationRoles) && (
-                <RowContainer>
-                  <Link to={`/org/@/${props?.organization?.handle}/roles`}>
+              {props.organization?.membership?.permissions
+                ?.canModifyOrganizationRoles && (
+                <Link to={`/org/@/${props?.organization?.handle}/roles`}>
+                  <RowContainer>
                     <DisplayName
                       style={{
                         color:
@@ -165,30 +165,36 @@ const MembersController = (props: Props) => {
                             ? theme.colors.selectedPluginRow
                             : theme.colors.unselectedPluginRow,
                       }}
-                    >{`Roles (${props?.organization?.roles?.length ?? 0})`}</DisplayName>
-                  </Link>
-                </RowContainer>
+                    >{`Roles (${
+                      props?.organization?.roles?.length ?? 0
+                    })`}</DisplayName>
+                  </RowContainer>
+                </Link>
               )}
             </TopWrapper>
             <BottomWrapper>
-              {(props.page == "members" || props.page == "invitations") && props.organization?.membership?.permissions?.canInviteMembers && (
-                <Button
-                  onClick={props.onPressAddNewInvite}
-                  label={"invite new member"}
-                  bg={"teal"}
-                  size={"medium"}
-                  textSize={"small"}
-                />
-              )}
-              {props.page == "roles" && props.organization?.membership?.permissions?.canModifyOrganizationRoles && (
-                <Button
-                  onClick={props.onPressAddNewRole}
-                  label={"add new role"}
-                  bg={"purple"}
-                  size={"medium"}
-                  textSize={"small"}
-                />
-              )}
+              {(props.page == "members" || props.page == "invitations") &&
+                props.organization?.membership?.permissions
+                  ?.canInviteMembers && (
+                  <Button
+                    onClick={props.onPressAddNewInvite}
+                    label={"invite new member"}
+                    bg={"teal"}
+                    size={"medium"}
+                    textSize={"small"}
+                  />
+                )}
+              {props.page == "roles" &&
+                props.organization?.membership?.permissions
+                  ?.canModifyOrganizationRoles && (
+                  <Button
+                    onClick={props.onPressAddNewRole}
+                    label={"add new role"}
+                    bg={"purple"}
+                    size={"medium"}
+                    textSize={"small"}
+                  />
+                )}
             </BottomWrapper>
           </Container>
           <GradientOverlay />

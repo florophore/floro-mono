@@ -1,0 +1,20 @@
+mutation RegenerateOrganizationApiKey($organizationId: ID!, $apiKeyId: ID!) {
+    regenerateOrganizationApiKey(organizationId: $organizationId, apiKeyId: $apiKeyId) {
+        ... on OrganizationApiKeySuccess {
+            organization {
+                id
+                apiKeys {
+                    ...ApiKey
+                }
+            }
+        }
+        ... on OrganizationApiKeyError {
+            type
+            message
+        }
+        ... on UnAuthenticatedError {
+            type
+            message
+        }
+    }
+}

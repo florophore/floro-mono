@@ -1,0 +1,20 @@
+mutation CreateUserApiKey($keyName: String!) {
+    createUserApiKey(keyName: $keyName) {
+        ... on UserApiKeySuccess {
+            user {
+                id
+                apiKeys {
+                    ...ApiKey
+                }
+            }
+        }
+        ... on UserApiKeyError {
+            type
+            message
+        }
+        ... on UnAuthenticatedError {
+            type
+            message
+        }
+    }
+}

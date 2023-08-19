@@ -9,6 +9,7 @@ extend type Mutation {
     deleteOrganizationApiKey(organizationId: ID!, apiKeyId: ID!): OrganizationApiKeyResponse
     updateOrganizationApiKeyEnabled(organizationId: ID!, apiKeyId: ID!, isEnabled: Boolean!): OrganizationApiKeyResponse
 
+
     createUserWebhookKey(domain: String!, defaultSubdomain: String, defaultProtocol: String, defaultPort: Int): UserWebhookKeyResponse
     updateUserWebhookKey(webhookKeyId: ID!, defaultSubdomain: String, defaultProtocol: String, defaultPort: Int): UserWebhookKeyResponse
     verifyUserWebhookKey(webhookKeyId: ID!): UserWebhookKeyResponse

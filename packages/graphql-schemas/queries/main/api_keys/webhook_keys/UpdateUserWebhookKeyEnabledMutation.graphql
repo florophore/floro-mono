@@ -1,0 +1,20 @@
+mutation UpdateUserWebhookKeyEnabled($webhookKeyId: ID!, $isEnabled: Boolean!) {
+    updateUserWebhookKeyEnabled(webhookKeyId: $webhookKeyId, isEnabled: $isEnabled) {
+        ... on UserWebhookKeySuccess {
+            user {
+                id
+                webhookKeys {
+                    ...WebhookKey
+                }
+            }
+        }
+        ... on UserWebhookKeyError {
+            type
+            message
+        }
+        ... on UnAuthenticatedError {
+            type
+            message
+        }
+    }
+}

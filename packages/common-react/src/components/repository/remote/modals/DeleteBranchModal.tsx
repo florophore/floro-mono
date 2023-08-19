@@ -1,5 +1,3 @@
-
-
 import React, { useMemo, useState, useCallback, useEffect } from "react";
 import RootModal from "../../../RootModal";
 import styled from "@emotion/styled";

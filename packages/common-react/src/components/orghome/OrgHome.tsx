@@ -246,7 +246,9 @@ const OrgHome = (props: Props) => {
                 )}
                 {props?.organization?.membership?.permissions?.canModifyOrganizationDeveloperSettings && (
                   <div style={{ marginTop: 16, display: "flex" }}>
-                    <DevSettingsTab />
+                    <Link to={`/org/@/${props?.organization?.handle}/remote/api`}>
+                      <DevSettingsTab />
+                    </Link>
                   </div>
                 )}
                 <div style={{ marginTop: 16, display: "flex" }}>

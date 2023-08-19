@@ -1,0 +1,20 @@
+mutation UpdateUserApiKeyEnabled($apiKeyId: ID!, $isEnabled: Boolean!) {
+    updateUserApiKeyEnabled(apiKeyId: $apiKeyId, isEnabled: $isEnabled) {
+        ... on UserApiKeySuccess {
+            user{
+                id
+                apiKeys {
+                    ...ApiKey
+                }
+            }
+        }
+        ... on UserApiKeyError {
+            type
+            message
+        }
+        ... on UnAuthenticatedError {
+            type
+            message
+        }
+    }
+}

@@ -1,7 +1,6 @@
-import React, { useCallback, useState, useEffect, useMemo } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import UserApiController from "@floro/storybook/stories/common-components/UserApiController";
-import { useTheme } from "@emotion/react";
 import { useDaemonIsConnected } from "../../pubsub/socket";
 import { useNavigate } from "react-router-dom";
 import { useApiKeys } from "./local-api-hooks";

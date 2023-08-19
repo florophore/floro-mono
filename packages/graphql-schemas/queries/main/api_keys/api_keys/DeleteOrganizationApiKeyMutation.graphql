@@ -1,0 +1,20 @@
+mutation DeleteOrganizationApiKey($organizationId: ID!, $apiKeyId: ID!) {
+    deleteOrganizationApiKey(organizationId: $organizationId, apiKeyId: $apiKeyId) {
+        ... on OrganizationApiKeySuccess {
+            organization {
+                id
+                apiKeys {
+                    ...ApiKey
+                }
+            }
+        }
+        ... on OrganizationApiKeyError {
+            type
+            message
+        }
+        ... on UnAuthenticatedError {
+            type
+            message
+        }
+    }
+}

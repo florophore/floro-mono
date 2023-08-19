@@ -1,0 +1,20 @@
+mutation DeleteOrganizationWebhookKey($organizationId: ID!, $webhookKeyId: ID!) {
+    deleteOrganizationWebhookKey(organizationId: $organizationId, webhookKeyId: $webhookKeyId) {
+        ... on OrganizationWebhookKeySuccess {
+            organization {
+                id
+                webhookKeys {
+                    ...WebhookKey
+                }
+            }
+        }
+        ... on OrganizationWebhookKeyError {
+            type
+            message
+        }
+        ... on UnAuthenticatedError {
+            type
+            message
+        }
+    }
+}

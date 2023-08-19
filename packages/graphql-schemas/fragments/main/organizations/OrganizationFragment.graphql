@@ -59,5 +59,13 @@ fragment Organization on Organization {
       handle
     }
   }
+
+  apiKeys {
+    ...ApiKey
+  }
+
+  webhookKeys {
+    ...WebhookKey
+  }
 }
 

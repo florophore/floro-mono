@@ -1,0 +1,20 @@
+mutation CreateOrganizationWebhookKey($organizationId: ID!, $domain: String!, $defaultSubdomain: String, $defaultProtocol: String, $defaultPort: Int) {
+    createOrganizationWebhookKey(organizationId: $organizationId, domain: $domain, defaultSubdomain: $defaultSubdomain, defaultProtocol: $defaultProtocol, defaultPort: $defaultPort) {
+        ... on OrganizationWebhookKeySuccess {
+            organization {
+                id
+                webhookKeys {
+                    ...WebhookKey
+                }
+            }
+        }
+        ... on OrganizationWebhookKeyError {
+            type
+            message
+        }
+        ... on UnAuthenticatedError {
+            type
+            message
+        }
+    }
+}

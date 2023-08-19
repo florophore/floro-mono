@@ -1,0 +1,20 @@
+mutation CreateOrganizationApiKey($organizationId: ID!, $keyName: String!) {
+    createOrganizationApiKey(organizationId: $organizationId, keyName: $keyName) {
+        ... on OrganizationApiKeySuccess {
+            organization {
+                id
+                apiKeys {
+                    ...ApiKey
+                }
+            }
+        }
+        ... on OrganizationApiKeyError {
+            type
+            message
+        }
+        ... on UnAuthenticatedError {
+            type
+            message
+        }
+    }
+}

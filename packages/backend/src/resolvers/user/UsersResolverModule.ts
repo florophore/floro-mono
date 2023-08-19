@@ -26,6 +26,8 @@ import PhotoUploadService from "../../services/photos/PhotoUploadService";
 import PhotosContext from "@floro/database/src/contexts/photos/PhotosContext";
 import { Photo } from "@floro/database/src/entities/Photo";
 import PluginsContext from "@floro/database/src/contexts/plugins/PluginsContext";
+import ApiKeysContext from "@floro/database/src/contexts/api_keys/ApiKeysContext";
+import WebhookKeysContext from "@floro/database/src/contexts/api_keys/WebhookKeysContext";
 
 @injectable()
 export default class UsersResolverModule extends BaseResolverModule {
@@ -571,5 +573,39 @@ export default class UsersResolverModule extends BaseResolverModule {
       );
       return publicCount + privateCount;
     },
+    apiKeys: runWithHooks(
+      () => [],
+      async (
+        user,
+        _,
+        { currentUser, cacheKey }
+      ) => {
+        if (!currentUser) {
+          return null;
+        }
+        if (currentUser.id != user.id) {
+          return null;
+        }
+        const apiKeysContext = await this.contextFactory.createContext(ApiKeysContext);
+        return await apiKeysContext.getUserApiKeys(currentUser.id)
+      }
+    ),
+    webhookKeys: runWithHooks(
+      () => [],
+      async (
+        user,
+        _,
+        { currentUser, cacheKey }
+      ) => {
+        if (!currentUser) {
+          return null;
+        }
+        if (currentUser.id != user.id) {
+          return null;
+        }
+        const webhookKeysContext = await this.contextFactory.createContext(WebhookKeysContext);
+        return await webhookKeysContext.getUserWebhookKeys(currentUser.id);
+      }
+    ),
   };
 }

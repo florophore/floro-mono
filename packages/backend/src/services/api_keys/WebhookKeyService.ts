@@ -58,7 +58,7 @@ export default class WebhookKeyService {
         },
       };
     }
-    if (TLD_DOMAIN.test(domain)) {
+    if (!TLD_DOMAIN.test(domain)) {
       return {
         action: "INVALID_DOMAIN_ERROR",
         error: {
@@ -127,7 +127,7 @@ export default class WebhookKeyService {
       const webhookKey = await webhookKeysContexts.create({
         secret,
         userId: user.id,
-        createByUserId: user.id,
+        createdByUserId: user.id,
         keyType: "user_key",
         domain,
         isEnabled: true,
@@ -182,7 +182,7 @@ export default class WebhookKeyService {
         },
       };
     }
-    if (TLD_DOMAIN.test(domain)) {
+    if (!TLD_DOMAIN.test(domain)) {
       return {
         action: "INVALID_DOMAIN_ERROR",
         error: {
@@ -253,7 +253,7 @@ export default class WebhookKeyService {
       const webhookKey = await webhookKeysContexts.create({
         secret,
         organizationId: organization.id as string,
-        createByUserId: user.id,
+        createdByUserId: user.id,
         keyType: "org_key",
         domain,
         isEnabled: true,

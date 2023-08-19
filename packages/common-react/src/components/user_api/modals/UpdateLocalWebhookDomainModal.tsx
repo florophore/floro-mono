@@ -3,13 +3,12 @@ import styled from "@emotion/styled";
 import RootLongModal from "@floro/common-react/src/components/RootLongModal";
 import Button from "@floro/storybook/stories/design-system/Button";
 import Input from "@floro/storybook/stories/design-system/Input";
-import {  WebhookKey } from "floro/dist/src/apikeys";
-import {  useAddWebhookKey, useUpdateWebhookKey } from "../local-api-hooks";
+import { WebhookKey } from "floro/dist/src/apikeys";
+import { useUpdateWebhookKey } from "../local-api-hooks";
 import {
   LOCALHOST,
   SUBDOMAIN,
   TLD_DOMAIN,
-  validateLocalDomain,
 } from "@floro/common-web/src/utils/validators";
 import ProtocolToggle from "../ProtocolToggle";
 
@@ -75,7 +74,7 @@ export interface Props {
   webhookKey: WebhookKey;
 }
 
-const CreateLocalWebhookDomainModal = (props: Props) => {
+const UpdateLocalWebhookDomainModal = (props: Props) => {
   const domain = useMemo(() => props.webhookKey.domain,[props.webhookKey.domain]);
   const [defaultProtocol, setDefaultProtocol] =
     useState<"http" | "https">(props.webhookKey.defaultProtocol ?? "http");
@@ -220,4 +219,4 @@ const CreateLocalWebhookDomainModal = (props: Props) => {
   );
 };
 
-export default React.memo(CreateLocalWebhookDomainModal);
+export default React.memo(UpdateLocalWebhookDomainModal);

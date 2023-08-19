@@ -1,0 +1,20 @@
+mutation VerifyOrganizationWebhookKey($organizationId: ID!, $webhookKeyId: ID!) {
+    verifyOrganizationWebhookKey(organizationId: $organizationId, webhookKeyId: $webhookKeyId) {
+        ... on OrganizationWebhookKeySuccess {
+            organization {
+                id
+                webhookKeys {
+                    ...WebhookKey
+                }
+            }
+        }
+        ... on OrganizationWebhookKeyError {
+            type
+            message
+        }
+        ... on UnAuthenticatedError {
+            type
+            message
+        }
+    }
+}

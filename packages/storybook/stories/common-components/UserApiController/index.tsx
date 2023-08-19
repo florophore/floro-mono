@@ -94,8 +94,8 @@ const UserApiController = (props: Props) => {
             <TopWrapper>
               {props.isDaemonConnected && (
                 <>
-                  <RowContainer>
-                    <Link to={`/home/local/api`}>
+                  <Link to={`/home/local/api`}>
+                    <RowContainer>
                       <DisplayName
                         style={{
                           color:
@@ -104,10 +104,10 @@ const UserApiController = (props: Props) => {
                               : theme.colors.unselectedPluginRow,
                         }}
                       >{`Local API Keys`}</DisplayName>
-                    </Link>
-                  </RowContainer>
-                  <RowContainer>
-                    <Link to={`/home/local/webhooks`}>
+                    </RowContainer>
+                  </Link>
+                  <Link to={`/home/local/webhooks`}>
+                    <RowContainer>
                       <DisplayName
                         style={{
                           color:
@@ -116,12 +116,12 @@ const UserApiController = (props: Props) => {
                               : theme.colors.unselectedPluginRow,
                         }}
                       >{`Local Webhooks`}</DisplayName>
-                    </Link>
-                  </RowContainer>
+                    </RowContainer>
+                  </Link>
                 </>
               )}
-              <RowContainer>
-                <Link to={`/home/remote/api`}>
+              <Link to={`/home/remote/api`}>
+                <RowContainer>
                   <DisplayName
                     style={{
                       color:
@@ -130,10 +130,10 @@ const UserApiController = (props: Props) => {
                           : theme.colors.unselectedPluginRow,
                     }}
                   >{`Remote API Keys`}</DisplayName>
-                </Link>
-              </RowContainer>
-              <RowContainer>
-                <Link to={`/home/remote/webhooks`}>
+                </RowContainer>
+              </Link>
+              <Link to={`/home/remote/webhooks`}>
+                <RowContainer>
                   <DisplayName
                     style={{
                       color:
@@ -142,11 +142,11 @@ const UserApiController = (props: Props) => {
                           : theme.colors.unselectedPluginRow,
                     }}
                   >{`Remote Webhooks`}</DisplayName>
-                </Link>
-              </RowContainer>
+                </RowContainer>
+              </Link>
             </TopWrapper>
             <BottomWrapper>
-              {((props.page == "local-api" || props.page == "remote-api") && (
+              {(props.page == "local-api" || props.page == "remote-api") && (
                 <Button
                   label={"create api key"}
                   bg={"teal"}
@@ -154,8 +154,9 @@ const UserApiController = (props: Props) => {
                   textSize={"small"}
                   onClick={props.onClickCreateApiKey}
                 />
-              ))}
-              {((props.page == "local-webhook" || props.page == "remote-webhook") && (
+              )}
+              {(props.page == "local-webhook" ||
+                props.page == "remote-webhook") && (
                 <Button
                   label={"register webhook domain"}
                   bg={"orange"}
@@ -163,7 +164,7 @@ const UserApiController = (props: Props) => {
                   textSize={"small"}
                   onClick={props.onClickCreateWebhookDomain}
                 />
-              ))}
+              )}
             </BottomWrapper>
           </Container>
           <GradientOverlay />

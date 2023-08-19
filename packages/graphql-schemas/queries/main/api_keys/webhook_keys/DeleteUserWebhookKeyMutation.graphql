@@ -1,0 +1,20 @@
+mutation DeleteUserWebhookKey($webhookKeyId: ID!) {
+    deleteUserWebhookKey(webhookKeyId: $webhookKeyId) {
+        ... on UserWebhookKeySuccess {
+            user {
+                id
+                webhookKeys {
+                    ...WebhookKey
+                }
+            }
+        }
+        ... on UserWebhookKeyError {
+            type
+            message
+        }
+        ... on UnAuthenticatedError {
+            type
+            message
+        }
+    }
+}

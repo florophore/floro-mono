@@ -864,17 +864,17 @@ export default class RequestCache {
 
   public getWebhookKey(
     cacheKey: string,
-    apiKeyId: string,
+    webhookKeyId: string,
   ): WebhookKey {
     const cache = this.getCache(cacheKey);
-    return cache[`webhook-key:${apiKeyId}`] as WebhookKey;
+    return cache[`webhook-key:${webhookKeyId}`] as WebhookKey;
   }
 
   public setWebhookKey(
     cacheKey: string,
-    apiKey: WebhookKey,
+    webhookKey: WebhookKey,
   ) {
     const cache = this.getCache(cacheKey);
-    cache[`webhook-key:${apiKey.id}`] = apiKey;
+    cache[`webhook-key:${webhookKey.id}`] = webhookKey;
   }
 }

@@ -1,0 +1,20 @@
+mutation UpdateOrganizationWebhookKeyEnabled($organizationId: ID!, $webhookKeyId: ID!, $isEnabled: Boolean!) {
+    updateOrganizationWebhookKeyEnabled(organizationId: $organizationId, webhookKeyId: $webhookKeyId, isEnabled: $isEnabled) {
+        ... on OrganizationWebhookKeySuccess {
+            organization {
+                id
+                webhookKeys {
+                    ...WebhookKey
+                }
+            }
+        }
+        ... on OrganizationWebhookKeyError {
+            type
+            message
+        }
+        ... on UnAuthenticatedError {
+            type
+            message
+        }
+    }
+}

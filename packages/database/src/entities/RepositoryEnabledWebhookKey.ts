@@ -64,7 +64,7 @@ export class RepositoryEnabledWebhookKey extends BinaryPKBaseEntity {
   user?: Relation<User>;
 
   @Column("uuid")
-  createByUserId!: string;
+  createdByUserId!: string;
 
   @ManyToOne("User", "createdRepositoryEnabledWebhookKeys")
   @JoinColumn({ name: "created_by_user_id" })

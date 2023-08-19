@@ -1,10 +1,11 @@
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo, useCallback, useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import UserProfilePhoto from "@floro/storybook/stories/common-components/UserProfilePhoto";
 import {
   Organization,
   OrganizationMember,
+  useExchangeSessionMutation,
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import ColorPalette from "@floro/styles/ColorPalette";
 import TimeAgo from "javascript-time-ago";
@@ -20,6 +21,8 @@ import RefreshLight from "@floro/common-assets/assets/images/icons/refresh.light
 import RefreshDark from "@floro/common-assets/assets/images/icons/refresh.dark.svg";
 import DotsLoader from "@floro/storybook/stories/design-system/DotsLoader";
 import { useDeleteApiKey, useRegenerateApiKey } from "../local-api-hooks";
+import ConfirmDeleteKey from "../modals/ConfirmDeleteKey";
+import ConfirmRegenerateKey from "../modals/ConfirmRegenerateKey";
 
 const Container = styled.div`
   margin-top: 14px;
@@ -58,7 +61,7 @@ const KeyTitle = styled.h4`
 
 const ButtonRow = styled.div`
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   margin-top: 24px;
   align-items: center;
 `;
@@ -90,6 +93,29 @@ const LocalApiKeyCard = (props: Props): React.ReactElement => {
 
   const regenerateKeyMutation = useRegenerateApiKey();
   const deleteKeyMutation = useDeleteApiKey();
+  const [showEditMode, setShowEditMode] = useState(false);
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [showConfirmRegenerate, setShowConfirmRegenerate] = useState(false);
+
+  const onToggleEditMode = useCallback(() => {
+    setShowEditMode(!showEditMode);
+  }, [showEditMode])
+
+  const onShowConfirmDelete = useCallback(() => {
+    setShowConfirmDelete(true);
+  }, []);
+
+  const onHideConfirmDelete = useCallback(() => {
+    setShowConfirmDelete(false);
+  }, []);
+
+  const onShowConfirmRegenerate = useCallback(() => {
+    setShowConfirmRegenerate(true);
+  }, []);
+
+  const onHideConfirmRegenerate = useCallback(() => {
+    setShowConfirmRegenerate(false);
+  }, []);
 
   const onRegenKey = useCallback(() => {
     regenerateKeyMutation.mutate({
@@ -102,6 +128,20 @@ const LocalApiKeyCard = (props: Props): React.ReactElement => {
         id: props.localApiKey.id
     })
   }, [props.localApiKey]);
+
+  useEffect(() => {
+    if (regenerateKeyMutation.isSuccess) {
+      regenerateKeyMutation.reset();
+      setShowConfirmRegenerate(false);
+    }
+  }, [regenerateKeyMutation.isSuccess])
+
+  useEffect(() => {
+    if (deleteKeyMutation.isSuccess) {
+      deleteKeyMutation.reset();
+      setShowConfirmDelete(false);
+    }
+  }, [deleteKeyMutation.isSuccess])
 
   const trashIcon = useMemo(() => {
     if (theme.name == "light") {
@@ -123,35 +163,59 @@ const LocalApiKeyCard = (props: Props): React.ReactElement => {
   }, [regenerateKeyMutation.isLoading, deleteKeyMutation.isLoading])
 
   return (
-    <Container
-      style={{
-        border: `2px solid ${theme.colors.inputBorderColor}`,
-      }}
-    >
-      <TopRow>
-        <KeyTitle>{props.localApiKey.name}</KeyTitle>
-        <IconRow>
-            {!isLoading && (
+    <>
+      <ConfirmDeleteKey
+        show={showConfirmDelete}
+        onDismiss={onHideConfirmDelete}
+        onConfirm={onDeleteKey}
+        keyName={props.localApiKey.name}
+        isLoading={deleteKeyMutation.isLoading}
+      />
+      <ConfirmRegenerateKey
+        show={showConfirmRegenerate}
+        onDismiss={onHideConfirmRegenerate}
+        onConfirm={onRegenKey}
+        keyName={props.localApiKey.name}
+        isLoading={regenerateKeyMutation.isLoading}
+      />
+      <Container
+        style={{
+          border: `2px solid ${theme.colors.inputBorderColor}`,
+        }}
+      >
+        <TopRow>
+          <KeyTitle>{props.localApiKey.name}</KeyTitle>
+          {showEditMode && (
+            <IconRow>
+              {!isLoading && (
                 <>
-            <Icon onClick={onRegenKey} src={refreshIcon}/>
-            <Icon onClick={onDeleteKey} src={trashIcon}/>
+                  <Icon onClick={onShowConfirmRegenerate} src={refreshIcon} />
+                  <Icon onClick={onShowConfirmDelete} src={trashIcon} />
                 </>
-            )}
-            {isLoading && (
+              )}
+              {isLoading && (
                 <>
-                <DotsLoader size="small" color={theme.name == "light" ? "gray" : "white"}/>
+                  <DotsLoader
+                    size="small"
+                    color={theme.name == "light" ? "gray" : "white"}
+                  />
                 </>
-            )}
-        </IconRow>
-      </TopRow>
-      <ButtonRow>
-        <DefaultTitle style={{padding: 0, marginRight: 24}}>
-          {'secret: '}
-        </DefaultTitle>
-        <SecretDisplay secret={props.localApiKey.secret} />
-        {false && <Button label={"edit"} bg={"orange"} size={"small"} />}
-      </ButtonRow>
-    </Container>
+              )}
+            </IconRow>
+          )}
+        </TopRow>
+        <ButtonRow>
+          <DefaultTitle style={{ padding: 0 }}>{"secret: "}</DefaultTitle>
+          <SecretDisplay secret={props.localApiKey.secret} />
+          <Button
+            onClick={onToggleEditMode}
+            label={!showEditMode ? "edit" : "done"}
+            bg={!showEditMode ? "orange" : "gray"}
+            size={"small"}
+          />
+        </ButtonRow>
+      </Container>
+    </>
   );
 };
 
