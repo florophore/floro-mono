@@ -55,7 +55,6 @@ const WarningIconImg = styled.img`
 
 const ShadeEditList = () => {
   const theme = useTheme();
-  const { applicationState } = useFloroContext();
   const [isDragging, setIsDragging] = useState(false);
   const [newShadeName, setNewShadeName] = useState("");
   const [shades, setShades, save] = useFloroState(
@@ -80,17 +79,9 @@ const ShadeEditList = () => {
 
   const onReOrderShades = useCallback(
     (values: SchemaTypes["$(palette).shades"]) => {
-      if (applicationState) {
-        const remap = values.map((v) => {
-          return getReferencedObject(
-            applicationState,
-            makeQueryRef("$(palette).shades.id<?>", v.id)
-          );
-        });
-        setShades(remap);
-      }
+      setShades(values, false);
     },
-    [applicationState]
+    [setShades]
   );
 
   const onRemove = useCallback(
@@ -137,14 +128,8 @@ const ShadeEditList = () => {
   }, []);
 
   const onDragEnd = useCallback(() => {
-    setIsDragging(false);
-  }, []);
-
-  useEffect(() => {
-    if (!isDragging) {
-      save();
-    }
-  }, [isDragging]);
+    save();
+  }, [save]);
 
   const warningIcon = useMemo(() => {
     if (theme.name == "light") {

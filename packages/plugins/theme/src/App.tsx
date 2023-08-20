@@ -61,6 +61,7 @@ const Layout = () => {
   const onScrollToBottom = useCallback(() => {
       container?.current?.scrollTo({top: container?.current?.scrollHeight, behavior: "smooth"})
   }, []);
+  console.log("EM", commandMode);
 
   return (
     <Container ref={container}>

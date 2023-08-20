@@ -6,6 +6,8 @@ import {
   SchemaTypes,
   getReferencedObject,
   makeQueryRef,
+  useClientStorageApi,
+  useCopyApi,
   useFloroContext,
   useFloroState,
   useHasConflict,
@@ -197,22 +199,36 @@ const Group = (props: Props) => {
   const { applicationState, commandMode, compareFrom, saveState } = useFloroContext();
   const [isReOrderIconsMode, setIsReOrderIconsMode] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const iconGroupRef = useQueryRef(
     "$(icons).iconGroups.id<?>",
     props.iconGroup.id
   );
+
+  const [lastExpanded, setLastExpanded] = useClientStorageApi<PointerTypes["$(icons).iconGroups.id<?>"]>("lastExpandedDir");
+
+  useEffect(() => {
+    if (commandMode != "compare" && lastExpanded && iconGroupRef == lastExpanded) {
+      setIsExpanded(true);
+    }
+  }, [lastExpanded, commandMode, iconGroupRef])
 
   const isInvalid = useIsFloroInvalid(iconGroupRef, true);
   const wasRemoved = useWasRemoved(iconGroupRef, true);
   const wasAdded = useWasAdded(iconGroupRef, true);
   const hasConflict = useHasConflict(iconGroupRef, true);
 
-  const [iconGroup, setIconGroup] =
+  const [iconGroup, setIconGroup, save] =
     useFloroState(iconGroupRef);
-  const [icons, setIcons] = useState<
-    SchemaTypes["$(icons).iconGroups.id<?>.icons"]
-  >(iconGroup?.icons ?? []);
-  const [isExpanded, setIsExpanded] = useState(false);
+  const icons = useMemo(() => iconGroup?.icons ?? [] as SchemaTypes["$(icons).iconGroups.id<?>.icons"], [iconGroup?.icons]);
+
+  const setIcons = useCallback((icons: SchemaTypes["$(icons).iconGroups.id<?>.icons"], doSave = true) => {
+    setIconGroup({
+      id: iconGroup?.id,
+      name: iconGroup?.name,
+      icons
+    } as SchemaTypes["$(icons).iconGroups.id<?>"], doSave);
+  }, [iconGroup])
 
   useEffect(() => {
     if (wasAdded || wasRemoved || hasConflict) {
@@ -220,18 +236,11 @@ const Group = (props: Props) => {
     }
   }, [wasAdded, wasRemoved, hasConflict]);
 
-  useEffect(() => {
-    if (props.iconGroup?.icons) {
-      setIcons(props?.iconGroup?.icons);
-    }
-  }, [props.iconGroup?.icons]);
-
   const onRemoveIcon = useCallback(
     (icon: SchemaTypes["$(icons).iconGroups.id<?>.icons.id<?>"]) => {
       if (icons && iconGroup && applicationState) {
         const filteredIcons = icons.filter((v) => v.id != icon.id);
         setIcons(filteredIcons);
-        setIconGroup({ ...iconGroup, icons: filteredIcons });
       }
     },
     [iconGroup, icons, applicationState]
@@ -334,23 +343,18 @@ const Group = (props: Props) => {
   }, [props.searchText, props?.iconGroup?.icons, isSearching]);
 
   const onToggle = useCallback(() => {
+    if (!isExpanded) {
+      setLastExpanded(iconGroupRef);
+    } else if (iconGroupRef == lastExpanded) {
+      setLastExpanded(null);
+    }
     setIsExpanded(!isExpanded);
-  }, [isExpanded]);
+  }, [isExpanded, iconGroupRef, setLastExpanded, lastExpanded]);
 
   const onReOrderIcons = useCallback(
     (values: SchemaTypes["$(icons).iconGroups.id<?>.icons"]) => {
       if (applicationState && iconGroup?.icons) {
-        const remap = values.map((v) => {
-          return getReferencedObject(
-            applicationState,
-            makeQueryRef(
-              "$(icons).iconGroups.id<?>.icons.id<?>",
-              iconGroup.id,
-              v.id
-            )
-          );
-        });
-        setIcons(remap);
+        setIcons(values, false);
       }
     },
     [applicationState, icons]
@@ -365,20 +369,8 @@ const Group = (props: Props) => {
 
   const onDragEnd = useCallback(() => {
     setIsDragging(false);
-  }, []);
-
-  //useEffect(() => {
-  //  if (
-  //    !isDragging &&
-  //    iconGroup &&
-  //    commandMode == "edit" &&
-  //    icons != props.iconGroup.icons &&
-  //    icons
-  //  ) {
-  //    iconGroup.icons = icons;
-  //    save();
-  //  }
-  //}, [isDragging]);
+    save()
+  }, [save]);
 
   const isDisplayingIcons = useMemo(() => {
     if (

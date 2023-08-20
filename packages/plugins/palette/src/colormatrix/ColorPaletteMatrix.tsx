@@ -82,17 +82,9 @@ const ColorPaletteMatrix = (props: Props) => {
 
   const onReOrderColors = useCallback(
     (values: SchemaTypes["$(palette).colorPalettes"]) => {
-      if (applicationState) {
-        const remap = values.map((v) => {
-            return getReferencedObject(
-              applicationState,
-              makeQueryRef("$(palette).colorPalettes.id<?>", v.id)
-            );
-          });
-        setColorPalettes(remap);
-      }
+      setColorPalettes(values, false);
     },
-    [applicationState]
+    [setColorPalettes]
   );
 
   const onRemove = useCallback(
@@ -102,7 +94,7 @@ const ColorPaletteMatrix = (props: Props) => {
         setColorPalettes(values);
       }
     },
-    [colorPalettes]
+    []
   );
 
   const newId = useMemo((): string | null => {
@@ -141,8 +133,9 @@ const ColorPaletteMatrix = (props: Props) => {
   }, []);
 
   const onDragEnd = useCallback(() => {
+    save();
     setIsDragging(false);
-  }, []);
+  }, [save]);
 
   const onOrganize = useCallback(() => {
     setIsReOrderMode(true);
@@ -152,18 +145,6 @@ const ColorPaletteMatrix = (props: Props) => {
     setIsReOrderMode(false);
   }, []);
 
-  const onClickNewColor = useCallback(() => {
-    props.onScrollToBottom?.();
-    setTimeout(() => {
-      input?.current?.focus?.();
-    }, 600);
-  }, [props.onScrollToBottom]);
-
-  useEffect(() => {
-    if (!isDragging) {
-      save();
-    }
-  }, [isDragging]);
 
   return (
     <div style={{ marginBottom: 36, marginRight: 72 }}>

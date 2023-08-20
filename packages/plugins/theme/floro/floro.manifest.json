@@ -1,5 +1,5 @@
 {
-  "version": "0.0.20",
+  "version": "0.0.37",
   "name": "theme",
   "displayName": "Theme",
   "description": "A plugin for mapping color constants to themes.",
@@ -12,7 +12,7 @@
     }
   },
   "imports": {
-    "palette": "0.0.20"
+    "palette": "0.0.37"
   },
   "types": {
     "Theme": {

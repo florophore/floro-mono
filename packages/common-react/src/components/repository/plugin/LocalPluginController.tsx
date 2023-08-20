@@ -476,12 +476,10 @@ const LocalPluginController = (props: Props) => {
             updateCounter.current = id +1;
           }
           clientUpdateCounter.current = id;
-          if (props.apiResponse.repoState?.commandMode == "edit") {
-            updatePluginClientStorage.mutate({
-              storage: state.data as object,
-              id
-            })
-          }
+          updatePluginClientStorage.mutate({
+            storage: state.data as object,
+            id
+          })
         }
         delete incoming[data.id];
       }

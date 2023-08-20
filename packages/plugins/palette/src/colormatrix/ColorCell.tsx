@@ -169,7 +169,6 @@ const ColorRow = (props: Props) => {
     }
   );
 
-
   const wasRemoved = useWasRemoved(paletteCellRef, false);
   const wasAdded = useWasAdded(paletteCellRef, false);
   const hasConflict = useHasConflict(paletteCellRef, false);

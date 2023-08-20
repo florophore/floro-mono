@@ -105,6 +105,7 @@ interface IFloroContext {
   commandMode: "view" | "edit" | "compare";
   compareFrom: "none" | "before" | "after";
   applicationState: SchemaRoot | null;
+  currentPluginAppState: React.MutableRefObject<SchemaRoot|null>,
   changeset: Set<string>;
   apiStoreInvalidity: {[key: string]: Array<string>};
   apiStoreInvaliditySets: {[key: string]: Set<string>};
@@ -142,6 +143,7 @@ const FloroContext = createContext({
   rootSchemaMap: {},
   clientStorage: {},
   lastEditKey: { current: null},
+  currentPluginAppState: { current: null},
   pluginState: {
     commandMode: "view",
     compareFrom: "none",
@@ -216,7 +218,6 @@ export const FloroProvider = (props: Props) => {
   const [hasLoaded, setHasLoaded] = useState(false);
   const ids = useRef<Set<number>>(new Set());
   const [copyList, setCopyList] = useState<Array<ValueOf<QueryTypes>>>([]);
-  const outboundTimeout = useRef<NodeJS.Timeout>();
   const updateTimeout = useRef<NodeJS.Timeout>();
   const lastEditKey = useRef<string|null>(null);
   const currentPluginState = useRef<PluginState>(pluginState);
@@ -297,10 +298,7 @@ export const FloroProvider = (props: Props) => {
         updateCounter.current += 2;
         const id = updateCounter.current;
         ids.current = new Set([...Array.from(ids.current), id]);
-
-        currentPluginAppState.current = { ...state};
-        clearTimeout(outboundTimeout.current);
-        outboundTimeout.current = setTimeout(() => {
+        setTimeout(() => {
           sendMessagetoParent(id, pluginName, "save", state[pluginName]);
         }, 0);
         return id;
@@ -320,8 +318,7 @@ export const FloroProvider = (props: Props) => {
       updateCounter.current += 2;
       const id = updateCounter.current;
       ids.current = new Set([...Array.from(ids.current), id]);
-      clearTimeout(outboundTimeout.current);
-      outboundTimeout.current = setTimeout(() => {
+      setTimeout(() => {
         sendMessagetoParent(id, null, "update-copy", copyList);
       }, 0);
       return id;
@@ -331,17 +328,13 @@ export const FloroProvider = (props: Props) => {
 
 
   const saveClientStorage = useCallback((clientStorage: object) => {
-    if (commandMode != "edit") {
-      return null;
-    }
     clearTimeout(updateTimeout.current);
     if (ids.current) {
       updateCounter.current += 2;
       const id = updateCounter.current;
       ids.current = new Set([...Array.from(ids.current), id]);
       currentClientStorage.current = {...clientStorage};
-      clearTimeout(outboundTimeout.current);
-      outboundTimeout.current = setTimeout(() => {
+      setTimeout(() => {
         sendMessagetoParent(id, null, "update-client-storage", clientStorage);
       }, 0);
       return id;
@@ -411,21 +404,17 @@ export const FloroProvider = (props: Props) => {
             setHasLoaded(true);
         }
         if (response.event == "ack" || response.event == "update") {
-            const state: PluginState = response.data as PluginState;
-            let skip = false;
-            if (response.event == "update" && state.commandMode == "edit" && commandModeRef.current == "edit" && data.id < updateCounter.current) {
-              skip = true;
-            }
-            if (!skip) {
+            clearTimeout(updateTimeout.current);
+              const isStale = updateCounter?.current > data.id;
+              const state: PluginState = response.data as PluginState;
               if (currentPluginAppState.current && state.applicationState) {
-                clearTimeout(updateTimeout.current);
                 const nextApplicationState = getNextApplicationState(
                   currentPluginAppState.current,
                   state.applicationState,
                   state.rootSchemaMap,
-                  lastEditKey
+                  lastEditKey,
+                  isStale
                 );
-                lastEditKey.current = null;
                 const didChangeStorage = JSON.stringify(state.clientStorage) !=
                     JSON.stringify(currentClientStorage.current);
                 const nextClientStorage =
@@ -438,17 +427,16 @@ export const FloroProvider = (props: Props) => {
                   clientStorage: nextClientStorage
                 }
                 rootSchemaMap.current = state.rootSchemaMap;
-                currentPluginAppState.current = {...nextState.applicationState} as SchemaRoot;
+                currentPluginAppState.current = nextState.applicationState;
                 currentClientStorage.current = {...nextClientStorage};
                 commandModeRef.current = state.commandMode;
                 if (nextState.applicationState) {
-                  clearTimeout(updateTimeout.current);
-                  updateTimeout.current = setTimeout(() => {
-                    setPluginState(nextState);
-                  }, 200);
+                  setPluginState(nextState);
                 }
+                updateTimeout.current = setTimeout(() => {
+                  lastEditKey.current = null;
+                }, 200);
               }
-            }
         }
         for (const id in incoming.current) {
           const idInt = parseInt(id);
@@ -473,6 +461,7 @@ export const FloroProvider = (props: Props) => {
     <FloroContext.Provider
       value={{
         applicationState,
+        currentPluginAppState,
         apiStoreInvalidity,
         apiStoreInvaliditySets,
         changeset,
@@ -561,9 +550,6 @@ export const useClientStorageApi = <T,> (clientStorageKey: string): [T|null, (va
   }, [value])
 
   const set = useCallback((value: T|null) => {
-    if (commandMode != "edit") {
-      return;
-    }
     const next = {
       ...clientStorage,
       [clientStorageKey]: value
@@ -573,9 +559,6 @@ export const useClientStorageApi = <T,> (clientStorageKey: string): [T|null, (va
   }, [clientStorage, clientStorageKey, pluginState, commandMode, setPluginState, saveClientStorage]);
 
   const remove = useCallback(() => {
-    if (commandMode != "edit") {
-      return;
-    }
     const next = {
       ...clientStorage,
     };
@@ -1046,86 +1029,6 @@ const getStateId = (schema: TypeStruct, state: object): string => {
   );
 };
 
-const decodeSchemaPath = (
-  pathString: string
-): Array<DiffElement | string> => {
-  return splitPath(pathString).map((part) => {
-    if (/^(.+)<(.+)>$/.test(part) && getCounterArrowBalanance(part) == 0) {
-      const { key, value } = extractKeyValueFromRefString(part);
-      return {
-        key,
-        value,
-      };
-    }
-    return part;
-  });
-};
-
-const writePathStringWithArrays = (
-  pathParts: Array<DiffElement | string | number>
-): string => {
-  return pathParts
-    .map((part) => {
-      if (typeof part == "string") {
-        return part;
-      }
-      if (typeof part == "number") {
-        return `[${part}]`;
-      }
-      return `${part.key}<${part.value}>`;
-    })
-    .join(".");
-};
-
-
-
-const reIndexSchemaArrays = (kvs: Array<DiffElement>): Array<string> => {
-  const out: string[] = [];
-  const listStack: Array<string> = [];
-  let indexStack: Array<number> = [];
-  for (const { key } of kvs) {
-    const decodedPath = decodeSchemaPath(key);
-    const lastPart = decodedPath[decodedPath.length - 1];
-    if (typeof lastPart == "object" && lastPart.key == "(id)") {
-      const parentPath = decodedPath.slice(0, -1);
-      const parentPathString = writePathString(parentPath);
-      const peek = listStack?.[listStack.length - 1];
-      if (peek != parentPathString) {
-        if (!peek || key.startsWith(peek)) {
-          listStack.push(parentPathString);
-          indexStack.push(0);
-        } else {
-          while (
-            listStack.length > 0 &&
-            !key.startsWith(listStack[listStack.length - 1])
-          ) {
-            listStack.pop();
-            indexStack.pop();
-          }
-          indexStack[indexStack.length - 1]++;
-        }
-      } else {
-        const currIndex = indexStack.pop();
-        indexStack.push((currIndex ?? 0) + 1);
-      }
-      let pathIdx = 0;
-      const pathWithNumbers = decodedPath.map((part) => {
-        if (typeof part == "object" && part.key == "(id)") {
-          return indexStack[pathIdx++];
-        }
-        return part;
-      });
-      const arrayPath = writePathStringWithArrays(pathWithNumbers);
-      out.push(arrayPath);
-    } else {
-      out.push(key);
-    }
-  }
-  return out;
-};
-
-
-
 const flattenStateToSchemaPathKV = (
   schemaRoot: Manifest,
   state: object,
@@ -1228,7 +1131,7 @@ const flattenStateToSchemaPathKV = (
   return kv;
 };
 
-const getNextApplicationState = (currentApplicationState: {[key: string]: object}, nextApplicationState: {[key: string]: object}, rootSchemaMap: TypeStruct, lastEditKey: React.MutableRefObject<null|string>): SchemaRoot | null => {
+const getNextApplicationState = (currentApplicationState: {[key: string]: object}, nextApplicationState: {[key: string]: object}, rootSchemaMap: TypeStruct, lastEditKey: React.MutableRefObject<null|string>, isStale: boolean): SchemaRoot | null => {
   try {
     if (!currentApplicationState && !nextApplicationState) {
       return null;
@@ -1239,18 +1142,21 @@ const getNextApplicationState = (currentApplicationState: {[key: string]: object
     if (!nextApplicationState) {
       return currentApplicationState as SchemaRoot;
     }
+    const key = lastEditKey.current;
+    if (key) {
+      const object = getObjectInStateMap(currentApplicationState, key);
+      const nextObject = getObjectInStateMap(nextApplicationState, key);
+      if (object && nextObject && JSON.stringify(object) != JSON.stringify(nextObject)) {
+        if (isStale) {
+          return currentApplicationState as SchemaRoot;
+        }
+        return updateObjectInStateMap(nextApplicationState, key, object) as SchemaRoot;
+      }
+    }
     const currentKV = generateKVState(rootSchemaMap, currentApplicationState);
     const nextKV = generateKVState(rootSchemaMap, nextApplicationState);
     const diff = getDiff(currentKV, nextKV);
     if (Object.keys(diff.add).length == 0 && Object.keys(diff.remove).length == 0) {
-      return currentApplicationState as SchemaRoot;
-    }
-    const removedKeys = new Set(Object.values(diff.remove).map(kv => kv.key));
-    const updatedKeys = Object.values(diff.add).filter(kv => removedKeys.has(kv.key));
-    const reIndexedUpdatedKeys = reIndexSchemaArrays(updatedKeys);
-    const updatedKeysSet = new Set(reIndexedUpdatedKeys)
-    const key = lastEditKey.current;
-    if (key && updatedKeysSet.has(key) && updatedKeysSet.size == 1) {
       return currentApplicationState as SchemaRoot;
     }
     return nextApplicationState as SchemaRoot;
@@ -1397,14 +1303,14 @@ export function useReferencedObject<T>(query?: string): T|null {
   }, [query, ctx.applicationState]);
 };
 
-export function useFloroState(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], defaultData?: SchemaTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|null, (t: SchemaTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']) => void, () => void];
-export function useFloroState(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades'], defaultData?: SchemaTypes['$(palette).colorPalettes.id<?>.colorShades'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(palette).colorPalettes.id<?>.colorShades']|null, (t: SchemaTypes['$(palette).colorPalettes.id<?>.colorShades']) => void, () => void];
-export function useFloroState(query: PointerTypes['$(palette).colorPalettes.id<?>'], defaultData?: SchemaTypes['$(palette).colorPalettes.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(palette).colorPalettes.id<?>']|null, (t: SchemaTypes['$(palette).colorPalettes.id<?>']) => void, () => void];
-export function useFloroState(query: PointerTypes['$(palette).shades.id<?>'], defaultData?: SchemaTypes['$(palette).shades.id<?>'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(palette).shades.id<?>']|null, (t: SchemaTypes['$(palette).shades.id<?>']) => void, () => void];
-export function useFloroState(query: PointerTypes['$(palette).colorPalettes'], defaultData?: SchemaTypes['$(palette).colorPalettes'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(palette).colorPalettes']|null, (t: SchemaTypes['$(palette).colorPalettes']) => void, () => void];
-export function useFloroState(query: PointerTypes['$(palette).shades'], defaultData?: SchemaTypes['$(palette).shades'], mutateStoreWithDefault?: boolean): [SchemaTypes['$(palette).shades']|null, (t: SchemaTypes['$(palette).shades']) => void, () => void];
+export function useFloroState(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], defaultData?: SchemaTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']): [SchemaTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|null, (t: SchemaTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], doSave?: boolean) => void, () => void];
+export function useFloroState(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades'], defaultData?: SchemaTypes['$(palette).colorPalettes.id<?>.colorShades']): [SchemaTypes['$(palette).colorPalettes.id<?>.colorShades']|null, (t: SchemaTypes['$(palette).colorPalettes.id<?>.colorShades'], doSave?: boolean) => void, () => void];
+export function useFloroState(query: PointerTypes['$(palette).colorPalettes.id<?>'], defaultData?: SchemaTypes['$(palette).colorPalettes.id<?>']): [SchemaTypes['$(palette).colorPalettes.id<?>']|null, (t: SchemaTypes['$(palette).colorPalettes.id<?>'], doSave?: boolean) => void, () => void];
+export function useFloroState(query: PointerTypes['$(palette).shades.id<?>'], defaultData?: SchemaTypes['$(palette).shades.id<?>']): [SchemaTypes['$(palette).shades.id<?>']|null, (t: SchemaTypes['$(palette).shades.id<?>'], doSave?: boolean) => void, () => void];
+export function useFloroState(query: PointerTypes['$(palette).colorPalettes'], defaultData?: SchemaTypes['$(palette).colorPalettes']): [SchemaTypes['$(palette).colorPalettes']|null, (t: SchemaTypes['$(palette).colorPalettes'], doSave?: boolean) => void, () => void];
+export function useFloroState(query: PointerTypes['$(palette).shades'], defaultData?: SchemaTypes['$(palette).shades']): [SchemaTypes['$(palette).shades']|null, (t: SchemaTypes['$(palette).shades'], doSave?: boolean) => void, () => void];
 
-export function useFloroState<T>(query: string, defaultData?: T, mutateStoreWithDefault = true): [T|null, (t: T) => void, () => void] {
+export function useFloroState<T>(query: string, defaultData?: T): [T|null, (t: T, doSave?: boolean) => void, () => void] {
   const ctx = useFloroContext();
   const pluginName = useMemo(() => getPluginNameFromQuery(query), [query]);
 
@@ -1419,53 +1325,46 @@ export function useFloroState<T>(query: string, defaultData?: T, mutateStoreWith
     if (existingObj) {
       return existingObj as T;
     }
-
-    if (mutateStoreWithDefault && ctx.applicationState && defaultData) {
-      updateObjectInStateMap(ctx.applicationState, query, defaultData);
-    }
     if (ctx.applicationState && defaultData) {
       return defaultData;
     }
     return null;
-  }, [ctx.applicationState, query, defaultData, mutateStoreWithDefault, ctx.hasLoaded]);
+  }, [ctx.applicationState, query, defaultData, ctx.hasLoaded]);
 
   const [getter, setter] = useState<T|null>(obj ?? defaultData ?? null);
 
-  const objString = useMemo(() => {
-    if (!obj) {
-      return null;
-    }
-    return JSON.stringify(obj);
-  }, [obj, query])
-
   useEffect(() => {
     setter(obj);
-  }, [objString]);
+  }, [obj])
 
   const save = useCallback(() => {
-    if (ctx.applicationState && pluginName && getter && ctx.commandMode == "edit") {
+    if (ctx.currentPluginAppState.current && pluginName && getter && ctx.commandMode == "edit") {
       ctx.lastEditKey.current = query;
-      updateObjectInStateMap(ctx.applicationState, query, getter);
+      const next = updateObjectInStateMap({...ctx.currentPluginAppState.current}, query, getter) as SchemaRoot
       ctx.setPluginState({
         ...ctx.pluginState,
-        applicationState: ctx.applicationState
+        applicationState: next
       });
+      ctx.currentPluginAppState.current = next;
       ctx.saveState(pluginName, ctx.applicationState);
     }
-  }, [query, pluginName, ctx.pluginState, ctx.applicationState, ctx.commandMode, getter]);
+  }, [query, pluginName, obj, ctx.pluginState, ctx.commandMode, getter]);
 
-  const set = useCallback((obj: T) => {
-    setter(obj);
-    ctx.lastEditKey.current = query;
-    if (ctx.applicationState && pluginName && obj && ctx.commandMode == "edit") {
-      updateObjectInStateMap(ctx.applicationState, query, obj);
-      ctx.setPluginState({
-        ...ctx.pluginState,
-        applicationState: ctx.applicationState
-      });
-      ctx.saveState(pluginName, ctx.applicationState);
+  const set = useCallback((obj: T, doSave = true) => {
+    if (ctx.currentPluginAppState.current && pluginName && obj && ctx.commandMode == "edit") {
+      setter(obj);
+      ctx.lastEditKey.current = query;
+      if (doSave) {
+        const next = updateObjectInStateMap({...ctx.currentPluginAppState.current}, query, obj) as SchemaRoot
+        ctx.setPluginState({
+          ...ctx.pluginState,
+          applicationState: next
+        });
+        ctx.currentPluginAppState.current = next;
+        ctx.saveState(pluginName, next);
+      }
     }
-  }, [query, pluginName, ctx.pluginState, ctx.applicationState, ctx.commandMode]);
+  }, [query, ctx.saveState, ctx.setPluginState, obj, pluginName, ctx.pluginState, ctx.commandMode]);
   return [getter, set, save];
 };
 

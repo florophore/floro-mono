@@ -306,6 +306,9 @@ export const useUpdatePluginState = (pluginName: string, repository: Repository,
           pluginName: pluginNameToUpdate
         }
       );
+      //await (new Promise(resolve => {
+      //  setTimeout(() => resolve(true), 500);
+      //}))
       return {
         id,
         result: result?.data
