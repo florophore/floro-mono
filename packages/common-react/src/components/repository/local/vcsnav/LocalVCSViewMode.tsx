@@ -149,6 +149,7 @@ const LocalVCSViewMode = (props: Props) => {
   const [showConfirmForcePull, setShowConfirmForcePull] = useState(false);
   const [showConfirmForcePush, setShowConfirmForcePush] = useState(false);
   const { isCopyEnabled, setShowCopyPaste, isSelectMode, setSelectedRepoInfo, setCopyInstructions, setIsSelectMode, copyInstructions } = useCopyPasteContext("local");
+  const { setShowLocalSettings} = useLocalVCSNavContext();
   const clearStorageMutation =  useClearPluginStorage(props.plugin, props.repository);
   const onClearStorage = useCallback(() => {
     clearStorageMutation.mutate({});
@@ -461,7 +462,11 @@ const LocalVCSViewMode = (props: Props) => {
       return false;
     }
     return JSON.stringify(props?.apiResponse?.storageMap?.[props.plugin]) != JSON.stringify({});
-  }, [props.apiResponse?.storageMap, props.plugin])
+  }, [props.apiResponse?.storageMap, props.plugin]);
+
+  const onShowSettings = useCallback(() => {
+    setShowLocalSettings(true);
+  }, []);
 
   return (
     <>
@@ -522,6 +527,7 @@ const LocalVCSViewMode = (props: Props) => {
                       label={"local settings"}
                       icon={"settings"}
                       titleTextSize="small"
+                      onClick={onShowSettings}
                     />
                   </ButtonRow>
                   {showClearStorage && (

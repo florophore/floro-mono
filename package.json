@@ -55,6 +55,8 @@
     "dependencies": {
         "@apollo/client": "^3.6.9",
         "@apollo/react-hooks": "^4.0.0",
+        "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
+        "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
         "floro": "file:../floro",
         "object-sizeof": "^2.6.1",
         "ts-node": "^10.9.1",

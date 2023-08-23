@@ -11,6 +11,7 @@ import WriteCommitNavPage from "./WriteCommitNavPage";
 import EditBranchNavPage from "./EditBranchNavPage";
 import LocalVCSCompareMergeMode from "./LocalVCSCompareMergeMode";
 import SourceGraphNav from "./SourceGraphNav";
+import LocalSettingsVCSPage from "./LocalSettingsVCSPage";
 
 interface Props {
   repository: Repository;
@@ -20,8 +21,11 @@ interface Props {
 const LocalVCSNavController = (props: Props) => {
 
   const { data } = useCurrentRepoState(props.repository);
-  const { subAction} = useLocalVCSNavContext();
+  const { subAction, showLocalSettings} = useLocalVCSNavContext();
 
+  if (showLocalSettings) {
+    return <LocalSettingsVCSPage repository={props.repository}/>;
+  }
   if (data) {
     if (subAction == "branches") {
         return <LocalBranchesNavPage apiResponse={data} repository={props.repository}/>

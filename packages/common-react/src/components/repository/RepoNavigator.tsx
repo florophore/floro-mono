@@ -46,6 +46,7 @@ interface Props {
 const RepoNavigator = (props: Props): React.ReactElement => {
   const sourceMapIsShown = useSourceGraphIsShown();
   const { reviewPage } = useMergeRequestReviewPage();
+  const { showLocalSettings} = useLocalVCSNavContext();
 
   const hideSideNav = useMemo(() => {
     if (props.from == "remote") {
@@ -69,11 +70,14 @@ const RepoNavigator = (props: Props): React.ReactElement => {
       }
       return false;
     }
+    if (showLocalSettings) {
+      return true;
+    }
     if (sourceMapIsShown) {
       return true;
     }
     return false;
-  }, [sourceMapIsShown, reviewPage, props.from, props.page])
+  }, [sourceMapIsShown, reviewPage, props.from, props.page, showLocalSettings])
   return (
     <Container>
       {!hideSideNav && (

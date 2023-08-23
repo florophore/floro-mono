@@ -6,6 +6,8 @@ interface ILocalVCSNavContext {
 
     compareFrom: "before"|"after";
     setCompareFrom: React.Dispatch<React.SetStateAction<ILocalVCSNavContext["compareFrom"]>>;
+    showLocalSettings: boolean;
+    setShowLocalSettings: React.Dispatch<React.SetStateAction<ILocalVCSNavContext["showLocalSettings"]>>;
 }
 
 const LocalVCSNavContext = createContext({
@@ -16,7 +18,10 @@ const LocalVCSNavContext = createContext({
     setCompareFrom: (_: ILocalVCSNavContext["compareFrom"]) => {
         //void
     },
-
+    showLocalSettings: false,
+    setShowLocalSettings: (_: ILocalVCSNavContext["showLocalSettings"]) => {
+        //void
+    },
 } as ILocalVCSNavContext);
 
 interface Props {
@@ -26,12 +31,15 @@ interface Props {
 export const LocalVCSNavProvider = (props: Props) => {
     const [subAction, setSubAction] = useState<ILocalVCSNavContext["subAction"]>(null);
     const [compareFrom, setCompareFrom] = useState<ILocalVCSNavContext["compareFrom"]>("before");
+    const [showLocalSettings, setShowLocalSettings] = useState<ILocalVCSNavContext["showLocalSettings"]>(false);
 
     const value: ILocalVCSNavContext = {
       subAction,
       setSubAction,
       compareFrom,
-      setCompareFrom
+      setCompareFrom,
+      showLocalSettings,
+      setShowLocalSettings
     };
     return (
         <LocalVCSNavContext.Provider value={value}>

@@ -12,6 +12,7 @@ import { useLocalVCSNavContext } from "./vcsnav/LocalVCSContext";
 import { useSourceGraphIsShown } from "../ui-state-hook";
 import SourceGraphMount from "../sourcegraph/SourceGraphMount";
 import { useCopyPasteContext } from "../copypaste/CopyPasteContext";
+import LocalSettingsHome from "./settings/LocalSettingsHome";
 
 const LoadingContainer = styled.div`
   display: flex;
@@ -60,7 +61,7 @@ const LocalRepoController = (props: Props) => {
     [theme.name]
   );
   const { data } = useCurrentRepoState(props.repository);
-  const { setCompareFrom, setSubAction } = useLocalVCSNavContext();
+  const { setCompareFrom, setSubAction, showLocalSettings } = useLocalVCSNavContext();
   const { isSelectMode } = useCopyPasteContext("local");
 
   const updateCommandState = useUpdateCurrentCommand(props.repository);
@@ -266,7 +267,10 @@ const LocalRepoController = (props: Props) => {
           <DotsLoader color={loaderColor} size={"large"} />
         </LoadingContainer>
       )}
-      {data && (
+      {showLocalSettings && (
+        <LocalSettingsHome repository={props.repository}/>
+      )}
+      {!showLocalSettings && data && (
         <>
           {localRepoHeader}
           {showSourceGraph && <SourceGraphMount/>}

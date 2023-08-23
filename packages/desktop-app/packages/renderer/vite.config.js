@@ -5,6 +5,11 @@ import {join} from 'path';
 import react from '@vitejs/plugin-react';
 import {renderer} from 'unplugin-auto-expose';
 
+
+import nodePolyfills from "rollup-plugin-polyfill-node";
+import { defineConfig } from "vite";
+import { nodeModulesPolyfillPlugin } from "esbuild-plugins-node-modules-polyfill";
+
 const PACKAGE_ROOT = __dirname;
 
 /**
@@ -43,7 +48,16 @@ const config = {
   test: {
     environment: 'happy-dom',
   },
+  optimizeDeps: {
+    esbuildOptions: {
+        // Enable esbuild polyfill plugins
+        plugins: [
+            nodeModulesPolyfillPlugin()
+        ]
+    }
+},
   plugins: [
+    nodePolyfills(),
     react(),
     renderer.vite({
       preloadEntry: join(PACKAGE_ROOT, '../preload/src/index.ts'),

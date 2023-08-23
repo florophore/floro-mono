@@ -20,6 +20,7 @@ import {  useCloneState, useRepoExistsLocally } from "./local/hooks/local-hooks"
 import { ComparisonState, RemoteCommitState } from "./remote/hooks/remote-state";
 import RemoteVCSNavController from "./remote/vcsnav/RemoteVCSNavController";
 import { RepoPage } from "./types";
+import { useLocalVCSNavContext } from "./local/vcsnav/LocalVCSContext";
 
 const Container = styled.nav`
   display: flex;
@@ -126,6 +127,8 @@ const VersionControlPanel = (props: Props) => {
   const from: "remote"|"local" = searchParams.get?.('from') as "remote"|"local" ?? "remote";
   const { data: repoExistsLocally, isLoading } = useRepoExistsLocally(props.repository);
   const sourceGraphIsShown = useSourceGraphIsShown();
+  const { showLocalSettings} = useLocalVCSNavContext();
+
   const isFullShadow = useMemo(() => {
     if (from == "remote") {
       if (props.page == "settings") {
@@ -138,11 +141,14 @@ const VersionControlPanel = (props: Props) => {
     //if (!repoExistsLocally) {
     //  return false;
     //}
-    if (sourceGraphIsShown) {
+    if (showLocalSettings && from == "local") {
+      return true;
+    }
+    if (sourceGraphIsShown && from == "local") {
       return true;
     }
     return false;
-  }, [sourceGraphIsShown, repoExistsLocally, props.page, from]);
+  }, [sourceGraphIsShown, showLocalSettings, repoExistsLocally, props.page, from]);
   const { data: cloneState } = useCloneState(props.repository);
 
   const theme = useTheme();

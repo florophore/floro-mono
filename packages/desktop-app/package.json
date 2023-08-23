@@ -31,6 +31,7 @@
     "format": "npx prettier --write \"**/*.{js,mjs,cjs,ts,tsx,mts,cts,json}\""
   },
   "devDependencies": {
+    "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "@types/apollo-upload-client": "^17.0.2",
     "@types/js-cookie": "^3.0.2",
     "@types/mixpanel-browser": "^2.38.0",
@@ -40,10 +41,13 @@
     "cross-env": "7.0.3",
     "electron": "24.1.1 ",
     "electron-builder": "23.3.3",
+    "esbuild-plugins-node-modules-polyfill": "^1.4.0",
     "eslint": "8.21.0",
     "happy-dom": "6.0.4",
     "nano-staged": "0.8.0",
     "playwright": "1.26.0",
+    "rollup-plugin-node-externals": "^6.1.1",
+    "rollup-plugin-polyfill-node": "^0.12.0",
     "simple-git-hooks": "2.8.0",
     "typescript": "4.7.4",
     "unplugin-auto-expose": "0.0.2",
@@ -56,11 +60,13 @@
     "@apollo/react-hooks": "^4.0.0",
     "@emotion/css": "^11.10.0",
     "@emotion/react": "^11.10.0",
+    "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
     "apollo-upload-client": "^17.0.0",
     "electron-acrylic-window": "^0.5.11",
     "electron-updater": "5.2.1",
+    "esbuild-plugins-node-modules-polyfill": "^1.4.0",
     "framer-motion": "^10.10.0",
     "http-terminator": "^3.2.0",
     "isomorphic-fetch": "^3.0.0",
@@ -70,6 +76,7 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.3.0",
     "react-transition-group": "^4.4.5",
+    "rollup-plugin-polyfill-node": "^0.12.0",
     "socket.io": "^4.5.2",
     "whatwg-fetch": "^3.6.2"
   }

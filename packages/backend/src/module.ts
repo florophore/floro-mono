@@ -112,6 +112,7 @@ import OrgApiKeyGuard from './resolvers/hooks/guards/OrgApiKeyGuard';
 import OrgWebhookKeyGuard from './resolvers/hooks/guards/OrgWebhookKeyGuard';
 import UserApiKeyGuard from './resolvers/hooks/guards/UserApiKeyGuard';
 import UserWebhookKeyGuard from './resolvers/hooks/guards/UserWebhookKeyGuard';
+import TestWebhookController from './controllers/TestWebhookController';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -271,6 +272,7 @@ export default new ContainerModule((bind): void => {
     bind<RepoController>("Controllers").to(RepoController);
     bind<PluginController>("Controllers").to(PluginController);
     bind<PrivateCDNTestController>("Controllers").to(PrivateCDNTestController);
+    bind<TestWebhookController>("Controllers").to(TestWebhookController);
 
     // RESOLVER MODULES
     bind<UsersResolverModule>("ResolverModule").to(UsersResolverModule);
