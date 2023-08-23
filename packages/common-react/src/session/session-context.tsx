@@ -223,13 +223,13 @@ export const SessionProvider = (props: Props) => {
 
 
   useEffect(() => {
-    if (session?.clientKey && data?.exchangeSession?.user) {
+    if (session?.clientKey && data?.exchangeSession?.user?.id) {
       axios.post(`http://localhost:63403/session`, {
         session: session,
         user: session?.user
       });
     }
-  }, [session?.clientKey, data?.exchangeSession?.user])
+  }, [session?.clientKey, data?.exchangeSession?.user?.id])
 
   return (
     <SessionContext.Provider

@@ -338,12 +338,25 @@ const LocalVCSViewMode = (props: Props) => {
       );
     }
 
+
     if (!fetchInfo?.userHasPermissionToPush) {
       return (
           <ConflictInfoRow>
             <ConflictError>
               {
                 "You do not have push permissions for this repository."
+              }
+            </ConflictError>
+          </ConflictInfoRow>
+      );
+    }
+
+    if (!fetchInfo?.userCanPush) {
+      return (
+          <ConflictInfoRow>
+            <ConflictError>
+              {
+                "You cannot directly push this branch to the remote repository."
               }
             </ConflictError>
           </ConflictInfoRow>

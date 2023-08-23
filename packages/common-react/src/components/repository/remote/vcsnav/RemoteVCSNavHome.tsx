@@ -17,7 +17,9 @@ import { useDaemonIsConnected } from "../../../../pubsub/socket";
 import {
   useCloneRepo,
   useCloneState,
+  usePauseCloneRepo,
   useRepoExistsLocally,
+  useResumeCloneRepo,
 } from "../../local/hooks/local-hooks";
 import { RemoteCommitState, useMainCommitState } from "../hooks/remote-state";
 import RemoteCurrentInfo from "@floro/storybook/stories/repo-components/RemoteCurrentInfo";
@@ -32,6 +34,7 @@ import MergeBranchModal from "../modals/MergeBranchModal";
 import { useCopyPasteContext } from "../../copypaste/CopyPasteContext";
 import CopyPasteModal from "../../copypaste/copy_modal/CopyPasteModal";
 import PluginSelectRow from "../../home/plugin_editor/PluginSelectRow";
+import { useDeleteRepo } from "../../../../hooks/repos";
 
 const InnerContent = styled.div`
   display: flex;
@@ -96,6 +99,7 @@ const RemoteVCSNavHome = (props: Props) => {
   const { data: repoExistsLocally, isLoading } = useRepoExistsLocally(
     props.repository
   );
+  console.log("DEL", repoExistsLocally)
   const [ignoreBranch, ignoreBranchRequest] = useIgnoreBranchMutation();
   const { isSelectMode, isCopyEnabled, setShowCopyPaste, setIsSelectMode, setCopyInstructions, setSelectedRepoInfo, copyInstructions } = useCopyPasteContext("remote");
   const onShowCopy = useCallback(() => {
@@ -103,10 +107,27 @@ const RemoteVCSNavHome = (props: Props) => {
   }, []);
   const navigate = useNavigate();
   const cloneRepoMutation = useCloneRepo(props.repository);
+  const pauseCloneRepoMutation = usePauseCloneRepo(props.repository);
+  const resumeCloneRepoMutation = useResumeCloneRepo(props.repository);
+  const deleteRepoMutation = useDeleteRepo(props.repository?.id as string);
+
   const isDaemonConnected = useDaemonIsConnected();
+
   const cloneRepo = useCallback(() => {
     cloneRepoMutation.mutate();
   }, [props.repository?.id]);
+
+  const pauseCloneRepo = useCallback(() => {
+    pauseCloneRepoMutation.mutate();
+  }, [props.repository?.id]);
+
+  const resumeCloneRepo = useCallback(() => {
+    resumeCloneRepoMutation.mutate();
+  }, [props.repository?.id]);
+
+  const onDelete = useCallback(() => {
+    deleteRepoMutation.mutate();
+  }, []);
 
   const { data: cloneState, isLoading: cloneStateLoading } = useCloneState(
     props.repository
@@ -433,27 +454,27 @@ const RemoteVCSNavHome = (props: Props) => {
 
           {isSelectMode && (
             <>
-                <Row style={{ marginBottom: 0 }}>
-                  <SubTitleSpan>{"Copy Selectable Plugins"}</SubTitleSpan>
-                </Row>
-                <div style={{width: "100%", marginTop: 12}}>
-                  {selectablePluginVersions?.map((pluginVersion, index) => {
-                    return (
-                      <PluginSelectRow
-                        pluginVersion={pluginVersion}
-                        repository={props.repository}
-                        key={index}
-                      />
-                    );
-                  })}
-                </div>
+              <Row style={{ marginBottom: 0 }}>
+                <SubTitleSpan>{"Copy Selectable Plugins"}</SubTitleSpan>
+              </Row>
+              <div style={{ width: "100%", marginTop: 12 }}>
+                {selectablePluginVersions?.map((pluginVersion, index) => {
+                  return (
+                    <PluginSelectRow
+                      pluginVersion={pluginVersion}
+                      repository={props.repository}
+                      key={index}
+                    />
+                  );
+                })}
+              </div>
             </>
           )}
         </TopContainer>
         <BottomContainer>
           {isSelectMode && (
             <>
-              <ButtonRow style={{marginBottom: 16}}>
+              <ButtonRow style={{ marginBottom: 16 }}>
                 <RepoActionButton
                   label={"cancel copy and paste"}
                   icon={"copy-cancel"}
@@ -473,45 +494,86 @@ const RemoteVCSNavHome = (props: Props) => {
           )}
           {!isSelectMode && (
             <>
-            {props?.repository?.branchState?.showMergeAndDeleteOptions &&
-              !props?.repository?.branchState?.commitState?.isOffBranch && (
-                <ButtonRow>
-                  <Button
-                    label="merge branch"
-                    bg={"purple"}
-                    size={"extra-big"}
-                    isDisabled={!props?.repository?.branchState?.canMergeDirectly}
-                    onClick={onShowMergeBranch}
-                  />
-                  <div style={{ width: 48 }}></div>
-                  <Button
-                    label="delete branch"
-                    bg={"red"}
-                    size={"extra-big"}
-                    isDisabled={
-                      !(
-                        props?.repository?.branchState?.canDelete &&
-                        props?.repository?.branchState?.branchHead ==
-                          props?.repository?.branchState?.commitState?.sha
-                      )
-                    }
-                    onClick={onShowDeleteBranch}
-                  />
-                </ButtonRow>
-              )}
-            {(cloneState?.state != "none" || !repoExistsLocally) &&
-              !isLoading &&
-              !cloneStateLoading && (
-                <ButtonRow style={{ marginTop: 24 }}>
-                  <Button
-                    label="clone repository"
-                    bg={"orange"}
-                    size={"extra-big"}
-                    onClick={cloneRepo}
-                    isLoading={cloneRepoMutation.isLoading}
-                    isDisabled={!isDaemonConnected}
-                  />
-                </ButtonRow>
+              {props?.repository?.branchState?.showMergeAndDeleteOptions &&
+                !props?.repository?.branchState?.commitState?.isOffBranch && (
+                  <ButtonRow>
+                    <Button
+                      label="merge branch"
+                      bg={"purple"}
+                      size={"extra-big"}
+                      isDisabled={
+                        !props?.repository?.branchState?.canMergeDirectly
+                      }
+                      onClick={onShowMergeBranch}
+                    />
+                    <div style={{ width: 48 }}></div>
+                    <Button
+                      label="delete branch"
+                      bg={"red"}
+                      size={"extra-big"}
+                      isDisabled={
+                        !(
+                          props?.repository?.branchState?.canDelete &&
+                          props?.repository?.branchState?.branchHead ==
+                            props?.repository?.branchState?.commitState?.sha
+                        )
+                      }
+                      onClick={onShowDeleteBranch}
+                    />
+                  </ButtonRow>
+                )}
+
+              {!repoExistsLocally && (
+                <>
+                  {cloneState?.state == "none" && (
+                    <ButtonRow style={{ marginTop: 24 }}>
+                      <Button
+                        label="clone repository"
+                        bg={"orange"}
+                        size={"extra-big"}
+                        onClick={cloneRepo}
+                        isDisabled={!isDaemonConnected}
+                      />
+                    </ButtonRow>
+                  )}
+                  {cloneState?.state == "in_progress" && (
+                    <ButtonRow style={{ marginTop: 24 }}>
+                      <Button
+                        label={`pause cloning (${cloneState.downloadedCommits}/${cloneState.totalCommits} commits cloned)`}
+                        bg={"orange"}
+                        textSize={"small"}
+                        size={"extra-big"}
+                        isDisabled={!isDaemonConnected}
+                        onClick={pauseCloneRepo}
+                      />
+                    </ButtonRow>
+                  )}
+                  {cloneState?.state == "paused" && (
+                    <>
+                      <ButtonRow style={{ marginTop: 24 }}>
+                        <Button
+                          label={`stop clone progress & delete local repository`}
+                          bg={"red"}
+                          size={"extra-big"}
+                          textSize="small"
+                          isDisabled={!isDaemonConnected}
+                          onClick={onDelete}
+                          isLoading={deleteRepoMutation.isLoading}
+                        />
+                      </ButtonRow>
+                      <ButtonRow style={{ marginTop: 24 }}>
+                        <Button
+                          label={`resume cloning (${cloneState.downloadedCommits}/${cloneState.totalCommits} commits cloned)`}
+                          bg={"orange"}
+                          textSize={"small"}
+                          size={"extra-big"}
+                          isDisabled={!isDaemonConnected}
+                          onClick={resumeCloneRepo}
+                        />
+                      </ButtonRow>
+                    </>
+                  )}
+                </>
               )}
             </>
           )}

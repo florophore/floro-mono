@@ -1220,7 +1220,9 @@ export const useRepoExistsLocally = (repository: Repository) => {
         } catch(e) {
             return false;
         }
-    }, { cacheTime: 0});
+    }, {
+      cacheTime: 0
+    });
 }
 
 export const useIsBranchProtected = (repository: Repository, branchId?: string) => {
@@ -1241,21 +1243,36 @@ export const useIsBranchProtected = (repository: Repository, branchId?: string) 
 }
 
 export const useCloneRepo = (repository: Repository) => {
-  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: () => {
         return axios.get(
           `http://localhost:63403/repo/${repository.id}/clone`
         );
-    },
-    onSuccess: (result) => {
-      if (result?.data?.status == "success") {
-        queryClient.invalidateQueries("repo-exists:" + repository.id);
-        queryClient.invalidateQueries("local-repos");
-      }
     }
   });
 };
+
+export const usePauseCloneRepo = (repository: Repository) => {
+  return useMutation({
+    mutationFn: () => {
+        return axios.post(
+          `http://localhost:63403/repo/${repository.id}/clone/pause`
+        );
+    }
+  });
+};
+
+export const useResumeCloneRepo = (repository: Repository) => {
+  return useMutation({
+    mutationFn: () => {
+        return axios.post(
+          `http://localhost:63403/repo/${repository.id}/clone/resume`
+        );
+    }
+  });
+};
+
+
 
 export const useCloneState = (repository: Repository) => {
   const queryClient = useQueryClient();
@@ -1266,6 +1283,17 @@ export const useCloneState = (repository: Repository) => {
     },
     [repository.id]
   );
+
+  useSocketEvent(
+    "clone-done:" + repository.id,
+    () => {
+      queryClient.refetchQueries("local-repos-info");
+      queryClient.refetchQueries("local-repos");
+      queryClient.refetchQueries("repo-exists:" + repository.id);
+    },
+    [repository.id]
+  );
+
   return useQuery(
     "clone-state:" + repository.id,
     async (): Promise<{

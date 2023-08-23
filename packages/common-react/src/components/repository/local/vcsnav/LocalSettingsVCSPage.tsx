@@ -25,6 +25,7 @@ import { Branch } from "floro/dist/src/repo";
 
 import BranchRuleIcon from "@floro/common-assets/assets/images/icons/branch_rule.dark.svg";
 import { useLocalVCSNavContext } from "./LocalVCSContext";
+import ConfirmDeleteRepoModal from "../modals/ConfirmDeleteRepoModal";
 
 const InnerContent = styled.div`
   display: flex;
@@ -75,6 +76,79 @@ const GoBackIcon = styled.img`
   cursor: pointer;
 `;
 
+const Row = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+  margin-top: 24px;
+`;
+
+const TextAreaBlurbBox = styled.div`
+  font-family: "MavenPro";
+  font-weight: 600;
+  font-size: 1.4rem;
+  border: 1px solid ${(props) => props.theme.colors.blurbBorder};
+  padding: 16px;
+  border-radius: 8px;
+  min-height: 184px;
+  position: relative;
+  display: grid;
+  width: 100%;
+  margin: 0;
+
+  &::after {
+    content: attr(data-value) " ";
+    visibility: hidden;
+    white-space: pre-wrap;
+    font-weight: 400;
+    font-size: 1rem;
+    display: block;
+    margin-top: -38px;
+  }
+`;
+
+const BlurbTextArea = styled.textarea`
+  color: ${(props) => props.theme.colors.blurbBorder};
+  font-family: "MavenPro";
+  font-weight: 400;
+  font-size: 1rem;
+  white-space: pre-wrap;
+  resize: none;
+  background: none;
+  width: 100%;
+  padding: 0;
+  height: 184px;
+  outline: none;
+  border: none;
+  margin: 0;
+  resize: none;
+  background: none;
+  appearance: none;
+`;
+
+const BlurbPlaceholder = styled.span`
+  color: ${(props) => props.theme.colors.blurbBorder};
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-family: "MavenPro";
+  font-weight: 500;
+  font-size: 1rem;
+  left: 16px;
+  top: 16px;
+  pointer-events: none;
+`;
+
+const ButtonRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+`;
+
 interface Props {
   repository: Repository;
 }
@@ -82,7 +156,15 @@ interface Props {
 const LocalSettingsVCSPage = (props: Props) => {
   const theme = useTheme();
   const { setShowLocalSettings } = useLocalVCSNavContext();
+  const [showDelete, setShowDelete] = useState(false);
 
+  const onShowDelete = useCallback(() => {
+    setShowDelete(true);
+  }, []);
+
+  const onHideDelete = useCallback(() => {
+    setShowDelete(false);
+  }, []);
 
   const onGoBack = useCallback(() => {
     setShowLocalSettings(false);
@@ -96,6 +178,11 @@ const LocalSettingsVCSPage = (props: Props) => {
   }, [theme.name]);
   return (
     <>
+      <ConfirmDeleteRepoModal
+        repository={props.repository}
+        show={showDelete}
+        onDismiss={onHideDelete}
+      />
       <InnerContent>
         <TopContainer>
           <TitleRow>
@@ -126,6 +213,7 @@ const LocalSettingsVCSPage = (props: Props) => {
             }}
           >
             <Button
+              onClick={onShowDelete}
               label={
                 <div
                   style={{

@@ -289,7 +289,7 @@ const VersionControlPanel = (props: Props) => {
     <Container style={panelStyle}>
       <InnerContainer style={innerStyle}>
         <InnerContainerContent>
-          {repoExistsLocally && isDaemonConnected && cloneState?.state == "none" && (
+          {repoExistsLocally && isDaemonConnected && (
             <div style={{ height: 73 }}>
               <LocalRemoteToggle tab={from} onChange={onToggleFrom} />
             </div>

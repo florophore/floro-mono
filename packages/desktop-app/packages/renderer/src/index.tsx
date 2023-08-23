@@ -9,11 +9,9 @@ const root = createRoot(
 );
 
 (async () => {
-  mixpanel.init('3ef6d7c0665cd33bcea1ecc3e034e8c3', {debug: true}); 
+  mixpanel.init('3ef6d7c0665cd33bcea1ecc3e034e8c3', {debug: true});
   const systemAPI = await window.systemAPI;
   root.render(
-    <React.StrictMode>
-      <App systemAPI={systemAPI} />
-    </React.StrictMode>,
+    <App systemAPI={systemAPI} />
   );
 })();

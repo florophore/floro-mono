@@ -45,7 +45,7 @@ const RepoCreateMergeRequestPage = () => {
     fetchPolicy: 'cache-and-network'
   });
 
-  const subs = useMergeRequestUpdatesSubscription({
+  useMergeRequestUpdatesSubscription({
     variables: {
       mergeRequestId,
       idx

@@ -17,8 +17,8 @@ async function createWindow() {
     titleBarOverlay: true,
     height: 920,
     width: 1200,
-    minHeight: 800,
-    minWidth: 1050,
+    minHeight: 675,
+    minWidth: 900,
     webPreferences: {
       webSecurity: false,
       nodeIntegration: false,

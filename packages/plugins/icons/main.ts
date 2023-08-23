@@ -54,7 +54,6 @@ async function createServer() {
 
       return res.status(200).set({ "Content-Type": "text/html" }).end(template);
     });
-    console.log("PORt", PORT)
 
     app.listen(PORT);
   }

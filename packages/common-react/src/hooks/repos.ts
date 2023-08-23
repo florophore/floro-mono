@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Organization, Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { useMemo } from "react";
-import { useQuery, useQueryClient } from "react-query";
+import { useQuery, useMutation, useQueryClient } from "react-query";
 import { useDaemonIsConnected } from "../pubsub/socket";
 import { useSession } from "../session/session-context";
 import { useIsOnline } from "./offline";
@@ -121,3 +121,21 @@ export const useLocalReposInfos = (): Array<RepoInfo> => {
   });
   return response?.data ?? [];
 }
+
+
+export const useDeleteRepo = (repositoryId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => {
+      return axios.post(
+        `http://localhost:63403/repo/${repositoryId}/delete`
+      );
+    },
+    onSuccess: () => {
+      queryClient.refetchQueries("local-repos-info");
+      queryClient.refetchQueries("local-repos");
+      queryClient.refetchQueries("repo-exists:" + repositoryId);
+      queryClient.refetchQueries("clone-state:" + repositoryId);
+    },
+  });
+};

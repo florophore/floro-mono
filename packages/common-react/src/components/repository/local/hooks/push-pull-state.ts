@@ -65,6 +65,10 @@ export const usePushButtonSubTitle = (
       return "(no push permission)";
     }
 
+    if (!fetchInfo.userCanPush) {
+      return "(direct push disabled)";
+    }
+
     if (fetchInfo.baseBranchRequiresPush) {
       return "(push base branch first)";
     }

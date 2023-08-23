@@ -7,8 +7,6 @@ import {FetchRepositoryByNameDocument, Repository, useFetchRepoBranchRuleQuery, 
 import {useSession} from '@floro/common-react/src/session/session-context';
 import {useUserOrganizations} from '@floro/common-react/src/hooks/offline';
 import RepoController from '@floro/common-react/src/components/repository/RepoController';
-import { useApolloClient } from '@apollo/client';
-import { RepoPage } from '@floro/common-react/src/components/repository/types';
 
 const RepoHomeBranchRuleSettingsPage = () => {
   const params = useParams();
