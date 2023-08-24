@@ -1,0 +1,28 @@
+mutation RemoveEnabledApiKey($repositoryId: ID!, $apiKeyId: ID!) {
+  removeEnabledApiKey(repositoryId: $repositoryId, apiKeyId: $apiKeyId) {
+    ... on RepositoryApiKeySuccess {
+      repository {
+        id
+        enabledApiKeys {
+          ...RepositoryEnabledApiKey
+        }
+      }
+    }
+    ... on RepositoryApiKeyError {
+      type
+      message
+    }
+    ... on RepoAccessError {
+      message
+      type
+    }
+    ... on RepoSettingAccessError {
+      message
+      type
+    }
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+  }
+}

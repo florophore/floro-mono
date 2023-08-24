@@ -46,6 +46,9 @@ type Repository {
 
   protectedBranchRules: [ProtectedBranchRule]
   protectedBranchRule(protectedBranchRuleId: ID): ProtectedBranchRule
+
+  enabledApiKeys: [RepositoryEnabledApiKey]
+  enabledWebhookKeys: [RepositoryEnabledWebhookKey]
 }
 
 type ProtectedBranchRule {

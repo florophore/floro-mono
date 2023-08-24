@@ -39,7 +39,6 @@ import {
   ApplicationKVState,
   EMPTY_COMMIT_STATE,
   canAutoMergeCommitStates,
-  getCommitState,
   getDivergenceOrigin,
   getMergeOriginSha,
 } from "floro/dist/src/repo";
@@ -57,7 +56,6 @@ import RootRepositoryRemoteSettingsLoader from "../hooks/loaders/Root/Repository
 import RepoSettingsService from "../../services/repositories/RepoSettingsService";
 import RepoSettingAccessGuard from "../hooks/guards/RepoSettingAccessGuard";
 import RepoDataService from "../../services/repositories/RepoDataService";
-import OrganizationsContext from "@floro/database/src/contexts/organizations/OrganizationsContext";
 import RepositoryDatasourceFactoryService from "../../services/repositories/RepoDatasourceFactoryService";
 import UserClosedMergeRequestsLoader from "../hooks/loaders/MergeRequest/UserClosedMergeRequestsLoader";
 import RevertService from "../../services/repositories/RevertService";
@@ -65,6 +63,16 @@ import BranchStateRepositoryLoader from "../hooks/loaders/Repository/BranchState
 import BranchesContext from "@floro/database/src/contexts/repositories/BranchesContext";
 import MergeService from "../../services/merge_requests/MergeService";
 import CommitsContext from "@floro/database/src/contexts/repositories/CommitsContext";
+import OrganizationPermissionService from "../../services/organizations/OrganizationPermissionService";
+import RepositoryEnabledApiKeysContext from "@floro/database/src/contexts/api_keys/RepositoryEnabledApiKeysContext";
+import RepositoryEnabledWebhookKeysContext from "@floro/database/src/contexts/api_keys/RepositoryEnabledWebhookKeysContext";
+import RepoApiSettingAccessGuard from "../hooks/guards/RepoApiSettingAccessGuard";
+import ApiKeyLoader from "../hooks/loaders/ApiKey/ApiKeyLoader";
+import WebhookKeyLoader from "../hooks/loaders/ApiKey/WebhookKeyLoader";
+import ApiKeysContext from "@floro/database/src/contexts/api_keys/ApiKeysContext";
+import WebhookKeysContext from "@floro/database/src/contexts/api_keys/WebhookKeysContext";
+import RepoEnabledApiKeyService from "../../services/api_keys/RepoEnabledApiKeyService";
+import RepoEnabledWebhookKeyService from "../../services/api_keys/RepoEnabledWebhookKeyService";
 
 const PAGINATION_LIMIT = 10;
 
@@ -89,6 +97,9 @@ export default class RepositoryResolverModule extends BaseResolverModule {
   protected revertService!: RevertService;
   protected contextFactory!: ContextFactory;
   protected requestCache!: RequestCache;
+  protected organizationPermissionsService!: OrganizationPermissionService;
+  protected repoEnabledApiKeyService!: RepoEnabledApiKeyService;
+  protected repoEnabledWebhookKeyService!: RepoEnabledWebhookKeyService;
 
   protected loggedInUserGuard!: LoggedInUserGuard;
 
@@ -106,7 +117,10 @@ export default class RepositoryResolverModule extends BaseResolverModule {
   protected commitInfoRepositoryLoader!: CommitInfoRepositoryLoader;
   protected branchStateRepositoryLoader!: BranchStateRepositoryLoader;
   protected writeAccessIdsLoader!: WriteAccessIdsLoader;
+  protected apiKeyLoader!: ApiKeyLoader;
+  protected webhookKeyLoader!: WebhookKeyLoader;
   protected repoSettingAccessGuard!: RepoSettingAccessGuard;
+  protected repoApiSettingAccessGuard!: RepoApiSettingAccessGuard;
 
   protected openMergeRequestsLoader!: OpenMergeRequestsLoader;
   protected userClosedMergeRequestsLoader!: UserClosedMergeRequestsLoader;
@@ -123,6 +137,10 @@ export default class RepositoryResolverModule extends BaseResolverModule {
     @inject(LoggedInUserGuard) loggedInUserGuard: LoggedInUserGuard,
     @inject(RootOrganizationMemberPermissionsLoader)
     rootOrganizationMemberPermissionsLoader: RootOrganizationMemberPermissionsLoader,
+    @inject(RepoApiSettingAccessGuard)
+    repoApiSettingAccessGuard: RepoApiSettingAccessGuard,
+    @inject(OrganizationPermissionService)
+    organizationPermissionsService: OrganizationPermissionService,
     @inject(RepositoryRemoteSettingsLoader)
     repositoryRemoteSettingsLoader: RepositoryRemoteSettingsLoader,
     @inject(RepositoryBranchesLoader)
@@ -159,7 +177,11 @@ export default class RepositoryResolverModule extends BaseResolverModule {
     @inject(WriteAccessIdsLoader) writeAccessIdsLoader: WriteAccessIdsLoader,
     @inject(RepoSettingAccessGuard)
     repoSettingAccessGuard: RepoSettingAccessGuard,
-    @inject(RevertService) revertService: RevertService
+    @inject(RevertService) revertService: RevertService,
+    @inject(RepoEnabledApiKeyService)
+    repoEnabledApiKeyService: RepoEnabledApiKeyService,
+    @inject(RepoEnabledWebhookKeyService)
+    repoEnabledWebhookKeyService: RepoEnabledWebhookKeyService
   ) {
     super();
     this.contextFactory = contextFactory;
@@ -174,6 +196,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
     this.mergeRequestService = mergeRequestService;
     this.mergeService = mergeService;
     this.revertService = revertService;
+    this.organizationPermissionsService = organizationPermissionsService;
 
     this.loggedInUserGuard = loggedInUserGuard;
 
@@ -195,10 +218,14 @@ export default class RepositoryResolverModule extends BaseResolverModule {
     this.branchStateRepositoryLoader = branchStateRepositoryLoader;
     this.writeAccessIdsLoader = writeAccessIdsLoader;
     this.repoSettingAccessGuard = repoSettingAccessGuard;
+    this.repoApiSettingAccessGuard = repoApiSettingAccessGuard;
 
     this.openMergeRequestsLoader = openMergeRequestsLoader;
     this.closedMergeRequestsLoader = closedMergeRequestsLoader;
     this.userClosedMergeRequestsLoader = userClosedMergeRequestsLoader;
+
+    this.repoEnabledApiKeyService = repoEnabledApiKeyService;
+    this.repoEnabledWebhookKeyService = repoEnabledWebhookKeyService;
   }
 
   public Repository: main.RepositoryResolvers = {
@@ -1117,6 +1144,117 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         return null;
       }
     ),
+    enabledApiKeys: runWithHooks(
+      () => [this.repositoryRemoteSettingsLoader],
+      async (repository: main.Repository, _, { cacheKey, currentUser }) => {
+        if (!currentUser || !repository?.id) {
+          return null;
+        }
+        const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
+          cacheKey,
+          repository?.id
+        );
+
+        const dbRepo: Repository = repository as Repository;
+        if (!cachedRemoteSettings.canChangeSettings) {
+          return null;
+        }
+        if (repository.repoType == "user_repo") {
+          if (dbRepo.userId != currentUser?.id) {
+            return null;
+          }
+        }
+        if (repository.repoType == "org_repo") {
+          const organizationMembersContext =
+            await this.contextFactory.createContext(OrganizationMembersContext);
+          const membership =
+            await organizationMembersContext.getByOrgIdAndUserId(
+              dbRepo.organizationId,
+              currentUser.id
+            );
+          if (!membership || membership?.membershipState != "active") {
+            return null;
+          }
+          const organizationMemberRolesContext =
+            await this.contextFactory.createContext(
+              OrganizationMemberRolesContext
+            );
+          const roles = await organizationMemberRolesContext.getRolesByMember(
+            membership
+          );
+          const orgPermissions =
+            this.organizationPermissionsService.calculatePermissions(
+              roles ?? []
+            );
+          if (!orgPermissions.canModifyOrganizationDeveloperSettings) {
+            return null;
+          }
+        }
+        const repositoryEnabledApiKeysContext =
+          await this.contextFactory.createContext(
+            RepositoryEnabledApiKeysContext
+          );
+        return await repositoryEnabledApiKeysContext.getRepositoryApiKeys(
+          repository.id
+        );
+      }
+    ),
+
+    enabledWebhookKeys: runWithHooks(
+      () => [this.repositoryRemoteSettingsLoader],
+      async (repository: main.Repository, _, { cacheKey, currentUser }) => {
+        if (!currentUser || !repository?.id) {
+          return null;
+        }
+        const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
+          cacheKey,
+          repository?.id
+        );
+
+        const dbRepo: Repository = repository as Repository;
+        if (!cachedRemoteSettings.canChangeSettings) {
+          return null;
+        }
+        if (repository.repoType == "user_repo") {
+          if (dbRepo.userId != currentUser?.id) {
+            return null;
+          }
+        }
+        if (repository.repoType == "org_repo") {
+          const organizationMembersContext =
+            await this.contextFactory.createContext(OrganizationMembersContext);
+          const membership =
+            await organizationMembersContext.getByOrgIdAndUserId(
+              dbRepo.organizationId,
+              currentUser.id
+            );
+          if (!membership || membership?.membershipState != "active") {
+            return null;
+          }
+          const organizationMemberRolesContext =
+            await this.contextFactory.createContext(
+              OrganizationMemberRolesContext
+            );
+          const roles = await organizationMemberRolesContext.getRolesByMember(
+            membership
+          );
+          const orgPermissions =
+            this.organizationPermissionsService.calculatePermissions(
+              roles ?? []
+            );
+          if (!orgPermissions.canModifyOrganizationDeveloperSettings) {
+            return null;
+          }
+        }
+        const repositoryEnabledWebhookKeysContext =
+          await this.contextFactory.createContext(
+            RepositoryEnabledWebhookKeysContext
+          );
+        return await repositoryEnabledWebhookKeysContext.getRepositoryWebhookKeys(
+          repository.id
+        );
+      }
+    ),
   };
 
   public CommitInfo: main.CommitInfoResolvers = {
@@ -1364,7 +1502,8 @@ export default class RepositoryResolverModule extends BaseResolverModule {
 
         const isMerged =
           divergenceOrigin?.rebaseShas?.length == 0 &&
-          baseBranch?.lastCommit != null && !!branch?.lastCommit &&
+          baseBranch?.lastCommit != null &&
+          !!branch?.lastCommit &&
           (divergenceOrigin?.intoLastCommonAncestor == branch?.lastCommit ||
             divergenceOrigin?.trueOrigin == baseBranch?.lastCommit);
         let isConflictFree =
@@ -1526,12 +1665,18 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           cachedCommits,
           branchState?.branchHead ?? ""
         );
-        let commit: Commit|null|undefined =
-          branchHistory.find((c) => c.sha == sha);
+        let commit: Commit | null | undefined = branchHistory.find(
+          (c) => c.sha == sha
+        );
         if (!commit) {
           if (branchState.noIdPresent && sha) {
-            const commitsContext = await this.contextFactory.createContext(CommitsContext);
-            commit = await commitsContext.getCommitBySha(branchState.repositoryId, sha)
+            const commitsContext = await this.contextFactory.createContext(
+              CommitsContext
+            );
+            commit = await commitsContext.getCommitBySha(
+              branchState.repositoryId,
+              sha
+            );
             if (!commit) {
               return null;
             }
@@ -1570,11 +1715,11 @@ export default class RepositoryResolverModule extends BaseResolverModule {
               kvLink,
               stateLink,
               lastUpdatedAt: commit?.updatedAt?.toISOString(),
-              isOffBranch: true
+              isOffBranch: true,
             };
           }
           if (branchHeadCommit) {
-            commit = branchHeadCommit
+            commit = branchHeadCommit;
           }
           if (!commit) {
             return null;
@@ -1624,7 +1769,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           kvLink,
           stateLink,
           lastUpdatedAt: commit?.updatedAt?.toISOString(),
-          isOffBranch: false
+          isOffBranch: false,
         };
       }
     ),
@@ -3632,6 +3777,305 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           __typename: "MergeBranchError",
           message: result.error?.message ?? "Unknown Error",
           type: result.error?.type ?? "UNKNOWN_ERROR",
+        };
+      }
+    ),
+
+    addEnabledApiKey: runWithHooks(
+      () => [this.repoApiSettingAccessGuard],
+      async (_, args: main.MutationAddEnabledApiKeyArgs, { currentUser }) => {
+        const repository = await this.repoDataService.fetchRepoById(
+          args.repositoryId
+        );
+        const apiKeysContexts = await this.contextFactory.createContext(
+          ApiKeysContext
+        );
+        const apiKey = await apiKeysContexts.getById(args.apiKeyId);
+        if (!apiKey) {
+          return {
+            __typename: "RepositoryApiKeyError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        if (repository?.repoType == "user_repo") {
+          if (
+            apiKey?.keyType != "user_key" ||
+            apiKey?.userId != repository?.userId ||
+            apiKey?.userId != currentUser?.id
+          ) {
+            return {
+              __typename: "RepositoryApiKeyError",
+              message: "Forbidden Action",
+              type: "FORBIDDEN_ACTION_ERROR",
+            };
+          }
+        }
+        if (repository?.repoType == "org_repo") {
+          if (
+            apiKey?.keyType != "org_key" ||
+            apiKey?.organizationId != repository?.organizationId
+          ) {
+            return {
+              __typename: "RepositoryApiKeyError",
+              message: "Forbidden Action",
+              type: "FORBIDDEN_ACTION_ERROR",
+            };
+          }
+        }
+        await this.repoEnabledApiKeyService.addEnabledApiKey(
+          repository as Repository,
+          apiKey,
+          currentUser
+        );
+        return {
+          __typename: "RepositoryApiKeySuccess",
+          repository,
+        };
+      }
+    ),
+    removeEnabledApiKey: runWithHooks(
+      () => [this.repoApiSettingAccessGuard],
+      async (
+        _,
+        args: main.MutationRemoveEnabledApiKeyArgs,
+        { currentUser }
+      ) => {
+        const repository = await this.repoDataService.fetchRepoById(
+          args.repositoryId
+        );
+        const apiKeysContexts = await this.contextFactory.createContext(
+          ApiKeysContext
+        );
+        const apiKey = await apiKeysContexts.getById(args.apiKeyId);
+        if (!apiKey) {
+          return {
+            __typename: "RepositoryApiKeyError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        if (repository?.repoType == "user_repo") {
+          if (
+            apiKey?.keyType != "user_key" ||
+            apiKey?.userId != repository?.userId ||
+            apiKey?.userId != currentUser?.id
+          ) {
+            return {
+              __typename: "RepositoryApiKeyError",
+              message: "Forbidden Action",
+              type: "FORBIDDEN_ACTION_ERROR",
+            };
+          }
+        }
+        if (repository?.repoType == "org_repo") {
+          if (
+            apiKey?.keyType != "org_key" ||
+            apiKey?.organizationId != repository?.organizationId
+          ) {
+            return {
+              __typename: "RepositoryApiKeyError",
+              message: "Forbidden Action",
+              type: "FORBIDDEN_ACTION_ERROR",
+            };
+          }
+        }
+        await this.repoEnabledApiKeyService.removeEnabledApiKey(
+          repository as Repository,
+          apiKey
+        );
+        return {
+          __typename: "RepositoryApiKeySuccess",
+          repository,
+        };
+      }
+    ),
+    createEnabledWebhookKey: runWithHooks(
+      () => [this.repoApiSettingAccessGuard],
+      async (
+        _,
+        args: main.MutationCreateEnabledWebhookKeyArgs,
+        { currentUser }
+      ) => {
+        const repository = await this.repoDataService.fetchRepoById(
+          args.repositoryId
+        );
+        const webhookKeysContext = await this.contextFactory.createContext(
+          WebhookKeysContext
+        );
+        const webhookKey = await webhookKeysContext.getById(args.webhookKeyId);
+        if (!webhookKey) {
+          return {
+            __typename: "RepositoryWebhookKeyError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        if (repository?.repoType == "user_repo") {
+          if (
+            webhookKey?.keyType != "user_key" ||
+            webhookKey?.userId != repository?.userId ||
+            webhookKey?.userId != currentUser?.id
+          ) {
+            return {
+              __typename: "RepositoryWebhookKeyError",
+              message: "Forbidden Action",
+              type: "FORBIDDEN_ACTION_ERROR",
+            };
+          }
+        }
+        if (repository?.repoType == "org_repo") {
+          if (
+            webhookKey?.keyType != "org_key" ||
+            webhookKey?.organizationId != repository?.organizationId
+          ) {
+            return {
+              __typename: "RepositoryWebhookKeyError",
+              message: "Forbidden Action",
+              type: "FORBIDDEN_ACTION_ERROR",
+            };
+          }
+        }
+        const didSucceed = await this.repoEnabledWebhookKeyService.addEnabledWebhookKey(
+          repository as Repository,
+          currentUser,
+          webhookKey,
+          args.protocol ?? null,
+          args.port ?? null,
+          args.subdomain ?? null,
+          args.uri ?? null
+        );
+        if (!didSucceed) {
+          return {
+            __typename: "RepositoryWebhookKeyError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        return {
+          __typename: "RepositoryWebhookKeySuccess",
+          repository
+        };
+      }
+    ),
+    updateEnabledWebhookKey: runWithHooks(
+      () => [this.repoApiSettingAccessGuard],
+      async (
+        _,
+        args: main.MutationUpdateEnabledWebhookKeyArgs,
+        { currentUser }
+      ) => {
+        const repository = await this.repoDataService.fetchRepoById(
+          args.repositoryId
+        );
+        const repositoryEnabledWebhookKeysContext =
+          await this.contextFactory.createContext(
+            RepositoryEnabledWebhookKeysContext
+          );
+        const repositoryEnabledWebhookKey =
+          await repositoryEnabledWebhookKeysContext.getById(
+            args.repoEnabledWebhookKeyId
+          );
+        if (
+          !repositoryEnabledWebhookKey ||
+          repositoryEnabledWebhookKey.repositoryId != repository?.id
+        ) {
+          return {
+            __typename: "RepositoryWebhookKeyError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        const webhookKeysContext = await this.contextFactory.createContext(
+          WebhookKeysContext
+        );
+        const webhookKey = await webhookKeysContext.getById(args.webhookKeyId);
+        if (!webhookKey) {
+          return {
+            __typename: "RepositoryWebhookKeyError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        if (repository?.repoType == "user_repo") {
+          if (
+            webhookKey?.keyType != "user_key" ||
+            webhookKey?.userId != repository?.userId ||
+            webhookKey?.userId != currentUser?.id
+          ) {
+            return {
+              __typename: "RepositoryWebhookKeyError",
+              message: "Forbidden Action",
+              type: "FORBIDDEN_ACTION_ERROR",
+            };
+          }
+        }
+        if (repository?.repoType == "org_repo") {
+          if (
+            webhookKey?.keyType != "org_key" ||
+            webhookKey?.organizationId != repository?.organizationId
+          ) {
+            return {
+              __typename: "RepositoryWebhookKeyError",
+              message: "Forbidden Action",
+              type: "FORBIDDEN_ACTION_ERROR",
+            };
+          }
+        }
+        const didSucceed = await this.repoEnabledWebhookKeyService.updateEnabledWebhookKey(
+          repositoryEnabledWebhookKey,
+          webhookKey,
+          args.protocol ?? null,
+          args.port ?? null,
+          args.subdomain ?? null,
+          args.uri ?? null
+        );
+        if (!didSucceed) {
+          return {
+            __typename: "RepositoryWebhookKeyError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        return {
+          __typename: "RepositoryWebhookKeySuccess",
+          repository
+        };
+      }
+    ),
+    removeEnabledWebhookKey: runWithHooks(
+      () => [this.repoApiSettingAccessGuard],
+      async (
+        _,
+        args: main.MutationRemoveEnabledWebhookKeyArgs,
+      ) => {
+        const repository = await this.repoDataService.fetchRepoById(
+          args.repositoryId
+        );
+        const repositoryEnabledWebhookKeysContext =
+          await this.contextFactory.createContext(
+            RepositoryEnabledWebhookKeysContext
+          );
+        const repositoryEnabledWebhookKey =
+          await repositoryEnabledWebhookKeysContext.getById(
+            args.repoEnabledWebhookKeyId
+          );
+        if (
+          !repositoryEnabledWebhookKey ||
+          repositoryEnabledWebhookKey.repositoryId != repository?.id
+        ) {
+          return {
+            __typename: "RepositoryWebhookKeyError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        await this.repoEnabledWebhookKeyService.removeEnabledApiKey(
+          repositoryEnabledWebhookKey,
+        );
+        return {
+          __typename: "RepositoryWebhookKeySuccess",
+          repository
         };
       }
     ),

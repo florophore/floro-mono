@@ -91,6 +91,10 @@ const RemoteHeaderNav = (props: Props) => {
     return null;
   }
 
+  if (props.page == "api-settings") {
+    return null;
+  }
+
   if (props.page == "branch-rule") {
     return null;
   }

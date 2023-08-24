@@ -1,0 +1,116 @@
+fragment RepoWithApiSettings on Repository {
+  ...Repository
+  organization {
+    ...Organization
+    membership {
+        roles {
+            id
+            name
+            isMutable
+        }
+        permissions {
+          canModifyOrganizationDeveloperSettings
+        }
+    }
+    roles {
+        id
+        name
+        isMutable
+    }
+    apiKeys {
+      ...ApiKey
+    }
+
+    webhookKeys {
+      ...WebhookKey
+    }
+  }
+  user {
+    ...User
+    apiKeys {
+      ...ApiKey
+    }
+
+    webhookKeys {
+      ...WebhookKey
+    }
+  }
+  enabledApiKeys {
+    ...RepositoryEnabledApiKey
+  }
+  enabledWebhookKeys {
+    ...RepositoryEnabledWebhookKey
+  }
+  repoBranches {
+    id
+    name
+    lastCommit
+    baseBranchId
+    createdBy
+    createdByUsername
+    createdAt
+    updatedAt
+  }
+
+  repoPermissions {
+    canPushBranches
+    canChangeSettings
+  }
+
+  defaultBranchId
+
+  anyoneCanRead
+  canReadUsers {
+    id
+    firstName
+    lastName
+    username
+    profilePhoto {
+    ...Photo
+    }
+  }
+  canReadRoles {
+    id
+    name
+  }
+
+  allowExternalUsersToPush
+  anyoneCanPushBranches
+
+  canPushBranchesUsers {
+    id
+    firstName
+    lastName
+    username
+    profilePhoto {
+      ...Photo
+    }
+  }
+  canPushBranchesRoles {
+    id
+    name
+  }
+
+  anyoneCanChangeSettings
+  canChangeSettingsUsers {
+    id
+    firstName
+    lastName
+    username
+    profilePhoto {
+        ...Photo
+    }
+  }
+  canChangeSettingsRoles {
+    id
+    name
+  }
+
+  canTurnOffAnyoneCanChangeSettings
+  canTurnOffAnyoneCanRead
+  protectedBranchRules {
+    id
+    branchId
+    branchName
+  }
+}

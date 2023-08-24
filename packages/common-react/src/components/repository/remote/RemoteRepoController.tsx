@@ -21,6 +21,7 @@ import MRHistoryDisplay from "./history/MRHistoryDisplay";
 import MergeRequest from "./mergerequest/MergeRequest";
 import SettingsDisplay from "./settings/SettingsDisplay";
 import BranchRuleDisplay from "./settings/BranchRuleDisplay";
+import ApiSettingsDisplay from "./settings/ApiSettingsDisplay";
 
 const LoadingContainer = styled.div`
   display: flex;
@@ -110,6 +111,15 @@ const RemoteRepoController = (props: Props) => {
     if (props.page == "settings") {
       return (
         <SettingsDisplay
+          repository={props.repository}
+          plugin={props.plugin ?? "home"}
+        />
+      )
+    }
+
+    if (props.page == "api-settings") {
+      return (
+        <ApiSettingsDisplay
           repository={props.repository}
           plugin={props.plugin ?? "home"}
         />

@@ -1,0 +1,7 @@
+fragment RepositoryEnabledApiKey on RepositoryEnabledApiKey {
+  id
+  apiVersion
+  apiKey {
+    ...ApiKey
+  }
+}

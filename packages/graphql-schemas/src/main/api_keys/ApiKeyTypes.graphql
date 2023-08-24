@@ -18,6 +18,22 @@ type WebhookKey {
     dnsVerificationCode: String
 }
 
+type RepositoryEnabledApiKey {
+  id: ID
+  apiVersion: String
+  apiKey: ApiKey
+}
+
+type RepositoryEnabledWebhookKey {
+  id: ID
+  webhookVersion: String
+  webhookKey: WebhookKey
+  subdomain: String
+  protocol: String
+  port: Int
+  uri: String
+}
+
 type UserApiKeySuccess {
   user: User
   apiKey: ApiKey
@@ -76,4 +92,36 @@ type OrganizationWebhookKeyError {
 union OrganizationWebhookKeyResponse =
     OrganizationWebhookKeySuccess
   | OrganizationWebhookKeyError
+  | UnAuthenticatedError
+
+type RepositoryWebhookKeySuccess {
+  repository: Repository
+}
+
+type RepositoryWebhookKeyError {
+    type: String
+    message: String
+}
+
+union RepositoryWebhookKeyResponse =
+    RepositoryWebhookKeySuccess
+  | RepositoryWebhookKeyError
+  | RepoAccessError
+  | RepoSettingAccessError
+  | UnAuthenticatedError
+
+type RepositoryApiKeySuccess {
+  repository: Repository
+}
+
+type RepositoryApiKeyError {
+    type: String
+    message: String
+}
+
+union RepositoryApiKeyResponse =
+    RepositoryApiKeySuccess
+  | RepositoryApiKeyError
+  | RepoAccessError
+  | RepoSettingAccessError
   | UnAuthenticatedError

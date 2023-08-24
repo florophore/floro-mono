@@ -12,6 +12,7 @@ import RemoteVCSMergeRequest from "./RemoteVCSMergeRequest";
 import RemoteVCSSettings from "./RemoteVCSSettings";
 import RemoteVCSBranchRuleSettings from "./RemoteVCSBranchRuleSettings";
 import RemoteVCSConversation from "./RemoteVCSConversation";
+import RemoteVCSApiSettings from "./RemoteVCSApiSettings";
 
 interface Props {
   repository: Repository;
@@ -30,6 +31,14 @@ const RemoteVCSNavController = (props: Props) => {
   if (props.page == "settings") {
     return (
       <RemoteVCSSettings
+        repository={props.repository}
+        plugin={props.plugin}
+      />
+    );
+  }
+  if (props.page == "api-settings") {
+    return (
+      <RemoteVCSApiSettings
         repository={props.repository}
         plugin={props.plugin}
       />

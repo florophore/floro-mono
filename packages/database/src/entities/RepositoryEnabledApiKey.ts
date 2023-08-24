@@ -18,6 +18,7 @@ import { Organization } from "./Organization";
 import { User } from "./User";
 import { ApiKey } from "./ApiKey";
 import { ApiEvent } from "./ApiEvent";
+import { Repository } from "./Repository";
 
 @Entity("repository_enabled_api_keys")
 export class RepositoryEnabledApiKey extends BinaryPKBaseEntity {
@@ -33,6 +34,13 @@ export class RepositoryEnabledApiKey extends BinaryPKBaseEntity {
   @ManyToOne("ApiKey", "repositoryEnabledApiKeys")
   @JoinColumn()
   apiKey?: Relation<ApiKey>;
+
+  @Column("uuid")
+  repositoryId!: string;
+
+  @ManyToOne("Repository", "repositoryEnabledApiKeys")
+  @JoinColumn()
+  repository?: Relation<Repository>;
 
   @Column("uuid")
   organizationId!: string;

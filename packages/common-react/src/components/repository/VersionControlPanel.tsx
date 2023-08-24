@@ -13,7 +13,7 @@ import AdjustShrink from "@floro/common-assets/assets/images/icons/adjust.shrink
 import LaptopWhite from "@floro/common-assets/assets/images/icons/laptop.white.svg";
 import GlobeWhite from "@floro/common-assets/assets/images/icons/globe.white.svg";
 import LocalRemoteToggle from "@floro/storybook/stories/common-components/LocalRemoteToggle";
-import { useDaemonIsConnected, useFloroSocket, useSocketEvent } from "../../pubsub/socket";
+import { useDaemonIsConnected } from "../../pubsub/socket";
 import LocalVCSNavController from "./local/vcsnav/LocalVCSNavController";
 import { useSourceGraphIsShown } from "./ui-state-hook";
 import {  useCloneState, useRepoExistsLocally } from "./local/hooks/local-hooks";
@@ -131,6 +131,9 @@ const VersionControlPanel = (props: Props) => {
 
   const isFullShadow = useMemo(() => {
     if (from == "remote") {
+      if (props.page == "api-settings") {
+        return true;
+      }
       if (props.page == "settings") {
         return true;
       }

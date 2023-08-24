@@ -1,0 +1,28 @@
+mutation RemoveEnabledWebhookKey($repositoryId: ID!, $repoEnabledWebhookKeyId: ID!) {
+  removeEnabledWebhookKey(repositoryId: $repositoryId, repoEnabledWebhookKeyId: $repoEnabledWebhookKeyId) {
+    ... on RepositoryWebhookKeySuccess {
+      repository {
+        id
+        enabledWebhookKeys {
+          ...RepositoryEnabledWebhookKey
+        }
+      }
+    }
+    ... on RepositoryWebhookKeyError {
+      type
+      message
+    }
+    ... on RepoAccessError {
+      message
+      type
+    }
+    ... on RepoSettingAccessError {
+      message
+      type
+    }
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+  }
+}

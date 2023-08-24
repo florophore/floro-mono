@@ -53,6 +53,9 @@ const RepoNavigator = (props: Props): React.ReactElement => {
       if (props.page == "history") {
         return true;
       }
+      if (props.page == "api-settings") {
+        return true;
+      }
       if (props.page == "settings") {
         return true;
       }

@@ -3,20 +3,17 @@ import styled from "@emotion/styled";
 import RootLongModal from "@floro/common-react/src/components/RootLongModal";
 import Button from "@floro/storybook/stories/design-system/Button";
 import Input from "@floro/storybook/stories/design-system/Input";
-import { RepoEnabledWebhookKey, WebhookKey } from "floro/dist/src/apikeys";
-//import {  useAddWebhookKey } from "../local-api-hooks";
-import {
-  IP_REGEX,
-  LOCALHOST,
-  SUBDOMAIN,
-  TLD_DOMAIN,
-  URI_PATH,
-  validateLocalDomain,
-} from "@floro/common-web/src/utils/validators";
+import { SUBDOMAIN, URI_PATH } from "@floro/common-web/src/utils/validators";
 import ProtocolToggle from "../ProtocolToggle";
-import InputSelector, { Option } from "@floro/storybook/stories/design-system/InputSelector";
-import { useAddEnabledWebhookKey, useUpdateWebhookKey } from "../enabled-key-hooks";
-import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import InputSelector, {
+  Option,
+} from "@floro/storybook/stories/design-system/InputSelector";
+import {
+  Repository,
+  RepositoryEnabledWebhookKey,
+  WebhookKey,
+  useUpdateEnabledWebhookKeyMutation,
+} from "@floro/graphql-schemas/src/generated/main-client-graphql";
 
 const HeaderWrapper = styled.div`
   height: 100%;
@@ -68,45 +65,46 @@ const ButtonRow = styled.div`
 export interface Props {
   show: boolean;
   onDismissModal: () => void;
-  enabledWebhookKey: RepoEnabledWebhookKey;
+  enabledWebhookKey: RepositoryEnabledWebhookKey;
   webhookKeys: Array<WebhookKey>;
   repository: Repository;
 }
 
-const UpdateLocalWebhookDomainModal = (props: Props) => {
-  const [domainKeyOption, setDomainKeyOption] = useState<Option<string>|null>(null);
+const UpdateRemoteWebhookDomainModal = (props: Props) => {
+  const [domainKeyOption, setDomainKeyOption] =
+    useState<Option<string> | null>(null);
   const [uri, setUri] = useState("");
-  const [protocol, setProtocol] =
-    useState<"http" | "https">("http");
+  const [protocol, setProtocol] = useState<"http" | "https">("http");
   const [port, setPort] = useState<string>("");
   const [subdomain, setSubdomain] = useState<string>("");
-  const updateMutation = useUpdateWebhookKey(props?.repository?.id as string);
+  const [update, updateMutation] = useUpdateEnabledWebhookKeyMutation();
 
   const webhookDomainOptions = useMemo(() => {
-    return props?.webhookKeys.map(webhookKey => {
+    return props?.webhookKeys.map((webhookKey) => {
       return {
-        value: webhookKey.id,
-        label: webhookKey.domain
-      }
-    })
-
-  }, [props.webhookKeys])
+        value: webhookKey.id as string,
+        label: webhookKey.domain as string,
+      };
+    });
+  }, [props.webhookKeys]);
 
   useEffect(() => {
     if (!props.show) {
       setDomainKeyOption(
         webhookDomainOptions?.find?.(
-          (option) => option.value == props?.enabledWebhookKey.webhookKeyId
+          (option) => option.value == props?.enabledWebhookKey?.webhookKey?.id
         ) ?? null
       );
       setUri(props.enabledWebhookKey?.uri ?? "");
       setPort(props.enabledWebhookKey?.port?.toString() ?? "");
       setSubdomain(props.enabledWebhookKey?.subdomain ?? "");
-      setProtocol(props.enabledWebhookKey?.protocol ?? "http");
+      setProtocol(
+        (props.enabledWebhookKey?.protocol as "http" | "https") ?? "https"
+      );
     }
   }, [
     props.show,
-    props.enabledWebhookKey?.webhookKeyId,
+    props.enabledWebhookKey?.webhookKey?.id,
     props?.enabledWebhookKey?.uri,
     props?.enabledWebhookKey?.port,
     props?.enabledWebhookKey?.subdomain,
@@ -122,7 +120,7 @@ const UpdateLocalWebhookDomainModal = (props: Props) => {
       return false;
     }
     return URI_PATH.test(uri);
-  }, [uri])
+  }, [uri]);
 
   const isPortValid = useMemo(() => {
     if (port == "") {
@@ -151,16 +149,14 @@ const UpdateLocalWebhookDomainModal = (props: Props) => {
     return !!domainKeyOption && isPortValid && isSubdomainValid && isUriValid;
   }, [isPortValid, isSubdomainValid, isUriValid, domainKeyOption]);
 
-
-  const onSetOption = useCallback((option: Option<unknown>|null) => {
+  const onSetOption = useCallback((option: Option<unknown> | null) => {
     if (option) {
       setDomainKeyOption(option as Option<string>);
-
-      const webhookKey = props.webhookKeys.find(wk => wk.id == option.value);
+      const webhookKey = props.webhookKeys.find((wk) => wk.id == option.value);
       if (webhookKey) {
-        setPort(webhookKey?.defaultPort?.toString() ?? "")
+        setPort(webhookKey?.defaultPort?.toString() ?? "");
         setSubdomain(webhookKey?.defaultSubdomain ?? "");
-        setProtocol(webhookKey?.defaultProtocol ?? "http");
+        setProtocol((webhookKey?.defaultProtocol as "http" | "https") ?? "https");
       }
     }
   }, []);
@@ -169,8 +165,7 @@ const UpdateLocalWebhookDomainModal = (props: Props) => {
     if (!domainKeyOption?.value) {
       return null;
     }
-    return props.webhookKeys.find(wk => wk.id == domainKeyOption.value)
-
+    return props.webhookKeys.find((wk) => wk.id == domainKeyOption.value);
   }, [domainKeyOption, props.webhookKeys]);
 
   const onChangeUri = useCallback((text: string) => {
@@ -182,35 +177,45 @@ const UpdateLocalWebhookDomainModal = (props: Props) => {
   }, []);
 
   const onUpdateKey = useCallback(() => {
-    if (!isValid || !webhookKey?.id || !props.enabledWebhookKey.id) {
+    if (
+      !isValid ||
+      !webhookKey?.id ||
+      !props.enabledWebhookKey.id ||
+      !props?.repository?.id
+    ) {
       return;
     }
-    updateMutation.mutate({
-      id: props.enabledWebhookKey.id,
-      webhookKeyId: webhookKey?.id,
-      port: port?.trim() == "" ? undefined : parseInt(port),
-      protocol: protocol ?? "http",
-      subdomain: subdomain?.trim() == "" ? undefined : subdomain,
-      uri: uri.trim() == "" ? undefined : uri
+    update({
+      variables: {
+        repoEnabledWebhookKeyId: props.enabledWebhookKey.id,
+        repositoryId: props.repository.id,
+        webhookKeyId: webhookKey?.id,
+        port: port?.trim() == "" ? undefined : parseInt(port),
+        protocol: protocol ?? "http",
+        subdomain: subdomain?.trim() == "" ? undefined : subdomain,
+        uri: uri.trim() == "" ? undefined : uri,
+      },
     });
-  }, [isValid, uri, protocol, port, subdomain, webhookKey?.id]);
+  }, [
+    isValid,
+    uri,
+    protocol,
+    port,
+    subdomain,
+    webhookKey?.id,
+    props.enabledWebhookKey?.id,
+    props?.repository?.id,
+  ]);
 
   useEffect(() => {
-    if (updateMutation?.isSuccess) {
+    if (
+      updateMutation?.data?.updateEnabledWebhookKey?.__typename ==
+      "RepositoryWebhookKeySuccess"
+    ) {
       updateMutation.reset();
       props.onDismissModal();
     }
-  }, [updateMutation?.isSuccess])
-
-  const showSubdomain = useMemo(() => {
-    if (!webhookKey?.domain) {
-      return false;
-    }
-    if (IP_REGEX.test(webhookKey?.domain)) {
-      return false;
-    }
-    return true;
-  }, [webhookKey?.domain])
+  }, [updateMutation?.data?.updateEnabledWebhookKey?.__typename]);
 
   return (
     <RootLongModal
@@ -220,7 +225,7 @@ const UpdateLocalWebhookDomainModal = (props: Props) => {
       headerSize={"small"}
       headerChildren={
         <HeaderWrapper>
-          <FloroHeaderTitle>{"update local webhook"}</FloroHeaderTitle>
+          <FloroHeaderTitle>{"update remote webhook"}</FloroHeaderTitle>
         </HeaderWrapper>
       }
     >
@@ -258,18 +263,16 @@ const UpdateLocalWebhookDomainModal = (props: Props) => {
                   isValid={isPortValid}
                 />
               </div>
-              {showSubdomain && (
-                <div style={{ marginTop: 24 }}>
-                  <Input
-                    label={"subdomain (optional)"}
-                    placeholder={`e.g. put "test" for test.${webhookKey.domain}`}
-                    widthSize="wide"
-                    value={subdomain}
-                    onTextChanged={setSubdomain}
-                    isValid={isSubdomainValid}
-                  />
-                </div>
-              )}
+              <div style={{ marginTop: 24 }}>
+                <Input
+                  label={"subdomain (optional)"}
+                  placeholder={`e.g. put "test" for test.${webhookKey.domain}`}
+                  widthSize="wide"
+                  value={subdomain}
+                  onTextChanged={setSubdomain}
+                  isValid={isSubdomainValid}
+                />
+              </div>
               <div style={{ marginTop: 24 }}>
                 <ProtocolToggle
                   protocol={protocol}
@@ -283,11 +286,11 @@ const UpdateLocalWebhookDomainModal = (props: Props) => {
         <BottomWrapper>
           <ButtonRow>
             <Button
-              label={"update local webhook"}
+              label={"update remote webhook"}
               bg={"orange"}
               size={"extra-big"}
               isDisabled={!isValid}
-              isLoading={updateMutation.isLoading}
+              isLoading={updateMutation.loading}
               onClick={onUpdateKey}
             />
           </ButtonRow>
@@ -297,4 +300,4 @@ const UpdateLocalWebhookDomainModal = (props: Props) => {
   );
 };
 
-export default  React.memo(UpdateLocalWebhookDomainModal);
+export default React.memo(UpdateRemoteWebhookDomainModal);

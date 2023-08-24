@@ -26,6 +26,7 @@ import UserLocalWebhookHome from './apikeys/UserLocalWebhookHome';
 import UserRemoteWebhookHome from './apikeys/UserRemoteWebhookHome';
 import OrgRemoteApiHome from './apikeys/OrgRemoteApiHome';
 import OrgRemoteWebhookHome from './apikeys/OrgRemoteWebhookHome';
+import RepoHomeApiSettingsPage from './repository/RepoHomeApiSettingsPage';
 
 const Router = (): React.ReactElement => {
     const location = useLocation();
@@ -74,8 +75,7 @@ const Router = (): React.ReactElement => {
 
           <Route path="/repo/@/:ownerHandle/:repoName/history" element={<RepoHistoryPage page={'history'}/>} />
           <Route path="/repo/@/:ownerHandle/:repoName/settings" element={<RepoHomeSettingsPage/>} />
-          <Route path="/repo/@/:ownerHandle/:repoName/settings/api" element={<RepoHomeSettingsPage/>} />
-          <Route path="/repo/@/:ownerHandle/:repoName/settings/webhooks" element={<RepoHomeSettingsPage/>} />
+          <Route path="/repo/@/:ownerHandle/:repoName/settings/api" element={<RepoHomeApiSettingsPage/>} />
           <Route path="/repo/@/:ownerHandle/:repoName/settings/branchrules/:branchRuleId" element={<RepoHomeBranchRuleSettingsPage/>} />
           <Route path="/repo/@/:ownerHandle/:repoName/mergerequests/create/:branchId" element={<RepoCreateMergeRequestPage/>} />
           <Route path="/repo/@/:ownerHandle/:repoName/mergerequests/:mergeRequestId/review" element={<RepoMergeRequestPage/>} />

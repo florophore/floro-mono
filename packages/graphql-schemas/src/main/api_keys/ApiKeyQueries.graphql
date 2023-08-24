@@ -23,4 +23,12 @@ extend type Mutation {
     regenerateOrganizationWebhookKey(organizationId: ID!, webhookKeyId: ID!): OrganizationWebhookKeyResponse
     deleteOrganizationWebhookKey(organizationId: ID!, webhookKeyId: ID!): OrganizationWebhookKeyResponse
     updateOrganizationWebhookKeyEnabled(organizationId: ID!, webhookKeyId: ID!, isEnabled: Boolean!): OrganizationWebhookKeyResponse
+
+
+    addEnabledApiKey(repositoryId: ID!, apiKeyId: ID!): RepositoryApiKeyResponse
+    removeEnabledApiKey(repositoryId: ID!, apiKeyId: ID!): RepositoryApiKeyResponse
+
+    createEnabledWebhookKey(repositoryId: ID!, webhookKeyId: ID!, port: Int, subdomain: String, protocol: String, uri: String): RepositoryWebhookKeyResponse
+    updateEnabledWebhookKey(repositoryId: ID!, repoEnabledWebhookKeyId: ID!, webhookKeyId: ID!, port: Int, subdomain: String, protocol: String, uri: String): RepositoryWebhookKeyResponse
+    removeEnabledWebhookKey(repositoryId: ID!, repoEnabledWebhookKeyId: ID!): RepositoryWebhookKeyResponse
 }

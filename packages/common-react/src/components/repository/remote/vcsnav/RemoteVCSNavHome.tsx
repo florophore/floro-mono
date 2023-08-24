@@ -99,7 +99,6 @@ const RemoteVCSNavHome = (props: Props) => {
   const { data: repoExistsLocally, isLoading } = useRepoExistsLocally(
     props.repository
   );
-  console.log("DEL", repoExistsLocally)
   const [ignoreBranch, ignoreBranchRequest] = useIgnoreBranchMutation();
   const { isSelectMode, isCopyEnabled, setShowCopyPaste, setIsSelectMode, setCopyInstructions, setSelectedRepoInfo, copyInstructions } = useCopyPasteContext("remote");
   const onShowCopy = useCallback(() => {

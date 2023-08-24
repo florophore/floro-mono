@@ -17,6 +17,7 @@ import { BinaryPKBaseEntity } from "./BinaryPKBaseEntity";
 import { Organization } from "./Organization";
 import { User } from "./User";
 import { WebhookKey } from "./WebhookKey";
+import { Repository } from "./Repository";
 
 @Entity("repository_enabled_webhook_keys")
 export class RepositoryEnabledWebhookKey extends BinaryPKBaseEntity {
@@ -29,18 +30,23 @@ export class RepositoryEnabledWebhookKey extends BinaryPKBaseEntity {
   @Column("varchar", { length: 255 })
   @IsOptional()
   @IsString()
-  subdomain?: string;
+  subdomain?: string|null;
 
   @Column("varchar", { length: 255 })
   @IsIn(["http", "https"])
   @IsOptional()
   @IsString()
-  protocol!: string;
+  protocol?: string|null;
 
   @Column("int")
   @IsOptional()
   @IsInt()
-  port!: number;
+  port?: number|null;
+
+  @Column("varchar", { length: 255 })
+  @IsOptional()
+  @IsString()
+  uri?: string|null;
 
   @Column("uuid")
   webhookKeyId!: string;
@@ -48,6 +54,13 @@ export class RepositoryEnabledWebhookKey extends BinaryPKBaseEntity {
   @ManyToOne("WebhookKey", "repositoryEnabledWebhookKeys")
   @JoinColumn()
   webhookKey?: Relation<WebhookKey>;
+
+  @Column("uuid")
+  repositoryId!: string;
+
+  @ManyToOne("Repository", "repositoryEnabledWebhookKeys")
+  @JoinColumn()
+  repository?: Relation<Repository>;
 
   @Column("uuid")
   organizationId!: string;

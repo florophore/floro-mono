@@ -23,6 +23,15 @@ export default class RepositoryEnabledWebhookKeysContext extends BaseContext {
     return await this.queryRunner.manager.findOneBy(RepositoryEnabledWebhookKey, { id });
   }
 
+  public async deleteById(id: string): Promise<boolean> {
+    try {
+     await this.queryRunner.manager.delete(RepositoryEnabledWebhookKey, { id });
+     return true;
+    } catch(e) {
+      return false
+    }
+  }
+
   public async updateRepositoryEnabledWebhookKey(
     repositoryEnabledApiKey: RepositoryEnabledWebhookKey,
     args: DeepPartial<RepositoryEnabledWebhookKey>
@@ -30,6 +39,23 @@ export default class RepositoryEnabledWebhookKeysContext extends BaseContext {
     return (
       (await this.updateRepositoryEnabledWebhookKeyById(repositoryEnabledApiKey.id, args)) ?? repositoryEnabledApiKey
     );
+  }
+
+  public async getRepositoryWebhookKeys(repositoryId: string): Promise<RepositoryEnabledWebhookKey[]> {
+    return await this.queryRunner.manager.find(RepositoryEnabledWebhookKey, {
+      where: {
+        repositoryId,
+        webhookKey: {
+          isDeleted: false
+        }
+      },
+      relations: {
+        webhookKey: true
+      },
+      order: {
+        createdAt: 'DESC'
+      },
+    });
   }
 
   public async updateRepositoryEnabledWebhookKeyById(

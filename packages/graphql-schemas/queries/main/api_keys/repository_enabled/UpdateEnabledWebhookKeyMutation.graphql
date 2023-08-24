@@ -1,0 +1,45 @@
+mutation UpdateEnabledWebhookKey(
+  $repositoryId: ID!
+  $repoEnabledWebhookKeyId: ID!
+  $webhookKeyId: ID!
+  $port: Int
+  $subdomain: String
+  $protocol: String
+  $uri: String
+) {
+  updateEnabledWebhookKey(
+    repositoryId: $repositoryId
+    repoEnabledWebhookKeyId: $repoEnabledWebhookKeyId
+    webhookKeyId: $webhookKeyId
+    port: $port
+    subdomain: $subdomain
+    protocol: $protocol
+    uri: $uri
+  ) {
+    ... on RepositoryWebhookKeySuccess {
+      repository {
+        id
+        enabledWebhookKeys {
+          ...RepositoryEnabledWebhookKey
+        }
+      }
+    }
+    ... on RepositoryWebhookKeyError {
+      type
+      message
+    }
+    ... on RepoAccessError {
+      message
+      type
+    }
+
+    ... on RepoSettingAccessError {
+      message
+      type
+    }
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+  }
+}

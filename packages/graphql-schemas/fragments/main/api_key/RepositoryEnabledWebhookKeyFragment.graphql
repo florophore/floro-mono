@@ -1,0 +1,11 @@
+fragment RepositoryEnabledWebhookKey on RepositoryEnabledWebhookKey {
+  id
+  webhookVersion
+  subdomain
+  protocol
+  port
+  uri
+  webhookKey {
+    ...WebhookKey
+  }
+}

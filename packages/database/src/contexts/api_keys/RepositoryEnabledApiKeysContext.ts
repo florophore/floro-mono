@@ -23,6 +23,19 @@ export default class RepositoryEnabledApiKeysContext extends BaseContext {
     return await this.queryRunner.manager.findOneBy(RepositoryEnabledApiKey, { id });
   }
 
+  public async getByRepoAndApiKeyId(repositoryId: string, apiKeyId: string): Promise<RepositoryEnabledApiKey | null> {
+    return await this.queryRunner.manager.findOneBy(RepositoryEnabledApiKey, { repositoryId, apiKeyId });
+  }
+
+  public async deleteByRepoAndApiKeyId(repositoryId: string, apiKeyId: string): Promise<boolean> {
+    try {
+      await this.queryRunner.manager.delete(RepositoryEnabledApiKey, { repositoryId, apiKeyId });
+      return true;
+    } catch(e) {
+      return false;
+    }
+  }
+
   public async updateRepositoryEnabledApiKey(
     repositoryEnabledApiKey: RepositoryEnabledApiKey,
     args: DeepPartial<RepositoryEnabledApiKey>
@@ -30,6 +43,23 @@ export default class RepositoryEnabledApiKeysContext extends BaseContext {
     return (
       (await this.updateRepositoryEnabledApiKeyById(repositoryEnabledApiKey.id, args)) ?? repositoryEnabledApiKey
     );
+  }
+
+  public async getRepositoryApiKeys(repositoryId: string): Promise<RepositoryEnabledApiKey[]> {
+    return await this.queryRunner.manager.find(RepositoryEnabledApiKey, {
+      where: {
+        repositoryId,
+        apiKey: {
+          isDeleted: false
+        }
+      },
+      relations: {
+        apiKey: true
+      },
+      order: {
+        createdAt: 'DESC'
+      },
+    });
   }
 
   public async updateRepositoryEnabledApiKeyById(

@@ -113,6 +113,9 @@ import OrgWebhookKeyGuard from './resolvers/hooks/guards/OrgWebhookKeyGuard';
 import UserApiKeyGuard from './resolvers/hooks/guards/UserApiKeyGuard';
 import UserWebhookKeyGuard from './resolvers/hooks/guards/UserWebhookKeyGuard';
 import TestWebhookController from './controllers/TestWebhookController';
+import RepoApiSettingAccessGuard from './resolvers/hooks/guards/RepoApiSettingAccessGuard';
+import RepoEnabledApiKeyService from './services/api_keys/RepoEnabledApiKeyService';
+import RepoEnabledWebhookKeyService from './services/api_keys/RepoEnabledWebhookKeyService';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -195,6 +198,7 @@ export default new ContainerModule((bind): void => {
     bind(OrgWebhookKeyGuard).toSelf();
     bind(UserApiKeyGuard).toSelf();
     bind(UserWebhookKeyGuard).toSelf();
+    bind(RepoApiSettingAccessGuard).toSelf();
 
     // SERVICES
     bind(AuthenticationService).toSelf();
@@ -224,6 +228,9 @@ export default new ContainerModule((bind): void => {
     bind(RepoDataService).toSelf();
     bind(CommitService).toSelf();
     bind(RevertService).toSelf();
+
+    bind(RepoEnabledApiKeyService).toSelf();
+    bind(RepoEnabledWebhookKeyService).toSelf();
 
     // REFERRALS
     bind(ReferralService).toSelf()
