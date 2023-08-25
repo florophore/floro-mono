@@ -116,6 +116,7 @@ import TestWebhookController from './controllers/TestWebhookController';
 import RepoApiSettingAccessGuard from './resolvers/hooks/guards/RepoApiSettingAccessGuard';
 import RepoEnabledApiKeyService from './services/api_keys/RepoEnabledApiKeyService';
 import RepoEnabledWebhookKeyService from './services/api_keys/RepoEnabledWebhookKeyService';
+import PublicApiV0Controller from './controllers/public_api/PublicApiV0Controller';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -280,6 +281,7 @@ export default new ContainerModule((bind): void => {
     bind<PluginController>("Controllers").to(PluginController);
     bind<PrivateCDNTestController>("Controllers").to(PrivateCDNTestController);
     bind<TestWebhookController>("Controllers").to(TestWebhookController);
+    bind<PublicApiV0Controller>("Controllers").to(PublicApiV0Controller);
 
     // RESOLVER MODULES
     bind<UsersResolverModule>("ResolverModule").to(UsersResolverModule);

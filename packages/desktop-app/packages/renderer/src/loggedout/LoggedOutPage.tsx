@@ -214,7 +214,7 @@ const LoggedOutPage = ({isOpen}: Props) => {
         }}
         initial={{
           right: '-100%',
-        }} 
+        }}
         exit={{
           right: '100%',
         }}

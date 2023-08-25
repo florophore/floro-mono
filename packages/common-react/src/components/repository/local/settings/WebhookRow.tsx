@@ -24,6 +24,12 @@ const Container = styled.div`
   margin-top: 12px;
 `;
 
+const UrlWrap = styled.div`
+  display: flex;
+  flex-grow: 1;
+  flex: 1;
+`;
+
 const UrlText = styled.span`
   font-family: "MavenPro";
   font-weight: 600;
@@ -142,7 +148,9 @@ const WebhookRow = (props: Props) => {
         <div style={{ width: 80 }}>
           <Button onClick={onShowTest} label={"test"} size="extra-small" bg={"teal"} />
         </div>
-        <UrlText>{defaultWebhook}</UrlText>
+        <UrlWrap>
+          <UrlText>{defaultWebhook}</UrlText>
+        </UrlWrap>
       </Container>
     </>
   );

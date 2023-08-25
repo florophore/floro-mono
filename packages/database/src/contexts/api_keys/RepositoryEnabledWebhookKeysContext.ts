@@ -58,6 +58,7 @@ export default class RepositoryEnabledWebhookKeysContext extends BaseContext {
     });
   }
 
+
   public async updateRepositoryEnabledWebhookKeyById(
     id: string,
     args: DeepPartial<RepositoryEnabledWebhookKey>

@@ -45,6 +45,20 @@ export default class RepositoryEnabledApiKeysContext extends BaseContext {
     );
   }
 
+  public async getRepositoryEnabledApiKeysForKey(apiKeyId: string): Promise<RepositoryEnabledApiKey[]> {
+    return await this.queryRunner.manager.find(RepositoryEnabledApiKey, {
+      where: {
+        apiKeyId,
+      },
+      relations: {
+        repository: true
+      },
+      order: {
+        createdAt: 'DESC'
+      },
+    });
+  }
+
   public async getRepositoryApiKeys(repositoryId: string): Promise<RepositoryEnabledApiKey[]> {
     return await this.queryRunner.manager.find(RepositoryEnabledApiKey, {
       where: {

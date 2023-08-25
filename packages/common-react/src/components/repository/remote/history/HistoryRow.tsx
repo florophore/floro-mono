@@ -55,12 +55,12 @@ const CommitTitle = styled.div`
   font-size: 1.4rem;
   color: ${(props) => props.theme.colors.linkColor};
   text-decoration: underline;
-  max-width: 650px;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   overflow: hidden;
   cursor: pointer;
+  max-width: 560px;
 `;
 
 const ShaTitle = styled.div`
@@ -239,12 +239,14 @@ const HistoryRow = (props: Props) => {
           <CommitTitle>{props.commit?.message}</CommitTitle>
         </Link>
         {!props.hideSelect && (
-          <Button
-            onClick={onClickSelect}
-            label={"select"}
-            bg={"purple"}
-            size={"small"}
-          />
+          <div style={{width: 120}}>
+            <Button
+              onClick={onClickSelect}
+              label={"select"}
+              bg={"purple"}
+              size={"small"}
+            />
+          </div>
         )}
         {props.hideSelect && (
           <div style={{height: 36}}></div>

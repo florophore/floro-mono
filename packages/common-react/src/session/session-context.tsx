@@ -105,6 +105,8 @@ export const SessionProvider = (props: Props) => {
   useSocketEvent(
     "login",
     (payload: PassedLoginAction) => {
+      apolloClient.clearStore();
+      queryClient.resetQueries();
       setClientSession(payload.session as Session);
       setSession(payload.session as Session);
       setCurrentUser({ ...payload.user } as User);

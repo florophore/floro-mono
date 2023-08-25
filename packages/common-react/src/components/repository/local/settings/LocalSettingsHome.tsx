@@ -94,7 +94,6 @@ const LocalSettingsHome = (props: Props) => {
   const navigate = useNavigate();
   const onGoToDeveloperSettings = useCallback(() => {
     navigate('/home/local/api')
-
   }, []);
   return (
     <Container>

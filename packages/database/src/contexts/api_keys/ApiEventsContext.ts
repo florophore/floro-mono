@@ -5,7 +5,7 @@ import { ApiEvent } from "../../entities/ApiEvent";
 import { User } from "../../entities/User";
 import { Organization } from "../../entities/Organization";
 
-export default class ApiEventContext extends BaseContext {
+export default class ApiEventsContext extends BaseContext {
   private apiEventRepo!: Repository<ApiEvent>;
 
   public async init(

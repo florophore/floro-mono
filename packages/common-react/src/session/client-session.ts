@@ -1,6 +1,6 @@
 import {
   Session
-  
+
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import Cookies from "js-cookie";
 

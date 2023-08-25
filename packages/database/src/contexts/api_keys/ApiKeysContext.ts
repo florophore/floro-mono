@@ -39,6 +39,7 @@ export default class ApiKeysContext extends BaseContext {
       },
     });
   }
+
   public async getOrganizationApiKeys(organizationId: string): Promise<ApiKey[]> {
     return await this.queryRunner.manager.find(ApiKey, {
       where: {
