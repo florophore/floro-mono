@@ -117,6 +117,7 @@ import RepoApiSettingAccessGuard from './resolvers/hooks/guards/RepoApiSettingAc
 import RepoEnabledApiKeyService from './services/api_keys/RepoEnabledApiKeyService';
 import RepoEnabledWebhookKeyService from './services/api_keys/RepoEnabledWebhookKeyService';
 import PublicApiV0Controller from './controllers/public_api/PublicApiV0Controller';
+import BranchUpdateWebhookQueue from './services/webhook_queues/BranchUpdateWebhookQueue';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -246,6 +247,8 @@ export default new ContainerModule((bind): void => {
     bind(ApiKeyService).toSelf();
     bind(WebhookKeyService).toSelf();
 
+    bind(BranchUpdateWebhookQueue).toSelf();
+
     // EVENT HANDLERS
 
     // CREATE USER HANLDER
@@ -256,6 +259,7 @@ export default new ContainerModule((bind): void => {
     bind<BranchPushHandler>("BranchPushHandler").to(MergeRequestService).inSingletonScope();
     bind<BranchPushHandler>("BranchPushHandler").to(MergeRequestEventService).inSingletonScope();
     bind<BranchPushHandler>("BranchPushHandler").to(PreMergeCommitQueue).inSingletonScope();
+    bind<BranchPushHandler>("BranchPushHandler").to(BranchUpdateWebhookQueue).inSingletonScope();
 
     // MERGE REQUESTS
     bind<CreateMergeRequestEventHandler>("CreateMergeRequestEventHandler").to(MergeRequestEventService);
@@ -274,6 +278,7 @@ export default new ContainerModule((bind): void => {
     // QUEUE SERVICES
     bind<QueueService>("QueueServices").to(MergeRequestService).inSingletonScope();
     bind<QueueService>("QueueServices").to(PreMergeCommitQueue).inSingletonScope();
+    bind<QueueService>("QueueServices").to(BranchUpdateWebhookQueue).inSingletonScope();
 
     // Controllers
     bind<AuthenticationController>("Controllers").to(AuthenticationController);

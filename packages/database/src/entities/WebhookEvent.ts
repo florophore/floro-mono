@@ -30,8 +30,9 @@ import { ApiKey } from "./ApiKey";
 import { Repository } from "./Repository";
 import { WebhookKey } from "./WebhookKey";
 
-@Entity("api_events")
+@Entity("webhook_events")
 export class WebhookEvent extends BinaryPKBaseEntity {
+
   @Column("varchar", { length: 255 })
   @IsDefined()
   @IsString()
@@ -40,7 +41,7 @@ export class WebhookEvent extends BinaryPKBaseEntity {
   @Column("varchar", { length: 255 })
   @IsDefined()
   @IsSemVer()
-  apiVersion!: string;
+  webhookVersion!: string;
 
   @Column("boolean")
   @IsOptional()
@@ -62,6 +63,11 @@ export class WebhookEvent extends BinaryPKBaseEntity {
   @IsString()
   payloadHash!: string;
 
+  @Column("integer")
+  @IsOptional()
+  @IsInt()
+  statusCode!: number;
+
   @Column("uuid")
   repositoryId!: string;
 
@@ -77,7 +83,7 @@ export class WebhookEvent extends BinaryPKBaseEntity {
   webhookKey?: Relation<WebhookKey>;
 
   @Column("uuid")
-  repositoryEnabledApiKeyId!: string;
+  repositoryEnabledWebhookKeyId!: string;
 
   @ManyToOne("RepositoryEnabledWebhookKey", "webhookEvents")
   @JoinColumn()
