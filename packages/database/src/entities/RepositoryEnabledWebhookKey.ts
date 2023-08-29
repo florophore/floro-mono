@@ -18,6 +18,7 @@ import { Organization } from "./Organization";
 import { User } from "./User";
 import { WebhookKey } from "./WebhookKey";
 import { Repository } from "./Repository";
+import { WebhookEvent } from "./WebhookEvent";
 
 @Entity("repository_enabled_webhook_keys")
 export class RepositoryEnabledWebhookKey extends BinaryPKBaseEntity {
@@ -85,5 +86,5 @@ export class RepositoryEnabledWebhookKey extends BinaryPKBaseEntity {
 
   @OneToMany("WebhookEvent", "repositoryEnabledWebhookKey")
   @JoinColumn()
-  webhookEvents?: Relation<WebhookKey>[];
+  webhookEvents?: Relation<WebhookEvent>[];
 }
