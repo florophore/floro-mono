@@ -1,0 +1,470 @@
+{
+  "version": "0.0.0",
+  "name": "text",
+  "displayName": "Text",
+  "description": "A plugin for managing strings and translations.",
+  "managedCopy": true,
+  "icon": {
+    "light": "./text.unselected.light.svg",
+    "dark": "./text.unselected.dark.svg",
+    "selected": {
+      "light": "./text.selected.light.svg",
+      "dark": "./text.selected.dark.svg"
+    }
+  },
+  "imports": {},
+  "types": {},
+  "store": {
+    "localeSettings": {
+      "locales": {
+        "type": "set",
+        "emptyable": false,
+        "values": {
+          "localeCode": {
+            "type": "string",
+            "isKey": true
+          },
+          "name": {
+            "type": "string"
+          },
+          "defaultTranslateFromLocaleRef": {
+            "type": "ref<$.localeSettings.locales.values>",
+            "onDelete": "nullify",
+            "nullable": true
+          },
+          "defaultFallbackLocaleRef": {
+            "type": "ref<$.localeSettings.locales.values>",
+            "onDelete": "nullify",
+            "nullable": true
+          }
+        }
+      },
+      "defaultLocaleRef": {
+        "type": "ref<$.localeSettings.locales.values>",
+        "nullable": false
+      }
+    },
+    "terms": {
+      "type": "set",
+      "values": {
+        "id": {
+          "type": "string",
+          "isKey": true
+        },
+        "name": {
+          "type": "string"
+        },
+        "globalNotes": {
+          "type": "string",
+          "default": "",
+          "nullable": true
+        },
+        "localizedTerms": {
+          "type": "set",
+          "bounded": true,
+          "values": {
+            "id": {
+              "type": "ref<$.localeSettings.locales.values>",
+              "isKey": true
+            },
+            "termValue": {
+              "type": "string",
+              "default": "",
+              "nullable": true
+            },
+            "localNotes": {
+              "type": "string",
+              "default": "",
+              "nullable": true
+            }
+          }
+        }
+      }
+    },
+    "phraseGroups": {
+      "type": "set",
+      "emptyable": false,
+      "values": {
+        "id": {
+          "type": "string",
+          "isKey": true
+        },
+        "name": {
+          "type": "string"
+        },
+        "phrases": {
+          "type": "set",
+          "values": {
+            "id": {
+              "type": "string",
+              "isKey": true
+            },
+            "phraseKey": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string",
+              "default": "",
+              "nullable": true
+            },
+            "tags": {
+              "type": "array",
+              "values": "string"
+            },
+            "variables": {
+              "type": "set",
+              "values": {
+                "id": {
+                  "type": "string",
+                  "isKey": true
+                },
+                "name": {
+                  "type": "string"
+                },
+                "varType": {
+                  "type": "string"
+                }
+              }
+            },
+            "linkVariables": {
+              "type": "set",
+              "values": {
+                "linkName": {
+                  "type": "string",
+                  "isKey": true
+                },
+                "translations": {
+                  "type": "set",
+                  "bounded": true,
+                  "values": {
+                    "id": {
+                      "type": "ref<$.localeSettings.locales.values>",
+                      "isKey": true
+                    },
+                    "linkDisplayValue": {
+                      "richTextHtml": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "json": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "plainText": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "revisionCount": {
+                        "type": "int",
+                        "default": 0
+                      },
+                      "revisionTimestamp": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "sourceAtRevision": {
+                        "sourceLocaleRef": {
+                          "type": "ref<$.localeSettings.locales.values>",
+                          "nullable": true
+                        },
+                        "richTextHtml": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "json": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "plainText": {
+                          "type": "string",
+                          "nullable": true
+                        }
+                      }
+                    },
+                    "linkHrefValue": {
+                      "json": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "richTextHtml": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "plainText": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "revisionCount": {
+                        "type": "int",
+                        "default": 0
+                      },
+                      "revisionTimestamp": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "sourceAtRevision": {
+                        "sourceLocaleRef": {
+                          "type": "ref<$.localeSettings.locales.values>",
+                          "nullable": true
+                        },
+                        "json": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "plainText": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "richTextHtml": {
+                          "type": "string",
+                          "nullable": true
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "interpolationVariants": {
+              "type": "set",
+              "values": {
+                "name": {
+                  "type": "string",
+                  "isKey": true
+                },
+                "variableRef": {
+                  "type": "ref<$.phraseGroups.values.phrases.values.variables.values>"
+                },
+                "localeRules": {
+                  "type": "set",
+                  "bounded": true,
+                  "values": {
+                    "id": {
+                      "type": "ref<$.localeSettings.locales.values>",
+                      "isKey": true
+                    },
+                    "defaultValue": {
+                      "richTextHtml": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "json": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "plainText": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "revisionCount": {
+                        "type": "int",
+                        "default": 0
+                      },
+                      "revisionTimestamp": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "sourceAtRevision": {
+                        "sourceLocaleRef": {
+                          "type": "ref<$.localeSettings.locales.values>",
+                          "nullable": true
+                        },
+                        "richTextHtml": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "json": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "plainText": {
+                          "type": "string",
+                          "nullable": true
+                        }
+                      }
+                    },
+                    "conditionals": {
+                      "type": "array",
+                      "values": {
+                        "operator": {
+                          "type": "string",
+                          "nullable": false
+                        },
+                        "intComparatorValue": {
+                          "type": "int",
+                          "nullable": true
+                        },
+                        "floatComparatorValue": {
+                          "type": "float",
+                          "nullable": true
+                        },
+                        "stringComparatorValue": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "booleanComparatorValue": {
+                          "type": "boolean",
+                          "nullable": true
+                        },
+                        "resultant": {
+                          "richTextHtml": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "json": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "plainText": {
+                            "type": "string",
+                            "nullable": true
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "phraseTranslations": {
+              "type": "set",
+              "bounded": true,
+              "values": {
+                "id": {
+                  "type": "ref<$.localeSettings.locales.values>",
+                  "isKey": true
+                },
+                "richTextHtml": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "json": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "plainText": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "revisionCount": {
+                  "type": "int",
+                  "default": 0
+                },
+                "revisionTimestamp": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "sourceAtRevision": {
+                  "sourceLocaleRef": {
+                    "type": "ref<$.localeSettings.locales.values>",
+                    "nullable": true
+                  },
+                  "richTextHtml": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "json": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "plainText": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                }
+              }
+            },
+            "exampleUsageImages": {
+              "type": "array",
+              "values": {
+                "description": {
+                  "type": "string"
+                },
+                "image": {
+                  "type": "file"
+                }
+              }
+            },
+            "testCases": {
+              "type": "set",
+              "bounded": true,
+              "values": {
+                "id": {
+                  "type": "ref<$.localeSettings.locales.values>",
+                  "isKey": true
+                },
+                "localeTests": {
+                  "type": "set",
+                  "values": {
+                    "description": {
+                      "type": "string",
+                      "isKey": true
+                    },
+                    "mockValues": {
+                      "type": "set",
+                      "values": {
+                        "variableRef": {
+                          "type": "ref<$.phraseGroups.values.phrases.values.variables.values>",
+                          "isKey": true
+                        },
+                        "intMockValue": {
+                          "type": "int",
+                          "nullable": true
+                        },
+                        "floatMockValue": {
+                          "type": "float",
+                          "nullable": true
+                        },
+                        "stringMockValue": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "booleanMockValue": {
+                          "type": "boolean",
+                          "nullable": true
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "seed": {
+    "localeSettings": {
+      "locales": [
+        {
+          "localeCode": "EN",
+          "name": "English",
+          "defaultTranslateFromLocaleRef": null,
+          "fallbacks": []
+        }
+      ],
+      "defaultLocaleRef": "$(text).localeSettings.locales.localeCode<EN>"
+    },
+    "terms": [],
+    "phraseGroups": [
+      {
+        "id": "main",
+        "name": "Main",
+        "phrases": [
+          {
+            "id": "hello_world",
+            "phraseKey": "hello world",
+            "description": "Example descript of key to get you started",
+            "variables": [],
+            "linkVariants": [],
+            "interpolationVariants": [],
+            "exampleUsages": [],
+            "testCases": [],
+            "phraseTranslations": []
+          }
+        ]
+      }
+    ]
+  }
+}

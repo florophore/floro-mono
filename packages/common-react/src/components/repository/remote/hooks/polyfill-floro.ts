@@ -685,45 +685,32 @@ export const writePathStringWithArrays = (
 
 export const reIndexSchemaArrays = (kvs: Array<DiffElement>): Array<string> => {
   const out: Array<string> = [];
-  const listStack: Array<string> = [];
-  let indexStack: Array<number> = [];
+  const indexMap: {[path: string]: number} = {};
   for (const { key } of kvs) {
     const decodedPath = decodeSchemaPath(key);
-    const lastPart = decodedPath[decodedPath.length - 1];
-    if (typeof lastPart == "object" && lastPart.key == "(id)") {
-      const parentPath = decodedPath.slice(0, -1);
-      const parentPathString = writePathString(parentPath);
-      const peek = listStack?.[listStack.length - 1];
-      if (peek != parentPathString) {
-        if (!peek || key.startsWith(peek)) {
-          listStack.push(parentPathString);
-          indexStack.push(0);
+    const parts: Array<string|DiffElement> = [];
+    const indexStack: Array<number> = [];
+    for (const part of decodedPath) {
+      if (typeof part == "object" && part.key == "(id)") {
+        const parentPathString = writePathString(parts);
+        if (!indexMap[parentPathString]) {
+          indexMap[parentPathString] = 0;
         } else {
-          while (
-            listStack.length > 0 &&
-            !key.startsWith(listStack[listStack.length - 1])
-          ) {
-            listStack.pop();
-            indexStack.pop();
-          }
-          indexStack[indexStack.length - 1]++;
+          indexMap[parentPathString]++;
         }
-      } else {
-        const currIndex = indexStack.pop() ?? 0;
-        indexStack.push(currIndex + 1);
+        indexStack.push(indexMap[parentPathString])
       }
-      let pathIdx = 0;
-      const pathWithNumbers = decodedPath.map((part) => {
-        if (typeof part == "object" && part.key == "(id)") {
-          return indexStack[pathIdx++];
-        }
-        return part;
-      });
-      const arrayPath = writePathStringWithArrays(pathWithNumbers);
-      out.push(arrayPath);
-    } else {
-      out.push(key);
+      parts.push(part);
     }
+    let pathIdx = 0;
+    const pathWithNumbers = decodedPath.map((part) => {
+      if (typeof part == "object" && part.key == "(id)") {
+        return indexStack[pathIdx++];
+      }
+      return part;
+    });
+    const arrayPath = writePathStringWithArrays(pathWithNumbers);
+    out.push(arrayPath);
   }
   return out;
 };

@@ -448,7 +448,7 @@ const RemotePluginController = (props: Props) => {
     >
       <iframe
         sandbox="allow-scripts"
-        allow="clipboard-read *; clipboard-write *;"
+        allow="clipboard-read *; clipboard-write *; allow-downloads;"
         ref={iframeRef}
         style={{
           width: "100%",

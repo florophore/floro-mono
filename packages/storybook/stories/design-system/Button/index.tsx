@@ -177,6 +177,7 @@ const Button = ({
         disabled={isDisabled}
         onClick={onClickCB}
         {...rest}
+        style={rest?.style ?? {}}
       >
         {!isLoading && (
           <>

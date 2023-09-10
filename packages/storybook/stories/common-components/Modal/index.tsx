@@ -54,6 +54,7 @@ export interface Props {
   showExitIcon?: boolean;
   headerChildren?: React.ReactElement|React.ReactElement[];
   headerSize?: "small"|"normal";
+  topOffest?: number;
 }
 
 const Modal = (props: Props): React.ReactElement => {
@@ -82,7 +83,7 @@ const Modal = (props: Props): React.ReactElement => {
       onDismiss={props?.onDismiss}
       disableBackgroundDismiss={props?.disableBackgroundDismiss}
     >
-      <ModalContainer>
+      <ModalContainer style={{marginTop: -(props.topOffest ?? 0)}}>
         <ModalHeaderContainer style={{height: headerSize}}>
           <HeaderContentWrapper style={{height: headerSize}}>
             {props?.headerChildren}

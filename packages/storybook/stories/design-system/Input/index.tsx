@@ -6,6 +6,10 @@ import React, {
 } from "react";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
+import ColorPalette from "@floro/styles/ColorPalette";
+import { css } from "@emotion/css";
+import { reduce } from "d3";
+import { ProposedMergeRequestRepositoryUpdatesDocument } from "@floro/graphql-schemas/build/generated/main-client-graphql";
 
 export interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   value: string;
@@ -13,6 +17,7 @@ export interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   placeholder: string;
   isLoading?: boolean;
   isValid?: boolean;
+  hideLabel?: boolean;
   onTextChanged: (text: string, event: React.ChangeEvent<HTMLInputElement>) => void;
   onFocus?: (event: React.FocusEvent<HTMLInputElement, Element>) => void;
   onBlur?: (event: React.FocusEvent<HTMLInputElement, Element>) => void;
@@ -20,7 +25,7 @@ export interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   inputPaddingLeft?: number;
   rightElement?: React.ReactElement|null;
   leftElement?: React.ReactElement|null;
-  widthSize?: 'regular'|'wide'|'mid';
+  widthSize?: 'regular'|'wide'|'mid'|'shorter'|'semi-short'|'short'|'shortest';
 }
 
 const Container = styled.div`
@@ -83,6 +88,7 @@ const InputElement = styled.input`
   font-weight: 500;
   font-size: 1.2rem;
   padding: 0 16px;
+  width: 100%;
   color: ${(props) => props.theme.colors.inputEntryTextColor};
   ::placeholder {
     color: ${(props) => props.theme.colors.inputPlaceholderTextColor};
@@ -98,6 +104,7 @@ const Input = React.forwardRef(
       onFocus,
       onBlur,
       isValid = true,
+      hideLabel = false,
       isLoading,
       placeholder,
       inputPaddingLeft = 16,
@@ -119,7 +126,7 @@ const Input = React.forwardRef(
         return theme.colors.inputInvalidBorderColor;
       }
       return theme.colors.inputBorderColor;
-    }, [theme.name, isValid]);
+    }, [theme, isValid]);
 
     const labelTextColor = useMemo(() => {
       if (!isValid) {
@@ -153,18 +160,54 @@ const Input = React.forwardRef(
       [onBlur]
     );
 
+    const disabledColor = useMemo(() => {
+      if (theme.name == "light") {
+        return ColorPalette.lightGray;
+      }
+      return ColorPalette.mediumGray;
+    }, [theme.name])
+
+    const disabledBorderColor = useMemo(() => {
+      if (theme.name == "light") {
+        return ColorPalette.gray;
+      }
+      return ColorPalette.gray;
+    }, [theme.name])
+
     return (
       <Container
         onClick={onClickContainer}
         style={{
           border: `2px solid ${borderColor}`,
-          width: widthSize == "regular" ? 432 : widthSize == "mid" ? 452 : 470
+          width: widthSize == "regular" ? 432 : widthSize == "mid" ? 452 : widthSize == "short" ? 240 : widthSize == 'semi-short' ? 300 : widthSize == 'shorter' ? 400 : widthSize == 'shortest' ? 152 : 470,
+          ...(rest.disabled ? {
+              background: disabledColor,
+              border: `2px solid ${disabledBorderColor}`,
+              cursor: "not-allowed",
+          }: {})
+
         }}
       >
-        <LabelContainer>
-          <LabelBorderEnd style={{ left: -1, background: borderColor }} />
-          <LabelText style={{ color: labelTextColor }}>{label}</LabelText>
-          <LabelBorderEnd style={{ right: -1 }} />
+        <LabelContainer style={{
+          ...(rest.disabled ? {
+              background: disabledColor,
+              borderColor: disabledBorderColor,
+              cursor: "not-allowed",
+          }: {})
+        }}>
+          <div
+          style={{
+            position: 'absolute',
+            background: theme.background,
+            top: 0,
+            height: 16,
+            width: '100%',
+            zIndex: 0,
+          }}>
+          </div>
+          <LabelBorderEnd style={{ left: -1, background: rest.disabled ? disabledBorderColor : borderColor, zIndex: 0 }} />
+          <LabelText style={{ color: rest.disabled ? disabledBorderColor : labelTextColor, zIndex: 0 }}>{label}</LabelText>
+          <LabelBorderEnd style={{ right: -1, zIndex: 0 }} />
         </LabelContainer>
         <InputRowWrapper>
           {!!rest?.leftElement && (
@@ -180,8 +223,22 @@ const Input = React.forwardRef(
             onBlur={onInputBlur}
             placeholder={placeholder}
             spellCheck={"false"}
+
+          className={rest.disabled ? css`
+              background: ${disabledColor};
+              color: ${theme.name == 'light' ? ColorPalette.darkGray : ColorPalette.gray} !important;
+              cursor: not-allowed;
+              ::placeholder {
+                color: ${theme.name == 'light' ? ColorPalette.gray : ColorPalette.gray} !important;
+              }
+          ` : css``}
             style={{
               paddingLeft: inputPaddingLeft,
+              ...(rest.disabled ? {
+                  background: disabledColor,
+                  borderColor: disabledBorderColor,
+                  cursor: "not-allowed",
+          }: {})
             }}
             {...rest}
           />

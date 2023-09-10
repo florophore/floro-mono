@@ -3,8 +3,10 @@ export interface ColorPalette {
   black: string;
   lightModeBG: string;
   darkModeBG: string;
+  extraLightGray: string;
   lightGray: string;
   gray: string;
+  darkerGray: string;
   mediumGray: string;
   darkGray: string;
   lightRed: string;
@@ -20,15 +22,25 @@ export interface ColorPalette {
   purple: string;
   darkPurple: string;
   linkBlue: string;
+  variableGreen: string;
+  variableGreenInset: string;
+  variableBlue: string;
+  variableBlueInset: string;
+  variableYellow: string;
+  variableYellowInset: string;
+  beigeDark: string;
+  beigeLight: string;
 }
 const ColorPalette = {
     white: '#FFFFFFFF',
     lightModeBG: '#FFFFFFFF',
     darkModeBG: '#222222FF',
     black: '#000000FF',
+    extraLightGray: '#F6F6F6FF',
     lightGray: '#E3E2E2FF',
     gray: '#7C7C7CFF',
     mediumGray: '#414141FF',
+    darkerGray: '#2E2E2EFF',
     darkGray: '#222222FF',
     lightRed: '#FF3D44FF',
     red: '#CC2E34FF',
@@ -44,7 +56,17 @@ const ColorPalette = {
     purple: '#5445C4FF',
     darkPurple: '#251F51FF',
     linkBlue: '#56A4FAFF',
-    //babyBlue: '#1D83F4FF'
+    //babyBlue: '#1D83F4FF',
+    variableGreen: '#3EA53EFF',
+    variableGreenInset: '#0D610EFF',
+    variableBlue: '#4E87EEFF',
+    variableBlueInset: '#1B5E97FF',
+    //variableYellow: '#FF964BFF',
+    variableYellow: '#FFFA4BFF',
+    //variableYellowInset: '#EE762CFF',
+    variableYellowInset: '#D2C71BFF',
+    beigeDark: '#E1BF92FF',
+    beigeLight: '#FFEACFFF'
 } as ColorPalette;
 
 export default ColorPalette;

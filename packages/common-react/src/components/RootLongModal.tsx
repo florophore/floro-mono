@@ -12,9 +12,10 @@ export interface Props {
   headerChildren?: React.ReactElement | React.ReactElement[];
   headerSize?: "small"|"normal";
   width?: number;
+  topOffset?: number;
 }
 
-const RootModal = (props: Props) => {
+const RootLongModal = (props: Props) => {
   const target = usePortal("long-modal-root");
   return ReactDOM.createPortal(
     <LongModal
@@ -25,6 +26,7 @@ const RootModal = (props: Props) => {
       disableBackgroundDismiss={props?.disableBackgroundDismiss}
       headerSize={props?.headerSize}
       width={props?.width}
+      topOffest={props.topOffset}
     >
       {props?.children}
     </LongModal>,
@@ -32,4 +34,4 @@ const RootModal = (props: Props) => {
   );
 };
 
-export default React.memo(RootModal);
+export default React.memo(RootLongModal);

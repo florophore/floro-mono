@@ -334,7 +334,7 @@ const Group = (props: Props) => {
 
     for (const icon of props?.iconGroup?.icons) {
       if (
-        icon?.name?.toLowerCase().indexOf(icon.name.toLowerCase().trim()) != -1
+        icon?.name?.toLowerCase().indexOf(props.searchText.toLowerCase().trim()) != -1
       ) {
         return true;
       }

@@ -158,7 +158,7 @@ const IconHeader = (props: Props) => {
   const { commandMode} = useFloroContext();
   const isSearching = useMemo(() => props.searchText.trim() != "", [props.searchText]);
   const [newGroupName, setNewGroupName] = useState("");
-  const [iconGroups, setIconGroups] = useFloroState("$(icons).iconGroups", [], false);
+  const [iconGroups, setIconGroups] = useFloroState("$(icons).iconGroups");
 
   const { fileRef, status, uploadFile, uploadBlob } = useUploadFile();
 

@@ -1,0 +1,43 @@
+{
+    "name": "@floro/text-plugin",
+    "version": "1.0.0",
+    "type": "module",
+    "license": "MIT",
+    "scripts": {
+        "start": "NODE_ENV=production node --experimental-specifier-resolution=node --loader ts-node/esm main.ts",
+        "dev": "NODE_ENV=development nodemon -e ts --watch ../ --experimental-specifier-resolution=node main.ts",
+        "build": "NODE_ENV=production vite build;",
+        "floro:package": "npm run build; rm -rf dist/floro; cp -R floro dist/floro;",
+        "lint": "eslint --ext .ts,.tsx .",
+        "test": "jest"
+    },
+    "dependencies": {
+        "@types/mime-types": "^2.1.1",
+        "axios": "^1.4.0",
+        "emoji-picker-react": "^4.4.12",
+        "framer-motion": "^10.10.0",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "svg-parser": "^2.0.4",
+        "svgo": "^3.0.2",
+        "svgson": "^5.2.1",
+        "uuidv4": "^6.2.13"
+    },
+    "devDependencies": {
+        "@types/express": "^4.17.14",
+        "@types/node": "^18.7.2",
+        "@types/react": "^18.0.15",
+        "@types/react-dom": "^18.0.6",
+        "@types/svg-parser": "^2.0.3",
+        "@vitejs/plugin-react": "^2.0.0",
+        "eslint": "^8.0.1",
+        "eslint-plugin-import": "^2.25.0",
+        "jest": "^29.1.0",
+        "jest-transformer-svg": "^2.0.0",
+        "nodemon": "^2.0.19",
+        "ts-jest": "^29.0.3",
+        "ts-node": "^10.9.1",
+        "typescript": "^4.6.4",
+        "vite": "^3.0.9"
+    }
+}

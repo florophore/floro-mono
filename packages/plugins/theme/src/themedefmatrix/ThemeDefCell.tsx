@@ -206,8 +206,7 @@ const ThemeDefCell = (props: Props) => {
     themeDefinitionRef,
     {
       id: themeRef
-    } as  SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'],
-    false
+    } as  SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>']
   );
 
   const paletteColorShade = useReferencedObject(themeDefinition?.paletteColorShade);

@@ -11,6 +11,8 @@ import DotsLoader from "../DotsLoader";
 import DropdownArrowLight from "@floro/common-assets/assets/images/icons/dropdown_arrow.light.svg";
 import DropdownArrowDark from "@floro/common-assets/assets/images/icons/dropdown_arrow.dark.svg";
 import { useTheme } from "@emotion/react";
+import { ProposedMergeRequestRepositoryUpdatesDocument } from "@floro/graphql-schemas/build/generated/main-client-graphql";
+import ColorPalette from "@floro/styles/ColorPalette";
 
 const Container = styled.div`
   position: relative;
@@ -157,8 +159,11 @@ export interface Props<T> {
   leftElement?: React.ReactElement|null;
   inputPaddingLeft?: number;
   noResultsMessage?: string;
-  size?: 'regular'|'wide'|'mid';
+  size?: 'regular'|'wide'|'mid'|'shorter'|'semi-short'|'short'| 'shortest';
   disableNull?: boolean
+  isDisabled?: boolean
+  hideLabel?: boolean
+  maxHeight?: number
 }
 
 const InputSelector = <T,>({
@@ -175,6 +180,9 @@ const InputSelector = <T,>({
   placeholder,
   size = 'regular',
   disableNull = true,
+  isDisabled = false,
+  hideLabel = false,
+  maxHeight = 250,
   ...rest
 }: Props<T>) => {
 
@@ -241,6 +249,20 @@ const InputSelector = <T,>({
     },
     [onTextChanged]
   );
+
+  const disabledColor = useMemo(() => {
+    if (theme.name == "light") {
+      return ColorPalette.lightGray;
+    }
+    return ColorPalette.mediumGray;
+  }, [theme.name])
+
+  const disabledBorderColor = useMemo(() => {
+    if (theme.name == "light") {
+      return ColorPalette.gray;
+    }
+    return ColorPalette.gray;
+  }, [theme.name])
 
   const showList = useMemo(
     () => isFocused || isHoveringList,
@@ -410,15 +432,20 @@ const InputSelector = <T,>({
     if (isDropdown) {
       return (
         <DropdownIconWrapper>
-          <DropdownDivider />
+          <DropdownDivider style={{
+            ...(isDisabled ? {
+                background: theme.name == 'light' ? ColorPalette.gray : ColorPalette.gray,
+                cursor: "not-allowed",
+            }: {})
+          }}/>
           <ArrowContainer>
-            <Arrow src={DropdownArrow} />
+            <Arrow src={isDisabled ? DropdownArrowLight : DropdownArrow} />
           </ArrowContainer>
         </DropdownIconWrapper>
       );
     }
     return Loader;
-  }, [isDropdown, Loader, DropdownArrow, theme.name]);
+  }, [isDropdown, Loader, DropdownArrow, theme, isDisabled]);
 
   useEffect(() => {
     if (!isTapping) {
@@ -434,7 +461,7 @@ const InputSelector = <T,>({
   return (
     <div style={{ display: "flex", position: "relative" }}>
       <Container
-        style={{ width: size == "regular" ? 432 : size == "mid" ? 452 : 470, }}
+        style={{ width: size == "regular" ? 432 : size == "mid" ? 452 : size == 'short' ? 240 : size == 'semi-short' ? 300 : size == 'shorter' ? 400 : size == 'shortest' ? 152 : 470, }}
       >
         <Input
           value={isFocused ? text : optionText}
@@ -451,13 +478,14 @@ const InputSelector = <T,>({
           inputPaddingLeft={rest.inputPaddingLeft}
           ref={input}
           widthSize={size}
+          disabled={isDisabled}
         />
-        {showList && (
+        {showList && !isDisabled && (
           <DropdownContainer
             onMouseEnter={onStartHoveringList}
             onMouseLeave={onStopHoveringList}
           >
-            <InnerContainer onMouseMove={onReEnableHover} ref={optionContainer}>
+            <InnerContainer style={{maxHeight}} onMouseMove={onReEnableHover} ref={optionContainer}>
               {options}
               {NoResults}
             </InnerContainer>
