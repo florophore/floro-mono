@@ -47,10 +47,6 @@ export class UserAuthCredential extends BinaryPKBaseEntity {
   /**
    *  if third party verified, this will be true. If not third party login then this indicates if account has been
    * verified.
-   * Notable rules:
-   * 1) An unverified email OR third party account cannot be used for billing.
-   * 2) An unverified email, can be changed by user without re-verification if no oauth login exists for the email address.
-   * 3) An unverified email, can only be changed by user via re-verification if prior oauth login exists or credential is verified
    */
   @Column("boolean")
   @IsDefined()
@@ -70,7 +66,7 @@ export class UserAuthCredential extends BinaryPKBaseEntity {
   isDisabled = false;
 
   /**
-   * if enabled, we can relax some frictions on our end knowing 2fa exists on 3pa level
+   * if enabled, we can relax some frictions down the line
    */
   @Column("boolean")
   hasThirdPartyTwoFactorEnabled?: boolean;

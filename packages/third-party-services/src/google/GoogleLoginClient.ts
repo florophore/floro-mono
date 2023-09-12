@@ -5,6 +5,7 @@ import GoogleAccessToken from "./schemas/GoogleAccessToken";
 import GoogleAccessTokenError from "./schemas/GoogleAccessTokenError";
 import GoogleAPIError from "./schemas/GoogleAPIError";
 import GoogleUser from "./schemas/GoogleUser";
+import process from 'process';
 
 @injectable()
 export default class GoogleLoginClient {
@@ -13,14 +14,14 @@ export default class GoogleLoginClient {
     private redirectUri!: string;
 
     constructor() {
-        this.clientId = '417722275204-e8n6h2vqcgnbnj7uuj3p561ij5sqn3tg.apps.googleusercontent.com';
-        this.clientSecret = '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';
-        this.redirectUri = 'http%3A//localhost:9000/oauth/google/callback';
+        this.clientId = process.env?.['GOOGLE_OAUTH_CLIENT_ID'] ?? '';
+        this.clientSecret = process.env?.['GOOGLE_OAUTH_CLIENT_SECRET'] ?? '';
+        this.redirectUri = process.env?.['GOOGLE_OAUTH_REDIRECT_URI'] ?? '';
     }
 
     public async getAccessToken(code: string): Promise<GoogleAccessToken|GoogleAccessTokenError|Error> {
         try {
-            const url = "https://oauth2.googleapis.com/token?client_id=" + this.clientId + "&client_secret=" + this.clientSecret + "&redirect_uri=" + this.redirectUri + "&code=" + code + "&grant_type=authorization_code"; 
+            const url = "https://oauth2.googleapis.com/token?client_id=" + this.clientId + "&client_secret=" + this.clientSecret + "&redirect_uri=" + this.redirectUri + "&code=" + code + "&grant_type=authorization_code";
             const response = await fetch(
               url,
               {

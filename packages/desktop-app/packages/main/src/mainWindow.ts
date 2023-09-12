@@ -52,7 +52,7 @@ async function createWindow() {
     ipcMain.on('system:openOAuthWindow', async (_: any, provider: any) => {
       const oauthWindow = new BrowserWindow({
         show: true, // Use the 'ready-to-show' event to show the instantiated BrowserWindow.
-        titleBarStyle: 'hidden',
+        //titleBarStyle: 'hidden',
         titleBarOverlay: true,
         parent: browserWindow,
         modal: true,
@@ -72,10 +72,13 @@ async function createWindow() {
       });
 
       if (provider == 'github') {
-        oauthWindow.loadURL('https://github.com/login/oauth/authorize?client_id=75b180c6c897d28dbf66&scope=user');
+        const githubOAuthUrl = `https://github.com/login/oauth/authorize?client_id=${process?.env?.['GITHUB_OAUTH_CLIENT_ID']}&scope=user`
+        console.log("URL", githubOAuthUrl)
+        oauthWindow.loadURL(githubOAuthUrl);
       }
       if (provider == 'google') {
-        oauthWindow.loadURL('https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A//www.googleapis.com/auth/userinfo.email%20https://www.googleapis.com/auth/userinfo.profile&include_granted_scopes=true&response_type=code&redirect_uri=http%3A//localhost:9000/oauth/google/callback&client_id=417722275204-e8n6h2vqcgnbnj7uuj3p561ij5sqn3tg.apps.googleusercontent.com');
+        const googleOAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A//www.googleapis.com/auth/userinfo.email%20https://www.googleapis.com/auth/userinfo.profile&include_granted_scopes=true&response_type=code&redirect_uri=${process.env['GOOGLE_OAUTH_REDIRECT_URI']}&client_id=${process.env['GOOGLE_OAUTH_CLIENT_ID']}`;
+        oauthWindow.loadURL(googleOAuthUrl);
       }
       oauthWindow.once('ready-to-show', () => {
         oauthWindow?.show();

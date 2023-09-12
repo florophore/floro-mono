@@ -16,15 +16,17 @@ export default class StorageClient {
   // INJECT S3 storage as well
   constructor(
     @inject("PublicDiskStorageDriver") publicDiskStorageDriver: StorageDriver,
-    @inject("PrivateDiskStorageDriver") privateDiskStorageDriver: StorageDriver
+    @inject("PrivateDiskStorageDriver") privateDiskStorageDriver: StorageDriver,
+    @inject("PublicAwsStorageDriver") publicAwsStorageDriver: StorageDriver,
+    @inject("PrivateAwsStorageDriver") privateAwsStorageDriver: StorageDriver,
     ) {
     if (isDevelopment || isTest) {
       this.publicDriver = publicDiskStorageDriver;
       this.privateDriver = privateDiskStorageDriver;
-    } 
+    }
     if (isProduction) {
-      // REPLACE WITH S3
-      //this.publicDriver = diskStorageDriver;
+      this.publicDriver = publicAwsStorageDriver;
+      this.privateDriver = privateAwsStorageDriver;
     }
   }
 

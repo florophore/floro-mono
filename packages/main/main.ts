@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import process from 'process';
 import * as fs from 'fs'
 import * as path from 'path'
@@ -15,6 +16,7 @@ let template = fs.readFileSync(
 );
 
 (async () => {
+  console.log("P", process.env?.['TEST_VAL']);
   const appServer = container.get(AppServer);
   appServer.startServer(template);
   console.log("started main app...")

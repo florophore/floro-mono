@@ -11970,6 +11970,11 @@ dotenv@^16.0.0, dotenv@^16.0.3:
   resolved "https://registry.npmjs.org/dotenv/-/dotenv-16.0.3.tgz"
   integrity sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==
 
+dotenv@^16.3.1:
+  version "16.3.1"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-16.3.1.tgz#369034de7d7e5b120972693352a3bf112172cc3e"
+  integrity sha512-IPzF4w4/Rd94bA9imS68tZBaYyBWSCE47V1RGuMrB94iyTOIEwRmVL2x/4An+6mETpLrKJ5hQkB8W4kFAadeIQ==
+
 dotenv@^8.0.0:
   version "8.6.0"
   resolved "https://registry.npmjs.org/dotenv/-/dotenv-8.6.0.tgz"
@@ -12779,14 +12784,9 @@ escape-goat@^3.0.0:
   resolved "https://registry.npmjs.org/escape-goat/-/escape-goat-3.0.0.tgz"
   integrity sha512-w3PwNZJwRxlp47QGzhuEBldEqVHHhh8/tIPcl6ecf2Bou99cdAt0knihBV0Ecc7CGxYduXVBDheH1K2oADRlvw==
 
-escape-html@^1.0.3:
+escape-html@^1.0.3, escape-html@~1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/escape-html/-/escape-html-1.0.3.tgz#0258eae4d3d0c0974de1c169188ef0051d1d1988"
-  integrity sha512-NiSupZ4OeuGwr68lGIeym/ksIZMJodUGOSCZ/FSnTxcrekbvqrgdUxlJOMpijaKZVjAJrWrGs/6Jy8OMuyj9ow==
-
-escape-html@~1.0.3:
-  version "1.0.3"
-  resolved "https://registry.npmjs.org/escape-html/-/escape-html-1.0.3.tgz"
   integrity sha512-NiSupZ4OeuGwr68lGIeym/ksIZMJodUGOSCZ/FSnTxcrekbvqrgdUxlJOMpijaKZVjAJrWrGs/6Jy8OMuyj9ow==
 
 escape-string-regexp@4.0.0, escape-string-regexp@^4.0.0:
@@ -13752,8 +13752,54 @@ flatted@^3.1.0:
   resolved "https://registry.npmjs.org/flatted/-/flatted-3.2.7.tgz"
   integrity sha512-5nqDSxl8nn5BSNxyR3n4I6eDmbolI6WT+QqR547RwxQapgjQBmtktdP+HTBb/a/zLsbzERTONyUB5pefh5TtjQ==
 
+floro@0.0.7:
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/floro/-/floro-0.0.7.tgz#0b2b3bd767f72db4e500e06cf7750a30e83c3be9"
+  integrity sha512-nZcwR1o0QvB7S9ajNZCIK3oFzxFtZfYGdhd3p6sLKrp9PF9uDzkgmqPPEMrHTifcdZoQ2J7xmksT7eW1Y3YODg==
+  dependencies:
+    "@types/busboy" "^1.5.0"
+    "@types/express" "^4.17.15"
+    arraybuffer-isbinary "^1.0.2"
+    axios "^1.0.0"
+    busboy "^1.6.0"
+    chalk "^5.2.0"
+    cli-color "^2.0.3"
+    command-line-args "^5.2.1"
+    connect-busboy "^1.0.0"
+    cors "^2.8.5"
+    crypto-js "^4.1.1"
+    cryptojs "^2.5.3"
+    email-validator "^2.0.4"
+    express "^4.18.1"
+    express-busboy "^9.0.0"
+    form-data "^4.0.0"
+    http-proxy-middleware "^2.0.6"
+    macaddress "^0.5.3"
+    mdiff "^1.4.2"
+    mime-types "^2.1.35"
+    node-cron "^3.0.2"
+    object-sizeof "^2.6.1"
+    pm2 "^5.2.0"
+    pretty-json "^0.1.1"
+    prettyjson "^1.2.5"
+    rimraf "^3.0.2"
+    semver "^7.3.8"
+    sharp "^0.31.1"
+    socket.io "^4.5.2"
+    socket.io-client "^4.5.3"
+    svg2img "^1.0.0-beta.2"
+    svgo "^2.8.0"
+    tar "^6.1.13"
+    tar-fs "^2.1.1"
+    tar.gz "^1.0.7"
+    targz "^1.0.1"
+    tiny-cli-editor "^0.1.1"
+    ts-node "^10.9.1"
+    yargs "^17.7.0"
+    zlib "^1.0.5"
+
 "floro@file:../floro":
-  version "0.0.6"
+  version "0.0.7"
   dependencies:
     "@types/busboy" "^1.5.0"
     "@types/express" "^4.17.15"

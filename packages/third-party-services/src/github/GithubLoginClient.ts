@@ -7,6 +7,7 @@ import GithubAccessTokenError from "./schemas/GithubAccessTokenError";
 import GithubAPIError from "./schemas/GithubAPIError";
 import GithubUser from "./schemas/GithubUser";
 import GithubEmail from "./schemas/GithubEmail";
+import process from 'process';
 
 @injectable()
 export default class GithubLoginClient {
@@ -14,8 +15,8 @@ export default class GithubLoginClient {
     private clientSecret!: string;
 
     constructor() {
-        this.clientId = '75b180c6c897d28dbf66';
-        this.clientSecret = '0c9d05f83dc3445c1ebb3eaa4e858b1e38511ab9';
+        this.clientId = process?.env?.['GITHUB_OAUTH_CLIENT_ID'] ?? '';
+        this.clientSecret = process?.env?.['GITHUB_OAUTH_CLIENT_SECRET'] ?? '';
     }
 
     public async getAccessToken(code: string): Promise<GithubAccessToken|GithubAccessTokenError|Error> {
@@ -37,7 +38,7 @@ export default class GithubLoginClient {
             const text = await response.text();
             const json = text.split("&").reduce(
               (json, kv) => {
-                const [key, value] = kv.split("="); 
+                const [key, value] = kv.split("=");
                 return {
                     ...json,
                     [key]: value,
