@@ -27,8 +27,9 @@ jobs:
         id: cdnHost
         with:
           cond: ${{ github.event.inputs.buildType == 'prod' }}
-          if_true: 'https://static-cdn.floro-staging.com'
-          if_false: 'https://static-cdn.floro.com'
+          if_true: 'https://static-cdn.floro.com'
+          if_false: 'https://static-cdn.floro-staging.com'
+      - run: echo "CDN_HOST ${{ steps.cdnHost.outputs.value }}"
       - name: Yarn install cache
         uses: c-hive/gha-yarn-cache@v1
 
