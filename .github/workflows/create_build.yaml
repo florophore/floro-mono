@@ -73,9 +73,12 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Get Commit Sha
-        id: short-sha
-        run: echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -b -8
+      - name: Set tag var
+        id: vars
+        run: echo "docker_tag=$(echo ${GITHUB_REF} | cut -d'/' -f3)-${GITHUB_SHA}" >> $GITHUB_OUTPUT
+
+      - name: Echo tag var
+        run: echo "${{ steps.vars.outputs.docker_tag }}"
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -85,7 +88,8 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ steps.repositoryName.outputs.value }}
-          IMAGE_TAG: floro:${{ steps.short-sha.outputs.registry }}
+          IMAGE_TAG: ${{ steps.vars.outputs.docker_tag }}
         run: |
           docker build --build-arg cdn_host_arg=${{ steps.cdnHost.outputs.value }} -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
