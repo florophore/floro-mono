@@ -24,6 +24,16 @@ jobs:
         ports:
           - 5432:5432
 
+      redis:
+        # Docker Hub image
+        image: redis
+        # Set health checks to wait until redis has started
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       # run steps required in the workflow
       - name: Checkout repository
@@ -33,6 +43,11 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 16
+
+      - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
+        name: List the state of node modules
+        continue-on-error: true
+        run: npm list
 
       - name: Install dependencies
         run: yarn
