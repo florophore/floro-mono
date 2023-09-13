@@ -87,12 +87,13 @@ export default class AppServer {
           "http://localhost:63403",
           "http://localhost:9000",
           "https://floro.io",
+          "https://floro-staging.com",
         ],
       })
     );
 
     this.app.use((req, res, next) => {
-      res.header("Access-Control-Allow-Origin", "http://localhost:63403,http://localhost:9000,https://floro.io");
+      res.header("Access-Control-Allow-Origin", "http://localhost:63403,http://localhost:9000,https://floro.io, https://floro-staging.com");
       res.header("Access-Control-Allow-Methods", "GET,POST,PUT");
       res.header("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type");
       res.header("Referrer-Policy", "no-referrer");

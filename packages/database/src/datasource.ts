@@ -36,10 +36,22 @@ const testDataSource = new DataSource({
   dropSchema: true
 });
 
+const prodDataSource = new DataSource({
+  ...defaultOptions,
+  host: process.env?.['POSTGRES_HOST'],
+  database: process.env?.['POSTGRES_DB_NAME'],
+  username: process.env?.['POSTGRES_USER'],
+  password: process.env?.['POSTGRES_PASSWORD'],
+  logging: false,
+  dropSchema: true
+});
+
 export default ((env = 'development'): DataSource => {
   switch (env) {
     case 'test':
       return testDataSource;
+    case 'production':
+      return prodDataSource;
     default:
       return devDataSource;
   }
