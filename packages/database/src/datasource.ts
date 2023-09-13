@@ -30,6 +30,8 @@ const devDataSource = new DataSource({
 const testDataSource = new DataSource({
   ...defaultOptions,
   database: "floro_test",
+  username: 'postgres',
+  password: '',
   logging: false,
   dropSchema: true
 });
@@ -41,4 +43,4 @@ export default ((env = 'development'): DataSource => {
     default:
       return devDataSource;
   }
-})(process.env.NODE_ENV);
+})(process?.env.NODE_ENV as string);

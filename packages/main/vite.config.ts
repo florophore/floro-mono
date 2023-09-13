@@ -9,6 +9,10 @@ export default defineConfig(({ mode }): any => {
     plugins: [react()],
     assetsInclude: [
       '../common-assets/assets/**/*.svg',
+      '../common-assets/assets/images/**/*.svg',
+      '../common-assets/assets/images/icons/**/*.svg',
+      '../common-assets/assets/images/repo_icons/**/*.svg',
+      '../common-assets/assets/images/rich_text_icons/**/*.svg',
       '../common-assets/assets/**/*.png',
       '../common-assets/assets/**/*.txt',
       '../common-assets/assets/**/*.ttf',

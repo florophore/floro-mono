@@ -38,7 +38,6 @@ export interface Props {
 export const SessionProvider = (props: Props) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [isDeadSession, setIsDeadSession] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const [exchangeSession, { data, loading, reset }] = useExchangeSessionMutation();
@@ -88,7 +87,6 @@ export const SessionProvider = (props: Props) => {
   const logout = useCallback(() => {
     setCurrentUser(null);
     setSession(null);
-    setIsDeadSession(false);
     removeClientSession();
     apolloClient.clearStore();
     queryClient.resetQueries();
@@ -140,7 +138,7 @@ export const SessionProvider = (props: Props) => {
       reset();
       navigate("/");
     },
-    [navigate],
+    [navigate, apolloClient, queryClient],
     false
   );
 
@@ -211,7 +209,6 @@ export const SessionProvider = (props: Props) => {
     if (data?.exchangeSession?.user) {
       setClientSession(data.exchangeSession);
       setSession(data.exchangeSession);
-      //setIsDeadSession(false);
       return;
     }
     const IGNORE_PATHS = new Set(["/credential/verifiy", "/credential/auth"]);

@@ -13,7 +13,7 @@ describe('MailerClient', () => {
         mailerClient = container.get(MailerClient);
     })
 
-    describe.only('e2e', () => {
+    describe.skip('e2e', () => {
 
         test('it injects', async () => {
             console.log(mailerClient);

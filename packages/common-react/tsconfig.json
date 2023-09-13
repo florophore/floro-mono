@@ -8,12 +8,8 @@
         "rootDir": "src",
         "outDir": "build",
         "jsx": "react-jsx",
-        "typeRoots": [
-            "node_modules/@types"
-        ],
         "types": [
             "node",
-            "mocha"
         ]
     },
     "include": ["global.d.ts","src", "svgTransform.js"],

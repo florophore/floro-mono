@@ -1,0 +1,45 @@
+name: Build & Test
+
+on: [push]
+
+jobs:
+  Test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres
+
+        env:
+          POSTGRES_PASSWORD: ''
+          POSTGRES_USER: postgres
+          POSTGRES_DB: floro_test
+
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      # run steps required in the workflow
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js 14.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Build Project
+        run: yarn build:all
+
+      - name: Run tests
+        run: yarn test
+        env:
+          DBURL: postgres://postgres:postgres@localhost:5432/postgres

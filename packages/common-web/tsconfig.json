@@ -13,7 +13,6 @@
         ],
         "types": [
             "node",
-            "mocha"
         ]
     },
     "include": ["global.d.ts","src", "svgTransform.js"],

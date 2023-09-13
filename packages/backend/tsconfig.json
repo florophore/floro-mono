@@ -9,9 +9,6 @@
         "rootDir": "src",
         "outDir": "build",
         "jsx": "react-jsx",
-        "typeRoots": [
-            "node_modules/@types"
-        ],
         "types": [
             "node",
             "mocha"
@@ -22,7 +19,8 @@
     ],
     "exclude": [
         "node_modules",
-        "build"
+        "build",
+        "src/tests/mocks/mock-plugin"
     ],
     "ts-node": {
         "esm": true,
