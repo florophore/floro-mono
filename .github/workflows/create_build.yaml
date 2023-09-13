@@ -23,8 +23,11 @@ jobs:
           cond: ${{ github.event.inputs.buildType == 'prod' }}
           if_true: 'floro-static-assets-prod'
           if_false: 'floro-static-assets-staging'
-      - run: echo "Syncing to bucket ${{ steps.bucketName.outputs.value }}"
-
+        id: cdnHost
+        with:
+          cond: ${{ github.event.inputs.buildType == 'prod' }}
+          if_true: 'https://static-cdn.floro-staging.com'
+          if_false: 'https://static-cdn.floro.com'
       - name: Yarn install cache
         uses: c-hive/gha-yarn-cache@v1
 
@@ -32,7 +35,7 @@ jobs:
         run: yarn
 
       - name: Build Main
-        run: yarn build:main
+        run: CDN_HOST=${{ steps.cdnHost.outputs.value }} yarn build:main
 
       - name: Push build to S3
         uses: jakejarvis/s3-sync-action@master
@@ -42,4 +45,4 @@ jobs:
           AWS_S3_BUCKET: ${{ steps.bucketName.outputs.value }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          SOURCE_DIR: 'packages/main/dist/client/assets'
+          SOURCE_DIR: 'packages/main/dist/client'
