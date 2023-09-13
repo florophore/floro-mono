@@ -23,6 +23,9 @@ jobs:
           --health-retries 5
         ports:
           - 5432:5432
+        ports:
+          # Maps port 6379 on service container to the host
+          - 6379:6379
 
       redis:
         # Docker Hub image
@@ -55,6 +58,6 @@ jobs:
         env:
           DBURL: postgres://postgres:postgres@localhost:5432/floro_test
           # The hostname used to communicate with the Redis service container
-          REDIS_HOST: redis
+          REDIS_HOST: localhost
           # The default Redis port
           REDIS_PORT: 6379
