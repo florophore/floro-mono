@@ -46,7 +46,7 @@
         "build:main": " yarn build:common || exit 1; yarn main:build || exit 1",
         "build:admin": "yarn build:common || exit 1; yarn admin:build || exit 1",
         "build:all": "yarn build:common || exit 1; yarn main:build || exit 1; yarn admin:build || exit 1",
-        "test": "yarn database:test; yarn redis:test; yarn mailer:test; yarn backend:test; yarn common-web:test",
+        "test": "yarn database:test || exit 1; yarn redis:test || exit 1; yarn mailer:test || exit 1; yarn backend:test || exit 1; yarn common-web:test || exit 1",
         "main:dev": "yarn main dev",
         "main:start": "yarn main start",
         "admin:dev": "yarn admin dev",
