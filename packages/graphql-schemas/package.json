@@ -7,8 +7,8 @@
   "scripts": {
     "tsc": "tsc --build",
     "clean": "rimraf build tsconfig.tsbuildinfo",
-    "build:main": "yarn gen:main; yarn gen:main:client; yarn clean && yarn tsc",
-    "build:admin": "yarn gen:admin; yarn gen:admin:client; yarn clean && yarn tsc",
+    "build:main": "yarn gen:main; yarn gen:main:client;",
+    "build:admin": "yarn gen:admin; yarn gen:admin:client;",
     "build": "yarn build:main; yarn build:admin; yarn clean && yarn tsc",
     "postbuild": "copyfiles -u 1 src/**/*.graphql build/",
     "lint": "eslint --ext .ts,.tsx .",
