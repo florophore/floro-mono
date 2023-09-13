@@ -35,7 +35,7 @@ jobs:
         run: yarn build:main
 
       - name: Push build to S3
-        uses: sai-sharan/aws-s3-sync-action@master
+      - uses: jakejarvis/s3-sync-action@master
         with:
           args: --follow-symlinks
         env:
