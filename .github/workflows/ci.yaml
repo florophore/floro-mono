@@ -44,11 +44,6 @@ jobs:
         with:
           node-version: 16
 
-      - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
-        name: List the state of node modules
-        continue-on-error: true
-        run: npm list
-
       - name: Install dependencies
         run: yarn
 
@@ -59,3 +54,7 @@ jobs:
         run: yarn test
         env:
           DBURL: postgres://postgres:postgres@localhost:5432/floro_test
+          # The hostname used to communicate with the Redis service container
+          REDIS_HOST: redis
+          # The default Redis port
+          REDIS_PORT: 6379
