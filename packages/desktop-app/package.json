@@ -68,7 +68,7 @@
     "electron-acrylic-window": "^0.5.11",
     "electron-updater": "5.2.1",
     "esbuild-plugins-node-modules-polyfill": "^1.4.0",
-    "floro": "file:../../../floro",
+    "floro": "0.0.7",
     "framer-motion": "^10.10.0",
     "http-terminator": "^3.2.0",
     "isomorphic-fetch": "^3.0.0",
