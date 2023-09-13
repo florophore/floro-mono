@@ -75,7 +75,7 @@ jobs:
 
       - name: Set tag var
         id: vars
-        run: echo "docker_tag=$(echo ${GITHUB_REF} | cut -d'/' -f3)-${GITHUB_SHA}" >> $GITHUB_OUTPUT
+        run: echo "docker_tag=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
       - name: Echo tag var
         run: echo "${{ steps.vars.outputs.docker_tag }}"
