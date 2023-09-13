@@ -1,0 +1,26 @@
+name: Create Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      buildType:
+        description: 'Build Environment'
+        required: true
+        default: staging
+        type: choice
+        options:
+          - staging
+          - prod
+jobs:
+  sync-artifacts:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: haya14busa/action-cond@v1
+        id: bucketName
+        with:
+          cond: ${{ github.event.inputs.buildType == 'prod' }}
+          if_true: 'floro-static-assets-prod'
+          if_false: 'floro-static-assets-staging'
+      - run: echo "Syncing to bucket ${{ steps.bucketName.outputs.value }}"
