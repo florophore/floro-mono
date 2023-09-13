@@ -23,6 +23,7 @@ jobs:
           cond: ${{ github.event.inputs.buildType == 'prod' }}
           if_true: 'floro-static-assets-prod'
           if_false: 'floro-static-assets-staging'
+      - uses: haya14busa/action-cond@v1
         id: cdnHost
         with:
           cond: ${{ github.event.inputs.buildType == 'prod' }}
