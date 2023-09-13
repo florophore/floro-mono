@@ -23,9 +23,6 @@ jobs:
           --health-retries 5
         ports:
           - 5432:5432
-        ports:
-          # Maps port 6379 on service container to the host
-          - 6379:6379
 
       redis:
         # Docker Hub image
@@ -36,6 +33,9 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+        ports:
+          # Maps port 6379 on service container to the host
+          - 6379:6379
 
     steps:
       # run steps required in the workflow
