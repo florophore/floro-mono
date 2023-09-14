@@ -11,6 +11,7 @@
         "lerna": "^4.0.0"
     },
     "scripts": {
+        "desktop-app": "yarn workspace @floro/desktop-app",
         "database": "yarn workspace @floro/database",
         "database:build": "yarn database build",
         "database:test": "yarn database test",

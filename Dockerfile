@@ -1,6 +1,7 @@
 FROM node:16.16.0-alpine
 
-RUN apk add g++ make py3-pip
+RUN apk add g++ make py3-pip libgtkextra-dev libgconf2-dev libnss3 libasound2 libxtst-dev libxss1
+
 
 ARG cdn_host_arg
 
@@ -12,11 +13,11 @@ COPY package.json /app
 
 COPY yarn.lock /app
 
-RUN rm -rf packages/desktop-app/
-
 COPY . /app
 
-RUN yarn
+RUN npm install --save-dev electron
+
+RUN yarn install
 
 RUN yarn build:main
 
