@@ -10,13 +10,13 @@ COPY package.json /app
 
 COPY yarn.lock /app
 
-RUN yarn
-
 COPY . /app
 
-CMD yarn build:main
-
 COPY . .
+
+RUN yarn
+
+CMD yarn build:main
 
 EXPOSE 9000
 
