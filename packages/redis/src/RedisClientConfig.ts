@@ -7,31 +7,26 @@ const isTest = env.NODE_ENV == 'test';
 @injectable()
 export default class ClientConfig {
 
-    public username = env.REDIS_USERNAME;
+  public url(): string {
 
-    public password = env.REDIS_PASSWORD;
+    const port =
+        env.REDIS_PORT && typeof env?.REDIS_PORT == "string"
+        ? parseInt(env.REDIS_PORT ?? "6379")
+        : env?.REDIS_PORT ?? 6379;
 
-    public endpointAddress = env.REDIS_ENDPOINT_ADDRESS;
-
-    public port = parseInt(env.REDIS_PORT ?? '6379');
-
-    public hostname = env.REDIS_HOST ?? '127.0.0.1';
-
-    public database = isTest ? 3 : isDev ? 2 : 1;
-
-    public url(): string {
-        if (this.username && this.password && this.endpointAddress) {
-            return `redis://${this.username}:${this.password}@${this.endpointAddress}/${this.database}`;
-        }
-        if (this.username && this.password) {
-            return `redis://${this.username}:${this.password}@${this.hostname}:${this.port}/${this.database}`;
-        }
-
-        if (this.endpointAddress) {
-            return `redis://${this.endpointAddress}/${this.database}`;
-        }
-
-        return `redis://${this.hostname}:${this.port}/${this.database}`;
+    const hostname = env.REDIS_HOST ?? "127.0.0.1";
+    const database = isTest ? 3 : isDev ? 2 : 1;
+    if (env.REDIS_USERNAME && env.REDIS_PASSWORD && env.REDIS_ENDPOINT_ADDRESS) {
+      return `redis://${env.REDIS_USERNAME}:${env.REDIS_PASSWORD}@${env.REDIS_ENDPOINT_ADDRESS}/${database}`;
+    }
+    if (env.REDIS_USERNAME && env.REDIS_PASSWORD) {
+      return `redis://${env.REDIS_USERNAME}:${env.REDIS_PASSWORD}@${hostname}:${port}/${database}`;
     }
 
+    if (env.REDIS_ENDPOINT_ADDRESS) {
+      return `redis://${env.REDIS_ENDPOINT_ADDRESS}/${database}`;
+    }
+
+    return `redis://${hostname}:${port}/${database}`;
+  }
 }
