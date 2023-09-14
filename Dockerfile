@@ -12,6 +12,8 @@ COPY package.json /app
 
 COPY yarn.lock /app
 
+RUN rm -rf packages/desktop-app/
+
 COPY . /app
 
 RUN yarn
