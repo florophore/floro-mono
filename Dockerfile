@@ -22,4 +22,4 @@ COPY . .
 
 EXPOSE 9000
 
-CMD [ "npm", "run", "main:start" ]
+CMD [ "yarn", "main:start" ]

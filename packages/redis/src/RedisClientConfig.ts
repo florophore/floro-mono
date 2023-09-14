@@ -11,6 +11,8 @@ export default class ClientConfig {
 
     public password = env.REDIS_PASSWORD;
 
+    public endpointAddress = env.REDIS_ENDPOINT_ADDRESS;
+
     public port = parseInt(env.REDIS_PORT ?? '6379');
 
     public hostname = env.REDIS_HOST ?? '127.0.0.1';
@@ -18,8 +20,15 @@ export default class ClientConfig {
     public database = isTest ? 3 : isDev ? 2 : 1;
 
     public url(): string {
+        if (this.username && this.password && this.endpointAddress) {
+            return `redis://${this.username}:${this.password}@${this.endpointAddress}/${this.database}`;
+        }
         if (this.username && this.password) {
             return `redis://${this.username}:${this.password}@${this.hostname}:${this.port}/${this.database}`;
+        }
+
+        if (this.endpointAddress) {
+            return `redis://${this.endpointAddress}/${this.database}`;
         }
 
         return `redis://${this.hostname}:${this.port}/${this.database}`;
