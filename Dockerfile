@@ -14,8 +14,6 @@ COPY yarn.lock /app
 
 COPY . /app
 
-RUN npm install --save-dev electron
-
 RUN yarn install
 
 RUN yarn build:main
