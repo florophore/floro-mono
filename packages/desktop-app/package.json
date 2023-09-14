@@ -27,7 +27,7 @@
     "typecheck:renderer": "tsc --noEmit -p packages/renderer/tsconfig.json",
     "typecheck:oauth": "tsc --noEmit -p packages/oauth/tsconfig.json",
     "typecheck": "yarn typecheck:main && npm run typecheck:preload && npm run typecheck:renderer && npm run typecheck:oauth",
-    "postinstall": "npx cross-env ELECTRON_RUN_AS_NODE=1 electron scripts/update-electron-vendors.mjs",
+    "postinstall:manual": "npx cross-env ELECTRON_RUN_AS_NODE=1 electron scripts/update-electron-vendors.mjs",
     "format": "npx prettier --write \"**/*.{js,mjs,cjs,ts,tsx,mts,cts,json}\""
   },
   "devDependencies": {

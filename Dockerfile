@@ -1,7 +1,6 @@
 FROM node:16.16.0-alpine
 
-RUN apk add g++ make py3-pip libgtkextra-dev libgconf2-dev libnss3 libasound2 libxtst-dev libxss1
-
+RUN apk add g++ make py3-pip
 
 ARG cdn_host_arg
 
