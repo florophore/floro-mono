@@ -14,12 +14,12 @@ COPY yarn.lock /app
 
 COPY . /app
 
-COPY . .
-
 RUN yarn
 
-CMD yarn build:main
+RUN yarn build:main
+
+COPY . .
 
 EXPOSE 9000
 
-CMD [ "yarn", "main:start" ]
+CMD [ "npm", "run", "main:start" ]
