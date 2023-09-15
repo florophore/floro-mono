@@ -213,6 +213,8 @@ export default class AppServer {
         if (context.url && context.url != url) {
           return res.redirect(301, context.url);
         }
+
+        const baseUrl = process?.env?.['DOMAIN'] ? `https://${process.env?.['DOMAIN']}` : 'http://localhost:9000';
         const html = template
           .replace(`<!--ssr-outlet-->`, appHtml)
           .replace(
@@ -229,7 +231,8 @@ export default class AppServer {
           )
           .replace("__HELMET_TITLE__", helmet?.title?.toString?.() ?? "")
           .replace("__HELMET_META__", helmet?.meta?.toString?.() ?? "")
-          .replace("__HELMET_LINK__", helmet?.link?.toString?.() ?? "");
+          .replace("__HELMET_LINK__", helmet?.link?.toString?.() ?? "")
+          .replace("__BASE_URL__", baseUrl);
 
         if (context.should404) {
           return res.status(404).set({ "Content-Type": "text/html" }).end(html);

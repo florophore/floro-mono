@@ -19,19 +19,28 @@ export default class MainConfig {
     if (isDev || isTest) {
       return "http://localhost:9000";
     }
-    return "https://cdn.floro.io";
+    if (process.env?.['DOMAIN']) {
+      return `https://static-cdn.${process?.env['DOMAIN']}`;
+    }
+    return "https://static-cdn.floro.io";
   }
 
   public publicRoot(): string {
     if (isDev || isTest) {
       return this.assetHost() + "/cdn";
     }
-    return "https://public.floro.io";
+    if (process.env?.['DOMAIN']) {
+      return `https://public-cdn.${process?.env['DOMAIN']}`;
+    }
+    return "https://public-cdn.floro.io";
   }
 
   public privateRoot(): string {
     if (isDev || isTest) {
       return this.url() + "/private-cdn";
+    }
+    if (process.env?.['DOMAIN']) {
+      return `https://private-cdn.${process?.env['DOMAIN']}`;
     }
     return "https://private.floro.io";
   }

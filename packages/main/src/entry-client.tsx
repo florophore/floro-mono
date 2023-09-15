@@ -6,7 +6,7 @@ import App from '@floro/common-web/src/App';
 import { MainRoutes } from '@floro/common-web/src/Routing';
 import { createApolloClient } from '@floro/common-web/src/apollo/create-apollo-client';
 
-const client = createApolloClient('localhost:9000');
+const client = createApolloClient(process.env?.['DOMAIN'] ? `https://${process.env?.['DOMAIN']}`: 'localhost:9000');
 
 const ClientApp = (
   <ApolloProvider client={client as unknown as ApolloClient<NormalizedCache>}>
