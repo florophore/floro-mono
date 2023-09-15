@@ -1,4 +1,4 @@
-import 'dotenv/config'
+//import 'dotenv/config'
 import process from 'process';
 import * as fs from 'fs'
 import * as path from 'path'
@@ -16,6 +16,8 @@ let template = fs.readFileSync(
 );
 
 (async () => {
+  console.log("DOMAIN ENV VAR", process.env?.['DOMAIN'])
+  console.log("DEPLOY ENV", process.env?.['DEPLOY_ENV'])
   const appServer = container.get(AppServer);
   appServer.startServer(template);
   console.log("started main app...")

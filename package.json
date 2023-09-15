@@ -49,7 +49,8 @@
         "build:all": "yarn build:common || exit 1; yarn main:build || exit 1; yarn admin:build || exit 1",
         "test": "yarn database:test || exit 1; yarn redis:test || exit 1; yarn mailer:test || exit 1; yarn backend:test || exit 1; yarn common-web:test || exit 1",
         "main:dev": "yarn main dev",
-        "main:start": "yarn main start",
+        "main:start": "cross-env-shell yarn main start",
+        "main:start:debug": "cross-env-shell yarn main start:debug",
         "admin:dev": "yarn admin dev",
         "admin:start": "yarn admin start"
     },
@@ -58,6 +59,7 @@
         "@apollo/react-hooks": "^4.0.0",
         "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
         "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
+        "cross-env": "^7.0.3",
         "floro": "0.0.7",
         "object-sizeof": "^2.6.1",
         "ts-node": "^10.9.1",
