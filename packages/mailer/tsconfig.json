@@ -12,9 +12,6 @@
         "rootDir": ".",
         "outDir": "build",
         "jsx": "react-jsx",
-        "typeRoots": [
-            "node_modules/@types"
-        ],
         "types": [
             "node",
             "mocha"

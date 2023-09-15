@@ -79,7 +79,6 @@ describe("AuthenticationService", () => {
   before(async () => {
     mailerClient = container.get(MailerClient);
     emailQueue = container.get(EmailQueue);
-    emailQueue.startMailWorker();
   });
 
   beforeEach(async () => {
@@ -87,6 +86,7 @@ describe("AuthenticationService", () => {
     redisClient = container.get(RedisClient);
     if (!redisClient.connectionExists) {
       redisClient.startRedis();
+      emailQueue.startMailWorker(redisClient);
     }
   });
 

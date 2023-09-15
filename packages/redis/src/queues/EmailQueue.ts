@@ -8,7 +8,7 @@ import AccountAlreadyExists from "@floro/mailer/src/templates/AccountAlreadyExis
 import LoginEmail from "@floro/mailer/src/templates/LoginEmail";
 import SignupEmail from "@floro/mailer/src/templates/SignupEmail";
 import OrganizationInvitationEmail from "@floro/mailer/src/templates/OrganizationInvitationEmail";
-import PersonalReferralEmail from "@floro/mailer/src/templates/PersonalReferralEmail"; 
+import PersonalReferralEmail from "@floro/mailer/src/templates/PersonalReferralEmail";
 
 import MailerClient from "@floro/mailer/src/MailerClient";
 import MainConfig from "@floro/config/src/MainConfig";
@@ -39,23 +39,22 @@ export default class EmailQueue {
   public queue!: Queue;
   public worker!: Worker;
   private mailerClient!: MailerClient;
+  public scheduler!: QueueScheduler;
   private mainConfig!: MainConfig;
-  private redisClient!: RedisClient;
 
   constructor(
-    @inject(RedisClient) redisClient: RedisClient,
     @inject(MailerClient) mailerClient: MailerClient,
     @inject(MainConfig) mainConfig: MainConfig
   ) {
     this.mailerClient = mailerClient;
     this.mainConfig = mainConfig;
-    this.redisClient = redisClient;
+  }
+
+  public startMailWorker(redisClient: RedisClient): void {
     this.queue = new Queue(EmailQueue.QUEUE_NAME, {
       connection: redisClient.redis,
     });
-  }
-
-  public startMailWorker(): void {
+    this.scheduler = new QueueScheduler(EmailQueue.QUEUE_NAME);
     this.worker = new Worker(
       EmailQueue.QUEUE_NAME,
       async <T extends keyof typeof EmailTemplates & string, U>(

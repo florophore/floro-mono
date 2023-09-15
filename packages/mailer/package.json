@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@floro/styles": "1.0.0",
+    "@types/mocha": "^10.0.1",
     "bullmq": "^1.90.1",
     "inversify": "^6.0.1",
     "mjml": "^4.13.0",
@@ -38,7 +39,7 @@
     "chai": "^4.3.6",
     "eslint": "^8.0.1",
     "eslint-plugin-import": "^2.25.0",
-    "mocha": "^10.0.0",
+    "mocha": "^10.2.0",
     "nodemon": "^2.0.19",
     "ts-node": "^10.9.1",
     "typescript": "^4.6.4",

@@ -23,5 +23,15 @@ export default class RedisClient {
     public async startRedis(): Promise<void> {
         this.redis = new IORedis(this.redisClientConfig.url());
         this.redis.options.maxRetriesPerRequest = null;
+        await new Promise((resolve, reject) => {
+            if (this.redis) {
+                this.redis.on('connect', () => {
+                    console.log("redis connected...");
+                    resolve(true);
+                })
+            } else {
+                reject();
+            }
+        })
     }
 }

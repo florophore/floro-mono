@@ -93,9 +93,9 @@ export default class Backend {
     await this.contextFactory.warmQueryRunnerConnection();
   }
 
-  public startRedis(): void {
-    this.redisClient.startRedis();
-    this.redisQueueWorkers.start();
+  public async startRedis(): Promise<void> {
+    await this.redisClient.startRedis();
+    this.redisQueueWorkers.start(this.redisClient);
     const pubsub = this.redisPubSubFactory.create();
     this.queueServics.forEach((queueService) => {
       queueService.setRedisPubsub(pubsub);

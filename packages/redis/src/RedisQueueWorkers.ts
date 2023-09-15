@@ -1,5 +1,6 @@
 import { inject, injectable } from "inversify";
 import EmailQueue from "./queues/EmailQueue";
+import RedisClient from "./RedisClient";
 
 @injectable()
 export default class RedisQueueWorkers {
@@ -10,7 +11,7 @@ export default class RedisQueueWorkers {
         this.emailQueue = emailQueue;
     }
 
-    public start(): void {
-        this.emailQueue.startMailWorker();
+    public start(redisClient: RedisClient): void {
+        this.emailQueue.startMailWorker(redisClient);
     }
 }

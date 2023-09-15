@@ -27,7 +27,6 @@ describe("OrganizationService", () => {
 
   before(async () => {
       emailQueue = container.get(EmailQueue);
-      emailQueue.startMailWorker();
   });
 
   beforeEach(async () => {
@@ -36,13 +35,14 @@ describe("OrganizationService", () => {
     if (!redisClient.connectionExists) {
       redisClient.startRedis();
     }
+    emailQueue.startMailWorker(redisClient);
   });
 
   describe('createOrg', async () => {
     let currentUser: User;
 
     test("fails with HANDLE_TAKEN error when handle already Exists", async () => {
-      const [currentUser, existingOrg] = await loadFixtures<[User, Organization]>(['User:user_0', 'Organization:org_0']); 
+      const [currentUser, existingOrg] = await loadFixtures<[User, Organization]>(['User:user_0', 'Organization:org_0']);
       const result = await organizationService.createOrg(
         "floro",
         "Floro Inc.",
@@ -55,7 +55,7 @@ describe("OrganizationService", () => {
     });
 
     test("fails with INVALID_PARAMS error when agreedToCustomerSeriviceAgreement is false", async () => {
-      [currentUser] = await loadFixtures<[User]>(['User:user_0']); 
+      [currentUser] = await loadFixtures<[User]>(['User:user_0']);
       const result = await organizationService.createOrg(
         "floro",
         "Floro Inc.",
@@ -68,7 +68,7 @@ describe("OrganizationService", () => {
     });
 
     test("fails with INVALID_PARAMS error when profanity in a public name", async () => {
-      [currentUser] = await loadFixtures<[User]>(['User:user_0']); 
+      [currentUser] = await loadFixtures<[User]>(['User:user_0']);
       const result = await organizationService.createOrg(
         "floro",
         "Fuck Inc.",
@@ -81,7 +81,7 @@ describe("OrganizationService", () => {
     });
 
     test("fails with INVALID_PARAMS error when name does not conform to pattern", async () => {
-      [currentUser] = await loadFixtures<[User]>(['User:user_0']); 
+      [currentUser] = await loadFixtures<[User]>(['User:user_0']);
       const result = await organizationService.createOrg(
         "f$oro",
         "Floro Inc.",
@@ -94,7 +94,7 @@ describe("OrganizationService", () => {
     });
 
     test('creates org when params are valid', async () => {
-      [currentUser] = await loadFixtures<[User]>(['User:user_0']); 
+      [currentUser] = await loadFixtures<[User]>(['User:user_0']);
       const result = await organizationService.createOrg(
         "floro",
         "Floro Inc.",

@@ -4,7 +4,7 @@ const isDev = process.env.NODE_ENV == 'development';
 const isTest = process.env.NODE_ENV == 'test';
 
 @injectable()
-export default class ClientConfig {
+export default class RedisClientConfig {
 
   public url(): string {
 
@@ -15,6 +15,7 @@ export default class ClientConfig {
 
     const hostname = process.env.REDIS_HOST ?? "127.0.0.1";
     const database = isTest ? 3 : isDev ? 2 : 1;
+
     if (process.env.REDIS_USERNAME && process.env.REDIS_PASSWORD && process.env.REDIS_ENDPOINT_ADDRESS) {
       return `redis://${process.env.REDIS_USERNAME}:${process.env.REDIS_PASSWORD}@${process.env.REDIS_ENDPOINT_ADDRESS}/${database}`;
     }

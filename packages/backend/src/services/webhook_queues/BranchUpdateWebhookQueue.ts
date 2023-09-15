@@ -40,16 +40,9 @@ export default class BranchUpdateWebhookQueue implements BranchPushHandler, Queu
   constructor(
     @inject(ContextFactory) contextFactory: ContextFactory,
     @inject(RepoDataService) repoDataService: RepoDataService,
-    @inject(RedisClient) redisClient: RedisClient,
   ) {
     this.contextFactory = contextFactory;
     this.repoDataService = repoDataService;
-
-    this.queue = new Queue(BranchUpdateWebhookQueue.QUEUE_NAME, {
-      connection: redisClient.redis,
-    });
-    // need scheduler for backoff
-    this.scheduler = new QueueScheduler(BranchUpdateWebhookQueue.QUEUE_NAME);
   }
 
   public setRedisPubsub(pubsub: RedisPubSub): void {
@@ -115,7 +108,12 @@ export default class BranchUpdateWebhookQueue implements BranchPushHandler, Queu
     });
   }
 
-  public startQueueWorker(): void {
+  public startQueueWorker(redisClient: RedisClient): void {
+    this.queue = new Queue(BranchUpdateWebhookQueue.QUEUE_NAME, {
+      connection: redisClient.redis,
+    });
+    // need scheduler for backoff
+    this.scheduler = new QueueScheduler(BranchUpdateWebhookQueue.QUEUE_NAME);
     this.worker = new Worker(
       BranchUpdateWebhookQueue.QUEUE_NAME,
       async (args: Job<{ jobId: string; webhookTrackingId: string; floroBranch: FloroBranch & {dbId: string}, enabledWebhook: RepositoryEnabledWebhookKey, repositoryId: string }>) => {

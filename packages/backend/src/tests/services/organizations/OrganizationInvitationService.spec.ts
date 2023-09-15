@@ -30,7 +30,6 @@ describe("OrganizationInvitationService", () => {
 
   before(async () => {
     emailQueue = container.get(EmailQueue);
-    emailQueue.startMailWorker();
   });
 
   beforeEach(async () => {
@@ -43,6 +42,7 @@ describe("OrganizationInvitationService", () => {
     if (!redisClient.connectionExists) {
       redisClient.startRedis();
     }
+    emailQueue.startMailWorker(redisClient);
   });
 
   describe("createInivitation", () => {

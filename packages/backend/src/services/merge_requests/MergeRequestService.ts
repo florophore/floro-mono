@@ -1,5 +1,5 @@
 import { injectable, inject, multiInject } from "inversify";
-import { Job, Queue, Worker } from "bullmq";
+import { Job, Queue, Worker, QueueScheduler } from "bullmq";
 
 import DatabaseConnection from "@floro/database/src/connection/DatabaseConnection";
 import ContextFactory from "@floro/database/src/contexts/ContextFactory";
@@ -275,6 +275,7 @@ export default class MergeRequestService
   public queue!: Queue;
   public worker!: Worker;
   public pubsub!: RedisPubSub;
+  public scheduler!: QueueScheduler;
 
   private databaseConnection!: DatabaseConnection;
   private contextFactory!: ContextFactory;
@@ -294,7 +295,6 @@ export default class MergeRequestService
     @inject(RepoDataService) repoDataService: RepoDataService,
     @inject(RepositoryDatasourceFactoryService)
     repositoryDatasourceFactoryService: RepositoryDatasourceFactoryService,
-    @inject(RedisClient) redisClient: RedisClient,
     @multiInject("CreateMergeRequestEventHandler")
     createMergeRequestEventHandlers: CreateMergeRequestEventHandler[],
     @multiInject("UpdateMergeRequestEventHandler")
@@ -324,10 +324,6 @@ export default class MergeRequestService
     this.mergeRequestCommentEventHandlers = mergeRequestCommentEventHandlers;
     this.mergeRequestCommentReplyEventHandlers =
       mergeRequestCommentReplyEventHandlers;
-
-    this.queue = new Queue(MergeRequestService.QUEUE_NAME, {
-      connection: redisClient.redis,
-    });
   }
 
   public setRedisPubsub(pubsub: RedisPubSub): void {
@@ -1915,7 +1911,12 @@ export default class MergeRequestService
     }
   }
 
-  public startQueueWorker(): void {
+  public startQueueWorker(redisClient: RedisClient): void {
+    this.queue = new Queue(MergeRequestService.QUEUE_NAME, {
+      connection: redisClient.redis,
+    });
+
+    this.scheduler = new QueueScheduler(MergeRequestService.QUEUE_NAME);
     this.worker = new Worker(
       MergeRequestService.QUEUE_NAME,
       async (args: Job<{ jobId: string; mergeRequest: MergeRequest }>) => {

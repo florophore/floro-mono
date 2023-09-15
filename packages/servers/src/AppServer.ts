@@ -56,9 +56,10 @@ export default class AppServer {
   public async startServer(indexHTMLTemplate: string): Promise<void> {
     const publicStorageRoot = await this.backend.startPublicStorageClient();
     const privateStorageRoot = await this.backend.startPrivateStorageClient();
-    const schema = this.backend.buildExecutableSchema();
+    await this.backend.startRedis();
     await this.backend.startDatabase();
-    this.backend.startRedis();
+
+    const schema = this.backend.buildExecutableSchema();
 
     this.app.use(cookieParser());
     this.app.use(busboy({

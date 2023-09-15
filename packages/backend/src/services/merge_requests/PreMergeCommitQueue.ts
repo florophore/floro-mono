@@ -4,6 +4,7 @@ import {
   Job,
   Queue,
   Worker,
+  QueueScheduler,
 } from "bullmq";
 
 import ContextFactory from "@floro/database/src/contexts/ContextFactory";
@@ -40,7 +41,9 @@ export default class PreMergeCommitQueue implements BranchPushHandler, QueueServ
 
   public queue!: Queue;
   public worker!: Worker;
+  public scheduler!: QueueScheduler;
   public pubsub!: RedisPubSub;
+  public redisClient!: RedisClient;
 
 
   constructor(
@@ -48,16 +51,11 @@ export default class PreMergeCommitQueue implements BranchPushHandler, QueueServ
     @inject(RepoDataService) repoDataService: RepoDataService,
     @inject(MergeRequestService) mergeRequestService: MergeRequestService,
     @inject(CommitService) commitService: CommitService,
-    @inject(RedisClient) redisClient: RedisClient,
   ) {
     this.contextFactory = contextFactory;
     this.repoDataService = repoDataService;
     this.commitService = commitService;
     this.mergeRequestService = mergeRequestService;
-
-    this.queue = new Queue(PreMergeCommitQueue.QUEUE_NAME, {
-      connection: redisClient.redis,
-    });
   }
 
   public setRedisPubsub(pubsub: RedisPubSub): void {
@@ -102,7 +100,14 @@ export default class PreMergeCommitQueue implements BranchPushHandler, QueueServ
     this.queue.add(PreMergeCommitQueue.QUEUE_NAME, args);
   }
 
-  public startQueueWorker(): void {
+  public startQueueWorker(redisClient: RedisClient): void {
+
+    this.queue = new Queue(PreMergeCommitQueue.QUEUE_NAME, {
+      connection: redisClient.redis,
+    });
+
+    this.scheduler = new QueueScheduler(PreMergeCommitQueue.QUEUE_NAME);
+
     this.worker = new Worker(
       PreMergeCommitQueue.QUEUE_NAME,
       async (args: Job<{ jobId: string; floroBranch: FloroBranch & {dbId: string}, repositoryId: string }>) => {
