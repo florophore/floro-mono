@@ -82,19 +82,36 @@ export default class AppServer {
     }
 
     // CORS POLICY
-    this.app.use(
-      cors({
-        origin: [
-          "http://localhost:63403",
-          "http://localhost:9000",
-          "https://floro.io",
-          "https://floro-staging.com",
-        ],
-      })
-    );
+    if (process.env?.['DOMAIN']) {
+      this.app.use(
+        cors({
+          origin: [
+            "http://localhost:63403",
+            `https://${process.env?.['DOMAIN']}`,
+            `https://static-cdn.${process.env?.['DOMAIN']}`,
+            `https://public-cdn.${process.env?.['DOMAIN']}`,
+            `https://private-cdn.${process.env?.['DOMAIN']}`,
+          ],
+        })
+      );
+
+    } else {
+      this.app.use(
+        cors({
+          origin: [
+            "http://localhost:63403",
+            "http://localhost:9000",
+          ],
+        })
+      );
+    }
 
     this.app.use((req, res, next) => {
-      res.header("Access-Control-Allow-Origin", "http://localhost:63403,http://localhost:9000,https://floro.io, https://floro-staging.com");
+      if (process.env?.['DOMAIN']) {
+        res.header("Access-Control-Allow-Origin", `http://localhost:63403,http://localhost:9000,https://${process.env?.['DOMAIN']},https://static-cdn.${process.env?.['DOMAIN']},https://public-cdn.${process.env?.['DOMAIN']},https://private-cdn.${process.env?.['DOMAIN']}`);
+      } else {
+        res.header("Access-Control-Allow-Origin", "http://localhost:63403,http://localhost:9000");
+      }
       res.header("Access-Control-Allow-Methods", "GET,POST,PUT");
       res.header("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type");
       res.header("Referrer-Policy", "no-referrer");
