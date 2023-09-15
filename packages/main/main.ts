@@ -3,6 +3,9 @@ import process from 'process';
 import * as fs from 'fs'
 import * as path from 'path'
 import { fileURLToPath } from 'url'
+import EventEmmitter from 'events';
+
+EventEmmitter.defaultMaxListeners = 50;
 
 import container from '@floro/servers/src/container';
 import AppServer from '@floro/servers/src/AppServer';
