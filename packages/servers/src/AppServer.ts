@@ -54,9 +54,9 @@ export default class AppServer {
   }
 
   public async startServer(indexHTMLTemplate: string): Promise<void> {
+    await this.backend.startRedis();
     const publicStorageRoot = await this.backend.startPublicStorageClient();
     const privateStorageRoot = await this.backend.startPrivateStorageClient();
-    await this.backend.startRedis();
     await this.backend.startDatabase();
 
     const schema = this.backend.buildExecutableSchema();

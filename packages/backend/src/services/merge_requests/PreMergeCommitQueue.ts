@@ -106,7 +106,9 @@ export default class PreMergeCommitQueue implements BranchPushHandler, QueueServ
       connection: redisClient.redis,
     });
 
-    this.scheduler = new QueueScheduler(PreMergeCommitQueue.QUEUE_NAME);
+    this.scheduler = new QueueScheduler(PreMergeCommitQueue.QUEUE_NAME, {
+      connection: redisClient.redis
+    });
 
     this.worker = new Worker(
       PreMergeCommitQueue.QUEUE_NAME,
@@ -218,7 +220,7 @@ export default class PreMergeCommitQueue implements BranchPushHandler, QueueServ
             }
         }
       },
-      { autorun: true}
+      { autorun: true, connection: redisClient.redis }
     );
 
     this.worker.on("error", (error: Error) => {

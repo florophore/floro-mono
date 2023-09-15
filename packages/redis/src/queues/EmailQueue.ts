@@ -54,7 +54,9 @@ export default class EmailQueue {
     this.queue = new Queue(EmailQueue.QUEUE_NAME, {
       connection: redisClient.redis,
     });
-    this.scheduler = new QueueScheduler(EmailQueue.QUEUE_NAME);
+    this.scheduler = new QueueScheduler(EmailQueue.QUEUE_NAME, {
+      connection: redisClient.redis
+    });
     this.worker = new Worker(
       EmailQueue.QUEUE_NAME,
       async <T extends keyof typeof EmailTemplates & string, U>(
@@ -111,7 +113,7 @@ export default class EmailQueue {
           );
         }
       },
-      { autorun: true }
+      { autorun: true, connection: redisClient.redis }
     );
     this.worker.on("error", (error: Error) => {
       console.error("Mail Queue Error", error);

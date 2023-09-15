@@ -113,7 +113,9 @@ export default class BranchUpdateWebhookQueue implements BranchPushHandler, Queu
       connection: redisClient.redis,
     });
     // need scheduler for backoff
-    this.scheduler = new QueueScheduler(BranchUpdateWebhookQueue.QUEUE_NAME);
+    this.scheduler = new QueueScheduler(BranchUpdateWebhookQueue.QUEUE_NAME, {
+      connection: redisClient.redis,
+    });
     this.worker = new Worker(
       BranchUpdateWebhookQueue.QUEUE_NAME,
       async (args: Job<{ jobId: string; webhookTrackingId: string; floroBranch: FloroBranch & {dbId: string}, enabledWebhook: RepositoryEnabledWebhookKey, repositoryId: string }>) => {
@@ -215,7 +217,7 @@ export default class BranchUpdateWebhookQueue implements BranchPushHandler, Queu
           }
 
       },
-      { autorun: true}
+      { autorun: true, connection: redisClient.redis}
     );
   }
 

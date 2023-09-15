@@ -1916,7 +1916,9 @@ export default class MergeRequestService
       connection: redisClient.redis,
     });
 
-    this.scheduler = new QueueScheduler(MergeRequestService.QUEUE_NAME);
+    this.scheduler = new QueueScheduler(MergeRequestService.QUEUE_NAME, {
+      connection: redisClient.redis,
+    });
     this.worker = new Worker(
       MergeRequestService.QUEUE_NAME,
       async (args: Job<{ jobId: string; mergeRequest: MergeRequest }>) => {
@@ -2024,7 +2026,7 @@ export default class MergeRequestService
             mergeRequestUpdated: updatedMergeRequest
           });
       },
-      { autorun: true}
+      { autorun: true, connection: redisClient.redis }
     );
 
     this.worker.on("error", (error: Error) => {
