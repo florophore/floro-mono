@@ -108,7 +108,7 @@ export default class AppServer {
 
     this.app.use((req, res, next) => {
       if (process.env?.['DOMAIN']) {
-        res.header("Access-Control-Allow-Origin", `http://localhost:63403,http://localhost:9000,https://${process.env?.['DOMAIN']},https://static-cdn.${process.env?.['DOMAIN']},https://public-cdn.${process.env?.['DOMAIN']},https://private-cdn.${process.env?.['DOMAIN']}`);
+        res.header("Access-Control-Allow-Origin", `http://localhost:63403,https://${process.env?.['DOMAIN']},https://static-cdn.${process.env?.['DOMAIN']},https://public-cdn.${process.env?.['DOMAIN']},https://private-cdn.${process.env?.['DOMAIN']}`);
       } else {
         res.header("Access-Control-Allow-Origin", "http://localhost:63403,http://localhost:9000");
       }
@@ -176,6 +176,11 @@ export default class AppServer {
       Response | undefined | void
     > => {
       const cacheKey = this.backend.requestCache.init();
+      if (process.env?.['DOMAIN']) {
+        res.header("Access-Control-Allow-Origin", `http://localhost:63403,https://${process.env?.['DOMAIN']},https://static-cdn.${process.env?.['DOMAIN']},https://public-cdn.${process.env?.['DOMAIN']},https://private-cdn.${process.env?.['DOMAIN']}`);
+      } else {
+        res.header("Access-Control-Allow-Origin", "http://localhost:63403,http://localhost:9000");
+      }
       try {
         const sessionContext = await this.backend.fetchSessionUserContext(req.cookies?.["user-session"]);
         const url = req.originalUrl;
