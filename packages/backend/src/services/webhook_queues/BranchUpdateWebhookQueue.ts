@@ -16,13 +16,14 @@ import BranchPushHandler from "../events/BranchPushEventHandler";
 import { Branch } from "@floro/database/src/entities/Branch";
 import { Branch as FloroBranch } from "floro/dist/src/repo";
 import RepoDataService from "../repositories/RepoDataService";
-import RedisClient from "@floro/redis/src/RedisClient";
+
 import { RedisPubSub } from "graphql-redis-subscriptions";
 import { QueueService } from "../QueueService";
 import RepositoryEnabledWebhookKeysContext from "@floro/database/src/contexts/api_keys/RepositoryEnabledWebhookKeysContext";
 import WebhookEventsContext from "@floro/database/src/contexts/api_keys/WebhookEventsContext";
 import { RepositoryEnabledWebhookKey } from "@floro/database/src/entities/RepositoryEnabledWebhookKey";
 import { url } from "inspector";
+import RedisClient from "@floro/redis/src/RedisClient";
 
 @injectable()
 export default class BranchUpdateWebhookQueue implements BranchPushHandler, QueueService {

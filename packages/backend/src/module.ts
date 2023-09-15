@@ -118,6 +118,7 @@ import RepoEnabledApiKeyService from './services/api_keys/RepoEnabledApiKeyServi
 import RepoEnabledWebhookKeyService from './services/api_keys/RepoEnabledWebhookKeyService';
 import PublicApiV0Controller from './controllers/public_api/PublicApiV0Controller';
 import BranchUpdateWebhookQueue from './services/webhook_queues/BranchUpdateWebhookQueue';
+import HealthCheckController from './controllers/HealthCheckController';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -281,6 +282,7 @@ export default new ContainerModule((bind): void => {
     bind<QueueService>("QueueServices").to(BranchUpdateWebhookQueue).inSingletonScope();
 
     // Controllers
+    bind<HealthCheckController>("Controllers").to(HealthCheckController);
     bind<AuthenticationController>("Controllers").to(AuthenticationController);
     bind<RepoController>("Controllers").to(RepoController);
     bind<PluginController>("Controllers").to(PluginController);
