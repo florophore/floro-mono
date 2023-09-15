@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import { DataSource, QueryRunner } from "typeorm";
+import { DataSource, MigrationExecutor, QueryRunner } from "typeorm";
 
 @injectable()
 export default class DatabaseConnection {
@@ -21,7 +21,17 @@ export default class DatabaseConnection {
     }
 
     public async migrate(): Promise<void> {
+        const hasPendingMigrations = await this.hasPendingMigrations();
+        if (!hasPendingMigrations) {
+            return;
+        }
         await this.datasource.runMigrations();
+    }
+
+    public async hasPendingMigrations(): Promise<boolean> {
+        const queryRunner = this.datasource.createQueryRunner();
+        const migrations = await new MigrationExecutor(this.datasource, queryRunner).getPendingMigrations();
+        return migrations?.length > 0;
     }
 
     public async makeQueryRunner(): Promise<QueryRunner> {
