@@ -6,7 +6,7 @@ import App from '@floro/common-web/src/App';
 import { MainRoutes } from '@floro/common-web/src/Routing';
 import { createApolloClient } from '@floro/common-web/src/apollo/create-apollo-client';
 
-const client = createApolloClient(import.meta.env?.['VITE_HOST'] ?? 'localhost:9000', import.meta.env?.['VITE_IS_SECURE'] == "true");
+const client = createApolloClient(import.meta.env?.['VITE_HOST'] ?? 'localhost:9000', !!import.meta.env?.['VITE_IS_SECURE']);
 
 const ClientApp = (
   <ApolloProvider client={client as unknown as ApolloClient<NormalizedCache>}>
