@@ -12,50 +12,8 @@ on:
           - staging
           - prod
 jobs:
-  #sync-artifacts:
-  #  name: 'Sync Artifacts'
-  #  runs-on: ubuntu-latest
-
-  #  steps:
-  #    - uses: actions/checkout@v1
-  #    - uses: haya14busa/action-cond@v1
-  #      id: bucketName
-  #      with:
-  #        cond: ${{ github.event.inputs.buildType == 'prod' }}
-  #        if_true: 'floro-static-assets-prod'
-  #        if_false: 'floro-static-assets-staging'
-  #    - uses: haya14busa/action-cond@v1
-  #      id: cdnHost
-  #      with:
-  #        cond: ${{ github.event.inputs.buildType == 'prod' }}
-  #        if_true: 'https://static-cdn.floro.io'
-  #        if_false: 'https://static-cdn.floro-staging.com'
-  #    - uses: haya14busa/action-cond@v1
-  #      id: viteHost
-  #      with:
-  #        cond: ${{ github.event.inputs.buildType == 'prod' }}
-  #        if_true: 'floro.io'
-  #        if_false: 'floro-staging.com'
-  #    - name: Yarn install cache
-  #      uses: c-hive/gha-yarn-cache@v1
-
-  #    - name: Install dependencies
-  #      run: yarn
-
-  #    - name: Build Main
-  #      run: CDN_HOST=${{ steps.cdnHost.outputs.value }} VITE_HOST=${{ steps.viteHost.outputs.value }} VITE_IS_SECURE=true yarn build:main
-
-  #    - name: Push build to S3
-  #      uses: jakejarvis/s3-sync-action@master
-  #      with:
-  #        args: --follow-symlinks
-  #      env:
-  #        AWS_S3_BUCKET: ${{ steps.bucketName.outputs.value }}
-  #        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #        SOURCE_DIR: 'packages/main/dist/client'
-  build-image:
-    name: 'Build Image & Push to ECR'
+  sync-artifacts:
+    name: 'Sync Artifacts'
     runs-on: ubuntu-latest
 
     steps:
@@ -66,6 +24,44 @@ jobs:
           cond: ${{ github.event.inputs.buildType == 'prod' }}
           if_true: 'floro-static-assets-prod'
           if_false: 'floro-static-assets-staging'
+      - uses: haya14busa/action-cond@v1
+        id: cdnHost
+        with:
+          cond: ${{ github.event.inputs.buildType == 'prod' }}
+          if_true: 'https://static-cdn.floro.io'
+          if_false: 'https://static-cdn.floro-staging.com'
+      - uses: haya14busa/action-cond@v1
+        id: viteHost
+        with:
+          cond: ${{ github.event.inputs.buildType == 'prod' }}
+          if_true: 'floro.io'
+          if_false: 'floro-staging.com'
+      - name: Yarn install cache
+        uses: c-hive/gha-yarn-cache@v1
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Build Graph QL
+        run: yarn graphql-schemas:build
+
+      - name: Build Main
+        run: CDN_HOST=${{ steps.cdnHost.outputs.value }} VITE_HOST=${{ steps.viteHost.outputs.value }} VITE_IS_SECURE=true yarn main build
+
+      - name: Push build to S3
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --follow-symlinks
+        env:
+          AWS_S3_BUCKET: ${{ steps.bucketName.outputs.value }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          SOURCE_DIR: 'packages/main/dist/client'
+  build-image:
+    name: 'Build Image & Push to ECR'
+    runs-on: ubuntu-latest
+
+    steps:
       - uses: actions/checkout@v1
       - uses: haya14busa/action-cond@v1
         id: repositoryName
@@ -79,26 +75,6 @@ jobs:
           cond: ${{ github.event.inputs.buildType == 'prod' }}
           if_true: 'https://static-cdn.floro.io'
           if_false: 'https://static-cdn.floro-staging.com'
-      - name: Yarn install cache
-        uses: c-hive/gha-yarn-cache@v1
-
-      - name: Install dependencies
-        run: yarn
-
-      - name: Build Main
-        run: CDN_HOST=${{ steps.cdnHost.outputs.value }} VITE_HOST=${{ steps.viteHost.outputs.value }} VITE_IS_SECURE=true yarn build:main
-
-      - name: Push build to S3
-        uses: jakejarvis/s3-sync-action@master
-        with:
-          args: --follow-symlinks
-        env:
-          AWS_S3_BUCKET: ${{ steps.bucketName.outputs.value }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          SOURCE_DIR: 'packages/main/dist/client'
-
-
       - uses: haya14busa/action-cond@v1
         id: viteHost
         with:

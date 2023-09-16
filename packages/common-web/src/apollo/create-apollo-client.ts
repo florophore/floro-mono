@@ -8,6 +8,7 @@ import { createUploadLink } from 'apollo-upload-client';
 import Cookies from "js-cookie";
 
 export const createApolloClient = (hostname: string, isSecure = false) => {
+  console.log("T", hostname)
   const authMiddleware = setContext((_, { headers }) => {
     // add the authorization to the headers
     const token = Cookies.get("user-session");
@@ -22,6 +23,7 @@ export const createApolloClient = (hostname: string, isSecure = false) => {
     uri: `${isSecure ? "https" : "http"}://${hostname}/graphql`,
   });
 
+  console.log("WS", `${isSecure ? "wss" : "ws"}://${hostname}/graphql-subscriptions`)
   const wsLink = new GraphQLWsLink(
     createClient({
       url: `${isSecure ? "wss" : "ws"}://${hostname}/graphql-subscriptions`,
