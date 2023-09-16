@@ -72,6 +72,12 @@ jobs:
           cond: ${{ github.event.inputs.buildType == 'prod' }}
           if_true: 'https://static-cdn.floro.io'
           if_false: 'https://static-cdn.floro-staging.com'
+      - uses: haya14busa/action-cond@v1
+        id: viteHost
+        with:
+          cond: ${{ github.event.inputs.buildType == 'prod' }}
+          if_true: 'https://floro.io'
+          if_false: 'https://floro-staging.com'
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
