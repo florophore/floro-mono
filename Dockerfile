@@ -6,6 +6,10 @@ ARG cdn_host_arg
 
 ENV CDN_HOST=$cdn_host_arg
 
+ARG vite_host_arg
+
+ENV VITE_HOST=$vite_host_arg
+
 WORKDIR /app
 
 COPY package.json /app
