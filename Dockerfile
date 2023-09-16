@@ -10,6 +10,10 @@ ARG vite_host_arg
 
 ENV VITE_HOST=$vite_host_arg
 
+ARG vite_host_arg
+
+ENV VITE_IS_SECURE=$vite_is_secure_arg
+
 WORKDIR /app
 
 COPY package.json /app

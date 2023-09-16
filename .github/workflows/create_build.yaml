@@ -34,8 +34,8 @@ jobs:
         id: viteHost
         with:
           cond: ${{ github.event.inputs.buildType == 'prod' }}
-          if_true: 'https://floro.io'
-          if_false: 'https://floro-staging.com'
+          if_true: 'floro.io'
+          if_false: 'floro-staging.com'
       - name: Yarn install cache
         uses: c-hive/gha-yarn-cache@v1
 
@@ -43,7 +43,7 @@ jobs:
         run: yarn
 
       - name: Build Main
-        run: CDN_HOST=${{ steps.cdnHost.outputs.value }} VITE_HOST=${{ steps.viteHost.outputs.value }} yarn build:main
+        run: CDN_HOST=${{ steps.cdnHost.outputs.value }} VITE_HOST=${{ steps.viteHost.outputs.value }} VITE_IS_SECURE="true" yarn build:main
 
       - name: Push build to S3
         uses: jakejarvis/s3-sync-action@master
@@ -76,8 +76,8 @@ jobs:
         id: viteHost
         with:
           cond: ${{ github.event.inputs.buildType == 'prod' }}
-          if_true: 'https://floro.io'
-          if_false: 'https://floro-staging.com'
+          if_true: 'floro.io'
+          if_false: 'floro-staging.com'
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -104,5 +104,5 @@ jobs:
           ECR_REPOSITORY: ${{ steps.repositoryName.outputs.value }}
           IMAGE_TAG: ${{ steps.vars.outputs.docker_tag }}
         run: |
-          docker build --build-arg vite_host_arg=${{ steps.viteHost.outputs.value }} --build-arg cdn_host_arg=${{ steps.cdnHost.outputs.value }} -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
+          docker build --build-arg vite_is_secure_arg=true --build-arg vite_host_arg=${{ steps.viteHost.outputs.value }} --build-arg cdn_host_arg=${{ steps.cdnHost.outputs.value }} -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
