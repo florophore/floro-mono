@@ -118,6 +118,9 @@ export default class RepoAccessor {
     try {
       const commitPath = this.getCommitPath(repo, sha);
       const commitString = await this.driver.read(commitPath);
+      if (!commitString) {
+        return null;
+      }
       return JSON.parse(commitString?.toString());
     } catch (e) {
       return null;
@@ -146,6 +149,9 @@ export default class RepoAccessor {
     try {
       const kvPath = this.getCommitKVStatePath(repo, sha);
       const kvString = await this.driver.read(kvPath);
+      if (!kvString) {
+        return null;
+      }
       return JSON.parse(kvString?.toString());
     } catch (e) {
       return null;
@@ -173,6 +179,9 @@ export default class RepoAccessor {
     try {
       const statePath = this.getCommitStatePath(repo, sha);
       const stateString = await this.driver.read(statePath);
+      if (!stateString) {
+        return null;
+      }
       return JSON.parse(stateString?.toString());
     } catch (e) {
       return null;

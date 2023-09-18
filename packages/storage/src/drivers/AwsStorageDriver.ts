@@ -35,7 +35,7 @@ export default class AwsStorageDriver implements StorageDriver {
     });
   }
 
-  public async mkdir(path: string) {
+  public async mkdir(_path: string) {
     // NOTHING TO DO
   }
 

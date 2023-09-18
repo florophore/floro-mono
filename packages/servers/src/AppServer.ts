@@ -106,7 +106,7 @@ export default class AppServer {
       );
     }
 
-    this.app.use((req, res, next) => {
+    this.app.use((_req, res, next) => {
       if (process.env?.['DOMAIN']) {
         res.header("Access-Control-Allow-Origin", `http://localhost:63403,https://${process.env?.['DOMAIN']},https://static-cdn.${process.env?.['DOMAIN']},https://public-cdn.${process.env?.['DOMAIN']},https://private-cdn.${process.env?.['DOMAIN']}`);
       } else {
@@ -139,14 +139,15 @@ export default class AppServer {
 
     this.app.use(vite.middlewares);
 
-
     const requestHandler = express.static(
       resolve("../../common-assets/assets")
     );
     this.app.use(requestHandler);
-    this.app.use("/assets", requestHandler);
+    if (!isProduction) {
+      this.app.use("/assets", requestHandler);
+    }
 
-    if (publicStorageRoot) {
+    if (publicStorageRoot && !isProduction) {
       const storageRequestHandler = express.static(
         publicStorageRoot
       );
@@ -154,8 +155,7 @@ export default class AppServer {
       this.app.use("/cdn", storageRequestHandler);
     }
 
-    if (privateStorageRoot) {
-      // TODO: update this to requiring signed urls
+    if (privateStorageRoot && !isProduction) {
       const storageRequestHandler = express.static(
         privateStorageRoot
       );
