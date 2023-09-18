@@ -49,13 +49,17 @@ export default class MainConfig {
     if (isDev || isTest) {
       return CDN_PUBLIC_PEM_DEV;
     }
-    return env.CDN_PUBLIC_PEM ?? "";
+    return env.AWS_SIGNING_PUBLIC_KEY ?? "";
   }
 
   public cdnPrivatePEM(): string {
     if (isDev || isTest) {
       return CDN_PRIVATE_PEM_DEV;
     }
-    return env.CDN_PRIVATE_PEM ?? "";
+    return env.AWS_SIGNING_PRIVATE_KEY ?? "";
+  }
+
+  public cdnKeypairId(): string {
+    return env.AWS_SIGNING_KEYPAIR_ID ?? "";
   }
 }

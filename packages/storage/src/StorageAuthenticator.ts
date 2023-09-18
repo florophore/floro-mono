@@ -5,21 +5,43 @@ import { sign, verify } from "crypto";
 import { parse } from "querystring";
 import MainConfig from "@floro/config/src/MainConfig";
 import StorageClient from "./StorageClient";
+import { S3Client } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/cloudfront-signer";
 
 const NODE_ENV = env.NODE_ENV;
 const isProduction = NODE_ENV == "production";
-const isDevelopment = NODE_ENV == "development";
-const isTest = NODE_ENV == "test";
 
 @injectable()
 export default class StorageAuthenticator {
   public config!: MainConfig;
+  public s3Client!: S3Client;
 
   constructor(@inject(MainConfig) config: MainConfig) {
     this.config = config;
+    if (isProduction) {
+      this.s3Client = new S3Client({
+        region: env.AWS_S3_REGION ?? "us-east-1",
+        credentials:{
+          accessKeyId: env.AWS_ACCESS_KEY_ID ?? "",
+          secretAccessKey: env.AWS_SECRET_ACCESS_KEY ?? ""
+        }
+      });
+    }
   }
 
   public signURL(url: string, path: string, ttlSec: number) {
+    if (isProduction) {
+      const dateLessThan = new Date((new Date()).getTime() + 1000 * ttlSec);
+      const keyPairId = this.config.cdnKeypairId();
+      const privateKey = this.config.cdnPrivatePEM();
+      return getSignedUrl({
+        url,
+        keyPairId,
+        dateLessThan: dateLessThan.toDateString(),
+        privateKey,
+      });
+    }
+
     const now = new Date().getTime();
     const expiration = now + ttlSec * 1000;
     const data = Buffer.from(`${path}:expiration=${expiration}`);

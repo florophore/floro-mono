@@ -12,6 +12,8 @@
     "test:inspect": "NODE_ENV=test node node_modules/.bin/mocha inspect src/**/*.spec.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.414.0",
+    "@aws-sdk/cloudfront-signer": "^3.413.0",
     "@dhkatz/json-ts": "^4.4.1",
     "@layered/dns-records": "^1.5.0",
     "@types/mocha": "^10.0.1",

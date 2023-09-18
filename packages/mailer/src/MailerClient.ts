@@ -5,6 +5,7 @@ import { render } from 'mjml-react';
 import { env} from 'process';
 import MockTransport from "./test/test_utils/MockTransport";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
+import * as  aws from "@aws-sdk/client-ses";
 
 const isDevelopment = env.NODE_ENV == 'development';
 const isProduction = env.NODE_ENV == 'production';
@@ -25,6 +26,19 @@ export default class MailerClient {
         if (isProduction) {
           this.clientConfig;
           /*TODO: Add SES transporter*/
+          const ses = new aws.SESClient({
+            apiVersion: "2010-12-01",
+            region: env.AWS_S3_REGION ?? "us-east-1",
+            credentials:{
+              accessKeyId: env.AWS_ACCESS_KEY_ID ?? "",
+              secretAccessKey: env.AWS_SECRET_ACCESS_KEY ?? ""
+            }
+          });
+
+          this.transporter = nodemailer.createTransport({
+            SES: { ses, aws }
+          });
+          return;
         }
         // update for prod to point at SES
         if (isDevelopment) {

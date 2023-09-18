@@ -15,6 +15,8 @@
     "test:inspect": "NODE_ENV=test node node_modules/.bin/mocha inspect src/**/*.spec.ts --exit"
   },
   "dependencies": {
+    "@aws-sdk/client-ses": "^3.414.0",
+    "@aws-sdk/credential-provider-node": "^3.414.0",
     "@floro/styles": "1.0.0",
     "@types/mocha": "^10.0.1",
     "bullmq": "^1.90.1",

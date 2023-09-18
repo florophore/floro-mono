@@ -1,57 +1,88 @@
-
 import { injectable } from "inversify";
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
 import StorageDriver from "./StrorageDriver";
-import fs from "fs";
 import tar from "tar";
 import { Readable } from "stream";
 import { env } from "process";
+import {
+  S3Client,
+  GetObjectCommand,
+  PutObjectCommand,
+  HeadObjectCommand,
+} from "@aws-sdk/client-s3";
 
-const NODE_ENV = env.NODE_ENV;
-const isTest = NODE_ENV == "test";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const root = isTest
-  ? join(__dirname, "..", "..", ".test_root")
-  : join(__dirname, "..", "..", ".local_root");
-const privateRoot = isTest
-  ? join(__dirname, "..", "..", ".test_private_root")
-  : join(__dirname, "..", "..", ".local_private_root");
+async function streamToString (stream: Readable): Promise<string> {
+  return await new Promise((resolve, reject) => {
+    const chunks: Uint8Array[] = [];
+    stream.on('data', (chunk) => chunks.push(chunk));
+    stream.on('error', reject);
+    stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf-8')));
+  });
+}
 
 @injectable()
 export default class AwsStorageDriver implements StorageDriver {
-  private root: string;
+  private bucket!: string;
+  public s3Client!: S3Client;
 
   constructor(storageType: "public" | "private") {
-    this.root = storageType == "public" ? root : privateRoot;
+    this.bucket = storageType == "public" ? env.PRIVATE_BUCKET ?? "" : env.PUBLIC_BUCKET ?? "";
+    this.s3Client = new S3Client({
+      region: env.AWS_S3_REGION ?? "us-east-1",
+      credentials:{
+        accessKeyId: env.AWS_ACCESS_KEY_ID ?? "",
+        secretAccessKey: env.AWS_SECRET_ACCESS_KEY ?? ""
+      }
+    });
   }
 
   public async mkdir(path: string) {
-    await fs.promises.mkdir(path, { recursive: true });
+    // NOTHING TO DO
   }
 
   public async init() {
-    if (!this.exists(this.root)) {
-      await fs.promises.mkdir(this.root);
-    }
+    // NOTHING TO DO
   }
 
   public async exists(path: string) {
-    const exists = await fs.promises
-      .access(path, fs.constants.F_OK)
-      .then(() => true)
-      .catch(() => false);
-    return exists;
+    try {
+      const command = new HeadObjectCommand({
+        Bucket: this.bucket,
+        Key: path
+      });
+      const response = await this.s3Client.send(command);
+      return response.$metadata.httpStatusCode == 200;
+    } catch(e) {
+      return false;
+    }
   }
 
   public async read(path: string) {
-    return await fs.promises.readFile(path);
+    try {
+      const command = new GetObjectCommand({
+        Bucket: this.bucket,
+        Key: path
+      });
+      const response = await this.s3Client.send(command);
+      return await streamToString(response.Body as Readable)
+    } catch(e) {
+      return null;
+    }
   }
 
   public async write(path: string, data: Buffer|string) {
-    return await fs.promises.writeFile(path, data);
+    try {
+      const command = new PutObjectCommand({
+        Bucket: this.bucket,
+        Key: path,
+        Body: typeof data == "string" ? Buffer.from(data) : data
+      });
+      const response = await this.s3Client.send(command);
+      if (response.$metadata.httpStatusCode != 200) {
+        throw new Error("failed to upload")
+      }
+    } catch(e) {
+      return;
+    }
   }
 
   public async zipDirectory(path: string): Promise<Readable> {
@@ -65,6 +96,7 @@ export default class AwsStorageDriver implements StorageDriver {
   }
 
   public staticRoot() {
-    return this.root;
+    // NOTHIG TO DO
+    return "";
   }
 }

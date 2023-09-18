@@ -20,7 +20,7 @@ const privateRoot = isTest
   : join(__dirname, "..", "..", ".local_private_root");
 
 @injectable()
-export default class DiskStorageDriver implements StorageDriver {
+export default class AwsStorageDriver implements StorageDriver {
   private root: string;
 
   constructor(storageType: "public" | "private") {
