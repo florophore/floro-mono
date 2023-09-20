@@ -1,0 +1,32 @@
+name: Electron CI
+
+on: [push]
+
+jobs:
+  Test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # run steps required in the workflow
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js 16.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+
+      - name: Yarn install cache
+        uses: c-hive/gha-yarn-cache@v1
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Install Electron dependencies
+        run: |
+          cd packages/floro-desktop
+          yarn install
+          yarn postinstall:manual
+
+      - name: Electron Tests
+        run: yarn test

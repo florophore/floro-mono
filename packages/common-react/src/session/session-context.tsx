@@ -12,7 +12,7 @@ import {
 import { useDaemonIsConnected, useFloroSocket, useSocketEvent } from "../pubsub/socket";
 import { useQueryClient } from "react-query";
 import { removeClientSession, setClientSession } from "./client-session";
-import { useApolloClient, useFragment_experimental } from "@apollo/client";
+import { useApolloClient, useFragment } from "@apollo/client";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { useSaveOfflinePhoto } from "../offline/OfflinePhotoContext";
@@ -46,7 +46,7 @@ export const SessionProvider = (props: Props) => {
   const savePhoto = useSaveOfflinePhoto();
   const saveIcon = useSaveOfflineIcon();
 
-  const fragmentUser = useFragment_experimental({
+  const fragmentUser = useFragment({
     fragment: UserFragmentDoc,
     fragmentName: 'User',
     from: {
