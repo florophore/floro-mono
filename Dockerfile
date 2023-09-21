@@ -2,7 +2,7 @@ FROM node:16.16.0-alpine
 
 RUN apk add g++ make py3-pip
 
-RUN bind-tools
+RUN apk update && apk add bind-tools
 
 ARG cdn_host_arg
 
