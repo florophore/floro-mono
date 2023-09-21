@@ -81,6 +81,8 @@ export interface ClaimReferralReponse {
   };
 }
 
+const fromEmail = process?.env?.DOMAIN ?? "floro.io";
+
 @injectable()
 export default class ReferralService implements CreateUserEventHandler {
   private databaseConnection!: DatabaseConnection;
@@ -252,7 +254,7 @@ export default class ReferralService implements CreateUserEventHandler {
           subsequentAttempt: false,
         },
         to: refereeEmail,
-        from: "referrals@floro.io",
+        from: `referrals@${fromEmail}`,
         subject: `${upcaseFirst(currentUser.firstName)} ${upcaseFirst(
           currentUser.lastName
         )} gave you 5GB of free storage on floro`,
@@ -370,7 +372,7 @@ export default class ReferralService implements CreateUserEventHandler {
         subsequentAttempt: true,
       },
       to: updatedReferral.refereeEmail,
-      from: "referrals@floro.io",
+      from: `referrals@${fromEmail}`,
       subject: `Nudge. ${upcaseFirst(currentUser.firstName)} ${upcaseFirst(
         currentUser.lastName
       )} gave you 5GB of free storage on floro`,

@@ -26,6 +26,8 @@ import CreateUserEventHandler from "../events/CreateUserEventHandler";
 
 const profanityFilter = new ProfanityFilter();
 
+const fromEmail = process?.env?.DOMAIN ?? "floro.io";
+
 export interface AuthReponse {
     action: 'COMPLETE_SIGNUP'|'LOG_ERROR'|'LOGIN'|'VERIFICATION_REQUIRED'|'VERIFICATION_SENT'|'NOT_FOUND';
     user?: User;
@@ -137,7 +139,7 @@ export default class AuthenticationService {
                             action: "signup"
                         },
                         to: credential.email as string,
-                        from: "accounts@floro.io",
+                        from: `accounts@${fromEmail}`,
                         subject: "Verify Email"
                     });
                     return { action: 'VERIFICATION_REQUIRED', email: credential.email as string };
@@ -185,7 +187,7 @@ export default class AuthenticationService {
                         action: "login"
                     },
                     to: primaryEmail.email as string,
-                    from: "accounts@floro.io",
+                    from: `accounts@${fromEmail}`,
                     subject: "Verify Email"
                 });
                 return { action: 'VERIFICATION_REQUIRED', email: primaryEmail.email };
@@ -303,7 +305,7 @@ export default class AuthenticationService {
                         link
                     },
                     to: email,
-                    from: "accounts@floro.io",
+                    from: `accounts@${fromEmail}`,
                     subject: "Complete Floro Sign Up"
                 });
                 return { action: 'VERIFICATION_SENT', credential };
@@ -320,7 +322,7 @@ export default class AuthenticationService {
                         link
                     },
                     to: email,
-                    from: "accounts@floro.io",
+                    from: `accounts@${fromEmail}`,
                     subject: "Complete Floro Sign Up"
                 });
                 return { action: 'VERIFICATION_SENT', credential };
@@ -350,7 +352,7 @@ export default class AuthenticationService {
                         link
                     },
                     to: email,
-                    from: "accounts@floro.io",
+                    from: `accounts@${fromEmail}`,
                     subject: "Floro Login"
                 });
                 return { action: 'VERIFICATION_SENT', credential };
@@ -366,7 +368,7 @@ export default class AuthenticationService {
                     link
                 },
                 to: email,
-                from: "accounts@floro.io",
+                from: `accounts@${fromEmail}`,
                 subject: "Floro Login"
             });
             return { action: 'VERIFICATION_SENT', credential };

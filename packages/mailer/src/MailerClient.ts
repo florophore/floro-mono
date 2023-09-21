@@ -25,7 +25,6 @@ export default class MailerClient {
         this.clientConfig = clientConfig;
         if (isProduction) {
           this.clientConfig;
-          /*TODO: Add SES transporter*/
           const ses = new aws.SESClient({
             apiVersion: "2010-12-01",
             region: env.AWS_S3_REGION ?? "us-east-1",
@@ -40,7 +39,6 @@ export default class MailerClient {
           });
           return;
         }
-        // update for prod to point at SES
         if (isDevelopment) {
           this.transporter = nodemailer.createTransport({
             host: "localhost",

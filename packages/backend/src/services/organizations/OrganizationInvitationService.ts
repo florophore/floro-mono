@@ -29,6 +29,8 @@ import OrganizationsContext from "@floro/database/src/contexts/organizations/Org
 const profanityFilter = new ProfanityFilter();
 const PAGE_SIZE = 10;
 
+const fromEmail = process?.env?.DOMAIN ?? "floro.io";
+
 export interface CreateOrganizationInvitationReponse {
   action:
     | "INVITATION_CREATED"
@@ -500,7 +502,7 @@ export default class OrganizationInvitationService
           userExistedAlready,
         },
         to: email,
-        from: "invites@floro.io",
+        from: `invites@${fromEmail}`,
         subject: "Floro Invitation to " + organization.name,
       });
 
@@ -807,7 +809,7 @@ export default class OrganizationInvitationService
         userExistedAlready: !!organizationInvitation.userId,
       },
       to: organizationInvitation.email,
-      from: "invites@floro.io",
+      from: `invites@${fromEmail}`,
       subject: "Floro Invitation to " + organization.name,
     });
 
