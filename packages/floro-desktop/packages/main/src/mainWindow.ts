@@ -73,6 +73,7 @@ async function createWindow() {
 
       if (provider == 'github') {
         const githubOAuthUrl = `https://github.com/login/oauth/authorize?client_id=${process?.env?.['GITHUB_OAUTH_CLIENT_ID']}&scope=user`
+        console.log("GH URL", githubOAuthUrl);
         oauthWindow.loadURL(githubOAuthUrl);
       }
       if (provider == 'google') {

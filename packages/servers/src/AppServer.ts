@@ -112,7 +112,7 @@ export default class AppServer {
       } else {
         res.header("Access-Control-Allow-Origin", "http://localhost:63403,http://localhost:9000");
       }
-      res.header("Access-Control-Allow-Methods", "GET,POST,PUT");
+      res.header("Access-Control-Allow-Methods", "GET,POST,PUT,OPTIONS");
       res.header("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type");
       res.header("Referrer-Policy", "no-referrer");
       next();
@@ -181,6 +181,9 @@ export default class AppServer {
       } else {
         res.header("Access-Control-Allow-Origin", "http://localhost:63403,http://localhost:9000");
       }
+      res.header("Access-Control-Allow-Methods", "GET,POST,PUT,OPTIONS");
+      res.header("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type");
+      res.header("Referrer-Policy", "no-referrer");
       try {
         const sessionContext = await this.backend.fetchSessionUserContext(req.cookies?.["user-session"]);
         const url = req.originalUrl;

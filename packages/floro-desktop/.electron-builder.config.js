@@ -10,6 +10,7 @@
  */
 
 const buildEnv = process?.env.BUILD_ENV ?? "dev";
+console.log("BE", buildEnv);
 
 const appId = (buildEnv) => {
   if (buildEnv == "staging") {
@@ -49,8 +50,7 @@ module.exports = async function () {
 
   return {
     appId: 'com.florophore.floro',
-    asar: true,
-    asarUnpack: ["LICENSE"],
+    asar: false,
     directories: {
       output: 'dist',
       buildResources: 'buildResources',
