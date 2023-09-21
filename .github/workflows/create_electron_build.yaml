@@ -1,0 +1,87 @@
+name: Create Electron Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: 'Compiles the app but not upload artifacts to distribution server'
+        default: false
+        required: false
+        type: boolean
+    inputs:
+      buildType:
+        description: 'Build Environment'
+        required: true
+        default: staging
+        type: choice
+        options:
+          - staging
+          - prod
+jobs:
+  release_electron:
+    name: 'Build Electron'
+
+    permissions:
+      contents: write
+
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ macos-latest, ubuntu-latest, windows-latest ]
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4
+      - uses: actions/setup-node@v3
+        with:
+          cache: 'npm'
+
+      - uses: haya14busa/action-cond@v1
+        id: buildEnv
+        with:
+          cond: ${{ github.event.inputs.buildType == 'staging' }}
+          if_true: 'prod'
+          if_false: 'staging'
+      - uses: haya14busa/action-cond@v1
+        id: viteHost
+        with:
+          cond: ${{ github.event.inputs.buildType == 'prod' }}
+          if_true: 'floro.io'
+          if_false: 'floro-staging.com'
+      - name: Yarn install cache
+        uses: c-hive/gha-yarn-cache@v1
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Build Graph QL
+        run: yarn graphql-schemas:build
+      - name: Install rpm
+        if: runner.os == 'Linux'
+        run: sudo apt-get install -y rpm
+        shell: bash
+
+      - name: Install Electron dependencies
+        working-directory: packages/floro-desktop
+        run: |
+          yarn install
+          yarn postinstall:manual
+
+      - name: Compile Artifacts
+        working-directory: packages/floro-desktop
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 15
+          max_attempts: 6
+          retry_wait_seconds: 15
+          retry_on: error
+          shell: 'bash'
+          command: BUILD_ENV=${{ steps.buildEnv.outputs.value }} npx --no-install electron-builder --config .electron-builder.config.js --publish ${{ inputs.dry-run && 'never' || 'always' }}
+        env:
+          TEAM_ID: ${{secrets.TEAM_ID}}
+          APPLE_ID: ${{secrets.APPLE_ID}}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{secrets.APPLE_APP_SPECIFIC_PASSWORD}}
+          APPLE_ID_PASS: ${{secrets.APPLE_ID_PASS}}
+          CSC_LINK: ${{secrets.CSC_LINK}}
+          CSC_KEY_PASSWORD: ${{secrets.CSC_KEY_PASSWORD}}
+          GH_TOKEN: ${{ secrets.github_token }}
