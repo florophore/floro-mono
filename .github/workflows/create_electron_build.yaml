@@ -66,6 +66,7 @@ jobs:
         run: |
           yarn install
           yarn postinstall:manual
+          BUILD_ENV=${{ steps.buildEnv.outputs.value }} yarn build
 
       - name: Compile Artifacts
         working-directory: packages/floro-desktop
