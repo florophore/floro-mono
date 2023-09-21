@@ -14,6 +14,20 @@ import { injectEnvVars } from '../../env/inject-env-vars.mjs';
 const PACKAGE_ROOT = __dirname;
 const PROJECT_ROOT = join(PACKAGE_ROOT, '../..');
 
+const serverOptions = process.env.MODE == 'production' ? {
+  fs: {
+    strict: true,
+  },
+} : {
+  fs: {
+    strict: true,
+  },
+  hmr: {
+    clientPort: 7779,
+    port: 7779,
+  }
+};
+
 /**
  * @type {import('vite').UserConfig}
  * @see https://vitejs.dev/config/
@@ -28,15 +42,7 @@ const config = {
     },
   },
   base: '',
-  server: {
-    fs: {
-      strict: true,
-    },
-    //hmr: {
-    //  clientPort: 7779,
-    //  port: 7779,
-    //}
-  },
+  server: serverOptions,
   build: {
     sourcemap: true,
     target: `chrome${chrome}`,

@@ -1,4 +1,5 @@
-//import 'dotenv/config'
+// just for development
+import 'dotenv/config'
 import process from 'process';
 import * as fs from 'fs'
 import * as path from 'path'

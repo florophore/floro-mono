@@ -10,10 +10,10 @@ import { useFloroSocket, useSocketEvent } from '@floro/common-react/src/pubsub/s
 
 
 const OAuthCallback = (): React.ReactElement => {
-    const params = useParams<{provider: 'github'|'google'}>();
-    const [searchParams] = useSearchParams();
-    const error = searchParams.get('error');
-    const code = searchParams.get('code') as string;
+  const params = useParams<{provider: 'github'|'google'}>();
+  const [searchParams] = useSearchParams();
+  const error = searchParams.get('error');
+  const code = searchParams.get('code') as string;
 
   const { data, error: graphqlError}  = useSubmitOAuthCodeQuery({
     variables: {

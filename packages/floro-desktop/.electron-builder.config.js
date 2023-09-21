@@ -45,9 +45,6 @@ const executableName = (buildEnv) => {
 module.exports = async function () {
   require('dotenv').config();
   const {getVersion} = await import('./version/getVersion.mjs');
-  const { notarizeMac} = await import('./scripts/notarize-app.mjs');
-
-
   return {
     appId: 'com.florophore.floro',
     asar: false,

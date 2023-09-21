@@ -45,10 +45,10 @@ ALLOWED_ORIGINS_AND_PERMISSIONS.set(
   'http://localhost:63403',
   new Set(),
 ).set(
-  'http://floro.io',
+  'https://floro.io',
   new Set(),
 ).set(
-  'http://floro-staging.com',
+  'https://floro-staging.com',
   new Set(),
 );
 
@@ -176,3 +176,5 @@ app.on('web-contents-created', (_, contents) => {
     webPreferences.contextIsolation = true;
   });
 });
+
+//app.commandLine.appendSwitch('disable-features','BlockInsecurePrivateNetworkRequests')

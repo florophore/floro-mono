@@ -205,9 +205,11 @@ export default class PluginController extends BaseController {
     if (!pluginVersion) {
       return;
     }
+
     response
       .status(200)
       .setHeader("Content-Type", "text/html")
+      .setHeader("Access-Control-Allow-Origin", "*")
       .send(pluginVersion.indexHtml);
   }
 
