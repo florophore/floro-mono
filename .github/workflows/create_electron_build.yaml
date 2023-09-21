@@ -99,33 +99,29 @@ jobs:
           GH_TOKEN: ${{ secrets.github_token }}
 
       - uses: actions/upload-artifact@v3
-        working-directory: packages/floro-desktop
         with:
           name: Mac Artifact
-          path: dist/apps/**/*.dmg
+          path: packages/floro-desktop/dist/apps/**/*.dmg
         env:
           GH_TOKEN: ${{ secrets.github_token }}
 
       - uses: actions/upload-artifact@v3
-        working-directory: packages/floro-desktop
         with:
           name: Windows Artifact
-          path: dist/apps/**/*.exe
+          path: packages/floro-desktop/dist/apps/**/*.exe
         env:
           GH_TOKEN: ${{ secrets.github_token }}
 
       - uses: actions/upload-artifact@v3
-        working-directory: packages/floro-desktop
         with:
           name: Debian Artifact
-          path: dist/apps/**/*.deb
+          path: packages/floro-desktop/dist/apps/**/*.deb
         env:
           GH_TOKEN: ${{ secrets.github_token }}
 
       - uses: actions/upload-artifact@v3
-        working-directory: packages/floro-desktop
         with:
           name: RPM Artifact
-          path: dist/apps/**/*.rpm
+          path: packages/floro-desktop/dist/apps/**/*.rpm
         env:
           GH_TOKEN: ${{ secrets.github_token }}
