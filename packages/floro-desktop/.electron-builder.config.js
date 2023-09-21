@@ -75,6 +75,7 @@ module.exports = async function () {
       },
     },
     afterSign: "scripts/notarize-app.js",
+    publish: null
     //publish: {
     //  "provider": "github"
     //},
