@@ -1,7 +1,7 @@
-const { notarize } = require("@electron/notarize");
+import { notarize } from "@electron/notarize";
 
 const buildEnv = process?.env.BUILD_ENV ?? "dev";
-exports.default = async function notarizing(context) {
+export async function notarizeMac(context) {
   const { electronPlatformName, appOutDir } = context;
   if (electronPlatformName !== "darwin" || process.env.NO_NOTARY) {
     return;
@@ -18,7 +18,7 @@ exports.default = async function notarizing(context) {
     }
 
   const appName = context.packager.appInfo.productFilename;
-
+  console.log("Notarizing...")
   return await notarize({
     tool: "notarytool",
     appBundleId: appId(buildEnv),

@@ -44,9 +44,13 @@ const executableName = (buildEnv) => {
 module.exports = async function () {
   require('dotenv').config();
   const {getVersion} = await import('./version/getVersion.mjs');
+  const { notarizeMac} = await import('./scripts/notarize-app.mjs');
 
 
   return {
+    appId: 'com.florophore.floro',
+    asar: true,
+    asarUnpack: ["LICENSE"],
     directories: {
       output: 'dist',
       buildResources: 'buildResources',
@@ -57,23 +61,28 @@ module.exports = async function () {
     },
     appId: appId(buildEnv),
     productName: productName(buildEnv),
-    appId: 'com.florophore.floro',
-    asar: false,
     forceCodeSigning: true,
     linux: {"target": ["deb", "rpm"]},
     rpm: {"depends": ["openssl"]},
     deb: {"depends": ["openssl"]},
     mac: {
+      category: "productivity",
+      target: "dmg",
       executableName: executableName(buildEnv),
       hardenedRuntime: true,
       entitlements: "buildResources/entitlements.mac.plist",
       entitlementsInherit: "buildResources/entitlements.mac.plist",
       gatekeeperAssess: false,
-      target: {
-        target: 'default'
-      },
+      notarize: false,
+      //target: {
+      //  target: 'default',
+      //},
     },
-    afterSign: "scripts/notarize-app.js",
+    afterSign: async (context) => {
+      if (context.electronPlatformName === "darwin") {
+        await notarizeMac(context)
+      }
+    },
     publish: null
     //publish: {
     //  "provider": "github"
