@@ -75,9 +75,8 @@ module.exports = async function () {
       },
     },
     afterSign: "scripts/notarize-app.js",
-    // Specify linux target just for disabling snap compilation
-    publish: {
-      "provider": "github"
-    },
+    //publish: {
+    //  "provider": "github"
+    //},
   };
 };
