@@ -44,7 +44,7 @@ jobs:
       - uses: haya14busa/action-cond@v1
         id: buildEnv
         with:
-          cond: ${{ github.event.inputs.buildType == 'staging' }}
+          cond: ${{ github.event.inputs.buildType == 'prod' }}
           if_true: 'prod'
           if_false: 'staging'
       - uses: haya14busa/action-cond@v1
