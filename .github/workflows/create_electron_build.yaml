@@ -1,11 +1,11 @@
 name: Create Electron Build
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       dry-run:
         description: 'Compiles the app but not upload artifacts to distribution server'
-        default: false
+        default: true
         required: false
         type: boolean
       buildType:
@@ -16,6 +16,15 @@ on:
         options:
           - staging
           - prod
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: 'bash'
+
 jobs:
   release_electron:
     name: 'Draft Electron Release'
@@ -71,16 +80,16 @@ jobs:
         env:
           BUILD_ENV: ${{ steps.buildEnv.outputs.value }}
 
-      - name: Compile Artifacts
-        working-directory: packages/floro-desktop
+      - name: Compile ${{ steps.buildEnv.outputs.value }} artifacts ${{ inputs.dry-run && '' || 'and upload them to github release' }}
         uses: nick-fields/retry@v2
+        working-directory: packages/floro-desktop
         with:
           timeout_minutes: 15
           max_attempts: 6
           retry_wait_seconds: 15
           retry_on: error
           shell: 'bash'
-          command: BUILD_ENV=${{ steps.buildEnv.outputs.value }} npx --no-install electron-builder --config .electron-builder.config.js --publish ${{ inputs.dry-run && 'never' || 'always' }}
+          command: npx --no-install electron-builder --config .electron-builder.config.js --publish ${{ inputs.dry-run && 'never' || 'always' }}
         env:
           BUILD_ENV: ${{ steps.buildEnv.outputs.value }}
           TEAM_ID: ${{secrets.TEAM_ID}}
