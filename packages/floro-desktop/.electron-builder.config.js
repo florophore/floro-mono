@@ -66,23 +66,27 @@ module.exports = async function () {
     rpm: {"depends": ["openssl"]},
     deb: {"depends": ["openssl"]},
     mac: {
-      category: "productivity",
+      category: "developer-tools",
       target: "dmg",
       executableName: executableName(buildEnv),
       hardenedRuntime: true,
       entitlements: "buildResources/entitlements.mac.plist",
       entitlementsInherit: "buildResources/entitlements.mac.plist",
       gatekeeperAssess: false,
-      notarize: false,
+      //notarize: false,
+      notarize: {
+        appBundleId: appId(buildEnv),
+        teamId: process.env.TEAM_ID
+      }
       //target: {
       //  target: 'default',
       //},
     },
-    afterSign: async (context) => {
-      if (context.electronPlatformName === "darwin") {
-        await notarizeMac(context)
-      }
-    },
+    //afterSign: async (context) => {
+    //  if (context.electronPlatformName === "darwin") {
+    //    await notarizeMac(context)
+    //  }
+    //},
     publish: null
     //publish: {
     //  "provider": "github"
