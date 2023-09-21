@@ -66,7 +66,11 @@ jobs:
         run: |
           yarn install
           yarn postinstall:manual
-          BUILD_ENV=${{ steps.buildEnv.outputs.value }} yarn build
+      - name: Install Electron dependencies
+        working-directory: packages/floro-desktop
+        run: yarn build
+        env:
+          BUILD_ENV: ${{ steps.buildEnv.outputs.value }}
 
       - name: Compile Artifacts
         working-directory: packages/floro-desktop
@@ -79,6 +83,7 @@ jobs:
           shell: 'bash'
           command: BUILD_ENV=${{ steps.buildEnv.outputs.value }} npx --no-install electron-builder --config .electron-builder.config.js --publish ${{ inputs.dry-run && 'never' || 'always' }}
         env:
+          BUILD_ENV: ${{ steps.buildEnv.outputs.value }}
           TEAM_ID: ${{secrets.TEAM_ID}}
           APPLE_ID: ${{secrets.APPLE_ID}}
           APPLE_APP_SPECIFIC_PASSWORD: ${{secrets.APPLE_APP_SPECIFIC_PASSWORD}}
