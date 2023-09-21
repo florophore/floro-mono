@@ -101,27 +101,27 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: Mac Artifact
-          path: packages/floro-desktop/dist/apps/**/*.dmg
+          path: packages/floro-desktop/dist/*.dmg
         env:
           GH_TOKEN: ${{ secrets.github_token }}
 
       - uses: actions/upload-artifact@v3
         with:
           name: Windows Artifact
-          path: packages/floro-desktop/dist/apps/**/*.exe
+          path: packages/floro-desktop/dist/*.exe
         env:
           GH_TOKEN: ${{ secrets.github_token }}
 
       - uses: actions/upload-artifact@v3
         with:
           name: Debian Artifact
-          path: packages/floro-desktop/dist/apps/**/*.deb
+          path: packages/floro-desktop/dist/*.deb
         env:
           GH_TOKEN: ${{ secrets.github_token }}
 
       - uses: actions/upload-artifact@v3
         with:
           name: RPM Artifact
-          path: packages/floro-desktop/dist/apps/**/*.rpm
+          path: packages/floro-desktop/dist/*.rpm
         env:
           GH_TOKEN: ${{ secrets.github_token }}
