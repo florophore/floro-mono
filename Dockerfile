@@ -2,6 +2,8 @@ FROM node:16.16.0-alpine
 
 RUN apk add g++ make py3-pip
 
+RUN bind-tools
+
 ARG cdn_host_arg
 
 ENV CDN_HOST=$cdn_host_arg
