@@ -82,14 +82,15 @@ jobs:
 
       - name: Compile ${{ steps.buildEnv.outputs.value }} artifacts ${{ inputs.dry-run && '' || 'and upload them to github release' }}
         uses: nick-fields/retry@v2
-        working-directory: packages/floro-desktop
         with:
           timeout_minutes: 15
           max_attempts: 6
           retry_wait_seconds: 15
           retry_on: error
           shell: 'bash'
-          command: npx --no-install electron-builder --config .electron-builder.config.js --publish ${{ inputs.dry-run && 'never' || 'always' }}
+          command: |
+            cd packages/floro-desktop
+            npx --no-install electron-builder --config .electron-builder.config.js --publish ${{ inputs.dry-run && 'never' || 'always' }}
         env:
           BUILD_ENV: ${{ steps.buildEnv.outputs.value }}
           TEAM_ID: ${{secrets.TEAM_ID}}
