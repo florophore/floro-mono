@@ -23,10 +23,11 @@ jobs:
         run: yarn
 
       - name: Install Electron dependencies
+        working_direction: packages/floro-desktop
         run: |
-          cd packages/floro-desktop
           yarn install
           yarn postinstall:manual
 
       - name: Electron Tests
+        working_direction: packages/floro-desktop
         run: yarn test
