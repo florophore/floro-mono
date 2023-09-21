@@ -70,8 +70,7 @@ module.exports = async function () {
       entitlementsInherit: "buildResources/entitlements.mac.plist",
       gatekeeperAssess: false,
       target: {
-        target: 'default',
-        arch: 'universal'
+        target: 'default'
       },
     },
     afterSign: "scripts/notarize-app.js",
