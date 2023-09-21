@@ -8,7 +8,6 @@ on:
         default: false
         required: false
         type: boolean
-    inputs:
       buildType:
         description: 'Build Environment'
         required: true
