@@ -19,7 +19,7 @@ on:
           - prod
 jobs:
   release_electron:
-    name: 'Build Electron'
+    name: 'Draft Electron Release'
 
     permissions:
       contents: write
