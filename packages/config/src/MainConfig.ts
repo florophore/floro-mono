@@ -12,6 +12,9 @@ export default class MainConfig {
     if (isDev || isTest) {
       return "http://localhost:9000";
     }
+    if (process.env?.['DOMAIN']) {
+      return `https://${process?.env['DOMAIN']}`;
+    }
     return "https://floro.io";
   }
 
