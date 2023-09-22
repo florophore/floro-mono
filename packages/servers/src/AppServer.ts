@@ -20,6 +20,7 @@ import { createServer as createViteServer } from "vite";
 import { SchemaLink } from "@apollo/client/link/schema";
 // eslint-disable-next-line
 import ApolloPkg from '@apollo/client';
+
 const { ApolloClient, InMemoryCache } = ApolloPkg;
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -53,11 +54,12 @@ export default class AppServer {
     });
   }
 
-  public async startServer(indexHTMLTemplate: string): Promise<void> {
+  public async startServer(indexHTMLTemplate: string, shouldPerformMigrations: boolean): Promise<void> {
     await this.backend.startRedis();
     const publicStorageRoot = await this.backend.startPublicStorageClient();
     const privateStorageRoot = await this.backend.startPrivateStorageClient();
-    await this.backend.startDatabase();
+
+    await this.backend.startDatabase(shouldPerformMigrations);
 
     const schema = this.backend.buildExecutableSchema();
 

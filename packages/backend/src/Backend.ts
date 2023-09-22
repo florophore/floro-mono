@@ -87,9 +87,11 @@ export default class Backend {
     return this.storageClient?.getStaticRoot?.("private") ?? null;
   }
 
-  public async startDatabase(): Promise<void> {
+  public async startDatabase(performMigrations: boolean = false): Promise<void> {
     await this.databaseConnection.open();
-    await this.databaseConnection.migrate();
+    if (performMigrations) {
+      await this.databaseConnection.migrate();
+    }
     await this.contextFactory.warmQueryRunnerConnection();
   }
 
