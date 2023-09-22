@@ -25,8 +25,7 @@ export default class AwsStorageDriver implements StorageDriver {
   public s3Client!: S3Client;
 
   constructor(storageType: "public" | "private") {
-    //this.bucket = storageType == "private" ? env.PRIVATE_BUCKET ?? "" : env.PUBLIC_BUCKET ?? "";
-    this.bucket = storageType == "private" ? "floro-private-assets-staging" : "floro-public-assets-staging";
+    this.bucket = storageType == "private" ? env.PRIVATE_BUCKET ?? "" : env.PUBLIC_BUCKET ?? "";
     this.s3Client = new S3Client({
       region: env.AWS_S3_REGION ?? "us-east-1",
       credentials:{
