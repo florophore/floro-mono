@@ -3,6 +3,7 @@ import StorageDriver from "../drivers/StrorageDriver";
 import StorageClient from "../StorageClient";
 import MainConfig from "@floro/config/src/MainConfig";
 import path from "path";
+import DiskStorageDriver from "../drivers/DiskStorageDriver";
 
 @injectable()
 export default class PluginAccessor {
@@ -37,7 +38,7 @@ export default class PluginAccessor {
           try {
             const subdir = path.dirname(fname);
             const dir = path.join(rootDir, uploadHash, subdir);
-            if (!(await driver.exists(dir))) {
+            if (this.driver instanceof DiskStorageDriver && !(await driver.exists(dir))) {
               await driver.mkdir(dir);
             }
             const filepath = path.join(rootDir, uploadHash, fname);

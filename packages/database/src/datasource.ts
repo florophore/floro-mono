@@ -36,14 +36,33 @@ const testDataSource = new DataSource({
   dropSchema: true
 });
 
+
+const parseDBPoolSize = (): number => {
+  try {
+    const rawDbPoolSize = process.env?.['DB_POOL_SIZE'];
+    if (!rawDbPoolSize) {
+      return 20;
+    }
+    if (typeof rawDbPoolSize == "string") {
+      return parseInt(rawDbPoolSize);
+    }
+    if (typeof rawDbPoolSize == "number") {
+      return rawDbPoolSize;
+    }
+    return 20;
+  } catch(e) {
+      return 20;
+  }
+}
+
 const prodDataSource = new DataSource({
   ...defaultOptions,
   host: process.env?.['POSTGRES_HOST'],
   database: process.env?.['POSTGRES_DB_NAME'],
   username: process.env?.['POSTGRES_USER'],
   password: process.env?.['POSTGRES_PASSWORD'],
-  logging: false,
-  dropSchema: true
+  logging: true,
+  poolSize: parseDBPoolSize()
 });
 
 export default ((env = 'development'): DataSource => {

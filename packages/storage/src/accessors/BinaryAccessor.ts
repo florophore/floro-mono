@@ -2,6 +2,7 @@ import { injectable, inject } from "inversify";
 import path from "path";
 import StorageDriver from "../drivers/StrorageDriver";
 import StorageClient from "../StorageClient";
+import DiskStorageDriver from "../drivers/DiskStorageDriver";
 
 @injectable()
 export default class BinaryAccessor {
@@ -14,9 +15,11 @@ export default class BinaryAccessor {
 
   public async initBinFolder() {
     const binDir = this.parentRootDirectory();
-    const exists = await this.driver.exists(binDir);
-    if (!exists){
-      await this.driver.mkdir(binDir);
+    if (this.driver instanceof DiskStorageDriver){
+      const exists = await this.driver.exists(binDir);
+      if (!exists) {
+        await this.driver.mkdir(binDir);
+      }
     }
   }
 

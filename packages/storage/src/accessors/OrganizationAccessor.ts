@@ -3,6 +3,7 @@ import { injectable, inject } from 'inversify';
 import StorageDriver from '../drivers/StrorageDriver';
 import StorageClient from '../StorageClient';
 import path from 'path';
+import DiskStorageDriver from '../drivers/DiskStorageDriver';
 
 @injectable()
 export default class OrganizationAccessor {
@@ -23,16 +24,20 @@ export default class OrganizationAccessor {
     }
 
     public async makeUserDirectory(org: Organization) {
-        const exists = await this.driver.exists(this.orgDirectory(org));
-        if (!exists) {
-            await this.driver.mkdir(this.orgDirectory(org));
+        if (this.driver instanceof DiskStorageDriver) {
+            const exists = await this.driver.exists(this.orgDirectory(org));
+            if (!exists) {
+                await this.driver.mkdir(this.orgDirectory(org));
+            }
         }
     }
 
     public async makePhotoPath(org: Organization) {
-        const exists = await this.driver.exists(path.join(this.orgDirectory(org), "photos"));
-        if (!exists) {
-            await this.driver.mkdir(path.join(this.orgDirectory(org), "photos"));
+        if (this.driver instanceof DiskStorageDriver) {
+            const exists = await this.driver.exists(path.join(this.orgDirectory(org), "photos"));
+            if (!exists) {
+                await this.driver.mkdir(path.join(this.orgDirectory(org), "photos"));
+            }
         }
     }
 
@@ -48,7 +53,9 @@ export default class OrganizationAccessor {
     }
 
     public async writePhoto(org: Organization, hash: string, image: Buffer, mimeType: "png"|"jpeg" = "png") {
-        await this.makePhotoPath(org);
+        if (this.driver instanceof DiskStorageDriver) {
+            await this.makePhotoPath(org);
+        }
         const filePath = this.getPhotoPath(org, hash, mimeType);
         this.driver.write(filePath, image);
         return null;

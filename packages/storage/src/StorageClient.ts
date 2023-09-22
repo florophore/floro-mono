@@ -2,6 +2,10 @@ import { injectable, inject } from 'inversify';
 import StorageDriver from './drivers/StrorageDriver';
 import { env } from 'process';
 import { createHash } from "crypto";
+import StorageAuthenticator from './StorageAuthenticator';
+import AwsStorageDriver from './drivers/AwsStorageDriver';
+import DiskStorageDriver from './drivers/DiskStorageDriver';
+import MainConfig from '@floro/config/src/MainConfig';
 
 const NODE_ENV = env.NODE_ENV;
 const isProduction = NODE_ENV == "production";
@@ -12,20 +16,25 @@ const isTest = NODE_ENV == "test";
 export default class StorageClient {
   public publicDriver!: StorageDriver;
   public privateDriver!: StorageDriver;
+  public storageAuthenticator!: StorageAuthenticator;
 
-  // INJECT S3 storage as well
   constructor(
-    @inject("PublicDiskStorageDriver") publicDiskStorageDriver: StorageDriver,
-    @inject("PrivateDiskStorageDriver") privateDiskStorageDriver: StorageDriver,
-    @inject("PublicAwsStorageDriver") publicAwsStorageDriver: StorageDriver,
-    @inject("PrivateAwsStorageDriver") privateAwsStorageDriver: StorageDriver,
+    @inject(StorageAuthenticator) storageAuthenticator: StorageAuthenticator,
+    @inject(MainConfig) mainConfig: MainConfig,
+    @inject("PublicDiskStorageDriver") publicDiskStorageDriver: DiskStorageDriver,
+    @inject("PrivateDiskStorageDriver") privateDiskStorageDriver: DiskStorageDriver,
+    @inject("PublicAwsStorageDriver") publicAwsStorageDriver: AwsStorageDriver,
+    @inject("PrivateAwsStorageDriver") privateAwsStorageDriver: AwsStorageDriver,
     ) {
     if (isDevelopment || isTest) {
       this.publicDriver = publicDiskStorageDriver;
       this.privateDriver = privateDiskStorageDriver;
     }
     if (isProduction) {
+      publicAwsStorageDriver.setMainConfig(mainConfig);
       this.publicDriver = publicAwsStorageDriver;
+      privateAwsStorageDriver.setMainConfig(mainConfig);
+      privateAwsStorageDriver.setAuthenticator(storageAuthenticator);
       this.privateDriver = privateAwsStorageDriver;
     }
   }

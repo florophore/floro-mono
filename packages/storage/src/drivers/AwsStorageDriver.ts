@@ -9,6 +9,9 @@ import {
   PutObjectCommand,
   HeadObjectCommand,
 } from "@aws-sdk/client-s3";
+import StorageAuthenticator from "../StorageAuthenticator";
+import MainConfig from "@floro/config/src/MainConfig";
+import fetch from 'node-fetch';
 
 async function streamToString (stream: Readable): Promise<string> {
   return await new Promise((resolve, reject) => {
@@ -23,8 +26,12 @@ async function streamToString (stream: Readable): Promise<string> {
 export default class AwsStorageDriver implements StorageDriver {
   private bucket!: string;
   public s3Client!: S3Client;
+  public storageType!: "public"|"private";
+  private storageAuthenticator?: StorageAuthenticator;
+  private mainConfig?: MainConfig;
 
   constructor(storageType: "public" | "private") {
+    this.storageType = storageType;
     this.bucket = storageType == "private" ? env.PRIVATE_BUCKET ?? "" : env.PUBLIC_BUCKET ?? "";
     this.s3Client = new S3Client({
       region: env.AWS_S3_REGION ?? "us-east-1",
@@ -33,6 +40,14 @@ export default class AwsStorageDriver implements StorageDriver {
         secretAccessKey: env.AWS_SECRET_ACCESS_KEY ?? ""
       }
     });
+  }
+
+  public setAuthenticator(storageAuthenticator: StorageAuthenticator) {
+    this.storageAuthenticator = storageAuthenticator;
+  }
+
+  public setMainConfig(mainConfig: MainConfig) {
+    this.mainConfig = mainConfig;
   }
 
   public async mkdir(_path: string) {
@@ -60,6 +75,19 @@ export default class AwsStorageDriver implements StorageDriver {
   public async read(path: string) {
     try {
       const key = path[0] == "/" ? path.substring(1) : path;
+      if (this.storageType == "private" && this.mainConfig && this.storageAuthenticator) {
+        const urlPath = "/" + key
+        const url = this.mainConfig.privateRoot() + urlPath;
+        const signedUrl = this.storageAuthenticator.signURL(url, urlPath, 3600);
+        const response = await fetch(signedUrl);
+        return await response.text();
+      }
+      if (this.storageType == "public" && this.mainConfig) {
+        const urlPath = "/" + key
+        const url = this.mainConfig.publicRoot() + urlPath;
+        const response = await fetch(url);
+        return await response.text();
+      }
       const command = new GetObjectCommand({
         Bucket: this.bucket,
         Key: key

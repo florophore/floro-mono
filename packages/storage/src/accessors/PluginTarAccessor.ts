@@ -4,6 +4,7 @@ import StorageClient from "../StorageClient";
 
 import fs, { ReadStream } from "fs";
 import path from "path";
+import DiskStorageDriver from "../drivers/DiskStorageDriver";
 
 @injectable()
 export default class PluginTarAccessor {
@@ -31,9 +32,11 @@ export default class PluginTarAccessor {
     readStream: ReadStream
   ): Promise<boolean> {
     try {
-      const rootDirExists = await this.driver.exists(this.rootDirectory());
-      if (!rootDirExists) {
-        await this.driver.mkdir(this.rootDirectory());
+      if (this.driver instanceof DiskStorageDriver) {
+        const rootDirExists = await this.driver.exists(this.rootDirectory());
+        if (!rootDirExists) {
+          await this.driver.mkdir(this.rootDirectory());
+        }
       }
       const tarPath = path.join(this.rootDirectory(), `${uploadHash}.tar.gz`);
       const writeStream = fs.createWriteStream(tarPath);

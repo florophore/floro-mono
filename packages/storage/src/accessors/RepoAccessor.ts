@@ -10,6 +10,7 @@ import {
 import { ApplicationKVState } from 'floro/dist/src/repo';
 import { Organization } from '@floro/database/src/entities/Organization';
 import { User } from '@floro/database/src/entities/User';
+import DiskStorageDriver from '../drivers/DiskStorageDriver';
 
 @injectable()
 export default class RepoAccessor {
@@ -140,9 +141,11 @@ export default class RepoAccessor {
       this.getRepoPath(repo),
       "kvs"
     );
-    const existsDir = await this.driver.exists(commitsKvsPath);
-    if (!existsDir) {
-      this.driver.mkdir(commitsKvsPath)
+    if (this.driver instanceof DiskStorageDriver) {
+      const existsDir = await this.driver.exists(commitsKvsPath);
+      if (!existsDir) {
+        this.driver.mkdir(commitsKvsPath)
+      }
     }
     const kvPath = this.getCommitKVStatePath(repo, sha);
     await this.driver.write(kvPath, JSON.stringify(commitKV, null, 2));
@@ -170,9 +173,11 @@ export default class RepoAccessor {
       this.getRepoPath(repo),
       "states"
     );
-    const existsDir = await this.driver.exists(commitsStatePath);
-    if (!existsDir) {
-      this.driver.mkdir(commitsStatePath)
+    if (this.driver instanceof DiskStorageDriver) {
+      const existsDir = await this.driver.exists(commitsStatePath);
+      if (!existsDir) {
+        this.driver.mkdir(commitsStatePath)
+      }
     }
     const statePath = this.getCommitStatePath(repo, sha);
     await this.driver.write(statePath, JSON.stringify(commitState, null, 2));
@@ -199,7 +204,9 @@ export default class RepoAccessor {
   }
 
   public async initInitialRepoFoldersAndFiles(repo: Repository, organization?: Organization|null, user?: User|null) {
-    await this.makeRepoPath(repo);
+    if (this.driver instanceof DiskStorageDriver) {
+        await this.makeRepoPath(repo);
+    }
     const commitsDirPath = path.join(
       this.getRepoPath(repo),
       "commits"
@@ -221,11 +228,14 @@ export default class RepoAccessor {
       this.getRepoPath(repo),
       "info.json"
     );
-    await Promise.all([
-      this.driver.mkdir(commitsDirPath),
-      this.driver.mkdir(commitsKvsPath),
-      this.driver.mkdir(commitsStatesDirPath),
-    ]);
+
+    if (this.driver instanceof DiskStorageDriver) {
+      await Promise.all([
+        this.driver.mkdir(commitsDirPath),
+        this.driver.mkdir(commitsKvsPath),
+        this.driver.mkdir(commitsStatesDirPath),
+      ]);
+    }
     await Promise.all([
       this.driver.write(
         currentJsonPath,

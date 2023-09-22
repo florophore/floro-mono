@@ -24,16 +24,20 @@ export default class UserAccessor {
     }
 
     public async makeUserDirectory(user: User) {
-        const exists = await this.driver.exists(this.userDirectory(user));
-        if (!exists) {
-            await this.driver.mkdir(this.userDirectory(user));
+        if (this.driver instanceof DiskStorageDriver) {
+            const exists = await this.driver.exists(this.userDirectory(user));
+            if (!exists) {
+                await this.driver.mkdir(this.userDirectory(user));
+            }
         }
     }
 
     public async makePhotoPath(user: User) {
-        const exists = await this.driver.exists(path.join(this.userDirectory(user), "photos"));
-        if (!exists) {
-            await this.driver.mkdir(path.join(this.userDirectory(user), "photos"));
+        if (this.driver instanceof DiskStorageDriver) {
+            const exists = await this.driver.exists(path.join(this.userDirectory(user), "photos"));
+            if (!exists) {
+                await this.driver.mkdir(path.join(this.userDirectory(user), "photos"));
+            }
         }
     }
 
@@ -51,7 +55,6 @@ export default class UserAccessor {
     public async writePhoto(user: User, hash: string, image: Buffer, mimeType: "png"|"jpeg" = "png") {
         if (this.driver instanceof DiskStorageDriver) {
             await this.makePhotoPath(user);
-
         }
         const filePath = this.getPhotoPath(user, hash, mimeType);
         this.driver.write(filePath, image);
