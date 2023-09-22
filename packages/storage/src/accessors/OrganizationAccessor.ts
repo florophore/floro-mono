@@ -6,7 +6,7 @@ import path from 'path';
 
 @injectable()
 export default class OrganizationAccessor {
-    private driver!: StorageDriver; 
+    private driver!: StorageDriver;
 
     constructor(
         @inject(StorageClient) storageClient: StorageClient
@@ -15,7 +15,11 @@ export default class OrganizationAccessor {
     }
 
     public orgDirectory(org: Organization) {
-        return path.join(this.driver.staticRoot?.() ?? "", "orgs", org.id);
+        const rootDir = path.join(this.driver.staticRoot?.() ?? "", "orgs", org.id);
+        if (rootDir[0] == '/') {
+            return rootDir;
+        }
+        return `/${rootDir}`;
     }
 
     public async makeUserDirectory(org: Organization) {

@@ -18,7 +18,11 @@ export default class PluginAccessor {
   }
 
   public rootDirectory() {
-    return path.join(this.driver.staticRoot?.() ?? "", "plugins");
+    const rootDir =  path.join(this.driver.staticRoot?.() ?? "", "plugins");
+    if (rootDir[0] == "/") {
+      return rootDir;
+    }
+    return `/${rootDir}`;
   }
 
   public async writePluginFiles(uploadHash: string, files: {

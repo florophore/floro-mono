@@ -14,7 +14,11 @@ export default class PluginTarAccessor {
   }
 
   public rootDirectory() {
-    return path.join(this.driver.staticRoot?.() ?? "", "plugin-tars");
+    const rootDir = path.join(this.driver.staticRoot?.() ?? "", "plugin-tars");
+    if (rootDir[0] == "/") {
+      return rootDir;
+    }
+    return `/${rootDir}`;
   }
 
   public getTarPath(uploadHash: string): string {

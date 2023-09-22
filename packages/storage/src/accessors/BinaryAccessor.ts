@@ -21,7 +21,11 @@ export default class BinaryAccessor {
   }
 
   public parentRootDirectory() {
-    return path.join(this.driver.staticRoot?.() ?? "", "binaries");
+    const rootDir = path.join(this.driver.staticRoot?.() ?? "", "binaries");
+    if (rootDir[0] == "/") {
+      return rootDir;
+    }
+    return `/${rootDir}`;
   }
 
   public getRelativeBinaryPath(fileName: string) {

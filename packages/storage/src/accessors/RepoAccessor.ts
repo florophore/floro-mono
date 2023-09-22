@@ -30,10 +30,14 @@ export default class RepoAccessor {
   }
 
   public parentRootDirectory(repo: Repository) {
-    return path.join(
+    const rootDir =  path.join(
       this.driver.staticRoot?.() ?? "",
       this.getRelativeParentRootDirectory(repo)
     );
+    if (rootDir[0] == "/") {
+      return rootDir;
+    }
+    return `/${rootDir}`;
   }
 
   public async makeRepoPath(repo: Repository) {

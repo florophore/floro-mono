@@ -25,7 +25,8 @@ export default class AwsStorageDriver implements StorageDriver {
   public s3Client!: S3Client;
 
   constructor(storageType: "public" | "private") {
-    this.bucket = storageType == "public" ? env.PRIVATE_BUCKET ?? "" : env.PUBLIC_BUCKET ?? "";
+    //this.bucket = storageType == "private" ? env.PRIVATE_BUCKET ?? "" : env.PUBLIC_BUCKET ?? "";
+    this.bucket = storageType == "private" ? "floro-private-assets-staging" : "floro-public-assets-staging";
     this.s3Client = new S3Client({
       region: env.AWS_S3_REGION ?? "us-east-1",
       credentials:{
@@ -45,9 +46,10 @@ export default class AwsStorageDriver implements StorageDriver {
 
   public async exists(path: string) {
     try {
+      const key = path[0] == "/" ? path.substring(1) : path;
       const command = new HeadObjectCommand({
         Bucket: this.bucket,
-        Key: path
+        Key: key
       });
       const response = await this.s3Client.send(command);
       return response.$metadata.httpStatusCode == 200;
@@ -58,9 +60,10 @@ export default class AwsStorageDriver implements StorageDriver {
 
   public async read(path: string) {
     try {
+      const key = path[0] == "/" ? path.substring(1) : path;
       const command = new GetObjectCommand({
         Bucket: this.bucket,
-        Key: path
+        Key: key
       });
       const response = await this.s3Client.send(command);
       return await streamToString(response.Body as Readable)
@@ -71,9 +74,10 @@ export default class AwsStorageDriver implements StorageDriver {
 
   public async write(path: string, data: Buffer|string) {
     try {
+      const key = path[0] == "/" ? path.substring(1) : path;
       const command = new PutObjectCommand({
         Bucket: this.bucket,
-        Key: path,
+        Key: key,
         Body: typeof data == "string" ? Buffer.from(data) : data
       });
       const response = await this.s3Client.send(command);
@@ -96,7 +100,7 @@ export default class AwsStorageDriver implements StorageDriver {
   }
 
   public staticRoot() {
-    // NO FS, so just leave "/"
-    return "/";
+    // NO FS, so just leave ""
+    return "";
   }
 }
