@@ -96,7 +96,7 @@ export default class AwsStorageDriver implements StorageDriver {
   }
 
   public staticRoot() {
-    // NOTHIG TO DO
-    return "";
+    // NO FS, so just leave "/"
+    return "/";
   }
 }
