@@ -42,7 +42,7 @@ const VerifyGithubOAuthEmail = (props: Props): React.ReactElement => {
       <MjmlBody width={500}>
         <MjmlSection fullWidth backgroundColor={colorPalette.white}>
           <MjmlColumn width={500}>
-            <MjmlImage width={200} src={`${props.assetHost}/assets/images/floro_v3_with_text_email.png`} />
+            <MjmlImage width={200} src={`${props.assetHost}/email_images/floro_with_text_email.png`} />
           </MjmlColumn>
         </MjmlSection>
         <MjmlSection paddingTop={0}>
@@ -75,7 +75,7 @@ const VerifyGithubOAuthEmail = (props: Props): React.ReactElement => {
             }
             {props.action == "login" &&
               <MjmlText align={'center'} lineHeight={32} fontSize={18} fontWeight={700} color={colorPalette.mediumGray}>
-                  {"After signing in with think link below, you will be able to sign in directly with Github."}
+                  {"After signing in with the link below, you will be able to sign in directly with Github."}
               </MjmlText>
             }
             <MjmlText fontStyle={'italic'} align={'center'} lineHeight={32} fontSize={18} color={colorPalette.mediumGray}>

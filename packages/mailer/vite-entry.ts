@@ -17,12 +17,11 @@ let template = fs.readFileSync(
 async function createServer() {
     const app = express()
 
-    console.log(resolve("../common-assets/assets"))
-    const requestHandler = express.static(resolve("../common-assets/assets"));
+    const requestHandler = express.static(resolve("../main/public/email_images"));
     app.use(requestHandler);
-    app.use("/assets", requestHandler);
+    app.use("/email_images", requestHandler);
 
-  
+
     // Create Vite server in middleware mode and configure the app type as
     // 'custom', disabling Vite's own HTML serving logic so parent server
     // can take control
@@ -42,7 +41,7 @@ async function createServer() {
       }
       return mocks;
     }
-  
+
     // use vite's connect instance as middleware
     // if you use your own express router (express.Router()), you should use router.use
     app.use(vite.middlewares)
@@ -87,7 +86,7 @@ async function createServer() {
         console.error(e);
       }
     });
-  
+
     app.use('*', async (req, res) => {
       // serve index.html - we will tackle this next
 
@@ -95,8 +94,8 @@ async function createServer() {
       const outTemplate = await vite.transformIndexHtml(url, template)
       res.status(200).set({ 'Content-Type': 'text/html' }).end(outTemplate)
     })
-  
+
     app.listen(5173)
   }
-  
+
   createServer()

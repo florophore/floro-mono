@@ -1,9 +1,6 @@
 import {app, BrowserWindow, ipcMain, nativeTheme} from 'electron';
 import {join, resolve} from 'node:path';
 
-import { createSocket } from '@floro/common-react/src/pubsub/socket';
-
-const socket = createSocket('desktop');
 let ipcRendererHasMounted = false;
 
 const getSystemTheme = (): 'light' | 'dark' => {
@@ -30,6 +27,15 @@ async function createWindow() {
     },
   });
 
+  const bringToFront = () => {
+      browserWindow?.focus?.();
+      browserWindow?.show?.();
+  }
+
+  browserWindow.on('close', () => {
+    ipcMain.off('system:bringToFront', bringToFront);
+  });
+
   /**
    * If the 'show' property of the BrowserWindow's constructor is omitted from the initialization options,
    * it then defaults to 'true'. This can cause flickering as the window loads the html content,
@@ -49,19 +55,20 @@ async function createWindow() {
       ipcMain.handle('system:getSystemTheme', getSystemTheme);
       ipcRendererHasMounted = true;
     }
+    ipcMain.on('system:bringToFront', bringToFront);
     ipcMain.on('system:openOAuthWindow', async (_: any, provider: any) => {
       const oauthWindow = new BrowserWindow({
         show: true, // Use the 'ready-to-show' event to show the instantiated BrowserWindow.
-        //titleBarStyle: 'hidden',
+        titleBarStyle: 'hidden',
+        trafficLightPosition: { x: 10, y: 10 },
         titleBarOverlay: true,
         parent: browserWindow,
-        modal: true,
         height: 800,
         width: 600,
         resizable: false,
         roundedCorners: true,
         webPreferences: {
-          webSecurity: false,
+          webSecurity: true, // THIS CREATES CORS ISSUES if false
           nodeIntegration: false,
           contextIsolation: true,
           sandbox: false,
@@ -73,7 +80,6 @@ async function createWindow() {
 
       if (provider == 'github') {
         const githubOAuthUrl = `https://github.com/login/oauth/authorize?client_id=${process?.env?.['GITHUB_OAUTH_CLIENT_ID']}&scope=user`
-        console.log("GH URL", githubOAuthUrl);
         oauthWindow.loadURL(githubOAuthUrl);
       }
       if (provider == 'google') {
@@ -87,41 +93,16 @@ async function createWindow() {
         }
       });
 
-      socket.on('login', () => {
+      const sendOAuthResult = () => {
         oauthWindow.close();
         oauthWindow.destroy();
-        socket.off('login');
-        socket.off('complete_signup');
-        socket.off('kill_oauth');
-      });
+      };
 
-      socket.on('complete_signup', () => {
-        oauthWindow.close();
-        oauthWindow.destroy();
-        socket.off('login');
-        socket.off('complete_signup');
-        socket.off('kill_oauth');
-      });
+      oauthWindow.on('close', () => {
+        ipcMain.off('oauth:sendOAuthResult', sendOAuthResult)
+      })
 
-      socket.on('oauth_failed', () => {
-        oauthWindow.close();
-        oauthWindow.destroy();
-        socket.off('login');
-        socket.off('complete_signup');
-        socket.off('kill_oauth');
-      });
-      socket.on('kill_oauth', () => {
-        oauthWindow.close();
-        oauthWindow.destroy();
-        socket.off('login');
-        socket.off('complete_signup');
-        socket.off('kill_oauth');
-      });
-
-      ipcMain.once('oauth:sendOAuthResult', () => {
-        oauthWindow.close();
-        oauthWindow.destroy();
-      });
+      ipcMain.once('oauth:sendOAuthResult', sendOAuthResult);
     });
   });
 
@@ -154,7 +135,6 @@ async function createWindow() {
  */
 export async function restoreOrCreateWindow() {
   let window = BrowserWindow.getAllWindows().find(w => !w.isDestroyed());
-  socket.off('bring-to-front');
 
   if (window === undefined) {
     window = await createWindow();
@@ -168,9 +148,5 @@ export async function restoreOrCreateWindow() {
   }
 
   window.focus();
-  socket.on('bring-to-front', () => {
-    window?.focus?.();
-    window?.show?.();
-  });
   return window;
 }

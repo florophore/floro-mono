@@ -21,6 +21,7 @@ import {OfflineIconProvider} from "@floro/common-react/src/offline/OfflineIconsC
 import ColorPalette from '@floro/styles/ColorPalette';
 import { createUploadLink } from 'apollo-upload-client';
 import { CurrentUserSubscriberMount } from '@floro/common-react/src/components/subscribers/UserSubscriber';
+import { DesktopSocketProvider } from './contexts/DesktopSocketContext';
 
 const authMiddleware = setContext((_, {headers}) => {
   // add the authorization to the headers
@@ -126,9 +127,11 @@ const App = (props: Props): React.ReactElement => {
                   <OfflinePhotoProvider>
                     <SessionProvider>
                       <CurrentUserSubscriberMount>
-                        <DOMMount>
-                          <Router />
-                        </DOMMount>
+                        <DesktopSocketProvider>
+                          <DOMMount>
+                            <Router />
+                          </DOMMount>
+                        </DesktopSocketProvider>
                       </CurrentUserSubscriberMount>
                     </SessionProvider>
                   </OfflinePhotoProvider>
