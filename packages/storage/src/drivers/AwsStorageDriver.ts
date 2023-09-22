@@ -3,6 +3,7 @@ import StorageDriver from "./StrorageDriver";
 import tar from "tar";
 import { Readable } from "stream";
 import { env } from "process";
+import path from 'path';
 import {
   S3Client,
   GetObjectCommand,
@@ -12,6 +13,7 @@ import {
 import StorageAuthenticator from "../StorageAuthenticator";
 import MainConfig from "@floro/config/src/MainConfig";
 import fetch from 'node-fetch';
+import mime from 'mime-types';
 
 async function streamToString (stream: Readable): Promise<string> {
   return await new Promise((resolve, reject) => {
@@ -50,7 +52,7 @@ export default class AwsStorageDriver implements StorageDriver {
     this.mainConfig = mainConfig;
   }
 
-  public async mkdir(_path: string) {
+  public async mkdir(_fpath: string) {
     // NOTHING TO DO
   }
 
@@ -58,9 +60,9 @@ export default class AwsStorageDriver implements StorageDriver {
     // NOTHING TO DO
   }
 
-  public async exists(path: string) {
+  public async exists(fpath: string) {
     try {
-      const key = path[0] == "/" ? path.substring(1) : path;
+      const key = fpath[0] == "/" ? fpath.substring(1) : fpath;
       const command = new HeadObjectCommand({
         Bucket: this.bucket,
         Key: key
@@ -72,9 +74,9 @@ export default class AwsStorageDriver implements StorageDriver {
     }
   }
 
-  public async read(path: string) {
+  public async read(fpath: string) {
     try {
-      const key = path[0] == "/" ? path.substring(1) : path;
+      const key = fpath[0] == "/" ? fpath.substring(1) : fpath;
       if (this.storageType == "private" && this.mainConfig && this.storageAuthenticator) {
         const urlPath = "/" + key
         const url = this.mainConfig.privateRoot() + urlPath;
@@ -99,13 +101,15 @@ export default class AwsStorageDriver implements StorageDriver {
     }
   }
 
-  public async write(path: string, data: Buffer|string) {
+  public async write(fpath: string, data: Buffer|string) {
     try {
-      const key = path[0] == "/" ? path.substring(1) : path;
+      const key = fpath[0] == "/" ? fpath.substring(1) : fpath;
+      const mimeType = mime.contentType(path.extname(fpath)) as string;
       const command = new PutObjectCommand({
         Bucket: this.bucket,
         Key: key,
-        Body: typeof data == "string" ? Buffer.from(data) : data
+        Body: typeof data == "string" ? Buffer.from(data) : data,
+        ContentType: mimeType
       });
       const response = await this.s3Client.send(command);
       if (response.$metadata.httpStatusCode != 200) {
@@ -116,11 +120,11 @@ export default class AwsStorageDriver implements StorageDriver {
     }
   }
 
-  public async zipDirectory(path: string): Promise<Readable> {
+  public async zipDirectory(fpath: string): Promise<Readable> {
     return tar.c(
       {
         gzip: true,
-        cwd: path,
+        cwd: fpath,
       },
       ["."]
     );
