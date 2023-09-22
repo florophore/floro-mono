@@ -48,6 +48,9 @@ jobs:
       - name: Build Main
         run: CDN_HOST=${{ steps.cdnHost.outputs.value }} VITE_HOST=${{ steps.viteHost.outputs.value }} VITE_IS_SECURE=true yarn main build
 
+      - name: LS source dir
+        run: ls packages/main/dist/client
+
       - name: Push build to S3
         uses: jakejarvis/s3-sync-action@master
         with:

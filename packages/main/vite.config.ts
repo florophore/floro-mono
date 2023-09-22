@@ -8,6 +8,7 @@ export default defineConfig(({ command, mode }): any => {
     mode: process.env.MODE,
     outDir: 'dist',
     plugins: [react()],
+    publicDir: 'public',
     assetsInclude: [
       '../common-assets/assets/**/*.svg',
       '../common-assets/assets/images/**/*.svg',
