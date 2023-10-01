@@ -52,7 +52,7 @@ const AddGroupContainer = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  width: 492px;
+  width: 620px;
 `;
 
 const Row = styled.div`
@@ -93,28 +93,6 @@ const SubTitle = styled.h3`
   cursor: pointer;
   padding: 0;
 `;
-
-
-//const itemsArray = [
-//  { itemId: 1, itemRef: "Item 001" },
-//  { itemId: 2, itemRef: "Item 002" },
-//  { itemId: 3, itemRef: "Item 003" }
-//];
-//
-//const csvString = [
-//  [
-//    "Item ID",
-//    "Item Reference"
-//  ],
-//  ...itemsArray.map(item => [
-//    item.itemId,
-//    item.itemRef
-//  ])
-//]
-//.map(e => e.join(","))
-//.join("\n");
-
-
 
 interface Props {
   onSetSearchText: (str: string) => void;
@@ -196,7 +174,7 @@ const TextAppHeader = (props: Props) => {
       return null;
     }
     return (
-      newGroupName?.trim?.()?.replaceAll?.(/ +/g, "-")?.toLowerCase?.() ?? null
+      newGroupName?.trim?.()?.replaceAll?.(/ +/g, "_")?.toLowerCase?.() ?? null
     );
   }, [newGroupName]);
 
@@ -295,6 +273,7 @@ const TextAppHeader = (props: Props) => {
                   label={"new phrase group"}
                   placeholder={"phrase group name"}
                   onTextChanged={setNewGroupName}
+                  widthSize="wide"
                 />
                 <Button
                   onClick={onAppendNewGroup}

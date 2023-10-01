@@ -54,11 +54,6 @@
         "name": {
           "type": "string"
         },
-        "globalNotes": {
-          "type": "string",
-          "default": "",
-          "nullable": true
-        },
         "localizedTerms": {
           "type": "set",
           "bounded": true,
@@ -162,6 +157,10 @@
                         "type": "string",
                         "nullable": true
                       },
+                      "enabledTerms": {
+                        "type": "set",
+                        "values": "string"
+                      },
                       "sourceAtRevision": {
                         "sourceLocaleRef": {
                           "type": "ref<$.localeSettings.locales.values>",
@@ -264,6 +263,10 @@
                         "type": "string",
                         "nullable": true
                       },
+                      "enabledTerms": {
+                        "type": "set",
+                        "values": "string"
+                      },
                       "sourceAtRevision": {
                         "sourceLocaleRef": {
                           "type": "ref<$.localeSettings.locales.values>",
@@ -305,6 +308,40 @@
                         "booleanComparatorValue": {
                           "type": "boolean",
                           "nullable": true
+                        },
+                        "subconditions": {
+                          "type": "array",
+                          "values": {
+                            "conjunction": {
+                              "type": "string",
+                              "nullable": false,
+                              "default": "AND"
+                            },
+                            "variableRef": {
+                              "type": "ref<$.phraseGroups.values.phrases.values.variables.values>",
+                              "onDelete": "delete"
+                            },
+                            "operator": {
+                              "type": "string",
+                              "nullable": false
+                            },
+                            "intComparatorValue": {
+                              "type": "int",
+                              "nullable": true
+                            },
+                            "floatComparatorValue": {
+                              "type": "float",
+                              "nullable": true
+                            },
+                            "stringComparatorValue": {
+                              "type": "string",
+                              "nullable": true
+                            },
+                            "booleanComparatorValue": {
+                              "type": "boolean",
+                              "nullable": true
+                            }
+                          }
                         },
                         "resultant": {
                           "richTextHtml": {
@@ -354,6 +391,10 @@
                   "type": "string",
                   "nullable": true
                 },
+                "enabledTerms": {
+                  "type": "set",
+                  "values": "string"
+                },
                 "sourceAtRevision": {
                   "sourceLocaleRef": {
                     "type": "ref<$.localeSettings.locales.values>",
@@ -371,17 +412,6 @@
                     "type": "string",
                     "nullable": true
                   }
-                }
-              }
-            },
-            "exampleUsageImages": {
-              "type": "array",
-              "values": {
-                "description": {
-                  "type": "string"
-                },
-                "image": {
-                  "type": "file"
                 }
               }
             },
@@ -455,7 +485,7 @@
           {
             "id": "hello_world",
             "phraseKey": "hello world",
-            "description": "Example descript of key to get you started",
+            "description": "Example description of key. This key should express \"Hello World\".",
             "variables": [],
             "linkVariants": [],
             "interpolationVariants": [],

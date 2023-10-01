@@ -12,6 +12,9 @@ import {
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
+import TrashLight from "@floro/common-assets/assets/images/icons/trash.light.darker.svg";
+import TrashDark from "@floro/common-assets/assets/images/icons/trash.dark.svg";
+
 import ContentEditor from "@floro/storybook/stories/design-system/ContentEditor";
 import LinkEditor from "@floro/storybook/stories/design-system/ContentEditor/LinkEditor";
 import EditorDocument from "@floro/storybook/stories/design-system/ContentEditor/editor/EditorDocument";
@@ -22,6 +25,14 @@ import Observer from "@floro/storybook/stories/design-system/ContentEditor/edito
 import ColorPalette from "@floro/styles/ColorPalette";
 import SourceLinkDisplayTranslation from "./SourceLinkDisplayTranslation";
 import SourceLinkHrefTranslation from "./SourceLinkHrefTranslation";
+import TextNode from "@floro/storybook/stories/design-system/ContentEditor/editor/nodes/TextNode";
+import TermList from "../termdisplay/TermList";
+
+import deepLSourceLocales from "../../deep_l_source_locales.json";
+import deepLTargetLocales from "../../deep_l_target_locales.json";
+import MLModal from "../mlmodal/MLModal";
+import { useTranslationMemory } from "../../memory/TranslationMemoryContext";
+import TranslationMemoryList from "../tranlsationmemory/TranslationMemoryList";
 
 const Container = styled.div`
 `;
@@ -67,6 +78,30 @@ const TitleRow = styled.div`
   width: 100%;
 `;
 
+const DeleteVarContainer = styled.div`
+  cursor: pointer;
+  margin-left: 16px;
+  padding-top: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const DeleteVar = styled.img`
+  height: 32px;
+  width: 32px;
+  pointer-events: none;
+  user-select: none;
+`;
+
+
+const BlankDisclaimer = styled.p`
+  font-family: "MavenPro";
+  font-weight: 500;
+  font-size: 1rem;
+  color: ${props => props.theme.colors.contrastText};
+`;
+
 interface Props {
   phrase: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>"];
   phraseRef: PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>"];
@@ -75,11 +110,15 @@ interface Props {
   systemSourceLocale:
     | SchemaTypes["$(text).localeSettings.locales.localeCode<?>"]
     | null;
+  fallbackLocale:
+    | SchemaTypes["$(text).localeSettings.locales.localeCode<?>"]
+    | null;
   linkRef: PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>"];
   setPinnedPhrases: (phraseRegs: Array<string>) => void;
   globalFilterUntranslated: boolean;
   isPinned: boolean;
   pinnedPhrases: Array<string>|null;
+  onRemove: (variable: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>"]) => void;
 }
 
 const LinkVariable = (props: Props) => {
@@ -87,7 +126,7 @@ const LinkVariable = (props: Props) => {
   const [phraseGroupId, phraseId, linkName] = useExtractQueryArgs(
     props.linkRef
   );
-  const { commandMode } = useFloroContext();
+  const { commandMode, applicationState } = useFloroContext();
 
   const localeRef = makeQueryRef(
     "$(text).localeSettings.locales.localeCode<?>",
@@ -101,6 +140,13 @@ const LinkVariable = (props: Props) => {
       )
     : (null as unknown as PointerTypes["$(text).localeSettings.locales.localeCode<?>"]);
 
+  const fallbackLocaleRef = props?.fallbackLocale?.localeCode
+    ? makeQueryRef(
+        "$(text).localeSettings.locales.localeCode<?>",
+        props?.fallbackLocale.localeCode
+      )
+    : (null as unknown as PointerTypes["$(text).localeSettings.locales.localeCode<?>"]);
+
   const sourceRef = sourceLocaleRef
     ? makeQueryRef(
         "$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>",
@@ -110,8 +156,19 @@ const LinkVariable = (props: Props) => {
         sourceLocaleRef
       )
     : (null as unknown as PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>"]);
+  const fallbackRef = fallbackLocaleRef
+    ? makeQueryRef(
+        "$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>",
+        phraseGroupId,
+        phraseId,
+        linkName,
+        fallbackLocaleRef
+      )
+    : (null as unknown as PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>"]);
+
 
   const sourceLinkTranslation = useReferencedObject(sourceRef);
+  const fallbackLinkTranslation = useReferencedObject(fallbackRef);
 
   const linkTranslationRef = useQueryRef(
     "$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>",
@@ -128,10 +185,84 @@ const LinkVariable = (props: Props) => {
     `${linkTranslationRef}.linkHrefValue`
   );
 
+  const terms = useReferencedObject("$(text).terms");
+  const localeTerms = useMemo(() => {
+    return terms?.flatMap(term => {
+      const value = term.localizedTerms.find(localizedTerm => {
+        return localizedTerm.id == localeRef;
+      })?.termValue ?? term?.name;
+      return {
+        id: term.id,
+        value: value == '' ? term.name : value,
+        name: term.name
+      }
+    }) ?? [];
+  }, [terms, localeRef, applicationState]);
+
+  const mentionedTerms = useMemo(() => {
+    const json = JSON.parse(linkDisplayValue?.json ?? '{}');
+    const children: Array<TextNode> = json?.children ?? [];
+    const foundTerms: Array<{
+      value: string,
+      id: string,
+      name: string,
+    }> = [];
+
+    const flattenedChildren: Array<TextNode> = [];
+    for (let i = 0; i < children.length; ++i) {
+      if (children[i]?.type == "text" || children[i]?.type == "mentioned-tag") {
+        const combined = children[i];
+        combined.type = 'text';
+        for (let j = i; j < children.length; ++j) {
+          if (children[j]?.type != "text" && children[j]?.type != "mentioned-tag") {
+            flattenedChildren.push(combined);
+            break;
+          }
+          combined.content += children[j].content;
+          i = j;
+          flattenedChildren.push(combined)
+        }
+      } else {
+        flattenedChildren.push(children[i]);
+      }
+    }
+
+    for (const localeTerm of localeTerms) {
+      for (const child of flattenedChildren) {
+        if (child?.type == 'text') {
+          if ((child.content?? '')?.toLowerCase()?.indexOf(localeTerm.value?.toLowerCase()) != -1) {
+            foundTerms.push(localeTerm);
+            break;
+          }
+        }
+        if (child?.type == 'mentioned-tag') {
+          if (child.content == localeTerm.value) {
+            foundTerms.push(localeTerm);
+            break;
+          }
+        }
+      }
+    }
+    return foundTerms;
+  }, [linkDisplayValue?.plainText, linkDisplayValue?.json, localeTerms])
+
+  const enabledMentionedValues = useMemo(() => {
+    return mentionedTerms
+      ?.filter((mentionedTerm) => {
+        return linkDisplayValue?.enabledTerms?.includes(mentionedTerm?.id);
+      })
+      ?.map((mentionedTerm) => mentionedTerm.value);
+  }, [mentionedTerms, linkDisplayValue?.enabledTerms])
+
   const editorObserver = useMemo(() => {
     const variables = props.phrase.variables.map((v) => v.name);
-    const interpolationVariants = props.phrase.interpolationVariants.map((v) => v.name);
-    return new Observer(variables, [], interpolationVariants);
+    const interpolationVariants = props.phrase?.interpolationVariants?.map?.((v) => v.name) ?? [];
+    return new Observer(variables, [], interpolationVariants, enabledMentionedValues ?? []);
+  }, [props.phrase.variables, enabledMentionedValues]);
+
+  const hrefEditorObserver = useMemo(() => {
+    const variables = props.phrase.variables.map((v) => v.name);
+    return new Observer(variables);
   }, [props.phrase.variables]);
 
   const linkDisplayEditorDoc = useMemo(() => {
@@ -153,17 +284,17 @@ const LinkVariable = (props: Props) => {
   const linkHrefEditorDoc = useMemo(() => {
     if (linkHrefValue) {
       const doc = new EditorDocument(
-        editorObserver,
+        hrefEditorObserver,
         props.selectedLocale.localeCode?.toLowerCase() ?? "en"
       );
       doc.tree.updateRootFromHTML(linkHrefValue?.richTextHtml ?? "");
       return doc;
     }
     return new EditorDocument(
-      editorObserver,
+      hrefEditorObserver,
       props.selectedLocale.localeCode?.toLowerCase() ?? "en"
     );
-  }, [props.selectedLocale.localeCode, editorObserver]);
+  }, [props.selectedLocale.localeCode, hrefEditorObserver]);
 
   const displayContentIsEmpty = useMemo(() => {
     return (linkDisplayValue?.plainText ?? "") == "";
@@ -172,6 +303,10 @@ const LinkVariable = (props: Props) => {
   const hrefContentIsEmpty = useMemo(() => {
     return (linkHrefValue?.plainText ?? "") == "";
   }, [linkHrefValue?.plainText])
+
+  const sourceDisplayValueIsEmpty = useMemo(() => {
+    return (sourceLinkTranslation?.linkDisplayValue?.plainText ?? "") == "";
+  }, [sourceLinkTranslation?.linkDisplayValue?.plainText])
 
   const onSetDisplayValueContent = useCallback(
     (richTextHtml: string) => {
@@ -288,6 +423,32 @@ const LinkVariable = (props: Props) => {
     sourceRef,
   ]);
 
+  const onChangeTerm = useCallback(
+    (termId: string) => {
+      if (linkDisplayValue?.enabledTerms?.includes(termId)) {
+        const enabledTerms =
+          linkDisplayValue?.enabledTerms?.filter((t) => t != termId) ?? [];
+        if (linkDisplayValue) {
+          setLinkDisplayValue?.({
+            ...linkDisplayValue,
+            enabledTerms,
+          });
+        }
+      } else {
+        const enabledTerms = [
+          ...(linkDisplayValue?.enabledTerms?.filter((t) => t != termId) ?? []),
+          termId,
+        ];
+        if (linkDisplayValue) {
+          setLinkDisplayValue?.({
+            ...linkDisplayValue,
+            enabledTerms,
+          });
+        }
+      }
+    },
+    [linkDisplayValue?.enabledTerms, linkDisplayValue, setLinkDisplayValue]
+  );
 
   const onMarkHrefResolved = useCallback(() => {
     if (!linkHrefValue) {
@@ -340,8 +501,102 @@ const LinkVariable = (props: Props) => {
     sourceLinkTranslation?.linkHrefValue?.revisionCount,
   ]);
 
+  const xIcon = useMemo(() => {
+    if (theme.name == "light") {
+      return TrashLight;
+    }
+    return TrashDark;
+  }, [theme.name]);
+
+
+  const onRemove = useCallback(() => {
+    if (props.linkVariable) {
+      props.onRemove(props.linkVariable);
+    }
+  }, [props.linkVariable, props.onRemove]);
+
+
+  const sourceEnabledMentionedValues = useMemo(() => {
+    return mentionedTerms
+      ?.filter((mentionedTerm) => {
+        return sourceLinkTranslation?.linkDisplayValue?.enabledTerms?.includes(mentionedTerm?.id);
+      })
+      ?.map((mentionedTerm) => mentionedTerm.value);
+  }, [mentionedTerms, sourceLinkTranslation?.linkDisplayValue?.enabledTerms])
+
+  const sourceEditorObserver = useMemo(() => {
+    const variables = props.phrase.variables?.map(v => v.name) ?? [];
+    const interpolationVariants = props.phrase?.interpolationVariants?.map?.(v => v.name) ?? [];
+    return new Observer(variables, [], interpolationVariants, sourceEnabledMentionedValues ?? []);
+  }, [props.phrase.variables, props.phrase.linkVariables, props.phrase.interpolationVariants, sourceEnabledMentionedValues]);
+
+  const sourceEditorDoc = useMemo(() => {
+    if (sourceLinkTranslation?.linkDisplayValue && props?.systemSourceLocale?.localeCode) {
+        const doc = new EditorDocument(sourceEditorObserver, props.systemSourceLocale.localeCode?.toLowerCase() ?? "en");
+        doc.tree.updateRootFromHTML(sourceLinkTranslation?.linkDisplayValue?.richTextHtml ?? "")
+        return doc;
+    }
+    return new EditorDocument(sourceEditorObserver, props?.systemSourceLocale?.localeCode?.toLowerCase() ?? "en");
+  }, [props?.systemSourceLocale?.localeCode, sourceEditorObserver, sourceLinkTranslation?.linkDisplayValue]);
+
+  const sourceMockHtml = useMemo(() => {
+    return sourceEditorDoc.tree.getHtml();
+  }, [sourceEditorDoc]);
+
+  const [showMLTranslate, setShowMLTranslate] = useState(false);
+
+  const onShowMLTranslate = useCallback(() => {
+    setShowMLTranslate(true);
+  }, []);
+
+  const onHideMLTranslate = useCallback(() => {
+    setShowMLTranslate(false);
+  }, []);
+
+
+  const translationMemory = useTranslationMemory();
+
+  const translationMemories = useMemo(() => {
+    if (!sourceLinkTranslation?.linkDisplayValue) {
+      return [];
+    }
+    if (!props.selectedLocale?.localeCode) {
+      return [];
+    }
+
+    if ((sourceLinkTranslation?.linkDisplayValue?.plainText?.trim() ?? "") == "") {
+      return [];
+    }
+
+    const memory = translationMemory[props.selectedLocale.localeCode];
+    if (!memory) {
+      return [];
+    }
+    if (!memory?.[sourceLinkTranslation?.linkDisplayValue?.plainText?.trim().toLowerCase() as string]) {
+      return [];
+    }
+    const termSet = memory?.[sourceLinkTranslation?.linkDisplayValue?.plainText?.trim().toLowerCase() as string];
+    if (!termSet) {
+      return [];
+    }
+    return Array.from(termSet);
+  }, [translationMemory, sourceLinkTranslation?.linkDisplayValue, props.selectedLocale]);
+
   return (
-    <div style={{marginBottom: 24}}>
+    <div style={{ marginBottom: 24 }}>
+      {sourceLinkTranslation?.linkDisplayValue?.richTextHtml && commandMode == "edit" && (
+        <MLModal
+          show={showMLTranslate && commandMode == "edit"}
+          selectedLocale={props.selectedLocale}
+          systemSourceLocale={props.systemSourceLocale}
+          sourceRichText={sourceLinkTranslation?.linkDisplayValue?.richTextHtml}
+          sourceMockText={sourceMockHtml}
+          sourceEditorDoc={sourceEditorDoc}
+          onDismiss={onHideMLTranslate}
+          enabledTermIds={sourceLinkTranslation?.linkDisplayValue.enabledTerms}
+          onApplyTranslation={onSetDisplayValueContent}
+        />
+      )}
       <TitleRow>
         <RowTitle
           style={{
@@ -374,6 +629,11 @@ const LinkVariable = (props: Props) => {
             {` (${props.selectedLocale.localeCode}):`}
           </span>
         </RowTitle>
+        {commandMode == "edit" && (
+          <DeleteVarContainer onClick={onRemove}>
+            <DeleteVar src={xIcon} />
+          </DeleteVarContainer>
+        )}
       </TitleRow>
       <SubContainer>
         <Container>
@@ -390,7 +650,7 @@ const LinkVariable = (props: Props) => {
                 {`Link Display Value`}
               </span>
               <span
-                  style={{
+                style={{
                   fontSize: "1.4rem",
                   background: ColorPalette.variableBlue,
                   boxShadow: `inset 0px 0px 2px 2px ${ColorPalette.variableBlueInset}`,
@@ -400,20 +660,30 @@ const LinkVariable = (props: Props) => {
                   color: ColorPalette.white,
                   marginLeft: 8,
                   marginRight: 8,
-                  }}
+                }}
               >
-              {props.linkVariable.linkName}
-            </span>
+                {props.linkVariable.linkName}
+              </span>
               <span style={{ color: theme.colors.contrastText }}>
                 {`(${props.selectedLocale.localeCode}):`}
               </span>
               {props.systemSourceLocale && commandMode == "edit" && (
                 <div style={{ width: 120, marginLeft: 12 }}>
                   <Button
+                    isDisabled={
+                      sourceDisplayValueIsEmpty ||
+                      !deepLSourceLocales[
+                        props.systemSourceLocale?.localeCode?.toUpperCase()
+                      ] ||
+                      !deepLTargetLocales?.[
+                        props?.selectedLocale?.localeCode?.toUpperCase()
+                      ]
+                    }
                     label={"ML translate"}
                     bg={"teal"}
                     size={"small"}
                     textSize="small"
+                    onClick={onShowMLTranslate}
                   />
                 </div>
               )}
@@ -461,10 +731,55 @@ const LinkVariable = (props: Props) => {
               content={linkDisplayValue?.richTextHtml ?? ""}
             />
           )}
+          {mentionedTerms?.length > 0 && (
+            <TermList
+              terms={mentionedTerms ?? []}
+              selectedLocale={props.selectedLocale}
+              systemSourceLocale={props.systemSourceLocale}
+              onChange={onChangeTerm}
+              enabledTerms={linkDisplayValue?.enabledTerms ?? []}
+              title={
+                <>
+                  <span style={{ color: theme.colors.contrastText }}>
+                    {`Recognized Terms in Display Value`}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: "1.4rem",
+                      background: ColorPalette.variableBlue,
+                      boxShadow: `inset 0px 0px 2px 2px ${ColorPalette.variableBlueInset}`,
+                      borderRadius: 8,
+                      padding: 4,
+                      fontWeight: 500,
+                      color: ColorPalette.white,
+                      marginLeft: 8,
+                      marginRight: 8,
+                    }}
+                  >
+                    {props.linkVariable.linkName}
+                  </span>
+                  <span style={{ color: theme.colors.contrastText }}>
+                    {`(${props.selectedLocale.localeCode}):`}
+                  </span>
+                </>
+              }
+            />
+          )}
+          {translationMemories.length > 0 &&
+            (linkDisplayValue?.plainText ?? "").trim() == "" &&
+            commandMode == "edit" && (
+              <TranslationMemoryList
+                memories={translationMemories}
+                observer={editorObserver}
+                onApply={onSetDisplayValueContent}
+                lang={props.selectedLocale?.localeCode}
+              />
+            )}
         </Container>
-        {props.systemSourceLocale && linkDisplayValue &&(
+        {props.systemSourceLocale && linkDisplayValue && (
           <SourceLinkDisplayTranslation
             phrase={props.phrase}
+            selectedLocale={props.selectedLocale}
             systemSourceLocale={props.systemSourceLocale}
             linkVariableRef={props.linkRef}
             targetLinkDisplayTranslation={linkDisplayValue}
@@ -485,7 +800,7 @@ const LinkVariable = (props: Props) => {
                 {`Link HREF Value`}
               </span>
               <span
-                  style={{
+                style={{
                   fontSize: "1.4rem",
                   background: ColorPalette.variableBlue,
                   boxShadow: `inset 0px 0px 2px 2px ${ColorPalette.variableBlueInset}`,
@@ -495,10 +810,10 @@ const LinkVariable = (props: Props) => {
                   color: ColorPalette.white,
                   marginLeft: 8,
                   marginRight: 8,
-                  }}
+                }}
               >
-              {props.linkVariable.linkName}
-            </span>
+                {props.linkVariable.linkName}
+              </span>
               <span style={{ color: theme.colors.contrastText }}>
                 {`(${props.selectedLocale.localeCode}):`}
               </span>
@@ -530,6 +845,13 @@ const LinkVariable = (props: Props) => {
               )}
             </div>
           </TitleRow>
+          {(fallbackLinkTranslation?.linkHrefValue?.plainText ?? "") != "" && (
+            <div style={{marginBottom: 12}}>
+              <BlankDisclaimer>
+                <span>{`Okay to leave HREF blank, will fallback to (${props?.fallbackLocale?.localeCode}) "${fallbackLinkTranslation.linkHrefValue?.plainText}"`}</span>
+              </BlankDisclaimer>
+            </div>
+          )}
           {commandMode == "edit" && (
             <LinkEditor
               lang={props.selectedLocale.localeCode?.toLowerCase() ?? "en"}
@@ -547,7 +869,7 @@ const LinkVariable = (props: Props) => {
             />
           )}
         </Container>
-        {props.systemSourceLocale && linkHrefValue &&(
+        {props.systemSourceLocale && linkHrefValue && (
           <SourceLinkHrefTranslation
             phrase={props.phrase}
             systemSourceLocale={props.systemSourceLocale}

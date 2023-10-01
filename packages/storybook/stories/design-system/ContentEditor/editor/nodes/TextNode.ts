@@ -4,6 +4,7 @@ import LinkVariableTagNode from "./LinkVariableTagNode";
 import VariableTagNode from "./VariableTagNode";
 import escape from 'escape-html';
 import VariantTagNode from "./VariantTagNode";
+import MentionedTagNode from "./MentionedTagNode";
 
 interface TextNodeJSON extends NodeJSON {
   children: TextNodeJSON[];
@@ -11,25 +12,31 @@ interface TextNodeJSON extends NodeJSON {
     isBold: boolean;
     isItalic: boolean;
     isUnderlined: boolean;
+    isStrikethrough: boolean;
+    isSuperscript: boolean;
+    isSubscript: boolean;
   }
 }
-
-//const tags = ['hello', 'world'];
 
 export default class TextNode extends Node {
 
   public children: TextNode[];
   public observer: Observer;
 
-
   public marks: {
     isBold: boolean;
     isItalic: boolean;
     isUnderlined: boolean;
+    isStrikethrough: boolean;
+    isSuperscript: boolean;
+    isSubscript: boolean;
   } = {
     isBold: false,
     isItalic: false,
-    isUnderlined: false
+    isUnderlined: false,
+    isStrikethrough: false,
+    isSuperscript: false,
+    isSubscript: false
   };
 
   public lang: string;
@@ -38,6 +45,9 @@ export default class TextNode extends Node {
     isBold: boolean,
     isItalic: boolean,
     isUnderlined: boolean,
+    isStrikethrough: boolean,
+    isSuperscript: boolean,
+    isSubscript: boolean
   }) {
     super(observer, content, lang, children);
     this.observer = observer;
@@ -49,6 +59,9 @@ export default class TextNode extends Node {
       this.marks.isBold = !!initMarks.isBold;
       this.marks.isItalic = !!initMarks.isItalic;
       this.marks.isUnderlined = !!initMarks.isUnderlined;
+      this.marks.isStrikethrough = !!initMarks.isStrikethrough;
+      this.marks.isSuperscript = !!initMarks.isSuperscript;
+      this.marks.isSubscript = !!initMarks.isSubscript;
     }
     this.lang = lang;
   }
@@ -56,6 +69,7 @@ export default class TextNode extends Node {
   public toJSON(): TextNodeJSON {
     return {
       content: this.content,
+      type: this.type,
       marks: this.marks,
       children: this.children.map(child => child.toJSON())
     };
@@ -73,6 +87,13 @@ export default class TextNode extends Node {
     if (this.marks.isUnderlined == true) {
       textDecoration = "underline";
     }
+    if (this.marks.isStrikethrough) {
+      if (textDecoration == "underline") {
+        textDecoration = "underline line-through";
+      } else {
+        textDecoration = "line-through";
+      }
+    }
     let fontWeight = "normal";
     if (this.marks.isBold == true) {
       fontWeight = "bold";
@@ -81,17 +102,36 @@ export default class TextNode extends Node {
     if (this.marks.isItalic == true) {
       fontStyle = "italic";
     }
+    let fontSize = "inherit";
+    if (this.marks.isSubscript || this.marks.isSuperscript) {
+      fontSize = "smaller";
+    }
+    let lineHeight = 1;
+    let verticalAlign = "inherit";
+    if (this.marks.isSuperscript) {
+      verticalAlign = "super";
+      lineHeight = 0;
+    }
+    if (this.marks.isSubscript) {
+      verticalAlign = "sub";
+      lineHeight = 0;
+    }
     return `<span
       data-is-bold=${this.marks.isBold ? "true" : "false"}
       data-is-italic=${this.marks.isItalic ? "true" : "false"}
       data-is-underlined=${this.marks.isUnderlined ? "true" : "false"}
+      data-is-strikethrough=${this.marks.isStrikethrough ? "true" : "false"}
+      data-is-superscript=${this.marks.isSuperscript ? "true" : "false"}
+      data-is-subscript=${this.marks.isSubscript ? "true" : "false"}
       lang="${this.lang}"
       spellcheck="true"
-      contenteditable="true"
       style="
         text-decoration: ${textDecoration};
         font-weight: ${fontWeight};
         font-style: ${fontStyle};
+        font-size: ${fontSize};
+        vertical-align: ${verticalAlign};
+        line-height: ${lineHeight};
         -webkit-user-select: none;
         -webkit-touch-callout: none;
         -moz-user-select: none;
@@ -198,8 +238,14 @@ export default class TextNode extends Node {
 
  public shouldExpand() {
     const remappedTags = this.observer.getAllTags().map(tag => `{${tag}}`)
+    const mentionedTerms = this.observer.getMentionedTerms();
     for (const tag of remappedTags) {
       if (this.content.indexOf(tag) != -1) {
+        return true;
+      }
+    }
+    for (const termValue of mentionedTerms) {
+      if (this.content?.toLowerCase().indexOf(termValue?.toLowerCase()) != -1) {
         return true;
       }
     }
@@ -218,6 +264,7 @@ export default class TextNode extends Node {
  public getExpansion(): Node[] {
   const tags = this.observer.getAllTags();
   const remappedTags = tags.map(tag => `{${tag}}`)
+  const mentionedTerms = this.observer.getMentionedTerms();
   const tagIndices = remappedTags.reduce((acc, tag) => {
     const indices = this.tagLocations(tag, this.content)
     for (const index of indices) {
@@ -225,15 +272,39 @@ export default class TextNode extends Node {
     }
     return acc;
   }, {});
+
+  const tagIndicesWithTerms = mentionedTerms.reduce((
+    acc, term
+  ) => {
+    const indices = this.tagLocations(term?.toLowerCase(), this.content?.toLowerCase())
+    for (const index of indices) {
+      let skip = false;
+      for (const startIndex in acc) {
+        const startIndexInt =  parseInt(startIndex);
+        if (startIndexInt > index) {
+          break;
+        }
+        const endIndex = startIndexInt + acc[startIndex].length - 1;
+        if (index >= startIndexInt && index <= endIndex) {
+          skip = true;
+          break;
+        }
+      }
+      if (!skip) {
+        acc[index] = this.content.substring(index, index + term.length);
+      }
+    }
+    return acc;
+  }, tagIndices)
   let nodes: Array<Node> = [];
   let startIndex = 0;
   for (let i = 0; i < this.content.length; ++i) {
-    if (tagIndices[i]) {
+    if (tagIndicesWithTerms[i]) {
       const subContent = this.content.substring(startIndex, i);
       if (subContent != "") {
         nodes.push(new TextNode(this.observer, subContent, this.lang, [], this.marks));
       }
-      const tagValue = tagIndices[i];
+      const tagValue = tagIndicesWithTerms[i];
       startIndex = i + tagValue.length;
       if (this.observer.getVariableRemapSet().has(tagValue)) {
         nodes.push(new VariableTagNode(this.observer, tagValue, this.lang, this.marks))
@@ -241,6 +312,8 @@ export default class TextNode extends Node {
         nodes.push(new LinkVariableTagNode(this.observer, tagValue, this.lang, this.marks))
       } else if (this.observer.getInterpolationVariantRemapSet().has(tagValue)) {
         nodes.push(new VariantTagNode(this.observer, tagValue, this.lang, this.marks))
+      } else if (mentionedTerms.includes(tagValue?.toLowerCase())) {
+        nodes.push(new MentionedTagNode(this.observer, tagValue, this.lang, this.marks))
       }
     }
   }

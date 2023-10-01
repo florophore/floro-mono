@@ -1,4 +1,3 @@
-
 import React, { useMemo, useCallback, useState } from "react";
 import { useTheme } from "@emotion/react";
 import { PointerTypes, SchemaTypes, useFloroContext, useFloroState, useReferencedObject } from "../../floro-schema-api";
@@ -75,6 +74,7 @@ interface Props {
   phraseRef: PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>"];
   selectedLocale: SchemaTypes["$(text).localeSettings.locales.localeCode<?>"];
   systemSourceLocale: SchemaTypes["$(text).localeSettings.locales.localeCode<?>"]|null;
+  fallbackLocale: SchemaTypes["$(text).localeSettings.locales.localeCode<?>"]|null;
   pinnedPhrases: Array<string> | null;
   setPinnedPhrases: (phraseRegs: Array<string>) => void;
   globalFilterUntranslated: boolean;
@@ -94,6 +94,7 @@ const LinkVariableList = (props: Props) => {
 
   const isMissingValues = useMemo(() => {
     const localeRef = `$(text).localeSettings.locales.localeCode<${props.selectedLocale.localeCode}>`;
+    const fallbackLocaleRef = `$(text).localeSettings.locales.localeCode<${props.fallbackLocale?.localeCode}>`;
     for (const lv of linkVariables ?? []) {
       for (const translation of lv?.translations ?? []) {
         if (translation.id != localeRef) {
@@ -103,12 +104,15 @@ const LinkVariableList = (props: Props) => {
           return true;
         }
         if ((translation.linkHrefValue?.plainText ?? "") == "") {
-          return true;
+          const fallbackHref = lv?.translations.find(v => v.id == fallbackLocaleRef);
+          if ((fallbackHref?.linkHrefValue?.plainText ?? "") == "") {
+            return true;
+          }
         }
       }
     }
     return false;
-  }, [linkVariables, applicationState, props.selectedLocale.localeCode])
+  }, [linkVariables, applicationState, props.selectedLocale.localeCode, props.fallbackLocale?.localeCode])
 
   const varSet = useMemo(() => {
     return new Set([
@@ -144,10 +148,10 @@ const LinkVariableList = (props: Props) => {
   }, [name, isNameTaken]);
 
   const onAppendLinkVariable = useCallback(() => {
-    if (!isEnabled || !props.phrase.linkVariables) {
+    if (!isEnabled) {
         return;
     }
-    setLinkVariables([...props.phrase.linkVariables, {
+    setLinkVariables([...(props.phrase.linkVariables ? props.phrase.linkVariables : []), {
         linkName: name.trim(),
         translations: []
       }]
@@ -235,7 +239,6 @@ const LinkVariableList = (props: Props) => {
                   index={index}
                   onDragStart={onDragStart}
                   onDragEnd={onDragEnd}
-                  onRemove={onRemoveLinkVar}
                 />
               );
             })}
@@ -253,11 +256,13 @@ const LinkVariableList = (props: Props) => {
                 linkRef={`${props.phraseRef}.linkVariables.linkName<${linkVariable.linkName}>`}
                 selectedLocale={props.selectedLocale}
                 systemSourceLocale={props.systemSourceLocale}
+                fallbackLocale={props.fallbackLocale}
                 globalFilterUntranslated={props.globalFilterUntranslated}
                 pinnedPhrases={props.pinnedPhrases}
                 setPinnedPhrases={props.setPinnedPhrases}
                 isPinned={props.isPinned}
                 phraseRef={props.phraseRef}
+                onRemove={onRemoveLinkVar}
               />
             );
           })}
@@ -298,7 +303,6 @@ const LinkVariableList = (props: Props) => {
             />
           </div>
         </AddVariableContainer>
-
       )}
     </Container>
   );

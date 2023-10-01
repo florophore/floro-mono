@@ -16,14 +16,22 @@ import TrashDark from "@floro/common-assets/assets/images/icons/trash.dark.svg";
 
 import EditLight from "@floro/common-assets/assets/images/icons/edit.light.svg";
 import EditDark from "@floro/common-assets/assets/images/icons/edit.dark.svg";
+
+import CopyLight from "@floro/common-assets/assets/images/icons/copy.lighter.svg";
+import CopyDark from "@floro/common-assets/assets/images/icons/copy.dark.svg";
+
 import Checkbox from "@floro/storybook/stories/design-system/Checkbox";
 import { debugPort } from "process";
+import DescriptionContainer from "./DescriptionContainer";
+import UpdatePhraseModal from "./UpdatePhraseModal";
+import TagList from "./tags/TagList";
+import DuplicatePhraseModal from "./DuplicatePhraseModal";
 
 const Container = styled.div`
   padding: 0;
   margin-bottom: 8px;
   border: 2px solid ${(props) => props.theme.colors.contrastText};
-  padding: 16px;
+  padding: 18px 16px;
   border-radius: 8px;
   position: relative;
   display: flex;
@@ -87,8 +95,6 @@ const DeleteVarContainer = styled.div`
 const DeleteVar = styled.img`
   height: 32px;
   width: 32px;
-  pointer-events: none;
-  user-select: none;
 `;
 
 const PinPhrase = styled.p`
@@ -104,12 +110,14 @@ const PinPhrase = styled.p`
 
 interface Props {
   phrase: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>"];
+  phraseGroup: SchemaTypes["$(text).phraseGroups.id<?>"];
   phraseRef: PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>"];
   index: number;
   selectedTopLevelLocale: string;
   pinnedPhrases: Array<string>|null;
   setPinnedPhrases: (phraseRegs: Array<string>) => void;
   globalFilterUntranslated: boolean;
+  onRemove: (phrase: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>"]) => void;
 }
 
 const PhraseRow = (props: Props) => {
@@ -155,9 +163,44 @@ const PhraseRow = (props: Props) => {
 
   }, [localeSettings.locales, localeSettings.defaultLocaleRef, selectedLocale]);
 
+  const globalFallbackLocale = useMemo(() => {
+    return localeSettings.locales.find(
+        (l) =>
+        makeQueryRef(
+            "$(text).localeSettings.locales.localeCode<?>",
+            l.localeCode
+        ) == localeSettings.defaultLocaleRef
+    ) ?? null;
+
+  }, [localeSettings.locales, localeSettings.defaultLocaleRef, selectedLocale]);
+
+  const fallbackLocale = useMemo(() => {
+    if (selectedLocale?.defaultFallbackLocaleRef) {
+        return localeSettings.locales.find(
+          (l) =>
+            makeQueryRef(
+              "$(text).localeSettings.locales.localeCode<?>",
+              l.localeCode
+            ) == selectedLocale.defaultFallbackLocaleRef
+        ) ?? null;
+    }
+    if (
+      localeSettings.defaultLocaleRef ==
+      makeQueryRef(
+        "$(text).localeSettings.locales.localeCode<?>",
+        selectedLocale?.localeCode as string
+      )
+    ) {
+      return null;
+    }
+    return globalFallbackLocale;
+
+  }, [localeSettings.locales, localeSettings.defaultLocaleRef, selectedLocale, globalFallbackLocale]);
+
   useEffect(() => {
     setSelectedLocaleCode(props.selectedTopLevelLocale);
   }, [props.selectedTopLevelLocale])
+
   const localeOptions = useMemo(() => {
     return [
       ...locales
@@ -181,10 +224,21 @@ const PhraseRow = (props: Props) => {
 
   }, [phrase, setPhrase]);
 
+  const onUpdateDescription = useCallback((description: string) => {
+    if (!phrase) {
+      return;
+    }
+    setPhrase({
+      ...phrase,
+      description
+    });
+
+  }, [phrase, setPhrase]);
+
   const hasUnTranslatedParts = useMemo(() => {
     const localeRef = makeQueryRef(
       "$(text).localeSettings.locales.localeCode<?>",
-      props.selectedTopLevelLocale
+      selectedLocale?.localeCode ?? props.selectedTopLevelLocale as string
     );
     const phraseTranslation = phrase?.phraseTranslations.find(
       (p) => p.id == localeRef
@@ -216,9 +270,8 @@ const PhraseRow = (props: Props) => {
         }
       }
     }
-
     return false;
-  }, [applicationState, phrase, props.selectedTopLevelLocale]);
+  }, [applicationState, phrase, selectedLocale?.localeCode, selectedLocale]);
 
 
   const trashIcon = useMemo(() => {
@@ -236,6 +289,13 @@ const PhraseRow = (props: Props) => {
     return EditDark;
   }, [theme.name]);
 
+  const copyIcon = useMemo(() => {
+    if (theme.name == "light") {
+      return CopyLight;
+    }
+    return CopyDark;
+  }, [theme.name]);
+
   const isPinned = useMemo(() => {
     return props.pinnedPhrases?.includes(props.phraseRef) ?? false;
   }, [props.pinnedPhrases, props.phraseRef, clientStorage]);
@@ -249,10 +309,54 @@ const PhraseRow = (props: Props) => {
 
   }, [isPinned, props.setPinnedPhrases, props.pinnedPhrases, props.phraseRef])
 
+  const onRemove = useCallback(() => {
+    props?.onRemove(props.phrase);
+  }, [props.onRemove, props.phrase])
+
+  const [showUpdate, setShowUpdate] = useState(false);
+
+  const onShowUpdate = useCallback(() => {
+    setShowUpdate(true);
+  }, []);
+
+  const onHideUpdate = useCallback(() => {
+    setShowUpdate(false);
+  }, []);
+
+  const [showDuplicate, setShowDuplicate] = useState(false);
+
+  const onShowDuplicate = useCallback(() => {
+    setShowDuplicate(true);
+  }, []);
+
+  const onHideDuplicate = useCallback(() => {
+    setShowDuplicate(false);
+  }, []);
+
   return (
     <Container>
+      <UpdatePhraseModal
+        show={showUpdate}
+        onDismiss={onHideUpdate}
+        phraseGroup={props.phraseGroup}
+        phrase={props.phrase}
+      />
+      <DuplicatePhraseModal
+        show={showDuplicate}
+        onDismiss={onHideDuplicate}
+        phraseGroup={props.phraseGroup}
+        phrase={props.phrase}
+      />
       <TitleRow>
-        <RowTitle style={{ fontWeight: 600, marginTop: 0, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+        <RowTitle
+          style={{
+            fontWeight: 600,
+            marginTop: 0,
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+        >
           <span style={{ color: theme.colors.contrastText }}>
             {"Phrase Key: "}
           </span>
@@ -261,18 +365,19 @@ const PhraseRow = (props: Props) => {
           </span>
           <span>
             {hasUnTranslatedParts && (
-                <MissingTranslationsPill>
-                  <MissingTranslationsTitle>{`missing ${props.selectedTopLevelLocale} values`}</MissingTranslationsTitle>
-                </MissingTranslationsPill>
+              <MissingTranslationsPill>
+                <MissingTranslationsTitle>{`missing ${
+                  selectedLocale?.localeCode ?? props.selectedTopLevelLocale
+                } values`}</MissingTranslationsTitle>
+              </MissingTranslationsPill>
             )}
           </span>
         </RowTitle>
-        <div style={{
-        }}>
+        <div>
           <div
             style={{
-              display: 'flex',
-              alignItems: 'center',
+              display: "flex",
+              alignItems: "center",
               marginTop: -16,
               marginLeft: 24,
             }}
@@ -280,10 +385,13 @@ const PhraseRow = (props: Props) => {
             {commandMode == "edit" && (
               <>
                 <DeleteVarContainer>
-                  <DeleteVar src={editIcon} />
+                  <DeleteVar onClick={onShowDuplicate} src={copyIcon} />
                 </DeleteVarContainer>
-                <DeleteVarContainer style={{marginRight: 24}}>
-                  <DeleteVar src={trashIcon} />
+                <DeleteVarContainer>
+                  <DeleteVar onClick={onShowUpdate} src={editIcon} />
+                </DeleteVarContainer>
+                <DeleteVarContainer style={{ marginRight: 24 }}>
+                  <DeleteVar src={trashIcon} onClick={onRemove} />
                 </DeleteVarContainer>
               </>
             )}
@@ -302,22 +410,44 @@ const PhraseRow = (props: Props) => {
           </div>
         </div>
       </TitleRow>
-      <div style={{
-        height: 56,
-        width: '100%',
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center'
-      }}>
+      <div
+        style={{
+          height: 56,
+          width: "100%",
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+        }}
+      >
         {clientStorageIsEnabled && (
           <>
-            <Checkbox isChecked={isPinned} onChange={onTogglePin}/>
-            <span style={{marginLeft: 12}}>
-              <PinPhrase>{'Keep Phrase Pinned'}</PinPhrase>
+            <Checkbox isChecked={isPinned} onChange={onTogglePin} />
+            <span style={{ marginLeft: 12 }}>
+              <PinPhrase>{"Keep Phrase Pinned"}</PinPhrase>
             </span>
           </>
         )}
-
+      </div>
+      {(commandMode == "edit" ||
+        (props?.phrase?.description?.trim() ?? "") != "") && (
+        <div
+          style={{
+            marginTop: 24,
+          }}
+        >
+          <DescriptionContainer
+            description={props.phrase?.description ?? ""}
+            onUpdateDescription={onUpdateDescription}
+            isReadOnly={commandMode != "edit"}
+          />
+        </div>
+      )}
+      <div
+          style={{
+            marginBottom: commandMode != "edit" ? 24 : 48,
+          }}
+      >
+        <TagList phraseRef={props.phraseRef} />
       </div>
       <div>
         {selectedLocale && (
@@ -326,6 +456,8 @@ const PhraseRow = (props: Props) => {
             phraseRef={props.phraseRef}
             selectedLocale={selectedLocale}
             systemSourceLocale={systemSourceLocale}
+            fallbackLocale={fallbackLocale}
+            globalFallbackLocale={globalFallbackLocale}
             pinnedPhrases={props.pinnedPhrases}
             setPinnedPhrases={props.setPinnedPhrases}
             globalFilterUntranslated={props.globalFilterUntranslated}
@@ -333,14 +465,6 @@ const PhraseRow = (props: Props) => {
           />
         )}
       </div>
-      {false && (
-        <div style={{
-          width: '100%',
-          marginTop: 24
-        }}>
-          <CreateTagsContainer tags={phrase?.tags ?? []} onUpdateTags={onUpdateTags}/>
-        </div>
-      )}
     </Container>
   );
 };

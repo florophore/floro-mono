@@ -1,4 +1,3 @@
-
 import React, { useMemo, useCallback, useState } from "react";
 import { useTheme } from "@emotion/react";
 import { PointerTypes, SchemaTypes, useFloroContext, useFloroState, useReferencedObject } from "../../floro-schema-api";
@@ -144,10 +143,10 @@ const VariableList = (props: Props) => {
   }, [type, name, isNameTaken]);
 
   const onAppendVariable = useCallback(() => {
-    if (!isEnabled || !variables) {
+    if (!isEnabled) {
         return;
     }
-    setVariables([...variables, {
+    setVariables([...(variables ? variables : []), {
         id: `${name}:${type}`,
         name,
         varType: type
@@ -221,6 +220,7 @@ const VariableList = (props: Props) => {
                   key={variable.name}
                   variable={variable}
                   index={index}
+                  onRemove={onRemoveVar}
                 />
               );
             })}
@@ -246,7 +246,6 @@ const VariableList = (props: Props) => {
                   index={index}
                   onDragStart={onDragStart}
                   onDragEnd={onDragEnd}
-                  onRemove={onRemoveVar}
                 />
               );
             })}

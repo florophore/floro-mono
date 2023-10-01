@@ -7,8 +7,6 @@ import styled from "@emotion/styled";
 import DraggerLight from "@floro/common-assets/assets/images/icons/dragger.light.svg";
 import DraggerDark from "@floro/common-assets/assets/images/icons/dragger.dark.svg";
 
-import TrashLight from "@floro/common-assets/assets/images/icons/trash.light.darker.svg";
-import TrashDark from "@floro/common-assets/assets/images/icons/trash.dark.svg";
 import ColorPalette from "@floro/styles/ColorPalette";
 
 const Container = styled.div`
@@ -104,7 +102,6 @@ interface Props {
   index: number;
   onDragStart: () => void;
   onDragEnd: () => void;
-  onRemove: (variable: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>"]) => void;
 }
 
 const VariableReOrderRow = (props: Props) => {
@@ -143,20 +140,6 @@ const VariableReOrderRow = (props: Props) => {
     }
     return null;
   }, [props.variable.varType]);
-
-  const xIcon = useMemo(() => {
-    if (theme.name == "light") {
-      return TrashLight;
-    }
-    return TrashDark;
-  }, [theme.name]);
-
-
-  const onRemove = useCallback(() => {
-    if (props.variable) {
-      props.onRemove(props.variable);
-    }
-  }, [props.variable, props.onRemove]);
 
   return (
     <Reorder.Item
@@ -214,7 +197,7 @@ const VariableReOrderRow = (props: Props) => {
               </span>
               <span
                 style={{
-                  color: theme.colors.contrastTextLight,
+                  color: theme.colors.contrastText,
                   fontWeight: 600,
                   fontFamily: "MavenPro",
                   fontSize: '1.7rem',
@@ -224,10 +207,6 @@ const VariableReOrderRow = (props: Props) => {
                 {varTypeFormatted}
               </span>
             </RowTitle>
-
-        <DeleteVarContainer onClick={onRemove}>
-          <DeleteVar src={xIcon} />
-        </DeleteVarContainer>
           </ColorControlsContainer>
         </TitleRow>
       </Container>

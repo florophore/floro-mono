@@ -15,7 +15,7 @@ import { AnimatePresence, Reorder } from "framer-motion";
 
 const Container = styled.div`
   margin-top: 24px;
-  padding-bottom: 120px;
+  padding-bottom: 40px;
   max-width: 1020px;
   width: 100%;
 `;
@@ -74,7 +74,7 @@ const PhraseGroups = (props: Props) => {
 
   return (
     <Container>
-      {props.isEditingGroups && (
+      {props.isEditingGroups && commandMode == "edit" && (
         <AnimatePresence>
           <Reorder.Group
             axis="y"
@@ -106,7 +106,7 @@ const PhraseGroups = (props: Props) => {
           </Reorder.Group>
         </AnimatePresence>
       )}
-      {!props.isEditingGroups &&
+      {(!props.isEditingGroups || commandMode != "edit") &&
         phraseGroups?.map((phraseGroup, index: number) => {
           return (
             <PhraseGroup

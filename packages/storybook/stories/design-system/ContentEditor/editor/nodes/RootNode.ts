@@ -1,4 +1,4 @@
-import Node from "../Node"
+import Node, { NodeJSON } from "../Node"
 import Observer from "../Observer";
 import TextNode from "./TextNode";
 
@@ -17,6 +17,11 @@ export default class RootNode extends Node {
   public toHTMLString(): string {
     const children = this.children?.map(child => child.toHTMLString()).join("");
     return `${this.content}${children}`;
+  }
+
+  public static fromJSON(json: NodeJSON, observer: Observer, lang: string): RootNode {
+    const children: Array<TextNode> = json.children?.map(c => TextNode.fromJSON(c as TextNode, observer, lang)) ?? [];
+    return new RootNode(observer, json.content, lang, children);
   }
 
   public getNodeIndexAtPosition(index: number): number {

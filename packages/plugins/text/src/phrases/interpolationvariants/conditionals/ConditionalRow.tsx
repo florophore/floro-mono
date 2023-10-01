@@ -1,11 +1,12 @@
-import React, { useMemo, useCallback, useState } from "react";
-import { PointerTypes, SchemaTypes, useFloroContext, useFloroState } from "../../../floro-schema-api";
-import { Reorder, useDragControls } from "framer-motion";
+import React, { useMemo, useCallback, useState, useEffect } from "react";
+import {
+  PointerTypes,
+  SchemaTypes,
+  useFloroContext,
+  useFloroState,
+} from "../../../floro-schema-api";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-
-import DraggerLight from "@floro/common-assets/assets/images/icons/dragger.light.svg";
-import DraggerDark from "@floro/common-assets/assets/images/icons/dragger.dark.svg";
 
 import TrashLight from "@floro/common-assets/assets/images/icons/trash.light.darker.svg";
 import TrashDark from "@floro/common-assets/assets/images/icons/trash.dark.svg";
@@ -16,12 +17,21 @@ import Observer from "@floro/storybook/stories/design-system/ContentEditor/edito
 import EditorDocument from "@floro/storybook/stories/design-system/ContentEditor/editor/EditorDocument";
 import ContentEditor from "@floro/storybook/stories/design-system/ContentEditor";
 import PlainTextDocument from "@floro/storybook/stories/design-system/ContentEditor/PlainTextDocument";
+import NewSubCondition from "./subconditions/NewSubCondition";
+import SubCondition from "./subconditions/SubCondition";
 
 const Container = styled.div`
   padding: 0;
   margin-bottom: 0px;
   margin-left: 0px;
   margin-top: 24px;
+`;
+
+const ContentRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
 `;
 
 const RowTitle = styled.h1`
@@ -52,7 +62,6 @@ const ColorControlsContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  height: 72px;
 `;
 
 const DeleteVarContainer = styled.div`
@@ -96,6 +105,36 @@ const options = [
   },
 ];
 
+const floatOptions = [
+  {
+    value: "eq",
+    label: "equal to",
+  },
+  {
+    value: "neq",
+    label: "NOT equal to",
+  },
+  {
+    value: "gt",
+    label: "greater than",
+  },
+  {
+    value: "gte",
+    label: "greater than or equal to",
+  },
+  {
+    value: "lt",
+    label: "less than",
+  },
+  {
+    value: "lte",
+    label: "less than or equal to",
+  },
+  {
+    value: "is_fractional",
+    label: "a fractional quantity",
+  },
+];
 
 const partialOperators = [
   {
@@ -108,7 +147,6 @@ const partialOperators = [
   },
 ];
 
-
 const booleanOptions = [
   {
     value: "true",
@@ -118,9 +156,16 @@ const booleanOptions = [
     value: "false",
     label: "FALSE",
   },
-]
+];
 
-
+const AddSubCondition = styled.p`
+  font-family: "MavenPro";
+  font-weight: 600;
+  font-size: 1.4rem;
+  color: ${ColorPalette.linkBlue};
+  cursor: pointer;
+  padding: 0;
+`;
 
 const colorPaletteItemVariants = {
   hidden: { opacity: 0 },
@@ -137,9 +182,13 @@ interface Props {
   phrase: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>"];
   phraseRef: PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>"];
   variable: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>"];
-  condtional: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?]"];
-  condtionalRef: PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?]"];
-  onRemove: (conditional: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?]"]) => void;
+  interpolationVariant: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>"];
+  conditional: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?]"];
+  conditionalRef: PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?]"];
+  onRemove: (
+    index: number,
+    conditional: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?]"]
+  ) => void;
   pinnedPhrases: Array<string> | null;
   setPinnedPhrases: (phraseRegs: Array<string>) => void;
   globalFilterUntranslated: boolean;
@@ -147,22 +196,24 @@ interface Props {
   index: number;
 }
 
-const ConditionalRow = (props: Props) => {
+const ConditionalRow = (props: Props): React.ReactElement => {
   const theme = useTheme();
-  const { commandMode} = useFloroContext();
+  const { commandMode } = useFloroContext();
 
-  const [conditional, setConditional] = useFloroState(props.condtionalRef);
-  const [resultant, setResultant] = useFloroState(`${props.condtionalRef}.resultant`);
-
-  const [operator, setOperator] = useState<string>(props.condtional?.operator);
-  const [stringValue, setStringValue] = useState<string>(props?.condtional?.stringComparatorValue ?? "");
-  const [booleanValue, setBooleanValue] = useState<boolean>(props?.condtional?.booleanComparatorValue ?? true);
-  const [integerValue, setIntegerValue] = useState<string>(props?.condtional?.intComparatorValue?.toString?.() ?? "");
-  const [floatValue, setFloatValue] = useState<string>(props?.condtional?.floatComparatorValue?.toString?.() ?? "");
+  const [conditional, setConditional] = useFloroState(props.conditionalRef);
+  const [resultant, setResultant] = useFloroState(
+    `${props.conditionalRef}.resultant`
+  );
+  const [integerValue, setIntegerValue] = useState<string>(
+    props?.conditional?.intComparatorValue?.toString?.() ?? ""
+  );
+  const [floatValue, setFloatValue] = useState<string>(
+    props?.conditional?.floatComparatorValue?.toString?.() ?? ""
+  );
 
   const editorObserver = useMemo(() => {
     const variables = props.phrase.variables.map((v) => v.name);
-    return new Observer(variables);
+    return new Observer(variables, [], []);
   }, [props.phrase.variables]);
 
   const conditionalEditorDoc = useMemo(() => {
@@ -191,8 +242,7 @@ const ConditionalRow = (props: Props) => {
         setIntegerValue(int.toString());
       }
       return;
-    } catch(e) {
-    }
+    } catch (e) {}
   }, []);
 
   const onUpdateFloatValue = useCallback((value: string) => {
@@ -210,22 +260,21 @@ const ConditionalRow = (props: Props) => {
         setFloatValue(float.toString());
       }
       return;
-    } catch(e) {
-    }
+    } catch (e) {}
   }, []);
 
   const isValueValid = useMemo(() => {
     if (props.variable.varType == "integer") {
-      return /^\d+$/.test(integerValue)
+      return /^\d+$/.test(integerValue);
     }
     if (props.variable.varType == "float") {
-      return /^(\d+|\d+\.\d+)$/.test(integerValue)
+      return /^(\d+|\d+\.\d+)$/.test(floatValue);
     }
     if (props.variable.varType == "string") {
-      return stringValue.trim() != "";
+      return (conditional?.stringComparatorValue?.trim?.() ?? "") != "";
     }
     return true;
-  }, [props.variable.varType, integerValue, stringValue, floatValue]);
+  }, [props.variable.varType, integerValue, conditional?.stringComparatorValue, floatValue]);
 
   const xIcon = useMemo(() => {
     if (theme.name == "light") {
@@ -234,64 +283,83 @@ const ConditionalRow = (props: Props) => {
     return TrashDark;
   }, [theme.name]);
 
-
   const onRemove = useCallback(() => {
-    if (props.condtional) {
-      props.onRemove(props.condtional);
+    if (props.conditional) {
+      props.onRemove(props.index, props.conditional);
     }
-  }, [props.condtional, props.onRemove]);
+  }, [props.index, props.conditional, props.onRemove]);
 
   const varValue = useMemo(() => {
     if (props.variable.varType == "integer") {
-      return props.condtional?.intComparatorValue;
+      return props.conditional?.intComparatorValue;
     }
     if (props.variable.varType == "float") {
-      return props.condtional?.floatComparatorValue;
+      return props.conditional?.floatComparatorValue;
     }
     if (props.variable.varType == "string") {
-      return props.condtional?.stringComparatorValue;
+      return props.conditional?.stringComparatorValue;
     }
     if (props.variable.varType == "boolean") {
-      return props.condtional?.booleanComparatorValue;
+      return props.conditional?.booleanComparatorValue ? "TRUE" : "FALSE";
     }
     return null;
-  }, [props.variable.varType, props.condtional]);
+  }, [props.variable.varType, props.conditional]);
 
   const operandText = useMemo(() => {
-    if (props.condtional.operator == "eq") {
+    if (props.conditional.operator == "eq") {
       return `is equal to`;
     }
-    if (props.condtional.operator == "neq") {
+    if (props.conditional.operator == "neq") {
       return `is NOT equal to`;
     }
 
-    if (props.condtional.operator == "gt") {
+    if (props.conditional.operator == "gt") {
       return `is greater than`;
     }
-    if (props.condtional.operator == "gte") {
+    if (props.conditional.operator == "gte") {
       return `is greater than or equal to`;
     }
 
-    if (props.condtional.operator == "lt") {
+    if (props.conditional.operator == "lt") {
       return `is less than`;
     }
-    if (props.condtional.operator == "lte") {
+    if (props.conditional.operator == "lte") {
       return `is less than or equal to`;
     }
+    if (props.conditional.operator == "is_fractional") {
+      return `is a fractional quantity`;
+    }
     return null;
-  }, [props.condtional.operator]);
+  }, [props.conditional.operator]);
+
+  const [showAddSubcondition, setShowAddSubcondition] = useState(false);
+
+  const onShowAddSubcondition = useCallback(() => {
+    setShowAddSubcondition(true);
+  }, []);
+
+  const onHideAddSubcondition = useCallback(() => {
+    setShowAddSubcondition(false);
+  }, []);
 
   const defaultValueIsEmpty = useMemo(() => {
     return (conditional?.resultant?.plainText ?? "") == "";
-  }, [conditional?.resultant?.plainText])
+  }, [conditional?.resultant?.plainText]);
 
   const onSetResultantValueContent = useCallback(
     (richTextHtml: string) => {
       conditionalEditorDoc.tree.updateRootFromHTML(richTextHtml ?? "");
       const plainText = conditionalEditorDoc.tree.rootNode.toUnescapedString();
       const json = conditionalEditorDoc.tree.rootNode.toJSON();
-      if (defaultValueIsEmpty && props.globalFilterUntranslated && !props.isPinned) {
-        props.setPinnedPhrases([...(props?.pinnedPhrases ?? []), props.phraseRef]);
+      if (
+        defaultValueIsEmpty &&
+        props.globalFilterUntranslated &&
+        !props.isPinned
+      ) {
+        props.setPinnedPhrases([
+          ...(props?.pinnedPhrases ?? []),
+          props.phraseRef,
+        ]);
       }
       setResultant({
         richTextHtml,
@@ -308,80 +376,92 @@ const ConditionalRow = (props: Props) => {
       props.setPinnedPhrases,
       props.pinnedPhrases,
       props.phraseRef,
-      props.globalFilterUntranslated
+      props.globalFilterUntranslated,
     ]
   );
 
   return (
-      <Container>
-        <TitleRow>
-          <ColorControlsContainer style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            width: '100%'
-          }}>
-            {commandMode != "edit" && (
-              <RowTitle
+    <Container>
+      <TitleRow>
+        <ColorControlsContainer
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            width: "100%",
+            marginTop: 12,
+            marginBottom: 12,
+          }}
+        >
+          {commandMode != "edit" && (
+            <RowTitle
+              style={{
+                display: "flex",
+                alignItems: "center",
+                position: "relative",
+                height: 96,
+                marginTop: -24,
+              }}
+            >
+              <span
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  position: 'relative',
-                  height: 96,
-                  marginTop: -24
+                  fontSize: "1.4rem",
+                  color: theme.colors.contrastText,
+                  fontWeight: 600,
+                  marginRight: 12,
                 }}
               >
-                  <span
-                    style={{
-                      fontSize: "1.4rem",
-                      color: theme.colors.contrastText,
-                      fontWeight: 600,
-                      marginRight: 12
-                    }}
-                  >
-                  {props.index == 0 ? 'If ': 'Otherwise if '}
-                </span>
-                <span
-                  style={{
-                    fontSize: "1.4rem",
-                    background: ColorPalette.variableGreen,
-                    boxShadow: `inset 0px 0px 2px 2px ${ColorPalette.variableGreenInset}`,
-                    borderRadius: 8,
-                    padding: 4,
-                    fontWeight: 500,
-                    color: ColorPalette.white,
-                  }}
-                >
-                  {props.variable.name}
-                </span>
-                <span style={{fontWeight: 600, marginLeft: 12, marginRight: 12, fontSize: '1.4rem' }}>
-                  {operandText}
-                </span>
-                <span>
-                  {varValue}
-                </span>
-              </RowTitle>
-            )}
-            {commandMode == "edit" && (
-              <EditRow
+                {props.index == 0 ? "If " : "Otherwise if "}
+              </span>
+              <span
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  position: 'relative',
-                  height: 96,
+                  fontSize: "1.4rem",
+                  background: ColorPalette.variableGreen,
+                  boxShadow: `inset 0px 0px 2px 2px ${ColorPalette.variableGreenInset}`,
+                  borderRadius: 8,
+                  padding: 4,
+                  fontWeight: 500,
+                  color: ColorPalette.white,
                 }}
               >
+                {props.variable.name}
+              </span>
+              <span
+                style={{
+                  fontWeight: 600,
+                  marginLeft: 12,
+                  marginRight: 12,
+                  fontSize: "1.4rem",
+                }}
+              >
+                {operandText}
+              </span>
+              {props.conditional.operator != "is_fractional_quantity" && (
+                <span>{varValue}</span>
+              )}
+            </RowTitle>
+          )}
+          {commandMode == "edit" && (
+            <EditRow
+              style={{
+                display: "flex",
+                alignItems: "center",
+                position: "relative",
+                minHeight: 96,
+              }}
+            >
+              <ContentRow>
                 <div>
                   <span
                     style={{
                       fontSize: "1.4rem",
                       color: theme.colors.contrastText,
                       fontWeight: 600,
-                      marginRight: 12
+                      marginRight: 12,
                     }}
                   >
-                    {props.index == 0 ? 'If ': 'Otherwise if'}
+                    {props.index == 0 ? "If " : "Otherwise if"}
                   </span>
                 </div>
                 <div>
@@ -405,23 +485,26 @@ const ConditionalRow = (props: Props) => {
                       fontSize: "1.4rem",
                       color: theme.colors.contrastText,
                       fontWeight: 600,
-                      marginLeft: 12
+                      marginLeft: 12,
                     }}
                   >
-                    {'is'}
+                    {"is"}
                   </span>
                 </div>
-                <div style={{ marginRight: 24, marginLeft: 12, marginTop: -12 }}>
+                <div
+                  style={{ marginRight: 24, marginLeft: 12, marginTop: -12 }}
+                >
                   <InputSelector
                     options={
-                      props.variable.varType == "integer" ||
+                      props.variable.varType == "integer" ?
+                      options :
                       props.variable.varType == "float"
-                        ? options
+                        ? floatOptions
                         : partialOperators
                     }
                     label={"operand"}
                     placeholder={"select a variable"}
-                    value={operator}
+                    value={conditional?.operator as string}
                     size={
                       props.variable.varType == "integer" ||
                       props.variable.varType == "float"
@@ -429,8 +512,20 @@ const ConditionalRow = (props: Props) => {
                         : "short"
                     }
                     onChange={(option) => {
-                      if (option?.value) {
-                        setOperator(option.value as string);
+                      if (option?.value && conditional) {
+                        if (props.variable.varType == "float" && conditional.floatComparatorValue == undefined) {
+                          setConditional({
+                            ...conditional,
+                            operator: option.value as string,
+                            floatComparatorValue: 0
+                          })
+                          setFloatValue("0");
+                        } else {
+                          setConditional({
+                            ...conditional,
+                            operator: option.value as string
+                          })
+                        }
                       }
                     }}
                   />
@@ -441,12 +536,16 @@ const ConditionalRow = (props: Props) => {
                       <InputSelector
                         label={"value"}
                         placeholder={"value"}
-                        value={booleanValue ? "true" : "false"}
+                        isValid={isValueValid}
+                        value={conditional?.booleanComparatorValue ? "true" : "false"}
                         options={booleanOptions}
                         size="shortest"
                         onChange={(option) => {
-                          if (option?.value) {
-                            setBooleanValue(option.value != "false");
+                          if (option?.value && conditional) {
+                            setConditional({
+                              ...conditional,
+                              booleanComparatorValue: option.value != "false"
+                            })
                           }
                         }}
                       />
@@ -455,77 +554,133 @@ const ConditionalRow = (props: Props) => {
                       <Input
                         label={"value"}
                         placeholder={"value"}
-                        value={stringValue}
+                        value={conditional?.stringComparatorValue ?? ""}
                         widthSize="semi-short"
-                        onTextChanged={setStringValue}
+                        isValid={isValueValid}
+                        onTextChanged={(stringComparatorValue) => {
+                          if (conditional) {
+                            setConditional({
+                              ...conditional,
+                              stringComparatorValue
+                            })
+                          }
+                        }}
                       />
                     )}
                     {props.variable.varType == "integer" && (
                       <Input
                         label={"value"}
                         placeholder={"value"}
+                        isValid={isValueValid}
                         value={integerValue}
                         widthSize="shortest"
-                        onTextChanged={onUpdateIntegerValue}
+                        onTextChanged={(text) => {
+                          if (/^\d+$/.test(text) && conditional) {
+                            setConditional({
+                              ...conditional,
+                              intComparatorValue: parseInt(text)
+                            })
+                          }
+                          onUpdateIntegerValue(text)
+                        }}
                       />
                     )}
-                    {props.variable.varType == "float" && (
+                    {props.variable.varType == "float" && props.conditional.operator != "is_fractional" &&  (
                       <Input
                         label={"value"}
                         placeholder={"value"}
+                        isValid={isValueValid}
                         value={floatValue}
                         widthSize="shortest"
-                        onTextChanged={onUpdateFloatValue}
+                        onTextChanged={(text) => {
+                          if (/^\d+\.$/.test(text) && conditional) {
+                            setConditional({
+                              ...conditional,
+                              floatComparatorValue: parseFloat(text)
+                            })
+                          }
+                          onUpdateFloatValue(text)
+                        }}
                       />
                     )}
                   </span>
                 </div>
-                <div>
-                </div>
-              </EditRow>
-            )}
-            {commandMode == "edit" && (
-              <DeleteVarContainer onClick={onRemove}>
-                <DeleteVar src={xIcon} />
-              </DeleteVarContainer>
-            )}
-          </ColorControlsContainer>
-        </TitleRow>
-        <TitleRow>
-          <RowTitle
-            style={{
-              fontWeight: 600,
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              fontSize: '1.4rem'
-            }}
-          >
-            <span style={{ color: theme.colors.contrastText }}>
-              {`Then (${props.lang}):`}
-            </span>
-            </RowTitle>
-        </TitleRow>
-        <div style={{marginTop: 12}}>
+              </ContentRow>
+              <div></div>
+            </EditRow>
+          )}
           {commandMode == "edit" && (
-            <ContentEditor
-              lang={props.lang?.toLowerCase() ?? "en"}
-              editorDoc={conditionalEditorDoc}
-              content={resultant?.richTextHtml ?? ""}
-              onSetContent={onSetResultantValueContent}
-              placeholder={`write the resultant value...`}
-            />
+            <DeleteVarContainer onClick={onRemove}>
+              <DeleteVar src={xIcon} />
+            </DeleteVarContainer>
           )}
-          {commandMode != "edit" && (
-            <PlainTextDocument
-              lang={props.lang?.toLowerCase() ?? "en"}
-              editorDoc={conditionalEditorDoc}
-              content={resultant?.richTextHtml ?? ""}
-            />
+        </ColorControlsContainer>
+      </TitleRow>
+      {conditional?.subconditions?.map((subcondition, index) => {
+        return (
+          <SubCondition
+            key={index}
+            index={index}
+            phraseRef={props.phraseRef}
+            variableRef={subcondition.variableRef}
+            conditionalRef={props.conditionalRef}
+            subconditionRef={`${props.conditionalRef}.subconditions.[${index}]`}
+            subcondition={subcondition}
+            onHideAddSubcondition={onHideAddSubcondition}
+          />
+        )
+      })}
+      {showAddSubcondition && commandMode == "edit" && (
+        <NewSubCondition
+          variableRef={props.interpolationVariant.variableRef}
+          phraseRef={props.phraseRef}
+          condtionalRef={props.conditionalRef}
+          onHideAddSubcondition={onHideAddSubcondition}
+        />
+      )}
+      <TitleRow>
+        <RowTitle
+          style={{
+            fontWeight: 600,
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            fontSize: "1.4rem",
+            width: "100%",
+          }}
+        >
+          <span style={{ color: theme.colors.contrastText }}>
+            {`Then (${props.lang}):`}
+          </span>
+          {commandMode == "edit" && !showAddSubcondition && (
+            <>
+              <AddSubCondition onClick={onShowAddSubcondition}>
+                {"+ add subcondition"}
+              </AddSubCondition>
+            </>
           )}
-
-        </div>
-      </Container>
+        </RowTitle>
+      </TitleRow>
+      <div style={{ marginTop: 12 }}>
+        {commandMode == "edit" && (
+          <ContentEditor
+            lang={props.lang?.toLowerCase() ?? "en"}
+            editorDoc={conditionalEditorDoc}
+            content={resultant?.richTextHtml ?? ""}
+            onSetContent={onSetResultantValueContent}
+            placeholder={`write the resultant value...`}
+          />
+        )}
+        {commandMode != "edit" && (
+          <PlainTextDocument
+            lang={props.lang?.toLowerCase() ?? "en"}
+            editorDoc={conditionalEditorDoc}
+            content={resultant?.richTextHtml ?? ""}
+          />
+        )}
+      </div>
+    </Container>
   );
 };
 

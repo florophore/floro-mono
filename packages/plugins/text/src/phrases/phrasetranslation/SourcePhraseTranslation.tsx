@@ -10,6 +10,8 @@ import Button from "@floro/storybook/stories/design-system/Button";
 import { getArrayStringDiff, splitTextForDiff } from "./diffing";
 import ColorPalette from "@floro/styles/ColorPalette";
 import Observer from "@floro/storybook/stories/design-system/ContentEditor/editor/Observer";
+import TextNode from "@floro/storybook/stories/design-system/ContentEditor/editor/nodes/TextNode";
+import TermList from "../termdisplay/TermList";
 
 const Container = styled.div`
     margin-top: 24px;
@@ -42,15 +44,49 @@ const TitleRow = styled.div`
   width: 100%;
 `;
 
+const TermContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+  margin-bottom: 12px;
+`;
+
+const TermWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-top: 12px;
+  margin-right: 12px;
+`;
+
+const TermSpan = styled.span`
+  font-family: "MavenPro";
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: ${props => props.theme.colors.linkColor};
+  text-decoration: underline;
+  margin-right: 8px;
+  margin-top: -2px;
+  cursor: pointer;
+`;
+
+const TermIcon = styled.img`
+  height: 24px;
+  width: 24px;
+`;
+
 interface Props {
   phrase: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>"];
   systemSourceLocale: SchemaTypes["$(text).localeSettings.locales.localeCode<?>"];
+  selectedLocale: SchemaTypes["$(text).localeSettings.locales.localeCode<?>"];
   phraseRef: PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>"];
   targetPhraseTranslation: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>']
 }
 
 const SourcePhraseTranslation = (props: Props) => {
   const theme = useTheme();
+  const { applicationState } = useFloroContext();
   const [phraseGroupId, phraseId] = useExtractQueryArgs(props.phraseRef);
   const sourceLocaleRef = props?.systemSourceLocale?.localeCode ? makeQueryRef(
     "$(text).localeSettings.locales.localeCode<?>",
@@ -70,13 +106,81 @@ const SourcePhraseTranslation = (props: Props) => {
     return sourcePhraseTranslation?.richTextHtml ?? "";
   }, [sourcePhraseTranslation?.richTextHtml])
 
+  const terms = useReferencedObject("$(text).terms");
+  const localeTerms = useMemo(() => {
+    return terms.flatMap(term => {
+      const value = term.localizedTerms.find(localizedTerm => {
+        return localizedTerm.id == sourceLocaleRef;
+      })?.termValue ?? term?.name;
+      return {
+        id: term.id,
+        value: value == '' ? term.name : value,
+        name: term.name
+      }
+    });
+  }, [terms, props?.systemSourceLocale?.localeCode, applicationState]);
+
+  const mentionedTerms = useMemo(() => {
+    const json = JSON.parse(sourcePhraseTranslation?.json ?? '{}');
+    const children: Array<TextNode> = json?.children ?? [];
+    const foundTerms: Array<{
+      value: string,
+      id: string,
+      name: string,
+    }> = [];
+
+    const flattenedChildren: Array<TextNode> = [];
+    for (let i = 0; i < children.length; ++i) {
+      if (children[i]?.type == "text" || children[i]?.type == "mentioned-tag") {
+        const combined = children[i];
+        combined.type = 'text';
+        for (let j = i; j < children.length; ++j) {
+          if (children[j]?.type != "text" && children[j]?.type != "mentioned-tag") {
+            flattenedChildren.push(combined);
+            break;
+          }
+          combined.content += children[j].content;
+          i = j;
+          flattenedChildren.push(combined)
+        }
+      } else {
+        flattenedChildren.push(children[i]);
+      }
+    }
+
+    for (const localeTerm of localeTerms) {
+      for (const child of flattenedChildren) {
+        if (child?.type == 'text') {
+          if ((child.content?? '')?.toLowerCase()?.indexOf(localeTerm.value?.toLowerCase()) != -1) {
+            foundTerms.push(localeTerm);
+            break;
+          }
+        }
+        if (child?.type == 'mentioned-tag') {
+          if (child.content == localeTerm.value) {
+            foundTerms.push(localeTerm);
+            break;
+          }
+        }
+      }
+    }
+    return foundTerms;
+  }, [sourcePhraseTranslation?.json, localeTerms])
+
+  const enabledMentionedTerms = useMemo(() => {
+    return mentionedTerms
+      ?.filter((mentionedTerm) => {
+        return sourcePhraseTranslation?.enabledTerms?.includes(mentionedTerm?.id);
+      })
+      ;
+  }, [mentionedTerms, sourcePhraseTranslation?.enabledTerms])
 
   const editorObserver = useMemo(() => {
-    const variables = props.phrase.variables.map(v => v.name);
-    const linkVariables = props.phrase.linkVariables.map(v => v.linkName);
-    const interpolationVariants = props.phrase.interpolationVariants.map(v => v.name);
-    return new Observer(variables, linkVariables, interpolationVariants);
-  }, [props.phrase.variables, props.phrase.linkVariables, props.phrase.interpolationVariants]);
+    const variables = props.phrase?.variables?.map(v => v.name) ?? [];
+    const linkVariables = props.phrase?.linkVariables?.map(v => v.linkName) ?? [];
+    const interpolationVariants = props.phrase?.interpolationVariants?.map(v => v.name) ?? [];
+    return new Observer(variables, linkVariables, interpolationVariants, enabledMentionedTerms?.map((mentionedTerm) => mentionedTerm.value) ?? []);
+  }, [props.phrase.variables, props.phrase.linkVariables, props.phrase.interpolationVariants, enabledMentionedTerms]);
 
   const editorDoc = useMemo(() => {
     if (sourcePhraseTranslation) {
@@ -182,6 +286,21 @@ const SourcePhraseTranslation = (props: Props) => {
             beforeStrings={beforeText}
             afterStrings={afterText}
             diff={diff}
+          />
+        )}
+
+        {enabledMentionedTerms?.length > 0 && (
+          <TermList
+            terms={mentionedTerms ?? []}
+            selectedLocale={props.selectedLocale}
+            systemSourceLocale={props.systemSourceLocale}
+            isReadOnly
+            enabledTerms={[]}
+            title={(
+              <>
+              {`Mentioned Terms in Source Phrase Value (${props.systemSourceLocale.localeCode}):`}
+              </>
+            )}
           />
         )}
       </Container>

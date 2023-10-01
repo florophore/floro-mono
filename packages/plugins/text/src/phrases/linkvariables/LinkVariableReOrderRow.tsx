@@ -57,22 +57,6 @@ const DragIcon = styled.img`
   user-select: none;
 `;
 
-const DeleteVarContainer = styled.div`
-  cursor: pointer;
-  margin-left: 16px;
-  padding-top: 14px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const DeleteVar = styled.img`
-  height: 32px;
-  width: 32px;
-  pointer-events: none;
-  user-select: none;
-`;
-
 const colorPaletteItemVariants = {
   hidden: { opacity: 0 },
   visible: (custom: number) => ({
@@ -88,7 +72,6 @@ interface Props {
   index: number;
   onDragStart: () => void;
   onDragEnd: () => void;
-  onRemove: (variable: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>"]) => void;
 }
 
 const VariableReOrderRow = (props: Props) => {
@@ -111,20 +94,6 @@ const VariableReOrderRow = (props: Props) => {
     },
     [controls]
   );
-
-  const xIcon = useMemo(() => {
-    if (theme.name == "light") {
-      return TrashLight;
-    }
-    return TrashDark;
-  }, [theme.name]);
-
-
-  const onRemove = useCallback(() => {
-    if (props.linkVariable) {
-      props.onRemove(props.linkVariable);
-    }
-  }, [props.linkVariable, props.onRemove]);
 
   return (
     <Reorder.Item
@@ -167,9 +136,6 @@ const VariableReOrderRow = (props: Props) => {
             >
               {props.linkVariable.linkName}
             </RowTitle>
-            <DeleteVarContainer onClick={onRemove}>
-              <DeleteVar src={xIcon} />
-            </DeleteVarContainer>
           </ColorControlsContainer>
         </TitleRow>
       </Container>

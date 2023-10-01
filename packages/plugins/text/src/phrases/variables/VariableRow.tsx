@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback } from "react";
-import { SchemaTypes } from "../../floro-schema-api";
+import { SchemaTypes, useFloroContext } from "../../floro-schema-api";
 import { Reorder, useDragControls } from "framer-motion";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
@@ -102,10 +102,12 @@ const paletteCellVariants = {
 interface Props {
   variable: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>"];
   index: number;
+  onRemove: (variable: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>"]) => void;
 }
 
 const VariableRow = (props: Props) => {
   const theme = useTheme();
+  const { commandMode} = useFloroContext();
 
   const varTypeFormatted = useMemo(() => {
     if (props.variable.varType == "integer") {
@@ -122,6 +124,20 @@ const VariableRow = (props: Props) => {
     }
     return null;
   }, [props.variable.varType]);
+
+  const xIcon = useMemo(() => {
+    if (theme.name == "light") {
+      return TrashLight;
+    }
+    return TrashDark;
+  }, [theme.name]);
+
+
+  const onRemove = useCallback(() => {
+    if (props.variable) {
+      props.onRemove(props.variable);
+    }
+  }, [props.variable, props.onRemove]);
 
   return (
     <div
@@ -161,7 +177,7 @@ const VariableRow = (props: Props) => {
               </span>
               <span
                 style={{
-                  color: theme.colors.contrastTextLight,
+                  color: theme.colors.contrastText,
                   fontWeight: 600,
                   fontFamily: "MavenPro",
                   fontSize: '1.7rem',
@@ -171,6 +187,11 @@ const VariableRow = (props: Props) => {
                 {varTypeFormatted}
               </span>
             </RowTitle>
+            {commandMode == "edit" && (
+              <DeleteVarContainer onClick={onRemove}>
+                <DeleteVar src={xIcon} />
+              </DeleteVarContainer>
+            )}
           </ColorControlsContainer>
         </TitleRow>
       </Container>

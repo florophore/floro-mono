@@ -10,6 +10,8 @@ import Button from "@floro/storybook/stories/design-system/Button";
 import { getArrayStringDiff, splitTextForDiff } from "../phrasetranslation/diffing";
 import ColorPalette from "@floro/styles/ColorPalette";
 import Observer from "@floro/storybook/stories/design-system/ContentEditor/editor/Observer";
+import TextNode from "@floro/storybook/stories/design-system/ContentEditor/editor/nodes/TextNode";
+import TermList from "../termdisplay/TermList";
 
 const Container = styled.div`
     margin-top: 24px;
@@ -46,12 +48,14 @@ interface Props {
   phrase: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>"];
   linkVariable: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>"];
   systemSourceLocale: SchemaTypes["$(text).localeSettings.locales.localeCode<?>"];
+  selectedLocale: SchemaTypes["$(text).localeSettings.locales.localeCode<?>"];
   linkVariableRef: PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>"];
   targetLinkDisplayTranslation: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue']
 }
 
 const SourceLinkDisplayTranslation = (props: Props) => {
   const theme = useTheme();
+  const { applicationState } = useFloroContext();
   const [phraseGroupId, phraseId, linkName] = useExtractQueryArgs(props.linkVariableRef);
   const sourceLocaleRef = props?.systemSourceLocale?.localeCode ? makeQueryRef(
     "$(text).localeSettings.locales.localeCode<?>",
@@ -73,11 +77,85 @@ const SourceLinkDisplayTranslation = (props: Props) => {
   }, [sourceLinkDisplayTranslation?.richTextHtml])
 
 
+  const terms = useReferencedObject("$(text).terms");
+  const localeTerms = useMemo(() => {
+    return terms.flatMap(term => {
+      const value = term.localizedTerms.find(localizedTerm => {
+        return localizedTerm.id == sourceLocaleRef;
+      })?.termValue ?? term?.name;
+      return {
+        id: term.id,
+        value: value == '' ? term.name : value,
+        name: term.name
+      }
+    });
+  }, [terms, props?.systemSourceLocale?.localeCode, applicationState]);
+
+  const mentionedTerms = useMemo(() => {
+    const json = JSON.parse(sourceLinkDisplayTranslation?.json ?? '{}');
+    const children: Array<TextNode> = json?.children ?? [];
+    const foundTerms: Array<{
+      value: string,
+      id: string,
+      name: string,
+    }> = [];
+
+    const flattenedChildren: Array<TextNode> = [];
+    for (let i = 0; i < children.length; ++i) {
+      if (children[i]?.type == "text" || children[i]?.type == "mentioned-tag") {
+        const combined = children[i];
+        combined.type = 'text';
+        for (let j = i; j < children.length; ++j) {
+          if (children[j]?.type != "text" && children[j]?.type != "mentioned-tag") {
+            flattenedChildren.push(combined);
+            break;
+          }
+          combined.content += children[j].content;
+          i = j;
+          flattenedChildren.push(combined)
+        }
+      } else {
+        flattenedChildren.push(children[i]);
+      }
+    }
+
+    for (const localeTerm of localeTerms) {
+      for (const child of flattenedChildren) {
+        if (child?.type == 'text') {
+          if ((child.content?? '')?.toLowerCase()?.indexOf(localeTerm.value?.toLowerCase()) != -1) {
+            foundTerms.push(localeTerm);
+            break;
+          }
+        }
+        if (child?.type == 'mentioned-tag') {
+          if (child.content == localeTerm.value) {
+            foundTerms.push(localeTerm);
+            break;
+          }
+        }
+      }
+    }
+    return foundTerms;
+  }, [sourceLinkDisplayTranslation?.json, localeTerms])
+
+  const enabledMentionedTerms = useMemo(() => {
+    return mentionedTerms
+      ?.filter((mentionedTerm) => {
+        return sourceLinkDisplayTranslation?.enabledTerms?.includes(mentionedTerm?.id);
+      })
+      ;
+  }, [mentionedTerms, sourceLinkDisplayTranslation?.enabledTerms])
+
   const editorObserver = useMemo(() => {
     const variables = props.phrase.variables.map(v => v.name);
     const interpolationVariants = props.phrase.interpolationVariants.map((v) => v.name);
-    return new Observer(variables, [], interpolationVariants);
-  }, [props.phrase.variables]);
+    return new Observer(
+      variables,
+      [],
+      interpolationVariants,
+      enabledMentionedTerms?.map((mentionedTerm) => mentionedTerm.value) ?? []
+    );
+  }, [props.phrase.variables, enabledMentionedTerms]);
 
   const editorDoc = useMemo(() => {
     if (sourceLinkDisplayTranslation) {
@@ -128,7 +206,7 @@ const SourceLinkDisplayTranslation = (props: Props) => {
               {`Source Display Value`}
             </span>
             <span
-                style={{
+              style={{
                 fontSize: "1.4rem",
                 background: ColorPalette.variableBlue,
                 boxShadow: `inset 0px 0px 2px 2px ${ColorPalette.variableBlueInset}`,
@@ -138,10 +216,10 @@ const SourceLinkDisplayTranslation = (props: Props) => {
                 color: ColorPalette.white,
                 marginLeft: 8,
                 marginRight: 8,
-                }}
+              }}
             >
-            {props.linkVariable.linkName}
-          </span>
+              {props.linkVariable.linkName}
+            </span>
             <span style={{ color: theme.colors.contrastText }}>
               {`(${props.systemSourceLocale.localeCode}):`}
             </span>
@@ -157,7 +235,7 @@ const SourceLinkDisplayTranslation = (props: Props) => {
                 }}
               >
                 {diffIsEmpty && (
-                  <NothingToDiff>{'Nothing to diff'}</NothingToDiff>
+                  <NothingToDiff>{"Nothing to diff"}</NothingToDiff>
                 )}
                 {!diffIsEmpty && !showDiff && (
                   <Button
@@ -171,7 +249,7 @@ const SourceLinkDisplayTranslation = (props: Props) => {
                     }}
                   />
                 )}
-                {showDiff && !diffIsEmpty &&(
+                {showDiff && !diffIsEmpty && (
                   <Button
                     style={{ width: 120 }}
                     label={"hide diff"}
@@ -201,6 +279,40 @@ const SourceLinkDisplayTranslation = (props: Props) => {
             beforeStrings={beforeText}
             afterStrings={afterText}
             diff={diff}
+          />
+        )}
+        {enabledMentionedTerms?.length > 0 && (
+          <TermList
+            terms={mentionedTerms ?? []}
+            selectedLocale={props.selectedLocale}
+            systemSourceLocale={props.systemSourceLocale}
+            isReadOnly
+            enabledTerms={[]}
+            title={
+              <>
+                <span style={{ color: theme.colors.contrastText }}>
+                  {`Mentioned Terms in Source Display Value`}
+                </span>
+                <span
+                  style={{
+                    fontSize: "1.4rem",
+                    background: ColorPalette.variableBlue,
+                    boxShadow: `inset 0px 0px 2px 2px ${ColorPalette.variableBlueInset}`,
+                    borderRadius: 8,
+                    padding: 4,
+                    fontWeight: 500,
+                    color: ColorPalette.white,
+                    marginLeft: 8,
+                    marginRight: 8,
+                  }}
+                >
+                  {props.linkVariable.linkName}
+                </span>
+                <span style={{ color: theme.colors.contrastText }}>
+                  {`(${props.systemSourceLocale.localeCode}):`}
+                </span>
+              </>
+            }
           />
         )}
       </Container>

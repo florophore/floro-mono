@@ -119,6 +119,7 @@ import RepoEnabledWebhookKeyService from './services/api_keys/RepoEnabledWebhook
 import PublicApiV0Controller from './controllers/public_api/PublicApiV0Controller';
 import BranchUpdateWebhookQueue from './services/webhook_queues/BranchUpdateWebhookQueue';
 import HealthCheckController from './controllers/HealthCheckController';
+import DeepLProxyController from './controllers/proxy/DeepLProxyController';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -289,6 +290,7 @@ export default new ContainerModule((bind): void => {
     bind<PrivateCDNTestController>("Controllers").to(PrivateCDNTestController);
     bind<TestWebhookController>("Controllers").to(TestWebhookController);
     bind<PublicApiV0Controller>("Controllers").to(PublicApiV0Controller);
+    bind<DeepLProxyController>("Controllers").to(DeepLProxyController);
 
     // RESOLVER MODULES
     bind<UsersResolverModule>("ResolverModule").to(UsersResolverModule);

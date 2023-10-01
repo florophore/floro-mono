@@ -16,15 +16,14 @@ export default {
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template = (args) => {
     const [text, setText] = useState("")
-    const observer = useMemo(() => new Observer(), []);
+    const observer = useMemo(() => new Observer(['hello', 'world']), []);
     const editor = useMemo(() => new EditorDocument(observer), [observer])
     return (
       <div
         style={{
-          display: "flex",
-          flexDirection: "column",
-          boxSizing: "border-box",
-          width: 500,
+          display: 'flex',
+          flexDirection: 'column',
+          width: 600
         }}
       >
         <ContentEditor
@@ -34,6 +33,7 @@ const Template = (args) => {
             editor.tree.updateRootFromHTML(str);
             setText(str);
           }}
+          isDebugMode
         />
       </div>
     );

@@ -88,7 +88,6 @@ interface Props {
   index: number;
   onDragStart: () => void;
   onDragEnd: () => void;
-  onRemove: (variable: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>"]) => void;
 }
 
 const InterpolationVariantReOrderRow = (props: Props) => {
@@ -111,20 +110,6 @@ const InterpolationVariantReOrderRow = (props: Props) => {
     },
     [controls]
   );
-
-  const xIcon = useMemo(() => {
-    if (theme.name == "light") {
-      return TrashLight;
-    }
-    return TrashDark;
-  }, [theme.name]);
-
-
-  const onRemove = useCallback(() => {
-    if (props.interpolationVariant) {
-      props.onRemove(props.interpolationVariant);
-    }
-  }, [props.interpolationVariant, props.onRemove]);
 
   return (
     <Reorder.Item
@@ -167,9 +152,6 @@ const InterpolationVariantReOrderRow = (props: Props) => {
             >
               {props.interpolationVariant.name}
             </RowTitle>
-            <DeleteVarContainer onClick={onRemove}>
-              <DeleteVar src={xIcon} />
-            </DeleteVarContainer>
           </ColorControlsContainer>
         </TitleRow>
       </Container>

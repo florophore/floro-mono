@@ -236,14 +236,13 @@ const PhraseGroup = (props: Props) => {
 
   const { applicationState, commandMode, compareFrom, saveState } =
     useFloroContext();
-  const [isReOrderPhrasesMode, setIsReOrderIconsMode] = useState(false);
+  const [isReOrderPhrasesMode, setIsReOrderPhrasesMode] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [showAddPhraseKey, setShowAddPhraseKey] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [filterUntranslatedForGroup, setFilterUntranslatedForGroup] =
     useState(false);
   const [filterRequiresUpdate, setFilterRequiresUpdate] = useState(false);
-  const [revisionSet, setRevisionSet] = useState<Set<string>>(new Set());
   const phraseGroupRef = useQueryRef(
     "$(text).phraseGroups.id<?>",
     props.phraseGroup.id
@@ -348,11 +347,11 @@ const PhraseGroup = (props: Props) => {
   }, [props.phraseGroup, props.onRemoveGroup]);
 
   const onStartReOrderMode = useCallback(() => {
-    setIsReOrderIconsMode(true);
+    setIsReOrderPhrasesMode(true);
   }, []);
 
   const onStopReOrderMode = useCallback(() => {
-    setIsReOrderIconsMode(false);
+    setIsReOrderPhrasesMode(false);
   }, []);
 
   const folderIcon = useMemo(() => {
@@ -706,14 +705,6 @@ const PhraseGroup = (props: Props) => {
     props.pinnedPhrases,
   ]);
 
-  useEffect(() => {
-    if (filterRequiresUpdate) {
-      setRevisionSet(new Set(Array.from(phrasesToRender.map((p) => p.id))));
-    } else {
-      setRevisionSet(new Set());
-    }
-  }, [filterRequiresUpdate]);
-
   const onToggle = useCallback(() => {
     if (!isExpanded) {
       setLastExpanded(phraseGroupRef);
@@ -1064,7 +1055,7 @@ const PhraseGroup = (props: Props) => {
 
   useEffect(() => {
     if (isSearching && isReOrderPhrasesMode) {
-      setIsReOrderIconsMode(false);
+      setIsReOrderPhrasesMode(false);
     }
   }, [isSearching, isReOrderPhrasesMode]);
 
@@ -1106,6 +1097,13 @@ const PhraseGroup = (props: Props) => {
       setIsExpanded(true);
     }
   }, [isSearching, hasSearchMatches]);
+
+  useEffect(() => {
+    if (isReOrderPhrasesMode && commandMode != "edit") {
+      setIsReOrderPhrasesMode(false)
+    }
+
+  }, [isReOrderPhrasesMode, commandMode])
 
   if (
     !isSearching &&
@@ -1152,15 +1150,16 @@ const PhraseGroup = (props: Props) => {
           {!isSearching &&
             !(props.showOnlyPinnedPhrases && props.pinnedPhrases) &&
             !props.isEditingGroups &&
-            (phrases?.length ?? 0) > 0 && <></>}
-          <ChevronWrapper onClick={onToggle}>
-            <ChevronIcon
-              src={chevronIcon}
-              style={{
-                transform: isExpanded ? "rotate(90deg)" : "rotate(0deg)",
-              }}
-            />
-          </ChevronWrapper>
+            (phrases?.length ?? 0) > 0 && <>
+            <ChevronWrapper onClick={onToggle}>
+              <ChevronIcon
+                src={chevronIcon}
+                style={{
+                  transform: isExpanded ? "rotate(90deg)" : "rotate(0deg)",
+                }}
+              />
+            </ChevronWrapper>
+            </>}
         </FolderRow>
         {!props.isEditingGroups && (
             <AddRow>
@@ -1263,9 +1262,11 @@ const PhraseGroup = (props: Props) => {
                   setPinnedPhrases={props.setPinnedPhrases}
                   phraseRef={phraseRef}
                   selectedTopLevelLocale={props.selectedTopLevelLocale}
-                  key={index}
+                  key={phraseRef}
                   index={index}
                   phrase={phrase}
+                  onRemove={onRemovePhrase}
+                  phraseGroup={props.phraseGroup}
                 />
               );
             })}

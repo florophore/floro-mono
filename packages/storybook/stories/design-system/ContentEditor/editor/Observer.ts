@@ -2,15 +2,18 @@ export default class Observer {
     public variables: string[];
     public linkVariables: string[];
     public interpolationVariants: string[];
+    public mentionedTerms: string[];
 
     constructor(
         variables?: string[],
         linkVariables?: string[],
         interpolationVariants?: string[],
+        mentionedTerms?: string[],
     ) {
         this.variables = variables ?? [];
         this.linkVariables = linkVariables ?? [];
         this.interpolationVariants = interpolationVariants ?? [];
+        this.mentionedTerms = mentionedTerms ?? [];
     }
 
     public getAllTags() {
@@ -27,5 +30,9 @@ export default class Observer {
 
     public getLinkVairablesRemapSet() {
         return new Set(this.linkVariables.map(tag => `{${tag}}`))
+    }
+
+    public getMentionedTerms() {
+        return this.mentionedTerms.sort((a, b) => b.length - a.length)?.map(t => t?.toLowerCase());
     }
 }

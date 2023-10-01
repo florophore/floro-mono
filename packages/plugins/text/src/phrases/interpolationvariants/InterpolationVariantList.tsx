@@ -1,4 +1,3 @@
-
 import React, { useMemo, useCallback, useState } from "react";
 import { useTheme } from "@emotion/react";
 import { PointerTypes, SchemaTypes, makeQueryRef, useFloroContext, useFloroState, useReferencedObject } from "../../floro-schema-api";
@@ -67,6 +66,13 @@ const MissingTranslationsTitle = styled.div`
   font-weight: 600;
   font-size: 1rem;
   color: ${ColorPalette.white};
+`;
+
+const BusinessLogicDisclaimer = styled.p`
+  font-family: "MavenPro";
+  font-weight: 500;
+  font-size: 1rem;
+  color: ${props => props.theme.colors.contrastText};
 `;
 
 interface Props {
@@ -141,10 +147,10 @@ const InterpolationVariantsList = (props: Props) => {
   }, [name, isNameTaken, variableRef]);
 
   const onAppendInterpolationVariant = useCallback(() => {
-    if (!isEnabled || !props.phrase.interpolationVariants || !variableRef) {
+    if (!isEnabled || !variableRef) {
         return;
     }
-    setInterpolationVariants([...props.phrase.interpolationVariants, {
+    setInterpolationVariants([...(props.phrase.interpolationVariants ? props.phrase.interpolationVariants : []), {
         name: name.trim(),
         variableRef,
         localeRules: []
@@ -206,7 +212,7 @@ const InterpolationVariantsList = (props: Props) => {
     return false;
   }, [interpolationVariants, applicationState, props.selectedLocale.localeCode])
 
-  if (commandMode != "edit" && (linkVariables?.length ?? 0) == 0) {
+  if (commandMode != "edit" && (interpolationVariants?.length ?? 0) == 0) {
     return null;
   }
 
@@ -222,18 +228,18 @@ const InterpolationVariantsList = (props: Props) => {
           }}
         >
           <span style={{ color: theme.colors.contrastText }}>
-            {`Interpolation Variants`}
+            {`Conditional Variants`}
           </span>
           <span>
             {isMissingValues && (
                 <MissingTranslationsPill>
-                    <MissingTranslationsTitle>{`missing ${props.selectedLocale.localeCode} interpolations`}</MissingTranslationsTitle>
+                    <MissingTranslationsTitle>{`missing ${props.selectedLocale.localeCode} vairants`}</MissingTranslationsTitle>
                 </MissingTranslationsPill>
             )}
           </span>
         </RowTitle>
         {(interpolationVariants?.length ?? 0) > 0 && commandMode == "edit" && (
-          <ToggleEditTitle onClick={onToggleReOrder}>{isReOrderMode ? 'done organizing' : 'organize interpolation variants'}</ToggleEditTitle>
+          <ToggleEditTitle onClick={onToggleReOrder}>{isReOrderMode ? 'done organizing' : 'organize conditional variants'}</ToggleEditTitle>
         )}
       </TitleRow>
       {isReOrderMode && commandMode == "edit" && (
@@ -254,7 +260,6 @@ const InterpolationVariantsList = (props: Props) => {
                   index={index}
                   onDragStart={onDragStart}
                   onDragEnd={onDragEnd}
-                  onRemove={onRemoveInterpolationVariant}
                 />
               );
             })}
@@ -263,10 +268,18 @@ const InterpolationVariantsList = (props: Props) => {
       )}
       {(!isReOrderMode || commandMode != "edit") && (
         <div>
+          {commandMode == "edit" && (
+            <div>
+              <BusinessLogicDisclaimer>
+                <b>{'Disclaimer:'}</b>
+                <span>{'We strongly discourage putting business logic in conditional variants. Conditional variants should be used for addressing grammatical rules (e.g. pluralization/genderization), not application logic.'}</span>
+              </BusinessLogicDisclaimer>
+            </div>
+          )}
           {interpolationVariants?.map((interpolationVariable) => {
             return (
               <InterpolationVariant
-                key={interpolationVariable.name}
+                key={`${props.phraseRef}.interpolationVariants.name<${interpolationVariable.name}>`}
                 interpolationVariant={interpolationVariable}
                 phrase={props.phrase}
                 interpolationVariantRef={`${props.phraseRef}.interpolationVariants.name<${interpolationVariable.name}>`}
@@ -277,6 +290,7 @@ const InterpolationVariantsList = (props: Props) => {
                 setPinnedPhrases={props.setPinnedPhrases}
                 isPinned={props.isPinned}
                 phraseRef={props.phraseRef}
+                onRemove={onRemoveInterpolationVariant}
               />
             );
           })}
@@ -320,10 +334,10 @@ const InterpolationVariantsList = (props: Props) => {
               />
             </div>
           </AddVariableContainer>
-          <div style={{ marginTop: 12 }}>
+          <div style={{ marginTop: 24 }}>
             <Button
               size="medium"
-              label={"add interpolation"}
+              label={"add variant"}
               bg={"orange"}
               isDisabled={!isEnabled}
               onClick={onAppendInterpolationVariant}

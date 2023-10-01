@@ -3,16 +3,34 @@ import mdiff from "mdiff";
 
 export type FileRef = `${string}.${string}`;
 
-export type PartialDiffableQuery = `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.conditionals.[${number}].resultant`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.conditionals.[${number}]`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.defaultValue.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkDisplayValue.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkHrefValue.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.localeTests.description<${string}>.mockValues.variableRef<${QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.conditionals`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.defaultValue`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkDisplayValue`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkHrefValue`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.localeTests.description<${string}>.mockValues`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.localeTests.description<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseTranslations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.localeTests`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.exampleUsageImages.[${number}]`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseTranslations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.variables.id<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.exampleUsageImages`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseTranslations`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.variables`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>`|`$(text).terms.id<${string}>.localizedTerms.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).localeSettings.locales.localeCode<${string}>`|`$(text).phraseGroups.id<${string}>.phrases`|`$(text).terms.id<${string}>.localizedTerms`|`$(text).localeSettings.locales`|`$(text).phraseGroups.id<${string}>`|`$(text).terms.id<${string}>`|`$(text).localeSettings`|`$(text).phraseGroups`|`$(text).terms`;
+export type PartialDiffableQuery = `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.conditionals.[${number}].subconditions.[${number}]`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.conditionals.[${number}].resultant`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.conditionals.[${number}].subconditions`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.conditionals.[${number}]`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.defaultValue.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkDisplayValue.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkHrefValue.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.localeTests.description<${string}>.mockValues.variableRef<${QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.conditionals`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.defaultValue`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkDisplayValue`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkHrefValue`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.localeTests.description<${string}>.mockValues`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.localeTests.description<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseTranslations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.localeTests`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseTranslations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.variables.id<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseTranslations`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.variables`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>`|`$(text).terms.id<${string}>.localizedTerms.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).localeSettings.locales.localeCode<${string}>`|`$(text).phraseGroups.id<${string}>.phrases`|`$(text).terms.id<${string}>.localizedTerms`|`$(text).localeSettings.locales`|`$(text).phraseGroups.id<${string}>`|`$(text).terms.id<${string}>`|`$(text).localeSettings`|`$(text).phraseGroups`|`$(text).terms`;
 
-export type DiffableQuery = `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.conditionals.[${number}].resultant`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.conditionals.[${number}]`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.defaultValue.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkDisplayValue.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkHrefValue.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.localeTests.description<${string}>.mockValues.variableRef<${QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.defaultValue`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkDisplayValue`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkHrefValue`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.localeTests.description<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseTranslations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.exampleUsageImages.[${number}]`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseTranslations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.variables.id<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>`|`$(text).terms.id<${string}>.localizedTerms.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).localeSettings.locales.localeCode<${string}>`|`$(text).phraseGroups.id<${string}>`|`$(text).terms.id<${string}>`|`$(text).localeSettings`;
+export type DiffableQuery = `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.conditionals.[${number}].subconditions.[${number}]`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.conditionals.[${number}].resultant`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.conditionals.[${number}]`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.defaultValue.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkDisplayValue.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkHrefValue.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.localeTests.description<${string}>.mockValues.variableRef<${QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.defaultValue`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkDisplayValue`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkHrefValue`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.localeTests.description<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseTranslations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseTranslations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.variables.id<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>`|`$(text).terms.id<${string}>.localizedTerms.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).localeSettings.locales.localeCode<${string}>`|`$(text).phraseGroups.id<${string}>`|`$(text).terms.id<${string}>`|`$(text).localeSettings`;
 
 export type SchemaTypes = {
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].subconditions.[?]']: {
+    ['booleanComparatorValue']?: boolean;
+    ['conjunction']: string;
+    ['floatComparatorValue']?: number;
+    ['intComparatorValue']?: number;
+    ['operator']: string;
+    ['stringComparatorValue']?: string;
+    ['variableRef']: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'];
+  };
   ['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].resultant']: {
     ['json']?: string;
     ['plainText']?: string;
     ['richTextHtml']?: string;
   };
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].subconditions']: Array<{
+    ['booleanComparatorValue']?: boolean;
+    ['conjunction']: string;
+    ['floatComparatorValue']?: number;
+    ['intComparatorValue']?: number;
+    ['operator']: string;
+    ['stringComparatorValue']?: string;
+    ['variableRef']: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'];
+  }>;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?]']: {
     ['booleanComparatorValue']?: boolean;
     ['floatComparatorValue']?: number;
@@ -24,6 +42,15 @@ export type SchemaTypes = {
       ['richTextHtml']?: string;
     };
     ['stringComparatorValue']?: string;
+    ['subconditions']: Array<{
+      ['booleanComparatorValue']?: boolean;
+      ['conjunction']: string;
+      ['floatComparatorValue']?: number;
+      ['intComparatorValue']?: number;
+      ['operator']: string;
+      ['stringComparatorValue']?: string;
+      ['variableRef']: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'];
+    }>;
   };
   ['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue.sourceAtRevision']: {
     ['json']?: string;
@@ -61,8 +88,18 @@ export type SchemaTypes = {
       ['richTextHtml']?: string;
     };
     ['stringComparatorValue']?: string;
+    ['subconditions']: Array<{
+      ['booleanComparatorValue']?: boolean;
+      ['conjunction']: string;
+      ['floatComparatorValue']?: number;
+      ['intComparatorValue']?: number;
+      ['operator']: string;
+      ['stringComparatorValue']?: string;
+      ['variableRef']: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'];
+    }>;
   }>;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue']: {
+    ['enabledTerms']: Array<string>;
     ['json']?: string;
     ['plainText']?: string;
     ['revisionCount']: number;
@@ -76,6 +113,7 @@ export type SchemaTypes = {
     };
   };
   ['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue']: {
+    ['enabledTerms']: Array<string>;
     ['json']?: string;
     ['plainText']?: string;
     ['revisionCount']: number;
@@ -120,8 +158,18 @@ export type SchemaTypes = {
         ['richTextHtml']?: string;
       };
       ['stringComparatorValue']?: string;
+      ['subconditions']: Array<{
+        ['booleanComparatorValue']?: boolean;
+        ['conjunction']: string;
+        ['floatComparatorValue']?: number;
+        ['intComparatorValue']?: number;
+        ['operator']: string;
+        ['stringComparatorValue']?: string;
+        ['variableRef']: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'];
+      }>;
     }>;
     ['defaultValue']: {
+      ['enabledTerms']: Array<string>;
       ['json']?: string;
       ['plainText']?: string;
       ['revisionCount']: number;
@@ -139,6 +187,7 @@ export type SchemaTypes = {
   ['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>']: {
     ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
     ['linkDisplayValue']: {
+      ['enabledTerms']: Array<string>;
       ['json']?: string;
       ['plainText']?: string;
       ['revisionCount']: number;
@@ -187,8 +236,18 @@ export type SchemaTypes = {
         ['richTextHtml']?: string;
       };
       ['stringComparatorValue']?: string;
+      ['subconditions']: Array<{
+        ['booleanComparatorValue']?: boolean;
+        ['conjunction']: string;
+        ['floatComparatorValue']?: number;
+        ['intComparatorValue']?: number;
+        ['operator']: string;
+        ['stringComparatorValue']?: string;
+        ['variableRef']: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'];
+      }>;
     }>;
     ['defaultValue']: {
+      ['enabledTerms']: Array<string>;
       ['json']?: string;
       ['plainText']?: string;
       ['revisionCount']: number;
@@ -206,6 +265,7 @@ export type SchemaTypes = {
   ['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations']: Array<{
     ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
     ['linkDisplayValue']: {
+      ['enabledTerms']: Array<string>;
       ['json']?: string;
       ['plainText']?: string;
       ['revisionCount']: number;
@@ -248,10 +308,6 @@ export type SchemaTypes = {
       ['variableRef']: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'];
     }>;
   }>;
-  ['$(text).phraseGroups.id<?>.phrases.id<?>.exampleUsageImages.[?]']: {
-    ['description']: string;
-    ['image']: FileRef;
-  };
   ['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>']: {
     ['localeRules']: Array<{
       ['conditionals']: Array<{
@@ -265,8 +321,18 @@ export type SchemaTypes = {
           ['richTextHtml']?: string;
         };
         ['stringComparatorValue']?: string;
+        ['subconditions']: Array<{
+          ['booleanComparatorValue']?: boolean;
+          ['conjunction']: string;
+          ['floatComparatorValue']?: number;
+          ['intComparatorValue']?: number;
+          ['operator']: string;
+          ['stringComparatorValue']?: string;
+          ['variableRef']: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'];
+        }>;
       }>;
       ['defaultValue']: {
+        ['enabledTerms']: Array<string>;
         ['json']?: string;
         ['plainText']?: string;
         ['revisionCount']: number;
@@ -289,6 +355,7 @@ export type SchemaTypes = {
     ['translations']: Array<{
       ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
       ['linkDisplayValue']: {
+        ['enabledTerms']: Array<string>;
         ['json']?: string;
         ['plainText']?: string;
         ['revisionCount']: number;
@@ -317,6 +384,7 @@ export type SchemaTypes = {
     }>;
   };
   ['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>']: {
+    ['enabledTerms']: Array<string>;
     ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
     ['json']?: string;
     ['plainText']?: string;
@@ -348,10 +416,6 @@ export type SchemaTypes = {
     ['name']: string;
     ['varType']: string;
   };
-  ['$(text).phraseGroups.id<?>.phrases.id<?>.exampleUsageImages']: Array<{
-    ['description']: string;
-    ['image']: FileRef;
-  }>;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants']: Array<{
     ['localeRules']: Array<{
       ['conditionals']: Array<{
@@ -365,8 +429,18 @@ export type SchemaTypes = {
           ['richTextHtml']?: string;
         };
         ['stringComparatorValue']?: string;
+        ['subconditions']: Array<{
+          ['booleanComparatorValue']?: boolean;
+          ['conjunction']: string;
+          ['floatComparatorValue']?: number;
+          ['intComparatorValue']?: number;
+          ['operator']: string;
+          ['stringComparatorValue']?: string;
+          ['variableRef']: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'];
+        }>;
       }>;
       ['defaultValue']: {
+        ['enabledTerms']: Array<string>;
         ['json']?: string;
         ['plainText']?: string;
         ['revisionCount']: number;
@@ -389,6 +463,7 @@ export type SchemaTypes = {
     ['translations']: Array<{
       ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
       ['linkDisplayValue']: {
+        ['enabledTerms']: Array<string>;
         ['json']?: string;
         ['plainText']?: string;
         ['revisionCount']: number;
@@ -417,6 +492,7 @@ export type SchemaTypes = {
     }>;
   }>;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations']: Array<{
+    ['enabledTerms']: Array<string>;
     ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
     ['json']?: string;
     ['plainText']?: string;
@@ -450,10 +526,6 @@ export type SchemaTypes = {
   }>;
   ['$(text).phraseGroups.id<?>.phrases.id<?>']: {
     ['description']?: string;
-    ['exampleUsageImages']: Array<{
-      ['description']: string;
-      ['image']: FileRef;
-    }>;
     ['id']: string;
     ['interpolationVariants']: Array<{
       ['localeRules']: Array<{
@@ -468,8 +540,18 @@ export type SchemaTypes = {
             ['richTextHtml']?: string;
           };
           ['stringComparatorValue']?: string;
+          ['subconditions']: Array<{
+            ['booleanComparatorValue']?: boolean;
+            ['conjunction']: string;
+            ['floatComparatorValue']?: number;
+            ['intComparatorValue']?: number;
+            ['operator']: string;
+            ['stringComparatorValue']?: string;
+            ['variableRef']: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'];
+          }>;
         }>;
         ['defaultValue']: {
+          ['enabledTerms']: Array<string>;
           ['json']?: string;
           ['plainText']?: string;
           ['revisionCount']: number;
@@ -492,6 +574,7 @@ export type SchemaTypes = {
       ['translations']: Array<{
         ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
         ['linkDisplayValue']: {
+          ['enabledTerms']: Array<string>;
           ['json']?: string;
           ['plainText']?: string;
           ['revisionCount']: number;
@@ -521,6 +604,7 @@ export type SchemaTypes = {
     }>;
     ['phraseKey']: string;
     ['phraseTranslations']: Array<{
+      ['enabledTerms']: Array<string>;
       ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
       ['json']?: string;
       ['plainText']?: string;
@@ -567,10 +651,6 @@ export type SchemaTypes = {
   };
   ['$(text).phraseGroups.id<?>.phrases']: Array<{
     ['description']?: string;
-    ['exampleUsageImages']: Array<{
-      ['description']: string;
-      ['image']: FileRef;
-    }>;
     ['id']: string;
     ['interpolationVariants']: Array<{
       ['localeRules']: Array<{
@@ -585,8 +665,18 @@ export type SchemaTypes = {
             ['richTextHtml']?: string;
           };
           ['stringComparatorValue']?: string;
+          ['subconditions']: Array<{
+            ['booleanComparatorValue']?: boolean;
+            ['conjunction']: string;
+            ['floatComparatorValue']?: number;
+            ['intComparatorValue']?: number;
+            ['operator']: string;
+            ['stringComparatorValue']?: string;
+            ['variableRef']: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'];
+          }>;
         }>;
         ['defaultValue']: {
+          ['enabledTerms']: Array<string>;
           ['json']?: string;
           ['plainText']?: string;
           ['revisionCount']: number;
@@ -609,6 +699,7 @@ export type SchemaTypes = {
       ['translations']: Array<{
         ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
         ['linkDisplayValue']: {
+          ['enabledTerms']: Array<string>;
           ['json']?: string;
           ['plainText']?: string;
           ['revisionCount']: number;
@@ -638,6 +729,7 @@ export type SchemaTypes = {
     }>;
     ['phraseKey']: string;
     ['phraseTranslations']: Array<{
+      ['enabledTerms']: Array<string>;
       ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
       ['json']?: string;
       ['plainText']?: string;
@@ -687,10 +779,6 @@ export type SchemaTypes = {
     ['name']: string;
     ['phrases']: Array<{
       ['description']?: string;
-      ['exampleUsageImages']: Array<{
-        ['description']: string;
-        ['image']: FileRef;
-      }>;
       ['id']: string;
       ['interpolationVariants']: Array<{
         ['localeRules']: Array<{
@@ -705,8 +793,18 @@ export type SchemaTypes = {
               ['richTextHtml']?: string;
             };
             ['stringComparatorValue']?: string;
+            ['subconditions']: Array<{
+              ['booleanComparatorValue']?: boolean;
+              ['conjunction']: string;
+              ['floatComparatorValue']?: number;
+              ['intComparatorValue']?: number;
+              ['operator']: string;
+              ['stringComparatorValue']?: string;
+              ['variableRef']: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'];
+            }>;
           }>;
           ['defaultValue']: {
+            ['enabledTerms']: Array<string>;
             ['json']?: string;
             ['plainText']?: string;
             ['revisionCount']: number;
@@ -729,6 +827,7 @@ export type SchemaTypes = {
         ['translations']: Array<{
           ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
           ['linkDisplayValue']: {
+            ['enabledTerms']: Array<string>;
             ['json']?: string;
             ['plainText']?: string;
             ['revisionCount']: number;
@@ -758,6 +857,7 @@ export type SchemaTypes = {
       }>;
       ['phraseKey']: string;
       ['phraseTranslations']: Array<{
+        ['enabledTerms']: Array<string>;
         ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
         ['json']?: string;
         ['plainText']?: string;
@@ -793,7 +893,6 @@ export type SchemaTypes = {
     }>;
   };
   ['$(text).terms.id<?>']: {
-    ['globalNotes']?: string;
     ['id']: string;
     ['localizedTerms']: Array<{
       ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
@@ -816,10 +915,6 @@ export type SchemaTypes = {
     ['name']: string;
     ['phrases']: Array<{
       ['description']?: string;
-      ['exampleUsageImages']: Array<{
-        ['description']: string;
-        ['image']: FileRef;
-      }>;
       ['id']: string;
       ['interpolationVariants']: Array<{
         ['localeRules']: Array<{
@@ -834,8 +929,18 @@ export type SchemaTypes = {
               ['richTextHtml']?: string;
             };
             ['stringComparatorValue']?: string;
+            ['subconditions']: Array<{
+              ['booleanComparatorValue']?: boolean;
+              ['conjunction']: string;
+              ['floatComparatorValue']?: number;
+              ['intComparatorValue']?: number;
+              ['operator']: string;
+              ['stringComparatorValue']?: string;
+              ['variableRef']: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'];
+            }>;
           }>;
           ['defaultValue']: {
+            ['enabledTerms']: Array<string>;
             ['json']?: string;
             ['plainText']?: string;
             ['revisionCount']: number;
@@ -858,6 +963,7 @@ export type SchemaTypes = {
         ['translations']: Array<{
           ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
           ['linkDisplayValue']: {
+            ['enabledTerms']: Array<string>;
             ['json']?: string;
             ['plainText']?: string;
             ['revisionCount']: number;
@@ -887,6 +993,7 @@ export type SchemaTypes = {
       }>;
       ['phraseKey']: string;
       ['phraseTranslations']: Array<{
+        ['enabledTerms']: Array<string>;
         ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
         ['json']?: string;
         ['plainText']?: string;
@@ -922,7 +1029,6 @@ export type SchemaTypes = {
     }>;
   }>;
   ['$(text).terms']: Array<{
-    ['globalNotes']?: string;
     ['id']: string;
     ['localizedTerms']: Array<{
       ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
@@ -935,7 +1041,9 @@ export type SchemaTypes = {
 
 
 export type PointerTypes = {
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].subconditions.[?]']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.conditionals.[${number}].subconditions.[${number}]`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].resultant']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.conditionals.[${number}].resultant`;
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].subconditions']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.conditionals.[${number}].subconditions`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?]']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.conditionals.[${number}]`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue.sourceAtRevision']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.defaultValue.sourceAtRevision`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue.sourceAtRevision']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkDisplayValue.sourceAtRevision`;
@@ -953,13 +1061,11 @@ export type PointerTypes = {
   ['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>.sourceAtRevision']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseTranslations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.sourceAtRevision`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.localeTests`;
-  ['$(text).phraseGroups.id<?>.phrases.id<?>.exampleUsageImages.[?]']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.exampleUsageImages.[${number}]`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseTranslations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.variables.id<${string}>`;
-  ['$(text).phraseGroups.id<?>.phrases.id<?>.exampleUsageImages']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.exampleUsageImages`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseTranslations`;
@@ -995,10 +1101,6 @@ export type SchemaRoot = {
       ['name']: string;
       ['phrases']: Array<{
         ['description']?: string;
-        ['exampleUsageImages']: Array<{
-          ['description']: string;
-          ['image']: FileRef;
-        }>;
         ['id']: string;
         ['interpolationVariants']: Array<{
           ['localeRules']: Array<{
@@ -1013,8 +1115,18 @@ export type SchemaRoot = {
                 ['richTextHtml']?: string;
               };
               ['stringComparatorValue']?: string;
+              ['subconditions']: Array<{
+                ['booleanComparatorValue']?: boolean;
+                ['conjunction']: string;
+                ['floatComparatorValue']?: number;
+                ['intComparatorValue']?: number;
+                ['operator']: string;
+                ['stringComparatorValue']?: string;
+                ['variableRef']: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'];
+              }>;
             }>;
             ['defaultValue']: {
+              ['enabledTerms']: Array<string>;
               ['json']?: string;
               ['plainText']?: string;
               ['revisionCount']: number;
@@ -1037,6 +1149,7 @@ export type SchemaRoot = {
           ['translations']: Array<{
             ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
             ['linkDisplayValue']: {
+              ['enabledTerms']: Array<string>;
               ['json']?: string;
               ['plainText']?: string;
               ['revisionCount']: number;
@@ -1066,6 +1179,7 @@ export type SchemaRoot = {
         }>;
         ['phraseKey']: string;
         ['phraseTranslations']: Array<{
+          ['enabledTerms']: Array<string>;
           ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
           ['json']?: string;
           ['plainText']?: string;
@@ -1101,7 +1215,6 @@ export type SchemaRoot = {
       }>;
     }>;
     ['terms']: Array<{
-      ['globalNotes']?: string;
       ['id']: string;
       ['localizedTerms']: Array<{
         ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
@@ -2174,7 +2287,6 @@ const flattenStateToSchemaPathKV = (
   return kv;
 };
 
-
 export const reIndexSchemaArrays = (kvs: Array<DiffElement>): Array<string> => {
   const out: Array<string> = [];
   const indexMap: {[path: string]: number} = {};
@@ -2525,7 +2637,9 @@ export function usePluginStore(plugin: 'text'): SchemaRoot['text'] {
   }, [root, plugin]);
 }
 
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].subconditions.[?]']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].subconditions.[?]'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].resultant']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].resultant'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].subconditions']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].subconditions'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?]']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?]'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue.sourceAtRevision']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue.sourceAtRevision'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue.sourceAtRevision']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue.sourceAtRevision'];
@@ -2543,13 +2657,11 @@ export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(te
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>.sourceAtRevision']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>.sourceAtRevision'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests'];
-export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.exampleUsageImages.[?]']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.exampleUsageImages.[?]'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'];
-export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.exampleUsageImages']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.exampleUsageImages'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations'];
@@ -2581,7 +2693,9 @@ export function getReferencedObject<T>(root: SchemaRoot, query?: string): T|null
   return null;
 };
 
+export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].subconditions.[?]']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].subconditions.[?]'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].resultant']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].resultant'];
+export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].subconditions']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].subconditions'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?]']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?]'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue.sourceAtRevision']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue.sourceAtRevision'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue.sourceAtRevision']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue.sourceAtRevision'];
@@ -2599,13 +2713,11 @@ export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.i
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>.sourceAtRevision']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>.sourceAtRevision'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests'];
-export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.exampleUsageImages.[?]']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.exampleUsageImages.[?]'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'];
-export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.exampleUsageImages']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.exampleUsageImages'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations'];
@@ -2640,7 +2752,9 @@ export function useReferencedObject<T>(query?: string): T|null {
   }, [query, ctx.applicationState]);
 };
 
+export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].subconditions.[?]'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].subconditions.[?]']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].subconditions.[?]']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].subconditions.[?]'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].resultant'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].resultant']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].resultant']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].resultant'], doSave?: boolean) => void, () => void];
+export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].subconditions'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].subconditions']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].subconditions']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].subconditions'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?]'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?]']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?]']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?]'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue.sourceAtRevision'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue.sourceAtRevision']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue.sourceAtRevision']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue.sourceAtRevision'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue.sourceAtRevision'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue.sourceAtRevision']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue.sourceAtRevision']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue.sourceAtRevision'], doSave?: boolean) => void, () => void];
@@ -2658,13 +2772,11 @@ export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.ph
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>.sourceAtRevision'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>.sourceAtRevision']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>.sourceAtRevision']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>.sourceAtRevision'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests'], doSave?: boolean) => void, () => void];
-export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.exampleUsageImages.[?]'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.exampleUsageImages.[?]']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.exampleUsageImages.[?]']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.exampleUsageImages.[?]'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'], doSave?: boolean) => void, () => void];
-export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.exampleUsageImages'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.exampleUsageImages']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.exampleUsageImages']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.exampleUsageImages'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations'], doSave?: boolean) => void, () => void];
@@ -2740,7 +2852,9 @@ export function useFloroState<T>(query: string, defaultData?: T): [T|null, (t: T
   return [getter, set, save];
 };
 
+export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].subconditions.[?]'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].resultant'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].subconditions'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?]'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue.sourceAtRevision'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue.sourceAtRevision'], fuzzy?: boolean): boolean;
@@ -2758,13 +2872,11 @@ export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>.sourceAtRevision'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests'], fuzzy?: boolean): boolean;
-export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.exampleUsageImages.[?]'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'], fuzzy?: boolean): boolean;
-export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.exampleUsageImages'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations'], fuzzy?: boolean): boolean;
@@ -2801,7 +2913,9 @@ export function useIsFloroInvalid(query: PartialDiffableQuery|DiffableQuery, fuz
     return containsDiffable(invalidQueriesSet, query, false);
   }, [invalidQueriesSet, query, fuzzy])
 };
+export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].subconditions.[?]'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].resultant'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].subconditions'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?]'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue.sourceAtRevision'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue.sourceAtRevision'], fuzzy?: boolean): boolean;
@@ -2819,13 +2933,11 @@ export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phra
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>.sourceAtRevision'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests'], fuzzy?: boolean): boolean;
-export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.exampleUsageImages.[?]'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'], fuzzy?: boolean): boolean;
-export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.exampleUsageImages'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations'], fuzzy?: boolean): boolean;
@@ -2855,7 +2967,9 @@ export function useWasAdded(query: PartialDiffableQuery|DiffableQuery, fuzzy = t
     return containsDiffable(ctx.changeset, query, false);
   }, [ctx.changeset, query, fuzzy, ctx.compareFrom, ctx.commandMode])
 };
+export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].subconditions.[?]'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].resultant'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].subconditions'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?]'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue.sourceAtRevision'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue.sourceAtRevision'], fuzzy?: boolean): boolean;
@@ -2873,13 +2987,11 @@ export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.ph
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>.sourceAtRevision'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests'], fuzzy?: boolean): boolean;
-export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.exampleUsageImages.[?]'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'], fuzzy?: boolean): boolean;
-export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.exampleUsageImages'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations'], fuzzy?: boolean): boolean;
@@ -2909,7 +3021,9 @@ export function useWasRemoved(query: PartialDiffableQuery|DiffableQuery, fuzzy =
     return containsDiffable(ctx.changeset, query, false);
   }, [ctx.changeset, query, fuzzy, ctx.compareFrom, ctx.commandMode])
 };
+export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].subconditions.[?]'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].resultant'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].subconditions'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?]'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue.sourceAtRevision'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue.sourceAtRevision'], fuzzy?: boolean): boolean;
@@ -2927,13 +3041,11 @@ export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.p
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>.sourceAtRevision'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests'], fuzzy?: boolean): boolean;
-export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.exampleUsageImages.[?]'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'], fuzzy?: boolean): boolean;
-export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.exampleUsageImages'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations'], fuzzy?: boolean): boolean;
@@ -2963,7 +3075,9 @@ export function useHasConflict(query: PartialDiffableQuery|DiffableQuery, fuzzy 
     return containsDiffable(ctx.conflictSet, query, false);
   }, [ctx.conflictSet, query, fuzzy, ctx.commandMode])
 };
+export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].subconditions.[?]'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].resultant'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].subconditions'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?]'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue.sourceAtRevision'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue.sourceAtRevision'], fuzzy?: boolean): boolean;
@@ -2981,13 +3095,11 @@ export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.ph
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>.sourceAtRevision'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests'], fuzzy?: boolean): boolean;
-export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.exampleUsageImages.[?]'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'], fuzzy?: boolean): boolean;
-export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.exampleUsageImages'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations'], fuzzy?: boolean): boolean;
@@ -3028,7 +3140,9 @@ export function useWasChanged(query: PartialDiffableQuery|DiffableQuery, fuzzy =
   }, [ctx.changeset, query, fuzzy, ctx.compareFrom, ctx.commandMode])
   return wasAdded || wasRemoved;
 };
+export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].subconditions.[?]'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].resultant'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].subconditions'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?]'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue.sourceAtRevision'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue.sourceAtRevision'], fuzzy?: boolean): boolean;
@@ -3046,13 +3160,11 @@ export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>.sourceAtRevision'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests'], fuzzy?: boolean): boolean;
-export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.exampleUsageImages.[?]'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'], fuzzy?: boolean): boolean;
-export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.exampleUsageImages'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations'], fuzzy?: boolean): boolean;

@@ -41,6 +41,7 @@ export default class Node {
   public toJSON(): NodeJSON {
     return {
       content: this.content,
+      type: this.type,
       children: this.children.map((child) => child.toJSON()),
     };
   }
@@ -70,6 +71,14 @@ export default class Node {
       .replaceAll("&quot;", '"')
       .replaceAll("&#39;", "'")
       .replaceAll("&amp;", "&");
+    return unescaped + children;
+  }
+
+  public toUnsafeString(): string {
+    const children = this.children
+      ?.map((child) => child.toUnsafeString())
+      .join("");
+    const unescaped = this.content;
     return unescaped + children;
   }
 

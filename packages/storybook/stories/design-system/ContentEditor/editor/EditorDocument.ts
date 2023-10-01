@@ -15,14 +15,16 @@ export default class EditorDocument {
 
   constructor(observer: Observer, lang?: string) {
     this.cursor = new Cursor();
+    this.observer = observer;
     this.textNodeLexer = new TextNodeLexer(observer, lang ?? "en");
     this.rootNodeLexer = new RootNodeLexer(observer, lang ?? "en", this.textNodeLexer);
     this.tree = new DocumentTree(
+      lang ?? "en",
+      observer,
       this.cursor,
       this.textNodeLexer,
       this.rootNodeLexer
     );
     this.lang = lang ?? "en";
-    this.observer = observer;
   }
 }

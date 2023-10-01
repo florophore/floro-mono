@@ -1,7 +1,6 @@
 import ColorPalette from "@floro/styles/ColorPalette";
 import Node from "../Node"
 import Observer from "../Observer";
-import TextNode from "./TextNode";
 import escape from 'escape-html';
 
 export default class LinkVariantTagNode extends Node {
@@ -10,10 +9,16 @@ export default class LinkVariantTagNode extends Node {
     isBold: boolean;
     isItalic: boolean;
     isUnderlined: boolean;
+    isStrikethrough: boolean;
+    isSuperscript: boolean;
+    isSubscript: boolean;
   } = {
     isBold: false,
     isItalic: false,
-    isUnderlined: false
+    isUnderlined: false,
+    isStrikethrough: false,
+    isSuperscript: false,
+    isSubscript: false
   };
 
   public lang: string;
@@ -22,6 +27,9 @@ export default class LinkVariantTagNode extends Node {
     isBold: boolean,
     isItalic: boolean,
     isUnderlined: boolean,
+    isStrikethrough: boolean,
+    isSuperscript: boolean,
+    isSubscript: boolean
   }) {
     super(observer, content, lang, []);
     this.type = 'link-variable-tag';
@@ -31,6 +39,9 @@ export default class LinkVariantTagNode extends Node {
       this.marks.isBold = !!initMarks.isBold;
       this.marks.isItalic = !!initMarks.isItalic;
       this.marks.isUnderlined = !!initMarks.isUnderlined;
+      this.marks.isStrikethrough = !!initMarks.isStrikethrough;
+      this.marks.isSuperscript = !!initMarks.isSuperscript;
+      this.marks.isSubscript = !!initMarks.isSubscript;
     }
   }
 
@@ -41,6 +52,13 @@ export default class LinkVariantTagNode extends Node {
     if (this.marks.isUnderlined == true) {
       textDecoration = "underline";
     }
+    if (this.marks.isStrikethrough) {
+      if (textDecoration == "underline") {
+        textDecoration = "underline line-through";
+      } else {
+        textDecoration = "line-through";
+      }
+    }
     let fontWeight = "normal";
     if (this.marks.isBold == true) {
       fontWeight = "bold";
@@ -48,6 +66,24 @@ export default class LinkVariantTagNode extends Node {
     let fontStyle = "normal";
     if (this.marks.isItalic == true) {
       fontStyle = "italic";
+    }
+    let fontSize = "inherit";
+    if (this.marks.isSubscript || this.marks.isSuperscript) {
+      fontSize = "smaller";
+    }
+
+    let lineHeight = 1;
+    let bottomLineHeight = 1;
+    let verticalAlign = "inherit";
+    if (this.marks.isSuperscript) {
+      verticalAlign = "super";
+      lineHeight = 0;
+      bottomLineHeight = 1.4;
+    }
+    if (this.marks.isSubscript) {
+      verticalAlign = "sub";
+      lineHeight = 0;
+      bottomLineHeight = 1.4;
     }
 
     return `<span
@@ -60,6 +96,9 @@ export default class LinkVariantTagNode extends Node {
         text-decoration: ${textDecoration};
         font-weight: ${fontWeight};
         font-style: ${fontStyle};
+        font-size: ${fontSize};
+        vertical-align: ${verticalAlign};
+        line-height: ${lineHeight};
         pointer-events: none;
         -webkit-user-select: none;
         -webkit-touch-callout: none;
@@ -84,6 +123,9 @@ export default class LinkVariantTagNode extends Node {
         text-decoration: ${textDecoration};
         font-weight: ${fontWeight};
         font-style: ${fontStyle};
+        font-size: ${fontSize};
+        vertical-align: ${verticalAlign};
+        line-height: ${bottomLineHeight};
         pointer-events: none;
         -webkit-user-select: none;
         -webkit-touch-callout: none;

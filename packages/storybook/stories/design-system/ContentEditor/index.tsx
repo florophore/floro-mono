@@ -10,7 +10,6 @@ import styled from "@emotion/styled";
 import EditorDocument from "./editor/EditorDocument";
 import ContentEditable from "react-contenteditable";
 import EmojiPicker from 'emoji-picker-react';
-import Button from "../Button";
 import sanitizeHtml from 'sanitize-html';
 
 import ExtendLight from "@floro/common-assets/assets/images/rich_text_icons/extend.light.svg";
@@ -36,13 +35,32 @@ import UnderlineUnSelectedDark from "@floro/common-assets/assets/images/rich_tex
 
 import UnderlineSelectedLight from "@floro/common-assets/assets/images/rich_text_icons/underline.selected.light.svg";
 import UnderlineSelectedDark from "@floro/common-assets/assets/images/rich_text_icons/underline.selected.light.svg";
+
+import StrikethroughUnSelectedLight from "@floro/common-assets/assets/images/rich_text_icons/strikethrough.unselect.light.svg";
+import StrikethroughUnSelectedDark from "@floro/common-assets/assets/images/rich_text_icons/strikethrough.unselect.dark.svg";
+
+import StrikethroughSelectedLight from "@floro/common-assets/assets/images/rich_text_icons/strikethrough.selected.light.svg";
+import StrikethroughSelectedDark from "@floro/common-assets/assets/images/rich_text_icons/strikethrough.selected.light.svg";
+
+import SuperscriptUnSelectedLight from "@floro/common-assets/assets/images/rich_text_icons/superscript.unselect.light.svg";
+import SuperscriptUnSelectedDark from "@floro/common-assets/assets/images/rich_text_icons/superscript.unselect.dark.svg";
+
+import SuperscriptSelectedLight from "@floro/common-assets/assets/images/rich_text_icons/superscript.selected.light.svg";
+import SuperscriptSelectedDark from "@floro/common-assets/assets/images/rich_text_icons/superscript.selected.light.svg";
+
+import SubscriptUnSelectedLight from "@floro/common-assets/assets/images/rich_text_icons/subscript.unselect.light.svg";
+import SubscriptUnSelectedDark from "@floro/common-assets/assets/images/rich_text_icons/subscript.unselect.dark.svg";
+
+import SubscriptSelectedLight from "@floro/common-assets/assets/images/rich_text_icons/subscript.selected.light.svg";
+import SubscriptSelectedDark from "@floro/common-assets/assets/images/rich_text_icons/subscript.selected.light.svg";
+
 import Cursor from "./editor/Cursor";
-import ColorPalette from "@floro/styles/ColorPalette";
 
 const Container = styled.div`
   border-radius: 8px;
   display: block;
   position: static;
+  box-sizing: border-box;
 `;
 
 const MainContainer = styled.div`
@@ -53,12 +71,21 @@ const MainContainer = styled.div`
   height: 100%;
   display: block;
   resize: vertical;
+  box-sizing: border-box;
 `;
 
 const Wrapper = styled.div`
   position: relative;
   border-radius: 8px;
   font-size: 1.4rem;
+
+  sup {
+    line-height: 0;
+  }
+  sub {
+    line-height: 0;
+  }
+
 `;
 
 const StickyHeader = styled.div`
@@ -73,6 +100,7 @@ const StickyHeader = styled.div`
     justify-content: space-between;
     align-items: center;
     padding: 16px;
+    box-sizing: border-box;
     box-shadow: 0px 2px 2px 2px
       ${(props) => props.theme.shadows.versionControlSideBarShadow};
 `;
@@ -119,6 +147,7 @@ export interface Props {
   onSetContent: (str: string) => void;
   lang?: string;
   placeholder?: string;
+  isDebugMode?: boolean;
 }
 
 const ContentEditor = (props: Props) => {
@@ -127,6 +156,9 @@ const ContentEditor = (props: Props) => {
   const [isBold, setIsBold] = useState(false);
   const [isItalic, setIsItalic] = useState(false);
   const [isUnderlined, setIsUnderlined] = useState(false);
+  const [isStrikethrough, setIsStrikethrough] = useState(false);
+  const [isSuperscript, setIsSuperscript] = useState(false);
+  const [isSubscript, setIsSubscript] = useState(false);
   const isFocused = useRef<boolean>(false);
   const lastPositon = useRef<number>(-1);
   const emojiPosition = useRef<number>(0);
@@ -135,7 +167,7 @@ const ContentEditor = (props: Props) => {
     (event) => {
       const sanitizedValue = event.target.value == "<br>" ? "" : event.target.value;
       const sanitizizedString = sanitizeHtml(sanitizedValue, {
-        allowedTags: [ 'b', 'i', 'u', 'br' ],
+        allowedTags: [ 'b', 'i', 'u', 'br', 'sup', 's', 'strike', 'sub' ],
       });
       props.editorDoc.tree.updateRootFromHTML(sanitizizedString);
       props.onSetContent(sanitizizedString);
@@ -152,6 +184,12 @@ const ContentEditor = (props: Props) => {
         setIsItalic(isItalic);
         const isUnderlined = document.queryCommandState("underline")
         setIsUnderlined(isUnderlined);
+        const isStrikethrough = document.queryCommandState("strikeThrough");
+        setIsStrikethrough(isStrikethrough);
+        const isSuperscript = document.queryCommandState("superscript");
+        setIsSuperscript(isSuperscript);
+        const isSubscript = document.queryCommandState("subscript");
+        setIsSubscript(isSubscript);
       }
     }, 0)
     return () => {
@@ -171,11 +209,14 @@ const ContentEditor = (props: Props) => {
 
   useEffect(() => {
     const onPaste = (e) => {
+      if (!isFocused?.current) {
+        return;
+      }
       e.stopPropagation();
       e.preventDefault();
       let paste = (e.clipboardData || window.Clipboard).getData('text/html');
       const sanitizizedString = sanitizeHtml(paste, {
-        allowedTags: [ 'b', 'i', 'u', 'br' ],
+        allowedTags: [ 'b', 'i', 'u', 'br', 'sup', 's', 'strike', 'sub' ],
       });
       if (isFocused.current) {
         document.execCommand("insertHtml", false, sanitizizedString);
@@ -272,6 +313,27 @@ const ContentEditor = (props: Props) => {
     return theme.name == 'light' ? UnderlineUnSelectedLight : UnderlineUnSelectedDark;
   }, [isUnderlined, theme.name])
 
+  const strikeThroughIcon = useMemo(() => {
+    if (isStrikethrough) {
+      return theme.name == 'light' ? StrikethroughSelectedLight : StrikethroughSelectedDark;
+    }
+    return theme.name == 'light' ? StrikethroughUnSelectedLight : StrikethroughUnSelectedDark;
+  }, [isStrikethrough, theme.name])
+
+  const superscriptIcon = useMemo(() => {
+    if (isSuperscript) {
+      return theme.name == 'light' ? SuperscriptSelectedLight : SuperscriptSelectedDark;
+    }
+    return theme.name == 'light' ? SuperscriptUnSelectedLight : SuperscriptUnSelectedDark;
+  }, [isSuperscript, theme.name])
+
+  const subscriptIcon = useMemo(() => {
+    if (isSubscript) {
+      return theme.name == 'light' ? SubscriptSelectedLight : SubscriptSelectedDark;
+    }
+    return theme.name == 'light' ? SubscriptUnSelectedLight : SubscriptUnSelectedDark;
+  }, [isSubscript, theme.name])
+
   const onToggleExtend = useCallback(() => {
     setShowExtend(!showExtend);
   }, [showExtend])
@@ -315,6 +377,36 @@ const ContentEditor = (props: Props) => {
     }
   }, []);
 
+  const onStrikeThrough = useCallback(() => {
+    if (contentEditorRef.current) {
+      if (!isFocused.current) {
+        contentEditorRef.current.focus();
+      }
+      document.execCommand("strikeThrough");
+      contentEditorRef.current.focus();
+    }
+  }, []);
+
+  const onSuperscript = useCallback(() => {
+    if (contentEditorRef.current) {
+      if (!isFocused.current) {
+        contentEditorRef.current.focus();
+      }
+      document.execCommand("superscript");
+      contentEditorRef.current.focus();
+    }
+  }, []);
+
+  const onSubscript = useCallback(() => {
+    if (contentEditorRef.current) {
+      if (!isFocused.current) {
+        contentEditorRef.current.focus();
+      }
+      document.execCommand("subscript");
+      contentEditorRef.current.focus();
+    }
+  }, []);
+
   const [showEmojis, setShowEmojis] = useState(false);
 
   return (
@@ -333,16 +425,30 @@ const ContentEditor = (props: Props) => {
               onClick={onItalic}
             />
             <HeaderIcon
-              style={{ cursor: "pointer", marginRight: 8 }}
+              style={{ cursor: "pointer", marginRight: 24 }}
               src={underlineIcon}
               onClick={onUnderline}
+            />
+            <HeaderIcon
+              style={{ cursor: "pointer", marginRight: 8 }}
+              src={strikeThroughIcon}
+              onClick={onStrikeThrough}
+            />
+            <HeaderIcon
+              style={{ cursor: "pointer", marginRight: 8 }}
+              src={superscriptIcon}
+              onClick={onSuperscript}
+            />
+            <HeaderIcon
+              style={{ cursor: "pointer", marginRight: 24 }}
+              src={subscriptIcon}
+              onClick={onSubscript}
             />
             <div
               onMouseDown={(event) => {
                 event?.preventDefault();
                 event?.stopPropagation();
                 if (showEmojis) {
-                  //setCaratTo(contentEditorRef.current, emojiPosition.current);
                   setShowEmojis(false);
                   contentEditorRef.current?.focus();
                   return;
@@ -352,7 +458,6 @@ const ContentEditor = (props: Props) => {
                 );
                 emojiPosition.current = selectionRange.end;
                 setShowEmojis(true);
-                //setCaratTo(contentEditorRef.current, emojiPosition.current);
               }}
               style={{
                 cursor: "pointer",
@@ -384,10 +489,7 @@ const ContentEditor = (props: Props) => {
                 autoFocusSearch={false}
                 onEmojiClick={(t) => {
                   if (contentEditorRef.current) {
-                    //setCaratTo(contentEditorRef.current, emojiPosition.current);
                     document.execCommand("insertText", false, t.emoji);
-                    //contentEditorRef.current.focus();
-                    //setCaratTo(contentEditorRef.current, emojiPosition.current + 1);
                   }
                   setShowEmojis(false);
                 }}
@@ -471,7 +573,7 @@ const ContentEditor = (props: Props) => {
                   width: "100%",
                   display: "inline-block",
                   outline: "none",
-                  color: "transparent",
+                  color: props.isDebugMode ? "red" : "transparent",
                   caretColor: theme.colors.contrastText,
                 }}
                 onKeyDown={onDelayedKeyDown}

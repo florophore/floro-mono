@@ -2,41 +2,16 @@ import React, {
   useMemo,
   useCallback,
   useState,
-  useRef,
-  useEffect,
 } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import EditorDocument from "./editor/EditorDocument";
-import ContentEditable from "react-contenteditable";
-import EmojiPicker from 'emoji-picker-react';
-import Button from "../Button";
-import sanitizeHtml from 'sanitize-html';
 
 import ExtendLight from "@floro/common-assets/assets/images/rich_text_icons/extend.light.svg";
 import ExtendDark from "@floro/common-assets/assets/images/rich_text_icons/extend.dark.svg";
 
 import ContractLight from "@floro/common-assets/assets/images/rich_text_icons/contract.light.svg";
 import ContractDark from "@floro/common-assets/assets/images/rich_text_icons/contract.dark.svg";
-
-import BoldUnSelectedLight from "@floro/common-assets/assets/images/rich_text_icons/bold.unselect.light.svg";
-import BoldUnSelectedDark from "@floro/common-assets/assets/images/rich_text_icons/bold.unselect.dark.svg";
-
-import BoldSelectedLight from "@floro/common-assets/assets/images/rich_text_icons/bold.selected.light.svg";
-import BoldSelectedDark from "@floro/common-assets/assets/images/rich_text_icons/bold.selected.light.svg";
-
-import ItalicUnSelectedLight from "@floro/common-assets/assets/images/rich_text_icons/italic.unselect.light.svg";
-import ItalicUnSelectedDark from "@floro/common-assets/assets/images/rich_text_icons/italic.unselect.dark.svg";
-
-import ItalicSelectedLight from "@floro/common-assets/assets/images/rich_text_icons/italic.selected.light.svg";
-import ItalicSelectedDark from "@floro/common-assets/assets/images/rich_text_icons/italic.selected.light.svg";
-
-import UnderlineUnSelectedLight from "@floro/common-assets/assets/images/rich_text_icons/underline.unselect.light.svg";
-import UnderlineUnSelectedDark from "@floro/common-assets/assets/images/rich_text_icons/underline.unselect.dark.svg";
-
-import UnderlineSelectedLight from "@floro/common-assets/assets/images/rich_text_icons/underline.selected.light.svg";
-import UnderlineSelectedDark from "@floro/common-assets/assets/images/rich_text_icons/underline.selected.light.svg";
-import Cursor from "./editor/Cursor";
 import ColorPalette from "@floro/styles/ColorPalette";
 
 const Container = styled.div`

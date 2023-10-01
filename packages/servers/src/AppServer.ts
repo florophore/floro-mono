@@ -88,6 +88,7 @@ export default class AppServer {
       this.app.use(
         cors({
           origin: [
+            "null",
             "http://localhost:63403",
             `https://${process.env?.['DOMAIN']}`,
             `https://static-cdn.${process.env?.['DOMAIN']}`,
@@ -101,6 +102,7 @@ export default class AppServer {
       this.app.use(
         cors({
           origin: [
+            "null",
             "http://localhost:63403",
             "http://localhost:9000",
           ],
@@ -114,6 +116,14 @@ export default class AppServer {
       } else {
         res.header("Access-Control-Allow-Origin", "http://localhost:63403,http://localhost:9000");
       }
+      res.header("Access-Control-Allow-Methods", "GET,POST,PUT,OPTIONS");
+      res.header("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type");
+      res.header("Referrer-Policy", "no-referrer");
+      next();
+    });
+
+    this.app.use("/proxy/*", (_req, res, next) => {
+      res.header("Access-Control-Allow-Origin", "null");
       res.header("Access-Control-Allow-Methods", "GET,POST,PUT,OPTIONS");
       res.header("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type");
       res.header("Referrer-Policy", "no-referrer");

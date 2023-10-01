@@ -22,7 +22,6 @@ import InputSelector, {
 import Button from "@floro/storybook/stories/design-system/Button";
 import Checkbox from "@floro/storybook/stories/design-system/Checkbox";
 import Input from "@floro/storybook/stories/design-system/Input";
-import CreateTagsContainer from "./CreateTagsContainer";
 
 const LocaleTitle = styled.h4`
   font-family: "MavenPro";
@@ -214,12 +213,9 @@ const AddPhraseModal = (props: Props) => {
   const [phraseGroup, setPhraseGroup] = useFloroState(phraseGroupRef);
   const [phraseKey, setPhraseKey] = useState("");
   const [description, setDescription] = useState("");
-  const [tags, setTags] = useState<string[]>([]);
 
   const textareaContainer = useRef<HTMLDivElement>(null);
   const textarea = useRef<HTMLTextAreaElement>(null);
-
-
 
   const onChangePhraseKey = useCallback((phraseKey: string) => {
     setPhraseKey(phraseKey.toLowerCase())
@@ -230,7 +226,9 @@ const AddPhraseModal = (props: Props) => {
   }, [phraseGroup?.phrases]);
 
   useEffect(() => {
-    if (props.show) {
+    if (!props.show) {
+      setPhraseKey("");
+      setDescription("");
     }
   }, [props.show]);
 
@@ -278,19 +276,18 @@ const AddPhraseModal = (props: Props) => {
           id: newId,
           phraseKey,
           description: description ?? "",
-          tags,
+          tags: [],
           phraseTranslations: [],
           variables: [],
           linkVariables: [],
           interpolationVariants: [],
-          exampleUsageImages: [],
           testCases: [],
         },
         ...(phraseGroup.phrases ?? []),
       ],
     });
     props.onAdd?.();
-  }, [props.onAdd, newId, phraseKey, description, tags, phraseGroup, canAddKey, phraseGroup?.phrases]);
+  }, [props.onAdd, newId, phraseKey, description, phraseGroup, canAddKey, phraseGroup?.phrases]);
 
   return (
     <RootLongModal
@@ -373,16 +370,6 @@ const AddPhraseModal = (props: Props) => {
                 onChange={onTextBoxChanged}
               />
             </TextAreaBlurbBox>
-          </Row>
-          <Row
-            style={{
-              marginTop: 32,
-              justifyContent: "center",
-            }}
-          >
-            <div style={{width: 470}}>
-              <CreateTagsContainer tags={tags} onUpdateTags={setTags} />
-            </div>
           </Row>
         </div>
         <div
