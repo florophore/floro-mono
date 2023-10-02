@@ -1,7 +1,6 @@
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
-  PointerTypes,
   SchemaTypes,
   getReferencedObject,
   makeQueryRef,
@@ -9,7 +8,6 @@ import {
   useFloroState,
 } from "../floro-schema-api";
 import PhraseGroup from "./PhraseGroup";
-import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { AnimatePresence, Reorder } from "framer-motion";
 
@@ -80,6 +78,7 @@ const PhraseGroups = (props: Props) => {
             axis="y"
             values={phraseGroups ?? []}
             onReorder={onReOrderPhraseGroups}
+            style={{listStyle: "none"}}
           >
             {phraseGroups?.map((phraseGroup, index: number) => {
               return (

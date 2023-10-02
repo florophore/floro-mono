@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import {
   PointerTypes,
   SchemaTypes,
@@ -6,26 +6,19 @@ import {
   makeQueryRef,
   useExtractQueryArgs,
   useFloroContext,
-  useFloroState,
   useQueryRef,
   useReferencedObject,
 } from "../../floro-schema-api";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
-import TrashLight from "@floro/common-assets/assets/images/icons/trash.light.darker.svg";
-import TrashDark from "@floro/common-assets/assets/images/icons/trash.dark.svg";
 import DiffTextDocument from "@floro/storybook/stories/design-system/ContentEditor/DiffTextDocument";
 
-import ContentEditor from "@floro/storybook/stories/design-system/ContentEditor";
-import LinkEditor from "@floro/storybook/stories/design-system/ContentEditor/LinkEditor";
 import EditorDocument from "@floro/storybook/stories/design-system/ContentEditor/editor/EditorDocument";
 import Button from "@floro/storybook/stories/design-system/Button";
 import PlainTextDocument from "@floro/storybook/stories/design-system/ContentEditor/PlainTextDocument";
-import LinkPlainTextDocument from "@floro/storybook/stories/design-system/ContentEditor/LinkPlainTextDocument";
 import Observer from "@floro/storybook/stories/design-system/ContentEditor/editor/Observer";
 import ColorPalette from "@floro/styles/ColorPalette";
-import ConditionalList from "./conditionals/ConditionalList";
 import { splitTextForDiff } from "../phrasetranslation/diffing";
 import TextNode from "@floro/storybook/stories/design-system/ContentEditor/editor/nodes/TextNode";
 import TermList from "../termdisplay/TermList";
@@ -43,19 +36,6 @@ const NothingToDiff = styled.p`
 const Container = styled.div`
 `;
 
-const SubContainer = styled.div`
-  padding: 0;
-  margin-bottom: 8px;
-  border: 2px solid ${(props) => props.theme.colors.contrastText};
-  padding: 16px;
-  border-radius: 8px;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  margin-top: 24px;
-  background: ${props => props.theme.name == 'light' ? ColorPalette.extraLightGray : ColorPalette.darkerGray};
-`;
 
 const RowTitle = styled.h1`
   font-family: "MavenPro";
@@ -66,38 +46,12 @@ const RowTitle = styled.h1`
   margin: 0;
 `;
 
-const RequiresRevision = styled.h1`
-  font-family: "MavenPro";
-  font-weight: 500;
-  font-size: 1.2rem;
-  color: ${(props) => props.theme.colors.warningTextColor};
-  font-style: italic;
-  padding: 0;
-  margin: 0;
-`;
-
 const TitleRow = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
   width: 100%;
-`;
-
-const DeleteVarContainer = styled.div`
-  cursor: pointer;
-  margin-left: 16px;
-  padding-top: 14px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const DeleteVar = styled.img`
-  height: 32px;
-  width: 32px;
-  pointer-events: none;
-  user-select: none;
 `;
 
 interface Props {
@@ -115,13 +69,12 @@ const SourceDefaultValueInterpolationVariant = (props: Props) => {
   const [phraseGroupId, phraseId, name] = useExtractQueryArgs(
     props.interpolationVariantRef
   );
-  const { commandMode, applicationState } = useFloroContext();
+  const { applicationState } = useFloroContext();
 
   const localeRef = props?.systemSourceLocale?.localeCode ? makeQueryRef(
     "$(text).localeSettings.locales.localeCode<?>",
     props.systemSourceLocale.localeCode
   ) : null as unknown as PointerTypes['$(text).localeSettings.locales.localeCode<?>'];;
-
 
   const sourceLocaleRef = props?.systemSourceLocale?.localeCode
     ? makeQueryRef(

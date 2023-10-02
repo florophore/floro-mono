@@ -1,15 +1,13 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { useTheme } from "@emotion/react";
-import { PointerTypes, SchemaTypes, useFloroContext, useFloroState, useQueryRef, useReferencedObject } from "../../floro-schema-api";
+import { PointerTypes, SchemaTypes, useFloroContext, useFloroState, useQueryRef } from "../../floro-schema-api";
 import styled from "@emotion/styled";
-import { css } from "@emotion/css";
 import Input from "@floro/storybook/stories/design-system/Input";
 import Button from "@floro/storybook/stories/design-system/Button";
 import ColorPalette from "@floro/styles/ColorPalette";
 import { AnimatePresence, Reorder } from "framer-motion";
 import TestCaseReOrderRow from "./TestCaseReOrderRow";
 import TestCase from "./TestCase";
-
+import { useDiffColor } from "../../diff";
 
 const Container = styled.div`
     margin-top: 24px;
@@ -56,8 +54,6 @@ interface Props {
 }
 
 const TestCaseList = (props: Props) => {
-  const theme = useTheme();
-
   const { commandMode} = useFloroContext();
   const localeRef = useQueryRef(
     "$(text).localeSettings.locales.localeCode<?>",
@@ -90,7 +86,7 @@ const TestCaseList = (props: Props) => {
     return description.trim() != "";
   }, [description, isDescriptionTaken]);
 
-  const [isDragging, setIsDragging] = useState(false);
+  const [_isDragging, setIsDragging] = useState(false);
 
   const onReOrderLocaleCases = useCallback(
     (values: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests']) => {
@@ -135,6 +131,7 @@ const TestCaseList = (props: Props) => {
     [setLocaleTests, localeTests]
   )
 
+  const diffColor = useDiffColor(`${props.phraseRef}.testCases`);
 
   if (commandMode != "edit" && (localeTests?.length ?? 0) == 0) {
     return null;
@@ -151,7 +148,7 @@ const TestCaseList = (props: Props) => {
             alignItems: "center",
           }}
         >
-          <span style={{ color: theme.colors.contrastText }}>
+          <span style={{ color: diffColor }}>
             {`Test Cases (${props.selectedLocale?.localeCode})`}
           </span>
           <span>
@@ -166,9 +163,7 @@ const TestCaseList = (props: Props) => {
           axis="y"
           values={localeTests ?? []}
           onReorder={onReOrderLocaleCases}
-          className={css(`
-            padding: 0px 0px 0px 0px;
-        `)}
+          style={{listStyle: "none", margin: 0, padding: 0 }}
         >
           <AnimatePresence>
             {localeTests?.map((localeCase, index) => {

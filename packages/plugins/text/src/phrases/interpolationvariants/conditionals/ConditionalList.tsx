@@ -1,17 +1,15 @@
 
 import React, { useMemo, useCallback, useState } from "react";
 import { useTheme } from "@emotion/react";
-import { PointerTypes, SchemaTypes, makeQueryRef, useFloroContext, useFloroState, useReferencedObject } from "../../../floro-schema-api";
-import { AnimatePresence, Reorder, m } from "framer-motion";
+import { PointerTypes, SchemaTypes, useFloroContext, useFloroState } from "../../../floro-schema-api";
 import styled from "@emotion/styled";
-import { css } from "@emotion/css";
 import Input from "@floro/storybook/stories/design-system/Input";
 import Button from "@floro/storybook/stories/design-system/Button";
 
-import InputSelector, { Option } from "@floro/storybook/stories/design-system/InputSelector";
-import ConditionalReOrderRow from "./ConditionalRow";
+import InputSelector from "@floro/storybook/stories/design-system/InputSelector";
 import ColorPalette from "@floro/styles/ColorPalette";
 import ConditionalRow from "./ConditionalRow";
+import { useDiffColor } from "../../../diff";
 
 
 const Container = styled.div`
@@ -187,6 +185,10 @@ const ConditionalList = (props: Props) => {
     `${props.phraseRef}.interpolationVariants.name<${props.interpolationVariant.name}>.localeRules.id<${props.localeRule.id}>.conditionals`
   );
 
+  const diffColor = useDiffColor(
+    `${props.phraseRef}.interpolationVariants.name<${props.interpolationVariant.name}>.localeRules.id<${props.localeRule.id}>.conditionals`
+  );
+
   const onUpdateIntegerValue = useCallback((value: string) => {
     try {
       if (value == "") {
@@ -208,7 +210,7 @@ const ConditionalList = (props: Props) => {
         setFloatValue("");
         return;
       }
-      if (/^\d+\.$/.test(value)) {
+      if (/^\d+\.\d*$/.test(value)) {
         setFloatValue(value);
         return;
       }
@@ -279,7 +281,7 @@ const ConditionalList = (props: Props) => {
           subconditions: [],
           floatComparatorValue:
             operator == "is_fractional"
-              ? /^\d+\.$/.test(floatValue)
+              ? /^(\d+|\d+\.\d+)$/.test(floatValue)
                 ? parseFloat(floatValue)
                 : 0
               : (parseFloat(floatValue) as number),
@@ -339,7 +341,7 @@ const ConditionalList = (props: Props) => {
   );
 
   return (
-    <SubContainer>
+    <SubContainer style={{borderColor: diffColor}}>
       <Container>
         <TitleRow style={{ marginBottom: 12, height: 40 }}>
           <RowTitle
@@ -350,7 +352,7 @@ const ConditionalList = (props: Props) => {
               alignItems: "center",
             }}
           >
-            <span style={{ color: theme.colors.contrastText, marginRight: 8 }}>
+            <span style={{ color: diffColor, marginRight: 8 }}>
               {`Conditionals of `}
             </span>
             <span
@@ -369,7 +371,7 @@ const ConditionalList = (props: Props) => {
             <span
               style={{
                 marginLeft: 8,
-                color: theme.colors.contrastText,
+                color: diffColor,
                 fontWeight: 600,
               }}
             >

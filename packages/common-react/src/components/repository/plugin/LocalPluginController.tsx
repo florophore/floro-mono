@@ -135,7 +135,7 @@ const LocalPluginController = (props: Props) => {
     if (!isSelectMode) {
       return false;
     }
-    if (!manifest.name || !copyInstructions[manifest.name].isManualCopy) {
+    if (!manifest.name || !copyInstructions?.[manifest.name]?.isManualCopy) {
       return false;
     }
     return true;

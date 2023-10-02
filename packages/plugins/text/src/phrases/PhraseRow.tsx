@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback, useState, useEffect } from "react";
-import { PointerTypes, SchemaTypes, makeQueryRef, useClientStorageApi, useExtractQueryArgs, useFloroContext, useFloroState, useReferencedObject } from "../floro-schema-api";
+import { PointerTypes, SchemaTypes, makeQueryRef, useClientStorageApi, useCopyApi, useExtractQueryArgs, useFloroContext, useFloroState, useHasIndication, useReferencedObject } from "../floro-schema-api";
 import { Reorder, useDragControls } from "framer-motion";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
@@ -8,7 +8,6 @@ import DraggerLight from "@floro/common-assets/assets/images/icons/dragger.light
 import DraggerDark from "@floro/common-assets/assets/images/icons/dragger.dark.svg";
 import InputSelector from "@floro/storybook/stories/design-system/InputSelector";
 import PhraseTranslation from "./phrasetranslation/PhraseTranslation";
-import CreateTagsContainer from "./CreateTagsContainer";
 import ColorPalette from "@floro/styles/ColorPalette";
 
 import TrashLight from "@floro/common-assets/assets/images/icons/trash.light.darker.svg";
@@ -26,6 +25,7 @@ import DescriptionContainer from "./DescriptionContainer";
 import UpdatePhraseModal from "./UpdatePhraseModal";
 import TagList from "./tags/TagList";
 import DuplicatePhraseModal from "./DuplicatePhraseModal";
+import { useDiffColor } from "../diff";
 
 const Container = styled.div`
   padding: 0;
@@ -123,7 +123,7 @@ interface Props {
 const PhraseRow = (props: Props) => {
   const theme = useTheme();
   const locales = useReferencedObject("$(text).localeSettings.locales");
-  const { applicationState, commandMode, clientStorage } = useFloroContext();
+  const { applicationState, commandMode, clientStorage, isCopyMode, conflictSet, changeset } = useFloroContext();
   const clientStorageIsEnabled = clientStorage != null;
   const [selectedLocaleCode, setSelectedLocaleCode] = useState(props.selectedTopLevelLocale);
   const localeSettings = useReferencedObject("$(text).localeSettings");
@@ -133,6 +133,26 @@ const PhraseRow = (props: Props) => {
       localeSettings.locales.find((l) => l.localeCode == selectedLocaleCode),
     [localeSettings.locales, selectedLocaleCode]
   );
+  const diffColor = useDiffColor(props.phraseRef, false, 'darker');
+
+  const {isCopied, toggleCopy} = useCopyApi(props.phraseRef);
+
+  const hasIndications = useHasIndication(props.phraseRef);
+
+  const indicatedLocales = useMemo(() => {
+    if (!hasIndications) {
+      return [];
+    }
+    return locales.filter(locale => {
+      const localeRef = makeQueryRef("$(text).localeSettings.locales.localeCode<?>", locale?.localeCode);
+      const phraseLocaleRef = `${props.phraseRef}.phraseTranslations.id<${localeRef}>`;
+      return changeset?.has?.(phraseLocaleRef) || conflictSet?.has?.(phraseLocaleRef);
+    })
+  }, [hasIndications, conflictSet, changeset, props.phraseRef, locales]);
+
+  const indicatedLocaleCodes = useMemo(() => {
+    return indicatedLocales?.map(l => l.localeCode).join(", ");
+  }, [indicatedLocales]);
 
   const systemSourceLocale = useMemo(() => {
     if (selectedLocale?.defaultTranslateFromLocaleRef) {
@@ -333,8 +353,12 @@ const PhraseRow = (props: Props) => {
     setShowDuplicate(false);
   }, []);
 
+  if (commandMode == "compare" && !hasIndications) {
+    return null;
+  }
+
   return (
-    <Container>
+    <Container style={{borderColor: diffColor}}>
       <UpdatePhraseModal
         show={showUpdate}
         onDismiss={onHideUpdate}
@@ -410,6 +434,21 @@ const PhraseRow = (props: Props) => {
           </div>
         </div>
       </TitleRow>
+      {hasIndications && (
+        <div
+          style={{
+            height: 56,
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+        >
+            <span style={{ marginLeft: 0 }}>
+              <PinPhrase style={{fontWeight: 700, fontSize: '1.4rem', color: diffColor}}>{"Changed Locales: " + indicatedLocaleCodes}</PinPhrase>
+            </span>
+        </div>
+      )}
       <div
         style={{
           height: 56,
@@ -428,6 +467,22 @@ const PhraseRow = (props: Props) => {
           </>
         )}
       </div>
+      {isCopyMode && (
+        <div
+          style={{
+            height: 56,
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+        >
+          <Checkbox isChecked={isCopied} onChange={toggleCopy} />
+          <span style={{ marginLeft: 12 }}>
+            <PinPhrase>{"Copy Phrase"}</PinPhrase>
+          </span>
+        </div>
+      )}
       {(commandMode == "edit" ||
         (props?.phrase?.description?.trim() ?? "") != "") && (
         <div

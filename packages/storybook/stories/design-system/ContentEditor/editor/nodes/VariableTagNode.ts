@@ -68,13 +68,7 @@ export default class VariableTagNode extends Node {
       fontStyle = "italic";
     }
 
-    let bottomLineHeight = 1;
-    if (this.marks.isSuperscript) {
-      bottomLineHeight = 1.4;
-    }
-    if (this.marks.isSubscript) {
-      bottomLineHeight = 1.4;
-    }
+    let bottomLineHeight = 1.2;
 
     return `<span
      spellcheck="false"

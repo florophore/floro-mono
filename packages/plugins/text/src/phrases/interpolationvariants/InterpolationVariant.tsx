@@ -16,11 +16,9 @@ import TrashLight from "@floro/common-assets/assets/images/icons/trash.light.dar
 import TrashDark from "@floro/common-assets/assets/images/icons/trash.dark.svg";
 
 import ContentEditor from "@floro/storybook/stories/design-system/ContentEditor";
-import LinkEditor from "@floro/storybook/stories/design-system/ContentEditor/LinkEditor";
 import EditorDocument from "@floro/storybook/stories/design-system/ContentEditor/editor/EditorDocument";
 import Button from "@floro/storybook/stories/design-system/Button";
 import PlainTextDocument from "@floro/storybook/stories/design-system/ContentEditor/PlainTextDocument";
-import LinkPlainTextDocument from "@floro/storybook/stories/design-system/ContentEditor/LinkPlainTextDocument";
 import Observer from "@floro/storybook/stories/design-system/ContentEditor/editor/Observer";
 import ColorPalette from "@floro/styles/ColorPalette";
 import ConditionalList from "./conditionals/ConditionalList";
@@ -33,6 +31,7 @@ import deepLTargetLocales from "../../deep_l_target_locales.json";
 import MLModal from "../mlmodal/MLModal";
 import { useTranslationMemory } from "../../memory/TranslationMemoryContext";
 import TranslationMemoryList from "../tranlsationmemory/TranslationMemoryList";
+import { useDiffColor } from "../../diff";
 
 const Container = styled.div`
 `;
@@ -149,6 +148,7 @@ const InterpolationVariant = (props: Props) => {
     name,
     localeRef
   );
+  const diffColor = useDiffColor(localRuleTranslationRef);
 
   const localeRule = useReferencedObject(
     localRuleTranslationRef
@@ -499,7 +499,7 @@ const InterpolationVariant = (props: Props) => {
           <span
             style={{
               marginLeft: 8,
-              color: theme.colors.contrastText,
+              color: diffColor,
               fontWeight: 600,
             }}
           >
@@ -512,7 +512,7 @@ const InterpolationVariant = (props: Props) => {
           </DeleteVarContainer>
         )}
       </TitleRow>
-      <SubContainer>
+      <SubContainer style={{borderColor: diffColor}}>
         {localeRule && hasMounted && (
           <ConditionalList
             phrase={props.phrase}

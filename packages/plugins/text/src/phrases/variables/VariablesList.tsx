@@ -3,15 +3,14 @@ import { useTheme } from "@emotion/react";
 import { PointerTypes, SchemaTypes, useFloroContext, useFloroState, useReferencedObject } from "../../floro-schema-api";
 import { AnimatePresence, Reorder } from "framer-motion";
 import styled from "@emotion/styled";
-import { css } from "@emotion/css";
 import Input from "@floro/storybook/stories/design-system/Input";
 import Button from "@floro/storybook/stories/design-system/Button";
 
-import InputSelector, { Option } from "@floro/storybook/stories/design-system/InputSelector";
+import InputSelector from "@floro/storybook/stories/design-system/InputSelector";
 import VariableReOrderRow from "./VariableReOrderRow";
 import VariableRow from "./VariableRow";
 import ColorPalette from "@floro/styles/ColorPalette";
-
+import { useDiffColor } from "../../diff";
 
 const Container = styled.div`
     margin-top: 24px;
@@ -100,11 +99,13 @@ const VariableList = (props: Props) => {
 
   const [name, setName] = useState<string>("");
   const [type, setType] = useState<string>("float");
-  const [isDragging, setIsDragging] = useState(false);
+  const [_isDragging, setIsDragging] = useState(false);
 
   const [variables, setVariables] = useFloroState(`${props.phraseRef}.variables`);
   const interpolationVariants = useReferencedObject(`${props.phraseRef}.interpolationVariants`)
   const linkVariables = useReferencedObject(`${props.phraseRef}.linkVariables`)
+
+  const diffColor = useDiffColor(`${props.phraseRef}.variables`, true, 'darker');
 
   const varSet = useMemo(() => {
     return new Set([
@@ -204,7 +205,7 @@ const VariableList = (props: Props) => {
             alignItems: "center",
           }}
         >
-          <span style={{ color: theme.colors.contrastText }}>
+          <span style={{ color: diffColor }}>
             {`Phrase Variables`}
           </span>
         </RowTitle>
@@ -215,10 +216,12 @@ const VariableList = (props: Props) => {
       {(!isReOrderMode || commandMode != "edit") && (
       <div>
             {variables?.map((variable, index) => {
+
               return (
                 <VariableRow
                   key={variable.name}
                   variable={variable}
+                  variableRef={`${props.phraseRef}.variables.id<${variable.id}>`}
                   index={index}
                   onRemove={onRemoveVar}
                 />
@@ -233,9 +236,7 @@ const VariableList = (props: Props) => {
           axis="y"
           values={variables ?? []}
           onReorder={onReOrderVariables}
-          className={css(`
-            padding: 0px 0px 0px 0px;
-        `)}
+          style={{listStyle: "none", margin: 0, padding: 0 }}
         >
           <AnimatePresence>
             {variables?.map((variable, index) => {

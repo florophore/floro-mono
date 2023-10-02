@@ -13,13 +13,10 @@ import {
 import TextAppHeader from './header/TextAppHeader';
 import LocalesSections from './locales/LocalesSections';
 import PhraseGroups from './phrasegroups/PhraseGroups';
-import PhraseGroup from './phrasegroups/PhraseGroup';
-import { ProposedMergeRequestRepositoryUpdatesDocument } from '@floro/graphql-schemas/build/generated/main-client-graphql';
 import TermGlossaryHeader from './header/TermGlossaryHeader';
 import TermList from './terms/TermList';
 import DeepLProvider from './deepl/DeepLContext';
 import TranslationMemoryProvider from './memory/TranslationMemoryContext';
-
 
 const Container = styled.div`
   width: 100%;

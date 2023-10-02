@@ -6,9 +6,6 @@ import escape from 'escape-html';
 import VariantTagNode from "./VariantTagNode";
 import MentionedTagNode from "./MentionedTagNode";
 import * as OrderedListNode from "./OrderedListNode";
-import UnOrderedListNode from "./UnOrderedListNode";
-import ListNode from "./ListNode";
-console.log(OrderedListNode)
 
 export interface TextNodeJSON extends NodeJSON {
   children: TextNodeJSON[];

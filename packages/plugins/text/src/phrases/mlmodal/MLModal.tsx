@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useCallback } from "react";
+import React, { useEffect, useMemo, useCallback } from "react";
 import styled from "@emotion/styled";
 import RootLongModal from "@floro/common-react/src/components/RootLongModal";
 import {

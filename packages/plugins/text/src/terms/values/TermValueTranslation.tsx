@@ -1,23 +1,23 @@
-import React, { useMemo, useCallback, useState, useEffect } from "react";
-import { PointerTypes, SchemaTypes, makeQueryRef, useExtractQueryArgs, useFloroContext, useFloroState, useQueryRef, useReferencedObject } from "../../floro-schema-api";
+import React, { useMemo, useCallback } from "react";
+import {
+  PointerTypes,
+  SchemaTypes,
+  makeQueryRef,
+  useFloroContext,
+  useFloroState,
+  useQueryRef,
+  useReferencedObject,
+} from "../../floro-schema-api";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-
-import ContentEditor from "@floro/storybook/stories/design-system/ContentEditor";
-import EditorDocument from "@floro/storybook/stories/design-system/ContentEditor/editor/EditorDocument";
-import Button from "@floro/storybook/stories/design-system/Button";
-import PlainTextDocument from "@floro/storybook/stories/design-system/ContentEditor/PlainTextDocument";
-import Observer from "@floro/storybook/stories/design-system/ContentEditor/editor/Observer";
 import ColorPalette from "@floro/styles/ColorPalette";
 import TermTextEditor from "../TermTextEditor";
 import SourceText from "../SourceText";
 
-
-const Container = styled.div`
-`;
+const Container = styled.div``;
 
 const SourceContainer = styled.div`
-    margin-top: 24px;
+  margin-top: 24px;
 `;
 
 const RowTitle = styled.h1`
@@ -53,7 +53,7 @@ const MissingTranslationsPill = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background: ${props => props.theme.colors.warningTextColor};
+  background: ${(props) => props.theme.colors.warningTextColor};
   padding-left: 12px;
   padding-right: 12px;
   margin-left: 12px;
@@ -69,9 +69,11 @@ const MissingTranslationsTitle = styled.div`
 interface Props {
   term: SchemaTypes["$(text).terms.id<?>"];
   selectedLocale: SchemaTypes["$(text).localeSettings.locales.localeCode<?>"];
-  systemSourceLocale: SchemaTypes["$(text).localeSettings.locales.localeCode<?>"]|null;
+  systemSourceLocale:
+    | SchemaTypes["$(text).localeSettings.locales.localeCode<?>"]
+    | null;
   termRef: PointerTypes["$(text).terms.id<?>"];
-  pinnedTerms: Array<string>|null;
+  pinnedTerms: Array<string> | null;
   setPinnedTerms: (phraseRegs: Array<string>) => void;
   globalFilterUntranslatedTerms: boolean;
   isPinned: boolean;
@@ -86,16 +88,20 @@ const TermValueTranslation = (props: Props) => {
     props.selectedLocale.localeCode
   );
 
-  const sourceLocaleRef = props?.systemSourceLocale?.localeCode ? makeQueryRef(
-    "$(text).localeSettings.locales.localeCode<?>",
-    props.systemSourceLocale.localeCode
-  ) : null as unknown as PointerTypes['$(text).localeSettings.locales.localeCode<?>'];
+  const sourceLocaleRef = props?.systemSourceLocale?.localeCode
+    ? makeQueryRef(
+        "$(text).localeSettings.locales.localeCode<?>",
+        props.systemSourceLocale.localeCode
+      )
+    : (null as unknown as PointerTypes["$(text).localeSettings.locales.localeCode<?>"]);
 
-  const sourceRef = sourceLocaleRef ? makeQueryRef(
-    "$(text).terms.id<?>.localizedTerms.id<?>",
-    props.term.id,
-    sourceLocaleRef
-  ) : null as unknown as PointerTypes["$(text).terms.id<?>.localizedTerms.id<?>"];
+  const sourceRef = sourceLocaleRef
+    ? makeQueryRef(
+        "$(text).terms.id<?>.localizedTerms.id<?>",
+        props.term.id,
+        sourceLocaleRef
+      )
+    : (null as unknown as PointerTypes["$(text).terms.id<?>.localizedTerms.id<?>"]);
 
   const sourceTermTranslation = useReferencedObject(sourceRef);
 
@@ -105,11 +111,12 @@ const TermValueTranslation = (props: Props) => {
     localeRef
   );
 
-  const [termTranslation, setTermTranslation] = useFloroState(termTranslationRef);
+  const [termTranslation, setTermTranslation] =
+    useFloroState(termTranslationRef);
 
   const contentIsEmpty = useMemo(() => {
     return (termTranslation?.termValue ?? "") == "";
-  }, [termTranslation?.termValue])
+  }, [termTranslation?.termValue]);
 
   const onSetContent = useCallback(
     (text: string) => {
@@ -118,9 +125,13 @@ const TermValueTranslation = (props: Props) => {
       }
       setTermTranslation({
         ...termTranslation,
-        termValue: text
-      })
-      if (contentIsEmpty && props.globalFilterUntranslatedTerms && !props.isPinned) {
+        termValue: text,
+      });
+      if (
+        contentIsEmpty &&
+        props.globalFilterUntranslatedTerms &&
+        !props.isPinned
+      ) {
         props.setPinnedTerms([...(props?.pinnedTerms ?? []), props.termRef]);
       }
     },
@@ -134,7 +145,7 @@ const TermValueTranslation = (props: Props) => {
       props.setPinnedTerms,
       props.pinnedTerms,
       props.termRef,
-      props.globalFilterUntranslatedTerms
+      props.globalFilterUntranslatedTerms,
     ]
   );
 
@@ -170,7 +181,7 @@ const TermValueTranslation = (props: Props) => {
           label={`(${props.selectedLocale.localeCode}) value`}
         />
       </Container>
-      {props.systemSourceLocale && sourceTermTranslation &&(
+      {props.systemSourceLocale && sourceTermTranslation && (
         <SourceContainer>
           <TitleRow style={{ marginBottom: 12, height: 40 }}>
             <RowTitle

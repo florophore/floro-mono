@@ -1,5 +1,14 @@
-import React, { useMemo, useCallback, useState, useEffect } from "react";
-import { PointerTypes, SchemaTypes, makeQueryRef, useExtractQueryArgs, useFloroContext, useFloroState, useQueryRef, useReferencedObject } from "../../floro-schema-api";
+import React, { useMemo, useCallback, useState } from "react";
+import {
+  PointerTypes,
+  SchemaTypes,
+  makeQueryRef,
+  useExtractQueryArgs,
+  useFloroContext,
+  useFloroState,
+  useQueryRef,
+  useReferencedObject,
+} from "../../floro-schema-api";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
@@ -23,9 +32,9 @@ import deepLTargetLocales from "../../deep_l_target_locales.json";
 import TestCaseList from "../testcases/TestCaseList";
 import { useTranslationMemory } from "../../memory/TranslationMemoryContext";
 import TranslationMemoryList from "../tranlsationmemory/TranslationMemoryList";
+import { useDiffColor } from "../../diff";
 
-const Container = styled.div`
-`;
+const Container = styled.div``;
 
 const RowTitle = styled.h1`
   font-family: "MavenPro";
@@ -60,7 +69,7 @@ const MissingTranslationsPill = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background: ${props => props.theme.colors.warningTextColor};
+  background: ${(props) => props.theme.colors.warningTextColor};
   padding-left: 12px;
   padding-right: 12px;
   margin-left: 12px;
@@ -93,7 +102,7 @@ const TermSpan = styled.span`
   font-family: "MavenPro";
   font-weight: 700;
   font-size: 1.4rem;
-  color: ${props => props.theme.colors.linkColor};
+  color: ${(props) => props.theme.colors.linkColor};
   text-decoration: underline;
   margin-right: 8px;
   margin-top: -2px;
@@ -108,11 +117,17 @@ const TermIcon = styled.img`
 interface Props {
   phrase: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>"];
   selectedLocale: SchemaTypes["$(text).localeSettings.locales.localeCode<?>"];
-  fallbackLocale: SchemaTypes["$(text).localeSettings.locales.localeCode<?>"]|null;
-  globalFallbackLocale: SchemaTypes["$(text).localeSettings.locales.localeCode<?>"]|null;
-  systemSourceLocale: SchemaTypes["$(text).localeSettings.locales.localeCode<?>"]|null;
+  fallbackLocale:
+    | SchemaTypes["$(text).localeSettings.locales.localeCode<?>"]
+    | null;
+  globalFallbackLocale:
+    | SchemaTypes["$(text).localeSettings.locales.localeCode<?>"]
+    | null;
+  systemSourceLocale:
+    | SchemaTypes["$(text).localeSettings.locales.localeCode<?>"]
+    | null;
   phraseRef: PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>"];
-  pinnedPhrases: Array<string>|null;
+  pinnedPhrases: Array<string> | null;
   setPinnedPhrases: (phraseRegs: Array<string>) => void;
   globalFilterUntranslated: boolean;
   isPinned: boolean;
@@ -121,24 +136,30 @@ interface Props {
 const PhraseTranslation = (props: Props) => {
   const theme = useTheme();
   const [phraseGroupId, phraseId] = useExtractQueryArgs(props.phraseRef);
-  const { commandMode, applicationState } = useFloroContext();
+  const { commandMode, applicationState, conflictSet, changeset } =
+    useFloroContext();
 
   const localeRef = makeQueryRef(
     "$(text).localeSettings.locales.localeCode<?>",
     props.selectedLocale.localeCode
   );
+  const locales = useReferencedObject("$(text).localeSettings.locales");
 
-  const sourceLocaleRef = props?.systemSourceLocale?.localeCode ? makeQueryRef(
-    "$(text).localeSettings.locales.localeCode<?>",
-    props.systemSourceLocale.localeCode
-  ) : null as unknown as PointerTypes['$(text).localeSettings.locales.localeCode<?>'];
+  const sourceLocaleRef = props?.systemSourceLocale?.localeCode
+    ? makeQueryRef(
+        "$(text).localeSettings.locales.localeCode<?>",
+        props.systemSourceLocale.localeCode
+      )
+    : (null as unknown as PointerTypes["$(text).localeSettings.locales.localeCode<?>"]);
 
-  const sourceRef = sourceLocaleRef ? makeQueryRef(
-    "$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>",
-    phraseGroupId,
-    phraseId,
-    sourceLocaleRef
-  ) : null as unknown as PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>"];
+  const sourceRef = sourceLocaleRef
+    ? makeQueryRef(
+        "$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>",
+        phraseGroupId,
+        phraseId,
+        sourceLocaleRef
+      )
+    : (null as unknown as PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>"]);
 
   const sourcePhraseTranslation = useReferencedObject(sourceRef);
 
@@ -149,44 +170,53 @@ const PhraseTranslation = (props: Props) => {
     localeRef
   );
 
-  const [phraseTranslation, setPhraseTranslation] = useFloroState(phraseTranslationRef);
+  const diffColor = useDiffColor(`${phraseTranslationRef}`, true, "darker");
+
+  const [phraseTranslation, setPhraseTranslation] =
+    useFloroState(phraseTranslationRef);
 
   const terms = useReferencedObject("$(text).terms");
   const localeTerms = useMemo(() => {
-    return terms?.flatMap(term => {
-      const value = term.localizedTerms.find(localizedTerm => {
-        return localizedTerm.id == localeRef;
-      })?.termValue ?? term?.name;
-      return {
-        id: term.id,
-        value: value == '' ? term.name : value,
-        name: term.name
-      }
-    }) ?? [];
+    return (
+      terms?.flatMap((term) => {
+        const value =
+          term.localizedTerms.find((localizedTerm) => {
+            return localizedTerm.id == localeRef;
+          })?.termValue ?? term?.name;
+        return {
+          id: term.id,
+          value: value == "" ? term.name : value,
+          name: term.name,
+        };
+      }) ?? []
+    );
   }, [terms, localeRef, applicationState]);
 
   const mentionedTerms = useMemo(() => {
-    const json = JSON.parse(phraseTranslation?.json ?? '{}');
+    const json = JSON.parse(phraseTranslation?.json ?? "{}");
     const children: Array<TextNode> = json?.children ?? [];
     const foundTerms: Array<{
-      value: string,
-      id: string,
-      name: string,
+      value: string;
+      id: string;
+      name: string;
     }> = [];
 
     const flattenedChildren: Array<TextNode> = [];
     for (let i = 0; i < children.length; ++i) {
       if (children[i]?.type == "text" || children[i]?.type == "mentioned-tag") {
         const combined = children[i];
-        combined.type = 'text';
+        combined.type = "text";
         for (let j = i; j < children.length; ++j) {
-          if (children[j]?.type != "text" && children[j]?.type != "mentioned-tag") {
+          if (
+            children[j]?.type != "text" &&
+            children[j]?.type != "mentioned-tag"
+          ) {
             flattenedChildren.push(combined);
             break;
           }
           combined.content += children[j].content;
           i = j;
-          flattenedChildren.push(combined)
+          flattenedChildren.push(combined);
         }
       } else {
         flattenedChildren.push(children[i]);
@@ -195,13 +225,17 @@ const PhraseTranslation = (props: Props) => {
 
     for (const localeTerm of localeTerms) {
       for (const child of flattenedChildren) {
-        if (child?.type == 'text') {
-          if ((child.content?? '')?.toLowerCase()?.indexOf(localeTerm.value?.toLowerCase()) != -1) {
+        if (child?.type == "text") {
+          if (
+            (child.content ?? "")
+              ?.toLowerCase()
+              ?.indexOf(localeTerm.value?.toLowerCase()) != -1
+          ) {
             foundTerms.push(localeTerm);
             break;
           }
         }
-        if (child?.type == 'mentioned-tag') {
+        if (child?.type == "mentioned-tag") {
           if (child.content == localeTerm.value) {
             foundTerms.push(localeTerm);
             break;
@@ -210,7 +244,7 @@ const PhraseTranslation = (props: Props) => {
       }
     }
     return foundTerms;
-  }, [phraseTranslation?.plainText, phraseTranslation?.json, localeTerms])
+  }, [phraseTranslation?.plainText, phraseTranslation?.json, localeTerms]);
 
   const enabledMentionedValues = useMemo(() => {
     return mentionedTerms
@@ -218,27 +252,45 @@ const PhraseTranslation = (props: Props) => {
         return phraseTranslation?.enabledTerms?.includes(mentionedTerm?.id);
       })
       ?.map((mentionedTerm) => mentionedTerm.value);
-  }, [mentionedTerms, phraseTranslation?.enabledTerms])
+  }, [mentionedTerms, phraseTranslation?.enabledTerms]);
 
   const editorObserver = useMemo(() => {
-    const variables = props.phrase.variables?.map(v => v.name) ?? [];
-    const linkVariables = props?.phrase.linkVariables?.map?.(v => v.linkName) ?? [];
-    const interpolationVariants = props.phrase?.interpolationVariants?.map?.(v => v.name) ?? [];
-    return new Observer(variables, linkVariables, interpolationVariants, enabledMentionedValues ?? []);
-  }, [props.phrase.variables, props.phrase.linkVariables, props.phrase.interpolationVariants, enabledMentionedValues]);
+    const variables = props.phrase.variables?.map((v) => v.name) ?? [];
+    const linkVariables =
+      props?.phrase.linkVariables?.map?.((v) => v.linkName) ?? [];
+    const interpolationVariants =
+      props.phrase?.interpolationVariants?.map?.((v) => v.name) ?? [];
+    return new Observer(
+      variables,
+      linkVariables,
+      interpolationVariants,
+      enabledMentionedValues ?? []
+    );
+  }, [
+    props.phrase.variables,
+    props.phrase.linkVariables,
+    props.phrase.interpolationVariants,
+    enabledMentionedValues,
+  ]);
 
   const editorDoc = useMemo(() => {
     if (phraseTranslation) {
-        const doc = new EditorDocument(editorObserver, props.selectedLocale.localeCode?.toLowerCase() ?? "en");
-        doc.tree.updateRootFromHTML(phraseTranslation?.richTextHtml ?? "")
-        return doc;
+      const doc = new EditorDocument(
+        editorObserver,
+        props.selectedLocale.localeCode?.toLowerCase() ?? "en"
+      );
+      doc.tree.updateRootFromHTML(phraseTranslation?.richTextHtml ?? "");
+      return doc;
     }
-    return new EditorDocument(editorObserver, props.selectedLocale.localeCode?.toLowerCase() ?? "en");
+    return new EditorDocument(
+      editorObserver,
+      props.selectedLocale.localeCode?.toLowerCase() ?? "en"
+    );
   }, [props.selectedLocale.localeCode, editorObserver]);
 
   const contentIsEmpty = useMemo(() => {
     return (phraseTranslation?.plainText ?? "") == "";
-  }, [phraseTranslation?.plainText])
+  }, [phraseTranslation?.plainText]);
 
   const sourceIsEmpty = useMemo(() => {
     return (sourcePhraseTranslation?.plainText ?? "") == "";
@@ -270,7 +322,10 @@ const PhraseTranslation = (props: Props) => {
         });
       }
       if (contentIsEmpty && props.globalFilterUntranslated && !props.isPinned) {
-        props.setPinnedPhrases([...(props?.pinnedPhrases ?? []), props.phraseRef]);
+        props.setPinnedPhrases([
+          ...(props?.pinnedPhrases ?? []),
+          props.phraseRef,
+        ]);
       }
     },
     [
@@ -284,7 +339,7 @@ const PhraseTranslation = (props: Props) => {
       props.setPinnedPhrases,
       props.pinnedPhrases,
       props.phraseRef,
-      props.globalFilterUntranslated
+      props.globalFilterUntranslated,
     ]
   );
 
@@ -317,62 +372,92 @@ const PhraseTranslation = (props: Props) => {
 
   const requireRevision = useMemo(() => {
     if (!sourcePhraseTranslation) {
-        return false;
+      return false;
     }
-    return (sourcePhraseTranslation?.revisionCount ?? 0) > (phraseTranslation?.revisionCount ?? 0);
-  }, [phraseTranslation?.revisionCount, sourcePhraseTranslation?.revisionCount])
+    return (
+      (sourcePhraseTranslation?.revisionCount ?? 0) >
+      (phraseTranslation?.revisionCount ?? 0)
+    );
+  }, [
+    phraseTranslation?.revisionCount,
+    sourcePhraseTranslation?.revisionCount,
+  ]);
 
-  const onChangeTerm = useCallback((termId: string) => {
-    if (phraseTranslation?.enabledTerms?.includes(termId)) {
-      const enabledTerms =
-        phraseTranslation?.enabledTerms?.filter(
-          (t) => t != termId
-        ) ?? [];
-      if (phraseTranslation) {
-        setPhraseTranslation?.({
-          ...phraseTranslation,
-          enabledTerms,
-        });
+  const onChangeTerm = useCallback(
+    (termId: string) => {
+      if (phraseTranslation?.enabledTerms?.includes(termId)) {
+        const enabledTerms =
+          phraseTranslation?.enabledTerms?.filter((t) => t != termId) ?? [];
+        if (phraseTranslation) {
+          setPhraseTranslation?.({
+            ...phraseTranslation,
+            enabledTerms,
+          });
+        }
+      } else {
+        const enabledTerms = [
+          ...(phraseTranslation?.enabledTerms?.filter((t) => t != termId) ??
+            []),
+          termId,
+        ];
+        if (phraseTranslation) {
+          setPhraseTranslation?.({
+            ...phraseTranslation,
+            enabledTerms,
+          });
+        }
       }
-    } else {
-      const enabledTerms = [
-        ...(phraseTranslation?.enabledTerms?.filter(
-          (t) => t != termId
-        ) ?? []),
-        termId,
-      ];
-      if (phraseTranslation) {
-        setPhraseTranslation?.({
-          ...phraseTranslation,
-          enabledTerms,
-        });
-      }
-    }
-  }, [phraseTranslation?.enabledTerms, phraseTranslation, setPhraseTranslation])
+    },
+    [phraseTranslation?.enabledTerms, phraseTranslation, setPhraseTranslation]
+  );
 
   const sourceEnabledMentionedValues = useMemo(() => {
     return mentionedTerms
       ?.filter((mentionedTerm) => {
-        return sourcePhraseTranslation?.enabledTerms?.includes(mentionedTerm?.id);
+        return sourcePhraseTranslation?.enabledTerms?.includes(
+          mentionedTerm?.id
+        );
       })
       ?.map((mentionedTerm) => mentionedTerm.value);
-  }, [mentionedTerms, sourcePhraseTranslation?.enabledTerms])
+  }, [mentionedTerms, sourcePhraseTranslation?.enabledTerms]);
 
   const sourceEditorObserver = useMemo(() => {
-    const variables = props.phrase.variables?.map(v => v.name) ?? [];
-    const linkVariables = props?.phrase.linkVariables?.map?.(v => v.linkName) ?? [];
-    const interpolationVariants = props.phrase?.interpolationVariants?.map?.(v => v.name) ?? [];
-    return new Observer(variables, linkVariables, interpolationVariants, sourceEnabledMentionedValues ?? []);
-  }, [props.phrase.variables, props.phrase.linkVariables, props.phrase.interpolationVariants, sourceEnabledMentionedValues]);
+    const variables = props.phrase.variables?.map((v) => v.name) ?? [];
+    const linkVariables =
+      props?.phrase.linkVariables?.map?.((v) => v.linkName) ?? [];
+    const interpolationVariants =
+      props.phrase?.interpolationVariants?.map?.((v) => v.name) ?? [];
+    return new Observer(
+      variables,
+      linkVariables,
+      interpolationVariants,
+      sourceEnabledMentionedValues ?? []
+    );
+  }, [
+    props.phrase.variables,
+    props.phrase.linkVariables,
+    props.phrase.interpolationVariants,
+    sourceEnabledMentionedValues,
+  ]);
 
   const sourceEditorDoc = useMemo(() => {
     if (sourcePhraseTranslation && props?.systemSourceLocale?.localeCode) {
-        const doc = new EditorDocument(sourceEditorObserver, props.systemSourceLocale.localeCode?.toLowerCase() ?? "en");
-        doc.tree.updateRootFromHTML(sourcePhraseTranslation?.richTextHtml ?? "")
-        return doc;
+      const doc = new EditorDocument(
+        sourceEditorObserver,
+        props.systemSourceLocale.localeCode?.toLowerCase() ?? "en"
+      );
+      doc.tree.updateRootFromHTML(sourcePhraseTranslation?.richTextHtml ?? "");
+      return doc;
     }
-    return new EditorDocument(sourceEditorObserver, props?.systemSourceLocale?.localeCode?.toLowerCase() ?? "en");
-  }, [props?.systemSourceLocale?.localeCode, sourceEditorObserver, sourcePhraseTranslation]);
+    return new EditorDocument(
+      sourceEditorObserver,
+      props?.systemSourceLocale?.localeCode?.toLowerCase() ?? "en"
+    );
+  }, [
+    props?.systemSourceLocale?.localeCode,
+    sourceEditorObserver,
+    sourcePhraseTranslation,
+  ]);
 
   const sourceMockHtml = useMemo(() => {
     return sourceEditorDoc.tree.getHtml();
@@ -406,10 +491,17 @@ const PhraseTranslation = (props: Props) => {
     if (!memory) {
       return [];
     }
-    if (!memory?.[sourcePhraseTranslation?.plainText?.trim().toLowerCase() as string]) {
+    if (
+      !memory?.[
+        sourcePhraseTranslation?.plainText?.trim().toLowerCase() as string
+      ]
+    ) {
       return [];
     }
-    const termSet = memory?.[sourcePhraseTranslation?.plainText?.trim().toLowerCase() as string];
+    const termSet =
+      memory?.[
+        sourcePhraseTranslation?.plainText?.trim().toLowerCase() as string
+      ];
     if (!termSet) {
       return [];
     }
@@ -441,7 +533,7 @@ const PhraseTranslation = (props: Props) => {
               alignItems: "center",
             }}
           >
-            <span style={{ color: theme.colors.contrastText }}>
+            <span style={{ color: diffColor }}>
               {`Phrase Value (${props.selectedLocale.localeCode}):`}
             </span>
             {props.systemSourceLocale && commandMode == "edit" && (

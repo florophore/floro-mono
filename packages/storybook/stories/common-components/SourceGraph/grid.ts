@@ -80,7 +80,6 @@ export const getPotentialBaseBranchesForSha = (
   const topologicalBranchMap = getTopologicalBranchMap(branches);
   const order: {[key: string]: number} = {};
   let index = 0;
-  console.log(sourceCommit?.branchIds);
   for (const branchId of sourceCommit?.branchIds ?? []) {
     const upsteamBranches = [branchId, ...getBranchTopOrder(branchId, topologicalBranchMap)];
     for (let bId of upsteamBranches) {

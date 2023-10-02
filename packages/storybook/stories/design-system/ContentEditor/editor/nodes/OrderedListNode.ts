@@ -47,6 +47,12 @@ export default class OrderedListNode extends TextNode {
     }
   }
 
+  public toUnescapedString(): string {
+    const children = this.children?.map(child => child.toUnescapedString()).join("");
+    // removes last \n from list
+    return children.substring(0, children.length -1);
+ }
+
   public static fromJSON(json: TextNodeJSON, observer: Observer, lang: string): OrderedListNode {
     const children: Array<TextNode> = RootNode.fromTextChildren(
       json.children as Array<TextNodeJSON> ?? ([] as Array<TextNodeJSON>),

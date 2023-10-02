@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState, useEffect } from "react";
+import React, { useMemo, useCallback, useEffect } from "react";
 import {
   PointerTypes,
   SchemaTypes,
@@ -15,6 +15,7 @@ import TrashDark from "@floro/common-assets/assets/images/icons/trash.dark.svg";
 
 import ColorPalette from "@floro/styles/ColorPalette";
 import MockValueRow from "./MockValueRow";
+import { useDiffColor } from "../../diff";
 
 const Container = styled.div``;
 
@@ -179,9 +180,6 @@ interface Props {
 
 const TestCase = (props: Props) => {
   const theme = useTheme();
-  const [phraseGroupId, phraseId, localeRef, description] = useExtractQueryArgs(
-    props.localeTestRef
-  );
   const { commandMode, applicationState } = useFloroContext();
 
   const selectedLocaleRef = props?.selectedLocale?.localeCode
@@ -868,6 +866,8 @@ const TestCase = (props: Props) => {
     globalFallbackLocaleRef,
   ]);
 
+  const diffColor = useDiffColor(props.localeTestRef);
+
   return (
     <div style={{ marginBottom: 24 }}>
       <TitleRow>
@@ -882,7 +882,7 @@ const TestCase = (props: Props) => {
           <span
             style={{
               marginLeft: 8,
-              color: theme.colors.contrastText,
+              color: diffColor,
               fontWeight: 600,
             }}
           >
@@ -895,7 +895,7 @@ const TestCase = (props: Props) => {
           </DeleteVarContainer>
         )}
       </TitleRow>
-      <SubContainer>
+      <SubContainer style={{borderColor: diffColor}}>
         <Container>
           <TitleRow style={{ marginBottom: 24 }}>
             <RowTitle
@@ -1007,7 +1007,14 @@ const TestCase = (props: Props) => {
                   <InputsContainer>
                     <Container>
                       <DisplayText>
-                        {linkVariableOutputTest.hrefValue}
+                        {(linkVariableOutputTest.hrefValue?.length == 0) && (
+                          <span style={{color: theme.colors.warningTextColor}}>{'Not Set'}</span>
+                        )}
+                        {(linkVariableOutputTest.hrefValue?.trim()?.length > 0) && (
+                          <>
+                            {linkVariableOutputTest.hrefValue}
+                          </>
+                        )}
                       </DisplayText>
                     </Container>
                   </InputsContainer>

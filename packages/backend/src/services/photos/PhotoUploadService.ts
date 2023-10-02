@@ -105,15 +105,12 @@ export default class PhotoUploadService {
         .toBuffer();
       const hash = this.storageClient.hashBuffer(image);
       const thumbnailHash = this.storageClient.hashBuffer(thumbnail);
-      debugger;
       const path = this.userAccessor.getPhotoPathFromRoot(user, hash, "png");
       const thumbnailPath = this.userAccessor.getPhotoPathFromRoot(
         user,
         thumbnailHash,
         "png"
       );
-      console.log("PATH", path)
-      console.log("thumbnailPath", thumbnailPath)
       await this.userAccessor.writePhoto(user, hash, image);
       await this.userAccessor.writePhoto(user, thumbnailHash, thumbnail);
       const photosContext = await this.contextFactory.createContext(
@@ -149,7 +146,6 @@ export default class PhotoUploadService {
         photo,
       };
     } catch (e: any) {
-      console.log("E", e);
       return {
         action: "LOG_ERROR",
         error: {

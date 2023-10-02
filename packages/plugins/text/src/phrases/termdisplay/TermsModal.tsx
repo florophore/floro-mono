@@ -1,23 +1,9 @@
-import React, {
-  useEffect,
-  useState,
-  useMemo,
-  useCallback,
-} from "react";
+import React from "react";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import RootLongModal from "@floro/common-react/src/components/RootLongModal";
-import {
-  SchemaTypes,
-  makeQueryRef,
-  useFloroState,
-  useQueryRef,
-  useReferencedObject,
-} from "../../floro-schema-api";
-import InputSelector from "@floro/storybook/stories/design-system/InputSelector";
+import { SchemaTypes, useQueryRef } from "../../floro-schema-api";
 
-import Button from "@floro/storybook/stories/design-system/Button";
-import Input from "@floro/storybook/stories/design-system/Input";
 import TermValueTranslation from "./values/TermValueTranslation";
 import TermNotesTranslation from "./values/TermNotesTranslation";
 
@@ -28,14 +14,6 @@ const RowTitle = styled.h1`
   color: ${(props) => props.theme.colors.contrastText};
   padding: 0;
   margin: 0;
-`;
-
-const TitleRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
 `;
 
 const OuterContainer = styled.div`
@@ -56,13 +34,6 @@ const HeaderWrapper = styled.div`
   align-items: center;
 `;
 
-const Row = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-`;
-
 const HeaderTitle = styled.h1`
   font-family: "MavenPro";
   color: ${(props) => props?.theme.colors.modalHeaderTitleColor};
@@ -75,12 +46,14 @@ interface Props {
   onDismiss: () => void;
   term: SchemaTypes["$(text).terms.id<?>"];
   selectedLocale?: SchemaTypes["$(text).localeSettings.locales.localeCode<?>"];
-  systemSourceLocale?: SchemaTypes["$(text).localeSettings.locales.localeCode<?>"]|null;
+  systemSourceLocale?:
+    | SchemaTypes["$(text).localeSettings.locales.localeCode<?>"]
+    | null;
 }
 
 const TermsModal = (props: Props) => {
   const theme = useTheme();
-  const termRef = useQueryRef('$(text).terms.id<?>', props.term.id);
+  const termRef = useQueryRef("$(text).terms.id<?>", props.term.id);
 
   return (
     <RootLongModal
@@ -96,7 +69,7 @@ const TermsModal = (props: Props) => {
       }
     >
       <OuterContainer>
-        <div style={{width: '100%'}}>
+        <div style={{ width: "100%" }}>
           <RowTitle
             style={{
               fontWeight: 600,
@@ -113,8 +86,8 @@ const TermsModal = (props: Props) => {
           </RowTitle>
           <div
             style={{
-              width: '100%',
-              display: 'block'
+              width: "100%",
+              display: "block",
             }}
           >
             {props.selectedLocale && (
@@ -128,8 +101,8 @@ const TermsModal = (props: Props) => {
           </div>
           <div
             style={{
-              width: '100%',
-              display: 'block'
+              width: "100%",
+              display: "block",
             }}
           >
             {props.selectedLocale && (

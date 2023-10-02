@@ -5,7 +5,6 @@ import React, {
   useCallback,
 } from "react";
 import styled from "@emotion/styled";
-import { useTheme } from "@emotion/react";
 import RootModal from "@floro/common-react/src/components/RootModal";
 import {
   SchemaTypes,

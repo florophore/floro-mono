@@ -33,6 +33,7 @@ import deepLTargetLocales from "../../deep_l_target_locales.json";
 import MLModal from "../mlmodal/MLModal";
 import { useTranslationMemory } from "../../memory/TranslationMemoryContext";
 import TranslationMemoryList from "../tranlsationmemory/TranslationMemoryList";
+import { useDiffColor } from "../../diff";
 
 const Container = styled.div`
 `;
@@ -127,6 +128,8 @@ const LinkVariable = (props: Props) => {
     props.linkRef
   );
   const { commandMode, applicationState } = useFloroContext();
+
+  const diffColor = useDiffColor(props.linkRef, true, 'darker');
 
   const localeRef = makeQueryRef(
     "$(text).localeSettings.locales.localeCode<?>",
@@ -622,7 +625,7 @@ const LinkVariable = (props: Props) => {
           <span
             style={{
               marginLeft: 8,
-              color: theme.colors.contrastText,
+              color: diffColor,
               fontWeight: 600,
             }}
           >
@@ -635,7 +638,7 @@ const LinkVariable = (props: Props) => {
           </DeleteVarContainer>
         )}
       </TitleRow>
-      <SubContainer>
+      <SubContainer style={{borderColor: diffColor}}>
         <Container>
           <TitleRow style={{ marginBottom: 24 }}>
             <RowTitle

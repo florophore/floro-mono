@@ -7,7 +7,6 @@ import {
   getReferencedObject,
   makeQueryRef,
   useClientStorageApi,
-  useCopyApi,
   useFloroContext,
   useFloroState,
   useHasConflict,
@@ -121,21 +120,6 @@ const SubTitle = styled.h3`
   text-decoration: underline;
   cursor: pointer;
   padding: 0;
-`;
-
-const IconPreviewRow = styled.div`
-  margin-top: 16px;
-  margin-left: 40px;
-  display: flex;
-  flex-direction: row;
-  align-items: flex-end;
-`;
-
-const DotDotDot = styled.span`
-  font-family: "MavenPro";
-  font-weight: 500;
-  font-size: 1.5rem;
-  color: ${(props) => props.theme.colors.contrastText};
 `;
 
 const DragShadeContainer = styled.div`
@@ -291,7 +275,6 @@ const PhraseGroup = (props: Props) => {
     setFilterRequiresUpdate(props.globalFilterRequiresUpdate);
   }, [props.globalFilterRequiresUpdate]);
 
-  const isInvalid = useIsFloroInvalid(phraseGroupRef, true);
   const wasRemoved = useWasRemoved(phraseGroupRef, true);
   const wasAdded = useWasAdded(phraseGroupRef, true);
   const hasConflict = useHasConflict(phraseGroupRef, true);
@@ -722,11 +705,6 @@ const PhraseGroup = (props: Props) => {
     },
     [applicationState, phrases]
   );
-
-  const onDragEnd = useCallback(() => {
-    setIsDragging(false);
-    save();
-  }, [save]);
 
   const isDisplayingPhrases = useMemo(() => {
     if (
@@ -1276,6 +1254,7 @@ const PhraseGroup = (props: Props) => {
                 axis="y"
                 values={renderLimitedIcons ?? []}
                 onReorder={onReOrderPhrases}
+                style={{listStyle: "none", margin: 0, padding: 0 }}
               >
                 {phrases?.map?.((phrase, index) => {
                   return (
@@ -1312,7 +1291,7 @@ const PhraseGroup = (props: Props) => {
       whileHover={{ scale: 1 }}
       whileDrag={{ scale: 1.02 }}
       key={phraseGroupRef}
-      style={{ position: "relative" }}
+      style={{ position: "relative", listStyle: 'none' }}
       onDragStart={props.onDragStart}
       onDragEnd={props.onDragEnd}
     >

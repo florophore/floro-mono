@@ -6,17 +6,10 @@ import SearchInput from "@floro/storybook/stories/design-system/SearchInput";
 import ColorPalette from "@floro/styles/ColorPalette";
 import Button from "@floro/storybook/stories/design-system/Button";
 import {
-  useClientStorageApi,
-  useExtractQueryArgs,
   useFloroContext,
   useFloroState,
-  useReferencedObject,
 } from "../floro-schema-api";
-import InputSelector from "@floro/storybook/stories/design-system/InputSelector";
 import Checkbox from "@floro/storybook/stories/design-system/Checkbox";
-
-import XCircleLight from "@floro/common-assets/assets/images/icons/x_circle.light.svg";
-import XCircleDark from "@floro/common-assets/assets/images/icons/x_circle.dark.svg";
 
 const Container = styled.div`
   display: inline-flex;

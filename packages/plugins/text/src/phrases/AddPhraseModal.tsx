@@ -8,41 +8,10 @@ import React, {
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import RootLongModal from "@floro/common-react/src/components/RootLongModal";
-import {
-  SchemaTypes,
-  makeQueryRef,
-  useExtractQueryArgs,
-  useFloroState,
-  useReferencedObject,
-} from "../floro-schema-api";
-import InputSelector, {
-  Option,
-} from "@floro/storybook/stories/design-system/InputSelector";
+import { SchemaTypes, makeQueryRef, useFloroState } from "../floro-schema-api";
 
 import Button from "@floro/storybook/stories/design-system/Button";
-import Checkbox from "@floro/storybook/stories/design-system/Checkbox";
 import Input from "@floro/storybook/stories/design-system/Input";
-
-const LocaleTitle = styled.h4`
-  font-family: "MavenPro";
-  font-weight: 700;
-  font-size: 1.4rem;
-  color: ${(props) => props.theme.colors.contrastText};
-  text-align: center;
-  padding: 0;
-  margin: 0;
-`;
-
-const DefaultTitle = styled.p`
-  font-family: "MavenPro";
-  font-weight: 700;
-  font-size: 1rem;
-  font-style: italic;
-  color: ${(props) => props.theme.colors.pluginTitle};
-  text-align: center;
-  padding: 0;
-  margin: 0 16px 0 16px;
-`;
 
 const OuterContainer = styled.div`
   height: 100%;
@@ -69,35 +38,11 @@ const Row = styled.div`
   align-items: center;
 `;
 
-const RightInfo = styled.div`
-  display: flex;
-  flex-direction: row;
-`;
-
 const HeaderTitle = styled.h1`
   font-family: "MavenPro";
   color: ${(props) => props?.theme.colors.modalHeaderTitleColor};
   font-weight: 700;
   font-size: 2rem;
-`;
-
-const ManualDefinedInstruction = styled.p`
-  font-family: "MavenPro";
-  color: ${(props) => props?.theme.colors.contrastTextLight};
-  font-weight: 500;
-  font-size: 1.4rem;
-  padding: 0;
-  margin-right: 12px;
-`;
-
-const SubPropTitle = styled.h4`
-  font-family: "MavenPro";
-  font-weight: 500;
-  font-size: 1.2rem;
-  color: ${(props) => props.theme.colors.contrastText};
-  text-align: center;
-  padding: 0;
-  margin: 0;
 `;
 
 const PageTitle = styled.h4`
@@ -218,7 +163,7 @@ const AddPhraseModal = (props: Props) => {
   const textarea = useRef<HTMLTextAreaElement>(null);
 
   const onChangePhraseKey = useCallback((phraseKey: string) => {
-    setPhraseKey(phraseKey.toLowerCase())
+    setPhraseKey(phraseKey.toLowerCase());
   }, []);
 
   const existingIds = useMemo(() => {
@@ -251,7 +196,6 @@ const AddPhraseModal = (props: Props) => {
     return true;
   }, [newId, existingIds]);
 
-
   const onTextBoxChanged = useCallback(
     (event: React.ChangeEvent<HTMLTextAreaElement>): void => {
       setDescription(event.target.value?.toLowerCase());
@@ -260,7 +204,7 @@ const AddPhraseModal = (props: Props) => {
   );
   const onPrependNewPhrase = useCallback(() => {
     if (!canAddKey) {
-        return;
+      return;
     }
     if (!phraseGroup?.id || !phraseGroup?.name) {
       return;
@@ -287,7 +231,15 @@ const AddPhraseModal = (props: Props) => {
       ],
     });
     props.onAdd?.();
-  }, [props.onAdd, newId, phraseKey, description, phraseGroup, canAddKey, phraseGroup?.phrases]);
+  }, [
+    props.onAdd,
+    newId,
+    phraseKey,
+    description,
+    phraseGroup,
+    canAddKey,
+    phraseGroup?.phrases,
+  ]);
 
   return (
     <RootLongModal
@@ -324,7 +276,11 @@ const AddPhraseModal = (props: Props) => {
               value={phraseKey}
               onTextChanged={onChangePhraseKey}
               widthSize={"wide"}
-              label={(!newId || !existingIds.has(newId)) ? "phrase key" : "phrase key (taken)"}
+              label={
+                !newId || !existingIds.has(newId)
+                  ? "phrase key"
+                  : "phrase key (taken)"
+              }
               placeholder={'Phrase Key (e.g. "home page greeting")'}
               isValid={!newId || !existingIds.has(newId)}
             />

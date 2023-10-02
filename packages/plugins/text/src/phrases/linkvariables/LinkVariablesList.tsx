@@ -3,14 +3,13 @@ import { useTheme } from "@emotion/react";
 import { PointerTypes, SchemaTypes, useFloroContext, useFloroState, useReferencedObject } from "../../floro-schema-api";
 import { AnimatePresence, Reorder } from "framer-motion";
 import styled from "@emotion/styled";
-import { css } from "@emotion/css";
 import Input from "@floro/storybook/stories/design-system/Input";
 import Button from "@floro/storybook/stories/design-system/Button";
 
-import InputSelector, { Option } from "@floro/storybook/stories/design-system/InputSelector";
 import LinkVariableReOrderRow from "./LinkVariableReOrderRow";
 import ColorPalette from "@floro/styles/ColorPalette";
 import LinkVariable from "./LinkVariable";
+import { useDiffColor } from "../../diff";
 
 
 const Container = styled.div`
@@ -82,11 +81,9 @@ interface Props {
 }
 
 const LinkVariableList = (props: Props) => {
-  const theme = useTheme();
-
   const [name, setName] = useState<string>("");
   const { commandMode, applicationState} = useFloroContext();
-  const [isDragging, setIsDragging] = useState(false);
+  const [_isDragging, setIsDragging] = useState(false);
 
   const [linkVariables, setLinkVariables] = useFloroState(`${props.phraseRef}.linkVariables`);
   const variables = useReferencedObject(`${props.phraseRef}.variables`)
@@ -165,7 +162,6 @@ const LinkVariableList = (props: Props) => {
 
   const onDragEnd = useCallback(() => {
     setIsDragging(false);
-    //save();
   }, []);
 
 
@@ -187,6 +183,8 @@ const LinkVariableList = (props: Props) => {
 
   const [isReOrderMode, setIsReOrderMode] = useState(false);
 
+  const diffColor = useDiffColor(`${props.phraseRef}.linkVariables`, true, 'darker');
+
   const onToggleReOrder = useCallback(() => {
     setIsReOrderMode(!isReOrderMode);
   }, [isReOrderMode])
@@ -206,7 +204,7 @@ const LinkVariableList = (props: Props) => {
             alignItems: "center",
           }}
         >
-          <span style={{ color: theme.colors.contrastText }}>
+          <span style={{ color: diffColor }}>
             {`Link Variables`}
           </span>
           <span>
@@ -226,9 +224,7 @@ const LinkVariableList = (props: Props) => {
           axis="y"
           values={variables ?? []}
           onReorder={onReOrderVariables}
-          className={css(`
-            padding: 0px 0px 0px 0px;
-        `)}
+          style={{listStyle: "none", margin: 0, padding: 0 }}
         >
           <AnimatePresence>
             {linkVariables?.map((linkVariable, index) => {

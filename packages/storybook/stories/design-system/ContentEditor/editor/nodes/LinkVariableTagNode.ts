@@ -67,13 +67,7 @@ export default class LinkVariantTagNode extends Node {
     if (this.marks.isItalic == true) {
       fontStyle = "italic";
     }
-    let bottomLineHeight = 1;
-    if (this.marks.isSuperscript) {
-      bottomLineHeight = 1.4;
-    }
-    if (this.marks.isSubscript) {
-      bottomLineHeight = 1.4;
-    }
+    let bottomLineHeight = 1.2;
 
     return `<span
      spellcheck="false"

@@ -15,13 +15,6 @@ import styled from "@emotion/styled";
 import TrashLight from "@floro/common-assets/assets/images/icons/trash.light.darker.svg";
 import TrashDark from "@floro/common-assets/assets/images/icons/trash.dark.svg";
 
-import ContentEditor from "@floro/storybook/stories/design-system/ContentEditor";
-import LinkEditor from "@floro/storybook/stories/design-system/ContentEditor/LinkEditor";
-import EditorDocument from "@floro/storybook/stories/design-system/ContentEditor/editor/EditorDocument";
-import Button from "@floro/storybook/stories/design-system/Button";
-import PlainTextDocument from "@floro/storybook/stories/design-system/ContentEditor/PlainTextDocument";
-import LinkPlainTextDocument from "@floro/storybook/stories/design-system/ContentEditor/LinkPlainTextDocument";
-import Observer from "@floro/storybook/stories/design-system/ContentEditor/editor/Observer";
 import ColorPalette from "@floro/styles/ColorPalette";
 import InputSelector from "@floro/storybook/stories/design-system/InputSelector";
 import Input from "@floro/storybook/stories/design-system/Input";
@@ -33,14 +26,6 @@ const SubContainer = styled.div`
   flex-direction: column;
   width: 100%;
   margin-bottom: 12px;
-`;
-
-const TitleRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
 `;
 
 const RowTitle = styled.h1`
@@ -79,14 +64,6 @@ const ContentRow = styled.div`
   flex-direction: row;
   align-items: center;
   flex-wrap: wrap;
-`;
-
-const AddRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
 `;
 
 const options = [
@@ -169,16 +146,6 @@ const booleanOptions = [
   },
 ];
 
-const conjuctions = [
-  {
-    value: "AND",
-    label: "and if",
-  },
-  {
-    value: "AND NOT",
-    label: "but not if",
-  },
-];
 interface Props {
   phraseRef: PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>"];
   variableRef: PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>"];
@@ -192,7 +159,6 @@ interface Props {
 const SubCondition = (props: Props) => {
   const theme = useTheme();
 
-  const variables = useReferencedObject(`${props.phraseRef}.variables`);
   const [subcondition, setSubcondition] = useFloroState(
     props.subconditionRef
   );
@@ -252,7 +218,7 @@ const SubCondition = (props: Props) => {
         setFloatValue("");
         return;
       }
-      if (/^\d+\.$/.test(value)) {
+      if (/^\d+\.\d*$/.test(value)) {
         setFloatValue(value);
         return;
       }
@@ -539,7 +505,7 @@ const SubCondition = (props: Props) => {
                       value={floatValue}
                       widthSize="shortest"
                       onTextChanged={(text) => {
-                        if (/^\d+\.$/.test(text) && subcondition) {
+                        if (/^(\d+|\d+\.\d+)$/.test(text) && subcondition) {
                           setSubcondition({
                             ...subcondition,
                             floatComparatorValue: parseFloat(text),

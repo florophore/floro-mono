@@ -6,7 +6,9 @@ import {
   makeQueryRef,
   useFloroContext,
   useFloroState,
+  useHasIndication,
   useQueryRef,
+  useReferencedObject,
 } from "../floro-schema-api";
 import TermReOrderRow from "./TermReOrderRow";
 import TermRow from "./TermRow";
@@ -36,7 +38,7 @@ const TermList = (props: Props) => {
   const [terms, setTerms] =
     useFloroState("$(text).terms") ?? [];
   const [isDragging, setIsDragging] = useState(false);
-  const { applicationState, commandMode } = useFloroContext();
+  const { applicationState, changeset, conflictSet } = useFloroContext();
 
   const onDragStart = useCallback(() => {
     setIsDragging(true);
@@ -151,6 +153,8 @@ const TermList = (props: Props) => {
     props.pinnedTerms,
   ]);
 
+  const hasIndications = useHasIndication("$(text).terms");
+
   return (
     <Container>
       {props.isEditTerms && (
@@ -159,6 +163,7 @@ const TermList = (props: Props) => {
             axis="y"
             values={terms ?? []}
             onReorder={onReOrderTerms}
+            style={{listStyle: "none", margin: 0, padding: 0 }}
           >
             {terms?.map((term, index: number) => {
               return (

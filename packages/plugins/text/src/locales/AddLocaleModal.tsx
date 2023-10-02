@@ -3,34 +3,20 @@ import React, {
   useState,
   useMemo,
   useCallback,
-  useRef,
 } from "react";
 import styled from "@emotion/styled";
-import { useTheme } from "@emotion/react";
 import RootLongModal from "@floro/common-react/src/components/RootLongModal";
 import {
-  PointerTypes,
   SchemaTypes,
-  extractQueryArgs,
-  getReferencedObject,
   makeQueryRef,
-  useBinaryData,
-  useBinaryRef,
-  useClientStorageApi,
-  useExtractQueryArgs,
-  useFloroContext,
   useReferencedObject,
-  useUploadFile,
 } from "../floro-schema-api";
 import InputSelector, {
   Option,
 } from "@floro/storybook/stories/design-system/InputSelector";
 
-import CrossWhite from "@floro/common-assets/assets/images/icons/x_cross.white.svg";
-import CrossGray from "@floro/common-assets/assets/images/icons/x_cross.gray.svg";
 import Button from "@floro/storybook/stories/design-system/Button";
 import Checkbox from "@floro/storybook/stories/design-system/Checkbox";
-import Radio from "@floro/storybook/stories/design-system/Radio";
 
 import deepLSourceLocales from "../deep_l_source_locales.json";
 import Input from "@floro/storybook/stories/design-system/Input";

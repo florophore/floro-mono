@@ -10,7 +10,6 @@
  */
 
 const buildEnv = process?.env.BUILD_ENV ?? "dev";
-console.log("BE", buildEnv);
 
 const appId = (buildEnv) => {
   if (buildEnv == "staging") {

@@ -9,11 +9,8 @@ import { useTheme } from "@emotion/react";
 import RootModal from "@floro/common-react/src/components/RootModal";
 import {
   SchemaTypes,
-  makeQueryRef,
   useFloroState,
-  useReferencedObject,
 } from "../floro-schema-api";
-import InputSelector from "@floro/storybook/stories/design-system/InputSelector";
 
 import Button from "@floro/storybook/stories/design-system/Button";
 import Input from "@floro/storybook/stories/design-system/Input";

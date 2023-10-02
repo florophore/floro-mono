@@ -5,7 +5,6 @@ import { PointerTypes, useFloroContext, useFloroState } from "../../floro-schema
 import styled from "@emotion/styled";
 import Input from "@floro/storybook/stories/design-system/Input";
 import Button from "@floro/storybook/stories/design-system/Button";
-import ColorPalette from "@floro/styles/ColorPalette";
 import Tag from "./Tag";
 
 const Container = styled.div`
@@ -103,7 +102,6 @@ const TagList = (props: Props) => {
         });
     }
   }, [phrase, applicationState]);
-
 
   if (commandMode != "edit" && (phrase?.tags?.length ?? 0) == 0) {
     return null;

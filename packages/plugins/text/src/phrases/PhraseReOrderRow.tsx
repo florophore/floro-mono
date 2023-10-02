@@ -63,22 +63,6 @@ const colorPaletteItemVariants = {
   }),
 };
 
-const paletteCellVariants = {
-  active: {
-    height: 20,
-    width: 104,
-    y: -30,
-    scale: 0.35,
-    marginTop: 12,
-  },
-  inactive: {
-    scale: 1,
-    marginTop: 0,
-    height: "auto",
-    transition: { duration: 0.3 },
-  },
-};
-
 interface Props {
   phrase: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>"];
   index: number;

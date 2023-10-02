@@ -25,19 +25,6 @@ const TextAreaBlurbBox = styled.div`
   }
 `;
 
-const BlurbPlaceholder = styled.span`
-  color: ${(props) => props.theme.colors.contrastTextLight};
-  position: absolute;
-  top: 0;
-  left: 0;
-  font-family: "MavenPro";
-  font-weight: 500;
-  font-size: 1rem;
-  left: 16px;
-  top: 16px;
-  pointer-events: none;
-`;
-
 const LabelContainer = styled.div`
   position: absolute;
   height: 32;
@@ -94,7 +81,6 @@ const GrowWrap = styled.div`
   }
 `;
 
-
 const BackgroundText = styled.div`
   content: attr(data-replicated-value) " ";
   white-space: pre-wrap;
@@ -144,14 +130,13 @@ const GrowCommentContainer = styled.div`
   overflow: scroll;
 `;
 
-
 interface Props {
-    value: string
-    onUpdateValue: (value: string) => void;
-    isReadOnly: boolean;
-    placeholder: string;
-    label: string;
-    maxHeight?: number;
+  value: string;
+  onUpdateValue: (value: string) => void;
+  isReadOnly: boolean;
+  placeholder: string;
+  label: string;
+  maxHeight?: number;
 }
 
 const TermTextEditor = (props: Props) => {
@@ -163,7 +148,7 @@ const TermTextEditor = (props: Props) => {
 
   const onChange = useCallback(
     (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-     props.onUpdateValue((event?.target?.value ?? ""));
+      props.onUpdateValue(event?.target?.value ?? "");
     },
     [props.onUpdateValue]
   );

@@ -2,7 +2,7 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-import { SchemaTypes, getReferencedObject, useFloroContext, useFloroState, useQueryRef, useReferencedObject } from "../floro-schema-api";
+import { SchemaTypes, getReferencedObject, useCopyApi, useFloroContext, useHasIndication, useQueryRef, useReferencedObject } from "../floro-schema-api";
 import {  Reorder, useDragControls } from "framer-motion";
 
 import DraggerLight from "@floro/common-assets/assets/images/icons/dragger.light.svg";
@@ -14,6 +14,8 @@ import EditDark from "@floro/common-assets/assets/images/icons/edit.dark.svg";
 import TrashLight from "@floro/common-assets/assets/images/icons/trash.light.darker.svg";
 import TrashDark from "@floro/common-assets/assets/images/icons/trash.dark.svg";
 import UpdateLocaleModal from "./UpdateLocaleModal";
+import Checkbox from "@floro/storybook/stories/design-system/Checkbox";
+import { useDiffColor } from "../diff";
 
 const Container = styled.div`
     max-width: 666px;
@@ -104,6 +106,16 @@ const Icon = styled.img`
   cursor: pointer;
 `;
 
+const PinPhrase = styled.p`
+  font-family: "MavenPro";
+  font-weight: 500;
+  font-size: 1.4rem;
+  color: ${(props) => props.theme.colors.contrastText};
+  padding: 0;
+  margin: 0;
+`;
+
+
 interface Props {
     locale: SchemaTypes['$(text).localeSettings.locales.localeCode<?>'];
     index: number;
@@ -123,7 +135,7 @@ const colorPaletteItemVariants = {
 
 const LocaleBox = (props: Props) => {
   const theme = useTheme();
-  const { commandMode, applicationState } = useFloroContext();
+  const { commandMode, applicationState, isCopyMode } = useFloroContext();
   const localeSettings = useReferencedObject("$(text).localeSettings");
   const defaultLocale = useReferencedObject(localeSettings.defaultLocaleRef);
   const controls = useDragControls();
@@ -145,6 +157,8 @@ const LocaleBox = (props: Props) => {
     "$(text).localeSettings.locales.localeCode<?>",
     props?.locale?.localeCode
   );
+
+  const {isCopied, toggleCopy} = useCopyApi(localeRef);
 
   const draggerIcon = useMemo(() => {
     if (theme.name == "light") {
@@ -220,20 +234,25 @@ const LocaleBox = (props: Props) => {
     localeSettings?.defaultLocaleRef,
   ]);
 
+  const diffColor = useDiffColor(localeRef, true, 'lighter');
+  const localesHasIndication = useHasIndication(localeRef);
+
   const container = (
     <>
       <UpdateLocaleModal
-        show={showUpdate}
+        show={showUpdate && commandMode == "edit"}
         onDismiss={onHideUpdate}
         locale={props.locale}
       />
       <Container>
-        <LeftColumn>
-          <DragControlBox onPointerDown={onPointerDown}>
-            <DragIcon src={draggerIcon} />
-          </DragControlBox>
-        </LeftColumn>
-        <RightColumn>
+        {commandMode == "edit" && (
+          <LeftColumn>
+            <DragControlBox onPointerDown={onPointerDown}>
+              <DragIcon src={draggerIcon} />
+            </DragControlBox>
+          </LeftColumn>
+        )}
+        <RightColumn style={{borderColor: diffColor}}>
           <div
             style={{
               width: "100%",
@@ -257,24 +276,42 @@ const LocaleBox = (props: Props) => {
                 <DefaultTitle>{"(default locale)"}</DefaultTitle>
               )}
             </div>
+            {commandMode == "edit" && (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  alignItems: "center",
+                  width: 80,
+                }}
+              >
+                {defaultLocale.localeCode != props?.locale?.localeCode && (
+                  <Icon
+                    onClick={onRemove}
+                    style={{ marginRight: 16 }}
+                    src={trashIcon}
+                  />
+                )}
+                <Icon onClick={onShowUpdate} src={editIcon} />
+              </div>
+            )}
+          </div>
+          {isCopyMode && (
             <div
               style={{
+                height: 56,
+                width: "100%",
                 display: "flex",
-                justifyContent: "flex-end",
+                flexDirection: "row",
                 alignItems: "center",
-                width: 80,
               }}
             >
-              {defaultLocale.localeCode != props?.locale?.localeCode && (
-                <Icon
-                  onClick={onRemove}
-                  style={{ marginRight: 16 }}
-                  src={trashIcon}
-                />
-              )}
-              <Icon onClick={onShowUpdate} src={editIcon} />
+              <Checkbox isChecked={isCopied} onChange={toggleCopy} />
+              <span style={{ marginLeft: 12 }}>
+                <PinPhrase>{"Copy Locale"}</PinPhrase>
+              </span>
             </div>
-          </div>
+          )}
           <div
             style={{
               width: "100%",
@@ -303,6 +340,10 @@ const LocaleBox = (props: Props) => {
       </Container>
     </>
   );
+
+  if (!localesHasIndication && commandMode == "compare") {
+    return null;
+  }
 
   return (
     <Reorder.Item

@@ -1,6 +1,6 @@
 
 import React, { useMemo, useCallback, useState, useEffect } from "react";
-import { PointerTypes, SchemaTypes, makeQueryRef, useFloroContext, useReferencedObject } from "../floro-schema-api";
+import { PointerTypes, SchemaTypes, makeQueryRef, useCopyApi, useFloroContext, useHasIndication, useReferencedObject } from "../floro-schema-api";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
@@ -16,6 +16,7 @@ import Checkbox from "@floro/storybook/stories/design-system/Checkbox";
 import TermValueTranslation from "./values/TermValueTranslation";
 import TermNotesTranslation from "./values/TermNotesTranslation";
 import UpdateTermModal from "./UpdateTermModal";
+import { useDiffColor } from "../diff";
 
 const Container = styled.div`
   padding: 0;
@@ -112,7 +113,14 @@ interface Props {
 const TermRow = (props: Props) => {
   const theme = useTheme();
   const locales = useReferencedObject("$(text).localeSettings.locales");
-  const { applicationState, commandMode, clientStorage } = useFloroContext();
+  const {
+    applicationState,
+    commandMode,
+    clientStorage,
+    isCopyMode,
+    changeset,
+    conflictSet,
+  } = useFloroContext();
   const clientStorageIsEnabled = clientStorage != null;
   const [selectedLocaleCode, setSelectedLocaleCode] = useState(props.selectedTopLevelLocale);
   const localeSettings = useReferencedObject("$(text).localeSettings");
@@ -122,6 +130,26 @@ const TermRow = (props: Props) => {
       localeSettings.locales.find((l) => l.localeCode == selectedLocaleCode),
     [localeSettings.locales, selectedLocaleCode]
   );
+
+  const {isCopied, toggleCopy} = useCopyApi(props.termRef);
+  const hasIndications = useHasIndication(props.termRef)
+
+  const indicatedLocales = useMemo(() => {
+    if (!hasIndications) {
+      return [];
+    }
+    return locales.filter(locale => {
+      const localeRef = makeQueryRef("$(text).localeSettings.locales.localeCode<?>", locale?.localeCode);
+      const phraseLocaleRef = `${props.termRef}.localizedTerms.id<${localeRef}>`;
+      return changeset?.has?.(phraseLocaleRef) || conflictSet?.has?.(phraseLocaleRef);
+    })
+  }, [hasIndications, conflictSet, changeset, props.termRef, locales]);
+
+  const indicatedLocaleCodes = useMemo(() => {
+    return indicatedLocales?.map(l => l.localeCode).join(", ");
+  }, [indicatedLocales]);
+
+  const diffColor = useDiffColor(props.termRef, false, 'darker');
 
   const systemSourceLocale = useMemo(() => {
     if (selectedLocale?.defaultTranslateFromLocaleRef) {
@@ -225,8 +253,12 @@ const TermRow = (props: Props) => {
     setShowUpdate(false);
   }, []);
 
+  if (commandMode == "compare" && !hasIndications) {
+    return null;
+  }
+
   return (
-    <Container>
+    <Container style={{borderColor: diffColor}}>
       <UpdateTermModal
         show={showUpdate}
         onDismiss={onHideUpdate}
@@ -290,6 +322,21 @@ const TermRow = (props: Props) => {
           </div>
         </div>
       </TitleRow>
+      {hasIndications && (
+        <div
+          style={{
+            height: 56,
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+        >
+            <span style={{ marginLeft: 0 }}>
+              <PinPhrase style={{fontWeight: 700, fontSize: '1.4rem', color: diffColor}}>{"Changed Locales: " + indicatedLocaleCodes}</PinPhrase>
+            </span>
+        </div>
+      )}
       <div
         style={{
           height: 56,
@@ -308,6 +355,22 @@ const TermRow = (props: Props) => {
           </>
         )}
       </div>
+      {isCopyMode && (
+        <div
+          style={{
+            height: 56,
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+        >
+          <Checkbox isChecked={isCopied} onChange={toggleCopy} />
+          <span style={{ marginLeft: 12 }}>
+            <PinPhrase>{"Copy Term"}</PinPhrase>
+          </span>
+        </div>
+      )}
       <div style={{ marginTop: 24 }}>
         {selectedLocale && (
           <TermValueTranslation

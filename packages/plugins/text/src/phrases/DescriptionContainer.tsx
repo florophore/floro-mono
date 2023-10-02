@@ -1,12 +1,6 @@
-import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
-import {
-  MergeRequest,
-  Repository,
-} from "@floro/graphql-schemas/src/generated/main-client-graphql";
-import Button from "@floro/storybook/stories/design-system/Button";
-import ColorPalette from "@floro/styles/ColorPalette";
 
 const TextAreaBlurbBox = styled.div`
   font-family: "MavenPro";
@@ -150,11 +144,11 @@ const GrowCommentContainer = styled.div`
   overflow: scroll;
 `;
 
-
 interface Props {
     description: string
     onUpdateDescription: (description: string) => void;
     isReadOnly: boolean;
+    diffColor?: string;
 }
 
 const DescriptionContainer = (props: Props) => {
@@ -186,7 +180,7 @@ const DescriptionContainer = (props: Props) => {
   return (
     <TextAreaBlurbBox
       style={{
-        border: `2px solid ${theme.colors.contrastTextLight}`,
+        border: `2px solid ${props.diffColor ?? theme.colors.contrastTextLight}`,
         position: "relative",
       }}
       ref={textareaContainer}
@@ -195,16 +189,16 @@ const DescriptionContainer = (props: Props) => {
         <LabelBorderEnd
           style={{
             left: -1,
-            background: theme.colors.contrastTextLight,
+            background: props.diffColor ?? theme.colors.contrastTextLight,
           }}
         />
-        <LabelText style={{ color: theme.colors.contrastTextLight }}>
+        <LabelText style={{ color: props.diffColor ?? theme.colors.contrastTextLight }}>
           {"phrase description"}
         </LabelText>
         <LabelBorderEnd
           style={{
             right: -1,
-            background: theme.colors.contrastTextLight,
+            background: props.diffColor ?? theme.colors.contrastTextLight,
           }}
         />
       </LabelContainer>

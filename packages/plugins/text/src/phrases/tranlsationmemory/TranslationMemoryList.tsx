@@ -1,29 +1,7 @@
-import React, { useMemo, useCallback, useState, useEffect } from "react";
-import {
-  PointerTypes,
-  SchemaTypes,
-  makeQueryRef,
-  useClientStorageApi,
-  useExtractQueryArgs,
-  useFloroContext,
-  useFloroState,
-  useReferencedObject,
-} from "../../floro-schema-api";
-import { Reorder, useDragControls } from "framer-motion";
+import React, { useMemo, useCallback, useState } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
-import DraggerLight from "@floro/common-assets/assets/images/icons/dragger.light.svg";
-import DraggerDark from "@floro/common-assets/assets/images/icons/dragger.dark.svg";
-import InputSelector from "@floro/storybook/stories/design-system/InputSelector";
-import ColorPalette from "@floro/styles/ColorPalette";
-
-import TrashLight from "@floro/common-assets/assets/images/icons/trash.light.darker.svg";
-import TrashDark from "@floro/common-assets/assets/images/icons/trash.dark.svg";
-
-import EditLight from "@floro/common-assets/assets/images/icons/edit.light.svg";
-import EditDark from "@floro/common-assets/assets/images/icons/edit.dark.svg";
-import Checkbox from "@floro/storybook/stories/design-system/Checkbox";
 import Observer from "@floro/storybook/stories/design-system/ContentEditor/editor/Observer";
 import TranslationMemory from "./TranslationMemory";
 
@@ -37,38 +15,6 @@ const RowTitle = styled.h1`
   color: ${(props) => props.theme.colors.contrastText};
   padding: 0;
   margin: 0;
-`;
-
-const TermContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  width: 100%;
-  margin-bottom: 12px;
-`;
-
-const TermWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding-top: 12px;
-  margin-right: 12px;
-`;
-
-const TermSpan = styled.span`
-  font-family: "MavenPro";
-  font-weight: 700;
-  font-size: 1.4rem;
-  color: ${(props) => props.theme.colors.linkColor};
-  text-decoration: underline;
-  margin-right: 8px;
-  margin-top: -2px;
-  cursor: pointer;
-`;
-
-const TermIcon = styled.img`
-  height: 24px;
-  width: 24px;
 `;
 
 interface Props {

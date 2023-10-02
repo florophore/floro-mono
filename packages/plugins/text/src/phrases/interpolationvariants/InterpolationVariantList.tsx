@@ -1,9 +1,8 @@
 import React, { useMemo, useCallback, useState } from "react";
 import { useTheme } from "@emotion/react";
-import { PointerTypes, SchemaTypes, makeQueryRef, useFloroContext, useFloroState, useReferencedObject } from "../../floro-schema-api";
+import { PointerTypes, SchemaTypes, useFloroContext, useFloroState, useReferencedObject } from "../../floro-schema-api";
 import { AnimatePresence, Reorder } from "framer-motion";
 import styled from "@emotion/styled";
-import { css } from "@emotion/css";
 import Input from "@floro/storybook/stories/design-system/Input";
 import Button from "@floro/storybook/stories/design-system/Button";
 
@@ -11,7 +10,7 @@ import InputSelector, { Option } from "@floro/storybook/stories/design-system/In
 import InterpolationVariantReOrderRow from "./InterpolationVariantReOrderRow";
 import InterpolationVariant from "./InterpolationVariant";
 import ColorPalette from "@floro/styles/ColorPalette";
-
+import { useDiffColor } from "../../diff";
 
 const Container = styled.div`
     margin-top: 24px;
@@ -93,7 +92,8 @@ const InterpolationVariantsList = (props: Props) => {
   const [variableRef, setVariableRef] = useState<PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>']|null>(null);
   const { commandMode, applicationState} = useFloroContext();
 
-  const [isDragging, setIsDragging] = useState(false);
+  const [_isDragging, setIsDragging] = useState(false);
+  const diffColor = useDiffColor(`${props.phraseRef}.interpolationVariants`);
 
   const [interpolationVariants, setInterpolationVariants] = useFloroState(`${props.phraseRef}.interpolationVariants`);
   const variables = useReferencedObject(`${props.phraseRef}.variables`)
@@ -227,7 +227,7 @@ const InterpolationVariantsList = (props: Props) => {
             alignItems: "center",
           }}
         >
-          <span style={{ color: theme.colors.contrastText }}>
+          <span style={{ color: diffColor }}>
             {`Conditional Variants`}
           </span>
           <span>
@@ -247,9 +247,7 @@ const InterpolationVariantsList = (props: Props) => {
           axis="y"
           values={variables ?? []}
           onReorder={onReOrderVariables}
-          className={css(`
-            padding: 0px 0px 0px 0px;
-        `)}
+          style={{listStyle: "none", margin: 0, padding: 0 }}
         >
           <AnimatePresence>
             {interpolationVariants?.map((interpolationVariant, index) => {

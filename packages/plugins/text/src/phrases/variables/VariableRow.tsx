@@ -1,15 +1,16 @@
 import React, { useMemo, useCallback } from "react";
-import { SchemaTypes, useFloroContext } from "../../floro-schema-api";
-import { Reorder, useDragControls } from "framer-motion";
+import {
+  PointerTypes,
+  SchemaTypes,
+  useFloroContext,
+} from "../../floro-schema-api";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-
-import DraggerLight from "@floro/common-assets/assets/images/icons/dragger.light.svg";
-import DraggerDark from "@floro/common-assets/assets/images/icons/dragger.dark.svg";
 
 import TrashLight from "@floro/common-assets/assets/images/icons/trash.light.darker.svg";
 import TrashDark from "@floro/common-assets/assets/images/icons/trash.dark.svg";
 import ColorPalette from "@floro/styles/ColorPalette";
+import { useDiffColor } from "../../diff";
 
 const Container = styled.div`
   padding: 0;
@@ -40,23 +41,6 @@ const ColorControlsContainer = styled.div`
   height: 72px;
 `;
 
-const DragShadeContainer = styled.div`
-  height: 50px;
-  cursor: grab;
-  margin-right: 24px;
-  margin-top: 14px;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-`;
-
-const DragIcon = styled.img`
-  height: 24px;
-  width: 24px;
-  pointer-events: none;
-  user-select: none;
-`;
-
 const DeleteVarContainer = styled.div`
   cursor: pointer;
   margin-left: 16px;
@@ -73,54 +57,31 @@ const DeleteVar = styled.img`
   user-select: none;
 `;
 
-const colorPaletteItemVariants = {
-  hidden: { opacity: 0 },
-  visible: (custom: number) => ({
-    opacity: 1,
-    transition: {
-      delay: custom,
-    },
-  }),
-};
-
-const paletteCellVariants = {
-  active: {
-    height: 20,
-    width: 104,
-    y: -30,
-    scale: 0.35,
-    marginTop: 12,
-  },
-  inactive: {
-    scale: 1,
-    marginTop: 0,
-    height: "auto",
-    transition: { duration: 0.3 },
-  },
-};
-
 interface Props {
   variable: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>"];
+  variableRef: PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>"];
   index: number;
-  onRemove: (variable: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>"]) => void;
+  onRemove: (
+    variable: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>"]
+  ) => void;
 }
 
 const VariableRow = (props: Props) => {
   const theme = useTheme();
-  const { commandMode} = useFloroContext();
+  const { commandMode } = useFloroContext();
 
   const varTypeFormatted = useMemo(() => {
     if (props.variable.varType == "integer") {
-      return 'Integer';
+      return "Integer";
     }
     if (props.variable.varType == "float") {
-      return 'Float';
+      return "Float";
     }
     if (props.variable.varType == "string") {
-      return 'String';
+      return "String";
     }
     if (props.variable.varType == "boolean") {
-      return 'Bool';
+      return "Bool";
     }
     return null;
   }, [props.variable.varType]);
@@ -132,34 +93,41 @@ const VariableRow = (props: Props) => {
     return TrashDark;
   }, [theme.name]);
 
-
   const onRemove = useCallback(() => {
     if (props.variable) {
       props.onRemove(props.variable);
     }
   }, [props.variable, props.onRemove]);
 
+  const diffColor = useDiffColor(props.variableRef, true, "darker");
+
   return (
-    <div
-    >
+    <div>
       <Container>
         <TitleRow>
           <ColorControlsContainer>
-            <RowTitle style={{ marginTop: 15, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-
-              <span style={{
-                fontWeight: 500,
-                color: ColorPalette.white,
+            <RowTitle
+              style={{
+                marginTop: 15,
                 display: "flex",
                 flexDirection: "row",
                 alignItems: "center",
-                fontSize: "1.4rem",
-                background: ColorPalette.variableGreen,
-                boxShadow: `inset 0px 0px 2px 2px ${ColorPalette.variableGreenInset}`,
-                borderRadius: 8,
-                padding: 4
-
-              }}>
+              }}
+            >
+              <span
+                style={{
+                  fontWeight: 500,
+                  color: ColorPalette.white,
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  fontSize: "1.4rem",
+                  background: ColorPalette.variableGreen,
+                  boxShadow: `inset 0px 0px 2px 2px ${ColorPalette.variableGreenInset}`,
+                  borderRadius: 8,
+                  padding: 4,
+                }}
+              >
                 {props.variable.name}
               </span>
               <span
@@ -167,7 +135,7 @@ const VariableRow = (props: Props) => {
                   marginTop: -6,
                   color: theme.colors.pluginTitle,
                   fontWeight: 900,
-                  fontSize: '2rem',
+                  fontSize: "2rem",
                   fontFamily: "MavenPro",
                   paddingLeft: 4,
                   paddingRight: 4,
@@ -177,10 +145,10 @@ const VariableRow = (props: Props) => {
               </span>
               <span
                 style={{
-                  color: theme.colors.contrastText,
+                  color: diffColor,
                   fontWeight: 600,
                   fontFamily: "MavenPro",
-                  fontSize: '1.7rem',
+                  fontSize: "1.7rem",
                   marginTop: -3,
                 }}
               >

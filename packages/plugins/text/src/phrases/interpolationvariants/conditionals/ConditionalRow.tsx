@@ -251,7 +251,7 @@ const ConditionalRow = (props: Props): React.ReactElement => {
         setFloatValue("");
         return;
       }
-      if (/^\d+\.$/.test(value)) {
+      if (/^\d+\.\d*$/.test(value)) {
         setFloatValue(value);
         return;
       }
@@ -268,13 +268,16 @@ const ConditionalRow = (props: Props): React.ReactElement => {
       return /^\d+$/.test(integerValue);
     }
     if (props.variable.varType == "float") {
+      if (conditional?.operator == "is_fractional") {
+        return true;
+      }
       return /^(\d+|\d+\.\d+)$/.test(floatValue);
     }
     if (props.variable.varType == "string") {
       return (conditional?.stringComparatorValue?.trim?.() ?? "") != "";
     }
     return true;
-  }, [props.variable.varType, integerValue, conditional?.stringComparatorValue, floatValue]);
+  }, [props.variable.varType, integerValue, conditional?.stringComparatorValue, floatValue, conditional?.operator]);
 
   const xIcon = useMemo(() => {
     if (theme.name == "light") {
@@ -437,7 +440,7 @@ const ConditionalRow = (props: Props): React.ReactElement => {
               >
                 {operandText}
               </span>
-              {props.conditional.operator != "is_fractional_quantity" && (
+              {props.conditional.operator != "is_fractional" && (
                 <span>{varValue}</span>
               )}
             </RowTitle>
@@ -593,7 +596,7 @@ const ConditionalRow = (props: Props): React.ReactElement => {
                         value={floatValue}
                         widthSize="shortest"
                         onTextChanged={(text) => {
-                          if (/^\d+\.$/.test(text) && conditional) {
+                          if (/^(\d+|\d+\.\d+)$/.test(text) && conditional) {
                             setConditional({
                               ...conditional,
                               floatComparatorValue: parseFloat(text)

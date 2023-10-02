@@ -35,7 +35,7 @@ const PillText = styled.span`
 `;
 
 const TermIcon = styled.img`
-  margin-top: 4px;
+  margin-top: 2px;
   margin-left: 8px;
   height: 16px;
   width: 16px;

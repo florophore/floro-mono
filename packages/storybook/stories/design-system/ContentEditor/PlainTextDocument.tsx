@@ -34,6 +34,47 @@ const Wrapper = styled.div`
   position: relative;
   border-radius: 8px;
   font-size: 1.4rem;
+
+  sup {
+    line-height: 0;
+  }
+  sub {
+    line-height: 0;
+  }
+  ol {
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  ul {
+    padding-top: 12px;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  span.sup {
+    font-size: smaller;
+    vertical-align: super;
+    line-height: 0;
+  }
+  span.sub {
+    font-size: smaller;
+    vertical-align: sub;
+    line-height: 0;
+  }
+
+  li {
+    line-height: 1.5;
+    .sup {
+      line-height: 0;
+      vertical-align: super;
+    }
+    .sub {
+      line-height: 0;
+      vertical-align: sub;
+    }
+  }
 `;
 
 const StickyHeader = styled.div`

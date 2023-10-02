@@ -8,8 +8,6 @@ import {platform} from 'node:process';
 import { startDaemon, killDaemon } from './daemon';
 
 
-
-debugger;
 if (process.env.BUILD_ENV === "dev") {
   setFloroEnv("dev");
 }

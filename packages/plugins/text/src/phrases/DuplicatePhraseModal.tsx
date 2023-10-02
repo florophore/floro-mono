@@ -1,11 +1,5 @@
-import React, {
-  useEffect,
-  useState,
-  useMemo,
-  useCallback,
-} from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import styled from "@emotion/styled";
-import { useTheme } from "@emotion/react";
 import RootModal from "@floro/common-react/src/components/RootModal";
 import {
   SchemaTypes,
@@ -13,13 +7,12 @@ import {
   useFloroContext,
   useFloroState,
   useReferencedObject,
-  extractQueryArgs
+  extractQueryArgs,
 } from "../floro-schema-api";
 import InputSelector from "@floro/storybook/stories/design-system/InputSelector";
 
 import Button from "@floro/storybook/stories/design-system/Button";
 import Input from "@floro/storybook/stories/design-system/Input";
-import WarningLabel from "@floro/storybook/stories/design-system/WarningLabel";
 
 const OuterContainer = styled.div`
   height: 100%;
@@ -56,80 +49,86 @@ const HeaderTitle = styled.h1`
 const createPhraseCopyWithUpdatedVariableRefs = (
   phrase: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>"],
   newGroupId: string,
-  newId: string,
-  ): SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>"] => {
-  const interpolationVariants = phrase.interpolationVariants.map(interpolationVariant => {
-    const oldVariableRef = interpolationVariant.variableRef;
-    const [, , variableId] = extractQueryArgs(oldVariableRef)
-    const variableRef = makeQueryRef("$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>",
-      newGroupId,
-      newId,
-      variableId
-    );
-    const localeRules = interpolationVariant.localeRules.map(localeRule => {
-      const conditionals = localeRule.conditionals.map(conditional => {
-        const subconditions = conditional.subconditions.map(subcondition => {
-          const oldVariableRef = subcondition.variableRef;
-          const [, , variableId] = extractQueryArgs(oldVariableRef)
-          const variableRef = makeQueryRef("$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>",
-            newGroupId,
-            newId,
-            variableId
+  newId: string
+): SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>"] => {
+  const interpolationVariants = phrase.interpolationVariants.map(
+    (interpolationVariant) => {
+      const oldVariableRef = interpolationVariant.variableRef;
+      const [, , variableId] = extractQueryArgs(oldVariableRef);
+      const variableRef = makeQueryRef(
+        "$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>",
+        newGroupId,
+        newId,
+        variableId
+      );
+      const localeRules = interpolationVariant.localeRules.map((localeRule) => {
+        const conditionals = localeRule.conditionals.map((conditional) => {
+          const subconditions = conditional.subconditions.map(
+            (subcondition) => {
+              const oldVariableRef = subcondition.variableRef;
+              const [, , variableId] = extractQueryArgs(oldVariableRef);
+              const variableRef = makeQueryRef(
+                "$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>",
+                newGroupId,
+                newId,
+                variableId
+              );
+              return {
+                ...subcondition,
+                variableRef,
+              };
+            }
           );
           return {
-            ...subcondition,
-            variableRef
-          }
+            ...conditional,
+            subconditions,
+          };
         });
         return {
-          ...conditional,
-          subconditions
-        }
+          ...localeRule,
+          conditionals,
+        };
       });
       return {
-        ...localeRule,
-        conditionals
-      }
-
-    })
-    return {
-      ...interpolationVariant,
-      localeRules,
-      variableRef
+        ...interpolationVariant,
+        localeRules,
+        variableRef,
+      };
     }
-  });
+  );
 
-  const testCases = phrase.testCases.map(testCase => {
-    const localeTests = testCase.localeTests.map(localeTest => {
-      const mockValues = localeTest.mockValues.map(mockValue => {
+  const testCases = phrase.testCases.map((testCase) => {
+    const localeTests = testCase.localeTests.map((localeTest) => {
+      const mockValues = localeTest.mockValues.map((mockValue) => {
         const [, , variableId] = extractQueryArgs(mockValue.variableRef);
-        const variableRef = makeQueryRef("$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>",
+        const variableRef = makeQueryRef(
+          "$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>",
           newGroupId,
           newId,
           variableId
         );
         return {
           ...mockValue,
-          variableRef
-        }
+          variableRef,
+        };
       });
       return {
         ...localeTest,
-        mockValues
-      }
+        mockValues,
+      };
     });
     return {
       ...testCase,
-      localeTests
-    }
+      localeTests,
+    };
   });
 
-  return  {
+  return {
     ...phrase,
     interpolationVariants,
-    testCases
-  }
-}
+    testCases,
+  };
+};
 
 interface Props {
   show: boolean;
@@ -144,15 +143,19 @@ const DuplicatePhraseModal = (props: Props) => {
   const phraseGroups = useReferencedObject(`$(text).phraseGroups`);
 
   const phraseGroupOptions = useMemo(() => {
-    return phraseGroups?.map(phraseGroup => {
-      return {
-        label: phraseGroup.name,
-        value: phraseGroup.id,
-      }
-    }) ?? [];
-  }, [phraseGroups, props.show])
+    return (
+      phraseGroups?.map((phraseGroup) => {
+        return {
+          label: phraseGroup.name,
+          value: phraseGroup.id,
+        };
+      }) ?? []
+    );
+  }, [phraseGroups, props.show]);
 
-  const [phraseGroupId, setPhraseGroupId] = useState(props.phraseGroup.id as string);
+  const [phraseGroupId, setPhraseGroupId] = useState(
+    props.phraseGroup.id as string
+  );
   const [phraseKey, setPhraseKey] = useState(props.phrase.phraseKey ?? "");
 
   useEffect(() => {
@@ -160,24 +163,29 @@ const DuplicatePhraseModal = (props: Props) => {
       setPhraseGroupId(props.phraseGroup.id);
       setPhraseKey(props.phrase.phraseKey);
     }
-  }, [props.show])
+  }, [props.show]);
 
   const selectedPhraseGroupRef = makeQueryRef(
     "$(text).phraseGroups.id<?>",
     phraseGroupId
   );
 
-  const onUpdateSelectedPhraseGroup = useCallback((option) => {
-    if (option?.value == null) {
-      return null;
-    }
-    setPhraseGroupId(option?.value);
-  }, [props.phrase])
+  const onUpdateSelectedPhraseGroup = useCallback(
+    (option) => {
+      if (option?.value == null) {
+        return null;
+      }
+      setPhraseGroupId(option?.value);
+    },
+    [props.phrase]
+  );
 
-  const [selectedPhraseGroup, setSelectedPhraseGroup] = useFloroState(selectedPhraseGroupRef);
+  const [selectedPhraseGroup, setSelectedPhraseGroup] = useFloroState(
+    selectedPhraseGroupRef
+  );
 
   const onChangePhraseKey = useCallback((phraseKey: string) => {
-    setPhraseKey(phraseKey.toLowerCase())
+    setPhraseKey(phraseKey.toLowerCase());
   }, []);
 
   const existingIds = useMemo(() => {
@@ -230,7 +238,7 @@ const DuplicatePhraseModal = (props: Props) => {
     if (nextPhrases && selectedPhraseGroup) {
       setSelectedPhraseGroup({
         ...selectedPhraseGroup,
-        phrases: nextPhrases
+        phrases: nextPhrases,
       });
     }
     props.onDismiss();
@@ -245,7 +253,7 @@ const DuplicatePhraseModal = (props: Props) => {
     selectedPhraseGroup?.phrases,
     setSelectedPhraseGroup,
     props.onDismiss,
-    applicationState
+    applicationState,
   ]);
 
   return (
@@ -271,8 +279,8 @@ const DuplicatePhraseModal = (props: Props) => {
             <InputSelector
               options={phraseGroupOptions}
               value={selectedPhraseGroup?.id}
-              label={'phrase group'}
-              placeholder={'selected phrase group'}
+              label={"phrase group"}
+              placeholder={"selected phrase group"}
               onChange={onUpdateSelectedPhraseGroup}
               size="wide"
             />
@@ -287,7 +295,11 @@ const DuplicatePhraseModal = (props: Props) => {
               value={phraseKey}
               onTextChanged={onChangePhraseKey}
               widthSize={"wide"}
-              label={(!newId || !existingIds.has(newId)) ? "phrase key" : "phrase key (taken)"}
+              label={
+                !newId || !existingIds.has(newId)
+                  ? "phrase key"
+                  : "phrase key (taken)"
+              }
               placeholder={'Phrase Key (e.g. "home page greeting")'}
               isValid={!newId || !existingIds.has(newId)}
             />

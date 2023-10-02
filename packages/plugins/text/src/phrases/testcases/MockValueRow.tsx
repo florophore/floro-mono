@@ -6,17 +6,10 @@ import {
   useFloroState,
   useReferencedObject,
 } from "../../floro-schema-api";
-import { Reorder, useDragControls } from "framer-motion";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
-import DraggerLight from "@floro/common-assets/assets/images/icons/dragger.light.svg";
-import DraggerDark from "@floro/common-assets/assets/images/icons/dragger.dark.svg";
-
-import TrashLight from "@floro/common-assets/assets/images/icons/trash.light.darker.svg";
-import TrashDark from "@floro/common-assets/assets/images/icons/trash.dark.svg";
 import ColorPalette from "@floro/styles/ColorPalette";
-import { useQuery } from "@apollo/client";
 import InputSelector from "@floro/storybook/stories/design-system/InputSelector";
 import Input from "@floro/storybook/stories/design-system/Input";
 

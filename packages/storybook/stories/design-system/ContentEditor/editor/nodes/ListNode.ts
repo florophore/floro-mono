@@ -50,6 +50,11 @@ export default class ListNode extends TextNode {
     this.expand(null);
   }
 
+  public toUnescapedString(): string {
+    const children = this.children?.map(child => child.toUnescapedString()).join("");
+    return children + "\n";
+ }
+
   public static fromJSON(json: TextNodeJSON, observer: Observer, lang: string): ListNode {
     const children: Array<TextNode> = RootNode.fromTextChildren(
       json.children as Array<TextNodeJSON> ?? ([] as Array<TextNodeJSON>),

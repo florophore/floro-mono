@@ -1,19 +1,27 @@
-import React, { useMemo, useCallback, useState, useEffect } from "react";
-import { PointerTypes, SchemaTypes, getDiff, makeQueryRef, useExtractQueryArgs, useFloroContext, useFloroState, useQueryRef, useReferencedObject } from "../../floro-schema-api";
+import React, { useMemo, useState, useEffect } from "react";
+import {
+  PointerTypes,
+  SchemaTypes,
+  makeQueryRef,
+  useExtractQueryArgs,
+  useReferencedObject,
+} from "../../floro-schema-api";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
-import PlainTextDocument from "@floro/storybook/stories/design-system/ContentEditor/PlainTextDocument";
 import LinkDiffTextDocument from "@floro/storybook/stories/design-system/ContentEditor/LinkDiffTextDocument";
 import EditorDocument from "@floro/storybook/stories/design-system/ContentEditor/editor/EditorDocument";
 import Button from "@floro/storybook/stories/design-system/Button";
-import { getArrayStringDiff, splitTextForDiff, splitTextForUriDiff } from "../phrasetranslation/diffing";
+import {
+  getArrayStringDiff,
+  splitTextForUriDiff,
+} from "../phrasetranslation/diffing";
 import ColorPalette from "@floro/styles/ColorPalette";
 import Observer from "@floro/storybook/stories/design-system/ContentEditor/editor/Observer";
 import LinkPlainTextDocument from "@floro/storybook/stories/design-system/ContentEditor/LinkPlainTextDocument";
 
 const Container = styled.div`
-    margin-top: 24px;
+  margin-top: 24px;
 `;
 
 const RowTitle = styled.h1`
@@ -48,55 +56,82 @@ interface Props {
   linkVariable: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>"];
   systemSourceLocale: SchemaTypes["$(text).localeSettings.locales.localeCode<?>"];
   linkVariableRef: PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>"];
-  targetLinkHrefTranslation: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkHrefValue']
+  targetLinkHrefTranslation: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkHrefValue"];
 }
 
 const SourceLinkHrefTranslation = (props: Props) => {
   const theme = useTheme();
-  const [phraseGroupId, phraseId, linkName] = useExtractQueryArgs(props.linkVariableRef);
-  const sourceLocaleRef = props?.systemSourceLocale?.localeCode ? makeQueryRef(
-    "$(text).localeSettings.locales.localeCode<?>",
-    props.systemSourceLocale.localeCode
-  ) : null as unknown as PointerTypes['$(text).localeSettings.locales.localeCode<?>'];
+  const [phraseGroupId, phraseId, linkName] = useExtractQueryArgs(
+    props.linkVariableRef
+  );
+  const sourceLocaleRef = props?.systemSourceLocale?.localeCode
+    ? makeQueryRef(
+        "$(text).localeSettings.locales.localeCode<?>",
+        props.systemSourceLocale.localeCode
+      )
+    : (null as unknown as PointerTypes["$(text).localeSettings.locales.localeCode<?>"]);
 
-  const sourceRef = sourceLocaleRef ? makeQueryRef(
-    "$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>",
-    phraseGroupId,
-    phraseId,
-    linkName,
-    sourceLocaleRef
-  ) : null as unknown as PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>"];
+  const sourceRef = sourceLocaleRef
+    ? makeQueryRef(
+        "$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>",
+        phraseGroupId,
+        phraseId,
+        linkName,
+        sourceLocaleRef
+      )
+    : (null as unknown as PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>"]);
 
-  const sourceLinkHrefTranslation = useReferencedObject(`${sourceRef}.linkHrefValue`);
+  const sourceLinkHrefTranslation = useReferencedObject(
+    `${sourceRef}.linkHrefValue`
+  );
 
   const richText = useMemo(() => {
     return sourceLinkHrefTranslation?.richTextHtml ?? "";
-  }, [sourceLinkHrefTranslation?.richTextHtml])
-
+  }, [sourceLinkHrefTranslation?.richTextHtml]);
 
   const editorObserver = useMemo(() => {
-    const variables = props.phrase.variables.map(v => v.name);
+    const variables = props.phrase.variables.map((v) => v.name);
     return new Observer(variables);
   }, [props.phrase.variables]);
 
   const editorDoc = useMemo(() => {
     if (sourceLinkHrefTranslation) {
-        const doc = new EditorDocument(editorObserver, props.systemSourceLocale.localeCode?.toLowerCase() ?? "en");
-        doc.tree.updateRootFromHTML(sourceLinkHrefTranslation?.richTextHtml ?? "")
-        return doc;
+      const doc = new EditorDocument(
+        editorObserver,
+        props.systemSourceLocale.localeCode?.toLowerCase() ?? "en"
+      );
+      doc.tree.updateRootFromHTML(
+        sourceLinkHrefTranslation?.richTextHtml ?? ""
+      );
+      return doc;
     }
-    return new EditorDocument(editorObserver, props.systemSourceLocale.localeCode?.toLowerCase() ?? "en");
-  }, [sourceLinkHrefTranslation, props.systemSourceLocale.localeCode, editorObserver]);
+    return new EditorDocument(
+      editorObserver,
+      props.systemSourceLocale.localeCode?.toLowerCase() ?? "en"
+    );
+  }, [
+    sourceLinkHrefTranslation,
+    props.systemSourceLocale.localeCode,
+    editorObserver,
+  ]);
 
   const requireRevision = useMemo(() => {
     if (!sourceLinkHrefTranslation) {
-        return false;
+      return false;
     }
-    return (sourceLinkHrefTranslation?.revisionCount ?? 0) > (props.targetLinkHrefTranslation?.revisionCount ?? 0);
-  }, [props.targetLinkHrefTranslation?.revisionCount, sourceLinkHrefTranslation?.revisionCount])
+    return (
+      (sourceLinkHrefTranslation?.revisionCount ?? 0) >
+      (props.targetLinkHrefTranslation?.revisionCount ?? 0)
+    );
+  }, [
+    props.targetLinkHrefTranslation?.revisionCount,
+    sourceLinkHrefTranslation?.revisionCount,
+  ]);
 
   const beforeText = useMemo(() => {
-    return splitTextForUriDiff(props.targetLinkHrefTranslation?.sourceAtRevision?.plainText ?? "");
+    return splitTextForUriDiff(
+      props.targetLinkHrefTranslation?.sourceAtRevision?.plainText ?? ""
+    );
   }, [props.targetLinkHrefTranslation?.sourceAtRevision?.plainText]);
 
   const afterText = useMemo(() => {
@@ -106,18 +141,22 @@ const SourceLinkHrefTranslation = (props: Props) => {
   const diff = useMemo(() => {
     const diff = getArrayStringDiff(beforeText, afterText);
     return diff;
-  }, [beforeText, afterText])
+  }, [beforeText, afterText]);
 
   const diffIsEmpty = useMemo(() => {
-    return Object.keys(diff.add).length == 0 && Object.keys(diff.remove).length == 0;
-  }, [Object.keys(diff.add).length == 0 && Object.keys(diff.remove).length == 0]);
+    return (
+      Object.keys(diff.add).length == 0 && Object.keys(diff.remove).length == 0
+    );
+  }, [
+    Object.keys(diff.add).length == 0 && Object.keys(diff.remove).length == 0,
+  ]);
 
   const [showDiff, setShowDiff] = useState(!diffIsEmpty);
   useEffect(() => {
     if (diffIsEmpty) {
       setShowDiff(false);
     }
-  }, [diffIsEmpty])
+  }, [diffIsEmpty]);
 
   return (
     <>

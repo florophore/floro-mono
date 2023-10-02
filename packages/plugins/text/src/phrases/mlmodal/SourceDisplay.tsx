@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 
@@ -22,19 +22,6 @@ const TextAreaBlurbBox = styled.div`
     display: block;
     margin-top: -38px;
   }
-`;
-
-const BlurbPlaceholder = styled.span`
-  color: ${(props) => props.theme.colors.contrastTextLight};
-  position: absolute;
-  top: 0;
-  left: 0;
-  font-family: "MavenPro";
-  font-weight: 500;
-  font-size: 1rem;
-  left: 16px;
-  top: 16px;
-  pointer-events: none;
 `;
 
 const LabelContainer = styled.div`
@@ -67,81 +54,47 @@ const LabelBorderEnd = styled.div`
   transition: 500ms background-color;
 `;
 
-const GrowWrap = styled.div`
-  display: grid;
-  margin-bottom: 6px;
-  &:after {
-    content: attr(data-replicated-value) " ";
-    white-space: pre-wrap;
-    border: 0;
-
-    font: inherit;
-    /* Place on top of each other */
-    grid-area: 1 / 1 / 2 / 2;
-    padding: 0px;
-    margin-right: 12px;
-
-    color: transparent;
-    caret-color: ${(props) => props.theme.colors.contrastText};
-    font-size: 1.4rem;
-    font-family: "MavenPro";
-    font-weight: 600;
-    line-height: 1.5;
-    pointer-events: none;
-    outline: none;
-    padding: 4px;
-  }
-`;
-
-
-const BackgroundText = styled.div`
-  content: attr(data-replicated-value) " ";
-  white-space: pre-wrap;
-  border: 0;
-
-  font: inherit;
-  /* Place on top of each other */
-  grid-area: 1 / 1 / 2 / 2;
-  padding: 0px;
-  margin-right: 12px;
-
-  color: transparent;
-  caret-color: ${(props) => props.theme.colors.contrastText};
-  font-size: 1.4rem;
-  font-family: "MavenPro";
-  font-weight: 600;
-  line-height: 1.5;
-  pointer-events: none;
-  outline: none;
-  padding: 4px;
-`;
-
-const TextArea = styled.textarea`
-  resize: none;
-  overflow: hidden;
-  font: inherit;
-
-  border: 0;
-  /* Place on top of each other */
-  grid-area: 1 / 1 / 2 / 2;
-  padding: 0px;
-  margin-right: 12px;
-
-  color: transparent;
-  caret-color: ${(props) => props.theme.colors.contrastText};
-  font-size: 1.4rem;
-  font-family: "MavenPro";
-  font-weight: 600;
-  line-height: 1.5;
-  outline: none;
-  padding: 4px;
-  background: none;
-`;
-
 const GrowCommentContainer = styled.div`
   flex-grow: 1;
   overflow: scroll;
 `;
+
+const Wrapper = styled.div`
+  ol {
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  ul {
+    padding-top: 12px;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  span.sup {
+    font-size: smaller;
+    vertical-align: super;
+    line-height: 0;
+  }
+  span.sub {
+    font-size: smaller;
+    vertical-align: sub;
+    line-height: 0;
+  }
+
+  li {
+    line-height: 1.5;
+    .sup {
+      line-height: 0;
+      vertical-align: super;
+    }
+    .sub {
+      line-height: 0;
+      vertical-align: sub;
+    }
+  }
+`
 
 
 interface Props {
@@ -181,7 +134,7 @@ const SourceDisplay = (props: Props) => {
         />
       </LabelContainer>
       <GrowCommentContainer style={{ maxHeight: props.maxHeight ?? 120 }}>
-        <div dangerouslySetInnerHTML={{__html: props.value}} style={{padding: 16, color: theme.colors.contrastText}}></div>
+        <Wrapper dangerouslySetInnerHTML={{__html: props.value}} style={{padding: 16, color: theme.colors.contrastText}}/>
       </GrowCommentContainer>
     </TextAreaBlurbBox>
   );

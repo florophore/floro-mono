@@ -1,27 +1,13 @@
 import React, { useMemo, useCallback, useState, useEffect } from "react";
 import {
   PointerTypes,
-  SchemaTypes,
-  makeQueryRef,
-  useExtractQueryArgs,
-  useFloroContext,
   useFloroState,
-  useQueryRef,
   useReferencedObject,
 } from "../../../../floro-schema-api";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
-import TrashLight from "@floro/common-assets/assets/images/icons/trash.light.darker.svg";
-import TrashDark from "@floro/common-assets/assets/images/icons/trash.dark.svg";
-
-import ContentEditor from "@floro/storybook/stories/design-system/ContentEditor";
-import LinkEditor from "@floro/storybook/stories/design-system/ContentEditor/LinkEditor";
-import EditorDocument from "@floro/storybook/stories/design-system/ContentEditor/editor/EditorDocument";
 import Button from "@floro/storybook/stories/design-system/Button";
-import PlainTextDocument from "@floro/storybook/stories/design-system/ContentEditor/PlainTextDocument";
-import LinkPlainTextDocument from "@floro/storybook/stories/design-system/ContentEditor/LinkPlainTextDocument";
-import Observer from "@floro/storybook/stories/design-system/ContentEditor/editor/Observer";
 import ColorPalette from "@floro/styles/ColorPalette";
 import InputSelector from "@floro/storybook/stories/design-system/InputSelector";
 import Input from "@floro/storybook/stories/design-system/Input";
@@ -53,20 +39,6 @@ const RowTitle = styled.h1`
   color: ${(props) => props.theme.colors.contrastText};
   padding: 0;
   margin: 0;
-`;
-
-const DeleteVarContainer = styled.div`
-  cursor: pointer;
-  margin-left: 16px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const DeleteVar = styled.img`
-  height: 32px;
-  width: 32px;
-  user-select: none;
 `;
 
 const EditRow = styled.div`
@@ -172,20 +144,6 @@ const booleanOptions = [
   },
 ];
 
-const conjuctions = [
-  {
-    value: "AND",
-    label: "and if",
-  },
-  {
-    value: "AND NOT",
-    label: "but not if",
-  },
-  {
-    value: "OR",
-    label: "or if",
-  },
-];
 interface Props {
   phraseRef: PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>"];
   variableRef: PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>"];
@@ -243,7 +201,7 @@ const NewSubContainer = (props: Props) => {
         setFloatValue("");
         return;
       }
-      if (/^\d+\.$/.test(value)) {
+      if (/^\d+\.\d*$/.test(value)) {
         setFloatValue(value);
         return;
       }

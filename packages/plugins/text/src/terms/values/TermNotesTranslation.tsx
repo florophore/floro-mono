@@ -1,23 +1,24 @@
-import React, { useMemo, useCallback, useState, useEffect } from "react";
-import { PointerTypes, SchemaTypes, makeQueryRef, useExtractQueryArgs, useFloroContext, useFloroState, useQueryRef, useReferencedObject } from "../../floro-schema-api";
+import React, { useCallback } from "react";
+import {
+  PointerTypes,
+  SchemaTypes,
+  makeQueryRef,
+  useFloroContext,
+  useFloroState,
+  useQueryRef,
+  useReferencedObject,
+} from "../../floro-schema-api";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
-import ContentEditor from "@floro/storybook/stories/design-system/ContentEditor";
-import EditorDocument from "@floro/storybook/stories/design-system/ContentEditor/editor/EditorDocument";
-import Button from "@floro/storybook/stories/design-system/Button";
-import PlainTextDocument from "@floro/storybook/stories/design-system/ContentEditor/PlainTextDocument";
-import Observer from "@floro/storybook/stories/design-system/ContentEditor/editor/Observer";
 import ColorPalette from "@floro/styles/ColorPalette";
 import TermTextEditor from "../TermTextEditor";
 import SourceText from "../SourceText";
 
-
-const Container = styled.div`
-`;
+const Container = styled.div``;
 
 const SourceContainer = styled.div`
-    margin-top: 24px;
+  margin-top: 24px;
 `;
 
 const RowTitle = styled.h1`
@@ -25,16 +26,6 @@ const RowTitle = styled.h1`
   font-weight: 400;
   font-size: 1.4rem;
   color: ${(props) => props.theme.colors.contrastText};
-  padding: 0;
-  margin: 0;
-`;
-
-const RequiresRevision = styled.h1`
-  font-family: "MavenPro";
-  font-weight: 500;
-  font-size: 1.2rem;
-  color: ${(props) => props.theme.colors.warningTextColor};
-  font-style: italic;
   padding: 0;
   margin: 0;
 `;
@@ -47,31 +38,14 @@ const TitleRow = styled.div`
   width: 100%;
 `;
 
-const MissingTranslationsPill = styled.div`
-  height: 24px;
-  border-radius: 12px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: ${props => props.theme.colors.warningTextColor};
-  padding-left: 12px;
-  padding-right: 12px;
-  margin-left: 12px;
-`;
-
-const MissingTranslationsTitle = styled.div`
-  font-family: "MavenPro";
-  font-weight: 600;
-  font-size: 1rem;
-  color: ${ColorPalette.white};
-`;
-
 interface Props {
   term: SchemaTypes["$(text).terms.id<?>"];
   selectedLocale: SchemaTypes["$(text).localeSettings.locales.localeCode<?>"];
-  systemSourceLocale: SchemaTypes["$(text).localeSettings.locales.localeCode<?>"]|null;
+  systemSourceLocale:
+    | SchemaTypes["$(text).localeSettings.locales.localeCode<?>"]
+    | null;
   termRef: PointerTypes["$(text).terms.id<?>"];
-  pinnedTerms: Array<string>|null;
+  pinnedTerms: Array<string> | null;
   setPinnedTerms: (phraseRegs: Array<string>) => void;
   globalFilterUntranslatedTerms: boolean;
   isPinned: boolean;
@@ -86,16 +60,20 @@ const TermNotesTranslation = (props: Props) => {
     props.selectedLocale.localeCode
   );
 
-  const sourceLocaleRef = props?.systemSourceLocale?.localeCode ? makeQueryRef(
-    "$(text).localeSettings.locales.localeCode<?>",
-    props.systemSourceLocale.localeCode
-  ) : null as unknown as PointerTypes['$(text).localeSettings.locales.localeCode<?>'];
+  const sourceLocaleRef = props?.systemSourceLocale?.localeCode
+    ? makeQueryRef(
+        "$(text).localeSettings.locales.localeCode<?>",
+        props.systemSourceLocale.localeCode
+      )
+    : (null as unknown as PointerTypes["$(text).localeSettings.locales.localeCode<?>"]);
 
-  const sourceRef = sourceLocaleRef ? makeQueryRef(
-    "$(text).terms.id<?>.localizedTerms.id<?>",
-    props.term.id,
-    sourceLocaleRef
-  ) : null as unknown as PointerTypes["$(text).terms.id<?>.localizedTerms.id<?>"];
+  const sourceRef = sourceLocaleRef
+    ? makeQueryRef(
+        "$(text).terms.id<?>.localizedTerms.id<?>",
+        props.term.id,
+        sourceLocaleRef
+      )
+    : (null as unknown as PointerTypes["$(text).terms.id<?>.localizedTerms.id<?>"]);
 
   const sourceTermTranslation = useReferencedObject(sourceRef);
 
@@ -105,7 +83,8 @@ const TermNotesTranslation = (props: Props) => {
     localeRef
   );
 
-  const [termTranslation, setTermTranslation] = useFloroState(termTranslationRef);
+  const [termTranslation, setTermTranslation] =
+    useFloroState(termTranslationRef);
 
   const onSetContent = useCallback(
     (text: string) => {
@@ -114,8 +93,8 @@ const TermNotesTranslation = (props: Props) => {
       }
       setTermTranslation({
         ...termTranslation,
-        localNotes: text
-      })
+        localNotes: text,
+      });
     },
     [
       termTranslation?.termValue,
@@ -151,7 +130,7 @@ const TermNotesTranslation = (props: Props) => {
           label={`(${props.selectedLocale.localeCode}) notes`}
         />
       </Container>
-      {props.systemSourceLocale && sourceTermTranslation &&(
+      {props.systemSourceLocale && sourceTermTranslation && (
         <SourceContainer>
           <TitleRow style={{ marginBottom: 12, height: 40 }}>
             <RowTitle

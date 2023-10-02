@@ -1,9 +1,6 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-import Input from "@floro/storybook/stories/design-system/Input";
-import SearchInput from "@floro/storybook/stories/design-system/SearchInput";
-import ColorPalette from "@floro/styles/ColorPalette";
 import Button from "@floro/storybook/stories/design-system/Button";
 import {
   PointerTypes,
@@ -14,7 +11,6 @@ import {
 } from "../floro-schema-api";
 import { AnimatePresence, Reorder } from "framer-motion";
 import LocaleBox from "./LocaleBox";
-import LongModal from "@floro/storybook/stories/common-components/LongModal";
 import AddLocaleModal from "./AddLocaleModal";
 
 const Container = styled.div`
@@ -45,10 +41,9 @@ const TitleRow = styled.div`
 interface Props {}
 
 const LocalesSection = (props: Props) => {
-  const theme = useTheme();
   const { commandMode, applicationState } = useFloroContext();
   const [localeSettings, setLocaleSettings] = useFloroState("$(text).localeSettings");
-  const [isDragging, setIsDragging] = useState(false);
+  const [_isDragging, setIsDragging] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
   const onDragStart = useCallback(() => {
     setIsDragging(true);
@@ -138,6 +133,7 @@ const LocalesSection = (props: Props) => {
               axis="y"
               values={localeSettings?.locales ?? []}
               onReorder={onReOrderIcons}
+              style={{listStyle: "none", margin: 0, padding: 0 }}
             >
               <AnimatePresence>
                 {localeSettings?.locales?.map((locale, index) => {

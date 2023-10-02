@@ -5,7 +5,7 @@ import Input from "@floro/storybook/stories/design-system/Input";
 import SearchInput from "@floro/storybook/stories/design-system/SearchInput";
 import ColorPalette from "@floro/styles/ColorPalette";
 import Button from "@floro/storybook/stories/design-system/Button";
-import { useClientStorageApi, useExtractQueryArgs, useFloroContext, useFloroState, useReferencedObject } from "../floro-schema-api";
+import { useFloroContext, useFloroState, useHasIndication, useReferencedObject } from "../floro-schema-api";
 import InputSelector from "@floro/storybook/stories/design-system/InputSelector";
 import Checkbox from "@floro/storybook/stories/design-system/Checkbox";
 
@@ -141,6 +141,14 @@ const TextAppHeader = (props: Props) => {
 
 
   const locales = useReferencedObject("$(text).localeSettings.locales");
+  const localesHasIndication = useHasIndication("$(text).localeSettings.locales");
+
+  useEffect(() => {
+    if (localesHasIndication) {
+      props.onShowEditLocales();
+    }
+
+  }, [localesHasIndication, props.onShowEditLocales])
   const allTags = useMemo(() => {
     const tagSet =  new Set(phraseGroups?.flatMap(phraseGroup => {
       return phraseGroup?.phrases?.flatMap(phrase => {
@@ -160,7 +168,7 @@ const TextAppHeader = (props: Props) => {
         };
       }),
     ];
-  }, [applicationState]);
+  }, [phraseGroups, applicationState]);
 
   const searchBorderColor = useMemo(() => {
     if (theme.name == "light") {
@@ -286,9 +294,8 @@ const TextAppHeader = (props: Props) => {
               </AddGroupContainer>
             )}
 
-            {commandMode == "edit" && (
               <div>
-                {props.isEditGroups && (
+                {props.isEditGroups && commandMode == "edit" && (
                   <div style={{ marginLeft: 24, display: "flex", width: 120 }}>
                     <Button
                       onClick={props.onHideEditGroups}
@@ -299,24 +306,25 @@ const TextAppHeader = (props: Props) => {
                     />
                   </div>
                 )}
-                {!props.isEditGroups && (
                   <>
                     <div style={{ display: "flex" }}>
-                      <div style={{ marginLeft: 24, width: 120 }}>
-                        <Button
-                          onClick={props.onShowEditGroups}
-                          label={"edit groups"}
-                          bg={"purple"}
-                          size={"small"}
-                          textSize={"small"}
-                          isDisabled={isSearching}
-                        />
-                      </div>
+                      {props.isEditGroups && (
+                        <div style={{ marginLeft: 24, width: 120 }}>
+                          <Button
+                            onClick={props.onShowEditGroups}
+                            label={"edit groups"}
+                            bg={"purple"}
+                            size={"small"}
+                            textSize={"small"}
+                            isDisabled={isSearching}
+                          />
+                        </div>
+                      )}
                       <div style={{ marginLeft: 24, width: 120 }}>
                         {!props.isEditLocales && (
                           <Button
                             onClick={props.onShowEditLocales}
-                            label={"edit locales"}
+                            label={"show locales"}
                             bg={"orange"}
                             size={"small"}
                             textSize={"small"}
@@ -334,9 +342,7 @@ const TextAppHeader = (props: Props) => {
                       </div>
                     </div>
                   </>
-                )}
               </div>
-            )}
           </TitleRow>
           <div
             style={{

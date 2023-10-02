@@ -55,22 +55,6 @@ const DragIcon = styled.img`
   user-select: none;
 `;
 
-const DeleteVarContainer = styled.div`
-  cursor: pointer;
-  margin-left: 16px;
-  padding-top: 14px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const DeleteVar = styled.img`
-  height: 32px;
-  width: 32px;
-  pointer-events: none;
-  user-select: none;
-`;
-
 const colorPaletteItemVariants = {
   hidden: { opacity: 0 },
   visible: (custom: number) => ({
@@ -79,22 +63,6 @@ const colorPaletteItemVariants = {
       delay: custom,
     },
   }),
-};
-
-const paletteCellVariants = {
-  active: {
-    height: 20,
-    width: 104,
-    y: -30,
-    scale: 0.35,
-    marginTop: 12,
-  },
-  inactive: {
-    scale: 1,
-    marginTop: 0,
-    height: "auto",
-    transition: { duration: 0.3 },
-  },
 };
 
 interface Props {
@@ -127,16 +95,16 @@ const VariableReOrderRow = (props: Props) => {
 
   const varTypeFormatted = useMemo(() => {
     if (props.variable.varType == "integer") {
-      return 'Integer';
+      return "Integer";
     }
     if (props.variable.varType == "float") {
-      return 'Float';
+      return "Float";
     }
     if (props.variable.varType == "string") {
-      return 'String';
+      return "String";
     }
     if (props.variable.varType == "boolean") {
-      return 'Bool';
+      return "Bool";
     }
     return null;
   }, [props.variable.varType]);
@@ -165,21 +133,28 @@ const VariableReOrderRow = (props: Props) => {
             <DragShadeContainer onPointerDown={onPointerDown}>
               <DragIcon src={draggerIcon} />
             </DragShadeContainer>
-            <RowTitle style={{ marginTop: 15, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-
-              <span style={{
-                fontWeight: 500,
-                color: ColorPalette.white,
+            <RowTitle
+              style={{
+                marginTop: 15,
                 display: "flex",
                 flexDirection: "row",
                 alignItems: "center",
-                fontSize: "1.4rem",
-                background: ColorPalette.variableGreen,
-                boxShadow: `inset 0px 0px 2px 2px ${ColorPalette.variableGreenInset}`,
-                borderRadius: 8,
-                padding: 4
-
-              }}>
+              }}
+            >
+              <span
+                style={{
+                  fontWeight: 500,
+                  color: ColorPalette.white,
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  fontSize: "1.4rem",
+                  background: ColorPalette.variableGreen,
+                  boxShadow: `inset 0px 0px 2px 2px ${ColorPalette.variableGreenInset}`,
+                  borderRadius: 8,
+                  padding: 4,
+                }}
+              >
                 {props.variable.name}
               </span>
               <span
@@ -187,7 +162,7 @@ const VariableReOrderRow = (props: Props) => {
                   marginTop: -6,
                   color: theme.colors.pluginTitle,
                   fontWeight: 900,
-                  fontSize: '2rem',
+                  fontSize: "2rem",
                   fontFamily: "MavenPro",
                   paddingLeft: 4,
                   paddingRight: 4,
@@ -200,7 +175,7 @@ const VariableReOrderRow = (props: Props) => {
                   color: theme.colors.contrastText,
                   fontWeight: 600,
                   fontFamily: "MavenPro",
-                  fontSize: '1.7rem',
+                  fontSize: "1.7rem",
                   marginTop: -3,
                 }}
               >

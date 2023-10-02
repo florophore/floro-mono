@@ -56,6 +56,12 @@ export default class UnOrderedListNode extends TextNode {
     return new UnOrderedListNode(observer, json.content, lang, children, json.marks);
   }
 
+  public toUnescapedString(): string {
+    const children = this.children?.map(child => child.toUnescapedString()).join("");
+    // removes last \n from list
+    return children.substring(0, children.length -1);
+ }
+
   public shouldExpand() {
     return false;
   }

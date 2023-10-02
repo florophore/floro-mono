@@ -1,9 +1,8 @@
-import React, { useMemo } from "react";
+import React from "react";
 import {
   PointerTypes,
   SchemaTypes,
   makeQueryRef,
-  useFloroContext,
   useQueryRef,
   useReferencedObject,
 } from "../../../floro-schema-api";
@@ -49,7 +48,6 @@ interface Props {
 
 const TermValueTranslation = (props: Props) => {
   const theme = useTheme();
-  const { commandMode } = useFloroContext();
 
   const localeRef = makeQueryRef(
     "$(text).localeSettings.locales.localeCode<?>",
@@ -80,11 +78,6 @@ const TermValueTranslation = (props: Props) => {
   );
 
   const termTranslation = useReferencedObject(termTranslationRef);
-  console.log(sourceTermTranslation);
-
-  const contentIsEmpty = useMemo(() => {
-    return (termTranslation?.termValue ?? "") == "";
-  }, [termTranslation?.termValue]);
 
   return (
     <>

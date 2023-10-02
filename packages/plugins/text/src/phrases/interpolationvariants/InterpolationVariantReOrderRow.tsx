@@ -7,8 +7,6 @@ import styled from "@emotion/styled";
 import DraggerLight from "@floro/common-assets/assets/images/icons/dragger.light.svg";
 import DraggerDark from "@floro/common-assets/assets/images/icons/dragger.dark.svg";
 
-import TrashLight from "@floro/common-assets/assets/images/icons/trash.light.darker.svg";
-import TrashDark from "@floro/common-assets/assets/images/icons/trash.dark.svg";
 import ColorPalette from "@floro/styles/ColorPalette";
 
 const Container = styled.div`
@@ -53,22 +51,6 @@ const DragShadeContainer = styled.div`
 const DragIcon = styled.img`
   height: 24px;
   width: 24px;
-  pointer-events: none;
-  user-select: none;
-`;
-
-const DeleteVarContainer = styled.div`
-  cursor: pointer;
-  margin-left: 16px;
-  padding-top: 14px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const DeleteVar = styled.img`
-  height: 32px;
-  width: 32px;
   pointer-events: none;
   user-select: none;
 `;
