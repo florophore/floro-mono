@@ -102,10 +102,6 @@ export default class Node {
     }`;
   }
 
-  public stateHash(): string {
-    return `hash:${this.hash()}:isActive:${this.isActive}`;
-  }
-
   public shouldCollapse(parent: Node) {
     return false;
   }
@@ -150,6 +146,10 @@ export default class Node {
     this.content = this.content + nextSibling.content;
   }
 
+  public shouldFlatten() {
+    return true;
+  }
+
   public shouldExpand() {
     return false;
   }
@@ -161,7 +161,9 @@ export default class Node {
   public flatten(parent: Node|null) {
 
     for (const child of this.children) {
-      child.flatten(this);
+      if (child.shouldFlatten()) {
+        child.flatten(this);
+      }
     }
 
     for (let i = 0; i < this.children.length; ++i) {

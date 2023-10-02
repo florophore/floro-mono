@@ -1,6 +1,8 @@
 import Node, { NodeJSON } from "../Node"
 import Observer from "../Observer";
-import TextNode from "./TextNode";
+import OrderedListNode from "./OrderedListNode";
+import TextNode, { TextNodeJSON } from "./TextNode";
+import UnOrderedListNode from "./UnOrderedListNode";
 
 export default class RootNode extends Node {
 
@@ -20,8 +22,29 @@ export default class RootNode extends Node {
   }
 
   public static fromJSON(json: NodeJSON, observer: Observer, lang: string): RootNode {
-    const children: Array<TextNode> = json.children?.map(c => TextNode.fromJSON(c as TextNode, observer, lang)) ?? [];
+    const children: Array<TextNode> = this.fromTextChildren(
+      json.children as Array<TextNodeJSON> ?? ([] as Array<TextNodeJSON>),
+      observer,
+      lang
+    );
     return new RootNode(observer, json.content, lang, children);
+  }
+
+  public static fromTextChildren(children: Array<TextNodeJSON>, observer: Observer, lang: string): Array<TextNode> {
+    return (
+      children?.map((c) => {
+        if (c.type == "ol-tag") {
+          return OrderedListNode.fromJSON(c as TextNode, observer, lang);
+        }
+        if (c.type == "ul-tag") {
+          return UnOrderedListNode.fromJSON(c as TextNode, observer, lang);
+        }
+        if (c.type == "li-tag") {
+          return UnOrderedListNode.fromJSON(c as TextNode, observer, lang);
+        }
+        return TextNode.fromJSON(c as TextNode, observer, lang);
+      }) ?? []
+    );
   }
 
   public getNodeIndexAtPosition(index: number): number {

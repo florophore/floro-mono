@@ -54,6 +54,18 @@ import SubscriptUnSelectedDark from "@floro/common-assets/assets/images/rich_tex
 import SubscriptSelectedLight from "@floro/common-assets/assets/images/rich_text_icons/subscript.selected.light.svg";
 import SubscriptSelectedDark from "@floro/common-assets/assets/images/rich_text_icons/subscript.selected.light.svg";
 
+import BulletedListUnSelectedLight from "@floro/common-assets/assets/images/rich_text_icons/bulletedlist.unselect.light.svg";
+import BulletedListUnSelectedDark from "@floro/common-assets/assets/images/rich_text_icons/bulletedlist.unselect.dark.svg";
+
+import BulletedListSelectedLight from "@floro/common-assets/assets/images/rich_text_icons/bulletedlist.selected.light.svg";
+import BulletedListSelectedDark from "@floro/common-assets/assets/images/rich_text_icons/bulletedlist.selected.light.svg";
+
+import NumberedListUnSelectedLight from "@floro/common-assets/assets/images/rich_text_icons/numberedlist.unselect.light.svg";
+import NumberedListUnSelectedDark from "@floro/common-assets/assets/images/rich_text_icons/numberedlist.unselect.dark.svg";
+
+import NumberedListSelectedLight from "@floro/common-assets/assets/images/rich_text_icons/numberedlist.selected.light.svg";
+import NumberedListSelectedDark from "@floro/common-assets/assets/images/rich_text_icons/numberedlist.selected.dark.svg";
+
 import Cursor from "./editor/Cursor";
 
 const Container = styled.div`
@@ -84,6 +96,40 @@ const Wrapper = styled.div`
   }
   sub {
     line-height: 0;
+  }
+  ol {
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  ul {
+    padding-top: 12px;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  span.sup {
+    font-size: smaller;
+    vertical-align: super;
+    line-height: 0;
+  }
+  span.sub {
+    font-size: smaller;
+    vertical-align: sub;
+    line-height: 0;
+  }
+
+  li {
+    line-height: 1.5;
+    .sup {
+      line-height: 0;
+      vertical-align: super;
+    }
+    .sub {
+      line-height: 0;
+      vertical-align: sub;
+    }
   }
 
 `;
@@ -159,6 +205,8 @@ const ContentEditor = (props: Props) => {
   const [isStrikethrough, setIsStrikethrough] = useState(false);
   const [isSuperscript, setIsSuperscript] = useState(false);
   const [isSubscript, setIsSubscript] = useState(false);
+  const [isOrderedList, setIsOrderedList] = useState(false);
+  const [isUnOrderedList, setIsUnOrderedList] = useState(false);
   const isFocused = useRef<boolean>(false);
   const lastPositon = useRef<number>(-1);
   const emojiPosition = useRef<number>(0);
@@ -167,7 +215,7 @@ const ContentEditor = (props: Props) => {
     (event) => {
       const sanitizedValue = event.target.value == "<br>" ? "" : event.target.value;
       const sanitizizedString = sanitizeHtml(sanitizedValue, {
-        allowedTags: [ 'b', 'i', 'u', 'br', 'sup', 's', 'strike', 'sub' ],
+        allowedTags: [ 'b', 'i', 'u', 'br', 'sup', 's', 'strike', 'sub', 'ul', 'ol', 'li' ],
       });
       props.editorDoc.tree.updateRootFromHTML(sanitizizedString);
       props.onSetContent(sanitizizedString);
@@ -190,6 +238,10 @@ const ContentEditor = (props: Props) => {
         setIsSuperscript(isSuperscript);
         const isSubscript = document.queryCommandState("subscript");
         setIsSubscript(isSubscript);
+        const isOrderedList = document.queryCommandState("insertOrderedList");
+        setIsOrderedList(isOrderedList);
+        const isUnOrderedList = document.queryCommandState("insertUnorderedList")
+        setIsUnOrderedList(isUnOrderedList);
       }
     }, 0)
     return () => {
@@ -216,7 +268,7 @@ const ContentEditor = (props: Props) => {
       e.preventDefault();
       let paste = (e.clipboardData || window.Clipboard).getData('text/html');
       const sanitizizedString = sanitizeHtml(paste, {
-        allowedTags: [ 'b', 'i', 'u', 'br', 'sup', 's', 'strike', 'sub' ],
+        allowedTags: [ 'b', 'i', 'u', 'br', 'sup', 's', 'strike', 'sub', 'ul', 'ol', 'li'],
       });
       if (isFocused.current) {
         document.execCommand("insertHtml", false, sanitizizedString);
@@ -334,6 +386,20 @@ const ContentEditor = (props: Props) => {
     return theme.name == 'light' ? SubscriptUnSelectedLight : SubscriptUnSelectedDark;
   }, [isSubscript, theme.name])
 
+  const orderedListIcon = useMemo(() => {
+    if (isOrderedList) {
+      return theme.name == 'light' ? NumberedListSelectedLight : NumberedListSelectedDark;
+    }
+    return theme.name == 'light' ? NumberedListUnSelectedLight : NumberedListUnSelectedDark;
+  }, [isOrderedList, theme.name])
+
+  const unOrderedListIcon = useMemo(() => {
+    if (isUnOrderedList) {
+      return theme.name == 'light' ? BulletedListSelectedLight : BulletedListSelectedDark;
+    }
+    return theme.name == 'light' ? BulletedListUnSelectedLight : BulletedListUnSelectedDark;
+  }, [isUnOrderedList, theme.name])
+
   const onToggleExtend = useCallback(() => {
     setShowExtend(!showExtend);
   }, [showExtend])
@@ -407,6 +473,27 @@ const ContentEditor = (props: Props) => {
     }
   }, []);
 
+
+  const onUnorderedList = useCallback(() => {
+    if (contentEditorRef.current) {
+      if (!isFocused.current) {
+        contentEditorRef.current.focus();
+      }
+      document.execCommand("insertUnorderedList");
+      contentEditorRef.current.focus();
+    }
+  }, [props.editorDoc?.tree, props.onSetContent]);
+
+  const onOrderedList = useCallback(() => {
+    if (contentEditorRef.current) {
+      if (!isFocused.current) {
+        contentEditorRef.current.focus();
+      }
+      document.execCommand("insertOrderedList");
+      contentEditorRef.current.focus();
+    }
+  }, [props.editorDoc?.tree, props.onSetContent]);
+
   const [showEmojis, setShowEmojis] = useState(false);
 
   return (
@@ -429,6 +516,7 @@ const ContentEditor = (props: Props) => {
               src={underlineIcon}
               onClick={onUnderline}
             />
+
             <HeaderIcon
               style={{ cursor: "pointer", marginRight: 8 }}
               src={strikeThroughIcon}
@@ -444,6 +532,18 @@ const ContentEditor = (props: Props) => {
               src={subscriptIcon}
               onClick={onSubscript}
             />
+
+            <HeaderIcon
+              style={{ cursor: "pointer", marginRight: 8 }}
+              src={unOrderedListIcon}
+              onClick={onUnorderedList}
+            />
+            <HeaderIcon
+              style={{ cursor: "pointer", marginRight: 24 }}
+              src={orderedListIcon}
+              onClick={onOrderedList}
+            />
+
             <div
               onMouseDown={(event) => {
                 event?.preventDefault();

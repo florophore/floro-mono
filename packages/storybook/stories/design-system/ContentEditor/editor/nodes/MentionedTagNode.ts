@@ -65,31 +65,15 @@ export default class MentionedTagNode extends Node {
     if (this.marks.isItalic == true) {
       fontStyle = "italic";
     }
-    let fontSize = "inherit";
-    if (this.marks.isSubscript || this.marks.isSuperscript) {
-      fontSize = "smaller";
-    }
-
-    let lineHeight = 1;
-    let verticalAlign = "inherit";
-    if (this.marks.isSuperscript) {
-      verticalAlign = "super";
-      lineHeight = 0;
-    }
-    if (this.marks.isSubscript) {
-      verticalAlign = "sub";
-      lineHeight = 0;
-    }
+    let subcontent = escape(this.content).replaceAll("\n", "<br>");
     return `<span
+     class="${this.marks.isSuperscript ? "sup" : this.marks.isSubscript ? "sub" : ""}"
      spellcheck="false"
      style="
         color: ${ColorPalette.linkBlue};
         text-decoration: ${textDecoration};
         font-weight: ${fontWeight};
         font-style: ${fontStyle};
-        font-size: ${fontSize};
-        vertical-align: ${verticalAlign};
-        line-height: ${lineHeight};
         border-radius:4px;
         position: relative;
         pointer-events: none;
@@ -99,6 +83,6 @@ export default class MentionedTagNode extends Node {
         -ms-user-select: none;
         user-select: none;
      "
-    >${escape(this.content)}</span>`;
+    >${subcontent}</span>`;
   }
 }

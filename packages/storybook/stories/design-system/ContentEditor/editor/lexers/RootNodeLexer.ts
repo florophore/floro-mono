@@ -24,6 +24,7 @@ export default class RootNodeLexer extends EditorLexer<string, RootNode> {
             const nodeChild = this.textNodeLexer.lex(child);
             children.push(nodeChild);
         }
-        return new RootNode(this.observer, '', this.lang, children);
+        const rootNode = new RootNode(this.observer, '', this.lang, children);
+        return rootNode;
     }
 }

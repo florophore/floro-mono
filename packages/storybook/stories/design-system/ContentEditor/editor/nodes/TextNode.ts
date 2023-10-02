@@ -5,8 +5,12 @@ import VariableTagNode from "./VariableTagNode";
 import escape from 'escape-html';
 import VariantTagNode from "./VariantTagNode";
 import MentionedTagNode from "./MentionedTagNode";
+import * as OrderedListNode from "./OrderedListNode";
+import UnOrderedListNode from "./UnOrderedListNode";
+import ListNode from "./ListNode";
+console.log(OrderedListNode)
 
-interface TextNodeJSON extends NodeJSON {
+export interface TextNodeJSON extends NodeJSON {
   children: TextNodeJSON[];
   marks: {
     isBold: boolean;
@@ -102,21 +106,9 @@ export default class TextNode extends Node {
     if (this.marks.isItalic == true) {
       fontStyle = "italic";
     }
-    let fontSize = "inherit";
-    if (this.marks.isSubscript || this.marks.isSuperscript) {
-      fontSize = "smaller";
-    }
-    let lineHeight = 1;
-    let verticalAlign = "inherit";
-    if (this.marks.isSuperscript) {
-      verticalAlign = "super";
-      lineHeight = 0;
-    }
-    if (this.marks.isSubscript) {
-      verticalAlign = "sub";
-      lineHeight = 0;
-    }
+    let subcontent = escape(this.content).replaceAll("\n", "<br>") + children;
     return `<span
+      class="${this.marks.isSuperscript ? "sup" : this.marks.isSubscript ? "sub" : ""}"
       data-is-bold=${this.marks.isBold ? "true" : "false"}
       data-is-italic=${this.marks.isItalic ? "true" : "false"}
       data-is-underlined=${this.marks.isUnderlined ? "true" : "false"}
@@ -129,17 +121,15 @@ export default class TextNode extends Node {
         text-decoration: ${textDecoration};
         font-weight: ${fontWeight};
         font-style: ${fontStyle};
-        font-size: ${fontSize};
-        vertical-align: ${verticalAlign};
-        line-height: ${lineHeight};
         -webkit-user-select: none;
         -webkit-touch-callout: none;
         -moz-user-select: none;
         -ms-user-select: none;
         user-select: none;
         pointer-events: none;
+        display: inline;
       "
-     >${escape(this.content).replaceAll("\n", "<br>")}${children}</span>`;
+     >${subcontent}</span>`;
   }
 
   public toTranslationString(): string {
@@ -174,10 +164,6 @@ export default class TextNode extends Node {
 
  public hash(): string {
     return `hash:${this.markHash()}:${this.childrenHash()}:content:${this.content}`;
- }
-
- public stateHash(): string {
-    return `hash:${this.hash()}:isActive:${this.isActive}`;
  }
 
  public shouldCollapse(parent: Node) {
@@ -252,7 +238,7 @@ export default class TextNode extends Node {
     return false;
  }
 
- public tagLocations(substring,string){
+ public tagLocations(substring, string){
   let a: Array<number> =[]
   let i=-1;
   while((i=string.indexOf(substring,i+1)) >= 0) {
@@ -308,7 +294,7 @@ export default class TextNode extends Node {
       startIndex = i + tagValue.length;
       if (this.observer.getVariableRemapSet().has(tagValue)) {
         nodes.push(new VariableTagNode(this.observer, tagValue, this.lang, this.marks))
-      } else if (this.observer.getLinkVairablesRemapSet().has(tagValue)) {
+      } else if (this.observer.getLinkVariablesRemapSet().has(tagValue)) {
         nodes.push(new LinkVariableTagNode(this.observer, tagValue, this.lang, this.marks))
       } else if (this.observer.getInterpolationVariantRemapSet().has(tagValue)) {
         nodes.push(new VariantTagNode(this.observer, tagValue, this.lang, this.marks))

@@ -28,7 +28,7 @@ export default class Observer {
         return new Set(this.interpolationVariants.map(tag => `{${tag}}`))
     }
 
-    public getLinkVairablesRemapSet() {
+    public getLinkVariablesRemapSet() {
         return new Set(this.linkVariables.map(tag => `{${tag}}`))
     }
 

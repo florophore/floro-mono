@@ -67,27 +67,18 @@ export default class VariableTagNode extends Node {
     if (this.marks.isItalic == true) {
       fontStyle = "italic";
     }
-    let fontSize = "inherit";
-    if (this.marks.isSubscript || this.marks.isSuperscript) {
-      fontSize = "smaller";
-    }
 
-    let lineHeight = 1;
     let bottomLineHeight = 1;
-    let verticalAlign = "inherit";
     if (this.marks.isSuperscript) {
-      verticalAlign = "super";
-      lineHeight = 0;
       bottomLineHeight = 1.4;
     }
     if (this.marks.isSubscript) {
-      verticalAlign = "sub";
-      lineHeight = 0;
       bottomLineHeight = 1.4;
     }
 
     return `<span
      spellcheck="false"
+     class="${this.marks.isSuperscript ? "sup" : this.marks.isSubscript ? "sub" : ""}"
      style="
         background-color: ${ColorPalette.variableGreen};
         color: transparent;
@@ -96,9 +87,6 @@ export default class VariableTagNode extends Node {
         text-decoration: ${textDecoration};
         font-weight: ${fontWeight};
         font-style: ${fontStyle};
-        font-size: ${fontSize};
-        vertical-align: ${verticalAlign};
-        line-height: ${lineHeight};
         pointer-events: none;
         -webkit-user-select: none;
         -webkit-touch-callout: none;
@@ -123,8 +111,6 @@ export default class VariableTagNode extends Node {
         text-decoration: ${textDecoration};
         font-weight: ${fontWeight};
         font-style: ${fontStyle};
-        font-size: ${fontSize};
-        vertical-align: ${verticalAlign};
         line-height: ${bottomLineHeight};
         pointer-events: none;
         -webkit-user-select: none;

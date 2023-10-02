@@ -16,7 +16,7 @@ export default {
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template = (args) => {
     const [text, setText] = useState("")
-    const observer = useMemo(() => new Observer(['hello', 'world']), []);
+    const observer = useMemo(() => new Observer(['hello', 'world'], ['link'], ['cond'], ['men']), []);
     const editor = useMemo(() => new EditorDocument(observer), [observer])
     return (
       <div

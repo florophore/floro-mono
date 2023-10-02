@@ -26,14 +26,6 @@ input::-moz-focus-inner {
   margin: 0;
 }
 
-ul,
-ol,
-dd {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
 h1,
 h2,
 h3,
