@@ -40,7 +40,7 @@ const TranslationMemoryProvider = (props: Props) => {
           }
           acc[locale.localeCode] = {};
           const translations = applicationState?.text?.phraseGroups
-            ?.flatMap((phraseGroup) => phraseGroup?.phrases)
+            ?.flatMap((phraseGroup) => phraseGroup?.phrases ?? [])
             ?.reduce((translationAgg, phrase) => {
               const targetPhrase = phrase?.phraseTranslations.find(
                 (pt) => pt.id == localeRef
@@ -49,17 +49,17 @@ const TranslationMemoryProvider = (props: Props) => {
                 (pt) => pt.id == sourceLocaleRef
               );
               const targetLinkVariants = phrase?.linkVariables
-                .flatMap((lv) => lv.translations)
-                .filter((t) => t.id == localeRef);
+                ?.flatMap((lv) => lv?.translations ?? [])
+                ?.filter((t) => t.id == localeRef) ?? [];
               const sourceLinkVariants = phrase?.linkVariables
-                .flatMap((lv) => lv.translations)
-                .filter((t) => t.id == sourceLocaleRef);
+                ?.flatMap((lv) => lv?.translations ?? [])
+                ?.filter((t) => t.id == sourceLocaleRef) ?? [];
               const targetInterpolationVariants = phrase?.interpolationVariants
-                .flatMap((iv) => iv.localeRules)
-                .filter((lr) => lr.id == localeRef);
+                ?.flatMap((iv) => iv?.localeRules ?? [])
+                ?.filter((lr) => lr.id == localeRef) ?? [];
               const sourceInterpolationVariants = phrase?.interpolationVariants
-                .flatMap((iv) => iv.localeRules)
-                .filter((lr) => lr.id == sourceLocaleRef);
+                ?.flatMap((iv) => iv?.localeRules ?? [])
+                ?.filter((lr) => lr.id == sourceLocaleRef) ?? [];
               if (
                 (sourcePhrase?.plainText?.trim() ?? "") != "" &&
                 !translationAgg[

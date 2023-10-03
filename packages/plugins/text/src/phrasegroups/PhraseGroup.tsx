@@ -477,7 +477,7 @@ const PhraseGroup = (props: Props) => {
             if ((linkVariable.linkName ?? "").trim() == "") {
               return true;
             }
-            for (let translation of linkVariable.translations) {
+            for (let translation of linkVariable.translations ?? []) {
               if (translation.id != topLevelLocaleRef) {
                 continue;
               }
@@ -533,7 +533,7 @@ const PhraseGroup = (props: Props) => {
             if ((linkVariable.linkName ?? "").trim() == "") {
               return true;
             }
-            for (let translation of linkVariable.translations) {
+            for (let translation of linkVariable.translations ?? []) {
               if (translation.id != topLevelLocaleRef) {
                 continue;
               }
@@ -592,7 +592,7 @@ const PhraseGroup = (props: Props) => {
       return true;
     });
 
-    for (const phrase of filteredPhrases) {
+    for (const phrase of filteredPhrases ?? []) {
       if (
         (phrase?.phraseKey ?? "")
           ?.toLowerCase()
@@ -632,7 +632,7 @@ const PhraseGroup = (props: Props) => {
         ) {
           return true;
         }
-        for (let translation of linkVariable.translations) {
+        for (let translation of linkVariable.translations ?? []) {
           if (
             (translation.linkDisplayValue.plainText ?? "")
               ?.toLowerCase()
@@ -793,7 +793,7 @@ const PhraseGroup = (props: Props) => {
             if ((linkVariable.linkName ?? "").trim() == "") {
               return true;
             }
-            for (let translation of linkVariable.translations) {
+            for (let translation of linkVariable.translations ?? []) {
               if (translation.id != topLevelLocaleRef) {
                 continue;
               }
@@ -850,7 +850,7 @@ const PhraseGroup = (props: Props) => {
             if ((linkVariable.linkName ?? "").trim() == "") {
               return true;
             }
-            for (let translation of linkVariable.translations) {
+            for (let translation of linkVariable.translations ?? []) {
               if (translation.id != topLevelLocaleRef) {
                 continue;
               }
@@ -936,7 +936,7 @@ const PhraseGroup = (props: Props) => {
             ) {
               return true;
             }
-            for (let translation of linkVariable.translations) {
+            for (let translation of linkVariable.translations ?? []) {
               if (translation.id != topLevelLocaleRef) {
                 continue;
               }

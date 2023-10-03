@@ -233,17 +233,6 @@ const PhraseRow = (props: Props) => {
     ];
   }, [locales]);
 
-  const onUpdateTags = useCallback((tags: string[]) => {
-    if (!phrase) {
-      return;
-    }
-    setPhrase({
-      ...phrase,
-      tags
-    });
-
-  }, [phrase, setPhrase]);
-
   const onUpdateDescription = useCallback((description: string) => {
     if (!phrase) {
       return;

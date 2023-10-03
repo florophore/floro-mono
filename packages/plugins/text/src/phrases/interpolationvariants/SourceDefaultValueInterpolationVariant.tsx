@@ -122,7 +122,14 @@ const SourceDefaultValueInterpolationVariant = (props: Props) => {
 
   const mentionedTerms = useMemo(() => {
     const json = JSON.parse(defaultValue?.json ?? '{}');
-    const children: Array<TextNode> = json?.children ?? [];
+    const children: Array<TextNode> = (json?.children ?? [])?.flatMap?.((child: TextNode) => {
+      if (child?.type == "ol-tag" || child?.type == "ul-tag") {
+        return child?.children?.flatMap(li => {
+          return li?.children ?? []
+        }) ?? [];
+      }
+      return [child];
+    }) ?? [];
     const foundTerms: Array<{
       value: string,
       id: string,

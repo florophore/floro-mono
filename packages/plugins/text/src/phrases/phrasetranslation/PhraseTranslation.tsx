@@ -134,7 +134,6 @@ interface Props {
 }
 
 const PhraseTranslation = (props: Props) => {
-  const theme = useTheme();
   const [phraseGroupId, phraseId] = useExtractQueryArgs(props.phraseRef);
   const { commandMode, applicationState, conflictSet, changeset } =
     useFloroContext();
@@ -143,8 +142,6 @@ const PhraseTranslation = (props: Props) => {
     "$(text).localeSettings.locales.localeCode<?>",
     props.selectedLocale.localeCode
   );
-  const locales = useReferencedObject("$(text).localeSettings.locales");
-
   const sourceLocaleRef = props?.systemSourceLocale?.localeCode
     ? makeQueryRef(
         "$(text).localeSettings.locales.localeCode<?>",
@@ -194,7 +191,14 @@ const PhraseTranslation = (props: Props) => {
 
   const mentionedTerms = useMemo(() => {
     const json = JSON.parse(phraseTranslation?.json ?? "{}");
-    const children: Array<TextNode> = json?.children ?? [];
+    const children: Array<TextNode> = (json?.children ?? [])?.flatMap?.((child: TextNode) => {
+      if (child.type == "ol-tag" || child.type == "ul-tag") {
+        return child?.children?.flatMap(li => {
+          return li?.children ?? []
+        }) ?? [];
+      }
+      return [child];
+    }) ?? [];
     const foundTerms: Array<{
       value: string;
       id: string;

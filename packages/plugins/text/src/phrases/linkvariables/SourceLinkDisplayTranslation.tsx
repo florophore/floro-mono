@@ -93,7 +93,14 @@ const SourceLinkDisplayTranslation = (props: Props) => {
 
   const mentionedTerms = useMemo(() => {
     const json = JSON.parse(sourceLinkDisplayTranslation?.json ?? '{}');
-    const children: Array<TextNode> = json?.children ?? [];
+    const children: Array<TextNode> = (json?.children ?? [])?.flatMap?.((child: TextNode) => {
+      if (child?.type == "ol-tag" || child?.type == "ul-tag") {
+        return child?.children?.flatMap(li => {
+          return li?.children ?? []
+        }) ?? [];
+      }
+      return [child];
+    }) ?? [];
     const foundTerms: Array<{
       value: string,
       id: string,
@@ -187,8 +194,8 @@ const SourceLinkDisplayTranslation = (props: Props) => {
   }, [beforeText, afterText])
 
   const diffIsEmpty = useMemo(() => {
-    return Object.keys(diff.add).length == 0 && Object.keys(diff.remove).length == 0;
-  }, [Object.keys(diff.add).length == 0 && Object.keys(diff.remove).length == 0]);
+    return Object.keys(diff.add ?? {}).length == 0 && Object.keys(diff?.remove ?? {}).length == 0;
+  }, [Object.keys(diff.add ?? {}).length == 0 && Object.keys(diff?.remove ?? {}).length == 0]);
 
   const [showDiff, setShowDiff] = useState(!diffIsEmpty);
   useEffect(() => {

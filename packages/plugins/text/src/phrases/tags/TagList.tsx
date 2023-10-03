@@ -132,7 +132,7 @@ const TagList = (props: Props) => {
           width: "100%",
         }}
       >
-        {phrase?.tags.map((tag, index) => {
+        {phrase?.tags?.map?.((tag, index) => {
           return <Tag key={index} tag={tag} index={index} onRemove={onRemove} />;
         })}
       </div>

@@ -627,7 +627,7 @@ const TestCase = (props: Props) => {
         );
         if ((linkTranslation?.linkDisplayValue?.plainText ?? "").trim() != "") {
           const richText = Object.keys(
-            interpolationVariantReplacementMap
+            interpolationVariantReplacementMap ?? {}
           ).reduce((s, iv) => {
             return s.replaceAll(
               `{${iv}}`,
@@ -651,7 +651,7 @@ const TestCase = (props: Props) => {
           ""
         ) {
           const richText = Object.keys(
-            interpolationVariantReplacementMap
+            interpolationVariantReplacementMap ?? {}
           ).reduce((s, iv) => {
             return s.replaceAll(
               `{${iv}}`,
@@ -677,7 +677,7 @@ const TestCase = (props: Props) => {
           ).trim() != ""
         ) {
           const richText = Object.keys(
-            interpolationVariantReplacementMap
+            interpolationVariantReplacementMap ?? {}
           ).reduce((s, iv) => {
             return s.replaceAll(
               `{${iv}}`,
@@ -728,7 +728,7 @@ const TestCase = (props: Props) => {
         (t) => t.id == selectedLocaleRef
       );
       if ((selectedLinkVarirable?.linkHrefValue?.plainText ?? "") != "") {
-        const hrefValue = Object.keys(varReplacementMap).reduce((s, v) => {
+        const hrefValue = Object.keys(varReplacementMap ?? {}).reduce((s, v) => {
           return s.replaceAll(`{${v}}`, varReplacementMap[v]?.toString() ?? "");
         }, selectedLinkVarirable?.linkHrefValue?.plainText ?? "");
         return {
@@ -740,7 +740,7 @@ const TestCase = (props: Props) => {
         (t) => t.id == fallbackLocaleRef
       );
       if ((fallbackLinkVarirable?.linkHrefValue?.plainText ?? "") != "") {
-        const hrefValue = Object.keys(varReplacementMap).reduce((s, v) => {
+        const hrefValue = Object.keys(varReplacementMap ?? {}).reduce((s, v) => {
           return s.replaceAll(`{${v}}`, varReplacementMap[v]?.toString() ?? "");
         }, fallbackLinkVarirable?.linkHrefValue?.plainText ?? "");
         return {
@@ -751,7 +751,7 @@ const TestCase = (props: Props) => {
       const globalFallbackLinkVarirable = linkVariable.translations?.find(
         (t) => t.id == fallbackLocaleRef
       );
-      const hrefValue = Object.keys(varReplacementMap).reduce((s, v) => {
+      const hrefValue = Object.keys(varReplacementMap ?? {}).reduce((s, v) => {
         return s.replaceAll(`{${v}}`, varReplacementMap[v]?.toString() ?? "");
       }, globalFallbackLinkVarirable?.linkHrefValue?.plainText ?? "");
       return {
@@ -777,7 +777,7 @@ const TestCase = (props: Props) => {
     );
     if ((phraseTranslation?.plainText ?? "").trim() != "") {
       const richTextWithInterpolations = Object.keys(
-        interpolationVariantReplacementMap
+        interpolationVariantReplacementMap ?? {}
       ).reduce((s, iv) => {
         return s.replaceAll(
           `{${iv}}`,
@@ -785,7 +785,7 @@ const TestCase = (props: Props) => {
         );
       }, phraseTranslation?.richTextHtml ?? "");
       const richTextWithLinks = Object.keys(
-        linkVariablesDisplayValueReplacementMap
+        linkVariablesDisplayValueReplacementMap ?? {}
       ).reduce((s, l) => {
         return s.replaceAll(
           `{${l}}`,
@@ -794,7 +794,7 @@ const TestCase = (props: Props) => {
           }</span>`
         );
       }, richTextWithInterpolations);
-      return Object.keys(varReplacementMap).reduce((s, v) => {
+      return Object.keys(varReplacementMap ?? {}).reduce((s, v) => {
         return s.replaceAll(`{${v}}`, varReplacementMap[v]?.toString() ?? "");
       }, richTextWithLinks);
     }
@@ -804,7 +804,7 @@ const TestCase = (props: Props) => {
     );
     if ((fallbackPhraseTranslation?.plainText ?? "").trim() != "") {
       const richTextWithInterpolations = Object.keys(
-        interpolationVariantReplacementMap
+        interpolationVariantReplacementMap ?? {}
       ).reduce((s, iv) => {
         return s.replaceAll(
           `{${iv}}`,
@@ -812,7 +812,7 @@ const TestCase = (props: Props) => {
         );
       }, fallbackPhraseTranslation?.richTextHtml ?? "");
       const richTextWithLinks = Object.keys(
-        linkVariablesDisplayValueReplacementMap
+        linkVariablesDisplayValueReplacementMap ?? {}
       ).reduce((s, l) => {
         return s.replaceAll(
           `{${l}}`,
@@ -821,7 +821,7 @@ const TestCase = (props: Props) => {
           }</span>`
         );
       }, richTextWithInterpolations);
-      return Object.keys(varReplacementMap).reduce((s, v) => {
+      return Object.keys(varReplacementMap ?? {}).reduce((s, v) => {
         return s.replaceAll(`{${v}}`, varReplacementMap[v]?.toString() ?? "");
       }, richTextWithLinks);
     }
@@ -830,7 +830,7 @@ const TestCase = (props: Props) => {
       props.phrase?.phraseTranslations?.find((t) => t.id == fallbackLocaleRef);
     if ((globalFallbackPhraseTranslation?.plainText ?? "").trim() != "") {
       const richTextWithInterpolations = Object.keys(
-        interpolationVariantReplacementMap
+        interpolationVariantReplacementMap ?? {}
       ).reduce((s, iv) => {
         return s.replaceAll(
           `{${iv}}`,
@@ -838,7 +838,7 @@ const TestCase = (props: Props) => {
         );
       }, globalFallbackPhraseTranslation?.richTextHtml ?? "");
       const richTextWithLinks = Object.keys(
-        linkVariablesDisplayValueReplacementMap
+        linkVariablesDisplayValueReplacementMap ?? {}
       ).reduce((s, l) => {
         return s.replaceAll(
           `{${l}}`,
@@ -847,7 +847,7 @@ const TestCase = (props: Props) => {
           }</span>`
         );
       }, richTextWithInterpolations);
-      return Object.keys(varReplacementMap).reduce((s, v) => {
+      return Object.keys(varReplacementMap ?? {}).reduce((s, v) => {
         return s.replaceAll(`{${v}}`, varReplacementMap[v]?.toString() ?? "");
       }, richTextWithLinks);
     }
