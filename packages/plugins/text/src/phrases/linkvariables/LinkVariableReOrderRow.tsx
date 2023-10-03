@@ -7,8 +7,6 @@ import styled from "@emotion/styled";
 import DraggerLight from "@floro/common-assets/assets/images/icons/dragger.light.svg";
 import DraggerDark from "@floro/common-assets/assets/images/icons/dragger.dark.svg";
 
-import TrashLight from "@floro/common-assets/assets/images/icons/trash.light.darker.svg";
-import TrashDark from "@floro/common-assets/assets/images/icons/trash.dark.svg";
 import ColorPalette from "@floro/styles/ColorPalette";
 
 const Container = styled.div`
