@@ -22,6 +22,7 @@ const serverOptions = process.env.MODE == 'production' ? {
   fs: {
     strict: true,
   },
+  port: 5175,
   hmr: {
     clientPort: 7779,
     port: 7779,

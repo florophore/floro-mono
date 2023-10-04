@@ -1,0 +1,42 @@
+{
+  "manifest_version": 3,
+  "name": "Floro",
+  "version": "0.0.1",
+  "description": "Test your Floro state anywhere!",
+  "permissions": [
+    "activeTab",
+    "cookies",
+    "declarativeContent",
+    "scripting",
+    "storage",
+    "tabs",
+    "webRequest"
+  ],
+  "action": {
+    "default_popup": "index.html",
+    "default_icon": "floro_logo.png"
+  },
+  "background": {
+    "service_worker": "src/background/background.ts",
+    "type": "module",
+    "persistent": false
+  },
+  "host_permissions": [
+    "http://127.0.0.1:63403/*"
+],
+  "content_scripts": [
+    {
+      "matches": ["*://*/*"],
+      "js": ["src/contentScript/main.tsx"],
+      "run_at": "document_end"
+    }
+  ],
+  "externally_connectable": {
+    "ids": [
+      "*"
+    ],
+    "matches": [
+      "*://*/*"
+    ]
+  }
+}
