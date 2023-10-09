@@ -175,12 +175,6 @@ const UserHome = () => {
           </ProfileInfoWrapper>
           <BottomNavContainer>
             <TopInfo>
-              {false && (
-                <FollowerInfo
-                  followerCount={0}
-                  followingCount={0}
-                />
-              )}
               <div style={{ marginTop: 0, display: "flex" }}>
                 <UserSettingsTab />
               </div>
@@ -194,18 +188,6 @@ const UserHome = () => {
                   <PluginsTab pluginCount={currentUser?.pluginCount ?? 0} />
                 </Link>
               </div>
-              {false && (
-                <div style={{ marginTop: 16, display: "flex" }}>
-                  <StorageTab
-                    utilizedDiskSpaceBytes={
-                      currentUser?.utilizedDiskSpaceBytes ?? 0
-                    }
-                    diskSpaceLimitBytes={
-                      currentUser?.diskSpaceLimitBytes ?? 0
-                    }
-                  />
-                </div>
-              )}
               <div style={{ marginTop: 16, display: "flex" }}>
                 <ConnectionStatusTab isConnected={isDaemonConnected ?? false} />
               </div>

@@ -120,6 +120,7 @@ import PublicApiV0Controller from './controllers/public_api/PublicApiV0Controlle
 import BranchUpdateWebhookQueue from './services/webhook_queues/BranchUpdateWebhookQueue';
 import HealthCheckController from './controllers/HealthCheckController';
 import DeepLProxyController from './controllers/proxy/DeepLProxyController';
+import SyncController from './controllers/sync/SyncController';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -290,6 +291,8 @@ export default new ContainerModule((bind): void => {
     bind<PrivateCDNTestController>("Controllers").to(PrivateCDNTestController);
     bind<TestWebhookController>("Controllers").to(TestWebhookController);
     bind<PublicApiV0Controller>("Controllers").to(PublicApiV0Controller);
+    bind<SyncController>("Controllers").to(SyncController);
+    // Plugin Controllers
     bind<DeepLProxyController>("Controllers").to(DeepLProxyController);
 
     // RESOLVER MODULES

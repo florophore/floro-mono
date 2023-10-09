@@ -1,0 +1,12 @@
+{
+  "moduleFile": "floro.module.js",
+  "repositoryId": "52812594-5b6e-43f3-ab1e-afa6978cfa4d",
+  "sha": "fbc7e2a1bc2fa4d89a1f1aaf0134a92ee6d925516b2e0efb529497ec49c978a3",
+  "message": "made some changes",
+  "idx": 2,
+  "genratorDependencies": {
+    "palette-generator": {
+      "palette": "0.0.37"
+    }
+  }
+}

@@ -709,7 +709,11 @@ export default class PublicApiV0Controller extends BaseController {
       const urlPath =
         "/" + this.binaryAccessor.getRelativeBinaryPath(bu.binaryFileName);
       const url = privateCdnUrl + urlPath;
-      return this.storageAuthenticator.signURL(url, urlPath, 3600);
+      return {
+          hash: bu.binaryHash,
+          fileName: bu.binaryFileName,
+          url: this.storageAuthenticator.signURL(url, urlPath, 3600)
+      }
     });
 
     const payload = { binaries, apiTrackingId };
