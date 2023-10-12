@@ -11,6 +11,10 @@ import { quicktype, InputData, JSONSchemaInput, TypeScriptTargetLanguage } from 
 
 type Languages = 'typescript';
 
+export function filename() {
+  return __filename;
+}
+
 export function getFloroGenerator() {
   return floroGeneratorFile;
 }
@@ -28,9 +32,9 @@ export const getPaletteColor = <
 };
 `.trim();
 
-export function getJSON(
+export async function getJSON<T>(
   state: SchemaRoot,
-): object {
+): Promise<T> {
   const paletteJson: {
     [colorName: SchemaTypes["$(palette).colorPalettes.id<?>"]["id"]]: {
       [shadeName: SchemaTypes["$(palette).shades.id<?>"]["id"]]: string | null;
@@ -50,7 +54,7 @@ export function getJSON(
       paletteJson[colorPalette.id][shade.id] = colorShade.hexcode ?? null;
     }
   }
-  return paletteJson;
+  return paletteJson as T;
 }
 
 export async function generate(
@@ -110,13 +114,13 @@ export async function generate(
     const { lines } = await quicktype({ lang, inputData });
     const code = lines.join("\n");
     const tsFile = path.join(outDir, 'index.ts');
-    let tsCode =`import paletteJSON from './palette.json;\n\n`;
+    let tsCode =`import paletteJSON from './palette.json';\n\n`;
     tsCode += code + '\n';
     tsCode += GET_PALETTE_COLOR + '\n\n';
-    tsCode += `export const initPalette: Palette = paletteJSON;`;
+    tsCode += `export default paletteJSON as Palette;`;
     await fs.promises.writeFile(tsFile, tsCode, 'utf-8');
 
-    const paletteJson = getJSON(state);
+    const paletteJson = await getJSON(state);
     const jsonFile = path.join(outDir, 'palette.json');
     await fs.promises.writeFile(jsonFile, JSON.stringify(paletteJson, null, 2), 'utf-8');
   }

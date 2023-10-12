@@ -7,6 +7,12 @@
   "genratorDependencies": {
     "palette-generator": {
       "palette": "0.0.37"
+    },
+    "theme-generator": {
+      "theme": "0.0.37"
+    },
+    "icon-generator": {
+      "icons": "0.0.37"
     }
   }
 }

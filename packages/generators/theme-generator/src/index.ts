@@ -15,13 +15,17 @@ import fs from 'fs';
 
 type Languages = "typescript";
 
+export function filename() {
+  return __filename;
+}
+
 export function getFloroGenerator() {
   return floroGeneratorFile;
 }
 
-export async function getJSON(
+export async function getJSON<T>(
   state: SchemaRoot,
-): Promise<object> {
+): Promise<T> {
   const themes = getReferencedObject(state, "$(theme).themes");
   const themeColors = getReferencedObject(state, "$(theme).themeColors");
   const themesObject = {
@@ -84,7 +88,7 @@ export async function getJSON(
       }
     }
   }
-  return themesObject;
+  return themesObject as T;
 }
 
 const GET_THEME_CODE =`
@@ -244,10 +248,10 @@ export async function generate(
     runtimeTypecheck.defaultValue = false;
     const { lines } = await quicktype({ lang, inputData });
     const code = lines.join("\n");
-    let tsCode =`import themesJSON from './themes.json;\n\n`;
+    let tsCode =`import themesJSON from './themes.json';\n\n`;
     tsCode += code + '\n';
     tsCode += GET_THEME_CODE + '\n\n';
-    tsCode += `export const initThemes: Themes = themesJSON;`;
+    tsCode += `export default themesJSON as Themes;`;
     const tsFile = path.join(outDir, 'index.ts');
     await fs.promises.writeFile(tsFile, tsCode, 'utf-8');
 

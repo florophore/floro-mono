@@ -28,7 +28,8 @@
     "svg-jest": "^1.0.1",
     "ts-jest-resolver": "^2.0.0",
     "ts-node": "^10.9.1",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "floro-palette-generator": "file:../generators/palette-generator"
   },
   "devDependencies": {
     "@types/chai": "^4.3.3",

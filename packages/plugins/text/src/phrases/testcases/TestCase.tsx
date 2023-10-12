@@ -344,7 +344,7 @@ const TestCase = (props: Props) => {
             isStatementTrue(value, comparatorValue, premiseVarType, operator)
           ) {
             let allSubConditonsAreTrue = true;
-            for (const subcondition of condition.subconditions) {
+            for (const subcondition of condition?.subconditions ?? []) {
               const variable = props.phrase.variables.find(
                 (v) =>
                   subcondition.variableRef ==
@@ -430,7 +430,7 @@ const TestCase = (props: Props) => {
               isStatementTrue(value, comparatorValue, premiseVarType, operator)
             ) {
               let allSubConditonsAreTrue = true;
-              for (const subcondition of condition.subconditions) {
+              for (const subcondition of condition?.subconditions ?? []) {
                 const variable = props.phrase.variables.find(
                   (v) =>
                     subcondition.variableRef ==
@@ -524,7 +524,7 @@ const TestCase = (props: Props) => {
               isStatementTrue(value, comparatorValue, premiseVarType, operator)
             ) {
               let allSubConditonsAreTrue = true;
-              for (const subcondition of condition.subconditions) {
+              for (const subcondition of condition?.subconditions ?? []) {
                 const variable = props.phrase.variables.find(
                   (v) =>
                     subcondition.variableRef ==

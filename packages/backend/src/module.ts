@@ -229,10 +229,11 @@ export default new ContainerModule((bind): void => {
     bind(BranchService).toSelf();
     bind(RepositoryDatasourceFactoryService).toSelf();
     bind(RepoSettingsService).toSelf();
-    bind(GrantAccessReceiverService).toSelf();
     bind(RepoDataService).toSelf();
     bind(CommitService).toSelf();
     bind(RevertService).toSelf();
+
+    bind(GrantAccessReceiverService).toSelf().inSingletonScope();
 
     bind(RepoEnabledApiKeyService).toSelf();
     bind(RepoEnabledWebhookKeyService).toSelf();
@@ -241,16 +242,16 @@ export default new ContainerModule((bind): void => {
     bind(ReferralService).toSelf()
 
     // MERGE REQUESTS
-    bind(MergeRequestService).toSelf();
-    bind(MergeRequestEventService).toSelf();
     bind(MergeService).toSelf();
-    bind(PreMergeCommitQueue).toSelf();
+    bind(MergeRequestService).toSelf().inSingletonScope();
+    bind(MergeRequestEventService).toSelf().inSingletonScope();
+    bind(PreMergeCommitQueue).toSelf().inSingletonScope();
 
     // API KEYS
     bind(ApiKeyService).toSelf();
     bind(WebhookKeyService).toSelf();
 
-    bind(BranchUpdateWebhookQueue).toSelf();
+    bind(BranchUpdateWebhookQueue).toSelf().inSingletonScope();
 
     // EVENT HANDLERS
 
@@ -259,29 +260,29 @@ export default new ContainerModule((bind): void => {
     bind<CreateUserEventHandler>("CreateUserHandler").to(ReferralService);
 
     // BRANCH PUSH HANLDERS
-    bind<BranchPushHandler>("BranchPushHandler").to(MergeRequestService).inSingletonScope();
-    bind<BranchPushHandler>("BranchPushHandler").to(MergeRequestEventService).inSingletonScope();
-    bind<BranchPushHandler>("BranchPushHandler").to(PreMergeCommitQueue).inSingletonScope();
-    bind<BranchPushHandler>("BranchPushHandler").to(BranchUpdateWebhookQueue).inSingletonScope();
+    bind<BranchPushHandler>("BranchPushHandler").toService(MergeRequestService);
+    bind<BranchPushHandler>("BranchPushHandler").toService(MergeRequestEventService);
+    bind<BranchPushHandler>("BranchPushHandler").toService(PreMergeCommitQueue);
+    bind<BranchPushHandler>("BranchPushHandler").toService(BranchUpdateWebhookQueue);
 
     // MERGE REQUESTS
-    bind<CreateMergeRequestEventHandler>("CreateMergeRequestEventHandler").to(MergeRequestEventService);
-    bind<UpdateMergeRequestEventHandler>("UpdateMergeRequestEventHandler").to(MergeRequestEventService);
-    bind<CloseMergeRequestEventHandler>("CloseMergeRequestEventHandler").to(MergeRequestEventService);
-    bind<UpdatedMergeRequestReviewersEventHandler>("UpdatedMergeRequestReviewersEventHandler").to(MergeRequestEventService);
-    bind<ReviewStatusChangeEventHandler>("ReviewStatusChangeEventHandler").to(MergeRequestEventService);
-    bind<MergeRequestCommentEventHandler>("MergeRequestCommentEventHandler").to(MergeRequestEventService);
-    bind<MergeRequestCommentReplyEventHandler>("MergeRequestCommentReplyEventHandler").to(MergeRequestEventService);
-    bind<MergedMergeRequestEventHandler>("MergedMergeRequestEventHandler").to(MergeRequestEventService);
+    bind<CreateMergeRequestEventHandler>("CreateMergeRequestEventHandler").toService(MergeRequestEventService);
+    bind<UpdateMergeRequestEventHandler>("UpdateMergeRequestEventHandler").toService(MergeRequestEventService);
+    bind<CloseMergeRequestEventHandler>("CloseMergeRequestEventHandler").toService(MergeRequestEventService);
+    bind<UpdatedMergeRequestReviewersEventHandler>("UpdatedMergeRequestReviewersEventHandler").toService(MergeRequestEventService);
+    bind<ReviewStatusChangeEventHandler>("ReviewStatusChangeEventHandler").toService(MergeRequestEventService);
+    bind<MergeRequestCommentEventHandler>("MergeRequestCommentEventHandler").toService(MergeRequestEventService);
+    bind<MergeRequestCommentReplyEventHandler>("MergeRequestCommentReplyEventHandler").toService(MergeRequestEventService);
+    bind<MergedMergeRequestEventHandler>("MergedMergeRequestEventHandler").toService(MergeRequestEventService);
 
     // GRANT ACCESS HANDLER
-    bind<GrantRepoAccessHandler>("GrantRepoAccessHandler").to(GrantAccessReceiverService);
+    bind<GrantRepoAccessHandler>("GrantRepoAccessHandler").toService(GrantAccessReceiverService);
 
 
     // QUEUE SERVICES
-    bind<QueueService>("QueueServices").to(MergeRequestService).inSingletonScope();
-    bind<QueueService>("QueueServices").to(PreMergeCommitQueue).inSingletonScope();
-    bind<QueueService>("QueueServices").to(BranchUpdateWebhookQueue).inSingletonScope();
+    bind<QueueService>("QueueServices").toService(MergeRequestService);
+    bind<QueueService>("QueueServices").toService(PreMergeCommitQueue);
+    bind<QueueService>("QueueServices").toService(BranchUpdateWebhookQueue);
 
     // Controllers
     bind<HealthCheckController>("Controllers").to(HealthCheckController);

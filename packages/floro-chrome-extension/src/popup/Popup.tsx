@@ -1,10 +1,13 @@
 import { useCallback, useMemo } from "react";
 import useExtensionState from "../hooks/useExtensionState";
-import { updateState } from "../state/extensionState";
+import { updateDebugMode, updateEditMode, updateState } from "../state/extensionState";
 import styled from '@emotion/styled';
 import Input from "@floro/storybook/stories/design-system/Input";
+import Checkbox from "@floro/storybook/stories/design-system/Checkbox";
 import ColorPalette from "@floro/styles/ColorPalette";
 import { useTheme } from "@emotion/react";
+import WarningLight from '@floro/common-assets/assets/images/icons/warning.light.svg';
+import WarningDark from '@floro/common-assets/assets/images/icons/warning.dark.svg';
 
 const Container = styled.div`
   width: 500px;
@@ -27,6 +30,19 @@ const Header = styled.h1`
 
 
 const DaemonContainer = styled.div`
+  margin-top: 24px;
+  width: 100%;
+  max-width: 430px;
+  border: 2px solid ${(props) => props.theme.colors.contrastTextLight};
+  padding: 16px 8px;
+  border-radius: 8px;
+  height: 56px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
+const NoEditsContainer = styled.div`
   margin-top: 24px;
   width: 100%;
   max-width: 430px;
@@ -86,9 +102,37 @@ const TextSpan = styled.span`
   color: ${(props) => props.theme.name == "light" ? ColorPalette.lightGray : ColorPalette.gray};
 `;
 
+const WarningImg = styled.img`
+  height: 32px;
+  width: 32px;
+
+`;
+const EditsContainer = styled.div`
+  margin-top: 24px;
+  width: 100%;
+  max-width: 430px;
+  border: 2px solid ${(props) => props.theme.colors.contrastTextLight};
+  padding: 16px 8px;
+  border-radius: 8px;
+  height: 56px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+
+
 const Popup = () => {
-  const { authToken, isDaemonConnected } = useExtensionState();
+  const { authToken, isDaemonConnected, activeTabId, tabPopupState, tabMetaFiles, localeRepoIds } = useExtensionState();
   const theme = useTheme();
+  const warningIcon = useMemo(() => {
+    if (theme.name == 'light') {
+      return WarningLight;
+    }
+
+    return WarningDark;
+  }, [theme.name])
 
   const onUpdateKey = useCallback((authToken: string) => {
     updateState({
@@ -104,15 +148,58 @@ const Popup = () => {
     () => (isDaemonConnected ? "connected" : "disconnected"),
     [isDaemonConnected]);
 
+  const isFloroSite = useMemo(() => {
+    return !!tabMetaFiles[activeTabId];
+  }, [activeTabId, tabMetaFiles])
+
+  const isEditMode = useMemo(() => {
+    return tabPopupState?.[activeTabId]?.isEditMode ?? false;
+  }, [activeTabId, tabPopupState])
+
+  const onToggleEditMode = useCallback(() => {
+    updateEditMode(!isEditMode);
+  }, [isEditMode, updateEditMode])
+
+  const isDebugMode = useMemo(() => {
+    return tabPopupState?.[activeTabId]?.isDebugMode ?? false;
+  }, [activeTabId, tabPopupState])
+
+  const onToggleDebugMode = useCallback(() => {
+    updateDebugMode(!isDebugMode);
+  }, [isDebugMode, updateDebugMode])
+
+  const missingAllRepos = useMemo(() => {
+    const siteRepos = tabMetaFiles?.[activeTabId] ?? [];
+    for (const repoId of siteRepos) {
+      if (localeRepoIds?.includes(repoId)) {
+        return false;
+      }
+    }
+    return true;
+  }, [activeTabId, tabMetaFiles, localeRepoIds]);
+
+  const missingSomeRepos = useMemo(() => {
+    const siteRepos = tabMetaFiles?.[activeTabId] ?? [];
+    for (const repoId of siteRepos) {
+      if (!localeRepoIds?.includes(repoId)) {
+        return true;
+      }
+    }
+    return false;
+  }, [activeTabId, tabMetaFiles, localeRepoIds]);
+
   return (
     <Container>
-      <Header >{"floro"}</Header>
-      <Input value={authToken ?? ""} label={"locale api key"} placeholder={"locale api key"} onTextChanged={onUpdateKey}/>
+      <Header>{"floro"}</Header>
+      <Input
+        value={authToken ?? ""}
+        label={"locale api key"}
+        placeholder={"locale api key"}
+        onTextChanged={onUpdateKey}
+      />
       <DaemonContainer>
         <InfoRow>
-          <InfoTitle>
-            {'floro server'}
-          </InfoTitle>
+          <InfoTitle>{"floro server"}</InfoTitle>
         </InfoRow>
         <InfoRow>
           <TextContainer>
@@ -123,6 +210,92 @@ const Popup = () => {
           </ConnectionContainer>
         </InfoRow>
       </DaemonContainer>
+      {!isFloroSite && (
+        <NoEditsContainer
+          style={{
+            width: "100%",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <InfoRow>
+            <InfoTitle>{"floro not configured on this site"}</InfoTitle>
+          </InfoRow>
+          <WarningImg src={warningIcon} style={{ marginRight: 6 }} />
+        </NoEditsContainer>
+      )}
+      {isFloroSite && (
+        <>
+        {missingAllRepos && (
+          <NoEditsContainer
+            style={{
+              width: "100%",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <InfoRow>
+              <InfoTitle>{"missing locale repos"}</InfoTitle>
+            </InfoRow>
+            <WarningImg src={warningIcon} style={{ marginRight: 6 }} />
+          </NoEditsContainer>
+        )}
+        {missingSomeRepos && !missingAllRepos && (
+          <NoEditsContainer
+            style={{
+              width: "100%",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <InfoRow>
+              <InfoTitle>{"missing some locale repos"}</InfoTitle>
+            </InfoRow>
+            <WarningImg src={warningIcon} style={{ marginRight: 6 }} />
+          </NoEditsContainer>
+        )}
+        {!missingAllRepos && (
+          <EditsContainer>
+            <InfoRow>
+              <InfoTitle>{"turn on floro edit mode"}</InfoTitle>
+            </InfoRow>
+            <div
+              style={{
+                marginRight: 6,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Checkbox
+                isChecked={isEditMode}
+                onChange={onToggleEditMode}
+              />
+            </div>
+          </EditsContainer>
+        )}
+        {!missingAllRepos && isEditMode && (
+          <EditsContainer>
+            <InfoRow>
+              <InfoTitle>{"turn on floro debug mode"}</InfoTitle>
+            </InfoRow>
+            <div
+              style={{
+                marginRight: 6,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Checkbox
+                isChecked={isDebugMode}
+                onChange={onToggleDebugMode}
+              />
+            </div>
+          </EditsContainer>
+        )}
+        </>
+      )}
     </Container>
   );
 };

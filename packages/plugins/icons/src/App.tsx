@@ -5,9 +5,8 @@ import { useColorTheme } from "@floro/common-web/src/hooks/color-theme";
 import "./index.css";
 import {
   FileRef,
-  FloroProvider, PointerTypes, SchemaTypes, useBinaryData, useFloroContext, useReferencedObject, useUploadFile,
+  FloroProvider, PointerTypes, SchemaTypes, useFloroContext,
 } from "./floro-schema-api";
-import RootModal from './RootModal';
 import IconHeader from './iconsheader/IconHeader';
 import AddIconModal from './AddIconModal';
 import UpdateIconModal from './UpdateIconModal';
@@ -37,6 +36,7 @@ const Layout = () => {
   const [show, setShow] = useState(false);
   const [showUpdate, setShowUpdate] = useState(false);
   const [addedSVGFileRef, setAddedSVGFileRef] = useState<FileRef|null>(null);
+  console.log("A", addedSVGFileRef)
   const [svgFileName, setSvgFileName] = useState<string>("");
   const { commandMode} = useFloroContext();
   const [searchText, setSearchText] = useState<string>("");

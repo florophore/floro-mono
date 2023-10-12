@@ -23,7 +23,7 @@
   },
   "host_permissions": [
     "http://127.0.0.1:63403/*"
-],
+  ],
   "content_scripts": [
     {
       "matches": ["*://*/*"],

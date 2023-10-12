@@ -1,8 +1,7 @@
 {
   "compilerOptions": {
     "declaration": true,
-    "isolatedModules": false,
-    "composite": true,
+    "isolatedModules": true,
     "target": "ESNext",
     "module": "CommonJS",
     "moduleResolution": "node",
@@ -29,7 +28,6 @@
   "include": [
     "floro/floro-generator-schema-api.ts",
     "**/*.ts",
-    "**/floro.generator.json",
-    "**/mock_state.json",
+    "**/*.json",
   ]
 }

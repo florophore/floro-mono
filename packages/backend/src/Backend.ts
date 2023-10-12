@@ -38,7 +38,7 @@ export default class Backend {
   public controllers: BaseController[];
   public storageClient!: StorageClient;
   public requestCache!: RequestCache;
-  public queueServics!: QueueService[];
+  public queueServices!: QueueService[];
 
   protected httpServer: Server;
   private databaseConnection!: DatabaseConnection;
@@ -65,7 +65,7 @@ export default class Backend {
   ) {
     this.resolverModules = resolverModules;
     this.controllers = controllers;
-    this.queueServics = queueServics;
+    this.queueServices = queueServics;
     this.httpServer = httpServer;
     this.databaseConnection = databaseConnection;
     this.redisClient = redisClient;
@@ -99,7 +99,7 @@ export default class Backend {
     await this.redisClient.startRedis();
     this.redisQueueWorkers.start(this.redisClient);
     const pubsub = this.redisPubSubFactory.create();
-    this.queueServics.forEach((queueService) => {
+    this.queueServices.forEach((queueService) => {
       queueService.setRedisPubsub(pubsub);
       queueService.startQueueWorker(this.redisClient);
     });

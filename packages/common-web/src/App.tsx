@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import NotFound from "@floro/common-web/src/pages/errors/NotFound";
 import { ThemeProvider } from "@emotion/react";
 import { useColorTheme } from "@floro/common-web/src/hooks/color-theme";
@@ -11,6 +11,7 @@ import {OfflinePhotoProvider} from "@floro/common-react/src/offline/OfflinePhoto
 import {OfflineIconProvider} from "@floro/common-react/src/offline/OfflineIconsContext";
 
 import "./index.css";
+import FloroMount from "./floro_listener/FloroMount";
 
 export interface Props {
   routing: IsomorphicRoute[];
@@ -22,25 +23,29 @@ function App(props: Props) {
   const notFound = useMemo(() => <NotFound />, []);
 
   return (
-    <ThemeProvider theme={colorTheme}>
-      <QueryClientProvider client={queryClient}>
-        <FloroSocketProvider client={"web"}>
-          <OfflineIconProvider>
-            <OfflinePhotoProvider>
-              <SessionProvider>
-                <Routes>
-                  {props.routing.map((route, key) => {
-                    const Page = route.component();
-                    return <Route key={key} path={route.path} element={<Page />} />;
-                  })}
-                  <Route path="*" element={notFound} />
-                </Routes>
-              </SessionProvider>
-            </OfflinePhotoProvider>
-          </OfflineIconProvider>
-        </FloroSocketProvider>
-      </QueryClientProvider>
-    </ThemeProvider>
+    <FloroMount>
+      <ThemeProvider theme={colorTheme}>
+        <QueryClientProvider client={queryClient}>
+          <FloroSocketProvider client={"web"}>
+            <OfflineIconProvider>
+              <OfflinePhotoProvider>
+                <SessionProvider>
+                  <Routes>
+                    {props.routing.map((route, key) => {
+                      const Page = route.component();
+                      return (
+                        <Route key={key} path={route.path} element={<Page />} />
+                      );
+                    })}
+                    <Route path="*" element={notFound} />
+                  </Routes>
+                </SessionProvider>
+              </OfflinePhotoProvider>
+            </OfflineIconProvider>
+          </FloroSocketProvider>
+        </QueryClientProvider>
+      </ThemeProvider>
+    </FloroMount>
   );
 }
 

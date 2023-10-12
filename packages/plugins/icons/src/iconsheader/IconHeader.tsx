@@ -15,9 +15,7 @@ import DropIconLightRed from "@floro/common-assets/assets/images/icons/drop_icon
 
 import DropIconTeal from "@floro/common-assets/assets/images/icons/drop_icon.teal.svg";
 import DropIconLightTeal from "@floro/common-assets/assets/images/icons/drop_icon.light_teal.svg";
-import { FileRef, useBinaryData, useFloroContext, useFloroState, useUploadFile } from "../floro-schema-api";
-import { optimize } from "svgo";
-import { parse } from "svg-parser";
+import { FileRef, useFloroContext, useFloroState, useUploadFile } from "../floro-schema-api";
 
 const dropzoneDash = (color: string) => {
     return `url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='8' ry='8' stroke='${encodeURIComponent(
@@ -112,8 +110,6 @@ const AddGroupContainer = styled.div`
   width: 492px;
 `;
 
-
-
 const getSVGTextBlob = (svgUrl: string) => {
   const xhr = new XMLHttpRequest();
   return new Promise<string>(
@@ -137,8 +133,6 @@ const getSVGTextBlob = (svgUrl: string) => {
     }
   );
 }
-
-
 
 interface Props {
     onUploaded: (fileRef: FileRef, fileName: string) => void;

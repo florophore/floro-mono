@@ -1,0 +1,27 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "isolatedModules": false,
+        "module": "ESNext",
+        "target": "ESNext",
+        "rootDir": "floro_modules",
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "outDir": "build",
+        "jsx": "react-jsx",
+        "types": [
+            "node",
+        ]
+    },
+    "include": ["global.d.ts", "floro_modules"],
+    "exclude": [
+        "node_modules",
+        "build"
+    ],
+    "ts-node": {
+        "esm": true,
+        "compilerOptions": {
+          "module": "ESNext"
+        }
+      }
+}
