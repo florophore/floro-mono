@@ -1,8 +1,8 @@
 {
-  "name": "floro-icon-generator",
+  "name": "@floro/icon-generator",
   "version": "0.0.1",
-  "main": "dist/cjs/src/index.js",
-  "module": "src/index.ts",
+  "main": "./dist/cjs/src/index.js",
+  "module": "./src/index.ts",
   "types": "./dist/types/src/index.d.ts",
   "type": "module",
   "exports": {

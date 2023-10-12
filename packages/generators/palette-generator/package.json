@@ -1,5 +1,5 @@
 {
-  "name": "floro-palette-generator",
+  "name": "@floro/palette-generator",
   "version": "0.0.1",
   "main": "dist/cjs/src/index.js",
   "module": "src/index.ts",
