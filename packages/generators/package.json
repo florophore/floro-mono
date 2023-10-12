@@ -2,5 +2,8 @@
     "name": "@floro/generators",
     "version": "1.0.0",
     "license": "MIT",
-    "type": "module"
-  }
+    "type": "module",
+    "dependencies": {
+        "quicktype-core": "^23.0.76"
+    }
+}
