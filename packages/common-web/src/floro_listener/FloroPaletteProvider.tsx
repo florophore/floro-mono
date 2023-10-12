@@ -1,7 +1,7 @@
 import React, { useContext} from "react";
 import metaFile from "@floro/common-generators/meta.floro.json";
-import initPalette from "@floro/common-generators/floro_modules/palette-generator";
-import { getJSON } from "floro-palette-generator";
+import initPalette from "@floro/common-generators/floro_modules/palette-generator/index";
+import { getJSON } from "@floro/generators/palette-generator/src/index";
 import { useWatchFloroState } from "./FloroListener";
 
 

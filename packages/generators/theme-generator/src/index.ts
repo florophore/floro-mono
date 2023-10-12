@@ -151,26 +151,26 @@ export async function generate(
       ThemeSet: {
         type: "object",
         properties: {},
-        required: [],
+        required: [] as string[],
         additionalProperties: false,
       },
       ThemeDefinitions: {
         type: "object",
         properties: {},
-        required: [],
+        required: [] as string[],
         additionalProperties: false,
       },
       ThemeColors: {
         type: "object",
         properties: {},
-        required: [],
+        required: [] as string[],
         additionalProperties: false,
       },
     },
   };
 
-  const requiredThemeSet = [];
-  const requiredThemeDefs = [];
+  const requiredThemeSet: string[] = [];
+  const requiredThemeDefs: string[] = [];
   for (const theme of themes) {
     SCHEMA.definitions.ThemeSet.properties[theme.id] = {
       type: ["string", "null"],
@@ -195,7 +195,7 @@ export async function generate(
   SCHEMA.definitions.ThemeSet.required = requiredThemeSet;
   SCHEMA.definitions.ThemeDefinitions.required = requiredThemeDefs;
 
-  const themeColorKeys = [];
+  const themeColorKeys: string[] = [];
   for (const themeColor of themeColors) {
       SCHEMA.definitions.ThemeColors.properties[themeColor.id] = {
         type: "object",
@@ -207,7 +207,7 @@ export async function generate(
           },
           variants: {
             type: "object",
-            required: [],
+            required: [] as string[],
             additionalProperties: false,
             properties: {},
           },
@@ -245,7 +245,9 @@ export async function generate(
     const runtimeTypecheck = lang.optionDefinitions.find(
       (option) => option.name == "runtime-typecheck"
     );
-    runtimeTypecheck.defaultValue = false;
+    if (runtimeTypecheck) {
+      runtimeTypecheck.defaultValue = false;
+    }
     const { lines } = await quicktype({ lang, inputData });
     const code = lines.join("\n");
     let tsCode =`import themesJSON from './themes.json';\n\n`;

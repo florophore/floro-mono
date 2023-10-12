@@ -1,5 +1,4 @@
 import React, { useContext} from "react";
-import metaFile from "@floro/common-generators/meta.floro.json";
 import { useWatchDebugMode } from "./FloroListener";
 
 

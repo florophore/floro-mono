@@ -330,18 +330,18 @@ export async function generate(
       Theme: {
         type: "object",
         properties: {},
-        required: [],
+        required: [] as string[],
         additionalProperties: false,
       },
       Icons: {
         type: "object",
         properties: {},
-        required: [],
+        required: [] as string[],
         additionalProperties: false,
       },
     },
   };
-  const requiredThemes = [];
+  const requiredThemes: string[] = [];
   for (const theme of themes) {
     SCHEMA.definitions.Theme.properties[theme.id] = {
       type: ["string"],
@@ -349,7 +349,7 @@ export async function generate(
     requiredThemes.push(theme.id);
   }
   SCHEMA.definitions.Theme.required = requiredThemes;
-  const requiredIcons = [];
+  const requiredIcons: string[] = [];
   for (const iconGroup of iconGroups) {
     const iconGroupId = iconGroup.id;
     for (const icon of iconGroup.icons) {
@@ -512,7 +512,9 @@ export async function generate(
     const runtimeTypecheck = lang.optionDefinitions.find(
       (option) => option.name == "runtime-typecheck"
     );
-    runtimeTypecheck.defaultValue = false;
+    if (runtimeTypecheck) {
+      runtimeTypecheck.defaultValue = false;
+    }
     const { lines } = await quicktype({ lang, inputData });
     const typesCode = lines.join("\n");
     const typesFilePath = path.join(outDir, "types.ts");

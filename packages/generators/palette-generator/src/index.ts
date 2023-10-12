@@ -69,20 +69,20 @@ export async function generate(
       Palette: {
         type: "object",
         properties: {},
-        required: [],
+        required: [] as string[],
         additionalProperties: false,
       },
       Shade: {
         type: "object",
         properties: {},
-        required: [],
+        required: [] as string[],
         additionalProperties: false,
       },
     },
   };
   const colorPalettes = getReferencedObject(state, "$(palette).colorPalettes");
   const shades = getReferencedObject(state, "$(palette).shades");
-  const requiredShades = [];
+  const requiredShades: string[] = [];
   for (const shade of shades) {
     SCHEMA.definitions.Shade.properties[shade.id] = {
       'type': ["string", "null"],
@@ -90,7 +90,7 @@ export async function generate(
     requiredShades.push(shade.id);
   }
   SCHEMA.definitions.Shade.required = requiredShades;
-  const requiredPaletteColors = [];
+  const requiredPaletteColors: string[] = [];
   for (const color of colorPalettes) {
     SCHEMA.definitions.Palette.properties[color.id] = {
       '$ref'  : "#/definitions/Shade",
@@ -110,7 +110,9 @@ export async function generate(
   if (args.lang == 'typescript') {
     const lang = new TypeScriptTargetLanguage();
     const runtimeTypecheck = lang.optionDefinitions.find(option => option.name == 'runtime-typecheck')
-    runtimeTypecheck.defaultValue = false;
+    if (runtimeTypecheck) {
+      runtimeTypecheck.defaultValue = false;
+    }
     const { lines } = await quicktype({ lang, inputData });
     const code = lines.join("\n");
     const tsFile = path.join(outDir, 'index.ts');
