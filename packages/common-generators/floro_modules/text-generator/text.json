@@ -1,0 +1,693 @@
+{
+  "locales": {
+    "EN": {
+      "localeCode": "EN",
+      "name": "English",
+      "defaultFallbackCode": null,
+      "isGlobalDefault": true
+    },
+    "ES": {
+      "localeCode": "ES",
+      "name": "Spanish",
+      "defaultFallbackCode": "EN",
+      "isGlobalDefault": false
+    }
+  },
+  "localizedPhraseKeys": {
+    "EN": {
+      "main.new_phrase": {
+        "phraseKey": "main.new_phrase",
+        "variables": {
+          "username": ""
+        },
+        "links": {
+          "my link": {
+            "displayValue": [
+              {
+                "children": [],
+                "content": "visit page (",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              },
+              {
+                "children": [],
+                "content": "{some condition}",
+                "type": "interpolation",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              },
+              {
+                "children": [],
+                "content": ")",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              }
+            ],
+            "linkName": "my link",
+            "href": [
+              {
+                "type": "text",
+                "content": "/home"
+              }
+            ]
+          }
+        },
+        "interpolations": {
+          "some condition": {
+            "cases": [
+              {
+                "variable": "username",
+                "operator": "eq",
+                "value": "jamie",
+                "subcases": [],
+                "resultant": [
+                  {
+                    "children": [],
+                    "content": "welcome ",
+                    "type": "text",
+                    "styles": {
+                      "isBold": false,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  },
+                  {
+                    "children": [],
+                    "content": "jamie",
+                    "type": "text",
+                    "styles": {
+                      "isBold": true,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  }
+                ]
+              }
+            ],
+            "default": [
+              {
+                "children": [],
+                "content": "welcome someone else",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              }
+            ]
+          }
+        },
+        "phrase": [
+          {
+            "children": [],
+            "content": "Hello ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{username}",
+            "type": "variable",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ",",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "content": "Here is ",
+                    "type": "text",
+                    "styles": {
+                      "isBold": false,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  },
+                  {
+                    "children": [],
+                    "content": "{my link}",
+                    "type": "link",
+                    "styles": {
+                      "isBold": false,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  }
+                ],
+                "content": "",
+                "type": "li",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "content": "And here is my condition ",
+                    "type": "text",
+                    "styles": {
+                      "isBold": false,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  },
+                  {
+                    "children": [],
+                    "content": "{some condition}",
+                    "type": "interpolation",
+                    "styles": {
+                      "isBold": false,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  }
+                ],
+                "content": "",
+                "type": "li",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "content": "Done",
+                    "type": "text",
+                    "styles": {
+                      "isBold": false,
+                      "isItalic": false,
+                      "isUnderlined": true,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  }
+                ],
+                "content": "",
+                "type": "li",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              }
+            ],
+            "content": "",
+            "type": "ul",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "main.hello_world": {
+        "phraseKey": "main.hello_world",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "Hello World from ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "! ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      }
+    },
+    "ES": {
+      "main.new_phrase": {
+        "phraseKey": "main.new_phrase",
+        "variables": {
+          "username": ""
+        },
+        "links": {
+          "my link": {
+            "displayValue": [
+              {
+                "children": [],
+                "content": "visitar página (",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              },
+              {
+                "children": [],
+                "content": "{some condition}",
+                "type": "interpolation",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              },
+              {
+                "children": [],
+                "content": ")",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              }
+            ],
+            "linkName": "my link",
+            "href": [
+              {
+                "type": "text",
+                "content": "/home"
+              }
+            ]
+          }
+        },
+        "interpolations": {
+          "some condition": {
+            "cases": [],
+            "default": [
+              {
+                "children": [],
+                "content": "dar la bienvenida a otra persona",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              }
+            ]
+          }
+        },
+        "phrase": [
+          {
+            "children": [],
+            "content": "Hola ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{username}",
+            "type": "variable",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ",",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "content": "Aquí está ",
+                    "type": "text",
+                    "styles": {
+                      "isBold": false,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  },
+                  {
+                    "children": [],
+                    "content": "{my link}",
+                    "type": "link",
+                    "styles": {
+                      "isBold": false,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  }
+                ],
+                "content": "",
+                "type": "li",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "content": "Y aquí está mi condición ",
+                    "type": "text",
+                    "styles": {
+                      "isBold": false,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  },
+                  {
+                    "children": [],
+                    "content": "{some condition}",
+                    "type": "interpolation",
+                    "styles": {
+                      "isBold": false,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  }
+                ],
+                "content": "",
+                "type": "li",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "content": "Hecho",
+                    "type": "text",
+                    "styles": {
+                      "isBold": false,
+                      "isItalic": false,
+                      "isUnderlined": true,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  }
+                ],
+                "content": "",
+                "type": "li",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              }
+            ],
+            "content": "",
+            "type": "ul",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "main.hello_world": {
+        "phraseKey": "main.hello_world",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "¡Hola mundo desde Floro!",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      }
+    }
+  },
+  "phraseKeyDebugInfo": {
+    "main.new_phrase": {
+      "groupName": "Main",
+      "phraseKey": "new phrase"
+    },
+    "main.hello_world": {
+      "groupName": "Main",
+      "phraseKey": "hello world"
+    }
+  }
+}

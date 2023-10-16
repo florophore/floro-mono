@@ -12,9 +12,11 @@ import {OfflineIconProvider} from "@floro/common-react/src/offline/OfflineIconsC
 
 import "./index.css";
 import FloroMount from "./floro_listener/FloroMount";
+import { LocalizedPhrases } from "@floro/common-generators/floro_modules/text-generator";
 
 export interface Props {
   routing: IsomorphicRoute[];
+  text: LocalizedPhrases;
 }
 
 function App(props: Props) {
@@ -23,7 +25,7 @@ function App(props: Props) {
   const notFound = useMemo(() => <NotFound />, []);
 
   return (
-    <FloroMount>
+    <FloroMount text={props.text}>
       <ThemeProvider theme={colorTheme}>
         <QueryClientProvider client={queryClient}>
           <FloroSocketProvider client={"web"}>

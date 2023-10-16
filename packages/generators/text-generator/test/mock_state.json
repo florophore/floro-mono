@@ -1,0 +1,283 @@
+{
+  "text": {
+    "localeSettings": {
+      "defaultLocaleRef": "$(text).localeSettings.locales.localeCode<EN>",
+      "locales": [
+        {
+          "defaultFallbackLocaleRef": null,
+          "defaultTranslateFromLocaleRef": null,
+          "localeCode": "EN",
+          "name": "English"
+        },
+        {
+          "defaultFallbackLocaleRef": null,
+          "defaultTranslateFromLocaleRef": null,
+          "localeCode": "ES",
+          "name": "Spanish"
+        }
+      ]
+    },
+    "phraseGroups": [
+      {
+        "id": "main",
+        "name": "Main",
+        "phrases": [
+          {
+            "description": "Has a description",
+            "id": "new_key",
+            "interpolationVariants": [
+              {
+                "localeRules": [
+                  {
+                    "conditionals": [
+                      {
+                        "booleanComparatorValue": null,
+                        "floatComparatorValue": null,
+                        "intComparatorValue": null,
+                        "operator": "eq",
+                        "resultant": {
+                          "json": "{\"content\":\"\",\"type\":\"root\",\"children\":[{\"content\":\"Hi \",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]},{\"content\":\"@\",\"type\":\"text\",\"marks\":{\"isBold\":true,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]},{\"content\":\"{username}\",\"type\":\"variable-tag\",\"children\":[]},{\"content\":\"/Jamie!!!...\",\"type\":\"text\",\"marks\":{\"isBold\":true,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]}]}",
+                          "plainText": "Hi @{username}/Jamie!!!...",
+                          "richTextHtml": "Hi <b>@{username}/Jamie!!!...</b>"
+                        },
+                        "stringComparatorValue": "jamie"
+                      }
+                    ],
+                    "defaultValue": {
+                      "enabledTerms": [],
+                      "json": "{\"content\":\"\",\"type\":\"root\",\"children\":[{\"content\":\"Hello \",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]},{\"content\":\"{username}\",\"type\":\"variable-tag\",\"children\":[]},{\"content\":\"!!!\",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]}]}",
+                      "plainText": "Hello {username}!!!",
+                      "revisionCount": 19,
+                      "revisionTimestamp": "2023-10-11T19:04:05.733Z",
+                      "richTextHtml": "Hello {username}!!!",
+                      "sourceAtRevision": {
+                        "json": null,
+                        "plainText": null,
+                        "richTextHtml": null,
+                        "sourceLocaleRef": null
+                      }
+                    },
+                    "id": "$(text).localeSettings.locales.localeCode<EN>"
+                  },
+                  {
+                    "defaultValue": {
+                      "enabledTerms": [],
+                      "json": "{\"content\":\"\",\"type\":\"root\",\"children\":[{\"content\":\"Â¡Â¡Â¡Hola \",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]},{\"content\":\"{username}\",\"type\":\"variable-tag\",\"children\":[]},{\"content\":\"!!!\",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]}]}",
+                      "plainText": "Â¡Â¡Â¡Hola {username}!!!",
+                      "revisionCount": 19,
+                      "revisionTimestamp": "2023-10-11T19:06:02.216Z",
+                      "richTextHtml": "Â¡Â¡Â¡Hola {username}!!!",
+                      "sourceAtRevision": {
+                        "json": "{\"content\":\"\",\"type\":\"root\",\"children\":[{\"content\":\"Hello \",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]},{\"content\":\"{username}\",\"type\":\"variable-tag\",\"children\":[]},{\"content\":\"!!!\",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]}]}",
+                        "plainText": "Hello {username}!!!",
+                        "richTextHtml": "Hello {username}!!!",
+                        "sourceLocaleRef": "$(text).localeSettings.locales.localeCode<EN>"
+                      }
+                    },
+                    "id": "$(text).localeSettings.locales.localeCode<ES>"
+                  }
+                ],
+                "name": "hello condition",
+                "variableRef": "$(text).phraseGroups.id<main>.phrases.id<new_key>.variables.id<username:string>"
+              }
+            ],
+            "linkVariables": [
+              {
+                "linkName": "user profile",
+                "translations": [
+                  {
+                    "id": "$(text).localeSettings.locales.localeCode<EN>",
+                    "linkDisplayValue": {
+                      "enabledTerms": [],
+                      "json": "{\"content\":\"\",\"type\":\"root\",\"children\":[{\"content\":\"Go to \",\"type\":\"text\",\"marks\":{\"isBold\":true,\"isItalic\":false,\"isUnderlined\":true,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]},{\"content\":\"{username}\",\"type\":\"variable-tag\",\"children\":[]},{\"content\":\"'s profile\",\"type\":\"text\",\"marks\":{\"isBold\":true,\"isItalic\":false,\"isUnderlined\":true,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]}]}",
+                      "plainText": "Go to {username}'s profile",
+                      "revisionCount": 36,
+                      "revisionTimestamp": "2023-10-11T19:03:29.661Z",
+                      "richTextHtml": "<b><u>Go to {username}'s profile</u></b>",
+                      "sourceAtRevision": {
+                        "json": null,
+                        "plainText": null,
+                        "richTextHtml": null,
+                        "sourceLocaleRef": null
+                      }
+                    },
+                    "linkHrefValue": {
+                      "json": "{\"content\":\"\",\"type\":\"root\",\"children\":[{\"content\":\"/profile/@\",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]},{\"content\":\"{username}\",\"type\":\"variable-tag\",\"children\":[]}]}",
+                      "plainText": "/profile/@{username}",
+                      "revisionCount": 28,
+                      "revisionTimestamp": "2023-10-11T19:03:08.742Z",
+                      "richTextHtml": "/profile/@{username}",
+                      "sourceAtRevision": {
+                        "json": null,
+                        "plainText": null,
+                        "richTextHtml": null,
+                        "sourceLocaleRef": null
+                      }
+                    }
+                  },
+                  {
+                    "id": "$(text).localeSettings.locales.localeCode<ES>",
+                    "linkDisplayValue": {
+                      "enabledTerms": [],
+                      "json": "{\"content\":\"\",\"type\":\"root\",\"children\":[{\"content\":\"Ir al perfil de \",\"type\":\"text\",\"marks\":{\"isBold\":true,\"isItalic\":false,\"isUnderlined\":true,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]},{\"content\":\"{username}\",\"type\":\"variable-tag\",\"children\":[]}]}",
+                      "plainText": "Ir al perfil de {username}",
+                      "revisionCount": 0,
+                      "revisionTimestamp": null,
+                      "richTextHtml": "<b><u>Ir al perfil de {username}</u></b>",
+                      "sourceAtRevision": {
+                        "json": null,
+                        "plainText": null,
+                        "richTextHtml": null,
+                        "sourceLocaleRef": null
+                      }
+                    },
+                    "linkHrefValue": {
+                      "json": "{\"content\":\"\",\"type\":\"root\",\"children\":[{\"content\":\"/profile/@\",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]},{\"content\":\"{username}\",\"type\":\"variable-tag\",\"children\":[]}]}",
+                      "plainText": "/profile/@{username}",
+                      "revisionCount": 28,
+                      "revisionTimestamp": "2023-10-11T19:05:56.133Z",
+                      "richTextHtml": "/profile/@{username}",
+                      "sourceAtRevision": {
+                        "json": "{\"content\":\"\",\"type\":\"root\",\"children\":[{\"content\":\"/profile/@\",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]},{\"content\":\"{username}\",\"type\":\"variable-tag\",\"children\":[]}]}",
+                        "plainText": "/profile/@{username}",
+                        "richTextHtml": "/profile/@{username}",
+                        "sourceLocaleRef": "$(text).localeSettings.locales.localeCode<EN>"
+                      }
+                    }
+                  }
+                ]
+              }
+            ],
+            "phraseKey": "new key",
+            "phraseTranslations": [
+              {
+                "enabledTerms": [],
+                "id": "$(text).localeSettings.locales.localeCode<EN>",
+                "json": "{\"content\":\"\",\"type\":\"root\",\"children\":[{\"content\":\"Hello \",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]},{\"content\":\"{username}\",\"type\":\"variable-tag\",\"children\":[]},{\"content\":\"!\",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]},{\"content\":\"\\n\",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]},{\"content\":\"\\n\",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]},{\"content\":\"\",\"type\":\"ul-tag\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[{\"content\":\"\",\"type\":\"li-tag\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[{\"content\":\"Here is the \",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]},{\"content\":\"{user profile}\",\"type\":\"link-variable-tag\",\"children\":[]}]},{\"content\":\"\",\"type\":\"li-tag\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[{\"content\":\"And \",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]},{\"content\":\"{hello condition}\",\"type\":\"variant-tag\",\"children\":[]}]},{\"content\":\"\",\"type\":\"li-tag\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[{\"content\":\"All done\",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":true,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]},{\"content\":\"123\",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":true,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":true,\"isSubscript\":false},\"children\":[]}]}]}]}",
+                "plainText": "Hello {username}!\n\nHere is the {user profile}\nAnd {hello condition}\nAll done123",
+                "revisionCount": 82,
+                "revisionTimestamp": "2023-10-11T19:05:05.277Z",
+                "richTextHtml": "Hello {username}!<br /><br /><ul><li>Here is the {user profile}</li><li>And {hello condition}</li><li><i>All done<sup>123</sup></i></li></ul>",
+                "sourceAtRevision": {
+                  "json": null,
+                  "plainText": null,
+                  "richTextHtml": null,
+                  "sourceLocaleRef": null
+                }
+              },
+              {
+                "enabledTerms": [],
+                "id": "$(text).localeSettings.locales.localeCode<ES>",
+                "json": "{\"content\":\"\",\"type\":\"root\",\"children\":[{\"content\":\"Â¡Hola \",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]},{\"content\":\"{username}\",\"type\":\"variable-tag\",\"children\":[]},{\"content\":\"!\",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]},{\"content\":\"\\n\",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]},{\"content\":\"\\n\",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]},{\"content\":\"\",\"type\":\"ul-tag\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[{\"content\":\"\",\"type\":\"li-tag\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[{\"content\":\"AquÃ­ estÃ¡ el \",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]},{\"content\":\"{user profile}\",\"type\":\"link-variable-tag\",\"children\":[]}]},{\"content\":\"\",\"type\":\"li-tag\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[{\"content\":\"Y \",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]},{\"content\":\"{hello condition}\",\"type\":\"variant-tag\",\"children\":[]}]},{\"content\":\"\",\"type\":\"li-tag\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[{\"content\":\"Todo \",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":true,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]},{\"content\":\"hecho123\",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":true,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":true,\"isSubscript\":false},\"children\":[]}]}]}]}",
+                "plainText": "Â¡Hola {username}!\n\nAquÃ­ estÃ¡ el {user profile}\nY {hello condition}\nTodo hecho123",
+                "revisionCount": 82,
+                "revisionTimestamp": "2023-10-11T19:05:31.949Z",
+                "richTextHtml": "Â¡Hola {username}!<br /><br /><ul><li>AquÃ­ estÃ¡ el {user profile}</li><li>Y {hello condition}</li><li><i>Todo <sup>hecho123</sup></i></li></ul>",
+                "sourceAtRevision": {
+                  "json": "{\"content\":\"\",\"type\":\"root\",\"children\":[{\"content\":\"Hello \",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]},{\"content\":\"{username}\",\"type\":\"variable-tag\",\"children\":[]},{\"content\":\"!\",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]},{\"content\":\"\\n\",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]},{\"content\":\"\\n\",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]},{\"content\":\"\",\"type\":\"ul-tag\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[{\"content\":\"\",\"type\":\"li-tag\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[{\"content\":\"Here is the \",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]},{\"content\":\"{user profile}\",\"type\":\"link-variable-tag\",\"children\":[]}]},{\"content\":\"\",\"type\":\"li-tag\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[{\"content\":\"And \",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]},{\"content\":\"{hello condition}\",\"type\":\"variant-tag\",\"children\":[]}]},{\"content\":\"\",\"type\":\"li-tag\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[{\"content\":\"All done\",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":true,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]},{\"content\":\"123\",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":true,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":true,\"isSubscript\":false},\"children\":[]}]}]}]}",
+                  "plainText": "Hello {username}!\n\nHere is the {user profile}\nAnd {hello condition}\nAll done123",
+                  "richTextHtml": "Hello {username}!<br /><br /><ul><li>Here is the {user profile}</li><li>And {hello condition}</li><li><i>All done<sup>123</sup></i></li></ul>",
+                  "sourceLocaleRef": "$(text).localeSettings.locales.localeCode<EN>"
+                }
+              }
+            ],
+            "tags": [],
+            "testCases": [
+              {
+                "id": "$(text).localeSettings.locales.localeCode<EN>",
+                "localeTests": [
+                  {
+                    "description": "jamie test",
+                    "mockValues": [
+                      {
+                        "booleanMockValue": null,
+                        "floatMockValue": null,
+                        "intMockValue": null,
+                        "stringMockValue": "jamie",
+                        "variableRef": "$(text).phraseGroups.id<main>.phrases.id<new_key>.variables.id<username:string>"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "$(text).localeSettings.locales.localeCode<ES>"
+              }
+            ],
+            "variables": [
+              {
+                "id": "username:string",
+                "name": "username",
+                "varType": "string"
+              }
+            ]
+          },
+          {
+            "description": "Example description of key. This key should express \"Hello World\".",
+            "id": "hello_world",
+            "phraseKey": "hello world",
+            "phraseTranslations": [
+              {
+                "enabledTerms": ["floro"],
+                "id": "$(text).localeSettings.locales.localeCode<EN>",
+                "json": "{\"content\":\"\",\"type\":\"root\",\"children\":[{\"content\":\"Hello World from Floro!\",\"type\":\"text\",\"marks\":{\"isBold\":true,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]},{\"content\":\"\\n\",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]}]}",
+                "plainText": "Hello World from Floro!\n",
+                "revisionCount": 1,
+                "revisionTimestamp": null,
+                "richTextHtml": "<b>Hello World from Floro!</b><br />",
+                "sourceAtRevision": {
+                  "json": null,
+                  "plainText": null,
+                  "richTextHtml": null,
+                  "sourceLocaleRef": null
+                }
+              },
+              {
+                "enabledTerms": [],
+                "id": "$(text).localeSettings.locales.localeCode<ES>",
+                "json": "{\"content\":\"\",\"type\":\"root\",\"children\":[{\"content\":\"Â¡Hola mundo desde Floro!\",\"type\":\"text\",\"marks\":{\"isBold\":true,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]},{\"content\":\"\\n\",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]}]}",
+                "plainText": "Â¡Hola mundo desde Floro!\n",
+                "revisionCount": 1,
+                "revisionTimestamp": "2023-10-11T19:00:44.896Z",
+                "richTextHtml": "<b>Â¡Hola mundo desde Floro!</b><br />",
+                "sourceAtRevision": {
+                  "json": "{\"content\":\"\",\"type\":\"root\",\"children\":[{\"content\":\"Hello World from Floro!\",\"type\":\"text\",\"marks\":{\"isBold\":true,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]},{\"content\":\"\\n\",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]}]}",
+                  "plainText": "Hello World from Floro!\n",
+                  "richTextHtml": "<b>Hello World from Floro!</b><br />",
+                  "sourceLocaleRef": "$(text).localeSettings.locales.localeCode<EN>"
+                }
+              }
+            ],
+            "tags": [],
+            "testCases": [
+              {
+                "id": "$(text).localeSettings.locales.localeCode<EN>"
+              },
+              {
+                "id": "$(text).localeSettings.locales.localeCode<ES>"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "terms": [
+      {
+        "id": "floro",
+        "localizedTerms": [
+          {
+            "id": "$(text).localeSettings.locales.localeCode<EN>",
+            "localNotes": "Term for Floro",
+            "termValue": "Floro"
+          },
+          {
+            "id": "$(text).localeSettings.locales.localeCode<ES>",
+            "localNotes": "",
+            "termValue": ""
+          }
+        ],
+        "name": "Floro"
+      }
+    ]
+  }
+}

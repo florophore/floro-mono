@@ -221,7 +221,7 @@ export default class AppServer {
         });
         const { appHtml, appState, helmet } = await render(
           url,
-          { client },
+          { client, floroText: this.backend.floroTextStore.getText() },
           context
         );
         this.backend.requestCache.release(cacheKey);
@@ -247,7 +247,8 @@ export default class AppServer {
           .replace("__HELMET_TITLE__", helmet?.title?.toString?.() ?? "")
           .replace("__HELMET_META__", helmet?.meta?.toString?.() ?? "")
           .replace("__HELMET_LINK__", helmet?.link?.toString?.() ?? "")
-          .replace("__BASE_URL__", baseUrl);
+          .replace("__BASE_URL__", baseUrl)
+          .replace("__SSR_FLORO_TEXT__", this.backend.floroTextStore.getTextString());
 
         if (context.should404) {
           return res.status(404).set({ "Content-Type": "text/html" }).end(html);

@@ -1,12 +1,11 @@
-//const paletteGenerator = require("../generators/palette-generator/dist/src");
-const themeGenerator = require("../generators/theme-generator/dist/src");
-const iconGenerator = require("../generators/icon-generator/dist/src");
-const paletteGenerator = require("floro-palette-generator");
+const paletteGenerator = require("../generators/palette-generator");
+const themeGenerator = require("../generators/theme-generator");
+const iconGenerator = require("../generators/icon-generator");
+const textGenerator = require("../generators/text-generator");
 
 module.exports = function () {
   return {
     repository: "@jamiesunderland/test-repo",
-    //assetHost: "http://localhost:9000/private-cdn",
     generators: [
       {
         generator: paletteGenerator,
@@ -22,6 +21,12 @@ module.exports = function () {
       },
       {
         generator: iconGenerator,
+        args: {
+          lang: "typescript",
+        },
+      },
+      {
+        generator: textGenerator,
         args: {
           lang: "typescript",
         },

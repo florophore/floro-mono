@@ -17,6 +17,7 @@ import RequestCache from "./request/RequestCache";
 import StorageClient from "@floro/storage/src/StorageClient";
 import ApolloRestClientFactory from "./controllers/ApolloRestClientFactory";
 import { QueueService } from "./services/QueueService";
+import FloroTextStore from "@floro/redis/src/stores/FloroTextStore";
 
 @injectable()
 export default class AdminBackend extends Backend {
@@ -36,6 +37,7 @@ export default class AdminBackend extends Backend {
     @inject(Server) httpServer: Server,
     @inject(RequestCache) requestCache: RequestCache,
     @inject(ApolloRestClientFactory) apolloRestClientFactory: ApolloRestClientFactory,
+    @inject(FloroTextStore) floroTextStore: FloroTextStore
   ) {
     super(
       resolverModules,
@@ -49,7 +51,8 @@ export default class AdminBackend extends Backend {
       contextFactory,
       httpServer,
       requestCache,
-      apolloRestClientFactory
+      apolloRestClientFactory,
+      floroTextStore
     );
     this.resolverModules = [...resolverModules, ...adminResolverModules];
   }

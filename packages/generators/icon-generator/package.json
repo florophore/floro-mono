@@ -2,13 +2,12 @@
   "name": "@floro/icon-generator",
   "version": "0.0.1",
   "main": "./dist/cjs/src/index.js",
-  "module": "./src/index.ts",
+  "module": "./src/esm/src/index.js",
   "types": "./dist/types/src/index.d.ts",
-  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/types/src/index.d.ts",
-      "import": "./src/index.ts",
+      "import": "./dist/esm/src/index.js",
       "require": "./dist/cjs/src/index.js",
       "default": "./src/index.ts"
     }
@@ -17,6 +16,7 @@
     "compile": "tsc -b ./tsconfig.cjs.json ./tsconfig.esm.json ./tsconfig.types.json",
     "build:clean": "rm -rf ./dist",
     "build": "yarn build:clean && yarn compile && ./fixup.sh",
+    "postinstall": "yarn build",
     "test": "jest"
   },
   "author": "Cheqout Payments Inc",

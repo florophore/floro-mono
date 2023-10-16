@@ -2,8 +2,22 @@ import ColorPalette from "@floro/styles/ColorPalette";
 import Node from "../Node"
 import Observer from "../Observer";
 import escape from 'escape-html';
+import { TextNodeJSON } from "./TextNode";
 
-export default class VariableTagNode extends Node {
+export interface VariableTagJSON extends TextNodeJSON {
+  type: string;
+  content: string;
+  marks: {
+    isBold: boolean;
+    isItalic: boolean;
+    isUnderlined: boolean;
+    isStrikethrough: boolean;
+    isSuperscript: boolean;
+    isSubscript: boolean;
+  }
+}
+
+export default class VariableTagNode extends Node implements TextNodeJSON {
 
   public marks: {
     isBold: boolean;
@@ -43,6 +57,19 @@ export default class VariableTagNode extends Node {
       this.marks.isSuperscript = !!initMarks.isSuperscript;
       this.marks.isSubscript = !!initMarks.isSubscript;
     }
+  }
+
+  public toJSON(): VariableTagJSON {
+    return {
+      content: this.content,
+      type: 'variable-tag',
+      marks: this.marks,
+      children: []
+    };
+  }
+
+  public static fromJSON(json: VariableTagJSON, observer: Observer, lang: string): VariableTagNode {
+    return new VariableTagNode(observer, json.content, lang, json.marks);
   }
 
   public toHTMLString(): string {

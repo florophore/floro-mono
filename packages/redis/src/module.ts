@@ -8,6 +8,7 @@ import EmailVerificationStore from './stores/EmailVerificationStore';
 import RedisQueueWorkers from './RedisQueueWorkers';
 import RedisPubsubFactory from './RedisPubsubFactory';
 import SignupExchangStore from './stores/SignUpExchangeStore';
+import FloroTextStore from './stores/FloroTextStore';
 
 export default new ContainerModule((bind): void => {
     bind<RedisClientConfig>(RedisClientConfig).toSelf().inSingletonScope();;
@@ -18,6 +19,7 @@ export default new ContainerModule((bind): void => {
     bind<EmailAuthStore>(EmailAuthStore).toSelf();
     bind<EmailVerificationStore>(EmailVerificationStore).toSelf();
     bind<SignupExchangStore>(SignupExchangStore).toSelf();
+    bind<FloroTextStore>(FloroTextStore).toSelf().inSingletonScope();
 
     // queues
     bind<EmailQueue>(EmailQueue).toSelf();

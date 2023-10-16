@@ -26,6 +26,7 @@ input::-moz-focus-inner {
   margin: 0;
 }
 
+/*
 ul,
 ol,
 dd {
@@ -33,6 +34,7 @@ dd {
   padding: 0;
   list-style: none;
 }
+*/
 
 h1,
 h2,

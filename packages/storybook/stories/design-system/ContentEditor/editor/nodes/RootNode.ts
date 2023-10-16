@@ -1,14 +1,17 @@
 import Node, { NodeJSON } from "../Node"
 import Observer from "../Observer";
+import LinkVariantTagNode from "./LinkVariableTagNode";
 import OrderedListNode from "./OrderedListNode";
 import TextNode, { TextNodeJSON } from "./TextNode";
 import UnOrderedListNode from "./UnOrderedListNode";
+import VariableTagNode from "./VariableTagNode";
+import VariantTagNode from "./VariantTagNode";
 
 export default class RootNode extends Node {
 
-  public children: TextNode[];
+  public children: Node[];
 
-  constructor(observer: Observer, content: string, lang: string, children?: TextNode[]) {
+  constructor(observer: Observer, content: string, lang: string, children?: Node[]) {
     super(observer, content, lang, children);
     this.content = content;
     this.children = children ?? [];
@@ -22,15 +25,15 @@ export default class RootNode extends Node {
   }
 
   public static fromJSON(json: NodeJSON, observer: Observer, lang: string): RootNode {
-    const children: Array<TextNode> = this.fromTextChildren(
-      json.children as Array<TextNodeJSON> ?? ([] as Array<TextNodeJSON>),
+    const children: Array<TextNodeJSON> = this.fromTextChildren(
+      json.children as Array<Node> ?? ([] as Array<NodeJSON>),
       observer,
       lang
     );
-    return new RootNode(observer, json.content, lang, children);
+    return new RootNode(observer, json.content, lang, children as TextNode[]);
   }
 
-  public static fromTextChildren(children: Array<TextNodeJSON>, observer: Observer, lang: string): Array<TextNode> {
+  public static fromTextChildren(children: Array<NodeJSON>, observer: Observer, lang: string): Array<TextNodeJSON> {
     return (
       children?.map((c) => {
         if (c.type == "ol-tag") {
@@ -41,6 +44,15 @@ export default class RootNode extends Node {
         }
         if (c.type == "li-tag") {
           return UnOrderedListNode.fromJSON(c as TextNode, observer, lang);
+        }
+        if (c.type == "variable-tag") {
+          return VariableTagNode.fromJSON(c as VariableTagNode, observer, lang);
+        }
+        if (c.type == "variant-tag") {
+          return VariantTagNode.fromJSON(c as VariantTagNode, observer, lang);
+        }
+        if (c.type == "link-variable-tag") {
+          return LinkVariantTagNode.fromJSON(c as LinkVariantTagNode, observer, lang);
         }
         return TextNode.fromJSON(c as TextNode, observer, lang);
       }) ?? []

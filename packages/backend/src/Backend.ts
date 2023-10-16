@@ -27,6 +27,7 @@ import RequestCache from "./request/RequestCache";
 import ApolloRestClientFactory from "./controllers/ApolloRestClientFactory";
 import { Context } from "graphql-ws";
 import { QueueService } from "./services/QueueService";
+import FloroTextStore from "@floro/redis/src/stores/FloroTextStore";
 
 const isProduction = process.env.NODE_ENV === "production";
 const isTest = process.env.NODE_ENV === "test";
@@ -47,6 +48,7 @@ export default class Backend {
   private redisPubSubFactory!: RedisPubsubFactory;
   private contextFactory!: ContextFactory;
   private apolloRestClientFactory!: ApolloRestClientFactory;
+  public floroTextStore!: FloroTextStore;
 
   constructor(
     @multiInject("ResolverModule") resolverModules: BaseResolverModule[],
@@ -61,7 +63,8 @@ export default class Backend {
     @inject(Server) httpServer: Server,
     @inject(RequestCache) requestCache: RequestCache,
     @inject(ApolloRestClientFactory)
-    apolloRestClientFactory: ApolloRestClientFactory
+    apolloRestClientFactory: ApolloRestClientFactory,
+    @inject(FloroTextStore) floroTextStore: FloroTextStore
   ) {
     this.resolverModules = resolverModules;
     this.controllers = controllers;
@@ -75,6 +78,7 @@ export default class Backend {
     this.contextFactory = contextFactory;
     this.requestCache = requestCache;
     this.apolloRestClientFactory = apolloRestClientFactory;
+    this.floroTextStore = floroTextStore;
   }
 
   public async startPublicStorageClient(): Promise<null | string> {
@@ -109,6 +113,7 @@ export default class Backend {
     this.controllers.forEach((controller) => {
       controller.setRedisPubsub(pubsub);
     })
+    await this.floroTextStore.onReady();
   }
 
   public mergeResolvers(): Partial<main.ResolversTypes> {

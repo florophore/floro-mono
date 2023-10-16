@@ -121,6 +121,7 @@ import BranchUpdateWebhookQueue from './services/webhook_queues/BranchUpdateWebh
 import HealthCheckController from './controllers/HealthCheckController';
 import DeepLProxyController from './controllers/proxy/DeepLProxyController';
 import SyncController from './controllers/sync/SyncController';
+import UpdateTextWebhookController from './controllers/UpdateTextWebhookController';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -295,6 +296,8 @@ export default new ContainerModule((bind): void => {
     bind<SyncController>("Controllers").to(SyncController);
     // Plugin Controllers
     bind<DeepLProxyController>("Controllers").to(DeepLProxyController);
+    // Floro Plugin Webhooks
+    bind<UpdateTextWebhookController>("Controllers").to(UpdateTextWebhookController);
 
     // RESOLVER MODULES
     bind<UsersResolverModule>("ResolverModule").to(UsersResolverModule);

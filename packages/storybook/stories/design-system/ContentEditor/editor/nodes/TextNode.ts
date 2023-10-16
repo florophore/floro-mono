@@ -1,14 +1,10 @@
 import Node, { NodeJSON } from "../Node"
 import Observer from "../Observer";
-import LinkVariableTagNode from "./LinkVariableTagNode";
-import VariableTagNode from "./VariableTagNode";
 import escape from 'escape-html';
-import VariantTagNode from "./VariantTagNode";
-import MentionedTagNode from "./MentionedTagNode";
-import * as OrderedListNode from "./OrderedListNode";
+import RootNode from "./RootNode";
 
 export interface TextNodeJSON extends NodeJSON {
-  children: TextNodeJSON[];
+  children: NodeJSON[];
   marks: {
     isBold: boolean;
     isItalic: boolean;
@@ -76,9 +72,9 @@ export default class TextNode extends Node {
     };
   }
 
-  public static fromJSON(json: TextNodeJSON, observer: Observer, lang: string): TextNode {
-    const children = json.children?.map(c => TextNode.fromJSON(c, observer, lang));
-    return new TextNode(observer, json.content, lang, children, json.marks);
+  public static fromJSON(json: TextNode, observer: Observer, lang: string): TextNode {
+    const children = RootNode.fromTextChildren(json.children ?? [], observer, lang);//json.children?.map(c => RootNode.fromJSON(c, observer, lang));
+    return new TextNode(observer, json.content, lang, children as TextNode[], json.marks);
   }
 
 
@@ -307,3 +303,8 @@ export default class TextNode extends Node {
   return nodes;
  }
 }
+
+import VariantTagNode from "./VariantTagNode";
+import MentionedTagNode from "./MentionedTagNode";
+import LinkVariableTagNode from "./LinkVariableTagNode";
+import VariableTagNode from "./VariableTagNode";

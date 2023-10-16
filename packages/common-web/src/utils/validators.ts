@@ -8,7 +8,7 @@ export const TLD_DOMAIN = /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2
 export const LOCALHOST = /^localhost$/;
 export const IP_REGEX = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
 export const SUBDOMAIN = /^(?![-.])[a-zA-Z0-9.-]+(?<![-.])$/;
-export const URI_PATH = /^\/[/.a-zA-Z0-9-]+$/;
+export const URI_PATH = /^\/.+$/;
 
 export const orRegex = (regexes: Array<RegExp>, str: string): boolean => {
     for (const regex of regexes) {

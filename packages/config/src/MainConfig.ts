@@ -48,6 +48,16 @@ export default class MainConfig {
     return "https://private.floro.io";
   }
 
+  public floroApiServer(): string {
+    if (isDev || isTest) {
+      return "http://localhost:63403";
+    }
+    if (process.env?.['FLORO_API_HOST']) {
+      return process?.env['FLORO_API_HOSTOMAIN'] as string;
+    }
+    return "https://api.floro.io";
+  }
+
   public cdnPublicPEM(): string {
     if (isDev || isTest) {
       return CDN_PUBLIC_PEM_DEV;

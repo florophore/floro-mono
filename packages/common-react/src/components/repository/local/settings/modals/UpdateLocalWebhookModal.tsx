@@ -118,9 +118,6 @@ const UpdateLocalWebhookDomainModal = (props: Props) => {
     if (uri == "") {
       return true;
     }
-    if (uri.trim() == "") {
-      return false;
-    }
     return URI_PATH.test(uri);
   }, [uri])
 

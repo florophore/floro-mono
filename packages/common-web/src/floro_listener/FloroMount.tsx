@@ -4,9 +4,13 @@ import { FloroDebugProvider } from "./FloroDebugProvider";
 import { FloroPaletteProvider } from "./FloroPaletteProvider";
 import { FloroThemesProvider } from "./FloroThemesProvider";
 import { FloroIconsProvider } from "./FloroIconsProvider";
+import { FloroTextProvider } from "./FloroTextProvider";
+import { LocalizedPhrases } from "@floro/common-generators/floro_modules/text-generator";
+import { FloroLocalesProvider } from "./hooks/locales";
 
 interface Props {
   children: React.ReactElement;
+  text: LocalizedPhrases;
 }
 
 const FloroMount = (props: Props) => {
@@ -14,7 +18,11 @@ const FloroMount = (props: Props) => {
     <FloroDebugProvider>
       <FloroPaletteProvider>
         <FloroThemesProvider>
-          <FloroIconsProvider>{props.children}</FloroIconsProvider>
+          <FloroIconsProvider>
+            <FloroTextProvider text={props.text}>
+              <FloroLocalesProvider>{props.children}</FloroLocalesProvider>
+            </FloroTextProvider>
+          </FloroIconsProvider>
         </FloroThemesProvider>
       </FloroPaletteProvider>
     </FloroDebugProvider>
