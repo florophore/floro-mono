@@ -27,6 +27,7 @@ import UserRemoteWebhookHome from './apikeys/UserRemoteWebhookHome';
 import OrgRemoteApiHome from './apikeys/OrgRemoteApiHome';
 import OrgRemoteWebhookHome from './apikeys/OrgRemoteWebhookHome';
 import RepoHomeApiSettingsPage from './repository/RepoHomeApiSettingsPage';
+import UserProfilePage from './user_profile/UserProfilePage';
 
 const Router = (): React.ReactElement => {
     const location = useLocation();
@@ -65,7 +66,7 @@ const Router = (): React.ReactElement => {
           <Route path="/org/@/:handle/billing/payment-details" element={<OrganizationRolesPage/>} />
           <Route path="/org/@/:handle/billing/invoices" element={<OrganizationRolesPage/>} />
 
-          <Route path="/user/@/:handle" element={<UserPluginsPage />} />
+          <Route path="/user/@/:handle" element={<UserProfilePage />} />
           <Route path="/user/@/:handle/plugins" element={<UserPluginsPage />} />
           <Route path="/user/@/:handle/plugins/:plugin/v/:version" element={<UserPluginsPage />} />
           <Route path="/user/@/:handle/plugins/:plugin" element={<UserPluginsPage />} />

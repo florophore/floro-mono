@@ -71,25 +71,27 @@ export default class OrganizationsContext extends BaseContext {
     return await this.queryRunner.manager.save(Organization, org);
   }
 
-  public async getAllOrganizationsForUser(userId: string): Promise<Organization[]> {
+  public async getAllOrganizationsForUser(
+    userId: string
+  ): Promise<Organization[]> {
     const userOrgs = await this.queryRunner.manager.find(Organization, {
       where: {
         organizationMembers: {
           userId,
           membershipState: "active",
-        }
-      }
+        },
+      },
     });
-    const ids = userOrgs?.map(org => org.id) ?? [];
+    const ids = userOrgs?.map((org) => org.id) ?? [];
     return await this.queryRunner.manager.find(Organization, {
       where: {
-        id: In(ids)
+        id: In(ids),
       },
       relations: {
         profilePhoto: true,
         organizationInvitations: {
           user: {
-            profilePhoto: true
+            profilePhoto: true,
           },
           invitedByUser: true,
           invitedByOrganizationMember: true,
@@ -99,34 +101,34 @@ export default class OrganizationsContext extends BaseContext {
         },
         organizationMembers: {
           user: {
-            profilePhoto: true
-          }
+            profilePhoto: true,
+          },
         },
         organizationRoles: true,
         organizationMemberRoles: {
           organizationRole: true,
           organizationMember: {
             user: {
-              profilePhoto: true
-            }
-          }
-        }
+              profilePhoto: true,
+            },
+          },
+        },
       },
       order: {
         name: "ASC",
         organizationMembers: {
           user: {
             firstName: "ASC",
-            lastName: "DESC"
-          }
+            lastName: "DESC",
+          },
         },
         organizationRoles: {
-          name: "ASC"
+          name: "ASC",
         },
         organizationMemberRoles: {
           organizationRole: {
-            name: "ASC"
-          }
+            name: "ASC",
+          },
         },
         organizationInvitations: {
           createdAt: "DESC",
@@ -135,8 +137,38 @@ export default class OrganizationsContext extends BaseContext {
               name: "ASC",
             },
           },
-        }
+        },
+      },
+    });
+  }
+
+  public async searchOrganizations(
+    query: string,
+    limit = 5
+  ): Promise<Organization[]> {
+    try {
+      const qb = this.organizationRepo.createQueryBuilder("organization", this.queryRunner);
+      if (query.startsWith("@")) {
+        const handleQuery = query.substring(1);
+        return await qb
+          .leftJoinAndSelect("organization.profilePhoto", "photo")
+          .where("organization.handle ILIKE :query || '%'")
+          .setParameter("query", handleQuery.trim().toLowerCase())
+          .limit(limit)
+          .orderBy("LENGTH(organization.handle)", "ASC")
+          .getMany();
       }
-    }); 
+      return await qb
+        .leftJoinAndSelect("organization.profilePhoto", "photo")
+        .where(
+          `(organization.name ILIKE :query || '%') OR (organization.handle ILIKE :query || '%')`
+        )
+        .setParameter("query", query.trim().toLowerCase())
+        .limit(limit)
+        .orderBy(`LENGTH(organization.name)`, "ASC")
+        .getMany();
+    } catch (e) {
+      return [];
+    }
   }
 }

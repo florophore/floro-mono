@@ -30,7 +30,7 @@ export default class RepositoriesContext extends BaseContext {
       where: { id },
       relations: {
         user: {
-          profilePhoto: true
+          profilePhoto: true,
         },
         organization: true,
       },
@@ -42,7 +42,7 @@ export default class RepositoriesContext extends BaseContext {
       where: { hashKey },
       relations: {
         user: {
-          profilePhoto: true
+          profilePhoto: true,
         },
         organization: true,
       },
@@ -54,7 +54,7 @@ export default class RepositoriesContext extends BaseContext {
       where: { userId },
       relations: {
         user: {
-          profilePhoto: true
+          profilePhoto: true,
         },
         organization: true,
       },
@@ -69,7 +69,7 @@ export default class RepositoriesContext extends BaseContext {
       where: { userId, isPrivate },
       relations: {
         user: {
-          profilePhoto: true
+          profilePhoto: true,
         },
       },
       order: {
@@ -120,5 +120,19 @@ export default class RepositoriesContext extends BaseContext {
       repo[prop] = repoArgs[prop];
     }
     return await this.queryRunner.manager.save(Repository, repo);
+  }
+
+  public async searchRepos(query: string, limit = 5): Promise<Repository[]> {
+    const qb = this.repositoryRepo.createQueryBuilder("repo", this.queryRunner);
+    return await qb
+      .leftJoinAndSelect("repo.user", "user")
+      .leftJoinAndSelect("repo.organization", "organization")
+      .where(
+        `(repo.name ILIKE :query || '%') OR (repo.name ILIKE :query || '%')`
+      )
+      .setParameter("query", query.trim().toLowerCase())
+      .limit(limit)
+      .orderBy(`LENGTH(repo.name)`, "ASC")
+      .getMany();
   }
 }

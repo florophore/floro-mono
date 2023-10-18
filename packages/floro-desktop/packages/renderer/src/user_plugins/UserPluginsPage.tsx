@@ -69,12 +69,12 @@ const UserPluginsPage = () => {
 
   useEffect(() => {
     if (!params['plugin'] && !paramsVersion && currentPlugin?.name && currentVersion?.version) {
-      navigate(`/home/plugins/${currentPlugin?.name}/v/${currentVersion?.version?.replaceAll(".", "-")}`);
+      navigate(`/home/plugins/${currentPlugin?.name}/v/${currentVersion?.version?.replaceAll(".", "-")}`, { replace: true});
       return;
     }
 
     if (!params['plugin'] && currentPlugin?.name) {
-      navigate(`/home/plugins/${currentPlugin?.name}`);
+      navigate(`/home/plugins/${currentPlugin?.name}`, { replace: true});
       return;
     }
 

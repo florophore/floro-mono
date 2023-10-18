@@ -93,4 +93,62 @@ export default class PluginSearchService {
     }
     return await pluginsContext.getOrgPluginsByType(repository.organizationId, true);
   }
+
+  public async searchPluginsForUser(
+    query: string,
+    currentUser: User,
+    maxTake = 5
+  ): Promise<Array<Plugin>> {
+    const pluginsContext = await this.contextFactory.createContext(PluginsContext);
+    const privatePlugins = await pluginsContext.getUserPluginsByType(currentUser.id, true);
+    const publicPlugins = await pluginsContext.getPublicReleasedPlugins();
+
+    const plugins = [...privatePlugins, ...publicPlugins]
+    .filter(plugin => (plugin?.versions?.length ?? 0) > 0);
+
+    const trie = new TrieSearch();
+    for (const plugin of plugins) {
+      const lastReleased = plugin.isPrivate
+        ? plugin.lastReleasedPublicPluginVersion
+        : plugin.lastReleasedPrivatePluginVersion;
+      trie.map(plugin.name.toLowerCase(), plugin.name);
+      if (lastReleased) {
+        trie.map(lastReleased.displayName.toLowerCase(), plugin.name);
+      }
+    }
+
+    const editDistanceMap = {};
+    for (const plugin of plugins) {
+      const lastReleased = plugin.isPrivate
+        ? plugin.lastReleasedPublicPluginVersion
+        : plugin.lastReleasedPrivatePluginVersion;
+      if (lastReleased) {
+        editDistanceMap[plugin.name] = Math.min(
+          levenshtein.get(plugin.name.toLowerCase(), (query ?? "").toLowerCase()),
+          levenshtein.get(
+            lastReleased.displayName.toLowerCase(),
+            (query ?? "").toLowerCase()
+          )
+        );
+      } else {
+        editDistanceMap[plugin.name] = levenshtein.get(
+          plugin.name,
+          (query ?? "").toLowerCase()
+        );
+      }
+    }
+    const trieResult = new Set(trie.search((query ?? "").toLowerCase()));
+    return plugins
+      .filter(plugin => {
+        return trieResult.has(plugin.name) || (editDistanceMap?.[plugin.name] ?? 0) <= 2;
+      })
+      .sort(
+        (a, b) => {
+          const aDistance = (editDistanceMap[a.name] ?? Number.MAX_SAFE_INTEGER);
+          const bDistance = (editDistanceMap[b.name] ?? Number.MAX_SAFE_INTEGER);
+          return aDistance - bDistance;
+        }
+      )
+      .slice(0, maxTake);
+  }
 }

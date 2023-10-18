@@ -205,7 +205,6 @@ const HomeDashboard = () => {
         onDismiss={onDismissRejectModal}
       />
       <MainContainer>
-        <a download="TEST_FILENAME.csv" href={"data:text/csv;base64,SXRlbSBJRCxJdGVtIFJlZmVyZW5jZQoxLEl0ZW0gMDAxCjIsSXRlbSAwMDIKMyxJdGVtIDAwMw=="}>{'testing'}</a>
       </MainContainer>
       <SideBar>
         <RepoContainer>

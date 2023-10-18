@@ -1,0 +1,16 @@
+type PageSearchSuccess {
+  repositories: [Repository]
+  users: [User]
+  organizations: [Organization]
+  plugins: [Plugin]
+}
+
+type PageSearchError {
+  message: String
+  type: String
+}
+
+union PageSearchResponse =
+    PageSearchSuccess
+  | PageSearchError
+  | UnAuthenticatedError

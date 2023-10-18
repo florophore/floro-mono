@@ -149,6 +149,18 @@ export default class PluginsContext extends BaseContext {
     });
   }
 
+  public async getPublicReleasedPlugins(): Promise<Plugin[]> {
+    return await this.queryRunner.manager.find(Plugin, {
+      where: [
+        { isPrivate: false, lastReleasedPublicPluginVersion: Not(IsNull()) },
+      ],
+      order: {
+        name: 'ASC'
+      },
+      relations: READ_RELATIONS
+    });
+  }
+
   public async getPublicReleasedPluginsForRepository(repository: Repository): Promise<Plugin[]> {
     if (repository.repoType == "org_repo") {
       return await this.queryRunner.manager.find(Plugin, {
@@ -173,6 +185,7 @@ export default class PluginsContext extends BaseContext {
       relations: READ_RELATIONS
     });
   }
+
   public async updatePlugin(
     plugin: Plugin,
     pluginArgs: DeepPartial<Plugin>

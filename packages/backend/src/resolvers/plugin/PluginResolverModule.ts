@@ -168,6 +168,7 @@ export default class PluginResolverModule extends BaseResolverModule {
           PluginsContext
         );
         const suggestedPlugins = await Promise.all([
+          pluginsContext.getByName("text"),
           pluginsContext.getByName("palette"),
           pluginsContext.getByName("theme"),
           pluginsContext.getByName("icons"),

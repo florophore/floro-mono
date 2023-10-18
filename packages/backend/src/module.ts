@@ -122,6 +122,8 @@ import HealthCheckController from './controllers/HealthCheckController';
 import DeepLProxyController from './controllers/proxy/DeepLProxyController';
 import SyncController from './controllers/sync/SyncController';
 import UpdateTextWebhookController from './controllers/UpdateTextWebhookController';
+import RepoSearchService from './services/repositories/RepoSearchService';
+import SearchResolverModule from './resolvers/search/SearchResolverModule';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -233,6 +235,7 @@ export default new ContainerModule((bind): void => {
     bind(RepoDataService).toSelf();
     bind(CommitService).toSelf();
     bind(RevertService).toSelf();
+    bind(RepoSearchService).toSelf();
 
     bind(GrantAccessReceiverService).toSelf().inSingletonScope();
 
@@ -315,6 +318,7 @@ export default new ContainerModule((bind): void => {
     bind<RepositoryProtectedBranchesResolverModule>("ResolverModule").to(RepositoryProtectedBranchesResolverModule);
     bind<ApiKeyResolverModule>("ResolverModule").to(ApiKeyResolverModule);
     bind<WebhookKeyResolverModule>("ResolverModule").to(WebhookKeyResolverModule);
+    bind<SearchResolverModule>("ResolverModule").to(SearchResolverModule);
 
     // ADMIN MODULES OVERRIDE WITH AdminResolverModule
     bind<AdminUsersResolverModule>("AdminResolverModule").to(AdminUsersResolverModule);

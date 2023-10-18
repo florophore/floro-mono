@@ -57,7 +57,6 @@ export default class RepositoryService {
     @inject(ContextFactory) contextFactory: ContextFactory,
     @inject(RepoAccessor) repoAccessor: RepoAccessor,
     @inject(BranchService) branchService: BranchService,
-    @inject(RepoDataService) repoDataService: RepoDataService,
   ) {
     this.databaseConnection = databaseConnection;
     this.contextFactory = contextFactory;

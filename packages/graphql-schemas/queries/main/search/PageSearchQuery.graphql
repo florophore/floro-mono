@@ -1,0 +1,70 @@
+query PageSearchQuery($query: String) {
+  pageSearch(query: $query) {
+    ... on PageSearchSuccess {
+      organizations {
+        id
+        name
+        handle
+        profilePhoto {
+          id
+          thumbnailHash
+          thumbnailPath
+          thumbnailUrl
+          url
+        }
+      }
+      plugins {
+        selectedLightIcon
+        selectedDarkIcon
+        name
+        darkIcon
+        lightIcon
+        isPrivate
+        displayName
+        ownerType
+        user {
+          id
+          username
+        }
+        organization {
+          id
+          handle
+        }
+      }
+      repositories {
+        id
+        name
+        repoType
+        user {
+          id
+          username
+        }
+        organization {
+          id
+          handle
+        }
+      }
+      users {
+        id
+        lastName
+        firstName
+        username
+        profilePhoto {
+          id
+          thumbnailHash
+          thumbnailPath
+          thumbnailUrl
+          url
+        }
+      }
+    }
+    ... on PageSearchError {
+      type
+      message
+    }
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+  }
+}
