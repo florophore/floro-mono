@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react'
 import styled from '@emotion/styled';
+import { css } from '@emotion/css';
 import ColorPalette from '@floro/styles/ColorPalette';
 import { useTheme } from '@emotion/react';
 import PluginsIconLight from '@floro/common-assets/assets/images/icons/plugin.light.svg';
@@ -44,6 +45,7 @@ const PluginCountNumeral = styled.span`
 
 export interface Props {
   pluginCount: number;
+  isClickable: boolean;
 }
 
 const PluginsTab = (props: Props): React.ReactElement => {
@@ -59,7 +61,23 @@ const PluginsTab = (props: Props): React.ReactElement => {
     <Container>
       <Icon src={pluginsIcon} />
       <TextContainer>
-        <TextSpan>{"Plugins "}<PluginCountNumeral>{props.pluginCount ?? 0}</PluginCountNumeral></TextSpan>
+        <span
+          className={css`
+            font-size: 0.9rem;
+            font-family: "MavenPro";
+            font-weight: 600;
+            color: ${theme.colors.followerTextColor};
+            ${props.isClickable ? `
+              cursor: pointer;
+              &:hover {
+                color: ${ColorPalette.linkBlue};
+              }
+            ` : ""}
+          `}
+        >
+          {"Plugins "}
+          <PluginCountNumeral>{props.pluginCount ?? 0}</PluginCountNumeral>
+        </span>
       </TextContainer>
     </Container>
   );

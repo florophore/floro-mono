@@ -72,8 +72,8 @@ const PluginDependencyList = (props: Props) => {
     return props.dependencies?.map((pluginVersion, index) => {
     const link =
         pluginVersion?.ownerType == "user_plugin"
-        ? `/users/@/${pluginVersion.user?.username}/plugins/${pluginVersion.name}/v/${pluginVersion.version}`
-        : `/orgs/@/${pluginVersion.organization?.handle}/plugins/${pluginVersion.name}/v/${pluginVersion.version}`;
+        ? `/user/@/${pluginVersion.user?.username}/plugins/${pluginVersion.name}/v/${pluginVersion.version}`
+        : `/org/@/${pluginVersion.organization?.handle}/plugins/${pluginVersion.name}/v/${pluginVersion.version}`;
       const icon =
         theme.name == "light"
           ? pluginVersion.lightIcon ?? ""

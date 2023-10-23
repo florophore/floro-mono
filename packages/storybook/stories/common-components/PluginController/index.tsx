@@ -3,6 +3,7 @@ import PluginNav from "../navs/PluginNav";
 import SideNavWrapper from "../navs/SideNavWrapper";
 import { Plugin } from "@floro/graphql-schemas/build/generated/main-graphql";
 import styled from "@emotion/styled";
+import { Organization } from "@floro/graphql-schemas/build/generated/main-client-graphql";
 
 const NoPluginsTextContainer = styled.div`
   display: flex;
@@ -26,18 +27,32 @@ const NoPluginsText = styled.h2`
 export interface Props {
   currentPlugin?: Plugin | null;
   plugins: Plugin[];
+  organization?: Organization;
   children: React.ReactElement;
   onPressRegisterNewPlugin: () => void;
   icons: { [key: string]: string };
   linkPrefix: string;
+  isProfileMode?: boolean;
+  canRegister: boolean;
 }
 
-const NoPlugins = () => {
+const NoPlugins = (props: {organization?: Organization}) => {
+  if (props?.organization) {
+    return (
+      <NoPluginsTextContainer>
+        <NoPluginsText>
+          {
+            `There are no plugins associated with ${props?.organization?.name}'s account. Register a new plugin to get started.`
+          }
+        </NoPluginsText>
+      </NoPluginsTextContainer>
+    );
+  }
   return (
     <NoPluginsTextContainer>
       <NoPluginsText>
         {
-          "There are no plugins associated with this account. Register a new plugin to get started."
+          "There are no plugins associated with your account. Register a new plugin to get started."
         }
       </NoPluginsText>
     </NoPluginsTextContainer>
@@ -47,10 +62,10 @@ const NoPlugins = () => {
 const PluginController = (props: Props) => {
   const content = useMemo(() => {
     if (props.plugins?.length == 0) {
-      return <NoPlugins />;
+      return <NoPlugins organization={props?.organization} />;
     }
     return props.children;
-  }, [props.plugins, props.children, props.currentPlugin]);
+  }, [props.plugins, props.children, props.currentPlugin, props?.organization]);
 
   return (
     <SideNavWrapper
@@ -61,6 +76,8 @@ const PluginController = (props: Props) => {
           icons={props.icons}
           onPressRegisterNewPlugin={props.onPressRegisterNewPlugin}
           plugins={props.plugins}
+          isProfileMode={props.isProfileMode}
+          canRegister={props.canRegister}
         />
       }
     >

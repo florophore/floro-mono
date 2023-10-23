@@ -19,6 +19,7 @@ import CommentReply from "./CommentReply";
 
 import EditIconLight from "@floro/common-assets/assets/images/icons/edit.light.darker.svg";
 import EditIconDark from "@floro/common-assets/assets/images/icons/edit.dark.svg";
+import { Link } from "react-router-dom";
 
 import TrashIconLight from "@floro/common-assets/assets/images/icons/trash.light.svg"
 import TrashIconDark from "@floro/common-assets/assets/images/icons/trash.dark.svg";
@@ -112,6 +113,9 @@ const AuthorTitle = styled.h3`
   font-weight: 600;
   font-size: 1.2rem;
   color: ${(props) => props.theme.colors.contrastText};
+  &:hover {
+    color: ${(props) => props.theme.colors.linkColor};
+  }
 `;
 
 const Icon = styled.img`
@@ -368,7 +372,9 @@ const CommentDisplay = (props: Props) => {
             <CommentDisplayInnerContainer>
               <MetaDataRow>
                 <MetaDataControlRow style={{marginRight: 12}}>
-                  <AuthorTitle>{userFullname}</AuthorTitle>
+                  <Link to={`/user/@/${props?.comment?.user?.username}`}>
+                    <AuthorTitle>{userFullname}</AuthorTitle>
+                  </Link>
                   {session?.user?.id == props.comment?.user?.id &&
                     !showEditReply && (
                       <>

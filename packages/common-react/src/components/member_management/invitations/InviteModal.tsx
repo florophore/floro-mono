@@ -139,7 +139,6 @@ const InstructionsText = styled.p`
   font-family: "MavenPro";
   font-weight: 400;
   color: ${(props) => ColorPalette.gray};
-
 `;
 
 const upcaseFirst = (str: string) => {

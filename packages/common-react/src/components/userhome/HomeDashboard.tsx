@@ -32,6 +32,9 @@ import { useCurrentUserRepos, useLocalRepos } from "../../hooks/repos";
 import ColorPalette from "@floro/styles/ColorPalette";
 import UserInvite from "./invitations/UserInvite";
 import ConfirmRejectInviteModal from "./invitations/ConfirmRejectInviteModal";
+import HomeProfileHeader from "./profile/HomeProfileHeader";
+import HomeFeedView from "./profile/feed/HomeFeedView";
+import { useIsOnline } from "../../hooks/offline";
 
 const Container = styled.div`
   flex: 1;
@@ -175,6 +178,15 @@ const HomeDashboard = () => {
   const [showRejectModal, setShowRejectModal] =
     useState<boolean>(false);
 
+  const [page, setPage] = useState<'feed'|'bookmarks'|'notifications'>('feed');
+  const isOnline = useIsOnline();
+
+  useEffect(() => {
+    if (!isOnline) {
+      setPage('bookmarks');
+    }
+  }, [isOnline])
+
   const onShowRejectModal = useCallback((invitation: OrganizationInvitation) => {
     setInvitationToReject(invitation);
     setShowRejectModal(true);
@@ -205,6 +217,13 @@ const HomeDashboard = () => {
         onDismiss={onDismissRejectModal}
       />
       <MainContainer>
+        <HomeProfileHeader
+          page={page}
+          onChangePage={setPage}
+        ></HomeProfileHeader>
+        {page == 'feed' && (
+          <HomeFeedView/>
+        )}
       </MainContainer>
       <SideBar>
         <RepoContainer>

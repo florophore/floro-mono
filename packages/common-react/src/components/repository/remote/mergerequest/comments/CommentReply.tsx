@@ -25,6 +25,7 @@ import EditIconDark from "@floro/common-assets/assets/images/icons/edit.dark.svg
 import TrashIconLight from "@floro/common-assets/assets/images/icons/trash.light.svg";
 import TrashIconDark from "@floro/common-assets/assets/images/icons/trash.dark.svg";
 import DotsLoader from "@floro/storybook/stories/design-system/DotsLoader";
+import { Link } from "react-router-dom";
 
 const TopContainer = styled.div`
   margin-top: 12px;
@@ -98,6 +99,9 @@ const AuthorTitle = styled.h3`
   font-weight: 600;
   font-size: 1.2rem;
   color: ${(props) => props.theme.colors.contrastText};
+  &:hover {
+    color: ${(props) => props.theme.colors.linkColor};
+  }
 `;
 
 const DateTitle = styled.h3`
@@ -233,7 +237,9 @@ const CommentReply = (props: Props) => {
           <CommentDisplayInnerContainer>
             <MetaDataRow>
               <MetaDataControlRow style={{marginRight: 12}}>
-                <AuthorTitle>{userFullname}</AuthorTitle>
+                <Link to={`/user/@/${props.reply.user?.username}`}>
+                  <AuthorTitle>{userFullname}</AuthorTitle>
+                </Link>
                 {session?.user?.id == props.reply?.user?.id && (
                   <>
                     {!props.isInEditMode && !deleteReplyMutation.loading && (

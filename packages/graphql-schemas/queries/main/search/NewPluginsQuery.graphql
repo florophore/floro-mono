@@ -1,0 +1,30 @@
+query NewPluginsQuery($lastId: ID) {
+  newPlugins(id: $lastId) {
+    ... on FetchNewPluginsResult {
+      hasMore
+      lastId
+      plugins {
+        selectedLightIcon
+        selectedDarkIcon
+        name
+        darkIcon
+        lightIcon
+        isPrivate
+        displayName
+        ownerType
+        user {
+          id
+          username
+        }
+        organization {
+          id
+          handle
+        }
+      }
+    }
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+  }
+}

@@ -149,6 +149,9 @@ export default class OrganizationsContext extends BaseContext {
     try {
       const qb = this.organizationRepo.createQueryBuilder("organization", this.queryRunner);
       if (query.startsWith("@")) {
+        if (query == "@") {
+          return [];
+        }
         const handleQuery = query.substring(1);
         return await qb
           .leftJoinAndSelect("organization.profilePhoto", "photo")

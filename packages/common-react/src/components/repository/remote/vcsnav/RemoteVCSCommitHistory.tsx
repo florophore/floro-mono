@@ -186,6 +186,10 @@ const Value = styled.span`
   font-size: 1rem;
   font-family: "MavenPro";
   color: ${(props) => props.theme.colors.contrastText};
+  cursor: pointer;
+  &:hover {
+    color: ${(props) => props.theme.colors.linkColor};
+  }
 `;
 
 const BlurbBox = styled.div`
@@ -541,7 +545,7 @@ const RemoteVCSCommitHistory = (props: Props) => {
             >
               <TextRow>
                 <Label>{"Commit:"}</Label>
-                <Value>
+                <Value onClick={onGoHome}>
                   {props.repository.branchState?.commitState?.sha?.substring(
                     0,
                     8

@@ -1,5 +1,6 @@
 extend type Query {
     user(id: ID!): User
+    userByUsername(username: String!): User
     usernameCheck(username: String): UsernameCheckResult
     searchUsers(query: String!): [User]
     currentUser: CurrentUserResponse

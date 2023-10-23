@@ -26,6 +26,13 @@ export default class UsersContext extends BaseContext {
     });
   }
 
+  public async getByUsername(username: string): Promise<User | null> {
+    return await this.queryRunner.manager.findOne(User, {
+      where: { username },
+      relations: { profilePhoto: true },
+    });
+  }
+
   public async usernameExists(username: string): Promise<boolean> {
     const qb = this.userRepo.createQueryBuilder("user", this.queryRunner);
     const count = await qb
@@ -60,6 +67,9 @@ export default class UsersContext extends BaseContext {
     try {
       const qb = this.userRepo.createQueryBuilder("user", this.queryRunner);
       if (query.startsWith("@")) {
+        if (query == "@") {
+          return [];
+        }
         const usernameQuery = query.substring(1);
         return await qb
           .leftJoinAndSelect("user.profilePhoto", "photo")
@@ -91,6 +101,9 @@ export default class UsersContext extends BaseContext {
     try {
       const qb = this.userRepo.createQueryBuilder("user", this.queryRunner);
       if (query.startsWith("@")) {
+        if (query == "@") {
+          return [];
+        }
         const usernameQuery = query.substring(1);
         return await qb
           .leftJoinAndSelect("user.profilePhoto", "photo")
@@ -125,6 +138,9 @@ export default class UsersContext extends BaseContext {
     try {
       const qb = this.userRepo.createQueryBuilder("user", this.queryRunner);
       if (query.startsWith("@")) {
+        if (query == "@") {
+          return [];
+        }
         const usernameQuery = query.substring(1);
         return await qb
           .leftJoinAndSelect("user.profilePhoto", "photo")

@@ -151,10 +151,7 @@ const RepoPrivateSelect = (props: Props): React.ReactElement => {
               {'Private'}
             </CheckTitle>
             <Subtext>
-              {"You choose who can see and commit to this repository. "}
-              <SubtextBold>
-                {"Private repos utilize storage space."}
-              </SubtextBold>
+              {"You choose who can see and commit to this repository."}
             </Subtext>
           </TextWrap>
         </Row>

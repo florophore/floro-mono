@@ -10,6 +10,7 @@ import PluginDependencyList from "@floro/storybook/stories/common-components/Plu
 import PluginVersionList from "@floro/storybook/stories/common-components/PluginVersionList";
 import ReleasePluginModal from "./ReleasePluginModal";
 import JSONPretty from "react-json-pretty";
+import { Organization } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 
 const Container = styled.div`
   height: 100%;
@@ -179,10 +180,12 @@ const DarkIconLabel = styled.h6`
 
 export interface Props {
   plugin: Plugin;
+  organization?: Organization;
   pluginVersion?: PluginVersion;
   icons: { [key: string]: string };
   linkPrefix: string;
   canRelease: boolean;
+  isProfileMode?: boolean;
 }
 
 const PluginDetails = (props: Props) => {
@@ -314,37 +317,39 @@ const PluginDetails = (props: Props) => {
           <BlurbText>{props?.pluginVersion?.description}</BlurbText>
         </BlurbBox>
       </SectionContainer>
-      <SectionContainer>
-        <SectionTitle>{"Plugin Icons"}</SectionTitle>
-        <IconBox>
-          <LightIconContainer>
-            <LightIconTitle>{"Light Mode"}</LightIconTitle>
-            <IconWrapper>
-              <ColoredIconWrapper>
-                <ColoredIcon src={lightIcon} />
-                <LightIconLabel>{"Regular"}</LightIconLabel>
-              </ColoredIconWrapper>
-              <ColoredIconWrapper>
-                <ColoredIcon src={selectedLightIcon} />
-                <LightIconLabel>{"Selected"}</LightIconLabel>
-              </ColoredIconWrapper>
-            </IconWrapper>
-          </LightIconContainer>
-          <DarkIconContainer>
-            <DarkIconTitle>{"Dark Mode"}</DarkIconTitle>
-            <IconWrapper>
-              <ColoredIconWrapper>
-                <ColoredIcon src={darkIcon} />
-                <DarkIconLabel>{"Regular"}</DarkIconLabel>
-              </ColoredIconWrapper>
-              <ColoredIconWrapper>
-                <ColoredIcon src={selectedDarkIcon} />
-                <DarkIconLabel>{"Selected"}</DarkIconLabel>
-              </ColoredIconWrapper>
-            </IconWrapper>
-          </DarkIconContainer>
-        </IconBox>
-      </SectionContainer>
+      {!props.isProfileMode && (
+        <SectionContainer>
+          <SectionTitle>{"Plugin Icons"}</SectionTitle>
+          <IconBox>
+            <LightIconContainer>
+              <LightIconTitle>{"Light Mode"}</LightIconTitle>
+              <IconWrapper>
+                <ColoredIconWrapper>
+                  <ColoredIcon src={lightIcon} />
+                  <LightIconLabel>{"Regular"}</LightIconLabel>
+                </ColoredIconWrapper>
+                <ColoredIconWrapper>
+                  <ColoredIcon src={selectedLightIcon} />
+                  <LightIconLabel>{"Selected"}</LightIconLabel>
+                </ColoredIconWrapper>
+              </IconWrapper>
+            </LightIconContainer>
+            <DarkIconContainer>
+              <DarkIconTitle>{"Dark Mode"}</DarkIconTitle>
+              <IconWrapper>
+                <ColoredIconWrapper>
+                  <ColoredIcon src={darkIcon} />
+                  <DarkIconLabel>{"Regular"}</DarkIconLabel>
+                </ColoredIconWrapper>
+                <ColoredIconWrapper>
+                  <ColoredIcon src={selectedDarkIcon} />
+                  <DarkIconLabel>{"Selected"}</DarkIconLabel>
+                </ColoredIconWrapper>
+              </IconWrapper>
+            </DarkIconContainer>
+          </IconBox>
+        </SectionContainer>
+      )}
       {props.pluginVersion?.pluginDependencies &&
         (props.pluginVersion?.pluginDependencies?.length ?? 0) > 0 && (
           <PluginDependencyList
@@ -361,6 +366,7 @@ const PluginDetails = (props: Props) => {
         linkPrefix={props.linkPrefix}
         onClickReleaseVersion={onClickReleaseVersion}
         canRelease={props.canRelease}
+        isProfileMode={props.isProfileMode}
       />
       {hasTypes && manifestTypes && (
         <BigSectionContainer>

@@ -121,6 +121,9 @@ const UsernameText = styled.p`
   font-family: "MavenPro";
   font-weight: 700;
   color: ${(props) => props.theme.colors.contrastText};
+  &:hover {
+    color: ${(props) => props.theme.colors.linkColor};
+  }
 `;
 
 const ElapseText = styled.p`
@@ -246,7 +249,9 @@ const MergeRequestHistoryRow = (props: Props) => {
             justifyContent: "flex-end",
           }}
         >
-          <UsernameText>{username}</UsernameText>
+          <Link to={`/user/@/${props.mergeRequest?.openedByUser?.username}`}>
+            <UsernameText>{username}</UsernameText>
+          </Link>
           <ElapseText>
             {"Opened "}
             <ElapseSince>{elapsedTime}</ElapseSince>

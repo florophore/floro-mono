@@ -190,7 +190,7 @@ export default class PluginRegistryService {
         ownerType,
         isPrivate,
         createdByUser: user,
-        user,
+        user: ownerType == "org_plugin" ? undefined : user,
         organization,
       };
       const plugin = await pluginsContext.createPlugin(params);

@@ -1,6 +1,12 @@
 import React, { useMemo } from "react";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
+import BookmarkIcon from "@floro/common-assets/assets/images/icons/bookmark.svg";
+import BookmarkOutlineIcon from "@floro/common-assets/assets/images/icons/bookmark.outline.svg";
+
+import SubscribeIcon from "@floro/common-assets/assets/images/icons/subscribe.svg";
+import SubscribeOutlineIcon from "@floro/common-assets/assets/images/icons/subscribe.outline.svg";
+
 import BranchIconLight from "@floro/common-assets/assets/images/icons/branch_icon.light.svg";
 import BranchIconDark from "@floro/common-assets/assets/images/icons/branch_icon.dark.svg";
 
@@ -39,6 +45,14 @@ import TimeAgo from "javascript-time-ago";
 
 import en from "javascript-time-ago/locale/en";
 import ColorPalette from "@floro/styles/ColorPalette";
+import Button from "../../design-system/Button";
+
+const ButtonRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+`;
 
 TimeAgo.addDefaultLocale(en);
 
@@ -184,6 +198,20 @@ const BranchHeadNotification = styled.div`
   border-radius: 50%;
   border: 1px solid ${ColorPalette.white};
   background: ${(props) => props.theme.colors.warningTextColor};
+`;
+
+const BookmarkContainer = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  padding: 0 12px 0 12px;
+`;
+
+const BookmarkIconImg = styled.img`
+  height: 24px;
+  width: 24px;
+  margin-right: 16px;
 `;
 
 export interface Props {
@@ -364,9 +392,7 @@ const RemoteCurrentInfo = (props: Props): React.ReactElement => {
         >
           <LeftRow>
             <Icon src={branchIcon} />
-            <LabelSpan>
-              {"Branch"}
-            </LabelSpan>
+            <LabelSpan>{"Branch"}</LabelSpan>
           </LeftRow>
           <RightRow>
             {branch?.name && <ValueSpan>{branch?.name}</ValueSpan>}
@@ -417,78 +443,84 @@ const RemoteCurrentInfo = (props: Props): React.ReactElement => {
           )}
         </RightRow>
       </Row>
-      {!props?.repository?.branchState?.commitState?.isOffBranch && baseBranch && !props.isCopyMode && (
-        <Row style={{marginTop: 12}}>
-          {props?.isMerged && (
-            <LeftRow>
-              <Icon src={mergeIcon} />
-              <LabelSpan>Nothing to merge</LabelSpan>
-            </LeftRow>
-          )}
-          {!props?.isMerged && props?.isConflictFree && (
-            <LeftRow>
-              <Icon src={resolveIcon} />
-              <LabelSpan>No conflicts</LabelSpan>
-            </LeftRow>
-          )}
-          {!props?.isMerged && !props?.isConflictFree && (
-            <LeftRow>
-              <Icon src={abortIcon} />
-              <LabelSpan>Has conflicts</LabelSpan>
-            </LeftRow>
-          )}
-        </Row>
-      )}
-      {(!defaultBranchIsMatching || !branchHeadIsMatching) && !props.isCopyMode && (
-        <Row
-          style={{
-            marginTop: 12,
-            marginBottom: 12,
-            justifyContent: "space-between",
-            width: "100%",
-          }}
-        >
-          <LeftRow>
-            {branchHeadIsMatching && props.defaultBranchLink && (
-              <Link to={props.defaultBranchLink}>
-                <LinkLabelSpan>{"Go to default branch"}</LinkLabelSpan>
-              </Link>
+      {!props?.repository?.branchState?.commitState?.isOffBranch &&
+        baseBranch &&
+        !props.isCopyMode && (
+          <Row style={{ marginTop: 12 }}>
+            {props?.isMerged && (
+              <LeftRow>
+                <Icon src={mergeIcon} />
+                <LabelSpan>Nothing to merge</LabelSpan>
+              </LeftRow>
             )}
-            {!branchHeadIsMatching && props.currentHeadLink && (
-              <Link style={{ position: "relative" }} to={props.currentHeadLink}>
-                {!props?.isOffBranch && (
-                  <LinkLabelSpan>{"Go to branch head"}</LinkLabelSpan>
-                )}
-                {props?.isOffBranch && (
-                  <LinkLabelSpan>{"Go to default branch head"}</LinkLabelSpan>
-                )}
-                <BranchHeadNotification />
-              </Link>
+            {!props?.isMerged && props?.isConflictFree && (
+              <LeftRow>
+                <Icon src={resolveIcon} />
+                <LabelSpan>No conflicts</LabelSpan>
+              </LeftRow>
             )}
-          </LeftRow>
-          {elapsedTime && (
-            <TimeTextRow
-              style={{
-                justifyContent: "flex-end",
-              }}
-            >
-              {branchHeadIsMatching && (
-                <ElapseText>
-                  {"Last committed "}
-                  <ElapseSince>{elapsedTime}</ElapseSince>
-                </ElapseText>
+            {!props?.isMerged && !props?.isConflictFree && (
+              <LeftRow>
+                <Icon src={abortIcon} />
+                <LabelSpan>Has conflicts</LabelSpan>
+              </LeftRow>
+            )}
+          </Row>
+        )}
+      {(!defaultBranchIsMatching || !branchHeadIsMatching) &&
+        !props.isCopyMode && (
+          <Row
+            style={{
+              marginTop: 12,
+              marginBottom: 12,
+              justifyContent: "space-between",
+              width: "100%",
+            }}
+          >
+            <LeftRow>
+              {branchHeadIsMatching && props.defaultBranchLink && (
+                <Link to={props.defaultBranchLink}>
+                  <LinkLabelSpan>{"Go to default branch"}</LinkLabelSpan>
+                </Link>
               )}
-              {!branchHeadIsMatching && (
-                <ElapseText>
-                  {"Committed "}
-                  <ElapseSince>{elapsedTime}</ElapseSince>
-                </ElapseText>
+              {!branchHeadIsMatching && props.currentHeadLink && (
+                <Link
+                  style={{ position: "relative" }}
+                  to={props.currentHeadLink}
+                >
+                  {!props?.isOffBranch && (
+                    <LinkLabelSpan>{"Go to branch head"}</LinkLabelSpan>
+                  )}
+                  {props?.isOffBranch && (
+                    <LinkLabelSpan>{"Go to default branch head"}</LinkLabelSpan>
+                  )}
+                  <BranchHeadNotification />
+                </Link>
               )}
-            </TimeTextRow>
-          )}
-        </Row>
-      )}
-      {defaultBranchIsMatching && branchHeadIsMatching &&  !props.isCopyMode && (
+            </LeftRow>
+            {elapsedTime && (
+              <TimeTextRow
+                style={{
+                  justifyContent: "flex-end",
+                }}
+              >
+                {branchHeadIsMatching && (
+                  <ElapseText>
+                    {"Last committed "}
+                    <ElapseSince>{elapsedTime}</ElapseSince>
+                  </ElapseText>
+                )}
+                {!branchHeadIsMatching && (
+                  <ElapseText>
+                    {"Committed "}
+                    <ElapseSince>{elapsedTime}</ElapseSince>
+                  </ElapseText>
+                )}
+              </TimeTextRow>
+            )}
+          </Row>
+        )}
+      {defaultBranchIsMatching && branchHeadIsMatching && !props.isCopyMode && (
         <Row style={{ marginTop: 12, marginBottom: 12, width: "100%" }}>
           {elapsedTime && (
             <TimeTextRow
@@ -512,13 +544,40 @@ const RemoteCurrentInfo = (props: Props): React.ReactElement => {
           )}
         </Row>
       )}
-      {props?.showMergeRequest && !!props.mergeRequestLink && !props.isCopyMode && (
-        <Row>
-          <Link to={props.mergeRequestLink}>
-            <LinkLabelSpan>{`Go to open merge request "${props?.mergeRequest?.title}" [${props?.mergeRequest?.mergeRequestCount}]`}</LinkLabelSpan>
-          </Link>
-        </Row>
-      )}
+      {props?.showMergeRequest &&
+        !!props.mergeRequestLink &&
+        !props.isCopyMode && (
+          <Row>
+            <Link to={props.mergeRequestLink}>
+              <LinkLabelSpan>{`Go to open merge request "${props?.mergeRequest?.title}" [${props?.mergeRequest?.mergeRequestCount}]`}</LinkLabelSpan>
+            </Link>
+          </Row>
+        )}
+      {!props?.showMergeRequest &&
+        !!props.mergeRequestLink &&
+        !props.isCopyMode &&
+        defaultBranchIsMatching &&
+        branchHeadIsMatching && (
+          <ButtonRow style={{ marginTop: 8 }}>
+            <Button label={(
+              <BookmarkContainer>
+                <BookmarkIconImg src={BookmarkOutlineIcon}/>
+                <span>
+                  {"bookmark"}
+                </span>
+              </BookmarkContainer>
+            )} bg={"purple"} size={"medium"} />
+            <Button label={(
+              <BookmarkContainer>
+                <BookmarkIconImg src={SubscribeOutlineIcon}/>
+                <span>
+                  {"subscribe"}
+                </span>
+              </BookmarkContainer>
+
+            )} bg={"orange"} size={"medium"} />
+          </ButtonRow>
+        )}
     </Container>
   );
 };

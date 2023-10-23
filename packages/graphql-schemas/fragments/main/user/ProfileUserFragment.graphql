@@ -1,0 +1,39 @@
+fragment ProfileUser on User {
+  id
+  firstName
+  lastName
+  username
+  profilePhoto {
+    ...Photo
+  }
+  pluginCount
+  publicPlugins {
+    ...Plugin
+  }
+  publicRepositories {
+    id
+    name
+    repoType
+    hashKey
+    isPrivate
+    lastRepoUpdateAt
+    createdAt
+    updatedAt
+    user {
+      id
+      username
+    }
+    organization {
+      id
+      handle
+    }
+  }
+  organizations {
+    id
+    name
+    handle
+    profilePhoto {
+      ...Photo
+    }
+  }
+}

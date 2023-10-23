@@ -1,0 +1,13 @@
+query UserByUseranme($username: String!) {
+  userByUsername(username: $username) {
+    ... on User {
+      ...ProfileUser,
+      privateRepositories {
+        ...Repository
+      }
+      publicRepositories {
+        ...Repository
+      }
+    }
+  }
+}

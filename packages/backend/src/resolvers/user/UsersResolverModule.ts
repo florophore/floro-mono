@@ -70,6 +70,12 @@ export default class UsersResolverModule extends BaseResolverModule {
       );
       return await usersContext.getById(id);
     },
+    userByUsername: async (_root, { username }) => {
+      const usersContext = await this.contextFactory.createContext(
+        UsersContext
+      );
+      return await usersContext.getByUsername(username)
+    },
     currentUser: runWithHooks(
       () => [this.loggedInUserGuard],
       async (_root, _, { currentUser }) => {
@@ -291,7 +297,7 @@ export default class UsersResolverModule extends BaseResolverModule {
     },
     organizations: async (user, _, { currentUser, cacheKey }) => {
       if (user.id != currentUser.id) {
-        return null;
+        //return null;
       }
       const cachedOrganizations = this.requestCache.getUserOrganizations(
         cacheKey,
@@ -506,6 +512,7 @@ export default class UsersResolverModule extends BaseResolverModule {
         user?.id as string,
         false
       );
+      debugger;
       this.requestCache.setUserPublicPlugins(
         cacheKey,
         user as User,

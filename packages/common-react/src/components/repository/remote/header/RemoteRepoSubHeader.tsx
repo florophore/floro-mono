@@ -14,6 +14,7 @@ import { RemoteCommitState } from "../hooks/remote-state";
 import BranchSelector from "@floro/storybook/stories/repo-components/BranchSelector";
 import { Branch } from "floro/dist/src/repo";
 import HistoryBlue from "@floro/common-assets/assets/images/repo_icons/history.blue.svg";
+import SubscribeBlue from "@floro/common-assets/assets/images/icons/subscribe.blue.svg";
 import { useRepoLinkBase } from "../hooks/remote-hooks";
 
 import CopyLight from '@floro/common-assets/assets/images/repo_icons/copy.purple.svg';
@@ -152,6 +153,15 @@ const RemoteRepoSubHeader = (props: Props) => {
 
   }, [props.repository?.branchState, linkBase, props.plugin])
 
+  const psaLink = useMemo(() => {
+    if (!props.repository?.branchState?.branchId) {
+
+      return `${linkBase}/psa?from=remote&plugin=${props?.plugin ?? 'home'}`
+    }
+    return `${linkBase}/psa?from=remote&branch=${props.repository?.branchState?.branchId}&plugin=${props.plugin ?? 'home'}`
+
+  }, [props.repository?.branchState, linkBase, props.plugin])
+
   const warning = useMemo(() => {
     if (theme.name == "light") {
       return WarningLight;
@@ -174,6 +184,15 @@ const RemoteRepoSubHeader = (props: Props) => {
     return `${commitCount} commits`;
 
   }, [props.repository?.branchState?.commitsSize])
+
+  const psaText = useMemo(() => {
+    const commitCount = props.repository?.branchState?.commitsSize ?? 0;
+    if (commitCount == 1) {
+      return `1 PSA`
+    }
+    return `${0} PSAs`;
+
+  }, [props.repository?.branchState?.commitsSize])
   return (
     <>
         <Container>
@@ -187,12 +206,20 @@ const RemoteRepoSubHeader = (props: Props) => {
           </LeftContainer>
           <RightContainer>
             {!isSelectMode && (
+              <>
+              <Link to={psaLink} style={{marginRight: 24}}>
+                <CommitHistoryWrapper>
+                  <CommitHistoryIcon src={SubscribeBlue}/>
+                  <CommitText>{`${psaText}`}</CommitText>
+                </CommitHistoryWrapper>
+              </Link>
               <Link to={historyLink}>
                 <CommitHistoryWrapper>
                   <CommitHistoryIcon src={HistoryBlue}/>
                   <CommitText>{`${commitText}`}</CommitText>
                 </CommitHistoryWrapper>
               </Link>
+              </>
             )}
             {isSelectMode && (
               <CopyRow>

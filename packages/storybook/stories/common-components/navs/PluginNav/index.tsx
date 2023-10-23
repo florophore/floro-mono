@@ -50,11 +50,13 @@ const BottomWrapper = styled.div`
 `;
 
 export interface Props {
-    currentPlugin?: Plugin|null;
-    plugins: Plugin[];
-    onPressRegisterNewPlugin: () => void;
-    icons: {[key: string]: string};
-    linkPrefix: string;
+  currentPlugin?: Plugin | null;
+  plugins: Plugin[];
+  onPressRegisterNewPlugin: () => void;
+  icons: { [key: string]: string };
+  linkPrefix: string;
+  isProfileMode?: boolean;
+  canRegister: boolean;
 }
 
 const PluginNav = (props: Props) => {
@@ -75,13 +77,15 @@ const PluginNav = (props: Props) => {
           })}
         </TopWrapper>
         <BottomWrapper>
-          <Button
-            onClick={props.onPressRegisterNewPlugin}
-            label={"register new plugin"}
-            bg={"purple"}
-            size={"medium"}
-            textSize={"small"}
-          />
+          {!props?.isProfileMode && props.canRegister && (
+            <Button
+              onClick={props.onPressRegisterNewPlugin}
+              label={"register new plugin"}
+              bg={"purple"}
+              size={"medium"}
+              textSize={"small"}
+            />
+          )}
         </BottomWrapper>
       </Container>
       <GradientOverlay />

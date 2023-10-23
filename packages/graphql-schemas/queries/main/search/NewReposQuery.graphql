@@ -1,0 +1,39 @@
+query NewReposQuery($lastId: ID) {
+  newRepos(id: $lastId) {
+    ... on FetchNewReposResult {
+      hasMore
+      lastId
+      repos {
+        id
+        name
+        repoType
+        user {
+          id
+          username
+          profilePhoto {
+            id
+            thumbnailHash
+            thumbnailPath
+            thumbnailUrl
+            url
+          }
+        }
+        organization {
+          id
+          handle
+          profilePhoto {
+            id
+            thumbnailHash
+            thumbnailPath
+            thumbnailUrl
+            url
+          }
+        }
+      }
+    }
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+  }
+}

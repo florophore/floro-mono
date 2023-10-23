@@ -1,16 +1,11 @@
 import React, { useMemo, useCallback, useRef } from "react";
 import {
   Repository,
-  Plugin,
-  useGetPluginQuery,
   PluginVersion,
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
-import EditIconLight from "@floro/common-assets/assets/images/icons/edit.light.svg";
-import EditIconDark from "@floro/common-assets/assets/images/icons/edit.dark.svg";
-import semver from "semver";
-import { useCanUpdatePluginInRepo } from "../../local/hooks/local-hooks";
+import { Link } from "react-router-dom";
 
 import WarningLight from "@floro/common-assets/assets/images/icons/warning.light.svg";
 import WarningDark from "@floro/common-assets/assets/images/icons/warning.dark.svg";
@@ -57,23 +52,11 @@ const DisplayName = styled.span`
   font-family: "MavenPro";
   font-weight: 600;
   font-size: 1.2rem;
+  text-decoration: underline;
   color: ${(props) => props.theme.colors.connectionTextColor};
-`;
-
-const UpdateText = styled.span`
-  margin-top: 4px;
-  font-family: "MavenPro";
-  font-weight: 600;
-  font-size: 0.8rem;
-  color: ${(props) => props.theme.colors.standardText};
-`;
-
-const UpdateAvailableText = styled.span`
-  margin-top: 4px;
-  font-family: "MavenPro";
-  font-weight: 600;
-  font-size: 0.8rem;
-  color: ${(props) => props.theme.colors.updateAvailableTextColor};
+  &:hover {
+    color: ${(props) => props.theme.colors.linkColor} !important;
+  }
 `;
 
 const VersionNumber = styled.span`
@@ -81,21 +64,9 @@ const VersionNumber = styled.span`
   font-weight: 500;
   font-size: 1rem;
   color: ${(props) => props.theme.colors.connectionTextColor};
-`;
-
-const EditIconContainer = styled.div`
-  display: flex;
-  width: 40px;
-  height: 56px;
-  flex-direction: row;
-  justify-content: flex-end;
-  align-items: center;
-  cursor: pointer;
-`;
-
-const EditIcon = styled.img`
-  height: 24px;
-  width: 24px;
+  &:hover {
+    color: ${(props) => props.theme.colors.linkColor} !important;
+  }
 `;
 
 interface Props {
@@ -111,10 +82,11 @@ interface Props {
 const RemotePluginEditorRow = (props: Props) => {
   const theme = useTheme();
 
-  const pluginVersion = useMemo((): Plugin => {
-    return props.pluginVersions.find((p) => p.name == props.pluginName) as Plugin;
+  const pluginVersion = useMemo((): PluginVersion => {
+    return props.pluginVersions.find(
+      (p) => p.name == props.pluginName
+    ) as PluginVersion;
   }, [props.pluginVersions, props.pluginName]);
-
 
   const icon = useMemo(() => {
     if (theme.name == "light") {
@@ -134,40 +106,51 @@ const RemotePluginEditorRow = (props: Props) => {
     }
   }, [theme.name]);
 
+  const link = useMemo(() => {
+    if (pluginVersion.ownerType == "user_plugin") {
+      return `/user/@/${pluginVersion.user?.username}/plugins/${pluginVersion.name}/v/${pluginVersion.version}`;
+    }
+    return `/org/@/${pluginVersion.organization?.handle}/plugins/${pluginVersion.name}/v/${pluginVersion.version}`;
+  }, [pluginVersion]);
+
   return (
     <Row>
       <LeftSide>
         <Icon src={icon} ref={iconRef} onError={onIconError} />
       </LeftSide>
       <CenterInfo>
-        <DisplayName
-          style={{
-            color: props.isCompareMode
-              ? props.wasAdded
-                ? theme.colors.addedText
-                : props.wasRemoved
-                ? theme.colors.removedText
-                : theme.colors.connectionTextColor
-              : theme.colors.connectionTextColor
-          }}
-        >
-          {pluginVersion?.displayName}
-        </DisplayName>
+        <Link to={link}>
+          <DisplayName
+            style={{
+              color: props.isCompareMode
+                ? props.wasAdded
+                  ? theme.colors.addedText
+                  : props.wasRemoved
+                  ? theme.colors.removedText
+                  : theme.colors.connectionTextColor
+                : theme.colors.connectionTextColor,
+            }}
+          >
+            {pluginVersion?.displayName}
+          </DisplayName>
+        </Link>
       </CenterInfo>
       <RightSide>
-        <VersionNumber
-          style={{
-            color: props.isCompareMode
-              ? props.wasAdded
-                ? theme.colors.addedText
-                : props.wasRemoved
-                ? theme.colors.removedText
-                : theme.colors.connectionTextColor
-              : theme.colors.connectionTextColor
-          }}
-        >
-          {props.pluginVersion}
-        </VersionNumber>
+        <Link to={link}>
+          <VersionNumber
+            style={{
+              color: props.isCompareMode
+                ? props.wasAdded
+                  ? theme.colors.addedText
+                  : props.wasRemoved
+                  ? theme.colors.removedText
+                  : theme.colors.connectionTextColor
+                : theme.colors.connectionTextColor,
+            }}
+          >
+            {props.pluginVersion}
+          </VersionNumber>
+        </Link>
       </RightSide>
     </Row>
   );

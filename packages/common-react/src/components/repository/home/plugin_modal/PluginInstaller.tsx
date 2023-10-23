@@ -20,6 +20,7 @@ import WarningLabel from "@floro/storybook/stories/design-system/WarningLabel";
 import { Manifest } from "floro/dist/src/plugins";
 import { sortPluginVersions, transformLocalManifestToPartialPlugin } from "../../local/hooks/manifest-transforms";
 import DownstreamDependentsList from "./DownstreamDependentsList";
+import { Link } from "react-router-dom";
 
 import WarningLight from "@floro/common-assets/assets/images/icons/warning.light.svg";
 import WarningDark from "@floro/common-assets/assets/images/icons/warning.dark.svg";
@@ -109,6 +110,9 @@ const SubTitle = styled.span`
   font-weight: 500;
   font-size: 1rem;
   color: ${(props) => props.theme.colors.pluginDisplaySubTitle};
+  &:hover {
+    color: ${(props) => props.theme.colors.linkColor};
+  }
 `;
 
 const VersionSubTitle = styled.span`
@@ -254,6 +258,16 @@ const PluginInstaller = (props: Props) => {
       return "@" + plugin?.user?.username;
     }
     return "@" + plugin?.organization?.handle;
+  }, [plugin]);
+
+  const ownerLink = useMemo(() => {
+    if (!plugin?.ownerType) {
+      return "";
+    }
+    if (plugin?.ownerType == "user_plugin") {
+      return "/user/@/" + plugin?.user?.username;
+    }
+    return "/org/@/" + plugin?.organization?.handle;
   }, [plugin]);
 
   const compatabilityCheck = usePluginCompatabilityCheck(
@@ -413,10 +427,14 @@ const PluginInstaller = (props: Props) => {
           <TitleWrapper>
             <Title>{pluginVersion?.displayName}</Title>
             <SubTitleWrapper>
-              <SubTitle
-                style={{ fontWeight: 700 }}
-              >{`${pluginVersion?.name}`}</SubTitle>
-              <SubTitle>{usernameDisplay}</SubTitle>
+              <Link to={`${ownerLink}/plugins/${pluginVersion?.name}`}>
+                <SubTitle
+                  style={{ fontWeight: 700 }}
+                >{`${pluginVersion?.name}`}</SubTitle>
+              </Link>
+              <Link to={ownerLink}>
+                <SubTitle>{usernameDisplay}</SubTitle>
+              </Link>
             </SubTitleWrapper>
           </TitleWrapper>
         </VersionInfoContainer>

@@ -345,3 +345,12 @@ union MergeBranchResponse =
   | MergeBranchError
   | RepoSettingAccessError
   | UnAuthenticatedError
+
+
+type FetchNewReposResult {
+    repos: [Repository]
+    hasMore: Boolean
+    lastId: String
+}
+
+union FetchNewReposResponse = FetchNewReposResult | UnAuthenticatedError

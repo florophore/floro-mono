@@ -1,4 +1,5 @@
 import React, {useMemo} from 'react';
+import OrganizationSubscriber from "@floro/common-react/src/components/subscribers/OrganizationSubscriber";
 import OuterNavigator from '@floro/common-react/src/components/outer-navigator/OuterNavigator';
 import OrgHome from '@floro/common-react/src/components/orghome/OrgHome';
 import {useNavigationAnimator} from '@floro/common-react/src/navigation/navigation-animator';
@@ -42,9 +43,11 @@ const OrganizationPage = () => {
   });
 
   return (
-    <OuterNavigator outerNavTab={'org'} page={'organization'} title={title} organizationId={organization?.id ?? null}>
-      <OrgHome organization={organization}/>
-    </OuterNavigator>
+    <OrganizationSubscriber organizationId={organization?.id ?? null}>
+      <OuterNavigator outerNavTab={'org'} page={'organization'} title={title} organizationId={organization?.id ?? null}>
+        <OrgHome organization={organization}/>
+      </OuterNavigator>
+    </OrganizationSubscriber>
   );
 };
 

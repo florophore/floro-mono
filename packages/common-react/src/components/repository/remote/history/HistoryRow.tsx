@@ -122,6 +122,9 @@ const UsernameText = styled.p`
   font-family: "MavenPro";
   font-weight: 700;
   color: ${(props) => props.theme.colors.contrastText};
+  &:hover {
+    color: ${(props) => props.theme.colors.linkColor};
+  }
 `;
 
 const ElapseText = styled.p`
@@ -282,7 +285,9 @@ const HistoryRow = (props: Props) => {
             justifyContent: "flex-end",
           }}
         >
-          <UsernameText>{username}</UsernameText>
+          <Link to={`/user/@/${props.commit?.user?.username}`}>
+            <UsernameText>{username}</UsernameText>
+          </Link>
           <ElapseText>
             {"Committed "}
             <ElapseSince>{elapsedTime}</ElapseSince>
@@ -309,7 +314,9 @@ const HistoryRow = (props: Props) => {
               }}
             >
               <ElapseText>{"Authored by "}</ElapseText>
-              <UsernameText>{authorUsername}</UsernameText>
+              <Link to={`/user/@/${props.commit?.authorUser?.username}`}>
+                <UsernameText>{authorUsername}</UsernameText>
+              </Link>
             </TimeTextRow>
           </>
         )}

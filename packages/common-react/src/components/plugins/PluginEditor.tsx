@@ -4,6 +4,7 @@ import PluginNoVersion from "@floro/storybook/stories/common-components/PluginNo
 import PluginDetails from "./PluginDetails";
 import RegisterPluginModal from "./RegisterPluginModal";
 import {
+  Organization,
   Plugin,
   PluginVersion,
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
@@ -15,8 +16,11 @@ interface Props {
   linkPrefix: string;
   currentPlugin?: Plugin | null;
   currentVersion?: PluginVersion | null;
-  onPressOpenDocs: () => void;
+  onPressOpenDocs?: () => void;
   canRelease: boolean;
+  canRegister: boolean;
+  isProfileMode?: boolean;
+  organization?: Organization;
 }
 
 const PluginEditor = (props: Props) => {
@@ -34,11 +38,15 @@ const PluginEditor = (props: Props) => {
 
   const content = useMemo(() => {
     if (!props.currentVersion || !props.currentPlugin) {
+      if (props.isProfileMode) {
+        return null;
+      }
       return (
         <PluginNoVersion
           onPressOpenDocs={props.onPressOpenDocs}
           icons={icons}
           currentPlugin={props.currentPlugin}
+          organization={props.organization}
         />
       );
     }
@@ -49,18 +57,23 @@ const PluginEditor = (props: Props) => {
         linkPrefix={props.linkPrefix}
         icons={icons}
         canRelease={props.canRelease}
+        isProfileMode={props.isProfileMode}
+        organization={props.organization}
       />
     );
-  }, [props.currentPlugin, props.currentVersion, icons]);
+  }, [props.currentPlugin, props.currentVersion, icons, props.isProfileMode, props?.organization]);
 
   return (
     <>
       <PluginController
         linkPrefix={props.linkPrefix}
         currentPlugin={props.currentPlugin}
+        organization={props.organization}
         icons={icons}
         plugins={props.plugins}
         onPressRegisterNewPlugin={onPressRegisterNewPlugin}
+        isProfileMode={props.isProfileMode}
+        canRegister={props.canRegister}
       >
         <>{content}</>
       </PluginController>
@@ -68,6 +81,7 @@ const PluginEditor = (props: Props) => {
         accountType={props.accountType}
         show={showRegistry}
         onDismiss={onCloseRegisterNewPluginModal}
+        organization={props.organization}
       />
     </>
   );

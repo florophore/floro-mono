@@ -966,6 +966,7 @@ const RemoteVCSMergeRequest = (props: Props) => {
                     )}
                     {!props?.repository?.mergeRequest?.mergeRequestPermissions
                       ?.hasApproved &&
+                      props?.repository?.mergeRequest?.isOpen &&
                       !props?.repository?.mergeRequest?.mergeRequestPermissions
                         ?.hasBlocked && (
                         <ButtonRow>

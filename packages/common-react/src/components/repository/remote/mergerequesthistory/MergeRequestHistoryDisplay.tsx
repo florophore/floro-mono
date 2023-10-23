@@ -163,9 +163,8 @@ const MergeRequestHistoryDisplay = (props: Props) => {
     setSearchParams({
       id: paginatation?.nextId,
       filter_mr: filterMR,
-
-    });
-  }, [paginatation?.nextId, filterMR]);
+    }, { replace: true});
+  }, [paginatation?.nextId, filterMR, setSearchParams]);
 
   const onNewer = useCallback(() => {
     if (!paginatation?.lastId) {
@@ -174,9 +173,9 @@ const MergeRequestHistoryDisplay = (props: Props) => {
     setSearchParams({
       id: paginatation?.lastId,
       filter_mr: filterMR
-    });
+    }, { replace: true});
 
-  }, [paginatation?.lastId, filterMR]);
+  }, [paginatation?.lastId, filterMR, setSearchParams]);
 
   const hasNone = useMemo(() => {
     return mergeRequests?.length == 0;

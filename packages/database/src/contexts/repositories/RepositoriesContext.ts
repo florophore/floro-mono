@@ -135,4 +135,24 @@ export default class RepositoriesContext extends BaseContext {
       .orderBy(`LENGTH(repo.name)`, "ASC")
       .getMany();
   }
+
+  public async getPublicReposWithCommit(): Promise<Repository[]> {
+    const qb = this.repositoryRepo.createQueryBuilder("repo", this.queryRunner);
+    return await qb
+      .leftJoinAndSelect(
+        "repo.branches",
+        "branches",
+        "branches.branch_id = repo.default_branch_id AND branches.repository_id = repo.id"
+      )
+      .leftJoinAndSelect("repo.user", "user")
+      .leftJoinAndSelect("repo.organization", "organization")
+      .where(
+        `repo.is_private = false`
+      )
+      .andWhere(
+        `branches.last_commit IS NOT NULL`
+      )
+      .orderBy(`repo.created_at`, "DESC")
+      .getMany();
+  }
 }

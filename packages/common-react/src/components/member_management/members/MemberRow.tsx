@@ -9,6 +9,7 @@ import {
 import ColorPalette from "@floro/styles/ColorPalette";
 import TimeAgo from "javascript-time-ago";
 import Button from "@floro/storybook/stories/design-system/Button";
+import { Link } from "react-router-dom";
 
 const Container = styled.div`
   margin-top: 14px;
@@ -65,6 +66,9 @@ const HandleSubTitle = styled.p`
   color: ${(props) => props?.theme.colors.contrastText};
   font-weight: 500;
   font-size: 1.2rem;
+  &:hover {
+    color: ${(props) => props?.theme.colors.linkColor};
+  }
 `;
 
 const RolesContainer = styled.div`
@@ -230,12 +234,14 @@ const MemberRow = (props: Props): React.ReactElement => {
           />
           <UserNameContainers>
             <UserTitle>{userFullname}</UserTitle>
-            {props?.member?.membershipState == "active" && (
-              <HandleSubTitle>{usernameDisplay}</HandleSubTitle>
-            )}
-            {props?.member?.membershipState != "active" && (
-              <HandleSubTitle style={{color: ColorPalette.gray}}>{usernameDisplay}</HandleSubTitle>
-            )}
+            <Link to={`/user/@/${props.member.user?.username}`}>
+              {props?.member?.membershipState == "active" && (
+                <HandleSubTitle>{usernameDisplay}</HandleSubTitle>
+              )}
+              {props?.member?.membershipState != "active" && (
+                <HandleSubTitle style={{color: ColorPalette.gray}}>{usernameDisplay}</HandleSubTitle>
+              )}
+            </Link>
           </UserNameContainers>
         </UserInfo>
         {props?.member?.membershipState == "active" && (

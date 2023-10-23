@@ -40,6 +40,7 @@ export interface Props {
   linkPrefix: string;
   canRelease: boolean;
   onClickReleaseVersion: (version: PluginVersion) => void;
+  isProfileMode?: boolean;
 }
 
 const PluginVersionList = (props: Props) => {
@@ -74,7 +75,7 @@ const PluginVersionList = (props: Props) => {
     <SectionContainer>
       <TopRow>
         <SectionTitle>{"Versions"}</SectionTitle>
-        {hasAReleasedVersion && (
+        {hasAReleasedVersion && !props?.isProfileMode && (
           <DualToggle
             leftOption={{
               value: "all",

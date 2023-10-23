@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useCallback, useEffect } from "react";
 import RootModal from "../RootModal";
+import RootLongModal from "../RootLongModal";
 import styled from "@emotion/styled";
 import { css } from "@emotion/css";
 import { useTheme } from "@emotion/react";
@@ -26,6 +27,9 @@ import CheckMarkCircleLightIcon from "@floro/common-assets/assets/images/icons/c
 import CheckMarkCircleDarkIcon from "@floro/common-assets/assets/images/icons/check_mark_circle.dark.svg";
 import ToolTip from "@floro/storybook/stories/design-system/ToolTip";
 import DotsLoader from "@floro/storybook/stories/design-system/DotsLoader";
+import OrgOwnerDescriptor from "@floro/storybook/stories/common-components/OrgOwnerDescriptor";
+import PluginPrivateSelect from "@floro/storybook/stories/common-components/PluginPrivateSelect";
+import WarningLabel from "@floro/storybook/stories/design-system/WarningLabel";
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -132,11 +136,11 @@ interface Props {
 }
 
 const RegisterPluginModal = (props: Props) => {
-  const {setCurrentUser} = useSession();
   const [pluginName, setPluginName] = useState("");
   const [pluginNameIsFocused, setPluginNameIsFocused] = useState(false);
   const [isHoveringTooltip, setIsHoveringToolTip] = useState(false);
   const [isFocusedOnTooltip, setIsFocusedOnTooltip] = useState(false);
+  const [isPrivate, setIsPrivate] = useState(false);
   const profanityFilter = useMemo(() => new ProfanityFilter(), []);
   const theme = useTheme();
 
@@ -153,9 +157,6 @@ const RegisterPluginModal = (props: Props) => {
 
   useEffect(() => {
     if (registerUserPluginRequest?.data?.createUserPlugin?.__typename == "CreateUserPluginSuccess") {
-      //if (registerUserPluginRequest?.data?.createUserPlugin?.user) {
-      //  setCurrentUser(registerUserPluginRequest?.data?.createUserPlugin?.user);
-      //}
       props.onDismiss?.();
     }
   }, [registerUserPluginRequest?.data?.createUserPlugin?.__typename])
@@ -196,7 +197,7 @@ const RegisterPluginModal = (props: Props) => {
       registerOrgPlugin({
         variables: {
           name: pluginName,
-          isPrivate: false,
+          isPrivate,
           organizationId: props?.organization?.id as string,
         },
       });
@@ -208,14 +209,19 @@ const RegisterPluginModal = (props: Props) => {
     registerOrgPlugin,
     registerUserPlugin,
     props.organization,
+    isPrivate
   ]);
 
   const [checkPluginName, { data, loading }] = usePluginNameCheckLazyQuery({
     fetchPolicy: 'network-only', // Used for first execution
-    nextFetchPolicy: 'no-cache', 
+    nextFetchPolicy: 'no-cache',
   });
   const { currentUser } = useSession();
-  const offlinePhoto = useOfflinePhoto(currentUser?.profilePhoto ?? null);
+  const offlinePhoto = useOfflinePhoto(
+    props.accountType == "user"
+      ? currentUser?.profilePhoto ?? null
+      : props.organization?.profilePhoto
+  );
 
   const checkPluginNameDebounced = useCallback(
     debouncer(checkPluginName, 300),
@@ -313,7 +319,7 @@ const RegisterPluginModal = (props: Props) => {
     return null;
   }
   return (
-    <RootModal
+    <RootLongModal
       headerSize="small"
       headerChildren={title}
       show={props.show}
@@ -321,12 +327,27 @@ const RegisterPluginModal = (props: Props) => {
     >
       <ContentContainer>
         <TopContentContainer>
-          <div style={{ display: "inline-flex" }}>
-            <OwnerDescriptor
-              label="owner"
-              user={currentUser}
-              offlinePhoto={offlinePhoto}
-            />
+          <div
+            style={{
+              display: "inline-flex",
+              paddingLeft: 36,
+              paddingRight: 36,
+            }}
+          >
+            {props.accountType == "user" && (
+              <OwnerDescriptor
+                label="owner"
+                user={currentUser}
+                offlinePhoto={offlinePhoto}
+              />
+            )}
+            {props?.accountType == "org" && props?.organization && (
+              <OrgOwnerDescriptor
+                label="owner"
+                organization={props.organization}
+                offlinePhoto={offlinePhoto}
+              />
+            )}
           </div>
           <div style={{ marginTop: 32 }}>
             <div
@@ -438,6 +459,35 @@ const RegisterPluginModal = (props: Props) => {
               </div>
             </div>
           </div>
+          {props.accountType == "org" && (
+            <>
+              <div style={{
+                  marginTop: 32,
+                  display: "flex",
+                  paddingLeft: 36,
+                  paddingRight: 36,
+                  boxSizing: 'border-box'
+
+                }}>
+                <PluginPrivateSelect
+                  isPrivate={isPrivate}
+                  onChange={setIsPrivate}
+                />
+              </div>
+              <div style={{
+                  marginTop: 32,
+                  display: "flex",
+                  paddingLeft: 36,
+                  paddingRight: 36,
+                  boxSizing: 'border-box'
+
+                }}>
+                  {isPrivate && (
+                    <WarningLabel size="large" label={"You will not be able to make a private plugin public at a later date."} />
+                  )}
+              </div>
+            </>
+          )}
         </TopContentContainer>
         <BottomContentContainer>
           <Button
@@ -445,12 +495,12 @@ const RegisterPluginModal = (props: Props) => {
             isLoading={registerIsLoading}
             label={"register plugin"}
             bg={"purple"}
-            size={"big"}
+            size={"extra-big"}
             isDisabled={data?.checkPluginNameIsTaken?.exists || !canRegister}
           />
         </BottomContentContainer>
       </ContentContainer>
-    </RootModal>
+    </RootLongModal>
   );
 };
 

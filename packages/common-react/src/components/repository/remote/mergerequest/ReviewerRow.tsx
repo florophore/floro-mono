@@ -13,6 +13,7 @@ import ColorPalette from "@floro/styles/ColorPalette";
 import UserProfilePhoto from "@floro/storybook/stories/common-components/UserProfilePhoto";
 import DotsLoader from "@floro/storybook/stories/design-system/DotsLoader";
 import { useSession } from "../../../../session/session-context";
+import {Link} from "react-router-dom";
 
 const Container = styled.div`
   width: 100%;
@@ -63,6 +64,10 @@ const HandleTitle = styled.p`
   font-size: 1rem;
   color: ${(props) => props.theme.colors.contrastText};
   margin-top: 2px;
+  cursor: pointer;
+  &:hover {
+    color: ${(props) => props.theme.colors.linkColor};
+  }
 `;
 
 const StatusBlock = styled.div`
@@ -247,7 +252,9 @@ const ReviewerRow = (props: Props) => {
         <UserProfilePhoto user={props.reviewerRequest.requestedReviewerUser as User} size={48} offlinePhoto={null}/>
         <LeftColumn style={{marginLeft: 16}}>
           <NameTitle>{userFullname}</NameTitle>
-          <HandleTitle>{usernameDisplay}</HandleTitle>
+          <Link to={`/user/@/${props.reviewerRequest.requestedReviewerUser?.username}`}>
+            <HandleTitle>{usernameDisplay}</HandleTitle>
+          </Link>
         </LeftColumn>
       </LeftRow>
       <RightRow>

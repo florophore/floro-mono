@@ -168,7 +168,6 @@ const RemoteHomeRead = (props: Props) => {
 
   const theme = useTheme();
   const { compareFrom } = useRemoteCompareFrom();
-  const beforeCommitState = useBeforeCommitState(props.repository, props.page);
   const viewMode = useViewMode(props.page);
   const plugins = useMemo(() => {
     if (viewMode == "compare" && compareFrom == "before") {

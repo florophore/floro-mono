@@ -102,6 +102,20 @@ const Line = styled.div`
   margin-bottom: 8px;
 `;
 
+const MainUser = styled.span`
+  cursor: pointer;
+  &:hover {
+    color: ${props => props.theme.colors.linkColor};
+  }
+`;
+
+const BoldLink = styled.b`
+  cursor: pointer;
+  &:hover {
+    color: ${props => props.theme.colors.linkColor};
+  }
+`;
+
 
 const upcaseFirst = (str: string) => {
   const rest = str.substring(1);
@@ -226,8 +240,14 @@ const TimelineRow = (props: Props) => {
   const lastName = useMemo(() => upcaseFirst(props.event.performedByUser?.lastName ?? ""), [props.event.performedByUser?.lastName]);
 
   const userFullname = useMemo(() => {
-    return `${firstName} ${lastName}`;
-  }, [firstName, lastName]);
+    return (
+      <Link to={`/user/@/${props.event.performedByUser?.username}`}>
+        <MainUser>
+          {`${firstName} ${lastName}`}
+        </MainUser>
+      </Link>
+    )
+  }, [firstName, lastName, props.event.performedByUser?.username]);
 
   const action = useMemo(() => {
     if (props.event.eventName == "CREATE_MERGE_REQUEST") {
@@ -312,9 +332,11 @@ const TimelineRow = (props: Props) => {
         return (
           <span>
             {'added '}
-            <b>
-              {reviwerFullName}
-            </b>
+            <Link to={`/user/@/${props?.event?.reviewerRequest?.requestedReviewerUser?.username}`}>
+              <BoldLink>
+                {reviwerFullName}
+              </BoldLink>
+            </Link>
             {' as a reviewer'}
           </span>
         );
@@ -327,9 +349,11 @@ const TimelineRow = (props: Props) => {
               {'Approved'}
             </b>
             {' merge request for '}
-            <b>
+            <Link to={homeLink + "&sha=" + props.event.branchHeadShaAtEvent}>
+              <b style={{color: theme.colors.linkColor}}>
               {`(${props.event.branchHeadShaAtEvent?.substring(0, 6)})`}
-            </b>
+              </b>
+            </Link>
           </span>
         );
     }
@@ -341,9 +365,11 @@ const TimelineRow = (props: Props) => {
               {'Blocked'}
             </b>
             {' merge request for '}
-            <b>
+            <Link to={homeLink + "&sha=" + props.event.branchHeadShaAtEvent}>
+              <b style={{color: theme.colors.linkColor}}>
               {`(${props.event.branchHeadShaAtEvent?.substring(0, 6)})`}
-            </b>
+              </b>
+            </Link>
           </span>
         );
     }
@@ -351,9 +377,11 @@ const TimelineRow = (props: Props) => {
         return (
           <span>
             {'removed review for '}
-            <b>
+            <Link to={homeLink + "&sha=" + props.event.branchHeadShaAtEvent}>
+              <b style={{color: theme.colors.linkColor}}>
               {`(${props.event.branchHeadShaAtEvent?.substring(0, 6)})`}
-            </b>
+              </b>
+            </Link>
           </span>
         );
 

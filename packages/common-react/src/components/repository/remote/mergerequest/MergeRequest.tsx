@@ -186,7 +186,6 @@ const MergeRequest = (props: Props) => {
   const theme = useTheme();
   const { isEditting, setIsEditting } = useMergeRequestNavContext();
   const container = useRef<HTMLDivElement>(null);
-  const [commentText, setCommentText] = useState("");
 
   const onEdit = useCallback(() => {
     if (

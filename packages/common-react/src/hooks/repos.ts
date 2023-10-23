@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Organization, Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import { Organization, Repository, User } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import { useDaemonIsConnected } from "../pubsub/socket";
@@ -54,6 +54,45 @@ export const useOrgRepos = (org?: Organization) => {
   const publicRepositories = useMemo(() => {
     return org?.publicRepositories ?? [];
   }, [org?.publicRepositories]);
+  const repositories = useMemo(() => {
+    return [...privateRepositories, ...publicRepositories].sort(
+      (repoA, repoB) => {
+        if (!repoA?.lastRepoUpdateAt && !repoB?.lastRepoUpdateAt) {
+          return 0;
+        }
+        if (!repoA?.lastRepoUpdateAt) {
+          return 1;
+        }
+        if (!repoB?.lastRepoUpdateAt) {
+          return -1;
+        }
+        if (repoA.lastRepoUpdateAt == repoB.lastRepoUpdateAt) {
+          return 0;
+        }
+        if (repoA.lastRepoUpdateAt > repoB.lastRepoUpdateAt) {
+          return -1;
+        }
+        return 1;
+      }
+    );
+  }, [privateRepositories, publicRepositories]);
+  return useMemo(
+    () => ({
+      privateRepositories,
+      publicRepositories,
+      repositories,
+    }),
+    [privateRepositories, publicRepositories, repositories]
+  );
+};
+
+export const useUserRepos = (user?: User) => {
+  const privateRepositories = useMemo(() => {
+    return user?.privateRepositories ?? [];
+  }, [user?.privateRepositories]);
+  const publicRepositories = useMemo(() => {
+    return user?.publicRepositories ?? [];
+  }, [user?.publicRepositories]);
   const repositories = useMemo(() => {
     return [...privateRepositories, ...publicRepositories].sort(
       (repoA, repoB) => {

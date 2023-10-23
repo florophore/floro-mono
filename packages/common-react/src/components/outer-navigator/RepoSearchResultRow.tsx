@@ -107,16 +107,6 @@ const RepoSearchResultRow = (props: Props) => {
     return props.repoResult?.name;
   }, [props.repoResult?.name]);
 
-  const onClick = useCallback(() => {
-    //const params = {};
-    //for(let [key, value] of searchParams.entries()) {
-    //  params[key] = value;
-    //}
-    //params["plugin"] = props.pluginVersion.name;
-    //setSearchParams(params)
-  }, []);
-
-
   return (
     <Row style={{
         background: props.isSelected ? theme.colors.highlightedOptionBackgroundColor : theme.background

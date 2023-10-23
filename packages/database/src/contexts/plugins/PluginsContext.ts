@@ -149,6 +149,18 @@ export default class PluginsContext extends BaseContext {
     });
   }
 
+  public async getPublicReleasedPluginsByCreatedAtDesc(): Promise<Plugin[]> {
+    return await this.queryRunner.manager.find(Plugin, {
+      where: [
+        { isPrivate: false, lastReleasedPublicPluginVersion: Not(IsNull()) },
+      ],
+      order: {
+        createdAt: 'DESC'
+      },
+      relations: READ_RELATIONS
+    });
+  }
+
   public async getPublicReleasedPlugins(): Promise<Plugin[]> {
     return await this.queryRunner.manager.find(Plugin, {
       where: [

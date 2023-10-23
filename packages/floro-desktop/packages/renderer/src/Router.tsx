@@ -28,6 +28,8 @@ import OrgRemoteApiHome from './apikeys/OrgRemoteApiHome';
 import OrgRemoteWebhookHome from './apikeys/OrgRemoteWebhookHome';
 import RepoHomeApiSettingsPage from './repository/RepoHomeApiSettingsPage';
 import UserProfilePage from './user_profile/UserProfilePage';
+import UserProfilePluginsPage from './user_plugins/UserProfilePluginsPage';
+import OrgPluginsPage from './org_plugins/OrgPluginsPage';
 
 const Router = (): React.ReactElement => {
     const location = useLocation();
@@ -67,12 +69,13 @@ const Router = (): React.ReactElement => {
           <Route path="/org/@/:handle/billing/invoices" element={<OrganizationRolesPage/>} />
 
           <Route path="/user/@/:handle" element={<UserProfilePage />} />
-          <Route path="/user/@/:handle/plugins" element={<UserPluginsPage />} />
-          <Route path="/user/@/:handle/plugins/:plugin/v/:version" element={<UserPluginsPage />} />
-          <Route path="/user/@/:handle/plugins/:plugin" element={<UserPluginsPage />} />
+          <Route path="/user/@/:handle/plugins" element={<UserProfilePluginsPage />} />
+          <Route path="/user/@/:handle/plugins/:plugin/v/:version" element={<UserProfilePluginsPage />} />
+          <Route path="/user/@/:handle/plugins/:plugin" element={<UserProfilePluginsPage />} />
 
-          <Route path="/org/@/:handle/plugins/:plugin/v/:version" element={<UserPluginsPage />} />
-          <Route path="/org/@/:handle/plugins/:plugin" element={<UserPluginsPage />} />
+          <Route path="/org/@/:handle/plugins" element={<OrgPluginsPage/>} />
+          <Route path="/org/@/:handle/plugins/:plugin/v/:version" element={<OrgPluginsPage/>} />
+          <Route path="/org/@/:handle/plugins/:plugin" element={<OrgPluginsPage/>} />
 
           <Route path="/repo/@/:ownerHandle/:repoName/history" element={<RepoHistoryPage page={'history'}/>} />
           <Route path="/repo/@/:ownerHandle/:repoName/settings" element={<RepoHomeSettingsPage/>} />

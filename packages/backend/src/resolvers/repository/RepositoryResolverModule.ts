@@ -73,7 +73,9 @@ import ApiKeysContext from "@floro/database/src/contexts/api_keys/ApiKeysContext
 import WebhookKeysContext from "@floro/database/src/contexts/api_keys/WebhookKeysContext";
 import RepoEnabledApiKeyService from "../../services/api_keys/RepoEnabledApiKeyService";
 import RepoEnabledWebhookKeyService from "../../services/api_keys/RepoEnabledWebhookKeyService";
+import RepositoriesContext from "@floro/database/src/contexts/repositories/RepositoriesContext";
 
+const NEW_REPOS_PAGINATION_SIZE = 10;
 const PAGINATION_LIMIT = 10;
 
 @injectable()
@@ -2584,6 +2586,58 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         };
       }
     ),
+
+    newRepos: runWithHooks(
+      () => [this.loggedInUserGuard],
+      async (_, args: main.QueryNewReposArgs) => {
+        const repositoriesContext = await this.contextFactory.createContext(
+          RepositoriesContext
+        );
+        const publicRepos = await repositoriesContext.getPublicReposWithCommit();
+
+        if (!args.id) {
+          const out = publicRepos.slice(
+            0,
+            NEW_REPOS_PAGINATION_SIZE
+          );
+          const lastId = out?.[out.length - 1]?.id ?? null;
+          const hasMore = out.length < publicRepos.length;
+          return {
+            __typename: "FetchNewReposResult",
+            repos: out,
+            lastId,
+            hasMore,
+          };
+        }
+        const out: Array<Repository> = [];
+        let i: number = 0;
+        for (; i < publicRepos.length; ++i) {
+          if (publicRepos[i]?.id == args.id) {
+            for (
+              let j = i + 1;
+              j <
+              Math.min(
+                i + 1 + NEW_REPOS_PAGINATION_SIZE,
+                publicRepos.length
+              );
+              ++j
+            ) {
+              out.push(publicRepos[j]);
+            }
+            const lastId = out?.[out.length - 1]?.id ?? null;
+            return {
+              __typename: "FetchNewReposResult",
+              repos: out,
+              lastId,
+              hasMore:
+                i + 1 + NEW_REPOS_PAGINATION_SIZE <
+                publicRepos.length,
+            };
+          }
+        }
+        return null;
+      }
+    ),
   };
 
   public Mutation: main.MutationResolvers = {
@@ -3936,15 +3990,16 @@ export default class RepositoryResolverModule extends BaseResolverModule {
             };
           }
         }
-        const didSucceed = await this.repoEnabledWebhookKeyService.addEnabledWebhookKey(
-          repository as Repository,
-          currentUser,
-          webhookKey,
-          args.protocol ?? null,
-          args.port ?? null,
-          args.subdomain ?? null,
-          args.uri ?? null
-        );
+        const didSucceed =
+          await this.repoEnabledWebhookKeyService.addEnabledWebhookKey(
+            repository as Repository,
+            currentUser,
+            webhookKey,
+            args.protocol ?? null,
+            args.port ?? null,
+            args.subdomain ?? null,
+            args.uri ?? null
+          );
         if (!didSucceed) {
           return {
             __typename: "RepositoryWebhookKeyError",
@@ -3954,7 +4009,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         }
         return {
           __typename: "RepositoryWebhookKeySuccess",
-          repository
+          repository,
         };
       }
     ),
@@ -4022,14 +4077,15 @@ export default class RepositoryResolverModule extends BaseResolverModule {
             };
           }
         }
-        const didSucceed = await this.repoEnabledWebhookKeyService.updateEnabledWebhookKey(
-          repositoryEnabledWebhookKey,
-          webhookKey,
-          args.protocol ?? null,
-          args.port ?? null,
-          args.subdomain ?? null,
-          args.uri ?? null
-        );
+        const didSucceed =
+          await this.repoEnabledWebhookKeyService.updateEnabledWebhookKey(
+            repositoryEnabledWebhookKey,
+            webhookKey,
+            args.protocol ?? null,
+            args.port ?? null,
+            args.subdomain ?? null,
+            args.uri ?? null
+          );
         if (!didSucceed) {
           return {
             __typename: "RepositoryWebhookKeyError",
@@ -4039,16 +4095,13 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         }
         return {
           __typename: "RepositoryWebhookKeySuccess",
-          repository
+          repository,
         };
       }
     ),
     removeEnabledWebhookKey: runWithHooks(
       () => [this.repoApiSettingAccessGuard],
-      async (
-        _,
-        args: main.MutationRemoveEnabledWebhookKeyArgs,
-      ) => {
+      async (_, args: main.MutationRemoveEnabledWebhookKeyArgs) => {
         const repository = await this.repoDataService.fetchRepoById(
           args.repositoryId
         );
@@ -4071,11 +4124,11 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           };
         }
         await this.repoEnabledWebhookKeyService.removeEnabledApiKey(
-          repositoryEnabledWebhookKey,
+          repositoryEnabledWebhookKey
         );
         return {
           __typename: "RepositoryWebhookKeySuccess",
-          repository
+          repository,
         };
       }
     ),

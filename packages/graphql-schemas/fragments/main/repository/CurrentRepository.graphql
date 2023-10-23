@@ -56,6 +56,15 @@ fragment CurrentRepository on Repository {
         manifest
         entryUrl
         managedCopy
+        ownerType
+        user {
+          id
+          username
+        }
+        organization {
+          id
+          handle
+        }
       }
       authorUser {
         id

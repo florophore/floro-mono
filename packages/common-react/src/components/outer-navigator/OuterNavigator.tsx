@@ -400,6 +400,7 @@ const OuterNavigator = (props: Props) => {
     }
     if (event?.code == "Enter") {
       onSelectIndex(selectedIndex);
+      searchRef.current?.blur();
     }
   }, [selectedIndex, searchResults, searchLength, onSelectIndex]);
 

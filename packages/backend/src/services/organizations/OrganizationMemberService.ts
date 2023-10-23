@@ -79,7 +79,7 @@ export default class OrganizationMemberService {
       if (!filterDeactivated) {
         return true;
       }
-      return m.membershipState == "active";
+      return m.membershipState != "active";
     }).sort((a, b) => {
       const aName = `${a.user?.firstName} ${a.user?.lastName}`.toLowerCase();
       const bName = `${b.user?.firstName} ${b.user?.lastName}`.toLowerCase();

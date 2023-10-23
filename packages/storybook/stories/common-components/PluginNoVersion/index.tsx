@@ -4,6 +4,7 @@ import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import Button from "../../design-system/Button";
 import LinkWhite from "@floro/common-assets/assets/images/icons/link.dark.svg";
+import { Organization } from "@floro/graphql-schemas/build/generated/main-client-graphql";
 
 const Container = styled.div`
   height: 100%;
@@ -98,8 +99,9 @@ We can't wait to see what you make!
 
 export interface Props {
   currentPlugin?: Plugin | null;
+  organization?: Organization;
   icons: { [key: string]: string };
-  onPressOpenDocs: () => void;
+  onPressOpenDocs?: () => void;
 }
 
 const PluginNoVersion = (props: Props) => {

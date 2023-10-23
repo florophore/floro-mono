@@ -127,7 +127,8 @@ const UserPluginsPage = () => {
         linkPrefix={'/home/plugins'}
         accountType={'user'}
         plugins={plugins}
-        canRelease={true}
+        canRelease
+        canRegister
       />
     </OuterNavigator>
   );

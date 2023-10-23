@@ -24,6 +24,8 @@ import RootRepositoryLoader from "../hooks/loaders/Root/RepositoryID/RepositoryL
 import { User } from "@floro/database/src/entities/User";
 import RepoDataService from "../../services/repositories/RepoDataService";
 
+const NEW_PLUGINS_PAGINATION_SIZE = 12;
+
 @injectable()
 export default class PluginResolverModule extends BaseResolverModule {
   public resolvers: Array<keyof this & keyof main.ResolversTypes> = [
@@ -68,7 +70,7 @@ export default class PluginResolverModule extends BaseResolverModule {
     this.loggedInUserGuard = loggedInUserGuard;
     this.rootOrganizationMemberPermissionsLoader =
       rootOrganizationMemberPermissionsLoader;
-      this.repositoryLoader = repositoryLoader;
+    this.repositoryLoader = repositoryLoader;
   }
 
   private sortBySemver(pluginVersions: DBPluginVersion[]): DBPluginVersion[] {
@@ -82,6 +84,12 @@ export default class PluginResolverModule extends BaseResolverModule {
 
   public Query: main.QueryResolvers = {
     checkPluginNameIsTaken: async (_, { pluginName }) => {
+      if (pluginName?.trim().toLowerCase() == "home") {
+        return {
+          exists: true,
+          pluginName: (pluginName ?? "").toLowerCase().trim(),
+        };
+      }
       const exists = await this.pluginRegistryService.checkPluginNameIsTaken(
         pluginName ?? ""
       );
@@ -174,11 +182,62 @@ export default class PluginResolverModule extends BaseResolverModule {
           pluginsContext.getByName("icons"),
         ]);
 
-        const plugins =  suggestedPlugins?.filter(v => v != null);
+        const plugins = suggestedPlugins?.filter((v) => v != null);
         return {
           __typename: "FetchSuggestedPluginsResult",
-          plugins
+          plugins,
+        };
+      }
+    ),
+    newPlugins: runWithHooks(
+      () => [this.loggedInUserGuard],
+      async (_, args: main.QueryNewPluginsArgs) => {
+        const pluginsContext = await this.contextFactory.createContext(
+          PluginsContext
+        );
+        const publicReleasedPlugins =
+          await pluginsContext.getPublicReleasedPluginsByCreatedAtDesc();
+        if (!args.id) {
+          const out = publicReleasedPlugins.slice(
+            0,
+            NEW_PLUGINS_PAGINATION_SIZE
+          );
+          const lastId = out?.[out.length - 1]?.id ?? null;
+          const hasMore = out.length < publicReleasedPlugins.length;
+          return {
+            __typename: "FetchNewPluginsResult",
+            plugins: out,
+            lastId,
+            hasMore,
+          };
         }
+        const out: Array<DBPlugin> = [];
+        let i: number = 0;
+        for (; i < publicReleasedPlugins.length; ++i) {
+          if (publicReleasedPlugins[i]?.id == args.id) {
+            for (
+              let j = i + 1;
+              j <
+              Math.min(
+                i + 1 + NEW_PLUGINS_PAGINATION_SIZE,
+                publicReleasedPlugins.length
+              );
+              ++j
+            ) {
+              out.push(publicReleasedPlugins[j]);
+            }
+            const lastId = out?.[out.length - 1]?.id ?? null;
+            return {
+              __typename: "FetchNewPluginsResult",
+              plugins: out,
+              lastId,
+              hasMore:
+                i + 1 + NEW_PLUGINS_PAGINATION_SIZE <
+                publicReleasedPlugins.length,
+            };
+          }
+        }
+        return null;
       }
     ),
     searchPluginsForRepository: async (_, { query, repositoryId }, context) => {
@@ -231,33 +290,38 @@ export default class PluginResolverModule extends BaseResolverModule {
 
   public Plugin: main.PluginResolvers = {
     versions: runWithHooks(
-      () => [
-        this.repositoryLoader
-      ],
-      async (plugin, { repositoryId}: main.PluginVersionsArgs, { cacheKey, currentUser }: any) => {
+      () => [this.repositoryLoader],
+      async (
+        plugin,
+        { repositoryId }: main.PluginVersionsArgs,
+        { cacheKey, currentUser }: any
+      ) => {
         const dbPlugin = plugin as DBPlugin;
         const repository = repositoryId
           ? this.requestCache.getRepo(cacheKey, repositoryId)
           : undefined;
-        const membership = currentUser?.id ? this.requestCache.getOrganizationMembership(
-          cacheKey,
-          dbPlugin.id,
-          currentUser?.id
-        ) : null;
+        const membership = currentUser?.id
+          ? this.requestCache.getOrganizationMembership(
+              cacheKey,
+              dbPlugin.organizationId,
+              currentUser?.id
+            )
+          : null;
         // public user plugin
-        if (
-          !dbPlugin?.isPrivate &&
-          dbPlugin.ownerType == "user_plugin"
-        ) {
+        if (!dbPlugin?.isPrivate && dbPlugin.ownerType == "user_plugin") {
           // in this case, show all versions
-          return this.sortBySemver(dbPlugin?.versions ?? [])?.filter(p => {
+          return this.sortBySemver(dbPlugin?.versions ?? [])?.filter((p) => {
             if (p.state != "released") {
               if (currentUser?.id == dbPlugin.userId) {
                 if (!repository) {
                   return true;
                 }
-                return repository?.repoType == "user_repo" && repository?.userId == dbPlugin?.userId;
+                return (
+                  repository?.repoType == "user_repo" &&
+                  repository?.userId == dbPlugin?.userId
+                );
               }
+              return false;
             }
             return true;
           });
@@ -267,10 +331,13 @@ export default class PluginResolverModule extends BaseResolverModule {
           membership &&
           membership.membershipState == "active"
         ) {
-          if (dbPlugin.isPrivate && dbPlugin.organizationId != repository?.organizationId) {
+          if (
+            dbPlugin.isPrivate &&
+            dbPlugin.organizationId != repository?.organizationId
+          ) {
             return [];
           }
-          return this.sortBySemver(dbPlugin?.versions ?? [])?.filter(p => {
+          return this.sortBySemver(dbPlugin?.versions ?? [])?.filter((p) => {
             if (p.state != "released") {
               if (!repository) {
                 return true;
@@ -289,7 +356,7 @@ export default class PluginResolverModule extends BaseResolverModule {
           }
           if (repository?.userId == dbPlugin.userId) {
             if (dbPlugin.ownerType != "user_plugin") {
-              return []
+              return [];
             }
 
             return this.sortBySemver(
@@ -298,7 +365,10 @@ export default class PluginResolverModule extends BaseResolverModule {
                   if (!repository) {
                     return true;
                   }
-                  return repository?.repoType == "user_repo" && repository?.userId == dbPlugin.userId;
+                  return (
+                    repository?.repoType == "user_repo" &&
+                    repository?.userId == dbPlugin.userId
+                  );
                 }
                 return v.state == "released";
               }) ?? []
@@ -343,7 +413,7 @@ export default class PluginResolverModule extends BaseResolverModule {
         const dbPlugin = plugin as DBPlugin;
         const membership = this.requestCache.getOrganizationMembership(
           cacheKey,
-          dbPlugin.id,
+          dbPlugin.organizationId,
           currentUser?.id
         );
         if (!plugin.isPrivate) {
@@ -371,7 +441,7 @@ export default class PluginResolverModule extends BaseResolverModule {
         const dbPlugin = plugin as DBPlugin;
         const membership = this.requestCache.getOrganizationMembership(
           cacheKey,
-          dbPlugin.id,
+          dbPlugin.organizationId,
           currentUser?.id
         );
         if (!plugin.isPrivate) {
@@ -399,7 +469,7 @@ export default class PluginResolverModule extends BaseResolverModule {
         const dbPlugin = plugin as DBPlugin;
         const membership = this.requestCache.getOrganizationMembership(
           cacheKey,
-          dbPlugin.id,
+          dbPlugin.organizationId,
           currentUser?.id
         );
         if (
@@ -452,7 +522,7 @@ export default class PluginResolverModule extends BaseResolverModule {
         const dbPlugin = plugin as DBPlugin;
         const membership = this.requestCache.getOrganizationMembership(
           cacheKey,
-          dbPlugin.id,
+          dbPlugin.organizationId,
           currentUser?.id
         );
         if (
@@ -506,7 +576,7 @@ export default class PluginResolverModule extends BaseResolverModule {
         const dbPlugin = plugin as DBPlugin;
         const membership = this.requestCache.getOrganizationMembership(
           cacheKey,
-          dbPlugin.id,
+          dbPlugin?.organizationId,
           currentUser?.id
         );
         if (
@@ -560,7 +630,7 @@ export default class PluginResolverModule extends BaseResolverModule {
         const dbPlugin = plugin as DBPlugin;
         const membership = this.requestCache.getOrganizationMembership(
           cacheKey,
-          dbPlugin.id,
+          dbPlugin?.organizationId,
           currentUser?.id
         );
         if (
@@ -614,7 +684,7 @@ export default class PluginResolverModule extends BaseResolverModule {
         const dbPlugin = plugin as DBPlugin;
         const membership = this.requestCache.getOrganizationMembership(
           cacheKey,
-          dbPlugin.id,
+          dbPlugin?.organizationId,
           currentUser?.id
         );
         if (

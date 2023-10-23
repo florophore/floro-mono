@@ -1425,8 +1425,14 @@ export default class MergeRequestService
     const branchRule: BranchRuleSettings | undefined | null = !!baseBranch
       ? userRepoSettings?.branchRules.find((b) => b?.branchId == baseBranch?.id)
       : null;
-    const canCreateMergeRequest = branchRule?.canCreateMergeRequests ?? true;
-    if (!canCreateMergeRequest) {
+
+    const canEditReviewers =
+      mergeRequest.isOpen &&
+      ((branchRule?.canApproveMergeRequests ?? userRepoSettings?.canPushBranches ?? false) ||
+      (repository?.repoType == "user_repo"
+        ? !!user?.id && user?.id == repository?.userId
+        : mergeRequest?.openedByUserId == user?.id));
+    if (!canEditReviewers) {
       return {
         action: "INVALID_PERMISSIONS_ERROR",
         error: {

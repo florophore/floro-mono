@@ -1,6 +1,7 @@
 extend type Query {
   fetchRepositoryByName(ownerHandle: String, repoName: String): FetchRepositoryResponse
   fetchRepositoryById(id: ID!): FetchRepositoryResponse
+  newRepos(id: ID): FetchNewReposResponse
 }
 
 extend type Mutation {

@@ -252,20 +252,15 @@ const OrgHome = (props: Props) => {
                   </div>
                 )}
                 <div style={{ marginTop: 16, display: "flex" }}>
-                  <PluginsTab pluginCount={0} />
+                  {((props?.organization?.pluginCount ?? 0) > 0 || props.organization?.membership?.membershipState == "active") && (
+                    <Link to={`/org/@/${props?.organization?.handle}/plugins`}>
+                      <PluginsTab pluginCount={props?.organization?.pluginCount ?? 0} isClickable={true} />
+                    </Link>
+                  )}
+                  {((props?.organization?.pluginCount ?? 0) == 0 && props.organization?.membership?.membershipState != "active") && (
+                    <PluginsTab pluginCount={props?.organization?.pluginCount ?? 0} isClickable={false} />
+                  )}
                 </div>
-                {false && (
-                  <div style={{ marginTop: 16, display: "flex" }}>
-                    <StorageTab
-                      utilizedDiskSpaceBytes={
-                        props?.organization?.utilizedDiskSpaceBytes ?? 0
-                      }
-                      diskSpaceLimitBytes={
-                        props?.organization?.diskSpaceLimitBytes ?? 0
-                      }
-                    />
-                  </div>
-                )}
                 {props?.organization?.membership?.permissions?.canModifyBilling && (
                   <div style={{ marginTop: 16, display: "flex" }}>
                     <BillingTab />

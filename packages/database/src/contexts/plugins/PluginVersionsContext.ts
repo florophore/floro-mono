@@ -46,6 +46,8 @@ export default class PluginsVersionsContext extends BaseContext {
     return await this.queryRunner.manager.findOne(PluginVersion, {
       where: { name, version },
       relations: {
+        user: true,
+        organization: true,
         dependencies: {
           dependencyPluginVersion: {
             user: true,
@@ -67,6 +69,8 @@ export default class PluginsVersionsContext extends BaseContext {
     return await this.queryRunner.manager.find(PluginVersion, {
       where: { nameKey },
       relations: {
+        user: true,
+        organization: true,
         dependencies: {
           dependencyPluginVersion: {
             user: true,
@@ -81,6 +85,8 @@ export default class PluginsVersionsContext extends BaseContext {
     return await this.queryRunner.manager.find(PluginVersion, {
       where: { pluginId },
       relations: {
+        user: true,
+        organization: true,
         dependencies: {
           dependencyPluginVersion: {
             user: true,
@@ -95,6 +101,8 @@ export default class PluginsVersionsContext extends BaseContext {
     return await this.queryRunner.manager.find(PluginVersion, {
       where: { id: In(ids) },
       relations: {
+        user: true,
+        organization: true,
         dependencies: {
           dependencyPluginVersion: {
             user: true,

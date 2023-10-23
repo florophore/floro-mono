@@ -494,6 +494,7 @@ const RemoteVCSNavHome = (props: Props) => {
           {!isSelectMode && (
             <>
               {props?.repository?.branchState?.showMergeAndDeleteOptions &&
+                !props?.repository?.branchState?.openMergeRequest?.id &&
                 !props?.repository?.branchState?.commitState?.isOffBranch && (
                   <ButtonRow>
                     <Button

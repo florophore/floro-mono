@@ -185,7 +185,7 @@ const UserHome = () => {
               </div>
               <div style={{ marginTop: 16, display: "flex" }}>
                 <Link to={'/home/plugins'}>
-                  <PluginsTab pluginCount={currentUser?.pluginCount ?? 0} />
+                  <PluginsTab pluginCount={currentUser?.pluginCount ?? 0} isClickable={true} />
                 </Link>
               </div>
               <div style={{ marginTop: 16, display: "flex" }}>
