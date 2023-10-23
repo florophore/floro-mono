@@ -183,6 +183,7 @@ const HomeDashboard = () => {
 
   useEffect(() => {
     if (!isOnline) {
+
       setPage('bookmarks');
     }
   }, [isOnline])
