@@ -1,5 +1,8 @@
 import {
+  PointerTypes,
+  QueryTypes,
   SchemaRoot,
+  SchemaTypes,
   getReferencedObject,
   makeQueryRef,
 } from "./floro-generator-schema-api";
@@ -403,13 +406,13 @@ const getTextNodes = (jsonString: string): TextNode[] => {
 
 const getPlainTextNodes = (jsonString: string): PlainTextNode[] => {
   const root: {children?: UnprocessedNode[]} = JSON.parse(jsonString);
-  return root?.children?.map(child => {
+  return root?.children?.map((child: UnprocessedNode): PlainTextNode => {
     const type = getPlainNodeType(child.type);
     return {
       type,
       content: child.content
-    }
-  })
+    } as PlainTextNode
+  }) ?? [] as PlainTextNode[]
 }
 
 export async function getJSON<T>(
@@ -439,12 +442,12 @@ export async function getJSON<T>(
       isGlobalDefault: defaultLocaleCode == locale.localeCode
     }
     localizedPhrases.localizedPhraseKeys[locale.localeCode] = {};
-    const fallbackRef = defaultFallbackCode
+    const fallbackRef = (defaultFallbackCode
       ? makeQueryRef(
           "$(text).localeSettings.locales.localeCode<?>",
           defaultFallbackCode
         )
-      : null;
+      : null) as QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
     for (const phraseGroup of phraseGroups) {
       for (const phrase of phraseGroup.phrases) {
         const phraseKey = `${phraseGroup.id}.${phrase.id}`;
@@ -497,6 +500,7 @@ export async function getJSON<T>(
             interpolation.name,
             fallbackRef
           );
+
           const fallbackInterpolationTranslation = getReferencedObject(
             state,
             fallbackInterpolationTranslationRef
@@ -506,7 +510,7 @@ export async function getJSON<T>(
             phraseGroup.id,
             phrase.id,
             interpolation.name,
-            localeSettings.defaultLocaleRef
+            localeSettings.defaultLocaleRef as QueryTypes['$(text).localeSettings.locales.localeCode<?>']
           );
           const defaultFallbackInterpolationTranslation = getReferencedObject(
             state,
@@ -772,7 +776,7 @@ export async function getJSON<T>(
           "$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>",
           phraseGroup.id,
           phrase.id,
-          fallbackRef
+          fallbackRef as QueryTypes['$(text).localeSettings.locales.localeCode<?>']
         );
         const fallbackPhraseTranslation = getReferencedObject(
           state,
