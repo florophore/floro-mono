@@ -4,7 +4,11 @@ items:
     username: doggylover0
     firstName: foo
     lastName: bar
+    hideOrganizationsInProfile: false
+    hideBookmarksInProfile: false
   user_1:
     username: doggylover1
     firstName: fooy
     lastName: baz
+    hideOrganizationsInProfile: false
+    hideBookmarksInProfile: false

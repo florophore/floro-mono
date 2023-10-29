@@ -1,4 +1,4 @@
-import { IsBoolean, IsDefined, MaxLength, MinLength, ValidateIf } from "class-validator";
+import { IsBoolean, IsDefined, IsOptional, MaxLength, MinLength, ValidateIf } from "class-validator";
 import { Entity, Column, OneToMany, OneToOne, Relation, JoinColumn } from "typeorm";
 import { BinaryPKBaseEntity } from "./BinaryPKBaseEntity";
 import { Organization } from "./Organization";
@@ -63,10 +63,12 @@ export class User extends BinaryPKBaseEntity {
 
   @Column("boolean", { default: false})
   @IsBoolean()
+  @IsOptional()
   hideOrganizationsInProfile?: boolean;
 
   @Column("boolean", { default: false})
   @IsBoolean()
+  @IsOptional()
   hideBookmarksInProfile?: boolean;
 
   @OneToOne("UserServiceAgreement", "user")
