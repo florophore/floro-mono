@@ -9,6 +9,7 @@ import { useSearchParams } from "react-router-dom";
 import { useOfflineIcon } from "../../offline/OfflineIconsContext";
 import OrgProfileInfo from "@floro/storybook/stories/common-components/OrgProfileInfo";
 import OrgProfilePhoto from "@floro/storybook/stories/common-components/OrgProfilePhoto";
+import { useOfflinePhoto } from "../../offline/OfflinePhotoContext";
 
 const Row = styled.div`
   display: flex;
@@ -103,7 +104,7 @@ interface Props {
 const OrganizationSearchResultRow = (props: Props) => {
   const theme = useTheme();
 
-  const photo = useOfflineIcon(props?.organization?.profilePhoto?.thumbnailUrl ?? undefined);
+  const photo = useOfflinePhoto(props?.organization?.profilePhoto ?? undefined);
 
 
   const handleDisplay = useMemo(() => {
@@ -113,15 +114,6 @@ const OrganizationSearchResultRow = (props: Props) => {
   const displayName = useMemo(() => {
     return upcaseFirst(props.organization?.name ?? "");
   }, [props.organization?.name]);
-
-  const onClick = useCallback(() => {
-    //const params = {};
-    //for(let [key, value] of searchParams.entries()) {
-    //  params[key] = value;
-    //}
-    //params["plugin"] = props.pluginVersion.name;
-    //setSearchParams(params)
-  }, []);
 
 
   return (

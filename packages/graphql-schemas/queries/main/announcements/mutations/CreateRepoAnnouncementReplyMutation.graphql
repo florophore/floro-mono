@@ -1,0 +1,29 @@
+mutation CreateRepoAnnouncementReply(
+  $repoAnnouncementId: String!
+  $repositoryId: String!
+  $text: String!
+) {
+  createRepoAnnouncementReplyComment(
+    repoAnnouncementId: $repoAnnouncementId
+    repositoryId: $repositoryId
+    text: $text
+  ) {
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+    ... on RepoAccessError {
+      type
+      message
+    }
+    ... on CreateRepoAnnouncementReplyError {
+      type
+      message
+    }
+    ... on CreateRepoAnnouncementReplySuccess {
+      repoAnnouncement {
+        ...RepoAnnouncement
+      }
+    }
+  }
+}

@@ -35,6 +35,7 @@ fragment RepoWithSettings on Repository {
   repoPermissions {
     canPushBranches
     canChangeSettings
+    canWriteAnnouncements
   }
 
   defaultBranchId
@@ -70,6 +71,22 @@ fragment RepoWithSettings on Repository {
     id
     name
   }
+
+  anyoneCanWriteAnnouncements
+  canWriteAnnouncementsUsers {
+    id
+    firstName
+    lastName
+    username
+    profilePhoto {
+      ...Photo
+    }
+  }
+  canWriteAnnouncementsRoles {
+    id
+    name
+  }
+
 
   anyoneCanChangeSettings
   canChangeSettingsUsers {

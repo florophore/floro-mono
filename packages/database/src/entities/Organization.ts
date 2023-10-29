@@ -37,6 +37,7 @@ import { ApiKey } from "./ApiKey";
 import { WebhookKey } from "./WebhookKey";
 import { RepositoryEnabledWebhookKey } from "./RepositoryEnabledWebhookKey";
 import { RepositoryEnabledApiKey } from "./RepositoryEnabledApiKey";
+import { RepoAnnouncement } from "./RepoAnnouncement";
 
 @Entity("organizations")
 export class Organization extends BinaryPKBaseEntity {
@@ -189,4 +190,8 @@ export class Organization extends BinaryPKBaseEntity {
   @OneToMany("RepositoryEnabledWebhookKey", "organization")
   @JoinColumn()
   repositoryEnabledWebhookKeys?: Relation<RepositoryEnabledWebhookKey>[];
+
+  @OneToMany("RepoAnnouncement", "organization")
+  @JoinColumn()
+  repoAnnouncements?: Relation<RepoAnnouncement>[];
 }

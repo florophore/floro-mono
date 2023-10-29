@@ -40,7 +40,7 @@ const RepoHistoryPage = (props: Props) => {
     }
   }, [idxString]);
   const userOrganizations = useUserOrganizations();
-  const {data} = useFetchRepositoryHistoryQuery({
+  const {data, loading} = useFetchRepositoryHistoryQuery({
     variables: {
       ownerHandle,
       repoName,
@@ -175,6 +175,7 @@ const RepoHistoryPage = (props: Props) => {
             repository={repository}
             plugin={plugin ?? 'home'}
             page={props.page}
+            isLoading={loading}
           />
         )}
         {!repository && <div />}

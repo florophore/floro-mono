@@ -17,7 +17,7 @@ const RepoHomeBranchRuleSettingsPage = () => {
   const protectedBranchRuleId = params?.['branchRuleId'] ?? '';
   const plugin = searchParams.get('plugin');
   const userOrganizations = useUserOrganizations();
-  const {data} = useFetchRepoBranchRuleQuery({
+  const {data, loading} = useFetchRepoBranchRuleQuery({
     variables: {
       ownerHandle,
       repoName,
@@ -164,6 +164,7 @@ const RepoHomeBranchRuleSettingsPage = () => {
             repository={repository}
             plugin={plugin ?? 'home'}
             page={'branch-rule'}
+            isLoading={loading}
           />
         )}
         {!repository && <div />}

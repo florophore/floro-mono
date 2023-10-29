@@ -9,6 +9,8 @@
  * @see https://www.electron.build/configuration/configuration
  */
 
+require('dotenv').config();
+
 const buildEnv = process?.env.BUILD_ENV ?? "dev";
 
 const appId = (buildEnv) => {
@@ -42,8 +44,11 @@ const executableName = (buildEnv) => {
 }
 
 module.exports = async function () {
-  require('dotenv').config();
+  const dotenv = await import ('dotenv');
+  dotenv.config();
   const {getVersion} = await import('./version/getVersion.mjs');
+
+
   return {
     appId: 'com.florophore.floro',
     asar: false,

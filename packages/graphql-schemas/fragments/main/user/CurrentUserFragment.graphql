@@ -6,6 +6,8 @@ fragment CurrentUser on User {
   freeDiskSpaceBytes
   diskSpaceLimitBytes
   utilizedDiskSpaceBytes
+  hideOrganizationsInProfile
+  hideBookmarksInProfile
   profilePhoto {
     ...Photo
   }
@@ -15,6 +17,30 @@ fragment CurrentUser on User {
   }
   publicPlugins {
     ...Plugin
+  }
+  bookmarkedRepositories {
+    id
+    name
+    repoType
+    hashKey
+    isPrivate
+    lastRepoUpdateAt
+    createdAt
+    updatedAt
+    user {
+      id
+      username
+      profilePhoto {
+        ...Photo
+      }
+    }
+    organization {
+      id
+      handle
+      profilePhoto {
+        ...Photo
+      }
+    }
   }
   publicRepositories {
     id

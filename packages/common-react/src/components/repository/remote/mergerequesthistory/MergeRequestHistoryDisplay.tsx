@@ -115,6 +115,7 @@ const useDatedCommitHistory = (commits: CommitInfo[]) => {
 interface Props {
   repository: Repository;
   plugin?: string;
+  isLoading?: boolean;
 }
 
 const MergeRequestHistoryDisplay = (props: Props) => {

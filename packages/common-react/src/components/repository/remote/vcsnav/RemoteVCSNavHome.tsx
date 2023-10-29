@@ -9,7 +9,11 @@ import {
   PluginVersion,
   RepoBranch,
   Repository,
+  useBookmarkRepoMutation,
   useIgnoreBranchMutation,
+  useSubscribeToRepoMutation,
+  useUnSubscribeFromRepoMutation,
+  useUnbookmarkRepoMutation,
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import styled from "@emotion/styled";
 import Button from "@floro/storybook/stories/design-system/Button";
@@ -35,6 +39,8 @@ import { useCopyPasteContext } from "../../copypaste/CopyPasteContext";
 import CopyPasteModal from "../../copypaste/copy_modal/CopyPasteModal";
 import PluginSelectRow from "../../home/plugin_editor/PluginSelectRow";
 import { useDeleteRepo } from "../../../../hooks/repos";
+import { useSession } from "../../../../session/session-context";
+import { useIsOnline } from "../../../../hooks/offline";
 
 const InnerContent = styled.div`
   display: flex;
@@ -109,6 +115,68 @@ const RemoteVCSNavHome = (props: Props) => {
   const pauseCloneRepoMutation = usePauseCloneRepo(props.repository);
   const resumeCloneRepoMutation = useResumeCloneRepo(props.repository);
   const deleteRepoMutation = useDeleteRepo(props.repository?.id as string);
+  const { currentUser } = useSession();
+
+  const [bookmark, bookmarkRequest] = useBookmarkRepoMutation();
+  const [unbookmark, unbookmarkRequest] = useUnbookmarkRepoMutation();
+  const [subscribe, subscribeRequest] = useSubscribeToRepoMutation();
+  const [unsubscribe, unsubscribeRequest] = useUnSubscribeFromRepoMutation();
+
+  const onBookmark = useCallback(() => {
+    if (!currentUser || !props.repository.id) {
+      return null;
+    }
+    bookmark({
+      variables: {
+        repositoryId: props.repository.id
+      }
+    });
+  }, [currentUser, props.repository.id])
+
+  const onUnBookmark = useCallback(() => {
+    if (!currentUser || !props.repository.id) {
+      return null;
+    }
+    unbookmark({
+      variables: {
+        repositoryId: props.repository.id
+      }
+    });
+  }, [currentUser, props.repository.id])
+
+  const onSubscribe = useCallback(() => {
+    if (!currentUser || !props.repository.id) {
+      return null;
+    }
+    subscribe({
+      variables: {
+        repositoryId: props.repository.id
+      }
+    });
+  }, [currentUser, props.repository.id])
+
+  const onUnSubscribe = useCallback(() => {
+    if (!currentUser || !props.repository.id) {
+      return null;
+    }
+    unsubscribe({
+      variables: {
+        repositoryId: props.repository.id
+      }
+    });
+  }, [currentUser, props.repository.id])
+
+  const bookmarkLoading = useMemo(
+    () => bookmarkRequest.loading || unbookmarkRequest.loading,
+    [bookmarkRequest.loading, unbookmarkRequest.loading]
+  );
+  const subscribeLoading = useMemo(
+    () => subscribeRequest.loading || unsubscribeRequest.loading,
+    [subscribeRequest.loading, unsubscribeRequest.loading]
+  );
+
+
+  const isOnline = useIsOnline();
 
   const isDaemonConnected = useDaemonIsConnected();
 
@@ -384,6 +452,15 @@ const RemoteVCSNavHome = (props: Props) => {
               props?.repository?.branchState?.isConflictFree ?? false
             }
             isCopyMode={isSelectMode}
+            isLoggedIn={!!currentUser && isOnline}
+            isBookmarked={!!props.repository.isBookmarked}
+            isSubscribed={!!props.repository.isSubscribed}
+            onBookmark={onBookmark}
+            onSubscribe={onSubscribe}
+            onUnBookmark={onUnBookmark}
+            onUnSubscribe={onUnSubscribe}
+            isBookmarkLoading={bookmarkLoading}
+            isSubscribeLoading={subscribeLoading}
           />
           {!isSelectMode && (
             <>

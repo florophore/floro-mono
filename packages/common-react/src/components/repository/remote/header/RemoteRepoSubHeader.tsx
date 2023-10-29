@@ -146,19 +146,17 @@ const RemoteRepoSubHeader = (props: Props) => {
 
   const historyLink = useMemo(() => {
     if (!props.repository?.branchState?.branchId) {
-
       return `${linkBase}/history?from=remote&plugin=${props?.plugin ?? 'home'}`
     }
     return `${linkBase}/history?from=remote&branch=${props.repository?.branchState?.branchId}&plugin=${props.plugin ?? 'home'}`
 
   }, [props.repository?.branchState, linkBase, props.plugin])
 
-  const psaLink = useMemo(() => {
+  const announcementsLink = useMemo(() => {
     if (!props.repository?.branchState?.branchId) {
-
-      return `${linkBase}/psa?from=remote&plugin=${props?.plugin ?? 'home'}`
+      return `${linkBase}/announcements?from=remote&plugin=${props?.plugin ?? 'home'}`
     }
-    return `${linkBase}/psa?from=remote&branch=${props.repository?.branchState?.branchId}&plugin=${props.plugin ?? 'home'}`
+    return `${linkBase}/announcements?from=remote&branch=${props.repository?.branchState?.branchId}&plugin=${props.plugin ?? 'home'}`
 
   }, [props.repository?.branchState, linkBase, props.plugin])
 
@@ -185,14 +183,14 @@ const RemoteRepoSubHeader = (props: Props) => {
 
   }, [props.repository?.branchState?.commitsSize])
 
-  const psaText = useMemo(() => {
-    const commitCount = props.repository?.branchState?.commitsSize ?? 0;
-    if (commitCount == 1) {
-      return `1 PSA`
+  const announcementText = useMemo(() => {
+    const annoucementCount = props.repository?.announcementCount ?? 0;
+    if (annoucementCount == 1) {
+      return `1 announcement`
     }
-    return `${0} PSAs`;
+    return `${annoucementCount} announcements`;
 
-  }, [props.repository?.branchState?.commitsSize])
+  }, [props.repository?.announcementCount])
   return (
     <>
         <Container>
@@ -207,12 +205,14 @@ const RemoteRepoSubHeader = (props: Props) => {
           <RightContainer>
             {!isSelectMode && (
               <>
-              <Link to={psaLink} style={{marginRight: 24}}>
-                <CommitHistoryWrapper>
-                  <CommitHistoryIcon src={SubscribeBlue}/>
-                  <CommitText>{`${psaText}`}</CommitText>
-                </CommitHistoryWrapper>
-              </Link>
+              {(props?.repository?.repoType == "org_repo" || !props?.repository?.isPrivate) && (
+                <Link to={announcementsLink} style={{marginRight: 24}}>
+                  <CommitHistoryWrapper>
+                    <CommitHistoryIcon src={SubscribeBlue}/>
+                    <CommitText>{`${announcementText}`}</CommitText>
+                  </CommitHistoryWrapper>
+                </Link>
+              )}
               <Link to={historyLink}>
                 <CommitHistoryWrapper>
                   <CommitHistoryIcon src={HistoryBlue}/>

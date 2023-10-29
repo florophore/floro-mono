@@ -28,6 +28,7 @@ import {
 import StorageTab from "@floro/storybook/stories/common-components/StorageTab";
 import { useCurrentUserRepos, useLocalRepos, useOrgRepos } from "../../hooks/repos";
 import ColorPalette from "@floro/styles/ColorPalette";
+import OrganizationAnnouncements from "./OrganizationAnnouncements";
 
 const Container = styled.div`
   flex: 1;
@@ -159,7 +160,11 @@ const OrgDashboard = (props: Props) => {
 
   return (
     <Container>
-      <MainContainer></MainContainer>
+      <MainContainer>
+        {props.organization && (
+          <OrganizationAnnouncements organization={props.organization}/>
+        )}
+      </MainContainer>
       <SideBar>
         <RepoContainer style={{borderBottom: 0}}>
           <SideBarTitleWrapper>

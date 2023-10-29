@@ -78,6 +78,20 @@ extend type Mutation {
     allowExternalUsersToPush: Boolean!
   ): RepoSettingChangeResponse
 
+
+  updateAnyoneCanWriteAnnouncements(
+    repositoryId: ID!
+    anyoneCanWriteAnnouncements: Boolean!
+  ): RepoSettingChangeResponse
+  updateAnyoneCanWriteAnnouncementsUsers(
+    repositoryId: ID!
+    userIds: [ID]!
+  ): RepoSettingChangeResponse
+  updateAnyoneCanWriteAnnouncementsRoles(
+    repositoryId: ID!
+    roleIds: [ID]!
+  ): RepoSettingChangeResponse
+
   # PROTECTED BRANCH RULE SETTINGS
   updateDisableDirectPushing(
     repositoryId: ID!

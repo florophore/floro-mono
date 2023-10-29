@@ -55,6 +55,7 @@ fragment RepoWithApiSettings on Repository {
   repoPermissions {
     canPushBranches
     canChangeSettings
+    canWriteAnnouncements
   }
 
   defaultBranchId
@@ -87,6 +88,21 @@ fragment RepoWithApiSettings on Repository {
     }
   }
   canPushBranchesRoles {
+    id
+    name
+  }
+
+  anyoneCanWriteAnnouncements
+  canWriteAnnouncementsUsers {
+    id
+    firstName
+    lastName
+    username
+    profilePhoto {
+      ...Photo
+    }
+  }
+  canWriteAnnouncementsRoles {
     id
     name
   }

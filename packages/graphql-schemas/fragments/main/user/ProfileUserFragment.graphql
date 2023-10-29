@@ -10,6 +10,32 @@ fragment ProfileUser on User {
   publicPlugins {
     ...Plugin
   }
+  hideOrganizationsInProfile
+  hideBookmarksInProfile
+  bookmarkedRepositories {
+    id
+    name
+    repoType
+    hashKey
+    isPrivate
+    lastRepoUpdateAt
+    createdAt
+    updatedAt
+    user {
+      id
+      username
+      profilePhoto {
+        ...Photo
+      }
+    }
+    organization {
+      id
+      handle
+      profilePhoto {
+        ...Photo
+      }
+    }
+  }
   publicRepositories {
     id
     name

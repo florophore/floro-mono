@@ -1,0 +1,19 @@
+query FetchOrgRepoAnnouncements($organizationId: ID!, $lastId: ID) {
+  fetchOrgRepoAnnouncements(organizationId: $organizationId, lastId: $lastId) {
+    ... on FetchRepoAnnouncementsResult {
+      hasMore
+      lastId
+      announcements {
+        ...RepoAnnouncement
+      }
+    }
+    ... on FetchRepoAnnouncementsError {
+      type
+      message
+    }
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+  }
+}

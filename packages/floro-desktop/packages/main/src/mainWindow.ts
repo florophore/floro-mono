@@ -1,5 +1,6 @@
-import {app, BrowserWindow, ipcMain, nativeTheme} from 'electron';
+import {app, BrowserWindow, ipcMain, nativeTheme, shell } from 'electron';
 import {join, resolve} from 'node:path';
+
 
 let ipcRendererHasMounted = false;
 
@@ -32,6 +33,13 @@ async function createWindow() {
       browserWindow?.show?.();
   }
 
+  const openUrl = (_: any, url: string) => {
+    try {
+      shell.openExternal(url);
+    } catch(e) {
+    }
+  }
+
   browserWindow.on('close', () => {
     ipcMain.off('system:bringToFront', bringToFront);
   });
@@ -56,6 +64,7 @@ async function createWindow() {
       ipcRendererHasMounted = true;
     }
     ipcMain.on('system:bringToFront', bringToFront);
+    ipcMain.on('system:openUrl', openUrl);
     ipcMain.on('system:openOAuthWindow', async (_: any, provider: any) => {
       const oauthWindow = new BrowserWindow({
         show: true, // Use the 'ready-to-show' event to show the instantiated BrowserWindow.

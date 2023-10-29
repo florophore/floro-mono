@@ -20,6 +20,9 @@ type User {
     pluginCount: Int
     apiKeys: [ApiKey]
     webhookKeys: [WebhookKey]
+    bookmarkedRepositories: [Repository]
+    hideOrganizationsInProfile: Boolean
+    hideBookmarksInProfile: Boolean
 }
 union CurrentUserResponse =
   | User

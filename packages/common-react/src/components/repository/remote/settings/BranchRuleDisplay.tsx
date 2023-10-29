@@ -17,6 +17,7 @@ import CanApproveMergeRequestSetting from "./branch_settings_boxes/CanApproveMer
 import WithApprovalCanMergetSetting from "./branch_settings_boxes/WithApprovalCanMergeSetting";
 import CanRevertSetting from "./branch_settings_boxes/CanRevertSetting";
 import CanFixForwardSetting from "./branch_settings_boxes/CanFixForwardSetting";
+import DotsLoader from "@floro/storybook/stories/design-system/DotsLoader";
 
 const Container = styled.div`
   height: 100%;
@@ -90,6 +91,7 @@ const InsufficientPermssionsText = styled.h3`
 interface Props {
   repository: Repository;
   plugin: string;
+  isLoading?: boolean;
 }
 
 const BranchRuleDisplay = (props: Props) => {
@@ -120,7 +122,14 @@ const BranchRuleDisplay = (props: Props) => {
       <InsufficientPermssionsContainer>
         <InsufficientPermssionsTextWrapper>
           <InsufficientPermssionsText>
-            {"insufficient repo access to display branch rule controls"}
+            {props.isLoading && (
+              <DotsLoader size={"medium"} color={"purple"}/>
+            )}
+            {!props.isLoading && (
+              <>
+                {"insufficient repo access to display branch rule controls"}
+              </>
+            )}
           </InsufficientPermssionsText>
         </InsufficientPermssionsTextWrapper>
       </InsufficientPermssionsContainer>

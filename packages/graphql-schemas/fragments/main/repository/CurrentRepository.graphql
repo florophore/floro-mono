@@ -9,7 +9,11 @@ fragment CurrentRepository on Repository {
   repoPermissions {
     canPushBranches
     canChangeSettings
+    canWriteAnnouncements
   }
+
+  isBookmarked
+  isSubscribed
   branchState(branchId: $branchId) {
     branchId
     name
@@ -107,4 +111,6 @@ fragment CurrentRepository on Repository {
     lastCommit
   }
   openUserMergeRequestsCount
+  isBookmarked
+  isSubscribed
 }

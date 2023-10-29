@@ -30,7 +30,7 @@ const RepoMergeRequestHistoryPage = () => {
     return null;
   }, [id, hasSearch])
   const userOrganizations = useUserOrganizations();
-  const {data, refetch} = useFetchRepositoryMergeRequestHistoryQuery({
+  const {data, refetch, loading} = useFetchRepositoryMergeRequestHistoryQuery({
     variables: {
       ownerHandle,
       repoName,
@@ -187,6 +187,7 @@ const RepoMergeRequestHistoryPage = () => {
             repository={repository}
             plugin={plugin ?? 'home'}
             page={"merge-requests"}
+            isLoading={loading}
           />
         )}
         {!repository && <div />}

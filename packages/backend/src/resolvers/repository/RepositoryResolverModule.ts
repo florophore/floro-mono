@@ -74,6 +74,9 @@ import WebhookKeysContext from "@floro/database/src/contexts/api_keys/WebhookKey
 import RepoEnabledApiKeyService from "../../services/api_keys/RepoEnabledApiKeyService";
 import RepoEnabledWebhookKeyService from "../../services/api_keys/RepoEnabledWebhookKeyService";
 import RepositoriesContext from "@floro/database/src/contexts/repositories/RepositoriesContext";
+import RepoAnnouncementService from "../../services/announcements/RepoAnnouncementService";
+import RepoBookmarksContext from "@floro/database/src/contexts/announcements/RepoBookmarksContext";
+import RepoSubscriptionsContext from "@floro/database/src/contexts/announcements/RepoSubscriptionsContext";
 
 const NEW_REPOS_PAGINATION_SIZE = 10;
 const PAGINATION_LIMIT = 10;
@@ -102,6 +105,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
   protected organizationPermissionsService!: OrganizationPermissionService;
   protected repoEnabledApiKeyService!: RepoEnabledApiKeyService;
   protected repoEnabledWebhookKeyService!: RepoEnabledWebhookKeyService;
+  protected repoAnnouncementService!: RepoAnnouncementService;
 
   protected loggedInUserGuard!: LoggedInUserGuard;
 
@@ -183,7 +187,9 @@ export default class RepositoryResolverModule extends BaseResolverModule {
     @inject(RepoEnabledApiKeyService)
     repoEnabledApiKeyService: RepoEnabledApiKeyService,
     @inject(RepoEnabledWebhookKeyService)
-    repoEnabledWebhookKeyService: RepoEnabledWebhookKeyService
+    repoEnabledWebhookKeyService: RepoEnabledWebhookKeyService,
+    @inject(RepoAnnouncementService)
+    repoAnnouncementService: RepoAnnouncementService
   ) {
     super();
     this.contextFactory = contextFactory;
@@ -228,6 +234,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
 
     this.repoEnabledApiKeyService = repoEnabledApiKeyService;
     this.repoEnabledWebhookKeyService = repoEnabledWebhookKeyService;
+    this.repoAnnouncementService = repoAnnouncementService;
   }
 
   public Repository: main.RepositoryResolvers = {
@@ -830,7 +837,103 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         return null;
       }
     ),
+    anyoneCanWriteAnnouncements: runWithHooks(
+      () => [this.repositoryRemoteSettingsLoader],
+      async (repository: main.Repository, _, { cacheKey, currentUser }) => {
+        if (!repository?.id || !currentUser) {
+          return null;
+        }
+        if (repository?.repoType != "org_repo") {
+          return null;
+        }
+        const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
+          cacheKey,
+          repository?.id
+        );
+        if (cachedRemoteSettings?.canChangeSettings) {
+          return repository.anyoneCanWriteAnnouncements ?? false;
+        }
+        return null;
+      }
+    ),
+    canWriteAnnouncementsRoles: runWithHooks(
+      () => [this.repositoryRemoteSettingsLoader],
+      async (repository: main.Repository, _, { cacheKey, currentUser }) => {
+        if (!repository?.id || !currentUser) {
+          return null;
+        }
+        if (repository?.repoType != "org_repo") {
+          return [];
+        }
+        const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
+          cacheKey,
+          repository?.id
+        );
+        if (cachedRemoteSettings?.canChangeSettings) {
+          const repositoryEnabledRoleSettingsContext =
+            await this.contextFactory.createContext(
+              RepositoryEnabledRoleSettingsContext
+            );
+          const enabledRoleSettings =
+            await repositoryEnabledRoleSettingsContext.getAllForRepositorySetting(
+              repository.id,
+              "anyoneCanWriteAnnouncements"
+            );
+          const roles = enabledRoleSettings?.map(
+            (s) => s.role as OrganizationRole
+          );
+          roles.sort((a, b) => {
+            return (a?.name?.toLowerCase?.() ?? "") >=
+              (b?.name?.toLowerCase?.() ?? "")
+              ? 1
+              : -1;
+          });
+          return roles;
+        }
+        return null;
+      }
+    ),
+    canWriteAnnouncementsUsers: runWithHooks(
+      () => [this.repositoryRemoteSettingsLoader, this.writeAccessIdsLoader],
+      async (repository: main.Repository, _, { cacheKey, currentUser }) => {
+        if (!repository?.id || !currentUser) {
+          return null;
+        }
+        const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
+          cacheKey,
+          repository?.id
+        );
 
+        const cachedWriteAccessIds =
+          this.requestCache.getRepoWriteAccessIds(cacheKey, repository?.id) ??
+          new Set<string>();
+        if (cachedRemoteSettings?.canChangeSettings) {
+          const repositoryEnabledUserSettingsContext =
+            await this.contextFactory.createContext(
+              RepositoryEnabledUserSettingsContext
+            );
+          const enabledUserSettings =
+            await repositoryEnabledUserSettingsContext.getAllForRepositorySetting(
+              repository.id,
+              "anyoneCanWriteAnnouncements"
+            );
+          const users = enabledUserSettings
+            ?.filter((s) => cachedWriteAccessIds.has(s.userId))
+            ?.map((s) => s.user as User);
+          users.sort?.((a, b) => {
+            if (!a || !b) {
+              return 0;
+            }
+            return `${a?.firstName} ${a?.lastName}`.toLowerCase() >=
+              `${b?.firstName} ${b?.lastName}`.toLowerCase()
+              ? 1
+              : -1;
+          });
+          return users;
+        }
+        return null;
+      }
+    ),
     anyoneCanChangeSettings: runWithHooks(
       () => [this.repositoryRemoteSettingsLoader],
       async (repository: main.Repository, _, { cacheKey, currentUser }) => {
@@ -938,6 +1041,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         return {
           canPushBranches: cachedRemoteSettings.canPushBranches,
           canChangeSettings: cachedRemoteSettings.canChangeSettings,
+          canWriteAnnouncements: cachedRemoteSettings.canWriteAnnouncements,
         };
       }
     ),
@@ -1255,6 +1359,69 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         return await repositoryEnabledWebhookKeysContext.getRepositoryWebhookKeys(
           repository.id
         );
+      }
+    ),
+    isBookmarked: runWithHooks(
+      () => [],
+      async (repository, _, context) => {
+        if (!repository?.id || !context?.currentUser?.id) {
+          return null;
+        }
+        const cachedIsBookmarked = this.requestCache.getIsBookmarked(
+          context.cacheKey,
+          repository.id
+        );
+        if (cachedIsBookmarked !== undefined) {
+          return cachedIsBookmarked;
+        }
+
+        const repoBookmarksContext = await this.contextFactory.createContext(
+          RepoBookmarksContext
+        );
+        const existingBookmark =
+          await repoBookmarksContext.getByUserIdAndRepoId(
+            context?.currentUser?.id,
+            repository.id
+          );
+        const isBookmarked = !!existingBookmark;
+        this.requestCache.setIsBookmarked(
+          context.cacheKey,
+          repository.id,
+          isBookmarked
+        );
+
+        return isBookmarked;
+      }
+    ),
+
+    isSubscribed: runWithHooks(
+      () => [],
+      async (repository, _, context) => {
+        if (!repository?.id || !context?.currentUser?.id) {
+          return null;
+        }
+        const cachedIsBookmarked = this.requestCache.getIsSubscribed(
+          context.cacheKey,
+          repository.id
+        );
+        if (cachedIsBookmarked !== undefined) {
+          return cachedIsBookmarked;
+        }
+
+        const repoSubscriptionsContext =
+          await this.contextFactory.createContext(RepoSubscriptionsContext);
+        const existingSubscription =
+          await repoSubscriptionsContext.getByUserIdAndRepoId(
+            context?.currentUser?.id,
+            repository.id
+          );
+        const isSubscribed = !!existingSubscription;
+        this.requestCache.setIsSubscribed(
+          context.cacheKey,
+          repository.id,
+          isSubscribed
+        );
+        return isSubscribed;
       }
     ),
   };
@@ -2593,13 +2760,11 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         const repositoriesContext = await this.contextFactory.createContext(
           RepositoriesContext
         );
-        const publicRepos = await repositoriesContext.getPublicReposWithCommit();
+        const publicRepos =
+          await repositoriesContext.getPublicReposWithCommit();
 
         if (!args.id) {
-          const out = publicRepos.slice(
-            0,
-            NEW_REPOS_PAGINATION_SIZE
-          );
+          const out = publicRepos.slice(0, NEW_REPOS_PAGINATION_SIZE);
           const lastId = out?.[out.length - 1]?.id ?? null;
           const hasMore = out.length < publicRepos.length;
           return {
@@ -2616,10 +2781,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
             for (
               let j = i + 1;
               j <
-              Math.min(
-                i + 1 + NEW_REPOS_PAGINATION_SIZE,
-                publicRepos.length
-              );
+              Math.min(i + 1 + NEW_REPOS_PAGINATION_SIZE, publicRepos.length);
               ++j
             ) {
               out.push(publicRepos[j]);
@@ -2629,9 +2791,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
               __typename: "FetchNewReposResult",
               repos: out,
               lastId,
-              hasMore:
-                i + 1 + NEW_REPOS_PAGINATION_SIZE <
-                publicRepos.length,
+              hasMore: i + 1 + NEW_REPOS_PAGINATION_SIZE < publicRepos.length,
             };
           }
         }
@@ -3065,6 +3225,148 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           enabledUserIds,
           currentUser
         );
+        if (!updatedRepo) {
+          return {
+            __typename: "RepoSettingChangeError",
+            message: "Repo Update Error",
+            type: "REPO_UPDATE_ERROR",
+          };
+        }
+        return {
+          __typename: "RepoSettingChangeSuccess",
+          repository: updatedRepo,
+        };
+      }
+    ),
+
+    updateAnyoneCanWriteAnnouncements: runWithHooks(
+      () => [
+        this.loggedInUserGuard,
+        this.rootRepositoryRemoteSettingsLoader,
+        this.repoSettingAccessGuard,
+      ],
+      async (
+        _,
+        args: main.MutationUpdateAnyoneCanWriteAnnouncementsArgs,
+        { cacheKey, currentUser }
+      ) => {
+        const repository = await this.repoDataService.fetchRepoById(
+          args.repositoryId
+        );
+        if (!repository) {
+          return {
+            __typename: "RepoSettingChangeError",
+            message: "Repo Not Found",
+            type: "REPO_NOT_FOUND_ERROR",
+          };
+        }
+
+        const updatedRepo =
+          await this.repoSettingsService.updateAnyoneCanWriteAnnouncements(
+            repository,
+            args?.anyoneCanWriteAnnouncements ?? false
+          );
+        if (!updatedRepo) {
+          return {
+            __typename: "RepoSettingChangeError",
+            message: "Repo Update Error",
+            type: "REPO_UPDATE_ERROR",
+          };
+        }
+        return {
+          __typename: "RepoSettingChangeSuccess",
+          repository: updatedRepo,
+        };
+      }
+    ),
+    updateAnyoneCanWriteAnnouncementsUsers: runWithHooks(
+      () => [
+        this.loggedInUserGuard,
+        this.rootRepositoryRemoteSettingsLoader,
+        this.repoSettingAccessGuard,
+      ],
+      async (
+        _,
+        args: main.MutationUpdateAnyoneCanWriteAnnouncementsUsersArgs
+      ) => {
+        const repository = await this.repoDataService.fetchRepoById(
+          args.repositoryId
+        );
+        if (!repository) {
+          return {
+            __typename: "RepoSettingChangeError",
+            message: "Repo Not Found",
+            type: "REPO_NOT_FOUND_ERROR",
+          };
+        }
+
+        const repositoryEnabledRoleSettingsContext =
+          await this.contextFactory.createContext(
+            RepositoryEnabledRoleSettingsContext
+          );
+        const enabledRoles =
+          await repositoryEnabledRoleSettingsContext.getAllForRepositorySetting(
+            repository.id,
+            "anyoneCanWriteAnnouncements"
+          );
+        const enabledRoleIds = enabledRoles.map((er) => er.roleId);
+
+        const updatedRepo =
+          await this.repoSettingsService.updateWriteAnnouncementsAccess(
+            repository,
+            enabledRoleIds,
+            (args?.userIds ?? []) as Array<string>
+          );
+        if (!updatedRepo) {
+          return {
+            __typename: "RepoSettingChangeError",
+            message: "Repo Update Error",
+            type: "REPO_UPDATE_ERROR",
+          };
+        }
+        return {
+          __typename: "RepoSettingChangeSuccess",
+          repository: updatedRepo,
+        };
+      }
+    ),
+    updateAnyoneCanWriteAnnouncementsRoles: runWithHooks(
+      () => [
+        this.loggedInUserGuard,
+        this.rootRepositoryRemoteSettingsLoader,
+        this.repoSettingAccessGuard,
+      ],
+      async (
+        _,
+        args: main.MutationUpdateAnyoneCanWriteAnnouncementsRolesArgs
+      ) => {
+        const repository = await this.repoDataService.fetchRepoById(
+          args.repositoryId
+        );
+        if (!repository) {
+          return {
+            __typename: "RepoSettingChangeError",
+            message: "Repo Not Found",
+            type: "REPO_NOT_FOUND_ERROR",
+          };
+        }
+        const repositoryEnabledUserSettingsContext =
+          await this.contextFactory.createContext(
+            RepositoryEnabledUserSettingsContext
+          );
+        const enabledUsers =
+          await repositoryEnabledUserSettingsContext.getAllForRepositorySetting(
+            repository.id,
+            "anyoneCanWriteAnnouncements"
+          );
+        const enabledUserIds = enabledUsers.map((eu) => eu.userId);
+
+        const updatedRepo =
+          await this.repoSettingsService.updateWriteAnnouncementsAccess(
+            repository,
+            (args?.roleIds ?? []) as Array<string>,
+            enabledUserIds
+          );
         if (!updatedRepo) {
           return {
             __typename: "RepoSettingChangeError",
@@ -4129,6 +4431,172 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         return {
           __typename: "RepositoryWebhookKeySuccess",
           repository,
+        };
+      }
+    ),
+    bookmarkRepo: runWithHooks(
+      () => [
+        this.loggedInUserGuard,
+        this.rootRepositoryRemoteSettingsLoader,
+      ],
+      async (_, {repositoryId}: main.MutationBookmarkRepoArgs, {cacheKey, currentUser}) => {
+        if (!currentUser || !repositoryId) {
+          return null;
+        }
+
+        const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
+          cacheKey,
+          repositoryId
+        );
+
+        if (!cachedRemoteSettings?.canReadRepo) {
+          return {
+            __typename: "RepoSettingAccessError",
+            type: "REPO_SETTING_ACCESS_ERROR",
+            message: "Repo Setting access error",
+          };
+        }
+        const repository = await this.repositoryService.getRepository(
+          repositoryId
+        );
+        if (!repository) {
+          return null
+        }
+        await this.repoAnnouncementService.bookmarkRepo(
+          repository,
+          currentUser
+        );
+        const bookmarkedRepo = await this.repositoryService.getRepository(
+          repositoryId
+        );
+        return {
+          __typename: "BookmarkRepoSuccess",
+          repository: bookmarkedRepo,
+          user: currentUser
+        };
+      }
+    ),
+    unbookmarkRepo: runWithHooks(
+      () => [
+        this.loggedInUserGuard,
+        this.rootRepositoryRemoteSettingsLoader,
+      ],
+      async (_, {repositoryId}: main.MutationUnbookmarkRepoArgs, {cacheKey, currentUser}) => {
+        if (!currentUser || !repositoryId) {
+          return null;
+        }
+
+        const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
+          cacheKey,
+          repositoryId
+        );
+
+        if (!cachedRemoteSettings?.canReadRepo) {
+          return {
+            __typename: "RepoSettingAccessError",
+            type: "REPO_SETTING_ACCESS_ERROR",
+            message: "Repo Setting access error",
+          };
+        }
+        const repository = await this.repositoryService.getRepository(
+          repositoryId
+        );
+        if (!repository) {
+          return null
+        }
+        await this.repoAnnouncementService.unBookmarkRepo(
+          repository,
+          currentUser
+        );
+        const bookmarkedRepo = await this.repositoryService.getRepository(
+          repositoryId
+        );
+        return {
+          __typename: "BookmarkRepoSuccess",
+          repository: bookmarkedRepo,
+          user: currentUser
+        };
+      }
+    ),
+    subscribeToRepo: runWithHooks(
+      () => [
+        this.loggedInUserGuard,
+        this.rootRepositoryRemoteSettingsLoader,
+      ],
+      async (_, {repositoryId}: main.MutationBookmarkRepoArgs, {cacheKey, currentUser}) => {
+        if (!currentUser || !repositoryId) {
+          return null;
+        }
+
+        const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
+          cacheKey,
+          repositoryId
+        );
+
+        if (!cachedRemoteSettings?.canReadRepo) {
+          return {
+            __typename: "RepoSettingAccessError",
+            type: "REPO_SETTING_ACCESS_ERROR",
+            message: "Repo Setting access error",
+          };
+        }
+        const repository = await this.repositoryService.getRepository(
+          repositoryId
+        );
+        if (!repository) {
+          return null
+        }
+        await this.repoAnnouncementService.subscribeToRepo(
+          repository,
+          currentUser
+        );
+        const subscribedRepo = await this.repositoryService.getRepository(
+          repositoryId
+        );
+        return {
+          __typename: "SubscribeRepoSuccess",
+          repository: subscribedRepo
+        };
+      }
+    ),
+    unSubscribeFromRepo: runWithHooks(
+      () => [
+        this.loggedInUserGuard,
+        this.rootRepositoryRemoteSettingsLoader,
+      ],
+      async (_, {repositoryId}: main.MutationBookmarkRepoArgs, {cacheKey, currentUser}) => {
+        if (!currentUser || !repositoryId) {
+          return null;
+        }
+
+        const cachedRemoteSettings = this.requestCache.getRepoRemoteSettings(
+          cacheKey,
+          repositoryId
+        );
+
+        if (!cachedRemoteSettings?.canReadRepo) {
+          return {
+            __typename: "RepoSettingAccessError",
+            type: "REPO_SETTING_ACCESS_ERROR",
+            message: "Repo Setting access error",
+          };
+        }
+        const repository = await this.repositoryService.getRepository(
+          repositoryId
+        );
+        if (!repository) {
+          return null
+        }
+        await this.repoAnnouncementService.unsubscribeFromRepo(
+          repository,
+          currentUser
+        );
+        const unsubscribedRepo = await this.repositoryService.getRepository(
+          repositoryId
+        );
+        return {
+          __typename: "SubscribeRepoSuccess",
+          repository: unsubscribedRepo
         };
       }
     ),

@@ -18,6 +18,8 @@ type Plugin {
   selectedDarkIcon: String
   lastReleasedPublicVersion: PluginVersion
   lastReleasedPrivateVersion: PluginVersion
+
+  repositoriesThatUsePlugin: [Repository]
 }
 
 type DependencyPluginVersion {

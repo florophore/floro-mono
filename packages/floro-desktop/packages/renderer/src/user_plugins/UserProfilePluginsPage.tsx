@@ -35,7 +35,6 @@ const NotFoundText = styled.h3`
   color: ${(props) => props.theme.colors.contrastText};
 `;
 
-
 const UserProfilePluginsPage = () => {
   const {currentUser} = useSession();
   const navigate = useNavigate();
@@ -105,6 +104,14 @@ const UserProfilePluginsPage = () => {
 
   useEffect(() => {
     if (currentUser?.username != null && handle?.toLowerCase() == currentUser?.username?.toLowerCase()) {
+      if (params['plugin'] && paramsVersion) {
+        navigate(`/home/plugins/${params['plugin']}/v/${paramsVersion?.replaceAll(".", "-")}`, { replace: true});
+        return;
+      }
+      if (params['plugin']) {
+        navigate(`/home/plugins/${params['plugin']}`, { replace: true});
+        return;
+      }
       navigate('/home/plugins', { replace: true});
       return;
     }

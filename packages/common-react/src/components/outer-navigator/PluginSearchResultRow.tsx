@@ -6,6 +6,7 @@ import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import { useSearchParams } from "react-router-dom";
 import ColorPalette from "@floro/styles/ColorPalette";
+import { useOfflineIcon } from "../../offline/OfflineIconsContext";
 
 const Row = styled.div`
   display: flex;
@@ -64,25 +65,15 @@ interface Props {
 const PluginSearchResultRow = (props: Props) => {
   const theme = useTheme();
 
+  const lightIcon = useOfflineIcon(props.plugin?.selectedLightIcon ?? undefined);
+  const darkIcon = useOfflineIcon(props.plugin?.selectedDarkIcon ?? undefined);
   const icon = useMemo(() => {
     if (theme.name == "light") {
-      return props.plugin?.selectedLightIcon as string;
+      return lightIcon as string;
     }
 
-    return props.plugin?.selectedDarkIcon as string;
-  }, [props.plugin, theme.name]);
-
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  const onClick = useCallback(() => {
-    //const params = {};
-    //for(let [key, value] of searchParams.entries()) {
-    //  params[key] = value;
-    //}
-    //params["plugin"] = props.pluginVersion.name;
-    //setSearchParams(params)
-  }, [searchParams, props?.plugin?.name]);
-
+    return darkIcon as string;
+  }, [props.plugin, theme.name, lightIcon, darkIcon]);
 
   return (
     <Row style={{
@@ -98,7 +89,6 @@ const PluginSearchResultRow = (props: Props) => {
               ? theme.colors.linkColor
               : theme.colors.contrastText,
           }}
-          onClick={onClick}
         >
           {props.plugin?.displayName}
         </DisplayName>

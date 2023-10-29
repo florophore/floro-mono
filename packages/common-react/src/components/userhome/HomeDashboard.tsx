@@ -35,6 +35,7 @@ import ConfirmRejectInviteModal from "./invitations/ConfirmRejectInviteModal";
 import HomeProfileHeader from "./profile/HomeProfileHeader";
 import HomeFeedView from "./profile/feed/HomeFeedView";
 import { useIsOnline } from "../../hooks/offline";
+import BookmarkedReposView from "./profile/feed/BookmarkedReposView";
 
 const Container = styled.div`
   flex: 1;
@@ -186,7 +187,7 @@ const HomeDashboard = () => {
 
       setPage('bookmarks');
     }
-  }, [isOnline])
+  }, [isOnline]);
 
   const onShowRejectModal = useCallback((invitation: OrganizationInvitation) => {
     setInvitationToReject(invitation);
@@ -224,6 +225,14 @@ const HomeDashboard = () => {
         ></HomeProfileHeader>
         {page == 'feed' && (
           <HomeFeedView/>
+        )}
+
+        {page == "bookmarks" && currentUser && (
+          <BookmarkedReposView
+            repos={(currentUser?.bookmarkedRepositories ?? []) as Repository[]}
+            user={currentUser}
+            isSelf={true}
+          />
         )}
       </MainContainer>
       <SideBar>

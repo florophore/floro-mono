@@ -63,6 +63,7 @@ interface Props {
   isExpanded: boolean;
   onSetIsExpanded: (isExpanded: boolean) => void;
   page: RepoPage;
+  isLoading?: boolean;
 }
 
 const RemotePluginController = (props: Props) => {

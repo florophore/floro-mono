@@ -68,38 +68,37 @@ export interface Props {
 const PluginDependencyList = (props: Props) => {
   const theme = useTheme();
 
-  const rows = useMemo(() => {
-    return props.dependencies?.map((pluginVersion, index) => {
-    const link =
-        pluginVersion?.ownerType == "user_plugin"
-        ? `/user/@/${pluginVersion.user?.username}/plugins/${pluginVersion.name}/v/${pluginVersion.version}`
-        : `/org/@/${pluginVersion.organization?.handle}/plugins/${pluginVersion.name}/v/${pluginVersion.version}`;
-      const icon =
-        theme.name == "light"
-          ? pluginVersion.lightIcon ?? ""
-          : pluginVersion.darkIcon ?? "";
-      return (
-        <Link key={index} to={link}>
-          <Row
-            style={{
-              marginBottom:
-                index != (props?.dependencies?.length ?? 0) - 1 ? 18 : 0,
-            }}
-          >
-            <LeftSide>
-              <Icon src={props.icons[icon] ?? icon} />
-              <DependencyTitle>{pluginVersion?.name}</DependencyTitle>
-            </LeftSide>
-            <VersionTitle>{pluginVersion?.version}</VersionTitle>
-          </Row>
-        </Link>
-      );
-    });
-  }, [theme.name, props.dependencies]);
   return (
     <SectionContainer>
       <SectionTitle>{"Dependencies"}</SectionTitle>
-      <DependencyBox>{rows}</DependencyBox>
+      <DependencyBox>
+        {props.dependencies?.map((pluginVersion, index) => {
+          const link =
+            pluginVersion?.ownerType == "user_plugin"
+              ? `/user/@/${pluginVersion.user?.username}/plugins/${pluginVersion.name}/v/${pluginVersion.version?.replaceAll(".", "-")}`
+              : `/org/@/${pluginVersion.organization?.handle}/plugins/${pluginVersion.name}/v/${pluginVersion.version?.replaceAll(".", "-")}`;
+          const icon =
+            theme.name == "light"
+              ? pluginVersion.lightIcon ?? ""
+              : pluginVersion.darkIcon ?? "";
+          return (
+            <Link key={index} to={link}>
+              <Row
+                style={{
+                  marginBottom:
+                    index != (props?.dependencies?.length ?? 0) - 1 ? 18 : 0,
+                }}
+              >
+                <LeftSide>
+                  <Icon src={props.icons[icon] ?? icon} />
+                  <DependencyTitle>{pluginVersion?.name}</DependencyTitle>
+                </LeftSide>
+                <VersionTitle>{pluginVersion?.version}</VersionTitle>
+              </Row>
+            </Link>
+          );
+        })}
+      </DependencyBox>
     </SectionContainer>
   );
 };

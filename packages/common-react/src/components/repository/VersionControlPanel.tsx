@@ -119,6 +119,7 @@ interface Props {
   onSetIsExpanded: (isExpanded: boolean) => void;
   plugin: string;
   page: RepoPage;
+  isLoading: boolean;
 }
 
 
@@ -131,6 +132,9 @@ const VersionControlPanel = (props: Props) => {
 
   const isFullShadow = useMemo(() => {
     if (from == "remote") {
+      if (props.page == "announcements") {
+        return true;
+      }
       if (props.page == "api-settings") {
         return true;
       }
@@ -299,7 +303,7 @@ const VersionControlPanel = (props: Props) => {
           )}
           <NavigationWrapper>
             {from == "remote" && (
-              <RemoteVCSNavController plugin={props.plugin} page={props.page} repository={props.repository} remoteCommitState={props.remoteCommitState} comparisonState={props.comparisonState} />
+              <RemoteVCSNavController isLoading={props.isLoading} plugin={props.plugin} page={props.page} repository={props.repository} remoteCommitState={props.remoteCommitState} comparisonState={props.comparisonState} />
             )}
             {from == "local" && (
               <LocalVCSNavController plugin={props.plugin} repository={props.repository} />

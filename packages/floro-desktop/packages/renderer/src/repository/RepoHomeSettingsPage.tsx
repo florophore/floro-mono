@@ -17,7 +17,7 @@ const RepoHomeSettingsPage = () => {
   const repoName = params?.['repoName'] ?? '';
   const plugin = searchParams.get('plugin');
   const userOrganizations = useUserOrganizations();
-  const {data} = useFetchRepositoryWithSettingsQuery({
+  const {data, loading} = useFetchRepositoryWithSettingsQuery({
     variables: {
       ownerHandle,
       repoName,
@@ -158,6 +158,7 @@ const RepoHomeSettingsPage = () => {
             repository={repository}
             plugin={plugin ?? 'home'}
             page={'settings'}
+            isLoading={loading}
           />
         )}
         {!repository && <div />}

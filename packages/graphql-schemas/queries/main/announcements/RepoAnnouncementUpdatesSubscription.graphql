@@ -1,0 +1,5 @@
+subscription repoAnnouncementUpdates($repoAnnouncementId: ID) {
+  repoAnnouncementUpdated(repoAnnouncementId: $repoAnnouncementId) {
+    ...RepoAnnouncement
+  }
+}

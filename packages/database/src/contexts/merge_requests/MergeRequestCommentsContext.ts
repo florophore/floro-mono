@@ -55,7 +55,7 @@ export default class MergeRequestCommentsContext extends BaseContext {
       order: {
         createdAt: 'ASC',
         replies: {
-          createdAt: 'ASC',
+          createdAt: 'DESC',
         }
       },
       relations: {
@@ -70,11 +70,17 @@ export default class MergeRequestCommentsContext extends BaseContext {
         }
       }
     });
-    return comments?.map?.(c => {
-      return {
-        ...c,
-        replies: c.replies.filter(r => !r.isDeleted)
-      }
-    }) as Array<MergeRequestComment> ?? [];
+    return (
+      (comments?.map?.((c) => {
+        return {
+          ...c,
+          replies: c.replies
+            .filter((r) => !r.isDeleted)
+            .sort((a, b) =>
+              new Date(a.createdAt) >= new Date(b.createdAt) ? 1 : -1
+            ),
+        };
+      }) as Array<MergeRequestComment>) ?? []
+    ).sort((a, b) => (new Date(a.createdAt) >= new Date(b.createdAt) ? 1 : -1));
   }
 }

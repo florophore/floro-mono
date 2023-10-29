@@ -5,6 +5,7 @@ fragment Repository on Repository {
   hashKey
   isPrivate
   licenseCode
+  announcementCount
   user {
     id
     username

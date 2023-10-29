@@ -13,6 +13,7 @@ import RemoteVCSSettings from "./RemoteVCSSettings";
 import RemoteVCSBranchRuleSettings from "./RemoteVCSBranchRuleSettings";
 import RemoteVCSConversation from "./RemoteVCSConversation";
 import RemoteVCSApiSettings from "./RemoteVCSApiSettings";
+import RemoteVCSAnnouncements from "./RemoteVCSAnnouncements";
 
 interface Props {
   repository: Repository;
@@ -20,6 +21,7 @@ interface Props {
   comparisonState: ComparisonState;
   plugin: string;
   page: RepoPage;
+  isLoading: boolean;
 }
 
 const RemoteVCSNavController = (props: Props) => {
@@ -31,6 +33,14 @@ const RemoteVCSNavController = (props: Props) => {
   if (props.page == "settings") {
     return (
       <RemoteVCSSettings
+        repository={props.repository}
+        plugin={props.plugin}
+      />
+    );
+  }
+  if (props.page == "announcements") {
+    return (
+      <RemoteVCSAnnouncements
         repository={props.repository}
         plugin={props.plugin}
       />

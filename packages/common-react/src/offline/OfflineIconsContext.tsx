@@ -36,7 +36,7 @@ export const OfflineIconProvider = (props: Props) => {
         }
       })
     }
-  }, []);
+  }, [icons]);
 
   return (
     <OfflineIconsContext.Provider value={{ icons, saveIcon }}>

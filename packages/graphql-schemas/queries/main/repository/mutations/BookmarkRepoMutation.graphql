@@ -1,0 +1,51 @@
+mutation bookmarkRepo(
+  $repositoryId: ID!
+) {
+  bookmarkRepo(repositoryId: $repositoryId) {
+    ... on BookmarkRepoSuccess {
+      repository {
+          id
+          isBookmarked
+      }
+      user {
+        id
+        bookmarkedRepositories {
+          id
+          name
+          repoType
+          hashKey
+          isPrivate
+          lastRepoUpdateAt
+          createdAt
+          updatedAt
+          user {
+            id
+            username
+            profilePhoto {
+              ...Photo
+            }
+          }
+          organization {
+            id
+            handle
+            profilePhoto {
+              ...Photo
+            }
+          }
+        }
+      }
+    }
+    ... on BookmarkRepoError {
+      message
+      type
+    }
+    ... on RepoSettingAccessError {
+      message
+      type
+    }
+    ... on UnAuthenticatedError {
+      message
+      type
+    }
+  }
+}

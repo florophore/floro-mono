@@ -500,7 +500,8 @@ export default class RepoSettingsService {
     settingName:
       | "anyoneCanRead"
       | "anyoneCanPushBranches"
-      | "anyoneCanChangeSettings",
+      | "anyoneCanChangeSettings"
+      | "anyoneCanWriteAnnouncements",
     userIds: string[],
     roleIds: string[]
   ) {
@@ -587,7 +588,7 @@ export default class RepoSettingsService {
           }
         }
 
-        if (settingName == "anyoneCanPushBranches") {
+        if (settingName == "anyoneCanPushBranches" || settingName == "anyoneCanWriteAnnouncements") {
           if (
             repository.repoType == "user_repo" &&
             !repository.isPrivate &&
@@ -1031,6 +1032,41 @@ export default class RepoSettingsService {
           }
         }
       }
+      return repository;
+    }
+    return null;
+  }
+
+  public async updateAnyoneCanWriteAnnouncements(
+    repository: Repository,
+    anyoneCanWriteAnnouncements: boolean
+  ) {
+    if (repository.isPrivate && repository.repoType != "org_repo") {
+      return null;
+    }
+    const repositoriesContext = await this.contextFactory.createContext(
+      RepositoriesContext
+    );
+    return await repositoriesContext.updateRepo(repository, {
+      anyoneCanWriteAnnouncements,
+    });
+  }
+
+  public async updateWriteAnnouncementsAccess(
+    repository: Repository,
+    roleIds: string[],
+    userIds: string[]
+  ) {
+    if (repository.repoType != "org_repo") {
+      return null;
+    }
+    const didUpdate = await this.updateRepoAnyoneSettingAccess(
+      repository,
+      "anyoneCanWriteAnnouncements",
+      userIds,
+      roleIds
+    );
+    if (didUpdate) {
       return repository;
     }
     return null;

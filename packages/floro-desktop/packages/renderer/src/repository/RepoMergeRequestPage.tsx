@@ -35,7 +35,7 @@ const RepoCreateMergeRequestPage = () => {
     }
   }, [idxString]);
   const userOrganizations = useUserOrganizations();
-  const {data, refetch} = useFetchRepositoryMergeRequestQuery({
+  const {data, refetch, loading} = useFetchRepositoryMergeRequestQuery({
     variables: {
       ownerHandle,
       repoName,
@@ -198,6 +198,7 @@ const RepoCreateMergeRequestPage = () => {
             repository={repository}
             plugin={plugin ?? 'home'}
             page={"merge-request"}
+            isLoading={loading}
           />
         )}
         {!repository && <div />}

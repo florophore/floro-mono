@@ -1,0 +1,44 @@
+fragment RepoAnnouncement on RepoAnnouncement {
+  id
+  text
+  isDeleted
+  repository {
+    id
+    name
+    repoType
+    repoPermissions {
+      canWriteAnnouncements
+    }
+  }
+  user {
+    id
+    username
+    profilePhoto {
+      ...Photo
+    }
+  }
+  organization {
+    id
+    handle
+    profilePhoto {
+      ...Photo
+    }
+  }
+  createdAt
+  updatedAt
+  replies {
+    id
+    text
+    user {
+      id
+      username
+      firstName
+      lastName
+      profilePhoto {
+        ...Photo
+      }
+    }
+    createdAt
+    updatedAt
+  }
+}

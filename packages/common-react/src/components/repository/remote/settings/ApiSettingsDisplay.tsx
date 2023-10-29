@@ -15,6 +15,7 @@ import { useSession } from "../../../../session/session-context";
 import RemoteEnabledApiKeys from "./api_settings/RemoteEnabledApiKeys";
 import RemoteEnabledWebhookKeys from "./api_settings/RemoteEnabledWebhookKeys";
 import Button from "@floro/storybook/stories/design-system/Button";
+import DotsLoader from "@floro/storybook/stories/design-system/DotsLoader";
 
 const Container = styled.div`
   height: 100%;
@@ -88,6 +89,7 @@ const InsufficientPermssionsText = styled.h3`
 interface Props {
   repository: Repository;
   plugin: string;
+  isLoading: boolean;
 }
 
 const ApiSettingsDisplay = (props: Props) => {
@@ -150,7 +152,14 @@ const ApiSettingsDisplay = (props: Props) => {
       <InsufficientPermssionsContainer>
         <InsufficientPermssionsTextWrapper>
           <InsufficientPermssionsText>
-            {"insufficient repo access to display api setting controls"}
+            {props.isLoading && (
+              <DotsLoader size={"medium"} color={"purple"}/>
+            )}
+            {!props.isLoading && (
+              <>
+                {"insufficient repo access to display api setting controls"}
+              </>
+            )}
           </InsufficientPermssionsText>
         </InsufficientPermssionsTextWrapper>
       </InsufficientPermssionsContainer>

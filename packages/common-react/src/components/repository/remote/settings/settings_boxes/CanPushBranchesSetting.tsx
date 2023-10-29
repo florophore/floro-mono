@@ -214,7 +214,7 @@ const CanPushBranchesSetting = (props: Props) => {
         <MainContainer>
           <LeftContainer>
             <Checkbox
-              disabled={!props?.repository?.canTurnOffAnyoneCanChangeSettings}
+              disabled={!props?.repository?.repoPermissions?.canChangeSettings}
               isChecked={anyoneCanPushBranches}
               onChange={onChangeAnyoneCanPush}
             />

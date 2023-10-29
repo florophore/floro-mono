@@ -1,0 +1,19 @@
+query FetchFeed($lastId: ID) {
+  fetchFeed(lastId: $lastId) {
+    ... on FetchRepoAnnouncementsResult {
+      hasMore
+      lastId
+      announcements {
+        ...RepoAnnouncement
+      }
+    }
+    ... on FetchRepoAnnouncementsError {
+      type
+      message
+    }
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+  }
+}

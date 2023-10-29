@@ -7,7 +7,9 @@ import {
   User,
   UserFragmentDoc,
   SessionFragmentDoc,
-  useCurrentUserHomeQuery
+  useCurrentUserHomeQuery,
+  RepositoryEnabledApiKeyFragmentDoc,
+  Repository
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { useDaemonIsConnected, useFloroSocket, useSocketEvent } from "../pubsub/socket";
 import { useQueryClient } from "react-query";
@@ -33,6 +35,7 @@ const SessionContext = React.createContext<{
 
 export interface Props {
   children: React.ReactElement;
+  clientType: 'web'|'app';
 }
 
 export const SessionProvider = (props: Props) => {
@@ -108,6 +111,7 @@ export const SessionProvider = (props: Props) => {
       setClientSession(payload.session as Session);
       setSession(payload.session as Session);
       setCurrentUser({ ...payload.user } as User);
+      reset();
     },
     [currentUser],
     false
@@ -120,6 +124,7 @@ export const SessionProvider = (props: Props) => {
         setClientSession(payload.exchangeSession);
         setSession(payload.exchangeSession as Session);
         setCurrentUser(payload.exchangeSession.user as User);
+        reset();
       }
     },
     [],
@@ -153,11 +158,18 @@ export const SessionProvider = (props: Props) => {
       const session = JSON.parse(sessionString);
       setCurrentUser(user);
       setSession(session);
-      exchangeSession();
+      //exchangeSession();
     } catch (e) {
       //dont log just fail
     }
   }, []);
+
+  useEffect(() => {
+    if (session?.user?.id) {
+      exchangeSession();
+    }
+
+  }, [session?.user?.id])
 
   const setCurrentUserInStorage = useCallback((user: User) => {
     // should query existing user and relations against cache here
@@ -202,6 +214,19 @@ export const SessionProvider = (props: Props) => {
           }
         });
       });
+      [
+        ...(fragmentUser?.data?.bookmarkedRepositories ?? [])
+      ].forEach((repository: Repository) => {
+        if (repository.repoType == "user_repo") {
+          if (repository?.user?.profilePhoto) {
+            savePhoto(repository?.user?.profilePhoto);
+          }
+        }
+        if (repository?.organization?.profilePhoto) {
+          savePhoto(repository?.organization?.profilePhoto);
+        }
+      })
+
     }
   }, [fragmentUser?.data, savePhoto, saveIcon]);
 
@@ -216,19 +241,23 @@ export const SessionProvider = (props: Props) => {
       return;
     }
     if (session && data && !data?.exchangeSession && !loading) {
+      // DEAD SESSION TOKEN
       logout();
     }
   }, [data?.exchangeSession, loading, location.pathname, session]);
 
 
   useEffect(() => {
+    if (props.clientType == "web") {
+      return;
+    }
     if (session?.clientKey && data?.exchangeSession?.user?.id) {
       axios.post(`http://localhost:63403/session`, {
         session: session,
         user: session?.user
       });
     }
-  }, [session?.clientKey, data?.exchangeSession?.user?.id])
+  }, [session?.clientKey, data?.exchangeSession?.user?.id, props.clientType])
 
   return (
     <SessionContext.Provider

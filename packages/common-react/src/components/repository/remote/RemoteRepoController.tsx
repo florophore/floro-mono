@@ -22,6 +22,7 @@ import MergeRequest from "./mergerequest/MergeRequest";
 import SettingsDisplay from "./settings/SettingsDisplay";
 import BranchRuleDisplay from "./settings/BranchRuleDisplay";
 import ApiSettingsDisplay from "./settings/ApiSettingsDisplay";
+import AnnouncementsDisplay from "./announcements/AnnouncementsDisplay";
 
 const LoadingContainer = styled.div`
   display: flex;
@@ -64,6 +65,7 @@ interface Props {
   remoteCommitState: RemoteCommitState;
   comparisonState: ComparisonState;
   page: RepoPage;
+  isLoading: boolean;
 }
 
 const RemoteRepoController = (props: Props) => {
@@ -104,6 +106,16 @@ const RemoteRepoController = (props: Props) => {
           repository={props.repository}
           remoteCommitState={props.remoteCommitState}
           plugin={props.plugin}
+          isLoading={props.isLoading}
+        />
+      );
+    }
+    if (props.page == "announcements") {
+      return (
+        <AnnouncementsDisplay
+          repository={props.repository}
+          plugin={props.plugin ?? "home"}
+          isLoading={props.isLoading}
         />
       );
     }
@@ -113,6 +125,7 @@ const RemoteRepoController = (props: Props) => {
         <SettingsDisplay
           repository={props.repository}
           plugin={props.plugin ?? "home"}
+          isLoading={props.isLoading}
         />
       )
     }
@@ -122,6 +135,7 @@ const RemoteRepoController = (props: Props) => {
         <ApiSettingsDisplay
           repository={props.repository}
           plugin={props.plugin ?? "home"}
+          isLoading={props.isLoading}
         />
       )
     }
@@ -131,6 +145,7 @@ const RemoteRepoController = (props: Props) => {
         <BranchRuleDisplay
           repository={props.repository}
           plugin={props.plugin ?? "home"}
+          isLoading={props.isLoading}
         />
       );
     }
@@ -140,6 +155,7 @@ const RemoteRepoController = (props: Props) => {
         <MergeRequestHistoryDisplay
           repository={props.repository}
           plugin={props.plugin}
+          isLoading={props.isLoading}
         />
       );
     }
@@ -149,6 +165,7 @@ const RemoteRepoController = (props: Props) => {
           repository={props.repository}
           remoteCommitState={props.remoteCommitState}
           plugin={props.plugin}
+          isLoading={props.isLoading}
         />
       );
     }
@@ -159,11 +176,12 @@ const RemoteRepoController = (props: Props) => {
           repository={props.repository}
           remoteCommitState={props.remoteCommitState}
           plugin={props.plugin}
+          isLoading={props.isLoading}
         />
       );
     }
     if (props.page == "merge-request" && reviewPage == "none") {
-      return <MergeRequest repository={props.repository} page={props.page} />;
+      return <MergeRequest repository={props.repository} page={props.page} isLoading={props.isLoading} />;
     }
     if (props.page == "home" || props.page == "merge-request-create" || props.page == "merge-request") {
       if (props.plugin != "home") {
@@ -212,6 +230,7 @@ const RemoteRepoController = (props: Props) => {
                         remoteCommitState={props.remoteCommitState}
                         comparisonState={props.comparisonState}
                         page={props.page}
+                        isLoading={props.isLoading}
                       />
                     )}
                   </React.Fragment>
@@ -235,6 +254,7 @@ const RemoteRepoController = (props: Props) => {
                       remoteCommitState={props.remoteCommitState}
                       comparisonState={props.comparisonState}
                       page={props.page}
+                      isLoading={props.isLoading}
                     />
                   )}
                 </React.Fragment>
@@ -250,12 +270,14 @@ const RemoteRepoController = (props: Props) => {
             remoteCommitState={props.remoteCommitState}
             comparisonState={props.comparisonState}
             page={props.page}
+            isLoading={props.isLoading}
           />
         );
       }
     }
     return null;
   }, [
+    props.isLoading,
     props.page,
     props.plugin,
     props.remoteCommitState,
@@ -265,7 +287,7 @@ const RemoteRepoController = (props: Props) => {
     props.isExpanded,
     reviewPage,
     viewMode,
-    compareFrom
+    compareFrom,
   ]);
 
   if (props.remoteCommitState.isLoading) {

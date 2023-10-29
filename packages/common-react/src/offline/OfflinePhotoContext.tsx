@@ -65,7 +65,7 @@ export const OfflinePhotoProvider = (props: Props) => {
       };
       thumbImage.src = photo.thumbnailUrl;
     }
-  }, []);
+  }, [photos]);
 
   return (
     <OfflinePhotoContext.Provider value={{ photos, savePhoto }}>

@@ -14,4 +14,7 @@ contextBridge?.exposeInMainWorld?.('systemAPI', {
     openOAuthWindow: (provider: string) => {
         ipcRenderer.send('system:openOAuthWindow', provider);
     },
+    openUrl: (url: string) => {
+        ipcRenderer.send('system:openUrl', url);
+    },
 });

@@ -1,0 +1,19 @@
+query FetchUserRepoAnnouncements($userId: ID!, $lastId: ID) {
+  fetchUserRepoAnnouncements(userId: $userId, lastId: $lastId) {
+    ... on FetchRepoAnnouncementsResult {
+      hasMore
+      lastId
+      announcements {
+        ...RepoAnnouncement
+      }
+    }
+    ... on FetchRepoAnnouncementsError {
+      type
+      message
+    }
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+  }
+}

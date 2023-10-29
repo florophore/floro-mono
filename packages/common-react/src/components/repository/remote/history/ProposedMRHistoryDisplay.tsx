@@ -111,6 +111,7 @@ interface Props {
   repository: Repository;
   remoteCommitState: RemoteCommitState;
   plugin?: string;
+  isLoading?: boolean;
 }
 
 const ProposedMRHistoryDisplay = (props: Props) => {

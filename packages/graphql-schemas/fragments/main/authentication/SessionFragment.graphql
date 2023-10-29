@@ -3,6 +3,30 @@ fragment Session on Session {
   clientKey
   user {
     ...User
+    bookmarkedRepositories {
+      id
+      name
+      repoType
+      hashKey
+      isPrivate
+      lastRepoUpdateAt
+      createdAt
+      updatedAt
+      user {
+        id
+        username
+        profilePhoto {
+          ...Photo
+        }
+      }
+      organization {
+        id
+        handle
+        profilePhoto {
+          ...Photo
+        }
+      }
+    }
     apiKeys {
       ...ApiKey
     }

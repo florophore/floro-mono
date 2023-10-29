@@ -124,6 +124,10 @@ import SyncController from './controllers/sync/SyncController';
 import UpdateTextWebhookController from './controllers/UpdateTextWebhookController';
 import RepoSearchService from './services/repositories/RepoSearchService';
 import SearchResolverModule from './resolvers/search/SearchResolverModule';
+import RepoAnnouncementService from './services/announcements/RepoAnnouncementService';
+import RepoAnnouncementsResolverModule from './resolvers/announcements/RepoAnnouncementsResolverModule';
+import RepoAnnouncementLoader from './resolvers/hooks/loaders/RepoAnnouncements/RepoAnnouncementLoader';
+import RepoAnnouncementReplyLoader from './resolvers/hooks/loaders/RepoAnnouncements/RepoAnnouncementReplyLoader';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -188,6 +192,10 @@ export default new ContainerModule((bind): void => {
     bind(WriteAccessIdsLoader).toSelf();
     bind(ProtectedBranchRuleLoader).toSelf();
 
+    // REPO ANNOUNCEMENT LOADERS
+    bind(RepoAnnouncementLoader).toSelf();
+    bind(RepoAnnouncementReplyLoader).toSelf();
+
     // MERGE REQUEST
     bind(MergeRequestLoader).toSelf();
     bind(MergeRequestCommentLoader).toSelf();
@@ -244,6 +252,9 @@ export default new ContainerModule((bind): void => {
 
     // REFERRALS
     bind(ReferralService).toSelf()
+
+    //ANNOUNCEMENTS
+    bind(RepoAnnouncementService).toSelf();
 
     // MERGE REQUESTS
     bind(MergeService).toSelf();
@@ -319,6 +330,7 @@ export default new ContainerModule((bind): void => {
     bind<ApiKeyResolverModule>("ResolverModule").to(ApiKeyResolverModule);
     bind<WebhookKeyResolverModule>("ResolverModule").to(WebhookKeyResolverModule);
     bind<SearchResolverModule>("ResolverModule").to(SearchResolverModule);
+    bind<RepoAnnouncementsResolverModule>("ResolverModule").to(RepoAnnouncementsResolverModule);
 
     // ADMIN MODULES OVERRIDE WITH AdminResolverModule
     bind<AdminUsersResolverModule>("AdminResolverModule").to(AdminUsersResolverModule);

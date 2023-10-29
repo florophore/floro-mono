@@ -14,6 +14,9 @@ import { RepositoryEnabledApiKey } from "./RepositoryEnabledApiKey";
 import { RepositoryEnabledWebhookKey } from "./RepositoryEnabledWebhookKey";
 import { ApiEvent } from "./ApiEvent";
 import { WebhookEvent } from "./WebhookEvent";
+import { RepoBookmark } from "./RepoBookmark";
+import { RepoSubscription } from "./RepoSubscription";
+import { RepoAnnouncement } from "./RepoAnnouncement";
 
 @Entity("repositories")
 export class Repository extends BinaryPKBaseEntity {
@@ -95,6 +98,26 @@ export class Repository extends BinaryPKBaseEntity {
   @IsBoolean()
   anyoneCanChangeSettings!: boolean;
 
+  @Column("boolean")
+  @IsOptional()
+  @IsBoolean()
+  anyoneCanWriteAnnouncements!: boolean;
+
+  @Column("integer", { default: 0 })
+  @IsDefined()
+  @ValidateIf((_, value) => value != undefined)
+  bookmarkCount?: number;
+
+  @Column("integer", { default: 0 })
+  @IsDefined()
+  @ValidateIf((_, value) => value != undefined)
+  subscriptionCount?: number;
+
+  @Column("integer", { default: 0 })
+  @IsDefined()
+  @ValidateIf((_, value) => value != undefined)
+  announcementCount?: number;
+
   @Column("uuid")
   userId!: string;
 
@@ -150,4 +173,16 @@ export class Repository extends BinaryPKBaseEntity {
   @OneToMany("WebhookEvent", "repository")
   @JoinColumn()
   webhookEvents?: Relation<WebhookEvent>[];
+
+  @OneToMany("RepoBookmark", "repository")
+  @JoinColumn()
+  repoBookmarks?: Relation<RepoBookmark>[];
+
+  @OneToMany("RepoSubscription", "repository")
+  @JoinColumn()
+  repoSubscriptions?: Relation<RepoSubscription>[];
+
+  @OneToMany("RepoAnnouncement", "repository")
+  @JoinColumn()
+  repoAnnouncements?: Relation<RepoAnnouncement>[];
 }

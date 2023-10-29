@@ -17,6 +17,7 @@ import NotificationSelected from "@floro/common-assets/assets/images/icons/notif
 import HomeFeedHeader from "./HomeFeedHeader";
 import NewPluginsView from "./NewPluginsView";
 import NewReposView from "./NewReposView";
+import FeedAnnouncements from "./FeedAnnouncements";
 
 const Container = styled.div`
   display: flex;
@@ -31,7 +32,7 @@ interface Props {
 
 const HomeFeedView = (props: Props) => {
   const theme = useTheme();
-  const [feedOption, setFeedOption] = useState<'psa'|'new_plugins'|'new_repos'>('psa');
+  const [feedOption, setFeedOption] = useState<'announcements'|'new_plugins'|'new_repos'>('announcements');
 
   return (
     <Container>
@@ -41,6 +42,7 @@ const HomeFeedView = (props: Props) => {
       />
       {feedOption == 'new_plugins' && <NewPluginsView/>}
       {feedOption == 'new_repos' && <NewReposView/>}
+      {feedOption == 'announcements' && <FeedAnnouncements/>}
     </Container>
   );
 

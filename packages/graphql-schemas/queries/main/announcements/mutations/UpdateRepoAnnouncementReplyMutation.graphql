@@ -1,0 +1,31 @@
+mutation UpdateRepoAnnouncementReply(
+  $repoAnnouncementReplyId: String!
+  $repoAnnouncementId: String!
+  $repositoryId: String!
+  $text: String!
+) {
+  updateRepoAnnouncementReplyComment(
+    repoAnnouncementReplyId: $repoAnnouncementReplyId
+    repoAnnouncementId: $repoAnnouncementId
+    repositoryId: $repositoryId
+    text: $text
+  ) {
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+    ... on RepoAccessError {
+      type
+      message
+    }
+    ... on UpdateRepoAnnouncementReplyError {
+      type
+      message
+    }
+    ... on UpdateRepoAnnouncementReplySuccess {
+      repoAnnouncement {
+        ...RepoAnnouncement
+      }
+    }
+  }
+}

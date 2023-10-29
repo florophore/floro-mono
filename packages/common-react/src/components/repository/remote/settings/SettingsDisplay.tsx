@@ -18,6 +18,8 @@ import CanPushBranchesSetting from "./settings_boxes/CanPushBranchesSetting";
 import { useSession } from "../../../../session/session-context";
 import { useCanAmend } from "../../local/hooks/local-hooks";
 import { Branch } from "floro/dist/src/repo";
+import CanWriteAnnouncementsSetting from "./settings_boxes/CanWriteAnnouncementsSetting";
+import DotsLoader from "@floro/storybook/stories/design-system/DotsLoader";
 
 const Container = styled.div`
   height: 100%;
@@ -91,6 +93,7 @@ const InsufficientPermssionsText = styled.h3`
 interface Props {
   repository: Repository;
   plugin: string;
+  isLoading: boolean;
 }
 
 const SettingsDisplay = (props: Props) => {
@@ -134,6 +137,13 @@ const SettingsDisplay = (props: Props) => {
     return true;
   }, [props?.repository]);
 
+  const showAnnouncementsSetting = useMemo(() => {
+    if (props?.repository?.repoType == "user_repo") {
+        return false;
+    }
+    return true;
+  }, [props?.repository]);
+
   const canChangeApiSettings = useMemo(() => {
     if (props?.repository?.repoType == "user_repo") {
       return currentUser?.id == props?.repository?.user?.id;
@@ -153,7 +163,14 @@ const SettingsDisplay = (props: Props) => {
       <InsufficientPermssionsContainer>
         <InsufficientPermssionsTextWrapper>
           <InsufficientPermssionsText>
-            {"insufficient repo access to display setting controls"}
+            {props.isLoading && (
+              <DotsLoader size={"medium"} color={"purple"}/>
+            )}
+            {!props.isLoading && (
+              <>
+                {"insufficient repo access to display setting controls"}
+              </>
+            )}
           </InsufficientPermssionsText>
         </InsufficientPermssionsTextWrapper>
       </InsufficientPermssionsContainer>
@@ -180,6 +197,9 @@ const SettingsDisplay = (props: Props) => {
         )}
         {showPushSetting && (
           <CanPushBranchesSetting repository={props.repository}/>
+        )}
+        {showAnnouncementsSetting && (
+          <CanWriteAnnouncementsSetting repository={props.repository}/>
         )}
       </InnerContainer>
     </Container>

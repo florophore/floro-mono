@@ -6,6 +6,7 @@ import { useLocalReposInfos } from "../../hooks/repos";
 import { useSession } from "../../session/session-context";
 import { Organization, Plugin, Repository, User } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { RepoInfo } from "floro/dist/src/repo";
+import { useSaveOfflineIcon } from "../../offline/OfflineIconsContext";
 
 export interface RepoSearchResult {
     id: string;
@@ -49,6 +50,7 @@ export const usePageSearch = (query: string): [SearchResult, boolean] => {
 
   const isOnline = useIsOnline();
   const repoInfos = useLocalReposInfos();
+  const saveIcon = useSaveOfflineIcon();
 
   const localPlugins = useMemo(() => {
     return [
@@ -66,6 +68,40 @@ export const usePageSearch = (query: string): [SearchResult, boolean] => {
     currentUser?.privatePlugins,
     currentUser?.publicPlugins,
   ]);
+
+  useEffect(() => {
+    localPlugins.forEach(plugin => {
+        if (plugin?.lightIcon) {
+          saveIcon(plugin?.lightIcon);
+        }
+        if (plugin?.darkIcon) {
+          saveIcon(plugin?.darkIcon);
+        }
+        if (plugin?.selectedLightIcon) {
+          saveIcon(plugin?.selectedLightIcon);
+        }
+        if (plugin?.selectedDarkIcon) {
+          saveIcon(plugin?.selectedDarkIcon);
+        }
+
+        plugin?.versions?.forEach((version) => {
+          if (version?.lightIcon) {
+            saveIcon(version?.lightIcon);
+          }
+          if (version?.darkIcon) {
+            saveIcon(version?.darkIcon);
+          }
+          if (version?.selectedLightIcon) {
+            saveIcon(version?.selectedLightIcon);
+          }
+          if (version?.selectedDarkIcon) {
+            saveIcon(version?.selectedDarkIcon);
+          }
+        });
+    })
+  }, [saveIcon, localPlugins])
+
+
 
   const localOrganizationResults = useMemo(() => {
     if ((query?.toLowerCase()?.trim() ?? "") == "") {

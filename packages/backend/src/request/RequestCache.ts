@@ -17,6 +17,8 @@ import { MergeRequest } from "@floro/database/src/entities/MergeRequest";
 import { MergeRequestComment } from "@floro/database/src/entities/MergeRequestComment";
 import { MergeRequestCommentReply } from "@floro/database/src/entities/MergeRequestCommentReply";
 import { ProtectedBranchRule } from "@floro/database/src/entities/ProtectedBranchRule";
+import { RepoAnnouncement } from "@floro/database/src/entities/RepoAnnouncement";
+import { RepoAnnouncementReply } from "@floro/database/src/entities/RepoAnnouncementReply";
 import { ApiKey } from "@floro/database/src/entities/ApiKey";
 import { WebhookKey } from "@floro/database/src/entities/WebhookKey";
 
@@ -876,5 +878,73 @@ export default class RequestCache {
   ) {
     const cache = this.getCache(cacheKey);
     cache[`webhook-key:${webhookKey.id}`] = webhookKey;
+  }
+
+  public getIsBookmarked(
+    cacheKey: string,
+    repositoryId: string,
+  ): boolean {
+    const cache = this.getCache(cacheKey);
+    return cache[`is-bookmarked:${repositoryId}`];
+  }
+
+  public setIsBookmarked(
+    cacheKey: string,
+    repositoryId: string,
+    isBookmarked: boolean,
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`is-bookmarked:${repositoryId}`] = isBookmarked;
+  }
+
+  public getIsSubscribed(
+    cacheKey: string,
+    repositoryId: string,
+  ): boolean {
+    const cache = this.getCache(cacheKey);
+    return cache[`is-subscribed:${repositoryId}`];
+  }
+
+  public setIsSubscribed(
+    cacheKey: string,
+    repositoryId: string,
+    isSubscribed: boolean,
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`is-subscribed:${repositoryId}`] = isSubscribed;
+  }
+
+  public getRepoAnnouncement(
+    cacheKey: string,
+    repoAnnouncementId: string,
+  ): RepoAnnouncement {
+    const cache = this.getCache(cacheKey);
+    return cache[`repo-announcement:${repoAnnouncementId}`];
+  }
+
+  public setRepoAnnouncement(
+    cacheKey: string,
+    repoAnnouncementId: string,
+    repoAnnouncement: RepoAnnouncement,
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`repo-announcement:${repoAnnouncementId}`] = repoAnnouncement;
+  }
+
+  public getRepoAnnouncementReply(
+    cacheKey: string,
+    repoAnnouncementReplyId: string,
+  ): RepoAnnouncementReply {
+    const cache = this.getCache(cacheKey);
+    return cache[`repo-announcement-reply:${repoAnnouncementReplyId}`];
+  }
+
+  public setRepoAnnouncementReply(
+    cacheKey: string,
+    repoAnnouncementReplyId: string,
+    repoAnnouncementReply: RepoAnnouncementReply,
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`repo-announcement-reply:${repoAnnouncementReplyId}`] = repoAnnouncementReply;
   }
 }

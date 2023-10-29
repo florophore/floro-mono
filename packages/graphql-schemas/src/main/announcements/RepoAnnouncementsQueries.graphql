@@ -1,0 +1,65 @@
+extend type Query {
+  fetchFeed(lastId: ID): FetchRepoAnnouncementsResponse
+
+  fetchRepoAnnouncements(
+    repositoryId: ID!
+    lastId: ID
+  ): FetchRepoAnnouncementsResponse
+
+  fetchUserRepoAnnouncements(
+    userId: ID!
+    lastId: ID
+  ): FetchRepoAnnouncementsResponse
+
+  fetchOrgRepoAnnouncements(
+    organizationId: ID!
+    lastId: ID
+  ): FetchRepoAnnouncementsResponse
+}
+
+extend type Mutation {
+  bookmarkRepo(repositoryId: ID!): BookmarkRepoResponse
+  unbookmarkRepo(repositoryId: ID!): BookmarkRepoResponse
+  subscribeToRepo(repositoryId: ID!): SubscribeRepoResponse
+  unSubscribeFromRepo(repositoryId: ID!): SubscribeRepoResponse
+
+  createRepoAnnouncementComment(
+    repositoryId: String!
+    text: String!
+  ): CreateRepoAnnouncementResponse
+
+  updateRepoAnnouncementComment(
+    repoAnnouncementId: String!
+    repositoryId: String!
+    text: String!
+  ): UpdateRepoAnnouncementResponse
+
+  deleteRepoAnnouncementComment(
+    repoAnnouncementId: String!
+    repositoryId: String!
+  ): DeleteRepoAnnouncementResponse
+
+  createRepoAnnouncementReplyComment(
+    repoAnnouncementId: String!
+    repositoryId: String!
+    text: String!
+  ): CreateRepoAnnouncementReplyResponse
+
+  updateRepoAnnouncementReplyComment(
+    repoAnnouncementReplyId: String!
+    repoAnnouncementId: String!
+    repositoryId: String!
+    text: String!
+  ): UpdateRepoAnnouncementReplyResponse
+
+  deleteRepoAnnouncementReplyComment(
+    repoAnnouncementReplyId: String!
+    repoAnnouncementId: String!
+    repositoryId: String!
+  ): DeleteRepoAnnouncementReplyResponse
+}
+
+
+extend type Subscription {
+  repoAnnouncementUpdated(repoAnnouncementId: ID): RepoAnnouncement
+}

@@ -1,0 +1,172 @@
+type RepoAnnouncement {
+  id: ID
+  text: String
+  user: User
+  createdByUser: User
+  organization: Organization
+  repository: Repository
+  isDeleted: Boolean
+  updatedAt: DateTime
+  createdAt: DateTime
+  replies: [RepoAnnouncementReply]
+}
+
+
+type RepoAnnouncementReply {
+  id: ID
+  text: String
+  user: User
+  updatedAt: DateTime
+  createdAt: DateTime
+}
+
+
+type FetchRepoAnnouncementsResult {
+    announcements: [RepoAnnouncement]
+    hasMore: Boolean
+    lastId: String
+}
+
+type FetchRepoAnnouncementsError {
+  message: String
+  type: String
+}
+
+union FetchRepoAnnouncementsResponse =
+    FetchRepoAnnouncementsResult
+  | FetchRepoAnnouncementsError
+  | UnAuthenticatedError
+
+
+type BookmarkRepoSuccess {
+  repository: Repository
+  user: User
+}
+
+type BookmarkRepoError {
+  message: String
+  type: String
+}
+
+union BookmarkRepoResponse =
+    BookmarkRepoSuccess
+  | BookmarkRepoError
+  | RepoSettingAccessError
+  | UnAuthenticatedError
+
+
+type SubscribeRepoSuccess {
+  repository: Repository
+}
+
+type SubscribeRepoError {
+  message: String
+  type: String
+}
+
+union SubscribeRepoResponse =
+    SubscribeRepoSuccess
+  | SubscribeRepoError
+  | RepoSettingAccessError
+  | UnAuthenticatedError
+
+
+type CreateRepoAnnouncementSuccess {
+  repository: Repository
+  repoAnnouncement: RepoAnnouncement
+}
+
+type CreateRepoAnnouncementError {
+  message: String
+  type: String
+}
+
+union CreateRepoAnnouncementResponse =
+    CreateRepoAnnouncementSuccess
+  | CreateRepoAnnouncementError
+  | UnAuthenticatedError
+  | RepoAccessError
+
+type UpdateRepoAnnouncementSuccess {
+  repository: Repository
+  repoAnnouncement: RepoAnnouncement
+}
+
+type UpdateRepoAnnouncementError {
+  message: String
+  type: String
+}
+
+union UpdateRepoAnnouncementResponse =
+    UpdateRepoAnnouncementSuccess
+  | UpdateRepoAnnouncementError
+  | UnAuthenticatedError
+  | RepoAccessError
+
+type DeleteRepoAnnouncementSuccess {
+  repository: Repository
+  repoAnnouncement: RepoAnnouncement
+}
+
+type DeleteRepoAnnouncementError {
+  message: String
+  type: String
+}
+
+union DeleteRepoAnnouncementResponse =
+    DeleteRepoAnnouncementSuccess
+  | DeleteRepoAnnouncementError
+  | UnAuthenticatedError
+  | RepoAccessError
+
+
+type CreateRepoAnnouncementReplySuccess {
+  repository: Repository
+  repoAnnouncement: RepoAnnouncement
+  repoAnnouncementReply: RepoAnnouncementReply
+}
+
+type CreateRepoAnnouncementReplyError {
+  message: String
+  type: String
+}
+
+union CreateRepoAnnouncementReplyResponse =
+    CreateRepoAnnouncementReplySuccess
+  | CreateRepoAnnouncementReplyError
+  | UnAuthenticatedError
+  | RepoAccessError
+
+
+type UpdateRepoAnnouncementReplySuccess {
+  repository: Repository
+  repoAnnouncement: RepoAnnouncement
+  repoAnnouncementReply: RepoAnnouncementReply
+}
+
+type UpdateRepoAnnouncementReplyError {
+  message: String
+  type: String
+}
+
+union UpdateRepoAnnouncementReplyResponse =
+    UpdateRepoAnnouncementReplySuccess
+  | UpdateRepoAnnouncementReplyError
+  | UnAuthenticatedError
+  | RepoAccessError
+
+type DeleteRepoAnnouncementReplySuccess {
+  repository: Repository
+  repoAnnouncement: RepoAnnouncement
+}
+
+type DeleteRepoAnnouncementReplyError {
+  message: String
+  type: String
+}
+
+union DeleteRepoAnnouncementReplyResponse =
+    DeleteRepoAnnouncementReplySuccess
+  | DeleteRepoAnnouncementReplyError
+  | UnAuthenticatedError
+  | RepoAccessError

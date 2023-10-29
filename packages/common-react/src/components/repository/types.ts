@@ -1,4 +1,5 @@
 export declare type RepoPage =
+  | "announcements"
   | "history"
   | "home"
   | "settings"

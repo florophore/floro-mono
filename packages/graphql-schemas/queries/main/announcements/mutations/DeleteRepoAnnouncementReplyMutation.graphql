@@ -1,0 +1,29 @@
+mutation DeleteRepoAnnouncementReply(
+  $repoAnnouncementReplyId: String!
+  $repoAnnouncementId: String!
+  $repositoryId: String!
+) {
+  deleteRepoAnnouncementReplyComment(
+    repoAnnouncementReplyId: $repoAnnouncementReplyId
+    repoAnnouncementId: $repoAnnouncementId
+    repositoryId: $repositoryId
+  ) {
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+    ... on RepoAccessError {
+      type
+      message
+    }
+    ... on DeleteRepoAnnouncementReplyError {
+      type
+      message
+    }
+    ... on DeleteRepoAnnouncementReplySuccess {
+      repoAnnouncement {
+        ...RepoAnnouncement
+      }
+    }
+  }
+}

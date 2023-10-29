@@ -180,6 +180,7 @@ const LicenseTitle = styled.div`
 interface Props {
   repository: Repository;
   page: RepoPage;
+  isLoading?: boolean;
 }
 
 const MergeRequest = (props: Props) => {

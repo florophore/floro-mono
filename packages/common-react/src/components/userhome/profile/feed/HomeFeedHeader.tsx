@@ -52,15 +52,15 @@ const Icon = styled.img`
 `;
 
 interface Props {
-  feedOption: 'psa'|'new_plugins'|'new_repos';
-  onChangeFeedOption: (feedOption: 'psa'|'new_plugins'|'new_repos') => void;
+  feedOption: 'announcements'|'new_plugins'|'new_repos';
+  onChangeFeedOption: (feedOption: 'announcements'|'new_plugins'|'new_repos') => void;
 }
 
 const HomeFeedHeader = (props: Props) => {
   const theme = useTheme();
 
   const onSelectFeed = useCallback(() => {
-    props.onChangeFeedOption('psa');
+    props.onChangeFeedOption('announcements');
   }, [props.onChangeFeedOption])
 
   const onSelectBookmarks = useCallback(() => {
@@ -76,8 +76,8 @@ const HomeFeedHeader = (props: Props) => {
     <Container>
       <HeaderNavCell>
         <HeaderSectionTitle onClick={onSelectFeed} style={{
-          color: props.feedOption == 'psa' ? theme.colors.sidebarTitleTextColor : theme.colors.contrastText,
-          fontWeight: props.feedOption == 'psa' ? 600 : 400
+          color: props.feedOption == 'announcements' ? theme.colors.sidebarTitleTextColor : theme.colors.contrastText,
+          fontWeight: props.feedOption == 'announcements' ? 600 : 400
         }}>
           {'announcements'}
         </HeaderSectionTitle>

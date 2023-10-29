@@ -28,10 +28,15 @@
     "d3": "^7.8.3",
     "emoji-picker-react": "^4.4.12",
     "escape-html": "^1.0.3",
+    "get-urls": "^12.1.0",
+    "linkifyjs": "^4.1.1",
+    "normalize-url": "^8.0.0",
     "react-contenteditable": "^3.3.7",
     "sanitize-html": "^2.11.0",
+    "super-regex": "^0.2.0",
     "ts-node-dev": "^1.1.8",
-    "typescript": "^4.3.5"
+    "typescript": "^4.3.5",
+    "url-regex-safe": "^4.0.0"
   },
   "scripts": {
     "tsc": "tsc --build",

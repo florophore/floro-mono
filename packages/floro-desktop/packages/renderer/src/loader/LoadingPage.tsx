@@ -1,13 +1,13 @@
-import React, { useEffect, useMemo, useCallback } from 'react';
+import React, {useEffect, useMemo, useCallback} from 'react';
 
 import FloroLogo from '@floro/common-assets/assets/images/floro_logo.svg';
 import styled from '@emotion/styled';
-import { keyframes } from '@emotion/react';
-import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import colorPalette, { Opacity } from '@floro/styles/ColorPalette';
-import { useSession } from '@floro/common-react/src/session/session-context';
-import { useNavigationAnimator } from '@floro/common-react/src/navigation/navigation-animator';
+import {keyframes} from '@emotion/react';
+import {useNavigate} from 'react-router-dom';
+import {motion} from 'framer-motion';
+import colorPalette, {Opacity} from '@floro/styles/ColorPalette';
+import {useSession} from '@floro/common-react/src/session/session-context';
+import {useNavigationAnimator} from '@floro/common-react/src/navigation/navigation-animator';
 
 const colorTransition = keyframes`
   from, 0% {
@@ -41,40 +41,40 @@ const ringTransition = keyframes`
 `;
 
 const Background = styled.div`
-    animation: ${colorTransition} 4s ease infinite;
-    padding: 0;
-    margin: 0;
-    height: 100%;
-    width: 100%;
-    display: flex;
-    flex: 1;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
+  animation: ${colorTransition} 4s ease infinite;
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
 `;
 
 const Image = styled.img`
-    max-width: 300px;
-    z-index: 1;
-    cursor: pointer;
+  max-width: 300px;
+  z-index: 1;
+  cursor: pointer;
 `;
 
 const RingContainer = styled.div`
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    position: absolute;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
 `;
 
 const Ring = styled.div`
-    animation: ${ringTransition} 4s ease infinite;
-    position: absolute;
-    border-radius: 50%;
+  animation: ${ringTransition} 4s ease infinite;
+  position: absolute;
+  border-radius: 50%;
 `;
 
 const DragBar = styled.div`
@@ -87,8 +87,8 @@ const DragBar = styled.div`
 `;
 
 const quack = () => {
-    const audio = new Audio('./assets/sounds/quack.mp3');
-    audio.play();
+  const audio = new Audio('./assets/sounds/quack.mp3');
+  audio.play();
 };
 
 const TRANSITION_TIME = 4000;
@@ -114,66 +114,66 @@ const LoadingPage = ({isTransitionIn = false}: Props) => {
 
   const onQuackCB = useCallback(quack, []);
 
-    const { session } = useSession();
-    useNavigationAnimator({
-      dashboardView: false,
-    });
+  const {session} = useSession();
+  useNavigationAnimator({
+    dashboardView: false,
+  });
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    useEffect(() => {
-      const timeout = setTimeout(() => {
-        if (!session?.id) {
-          navigate('/loggedout');
-        } else {
-          navigate('/home');
-        }
-      }, TRANSITION_TIME);
-
-      return () => {
-        clearTimeout(timeout);
-      };
-    }, [navigate, session?.id]);
-
-    const initialPageAnim = useMemo(() => {
-      if (isTransitionIn) {
-        return {
-          right: '-100%',
-        };
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (!session?.id) {
+        navigate('/loggedout');
+      } else {
+        navigate('/home');
       }
-      return {
-        right: 0,
-      };
-    }, [isTransitionIn]);
+    }, TRANSITION_TIME);
 
-    return (
-      <motion.div
-        style={{
-          position: 'absolute',
-          width: '100%',
-        }}
-        initial={initialPageAnim}
-        exit={{
-          right: '100%',
-        }}
-        animate={{
-          right: '0%',
-        }}
-        transition={{duration: 0.5}}
-      >
-        <Background>
-          <RingContainer>
-            <Ring style={{animationDelay: '0s'}} />
-            <Ring style={{animationDelay: '0.25s'}} />
-            <Ring style={{animationDelay: '0.5s'}} />
-            <Ring style={{animationDelay: '0.75s'}} />
-            <Ring style={{animationDelay: '1s'}} />
-          </RingContainer>
-          <Image draggable={false} src={FloroLogo} onClick={onQuackCB}/>
-        </Background>
-        <DragBar/>
-      </motion.div>
-    );
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [session?.id]);
+
+  const initialPageAnim = useMemo(() => {
+    if (isTransitionIn) {
+      return {
+        right: '-100%',
+      };
+    }
+    return {
+      right: 0,
+    };
+  }, [isTransitionIn]);
+
+  return (
+    <motion.div
+      style={{
+        position: 'absolute',
+        width: '100%',
+      }}
+      initial={initialPageAnim}
+      exit={{
+        right: '100%',
+      }}
+      animate={{
+        right: '0%',
+      }}
+      transition={{duration: 0.5}}
+    >
+      <Background>
+        <RingContainer>
+          <Ring style={{animationDelay: '0s'}} />
+          <Ring style={{animationDelay: '0.25s'}} />
+          <Ring style={{animationDelay: '0.5s'}} />
+          <Ring style={{animationDelay: '0.75s'}} />
+          <Ring style={{animationDelay: '1s'}} />
+        </RingContainer>
+        <Image draggable={false} src={FloroLogo} onClick={onQuackCB} />
+      </Background>
+      <DragBar />
+    </motion.div>
+  );
 };
 
 export default React.memo(LoadingPage);

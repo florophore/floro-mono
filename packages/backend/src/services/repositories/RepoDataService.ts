@@ -292,6 +292,15 @@ export default class RepoDataService {
         queryRunner
       ));
 
+    const canWriteAnnouncements =
+      isAdmin ||
+      (await this.repoRBAC.calculateUserRepositorySettingPermission(
+        repository,
+        user,
+        "anyoneCanWriteAnnouncements",
+        queryRunner
+      ));
+
     const protectedBranchRulesContext = await this.contextFactory.createContext(
       ProtectedBranchRulesContext,
       queryRunner
@@ -303,6 +312,7 @@ export default class RepoDataService {
       canReadRepo,
       canPushBranches,
       canChangeSettings,
+      canWriteAnnouncements
     };
 
     const branchRules = await Promise.all(
@@ -322,6 +332,7 @@ export default class RepoDataService {
       canReadRepo,
       canPushBranches,
       canChangeSettings,
+      canWriteAnnouncements,
       branchRules,
       accountInGoodStanding,
     };

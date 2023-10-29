@@ -162,6 +162,7 @@ interface Props {
   remoteCommitState: RemoteCommitState;
   comparisonState: ComparisonState;
   page: RepoPage;
+  isLoading?: boolean;
 }
 
 const RemoteHomeRead = (props: Props) => {

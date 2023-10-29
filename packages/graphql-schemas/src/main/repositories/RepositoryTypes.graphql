@@ -23,6 +23,7 @@ type Repository {
   closedMergeRequestsCount: Int
   mergeRequest(id: ID): MergeRequest
   repoPermissions: RepoPermissions
+  announcementCount:Int
 
   #repo settings
   defaultBranchId: String
@@ -41,6 +42,11 @@ type Repository {
   canChangeSettingsUsers: [User]
   canChangeSettingsRoles: [OrganizationRole]
 
+
+  anyoneCanWriteAnnouncements: Boolean # if org, must be org member, if user must be user, not relevant to user repos
+  canWriteAnnouncementsUsers: [User]
+  canWriteAnnouncementsRoles: [OrganizationRole]
+
   canTurnOffAnyoneCanChangeSettings: Boolean
   canTurnOffAnyoneCanRead: Boolean
 
@@ -49,6 +55,9 @@ type Repository {
 
   enabledApiKeys: [RepositoryEnabledApiKey]
   enabledWebhookKeys: [RepositoryEnabledWebhookKey]
+
+  isBookmarked: Boolean
+  isSubscribed: Boolean
 }
 
 type ProtectedBranchRule {
@@ -89,6 +98,7 @@ type ProtectedBranchRule {
 type RepoPermissions {
   canPushBranches: Boolean
   canChangeSettings: Boolean
+  canWriteAnnouncements: Boolean
 }
 
 type RepoBranch {

@@ -1,0 +1,24 @@
+mutation subscribeToRepo(
+  $repositoryId: ID!
+) {
+  subscribeToRepo(repositoryId: $repositoryId) {
+    ... on SubscribeRepoSuccess {
+      repository {
+          id
+          isSubscribed
+      }
+    }
+    ... on SubscribeRepoError {
+      message
+      type
+    }
+    ... on RepoSettingAccessError {
+      message
+      type
+    }
+    ... on UnAuthenticatedError {
+      message
+      type
+    }
+  }
+}

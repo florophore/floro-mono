@@ -1,6 +1,7 @@
 import Node, { NodeJSON } from "../Node"
 import Observer from "../Observer";
 import LinkVariantTagNode from "./LinkVariableTagNode";
+import ListNode from "./ListNode";
 import OrderedListNode from "./OrderedListNode";
 import TextNode, { TextNodeJSON } from "./TextNode";
 import UnOrderedListNode from "./UnOrderedListNode";
@@ -33,7 +34,7 @@ export default class RootNode extends Node {
     return new RootNode(observer, json.content, lang, children as TextNode[]);
   }
 
-  public static fromTextChildren(children: Array<NodeJSON>, observer: Observer, lang: string): Array<TextNodeJSON> {
+  public static fromTextChildren(children: Array<NodeJSON>, observer: Observer, lang: string): Array<Node&TextNodeJSON> {
     return (
       children?.map((c) => {
         if (c.type == "ol-tag") {
@@ -43,7 +44,7 @@ export default class RootNode extends Node {
           return UnOrderedListNode.fromJSON(c as TextNode, observer, lang);
         }
         if (c.type == "li-tag") {
-          return UnOrderedListNode.fromJSON(c as TextNode, observer, lang);
+          return ListNode.fromJSON(c as TextNode, observer, lang);
         }
         if (c.type == "variable-tag") {
           return VariableTagNode.fromJSON(c as VariableTagNode, observer, lang);

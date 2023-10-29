@@ -8,32 +8,16 @@ import React, {
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import {
-  useUpdateAnyoneCanChangeSettingsMutation,
-  RepoBranch,
   Repository,
   User,
   OrganizationRole,
   useUpdateAnyoneCanReadMutation,
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
-import { Manifest } from "floro/dist/src/plugins";
-import TimeAgo from "javascript-time-ago";
-import { useSearchParams } from "react-router-dom";
-import { Link } from "react-router-dom";
-
-import en from "javascript-time-ago/locale/en";
-import PaginationToggle from "@floro/storybook/stories/repo-components/PaginationToggle";
-import { useNavigate } from "react-router";
 import { ColorPalette } from "@floro/styles/ColorPalette";
-import { Branch } from "floro/dist/src/repo";
-import BranchSelector from "@floro/storybook/stories/repo-components/BranchSelector";
-import Button from "@floro/storybook/stories/design-system/Button";
-import { useRepoLinkBase } from "../../hooks/remote-hooks";
 import Checkbox from "@floro/storybook/stories/design-system/Checkbox";
 import DotsLoader from "@floro/storybook/stories/design-system/DotsLoader";
 import EnabledUserDisplay from "../components/EnabledUserDisplay";
-import AddSettingsUsersModal from "../setting_modals/AddSettingsUsersModal";
 import EnabledRoleDisplay from "../components/EnabledRoleDisplay";
-import AddSettingsRolesModal from "../setting_modals/AddSettingsRolesModal";
 import AddReadAccessUsersModal from "../setting_modals/AddReadAccessUsersModal";
 import AddReadAccessRolesModal from "../setting_modals/AddReadAccessRolesModal";
 
@@ -113,10 +97,6 @@ const CanReadSetting = (props: Props) => {
   const [showAddRoles, setShowAddRoles] = useState<boolean>(false);
   const theme = useTheme();
   const [updateAnyoneCanRead, updateAnyoneCanReadRequest] = useUpdateAnyoneCanReadMutation();
-  //const [
-  //  updateAnyoneCanChangeSettingsMutation,
-  //  updateAnyoneCanChangeSettingsResponse,
-  //] = useUpdateAnyoneCanChangeSettingsMutation();
   const loaderColor = useMemo((): keyof ColorPalette => {
     if (theme.name == "light") {
       return "mediumGray";
@@ -174,7 +154,7 @@ const CanReadSetting = (props: Props) => {
       <MainContainer>
         <LeftContainer>
           <Checkbox
-            disabled={!props?.repository?.canTurnOffAnyoneCanChangeSettings}
+            disabled={!props?.repository?.canTurnOffAnyoneCanRead}
             isChecked={anyoneCanRead}
             onChange={onChange}
           />

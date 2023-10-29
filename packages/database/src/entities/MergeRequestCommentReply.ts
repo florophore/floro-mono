@@ -2,7 +2,6 @@ import { IsBoolean, IsOptional, IsString } from "class-validator";
 import { Entity, Column, Relation, JoinColumn, ManyToOne, OneToMany } from "typeorm";
 import { BinaryPKBaseEntity } from "./BinaryPKBaseEntity";
 import { User } from "./User";
-import { MergeRequest } from "./MergeRequest";
 import { MergeRequestComment } from "./MergeRequestComment";
 import { MergeRequestEvent } from "./MergeRequestEvent";
 

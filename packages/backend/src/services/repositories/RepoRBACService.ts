@@ -21,6 +21,7 @@ export interface RepoPermissions {
   canReadRepo: boolean;
   canPushBranches: boolean;
   canChangeSettings: boolean;
+  canWriteAnnouncements: boolean;
 }
 
 @injectable()
@@ -369,7 +370,8 @@ export default class RepoRBACService {
     settingName:
       | "anyoneCanRead"
       | "anyoneCanPushBranches"
-      | "anyoneCanChangeSettings",
+      | "anyoneCanChangeSettings"
+      | "anyoneCanWriteAnnouncements",
       queryRunner?: QueryRunner
   ): Promise<boolean> {
     if (!repository.isPrivate) {
@@ -382,6 +384,9 @@ export default class RepoRBACService {
     }
     if (repository.repoType == "user_repo") {
       if (user.id == repository.createdByUserId) {
+        if (repository.isPrivate && settingName == "anyoneCanWriteAnnouncements") {
+          return false;
+        }
         return true;
       }
       if (repository.isPrivate) {

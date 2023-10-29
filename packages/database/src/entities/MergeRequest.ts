@@ -7,6 +7,7 @@ import { Branch } from "./Branch";
 import { ReviewerRequest } from "./ReviewerRequest";
 import { MergeRequestComment } from "./MergeRequestComment";
 import { ReviewStatus } from "./ReviewStatus";
+import { Repository } from "./Repository";
 
 @Entity("merge_requests")
 export class MergeRequest extends BinaryPKBaseEntity {
@@ -107,7 +108,7 @@ export class MergeRequest extends BinaryPKBaseEntity {
 
   @ManyToOne("Repository", "mergeRequests")
   @JoinColumn()
-  repository!: Relation<Organization>;
+  repository!: Relation<Repository>;
 
   @Column("uuid")
   dbBaseBranchId!: string;

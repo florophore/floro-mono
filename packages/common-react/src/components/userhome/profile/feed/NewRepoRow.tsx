@@ -2,11 +2,15 @@ import React, { useMemo, useCallback, useState } from "react";
 import {
   Organization,
   Plugin,
-  Repository
+  Repository,
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import { Link } from "react-router-dom";
+import UserProfilePhoto from "@floro/storybook/stories/common-components/UserProfilePhoto";
+import OrgProfilePhoto from "@floro/storybook/stories/common-components/OrgProfilePhoto";
+import { useOfflinePhoto } from "../../../../offline/OfflinePhotoContext";
+import { useOfflineIcon } from "../../../../offline/OfflineIconsContext";
 
 const Row = styled.div`
   display: flex;
@@ -69,9 +73,8 @@ const DisplayTitle = styled.h6`
   font-size: 1.4rem;
   font-family: "MavenPro";
   font-weight: 600;
-  color: ${props => props.theme.colors.contrastText};
+  color: ${(props) => props.theme.colors.contrastText};
 `;
-
 
 const SubRow = styled.div`
   display: flex;
@@ -87,7 +90,7 @@ const SubText = styled.p`
   font-size: 1rem;
   font-family: "MavenPro";
   font-weight: 500;
-  color: ${props => props.theme.colors.standardTextLight};
+  color: ${(props) => props.theme.colors.standardTextLight};
 `;
 
 interface Props {
@@ -118,42 +121,78 @@ const NewRepoRow = (props: Props) => {
     if (props.repo?.repoType == "user_repo") {
       return "/repo/@/" + props.repo?.user?.username + "/" + props.repo.name;
     }
-    return "/repo/@/" + props.repo?.organization?.handle + "/" + props.repo.name;
+    return (
+      "/repo/@/" + props.repo?.organization?.handle + "/" + props.repo.name
+    );
   }, [props.repo?.repoType]);
 
   const displayName = useMemo(() => {
     return props.repo?.name;
   }, [props.repo?.name]);
 
+  const orgOfflinePhoto = useOfflinePhoto(
+    props.repo?.organization?.profilePhoto ?? null
+  );
+  const userOfflinePhoto = useOfflinePhoto(
+    props.repo?.user?.profilePhoto ?? null
+  );
+
   return (
-    <Link to={linkHref}>
-      <Row onMouseOver={onMouseOver} onMouseLeave={onMouseLeave}>
-        <LeftSide></LeftSide>
-        <CenterInfo>
-          <DisplayTitle
-            style={{
-              color: isHovering
-                ? theme.colors.linkColor
-                : theme.colors.contrastText,
-            }}
-          >
-            {displayName}
-          </DisplayTitle>
-          <SubRow>
-            <SubText
-              style={{
-                color: isHovering
-                  ? theme.colors.linkColor
-                  : theme.colors.standardTextLight,
-              }}
-            >
-              {handleDisplay}
-            </SubText>
-          </SubRow>
-        </CenterInfo>
-        <RightSide></RightSide>
-      </Row>
-    </Link>
+    <div>
+      <Link to={linkHref}>
+        <div
+          style={{
+            display: "inline-block",
+            maxWidth: 450,
+            width: "100%",
+          }}
+        >
+          <Row onMouseOver={onMouseOver} onMouseLeave={onMouseLeave}>
+            <LeftSide>
+              <div style={{ marginRight: 24 }}>
+                {props.repo?.repoType == "user_repo" && (
+                  <UserProfilePhoto
+                    user={props.repo?.user}
+                    offlinePhoto={userOfflinePhoto}
+                    size={48}
+                  />
+                )}
+                {props.repo?.repoType == "org_repo" && (
+                  <OrgProfilePhoto
+                    organization={props.repo?.organization as Organization}
+                    offlinePhoto={orgOfflinePhoto}
+                    size={48}
+                  />
+                )}
+              </div>
+            </LeftSide>
+            <CenterInfo>
+              <DisplayTitle
+                style={{
+                  color: isHovering
+                    ? theme.colors.linkColor
+                    : theme.colors.contrastText,
+                }}
+              >
+                {displayName}
+              </DisplayTitle>
+              <SubRow>
+                <SubText
+                  style={{
+                    color: isHovering
+                      ? theme.colors.linkColor
+                      : theme.colors.standardTextLight,
+                  }}
+                >
+                  {handleDisplay}
+                </SubText>
+              </SubRow>
+            </CenterInfo>
+            <RightSide></RightSide>
+          </Row>
+        </div>
+      </Link>
+    </div>
   );
 };
 

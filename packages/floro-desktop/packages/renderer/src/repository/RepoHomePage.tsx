@@ -23,7 +23,7 @@ const RepoHomePage = (props: Props) => {
   const branchId = searchParams.get('branch');
   const sha = searchParams.get('sha');
   const userOrganizations = useUserOrganizations();
-  const {data} = useFetchRepositoryByNameQuery({
+  const {data, loading} = useFetchRepositoryByNameQuery({
     variables: {
       ownerHandle,
       repoName,
@@ -162,6 +162,7 @@ const RepoHomePage = (props: Props) => {
             repository={repository}
             plugin={plugin ?? 'home'}
             page={props.page}
+            isLoading={loading}
           />
         )}
         {!repository && <div />}

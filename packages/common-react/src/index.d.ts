@@ -13,5 +13,6 @@ declare global {
     interface Window {
       OAuthAPI: OAuthAPI;
       __APOLLO_STATE__: NormalizedCacheObject;
+      REDIRECT_URL: string;
     }
   }

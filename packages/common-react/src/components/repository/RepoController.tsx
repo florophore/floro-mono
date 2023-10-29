@@ -16,12 +16,14 @@ import {
 import { RepoPage } from "./types";
 import { MergeRequestNavProvider } from "./remote/mergerequest/MergeRequestContext";
 import { CopyPasteProvider } from "./copypaste/CopyPasteContext";
+import { CreateAnnouncementsProvider } from "./remote/announcements/CreateAnnouncementsContext";
 
 interface Props {
   from: "local" | "remote";
   repository: Repository;
   plugin?: string;
   page: RepoPage;
+  isLoading: boolean;
 }
 
 const RepoController = (props: Props) => {
@@ -61,51 +63,54 @@ const RepoController = (props: Props) => {
   }, [onTogglePanel]);
 
   return (
-    <CopyPasteProvider repository={props.repository}>
-      <SourceGraphUIProvider isExpanded={isExpanded}>
-        <MergeRequestNavProvider>
-          <LocalVCSNavProvider>
-            <RepoNavigator
-              from={props.from}
-              repository={props.repository}
-              plugin={props.plugin ?? "home"}
-              isExpanded={isExpanded}
-              onSetIsExpanded={setIsExpanded}
-              remoteCommitState={remoteCommitState}
-              comparisonState={comparisonState}
-              page={props.page}
-            >
-              <>
-                  <>
-                    {props.from == "local" && (
-                      <LocalRepoController
-                        repository={props.repository}
-                        plugin={props.plugin ?? "home"}
-                        isExpanded={isExpanded}
-                        onSetIsExpanded={setIsExpanded}
-                      />
-                    )}
-                  </>
-                  <>
-                    {props.from == "remote" && (
-                      <RemoteRepoController
-                        repository={props.repository}
-                        plugin={props.plugin ?? "home"}
-                        isExpanded={isExpanded}
-                        onSetIsExpanded={setIsExpanded}
-                        remoteCommitState={remoteCommitState}
-                        comparisonState={comparisonState}
-                        page={props.page}
-                      />
-                    )}
-                  </>
-              </>
-            </RepoNavigator>
-          </LocalVCSNavProvider>
-        </MergeRequestNavProvider>
-      </SourceGraphUIProvider>
-
-    </CopyPasteProvider>
+    <CreateAnnouncementsProvider>
+      <CopyPasteProvider repository={props.repository}>
+        <SourceGraphUIProvider isExpanded={isExpanded}>
+          <MergeRequestNavProvider>
+            <LocalVCSNavProvider>
+              <RepoNavigator
+                from={props.from}
+                repository={props.repository}
+                plugin={props.plugin ?? "home"}
+                isExpanded={isExpanded}
+                onSetIsExpanded={setIsExpanded}
+                remoteCommitState={remoteCommitState}
+                comparisonState={comparisonState}
+                page={props.page}
+                isLoading={props.isLoading}
+              >
+                <>
+                    <>
+                      {props.from == "local" && (
+                        <LocalRepoController
+                          repository={props.repository}
+                          plugin={props.plugin ?? "home"}
+                          isExpanded={isExpanded}
+                          onSetIsExpanded={setIsExpanded}
+                        />
+                      )}
+                    </>
+                    <>
+                      {props.from == "remote" && (
+                        <RemoteRepoController
+                          repository={props.repository}
+                          plugin={props.plugin ?? "home"}
+                          isExpanded={isExpanded}
+                          onSetIsExpanded={setIsExpanded}
+                          remoteCommitState={remoteCommitState}
+                          comparisonState={comparisonState}
+                          page={props.page}
+                          isLoading={props.isLoading}
+                        />
+                      )}
+                    </>
+                </>
+              </RepoNavigator>
+            </LocalVCSNavProvider>
+          </MergeRequestNavProvider>
+        </SourceGraphUIProvider>
+      </CopyPasteProvider>
+    </CreateAnnouncementsProvider>
   );
 };
 

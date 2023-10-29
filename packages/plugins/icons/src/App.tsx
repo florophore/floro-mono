@@ -36,7 +36,6 @@ const Layout = () => {
   const [show, setShow] = useState(false);
   const [showUpdate, setShowUpdate] = useState(false);
   const [addedSVGFileRef, setAddedSVGFileRef] = useState<FileRef|null>(null);
-  console.log("A", addedSVGFileRef)
   const [svgFileName, setSvgFileName] = useState<string>("");
   const { commandMode} = useFloroContext();
   const [searchText, setSearchText] = useState<string>("");

@@ -1,0 +1,18 @@
+mutation updateAnyoneCanWriteAnnouncements($repositoryId: ID!, $anyoneCanWriteAnnouncements: Boolean!) {
+  updateAnyoneCanWriteAnnouncements(repositoryId: $repositoryId, anyoneCanWriteAnnouncements: $anyoneCanWriteAnnouncements) {
+    ... on RepoSettingChangeSuccess {
+      repository {
+        ...RepoWithSettings
+      }
+    }
+    ... on RepoSettingChangeError {
+      message
+      type
+    }
+
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+  }
+}

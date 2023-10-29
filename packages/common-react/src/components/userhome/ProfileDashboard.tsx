@@ -10,6 +10,8 @@ import {
 import ColorPalette from "@floro/styles/ColorPalette";
 import { useLocalRepos, useUserRepos } from "../../hooks/repos";
 import ProfileHeader from "./profile/ProfileHeader";
+import UserAnnouncements from "./profile/feed/UserAnnouncements";
+import BookmarkedReposView from "./profile/feed/BookmarkedReposView";
 
 const Container = styled.div`
   flex: 1;
@@ -145,6 +147,16 @@ const ProfileDashboard = (props: Props) => {
       <MainContainer>
         {props.user && (
           <ProfileHeader user={props.user} page={page} onChangePage={setPage} />
+        )}
+        {page == "feed" && props.user && (
+          <UserAnnouncements user={props.user} />
+        )}
+        {page == "bookmarks" && props.user && (
+          <BookmarkedReposView
+            repos={(props.user?.bookmarkedRepositories ?? []) as Repository[]}
+            user={props.user}
+            isSelf={false}
+          />
         )}
       </MainContainer>
       <SideBar>

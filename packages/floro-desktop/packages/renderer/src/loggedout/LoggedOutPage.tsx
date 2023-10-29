@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import styled from '@emotion/styled';
 import { css } from '@emotion/css';
@@ -16,6 +16,7 @@ import SignupLoginModal from '@floro/common-react/src/components/signup/SignupLo
 import { useSocketEvent } from '@floro/common-react/src/pubsub/socket';
 import type { CompleteSignupAction, PassedLoginAction } from '@floro/graphql-schemas/src/generated/main-client-graphql';
 import { setClientSession } from '@floro/common-react/src/session/client-session';
+import { useSession } from '@floro/common-react/src/session/session-context';
 
 const Background = styled.div`
   background-color: ${props => props.theme.background};

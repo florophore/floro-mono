@@ -13,10 +13,14 @@ export const setClientSession = (
   });
   localStorage.setItem("user", JSON.stringify(session.user));
   localStorage.setItem("session", JSON.stringify(session));
+  if (session?.clientKey) {
+    localStorage.setItem("session_key", session?.clientKey);
+  }
 };
 export const removeClientSession = () => {
   Cookies.remove("user-session");
   localStorage.removeItem("user");
   localStorage.removeItem("session");
   localStorage.removeItem("offline-organizations");
+  localStorage.removeItem("session_key");
 };

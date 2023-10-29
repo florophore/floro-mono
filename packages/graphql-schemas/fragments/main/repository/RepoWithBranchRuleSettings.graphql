@@ -35,10 +35,12 @@ fragment RepoWithBranchRuleSettings on Repository {
   repoPermissions {
     canPushBranches
     canChangeSettings
+    canWriteAnnouncements
   }
 
   defaultBranchId
 
+  anyoneCanWriteAnnouncements
   allowExternalUsersToPush
   anyoneCanPushBranches
 

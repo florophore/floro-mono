@@ -1,0 +1,31 @@
+mutation CreateRepoAnnouncement(
+  $repositoryId: String!
+  $text: String!
+) {
+  createRepoAnnouncementComment(
+    repositoryId: $repositoryId
+    text: $text
+  ) {
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+    ... on RepoAccessError {
+      type
+      message
+    }
+    ... on CreateRepoAnnouncementError {
+      type
+      message
+    }
+    ... on CreateRepoAnnouncementSuccess {
+      repoAnnouncement {
+        ...RepoAnnouncement
+      }
+      repository {
+        id
+        announcementCount
+      }
+    }
+  }
+}

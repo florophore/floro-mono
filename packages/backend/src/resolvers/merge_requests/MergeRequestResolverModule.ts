@@ -26,7 +26,6 @@ import RepositoryBranchesLoader from "../hooks/loaders/Repository/RepositoryBran
 import OpenMergeRequestsLoader from "../hooks/loaders/MergeRequest/OpenMergeRequestsLoader";
 import ClosedMergeRequestsLoader from "../hooks/loaders/MergeRequest/ClosedMergeRequestsLoader";
 import { Commit } from "@floro/database/src/entities/Commit";
-import RepositoryService from "../../services/repositories/RepositoryService";
 import MergeRequestEventService from "../../services/merge_requests/MergeRequestEventService";
 import MergeRequestPermissionsLoader from "../hooks/loaders/MergeRequest/MergeRequestPermissionsLoader";
 import RepoSettingsService from "../../services/repositories/RepoSettingsService";
@@ -39,7 +38,6 @@ import OrganizationMemberRolesContext from "@floro/database/src/contexts/organiz
 import RepositoryEnabledRoleSettingsContext from "@floro/database/src/contexts/repositories/RepositoryEnabledRoleSettingsContext";
 import RepositoryEnabledUserSettingsContext from "@floro/database/src/contexts/repositories/RepositoryEnabledUserSettingsContext";
 import ReviewerStatusesContext from "@floro/database/src/contexts/merge_requests/ReviewStatusesContext";
-import MergeRequestCommentsContext from "@floro/database/src/contexts/merge_requests/MergeRequestCommentsContext";
 import MergeRequestCommentsLoader from "../hooks/loaders/MergeRequest/MergeRequestCommentsLoader";
 import BranchesContext from "@floro/database/src/contexts/repositories/BranchesContext";
 import MergeService from "../../services/merge_requests/MergeService";

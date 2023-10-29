@@ -28,6 +28,7 @@ import { Photo } from "@floro/database/src/entities/Photo";
 import PluginsContext from "@floro/database/src/contexts/plugins/PluginsContext";
 import ApiKeysContext from "@floro/database/src/contexts/api_keys/ApiKeysContext";
 import WebhookKeysContext from "@floro/database/src/contexts/api_keys/WebhookKeysContext";
+import RepoAnnouncementService from "../../services/announcements/RepoAnnouncementService";
 
 @injectable()
 export default class UsersResolverModule extends BaseResolverModule {
@@ -43,6 +44,7 @@ export default class UsersResolverModule extends BaseResolverModule {
   protected photoUploadService!: PhotoUploadService;
   protected organizationInvitationService!: OrganizationInvitationService;
   protected loggedInUserGuard!: LoggedInUserGuard;
+  protected repoAnnouncementService!: RepoAnnouncementService;
 
   constructor(
     @inject(ContextFactory) contextFactory: ContextFactory,
@@ -51,7 +53,9 @@ export default class UsersResolverModule extends BaseResolverModule {
     @inject(PhotoUploadService) photoUploadService: PhotoUploadService,
     @inject(OrganizationInvitationService)
     organizationInvitationService: OrganizationInvitationService,
-    @inject(LoggedInUserGuard) loggedInUserGuard: LoggedInUserGuard
+    @inject(LoggedInUserGuard) loggedInUserGuard: LoggedInUserGuard,
+    @inject(RepoAnnouncementService)
+    repoAnnouncementService: RepoAnnouncementService
   ) {
     super();
     this.contextFactory = contextFactory;
@@ -61,6 +65,7 @@ export default class UsersResolverModule extends BaseResolverModule {
     this.photoUploadService = photoUploadService;
     this.organizationInvitationService = organizationInvitationService;
     this.loggedInUserGuard = loggedInUserGuard;
+    this.repoAnnouncementService = repoAnnouncementService;
   }
 
   public Query: main.QueryResolvers = {
@@ -74,7 +79,7 @@ export default class UsersResolverModule extends BaseResolverModule {
       const usersContext = await this.contextFactory.createContext(
         UsersContext
       );
-      return await usersContext.getByUsername(username)
+      return await usersContext.getByUsername(username);
     },
     currentUser: runWithHooks(
       () => [this.loggedInUserGuard],
@@ -512,7 +517,6 @@ export default class UsersResolverModule extends BaseResolverModule {
         user?.id as string,
         false
       );
-      debugger;
       this.requestCache.setUserPublicPlugins(
         cacheKey,
         user as User,
@@ -582,36 +586,47 @@ export default class UsersResolverModule extends BaseResolverModule {
     },
     apiKeys: runWithHooks(
       () => [],
-      async (
-        user,
-        _,
-        { currentUser, cacheKey }
-      ) => {
+      async (user, _, { currentUser, cacheKey }) => {
         if (!currentUser) {
           return null;
         }
         if (currentUser.id != user.id) {
           return null;
         }
-        const apiKeysContext = await this.contextFactory.createContext(ApiKeysContext);
-        return await apiKeysContext.getUserApiKeys(currentUser.id)
+        const apiKeysContext = await this.contextFactory.createContext(
+          ApiKeysContext
+        );
+        return await apiKeysContext.getUserApiKeys(currentUser.id);
       }
     ),
     webhookKeys: runWithHooks(
       () => [],
-      async (
-        user,
-        _,
-        { currentUser, cacheKey }
-      ) => {
+      async (user, _, { currentUser, cacheKey }) => {
         if (!currentUser) {
           return null;
         }
         if (currentUser.id != user.id) {
           return null;
         }
-        const webhookKeysContext = await this.contextFactory.createContext(WebhookKeysContext);
+        const webhookKeysContext = await this.contextFactory.createContext(
+          WebhookKeysContext
+        );
         return await webhookKeysContext.getUserWebhookKeys(currentUser.id);
+      }
+    ),
+    bookmarkedRepositories: runWithHooks(
+      () => [],
+      async (user, _, context) => {
+        if (
+          user.id != context?.currentUser?.id &&
+          user?.hideBookmarksInProfile
+        ) {
+          return [];
+        }
+        return await this.repoAnnouncementService.getBookmarkedRepos(
+          user as User,
+          context?.currentUser ?? null
+        );
       }
     ),
   };

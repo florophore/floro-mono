@@ -41,6 +41,7 @@ interface Props {
   comparisonState: ComparisonState;
   from: "local"|"remote";
   page: RepoPage;
+  isLoading: boolean;
 }
 
 const RepoNavigator = (props: Props): React.ReactElement => {
@@ -51,6 +52,9 @@ const RepoNavigator = (props: Props): React.ReactElement => {
   const hideSideNav = useMemo(() => {
     if (props.from == "remote") {
       if (props.page == "history") {
+        return true;
+      }
+      if (props.page == "announcements") {
         return true;
       }
       if (props.page == "api-settings") {
@@ -103,6 +107,7 @@ const RepoNavigator = (props: Props): React.ReactElement => {
         comparisonState={props.comparisonState}
         page={props.page}
         plugin={props.plugin}
+        isLoading={props.isLoading}
       />
     </Container>
   );

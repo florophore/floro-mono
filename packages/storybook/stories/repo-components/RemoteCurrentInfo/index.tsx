@@ -229,6 +229,15 @@ export interface Props {
   isMerged?: boolean;
   isConflictFree?: boolean;
   isCopyMode?: boolean;
+  isLoggedIn?: boolean;
+  isBookmarked?: boolean;
+  isSubscribed?: boolean;
+  isBookmarkLoading?: boolean;
+  isSubscribeLoading?: boolean;
+  onBookmark?: () => void;
+  onUnBookmark?: () => void;
+  onSubscribe?: () => void;
+  onUnSubscribe?: () => void;
 }
 
 const RemoteCurrentInfo = (props: Props): React.ReactElement => {
@@ -553,29 +562,69 @@ const RemoteCurrentInfo = (props: Props): React.ReactElement => {
             </Link>
           </Row>
         )}
-      {!props?.showMergeRequest &&
+      {props.isLoggedIn &&
+        !props?.showMergeRequest &&
         !!props.mergeRequestLink &&
         !props.isCopyMode &&
         defaultBranchIsMatching &&
         branchHeadIsMatching && (
           <ButtonRow style={{ marginTop: 8 }}>
-            <Button label={(
-              <BookmarkContainer>
-                <BookmarkIconImg src={BookmarkOutlineIcon}/>
-                <span>
-                  {"bookmark"}
-                </span>
-              </BookmarkContainer>
-            )} bg={"purple"} size={"medium"} />
-            <Button label={(
-              <BookmarkContainer>
-                <BookmarkIconImg src={SubscribeOutlineIcon}/>
-                <span>
-                  {"subscribe"}
-                </span>
-              </BookmarkContainer>
-
-            )} bg={"orange"} size={"medium"} />
+            {props.isBookmarked && (
+              <Button
+                label={
+                  <BookmarkContainer>
+                    <BookmarkIconImg src={BookmarkIcon} />
+                    <span>{"unbookmark"}</span>
+                  </BookmarkContainer>
+                }
+                bg={"purple"}
+                size={"medium"}
+                isLoading={props.isBookmarkLoading}
+                onClick={props.onUnBookmark}
+              />
+            )}
+            {!props.isBookmarked && (
+              <Button
+                label={
+                  <BookmarkContainer>
+                    <BookmarkIconImg src={BookmarkOutlineIcon} />
+                    <span>{"bookmark"}</span>
+                  </BookmarkContainer>
+                }
+                bg={"purple"}
+                size={"medium"}
+                isLoading={props.isBookmarkLoading}
+                onClick={props.onBookmark}
+              />
+            )}
+            {props.isSubscribed && (
+              <Button
+                label={
+                  <BookmarkContainer>
+                    <BookmarkIconImg src={SubscribeIcon} />
+                    <span>{"unsubscribe"}</span>
+                  </BookmarkContainer>
+                }
+                bg={"orange"}
+                size={"medium"}
+                isLoading={props.isSubscribeLoading}
+                onClick={props.onUnSubscribe}
+              />
+            )}
+            {!props.isSubscribed && (
+              <Button
+                label={
+                  <BookmarkContainer>
+                    <BookmarkIconImg src={SubscribeOutlineIcon} />
+                    <span>{"subscribe"}</span>
+                  </BookmarkContainer>
+                }
+                bg={"orange"}
+                size={"medium"}
+                isLoading={props.isSubscribeLoading}
+                onClick={props.onSubscribe}
+              />
+            )}
           </ButtonRow>
         )}
     </Container>

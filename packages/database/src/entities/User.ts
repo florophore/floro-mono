@@ -1,4 +1,4 @@
-import { IsDefined, IsInt, MaxLength, MinLength, ValidateIf } from "class-validator";
+import { IsBoolean, IsDefined, MaxLength, MinLength, ValidateIf } from "class-validator";
 import { Entity, Column, OneToMany, OneToOne, Relation, JoinColumn } from "typeorm";
 import { BinaryPKBaseEntity } from "./BinaryPKBaseEntity";
 import { Organization } from "./Organization";
@@ -20,11 +20,14 @@ import { MergeRequestComment } from "./MergeRequestComment";
 import { ReviewStatus } from "./ReviewStatus";
 import { MergeRequestEvent } from "./MergeRequestEvent";
 import { IgnoredBranchNotification } from "./IgnoredBranchNotification";
-import { RepoEnabledRoleSetting } from "./RepoEnabledRoleSetting";
 import { ApiKey } from "./ApiKey";
 import { WebhookKey } from "./WebhookKey";
 import { RepositoryEnabledWebhookKey } from "./RepositoryEnabledWebhookKey";
 import { RepositoryEnabledApiKey } from "./RepositoryEnabledApiKey";
+import { RepoBookmark } from "./RepoBookmark";
+import { RepoSubscription } from "./RepoSubscription";
+import { RepoAnnouncement } from "./RepoAnnouncement";
+import { RepoAnnouncementReply } from "./RepoAnnouncementReply";
 
 @Entity("users")
 export class User extends BinaryPKBaseEntity {
@@ -57,6 +60,14 @@ export class User extends BinaryPKBaseEntity {
   @IsDefined()
   @ValidateIf((_, value) => value != undefined)
   utilizedDiskSpaceBytes?: number;
+
+  @Column("boolean", { default: false})
+  @IsBoolean()
+  hideOrganizationsInProfile?: boolean;
+
+  @Column("boolean", { default: false})
+  @IsBoolean()
+  hideBookmarksInProfile?: boolean;
 
   @OneToOne("UserServiceAgreement", "user")
   userServiceAgreement?: Relation<UserServiceAgreement>;
@@ -186,4 +197,24 @@ export class User extends BinaryPKBaseEntity {
   @OneToMany("RepositoryEnabledWebhookKey", "user")
   @JoinColumn()
   repositoryEnabledWebhookKeys?: Relation<RepositoryEnabledWebhookKey>[];
+
+  @OneToMany("RepoBookmark", "user")
+  @JoinColumn()
+  repoBookmarks?: Relation<RepoBookmark>[];
+
+  @OneToMany("RepoSubscription", "user")
+  @JoinColumn()
+  repoSubscriptions?: Relation<RepoSubscription>[];
+
+  @OneToMany("RepoAnnouncement", "user")
+  @JoinColumn()
+  repoAnnouncements?: Relation<RepoAnnouncement>[];
+
+  @OneToMany("RepoAnnouncement", "createdByUser")
+  @JoinColumn()
+  createdRepoAnnouncements?: Relation<RepoAnnouncement>[];
+
+  @OneToMany("RepoAnnouncementReply", "user")
+  @JoinColumn()
+  repoAnnouncementReplies?: Relation<RepoAnnouncementReply>[];
 }

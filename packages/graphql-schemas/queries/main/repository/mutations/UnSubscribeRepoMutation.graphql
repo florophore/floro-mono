@@ -1,0 +1,24 @@
+mutation unSubscribeFromRepo(
+  $repositoryId: ID!
+) {
+  unSubscribeFromRepo(repositoryId: $repositoryId) {
+    ... on SubscribeRepoSuccess {
+      repository {
+          id
+          isSubscribed
+      }
+    }
+    ... on SubscribeRepoError {
+      message
+      type
+    }
+    ... on RepoSettingAccessError {
+      message
+      type
+    }
+    ... on UnAuthenticatedError {
+      message
+      type
+    }
+  }
+}
