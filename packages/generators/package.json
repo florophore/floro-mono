@@ -3,6 +3,14 @@
     "version": "1.0.0",
     "license": "MIT",
     "type": "module",
+    "private": true,
+    "workspaces": [
+        "*"
+    ],
+    "scripts": {
+        "text-generator": "yarn workspace @floro/text-generator",
+        "text-generator:build": "yarn text-generator build"
+    },
     "dependencies": {
         "quicktype-core": "^23.0.76"
     }
