@@ -1,4 +1,4 @@
-import { useUserPluginUpdatedSubscription } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import { useUserNotificationCountUpdatedSubscription, useUserPluginUpdatedSubscription } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import React from "react";
 import { useSession } from "../../session/session-context";
 
@@ -13,6 +13,12 @@ const UserSubscriber = (props: Props) => {
       userId: props.userId,
     },
   });
+
+  useUserNotificationCountUpdatedSubscription({
+    variables: {
+      userId: props.userId
+    }
+  })
   return props.children;
 };
 

@@ -1,33 +1,11 @@
 import React, { useCallback, useState, useEffect, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import RepoBriefInfoRow from "@floro/storybook/stories/common-components/RepoBriefInfoRow";
-import ProfileInfo from "@floro/storybook/stories/common-components/ProfileInfo";
-import FollowerInfo from "@floro/storybook/stories/common-components/FollowerInfo";
-import UserSettingsTab from "@floro/storybook/stories/common-components/UserSettingsTab";
-import DevSettingsTab from "@floro/storybook/stories/common-components/DevSettingsTab";
-import PluginsTab from "@floro/storybook/stories/common-components/PluginsTab";
-import ConnectionStatusTab from "@floro/storybook/stories/common-components/ConnectionStatusTab";
-import { CropArea } from "@floro/storybook/stories/common-components/PhotoCropper";
-import Button from "@floro/storybook/stories/design-system/Button";
 import { useSession } from "../../session/session-context";
-import { useDaemonIsConnected } from "../../pubsub/socket";
-import RootPhotoCropper from "../RootPhotoCropper";
 import {
-  User,
-  useRemoveUserProfilePhotoMutation,
-  useUploadUserProfilePhotoMutation,
-  useCurrentUserHomeQuery,
-  Organization,
   Repository,
   OrganizationInvitation,
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
-import ChangeNameModal from "./ChangeNameModal";
-import {
-  useOfflinePhoto,
-  useSaveOfflinePhoto,
-} from "../../offline/OfflinePhotoContext";
-import StorageTab from "@floro/storybook/stories/common-components/StorageTab";
 import { useCurrentUserRepos, useLocalRepos } from "../../hooks/repos";
 import ColorPalette from "@floro/styles/ColorPalette";
 import UserInvite from "./invitations/UserInvite";
@@ -36,6 +14,8 @@ import HomeProfileHeader from "./profile/HomeProfileHeader";
 import HomeFeedView from "./profile/feed/HomeFeedView";
 import { useIsOnline } from "../../hooks/offline";
 import BookmarkedReposView from "./profile/feed/BookmarkedReposView";
+import NotificationsFeed from "./profile/feed/NotificationsFeed";
+import { useSearchParams } from "react-router-dom";
 
 const Container = styled.div`
   flex: 1;
@@ -178,8 +158,24 @@ const HomeDashboard = () => {
     useState<OrganizationInvitation | null>(null);
   const [showRejectModal, setShowRejectModal] =
     useState<boolean>(false);
+  const [searchParams, setSearchParams] = useSearchParams({});
 
-  const [page, setPage] = useState<'feed'|'bookmarks'|'notifications'>('feed');
+  const setPage = useCallback((page: 'feed'|'bookmarks'|'notifications') => {
+    setSearchParams({
+      page
+    });
+  }, [setSearchParams])
+
+  const page = useMemo(() => {
+    if (searchParams.get('page') == 'bookmarks') {
+      return 'bookmarks';
+    }
+    if (searchParams.get('page') == 'notifications') {
+      return 'notifications';
+    }
+    return 'feed';
+  }, [searchParams])
+
   const isOnline = useIsOnline();
 
   useEffect(() => {
@@ -187,7 +183,7 @@ const HomeDashboard = () => {
 
       setPage('bookmarks');
     }
-  }, [isOnline]);
+  }, [isOnline, setPage]);
 
   const onShowRejectModal = useCallback((invitation: OrganizationInvitation) => {
     setInvitationToReject(invitation);
@@ -233,6 +229,9 @@ const HomeDashboard = () => {
             user={currentUser}
             isSelf={true}
           />
+        )}
+        {page == 'notifications' && currentUser && (
+          <NotificationsFeed/>
         )}
       </MainContainer>
       <SideBar>

@@ -1,0 +1,17 @@
+query FetchRepoAnnouncement($repoAnnouncementId: ID!) {
+  fetchRepoAnnouncement(repoAnnouncementId: $repoAnnouncementId) {
+    ... on FetchRepoAnnouncementResult {
+      repoAnnouncement {
+        ...RepoAnnouncement
+      }
+    }
+    ... on FetchRepoAnnouncementError {
+      type
+      message
+    }
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+  }
+}

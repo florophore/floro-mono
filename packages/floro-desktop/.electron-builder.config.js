@@ -74,14 +74,10 @@ module.exports = async function () {
       entitlements: "buildResources/entitlements.mac.plist",
       entitlementsInherit: "buildResources/entitlements.mac.plist",
       gatekeeperAssess: false,
-      //notarize: false,
       notarize: {
         appBundleId: appId(buildEnv),
         teamId: process.env.TEAM_ID
       }
-      //target: {
-      //  target: 'default',
-      //},
     },
     //afterSign: async (context) => {
     //  if (context.electronPlatformName === "darwin") {

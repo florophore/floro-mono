@@ -7,8 +7,6 @@ import {
   User,
   UserFragmentDoc,
   SessionFragmentDoc,
-  useCurrentUserHomeQuery,
-  RepositoryEnabledApiKeyFragmentDoc,
   Repository
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { useDaemonIsConnected, useFloroSocket, useSocketEvent } from "../pubsub/socket";
@@ -67,7 +65,6 @@ export const SessionProvider = (props: Props) => {
 
   useEffect(() => {
     if (floroSessionQuery?.data) {
-      // TODO: COMPARE TIMESTAMPS HERE
       if (!currentUser && floroSessionQuery?.data?.id) {
         setSession(floroSessionQuery?.data as Session);
         setCurrentUser({ ...floroSessionQuery?.data.user } as User);
@@ -158,7 +155,7 @@ export const SessionProvider = (props: Props) => {
       const session = JSON.parse(sessionString);
       setCurrentUser(user);
       setSession(session);
-      //exchangeSession();
+      exchangeSession();
     } catch (e) {
       //dont log just fail
     }
@@ -168,7 +165,6 @@ export const SessionProvider = (props: Props) => {
     if (session?.user?.id) {
       exchangeSession();
     }
-
   }, [session?.user?.id])
 
   const setCurrentUserInStorage = useCallback((user: User) => {

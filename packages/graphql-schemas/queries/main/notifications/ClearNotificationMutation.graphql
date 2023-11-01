@@ -1,0 +1,26 @@
+mutation ClearNotification(
+  $notificationId: ID!
+) {
+  clearNotification(
+    notificationId: $notificationId
+  ) {
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+    ... on ClearNotificationError {
+      type
+      message
+    }
+    ... on ClearNotificationResult {
+      notification {
+        id
+        hasBeenChecked
+      }
+      user {
+        id
+        unreadNotificationsCount
+      }
+    }
+  }
+}

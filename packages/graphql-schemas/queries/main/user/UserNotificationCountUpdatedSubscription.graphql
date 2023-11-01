@@ -1,0 +1,27 @@
+subscription UserNotificationCountUpdated($userId: ID) {
+  userNotificationCountUpdated(userId: $userId) {
+      ...CurrentUser,
+      privateRepositories {
+        ...Repository
+      }
+      publicRepositories {
+        ...Repository
+      }
+      unreadNotificationsCount
+      organizations {
+          ...Organization
+          membership {
+              ...OrganizationMember
+              permissions {
+                ...OrganizationPermissions
+              }
+              roles {
+                ...OrganizationRole
+              }
+          }
+          roles {
+            ...OrganizationRole
+          }
+      }
+  }
+}

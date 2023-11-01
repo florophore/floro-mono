@@ -31,6 +31,7 @@ import UserProfilePage from './user_profile/UserProfilePage';
 import UserProfilePluginsPage from './user_plugins/UserProfilePluginsPage';
 import OrgPluginsPage from './org_plugins/OrgPluginsPage';
 import RepoAnnouncementsPage from './repository/RepoAnnouncementsPage';
+import RepoAnnouncementPage from './repository/RepoAnnouncementPage';
 
 const Router = (): React.ReactElement => {
     const location = useLocation();
@@ -81,6 +82,7 @@ const Router = (): React.ReactElement => {
           <Route path="/org/@/:handle/plugins" element={<OrgPluginsPage/>}/>
 
           <Route path="/repo/@/:ownerHandle/:repoName/history" element={<RepoHistoryPage page={'history'}/>} />
+          <Route path="/repo/@/:ownerHandle/:repoName/announcements/:repoAnnouncementId" element={<RepoAnnouncementPage/>} />
           <Route path="/repo/@/:ownerHandle/:repoName/announcements" element={<RepoAnnouncementsPage/>} />
           <Route path="/repo/@/:ownerHandle/:repoName/settings" element={<RepoHomeSettingsPage/>} />
           <Route path="/repo/@/:ownerHandle/:repoName/settings/api" element={<RepoHomeApiSettingsPage/>} />

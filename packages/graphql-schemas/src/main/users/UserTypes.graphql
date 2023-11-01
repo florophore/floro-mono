@@ -23,6 +23,8 @@ type User {
     bookmarkedRepositories: [Repository]
     hideOrganizationsInProfile: Boolean
     hideBookmarksInProfile: Boolean
+    unreadNotificationsCount: Int
+
 }
 union CurrentUserResponse =
   | User

@@ -12,6 +12,7 @@ import { useLocalRepos, useUserRepos } from "../../hooks/repos";
 import ProfileHeader from "./profile/ProfileHeader";
 import UserAnnouncements from "./profile/feed/UserAnnouncements";
 import BookmarkedReposView from "./profile/feed/BookmarkedReposView";
+import { useSearchParams} from "react-router-dom";
 
 const Container = styled.div`
   flex: 1;
@@ -139,7 +140,20 @@ const ProfileDashboard = (props: Props) => {
     }
     return new Set(localRepos ?? []);
   }, [localRepos]);
-  const [page, setPage] = useState<'feed'|'bookmarks'>('feed');
+  const [searchParams, setSearchParams] = useSearchParams({});
+
+  const setPage = useCallback((page: 'feed'|'bookmarks') => {
+    setSearchParams({
+      page
+    });
+  }, [setSearchParams])
+
+  const page = useMemo(() => {
+    if (searchParams.get('page') == 'bookmarks') {
+      return 'bookmarks';
+    }
+    return 'feed';
+  }, [searchParams])
 
 
   return (

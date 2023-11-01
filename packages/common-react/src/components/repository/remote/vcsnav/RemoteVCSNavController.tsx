@@ -14,6 +14,7 @@ import RemoteVCSBranchRuleSettings from "./RemoteVCSBranchRuleSettings";
 import RemoteVCSConversation from "./RemoteVCSConversation";
 import RemoteVCSApiSettings from "./RemoteVCSApiSettings";
 import RemoteVCSAnnouncements from "./RemoteVCSAnnouncements";
+import RemoteVCSAnnouncement from "./RemoteVCSAnnouncement";
 
 interface Props {
   repository: Repository;
@@ -41,6 +42,14 @@ const RemoteVCSNavController = (props: Props) => {
   if (props.page == "announcements") {
     return (
       <RemoteVCSAnnouncements
+        repository={props.repository}
+        plugin={props.plugin}
+      />
+    );
+  }
+  if (props.page == "announcement") {
+    return (
+      <RemoteVCSAnnouncement
         repository={props.repository}
         plugin={props.plugin}
       />

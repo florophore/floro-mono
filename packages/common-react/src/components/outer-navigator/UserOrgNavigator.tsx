@@ -51,6 +51,7 @@ const NavOption = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
 `;
 
 const Content = styled.div`
@@ -87,6 +88,27 @@ const OfflineText = styled.span`
   text-align: center;
 `;
 
+const NotificationCircle = styled.div`
+  height: 24px;
+  width: 24px;
+  background: ${ColorPalette.lightRed};
+  border: 2px solid ${ColorPalette.white};
+  border-radius: 50%;
+  position: absolute;
+  top: 4px;
+  right: 2px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const NotificationCount = styled.span`
+  font-family: "MavenPro";
+  color: ${ColorPalette.white};
+  font-weight: 700;
+  font-size: 0.7rem;
+`;
+
 const mainVariants = {
   open: {
     right: 0,
@@ -111,6 +133,18 @@ const UserOrgNavigator = (props: Props) => {
     return props.outerNavTab == "home" ? ColorPalette.lightPurple : "none";
   }, [props.outerNavTab]);
 
+  const showNotificationCount = useMemo(() => {
+    return (currentUser?.unreadNotificationsCount ?? 0) > 0;
+  }, [currentUser?.unreadNotificationsCount])
+
+  const notificationsCount = useMemo(() => {
+    const count = (currentUser?.unreadNotificationsCount ?? 0);
+    if (count > 10) {
+      return '10+';
+    }
+    return count;
+  }, [currentUser?.unreadNotificationsCount])
+
   return (
     <Navigator>
       <NavOptionList>
@@ -128,7 +162,13 @@ const UserOrgNavigator = (props: Props) => {
                 user={currentUser}
                 size={56}
                 offlinePhoto={offlinePhoto}
+
               />
+              {showNotificationCount && (
+                <NotificationCircle>
+                  <NotificationCount>{notificationsCount}</NotificationCount>
+                </NotificationCircle>
+              )}
             </Link>
           )}
         </NavOption>

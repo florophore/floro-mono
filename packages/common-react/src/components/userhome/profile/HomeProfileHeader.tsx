@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import ColorPalette from "@floro/styles/ColorPalette";
@@ -13,6 +13,7 @@ import SubscribeSelected from "@floro/common-assets/assets/images/icons/subscrib
 import NotificationLight from "@floro/common-assets/assets/images/icons/notification.light.svg";
 import NotificationDark from "@floro/common-assets/assets/images/icons/notification.dark.svg";
 import NotificationSelected from "@floro/common-assets/assets/images/icons/notification.selected.svg";
+import { useSession } from "../../../session/session-context";
 
 const Container = styled.div`
   height: 60px;
@@ -30,6 +31,7 @@ const HeaderNavCell= styled.div`
   align-items: center;
   flex: 1;
   flex-direction: row;
+  position: relative;
 `;
 
 const HeaderSectionTitle = styled.h5`
@@ -42,12 +44,34 @@ const HeaderSectionTitle = styled.h5`
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  position: relative;
 `;
 
 const Icon = styled.img`
   height: 20px;
   width: 20px;
   margin-right: 8px;
+`;
+
+const NotificationCircle = styled.div`
+  height: 24px;
+  width: 24px;
+  background: ${ColorPalette.lightRed};
+  border: 2px solid ${props => props.theme.colors.contrastText};
+  border-radius: 50%;
+  position: absolute;
+  top: -6px;
+  right: -28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const NotificationCount = styled.span`
+  font-family: "MavenPro";
+  color: ${ColorPalette.white};
+  font-weight: 700;
+  font-size: 0.7rem;
 `;
 
 interface Props {
@@ -57,6 +81,8 @@ interface Props {
 
 const HomeProfileHeader = (props: Props) => {
   const theme = useTheme();
+  const { currentUser} = useSession();
+
   const subscribeIcon = useMemo(() => {
     if (props.page == 'feed') {
       return SubscribeSelected;
@@ -99,6 +125,18 @@ const HomeProfileHeader = (props: Props) => {
     props.onChangePage('notifications');
   }, [props.onChangePage])
 
+  const showNotificationCount = useMemo(() => {
+    return (currentUser?.unreadNotificationsCount ?? 0) > 0;
+  }, [currentUser?.unreadNotificationsCount])
+
+  const notificationsCount = useMemo(() => {
+    const count = (currentUser?.unreadNotificationsCount ?? 0);
+    if (count > 10) {
+      return '10+';
+    }
+    return count;
+  }, [currentUser?.unreadNotificationsCount])
+
 
   return (
     <Container>
@@ -124,6 +162,11 @@ const HomeProfileHeader = (props: Props) => {
         }}>
           <Icon src={notificationsIcon}/>
           {'notifications'}
+          {showNotificationCount && (
+            <NotificationCircle>
+              <NotificationCount>{notificationsCount}</NotificationCount>
+            </NotificationCircle>
+          )}
         </HeaderSectionTitle>
       </HeaderNavCell>
     </Container>

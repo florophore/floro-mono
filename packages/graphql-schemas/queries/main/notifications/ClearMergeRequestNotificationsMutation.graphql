@@ -1,0 +1,22 @@
+mutation ClearMergeRequestNotifications(
+  $mergeRequestId: ID!
+) {
+  clearMergeRequestNotifications(
+    mergeRequestId: $mergeRequestId
+  ) {
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+    ... on ClearNotificationsError {
+      type
+      message
+    }
+    ... on ClearNotificationsResult {
+      user {
+        id
+        unreadNotificationsCount
+      }
+    }
+  }
+}

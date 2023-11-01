@@ -128,6 +128,11 @@ import RepoAnnouncementService from './services/announcements/RepoAnnouncementSe
 import RepoAnnouncementsResolverModule from './resolvers/announcements/RepoAnnouncementsResolverModule';
 import RepoAnnouncementLoader from './resolvers/hooks/loaders/RepoAnnouncements/RepoAnnouncementLoader';
 import RepoAnnouncementReplyLoader from './resolvers/hooks/loaders/RepoAnnouncements/RepoAnnouncementReplyLoader';
+import NotificationsService from './services/notifications/NotificationsService';
+import OrgInvitationsHandler from './services/events/OrgInvitationsHandler';
+import BookmarkSubscriptionsHandler from './services/events/BookmarkSubscriptionsHandler';
+import RepoAnnouncementReplyHandler from './services/events/RepoAnnouncementReplyHandler';
+import NotificationFanOutQueue from './services/notifications/NotificationFanOutQueue';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -262,6 +267,10 @@ export default new ContainerModule((bind): void => {
     bind(MergeRequestEventService).toSelf().inSingletonScope();
     bind(PreMergeCommitQueue).toSelf().inSingletonScope();
 
+    // NOTIFICATIONS
+    bind(NotificationsService).toSelf().inSingletonScope();
+    bind(NotificationFanOutQueue).toSelf().inSingletonScope();
+
     // API KEYS
     bind(ApiKeyService).toSelf();
     bind(WebhookKeyService).toSelf();
@@ -283,21 +292,36 @@ export default new ContainerModule((bind): void => {
     // MERGE REQUESTS
     bind<CreateMergeRequestEventHandler>("CreateMergeRequestEventHandler").toService(MergeRequestEventService);
     bind<UpdateMergeRequestEventHandler>("UpdateMergeRequestEventHandler").toService(MergeRequestEventService);
+    bind<UpdateMergeRequestEventHandler>("UpdateMergeRequestEventHandler").toService(NotificationsService);
     bind<CloseMergeRequestEventHandler>("CloseMergeRequestEventHandler").toService(MergeRequestEventService);
+    bind<CloseMergeRequestEventHandler>("CloseMergeRequestEventHandler").toService(NotificationsService);
     bind<UpdatedMergeRequestReviewersEventHandler>("UpdatedMergeRequestReviewersEventHandler").toService(MergeRequestEventService);
+    bind<UpdatedMergeRequestReviewersEventHandler>("UpdatedMergeRequestReviewersEventHandler").toService(NotificationsService);
     bind<ReviewStatusChangeEventHandler>("ReviewStatusChangeEventHandler").toService(MergeRequestEventService);
+    bind<ReviewStatusChangeEventHandler>("ReviewStatusChangeEventHandler").toService(NotificationsService);
     bind<MergeRequestCommentEventHandler>("MergeRequestCommentEventHandler").toService(MergeRequestEventService);
+    bind<MergeRequestCommentEventHandler>("MergeRequestCommentEventHandler").toService(NotificationsService);
     bind<MergeRequestCommentReplyEventHandler>("MergeRequestCommentReplyEventHandler").toService(MergeRequestEventService);
+    bind<MergeRequestCommentReplyEventHandler>("MergeRequestCommentReplyEventHandler").toService(NotificationsService);
     bind<MergedMergeRequestEventHandler>("MergedMergeRequestEventHandler").toService(MergeRequestEventService);
+    bind<MergedMergeRequestEventHandler>("MergedMergeRequestEventHandler").toService(NotificationsService);
 
     // GRANT ACCESS HANDLER
     bind<GrantRepoAccessHandler>("GrantRepoAccessHandler").toService(GrantAccessReceiverService);
+    bind<GrantRepoAccessHandler>("GrantRepoAccessHandler").toService(NotificationsService);
 
+    // ORG INVITATIONS
+    bind<OrgInvitationsHandler>("OrgInvitationsHandler").toService(NotificationsService);
+
+    // BOOKMARK SUBSCRIPTIONS/REPO ANNOUNCEMENTS
+    bind<BookmarkSubscriptionsHandler>("BookmarkSubscriptionsHandler").toService(NotificationsService);
+    bind<RepoAnnouncementReplyHandler>("RepoAnnouncementReplyHandler").toService(NotificationsService);
 
     // QUEUE SERVICES
     bind<QueueService>("QueueServices").toService(MergeRequestService);
     bind<QueueService>("QueueServices").toService(PreMergeCommitQueue);
     bind<QueueService>("QueueServices").toService(BranchUpdateWebhookQueue);
+    bind<QueueService>("QueueServices").toService(NotificationFanOutQueue);
 
     // Controllers
     bind<HealthCheckController>("Controllers").to(HealthCheckController);

@@ -20,6 +20,7 @@ import RepoAnnouncementService from "../../services/announcements/RepoAnnounceme
 import RepoAnnouncementLoader from "../hooks/loaders/RepoAnnouncements/RepoAnnouncementLoader";
 import RepoAnnouncementReplyLoader from "../hooks/loaders/RepoAnnouncements/RepoAnnouncementReplyLoader";
 import { RepoAnnouncement } from "@floro/database/src/entities/RepoAnnouncement";
+import RepoAnnouncementsContext from "@floro/database/src/contexts/announcements/RepoAnnouncementsContext";
 
 const PAGINATION_LIMIT = 10;
 
@@ -88,6 +89,36 @@ export default class RepoAnnouncementsResolverModule extends BaseResolverModule 
   }
 
   public Query: main.QueryResolvers = {
+
+    fetchRepoAnnouncement: runWithHooks(
+      () => [this.loggedInUserGuard],
+      async (_, args: main.QueryFetchRepoAnnouncementArgs, { currentUser }) => {
+
+        const repoAnnouncementsContext = await this.contextFactory.createContext(
+          RepoAnnouncementsContext
+        );
+        try {
+          const repoAnnouncement = await repoAnnouncementsContext.getByIdWithRelations(args.repoAnnouncementId);
+          if (!repoAnnouncement?.repository) {
+            return null;
+          }
+          const remoteSettings =
+            await this.repoDataService.fetchRepoSettingsForUser(
+              repoAnnouncement?.repository.id,
+              currentUser
+            );
+          if (!remoteSettings?.canReadRepo) {
+            return null;
+          }
+          return {
+            __typename: "FetchRepoAnnouncementResult",
+            repoAnnouncement
+          }
+        } catch (e) {
+          return null;
+        }
+      }
+    ),
     fetchFeed: runWithHooks(
       () => [this.loggedInUserGuard],
       async (_, args: main.QueryFetchFeedArgs, { currentUser }) => {

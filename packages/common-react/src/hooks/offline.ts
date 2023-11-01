@@ -87,7 +87,7 @@ export const useUserOrganizations = () => {
       );
       localStorage.setItem("offline-organizations", organizationsString);
     }
-  }, [data?.currentUser?.['organizations']]);
+  }, [currentUser?.id, data?.currentUser?.['organizations']]);
 
   useEffect(() => {
     if (currentUser?.id) {

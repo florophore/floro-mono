@@ -40,6 +40,7 @@ const Container = styled.div`
   padding: 16px 8px;
   border-radius: 8px;
   margin-bottom: 32px;
+  user-select: text;
 `;
 
 const TopContainer = styled.div`
@@ -245,7 +246,6 @@ const Wrapper = styled.div`
       vertical-align: sub;
     }
   }
-
 `;
 
 interface Props {
@@ -289,9 +289,10 @@ const RepoAnnouncementDisplay = (props: Props) => {
     node: StaticLinkNode,
     renderers: TextRenderers
   ): React.ReactElement => {
+
     const onClickLink = (e: React.MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
-        openLink("OPEN " + node.href);
+        openLink(node.href);
     }
 
     let children = renderers.renderStaticNodes(node.children, renderers);

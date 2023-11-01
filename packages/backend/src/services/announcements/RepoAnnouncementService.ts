@@ -1,4 +1,4 @@
-import { injectable, inject } from "inversify";
+import { injectable, inject, multiInject } from "inversify";
 import DatabaseConnection from "@floro/database/src/connection/DatabaseConnection";
 import ContextFactory from "@floro/database/src/contexts/ContextFactory";
 import { Repository } from "@floro/database/src/entities/Repository";
@@ -11,6 +11,8 @@ import { RepoAnnouncement } from "@floro/database/src/entities/RepoAnnouncement"
 import RepoDataService from "../repositories/RepoDataService";
 import { RepoAnnouncementReply } from "@floro/database/src/entities/RepoAnnouncementReply";
 import RepositoriesContext from "@floro/database/src/contexts/repositories/RepositoriesContext";
+import BookmarkSubscriptionsHandler from "../events/BookmarkSubscriptionsHandler";
+import RepoAnnouncementReplyHandler from "../events/RepoAnnouncementReplyHandler";
 
 export interface CreateRepoAnnouncementResponse {
   action:
@@ -119,15 +121,21 @@ export default class RepoAnnouncementService {
   private databaseConnection!: DatabaseConnection;
   private contextFactory!: ContextFactory;
   private repoDataService!: RepoDataService;
+  private bookmarkSubscriptionsHandlers!: BookmarkSubscriptionsHandler[];
+  private repoAnnouncementReplyHandlers!: RepoAnnouncementReplyHandler[];
 
   constructor(
     @inject(DatabaseConnection) databaseConnection: DatabaseConnection,
     @inject(ContextFactory) contextFactory: ContextFactory,
-    @inject(RepoDataService) repoDataService: RepoDataService
+    @inject(RepoDataService) repoDataService: RepoDataService,
+    @multiInject("BookmarkSubscriptionsHandler") bookmarkSubscriptionsHandlers: BookmarkSubscriptionsHandler[],
+    @multiInject("RepoAnnouncementReplyHandler") repoAnnouncementReplyHandlers: RepoAnnouncementReplyHandler[],
   ) {
     this.databaseConnection = databaseConnection;
     this.contextFactory = contextFactory;
     this.repoDataService = repoDataService;
+    this.bookmarkSubscriptionsHandlers = bookmarkSubscriptionsHandlers;
+    this.repoAnnouncementReplyHandlers = repoAnnouncementReplyHandlers;
   }
 
   public async getBookmarkedRepos(user: User, currentUser?: User|null) {
@@ -603,6 +611,14 @@ export default class RepoAnnouncementService {
         await updateRepoAnnouncementsContext.getByIdWithRelations(
           deletedRepoAnnouncement?.id as string
       );
+
+      if (updatedRepoAnnouncement) {
+        for (const handler of this.repoAnnouncementReplyHandlers) {
+          await handler.onRemoveRepoAnnouncement(
+            updatedRepoAnnouncement,
+          );
+        }
+      }
       return {
         action: "REPO_ANNOUNCEMENT_DELETED",
         repoAnnouncement: updatedRepoAnnouncement as RepoAnnouncement,
@@ -692,6 +708,15 @@ export default class RepoAnnouncementService {
         await updateRepoAnnouncementsContext.getByIdWithRelations(
           repoAnnouncement.id
         );
+
+      if (updatedRepoAnnouncement) {
+        for (const handler of this.repoAnnouncementReplyHandlers) {
+          await handler.onCreateRepoAnnouncementReply(
+            updatedRepoAnnouncement,
+            repoAnnouncementReply
+          );
+        }
+      }
       return {
         action: "REPO_ANNOUNCEMENT_REPLY_CREATED",
         repoAnnouncementReply,
@@ -882,6 +907,15 @@ export default class RepoAnnouncementService {
         await updateRepoAnnouncementsContext.getByIdWithRelations(
           repoAnnouncement.id
         );
+
+      if (updatedRepoAnnouncement) {
+        for (const handler of this.repoAnnouncementReplyHandlers) {
+          await handler.onRemoveRepoAnnouncementReply(
+            updatedRepoAnnouncement,
+            updatedRepoAnnouncementReply
+          );
+        }
+      }
       return {
         action: "REPO_ANNOUNCEMENT_REPLY_DELETED",
         repoAnnouncementReply: updatedRepoAnnouncementReply,
@@ -931,7 +965,7 @@ export default class RepoAnnouncementService {
         await queryRunner.rollbackTransaction();
         return false;
       }
-      await repoBookmarksContext.create({
+      const bookmark = await repoBookmarksContext.create({
         userId: user.id,
         repositoryId: repository.id,
       });
@@ -950,6 +984,9 @@ export default class RepoAnnouncementService {
       });
 
       await queryRunner.commitTransaction();
+      for (const handler of this.bookmarkSubscriptionsHandlers) {
+        await handler.onCreateBookmarkNotification(bookmark, repo);
+      }
       return true;
     } catch (e: any) {
       if (!queryRunner.isReleased) {
@@ -1004,6 +1041,9 @@ export default class RepoAnnouncementService {
       });
 
       await queryRunner.commitTransaction();
+      for (const handler of this.bookmarkSubscriptionsHandlers) {
+        await handler.onRemoveBookmarkNotification(existingBookmark, repo);
+      }
       return true;
     } catch (e: any) {
       if (!queryRunner.isReleased) {
@@ -1043,7 +1083,7 @@ export default class RepoAnnouncementService {
         await queryRunner.rollbackTransaction();
         return false;
       }
-      await repoSubscriptionsContext.create({
+      const subscription = await repoSubscriptionsContext.create({
         userId: user.id,
         repositoryId: repository.id,
       });
@@ -1062,6 +1102,9 @@ export default class RepoAnnouncementService {
       });
 
       await queryRunner.commitTransaction();
+      for (const handler of this.bookmarkSubscriptionsHandlers) {
+        await handler.onCreateSubscriptionNotification(subscription, repo);
+      }
       return true;
     } catch (e: any) {
       if (!queryRunner.isReleased) {
@@ -1117,6 +1160,9 @@ export default class RepoAnnouncementService {
       });
 
       await queryRunner.commitTransaction();
+      for (const handler of this.bookmarkSubscriptionsHandlers) {
+        await handler.onRemoveSubscriptionNotification(existingSubscription, repo);
+      }
       return true;
     } catch (e: any) {
       if (!queryRunner.isReleased) {

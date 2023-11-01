@@ -135,6 +135,9 @@ const VersionControlPanel = (props: Props) => {
       if (props.page == "announcements") {
         return true;
       }
+      if (props.page == "announcement") {
+        return true;
+      }
       if (props.page == "api-settings") {
         return true;
       }

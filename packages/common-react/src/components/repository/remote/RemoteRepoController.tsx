@@ -23,6 +23,7 @@ import SettingsDisplay from "./settings/SettingsDisplay";
 import BranchRuleDisplay from "./settings/BranchRuleDisplay";
 import ApiSettingsDisplay from "./settings/ApiSettingsDisplay";
 import AnnouncementsDisplay from "./announcements/AnnouncementsDisplay";
+import AnnouncementDisplay from "./announcements/AnnouncementDisplay";
 
 const LoadingContainer = styled.div`
   display: flex;
@@ -110,6 +111,17 @@ const RemoteRepoController = (props: Props) => {
         />
       );
     }
+
+    if (props.page == "announcement") {
+      return (
+        <AnnouncementDisplay
+          repository={props.repository}
+          plugin={props.plugin ?? "home"}
+          isLoading={props.isLoading}
+        />
+      );
+    }
+
     if (props.page == "announcements") {
       return (
         <AnnouncementsDisplay

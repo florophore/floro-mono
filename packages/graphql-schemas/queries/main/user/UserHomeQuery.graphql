@@ -12,6 +12,7 @@ query CurrentUserHome {
       publicRepositories {
         ...Repository
       }
+      unreadNotificationsCount
       organizations {
           ...Organization
           membership {

@@ -1,0 +1,19 @@
+query FetchNotifications($lastId: ID) {
+  fetchNotifications(lastId: $lastId) {
+    ... on FetchNotificationsResult {
+      notifications {
+        ...Notification
+      }
+      hasMore
+      lastId
+    }
+    ... on FetchNotificationsError {
+      type
+      message
+    }
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+  }
+}

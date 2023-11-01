@@ -21,7 +21,10 @@ import OrganizationInvitationsContext from "@floro/database/src/contexts/organiz
 import OrganizationInvitationService from "../../services/organizations/OrganizationInvitationService";
 import ReferralsContext from "@floro/database/src/contexts/referrals/ReferralsContext";
 import RepositoriesContext from "@floro/database/src/contexts/repositories/RepositoriesContext";
-import { Repository } from "@floro/graphql-schemas/build/generated/main-graphql";
+import {
+  Repository,
+  SubscriptionSubscribeFn,
+} from "@floro/graphql-schemas/build/generated/main-graphql";
 import PhotoUploadService from "../../services/photos/PhotoUploadService";
 import PhotosContext from "@floro/database/src/contexts/photos/PhotosContext";
 import { Photo } from "@floro/database/src/entities/Photo";
@@ -29,6 +32,9 @@ import PluginsContext from "@floro/database/src/contexts/plugins/PluginsContext"
 import ApiKeysContext from "@floro/database/src/contexts/api_keys/ApiKeysContext";
 import WebhookKeysContext from "@floro/database/src/contexts/api_keys/WebhookKeysContext";
 import RepoAnnouncementService from "../../services/announcements/RepoAnnouncementService";
+import NotificationsContext from "@floro/database/src/contexts/notifications/NotificationsContext";
+import NotificationsService from "../../services/notifications/NotificationsService";
+import { withFilter } from "graphql-subscriptions";
 
 @injectable()
 export default class UsersResolverModule extends BaseResolverModule {
@@ -36,6 +42,7 @@ export default class UsersResolverModule extends BaseResolverModule {
     "Query",
     "User",
     "Mutation",
+    "Subscription",
   ];
   protected usersService!: UsersService;
   protected contextFactory!: ContextFactory;
@@ -45,6 +52,7 @@ export default class UsersResolverModule extends BaseResolverModule {
   protected organizationInvitationService!: OrganizationInvitationService;
   protected loggedInUserGuard!: LoggedInUserGuard;
   protected repoAnnouncementService!: RepoAnnouncementService;
+  protected notificationsService!: NotificationsService;
 
   constructor(
     @inject(ContextFactory) contextFactory: ContextFactory,
@@ -55,7 +63,9 @@ export default class UsersResolverModule extends BaseResolverModule {
     organizationInvitationService: OrganizationInvitationService,
     @inject(LoggedInUserGuard) loggedInUserGuard: LoggedInUserGuard,
     @inject(RepoAnnouncementService)
-    repoAnnouncementService: RepoAnnouncementService
+    repoAnnouncementService: RepoAnnouncementService,
+    @inject(NotificationsService)
+    notificationsService: NotificationsService
   ) {
     super();
     this.contextFactory = contextFactory;
@@ -66,9 +76,26 @@ export default class UsersResolverModule extends BaseResolverModule {
     this.organizationInvitationService = organizationInvitationService;
     this.loggedInUserGuard = loggedInUserGuard;
     this.repoAnnouncementService = repoAnnouncementService;
+    this.notificationsService = notificationsService;
   }
 
   public Query: main.QueryResolvers = {
+    fetchNotifications: runWithHooks(
+      () => [this.loggedInUserGuard],
+      async (_, args: main.QueryFetchNotificationsArgs, { currentUser }) => {
+        const result = await this.notificationsService.fetchNotifications(
+          currentUser,
+          args?.lastId as string
+        );
+        if (!result) {
+          return null;
+        }
+        return {
+          ...result,
+          __typename: "FetchNotificationsResult",
+        };
+      }
+    ),
     user: async (_root, { id }) => {
       const usersContext = await this.contextFactory.createContext(
         UsersContext
@@ -265,6 +292,114 @@ export default class UsersResolverModule extends BaseResolverModule {
           __typename: "RejectOrganizationInvitationError",
           message: result.error?.message ?? "Unknown Error",
           type: result.error?.type ?? "UNKNOWN_ERROR",
+        };
+      }
+    ),
+    clearNotification: runWithHooks(
+      () => [],
+      async (_, args: main.MutationClearNotificationArgs, { currentUser }) => {
+        const notificationsContext = await this.contextFactory.createContext(
+          NotificationsContext
+        );
+        const notification = await notificationsContext.getById(
+          args.notificationId
+        );
+        if (notification?.userId != currentUser?.id || !notification) {
+          return {
+            __typename: "ClearNotificationError",
+            message: "Unknown error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        const updatedNotification =
+          await notificationsContext.updatehNotification(notification, {
+            hasBeenChecked: true,
+          });
+        return {
+          __typename: "ClearNotificationResult",
+          notification: updatedNotification,
+          user: currentUser,
+        };
+      }
+    ),
+    clearRepoAnnouncementNotifications: runWithHooks(
+      () => [],
+      async (
+        _,
+        args: main.MutationClearRepoAnnouncementNotificationsArgs,
+        { currentUser }
+      ) => {
+        const notificationsContext = await this.contextFactory.createContext(
+          NotificationsContext
+        );
+        if (!args.repoAnnouncementId) {
+          return {
+            __typename: "ClearNotificationsError",
+            message: "Unknown error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        await notificationsContext.markCheckedRepoAnnouncementNotificationsForUser(
+          args.repoAnnouncementId,
+          currentUser.id
+        );
+        return {
+          __typename: "ClearNotificationsResult",
+          user: currentUser,
+        };
+      }
+    ),
+    clearMergeRequestNotifications: runWithHooks(
+      () => [],
+      async (
+        _,
+        args: main.MutationClearMergeRequestNotificationsArgs,
+        { currentUser }
+      ) => {
+        const notificationsContext = await this.contextFactory.createContext(
+          NotificationsContext
+        );
+        if (!args.mergeRequestId) {
+          return {
+            __typename: "ClearNotificationsError",
+            message: "Unknown error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        await notificationsContext.markCheckedMergeRequestNotificationsForUser(
+          args.mergeRequestId,
+          currentUser.id
+        );
+        return {
+          __typename: "ClearNotificationsResult",
+          user: currentUser,
+        };
+      }
+    ),
+    clearRepositoryNotifications: runWithHooks(
+      () => [],
+      async (
+        _,
+        args: main.MutationClearRepositoryNotificationsArgs,
+        { currentUser }
+      ) => {
+        const notificationsContext = await this.contextFactory.createContext(
+          NotificationsContext
+        );
+        if (!args.repositoryId) {
+          return {
+            __typename: "ClearNotificationsError",
+            message: "Unknown error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        await notificationsContext.markCheckedRepositoryNotificationsForUser(
+          args.repositoryId,
+          currentUser.id
+        );
+        return {
+          __typename: "ClearNotificationsResult",
+          user: currentUser,
         };
       }
     ),
@@ -629,5 +764,54 @@ export default class UsersResolverModule extends BaseResolverModule {
         );
       }
     ),
+    unreadNotificationsCount: runWithHooks(
+      () => [],
+      async (user, _, context) => {
+        if (user.id != context?.currentUser?.id) {
+          return null;
+        }
+
+        const notificationsContext = await this.contextFactory.createContext(
+          NotificationsContext
+        );
+        return await notificationsContext.getUncheckedNotificationsCount(
+          context?.currentUser?.id
+        );
+      }
+    ),
+  };
+
+  public Subscription: main.SubscriptionResolvers = {
+    userNotificationCountUpdated: {
+      subscribe: withFilter(
+        (_, { userId }) => {
+          if (userId) {
+            return this.pubsub.asyncIterator(
+              `USER_NOTIFICATION_COUNT_UPDATED:${userId}`
+            );
+          }
+          return this.pubsub.asyncIterator([]);
+        },
+        runWithHooks(
+          () => [],
+          async (
+            payload: { userNotificationCountUpdated: User },
+            { userId },
+            { currentUser }
+          ) => {
+            if (!userId) {
+              return false;
+            }
+            if (payload?.userNotificationCountUpdated?.id != userId) {
+              return false;
+            }
+            return (
+              currentUser &&
+              currentUser?.id == payload?.userNotificationCountUpdated?.id
+            );
+          }
+        )
+      ) as unknown as SubscriptionSubscribeFn<any, any, any, any>,
+    },
   };
 }

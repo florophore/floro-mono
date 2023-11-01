@@ -1,10 +1,10 @@
-import React, { useMemo, useCallback, useState } from "react";
+import React, { useMemo, useCallback, useState, useEffect } from "react";
 import {
   Plugin,
 } from "@floro/graphql-schemas/build/generated/main-graphql";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
-import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import { Repository, useClearRepositoryNotificationsMutation } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { Manifest } from "floro/dist/src/plugins";
 import { ComparisonState, RemoteCommitState, useBeforeCommitState, useRemoteCompareFrom, useViewMode } from "../hooks/remote-state";
 import RemotePluginEditor from "./RemotePluginEditor";
@@ -170,6 +170,19 @@ const RemoteHomeRead = (props: Props) => {
   const theme = useTheme();
   const { compareFrom } = useRemoteCompareFrom();
   const viewMode = useViewMode(props.page);
+  const [clearNotifications] = useClearRepositoryNotificationsMutation();
+
+  useEffect(() => {
+    if (!props.repository?.id) {
+      return;
+    }
+    clearNotifications({
+      variables: {
+        repositoryId: props.repository.id
+      }
+    })
+  }, [props.repository.id]);
+
   const plugins = useMemo(() => {
     if (viewMode == "compare" && compareFrom == "before") {
       return props.comparisonState?.beforeRemoteCommitState?.renderedState?.plugins ?? [];

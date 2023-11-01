@@ -1,11 +1,11 @@
 
-import React, { useMemo, useCallback, useState, useRef } from "react";
+import React, { useMemo, useCallback, useState, useRef, useEffect  } from "react";
 import {
   Plugin,
 } from "@floro/graphql-schemas/build/generated/main-graphql";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
-import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import { Repository, useClearMergeRequestNotificationsMutation } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { Manifest } from "floro/dist/src/plugins";
 import { ComparisonState, RemoteCommitState, useBeforeCommitState, useRemoteCompareFrom, useViewMode } from "../hooks/remote-state";
 import ColorPalette from "@floro/styles/ColorPalette";
@@ -187,6 +187,19 @@ const MergeRequest = (props: Props) => {
   const theme = useTheme();
   const { isEditting, setIsEditting } = useMergeRequestNavContext();
   const container = useRef<HTMLDivElement>(null);
+
+  const [clearNotifications] = useClearMergeRequestNotificationsMutation();
+
+  useEffect(() => {
+    if (!props.repository?.mergeRequest?.id) {
+      return;
+    }
+    clearNotifications({
+      variables: {
+        mergeRequestId: props.repository.mergeRequest.id,
+      }
+    });
+  }, [props.repository?.mergeRequest?.id])
 
   const onEdit = useCallback(() => {
     if (

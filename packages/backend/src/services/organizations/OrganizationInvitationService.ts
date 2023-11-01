@@ -1,4 +1,4 @@
-import { injectable, inject } from "inversify";
+import { injectable, inject, multiInject } from "inversify";
 
 import DatabaseConnection from "@floro/database/src/connection/DatabaseConnection";
 import ContextFactory from "@floro/database/src/contexts/ContextFactory";
@@ -25,6 +25,7 @@ import { OrganizationPermissions } from "./OrganizationPermissionService";
 import { UserAuthCredential } from "@floro/database/src/entities/UserAuthCredential";
 import OrganizationMemberRolesContext from "@floro/database/src/contexts/organizations/OrganizationMemberRolesContext";
 import OrganizationsContext from "@floro/database/src/contexts/organizations/OrganizationsContext";
+import OrgInvitationsHandler from "../events/OrgInvitationsHandler";
 
 const profanityFilter = new ProfanityFilter();
 const PAGE_SIZE = 10;
@@ -130,16 +131,20 @@ export default class OrganizationInvitationService
   private emailAuthStore!: EmailAuthStore;
   private emailQueue!: EmailQueue;
 
+  private orgInvitationsHandlers!: Array<OrgInvitationsHandler>;
+
   constructor(
     @inject(DatabaseConnection) databaseConnection: DatabaseConnection,
     @inject(ContextFactory) contextFactory: ContextFactory,
     @inject(EmailAuthStore) emailAuthStore: EmailAuthStore,
-    @inject(EmailQueue) emailQueue: EmailQueue
+    @inject(EmailQueue) emailQueue: EmailQueue,
+    @multiInject("OrgInvitationsHandler") orgInvitationsHandlers: Array<OrgInvitationsHandler>
   ) {
     this.databaseConnection = databaseConnection;
     this.contextFactory = contextFactory;
     this.emailAuthStore = emailAuthStore;
     this.emailQueue = emailQueue;
+    this.orgInvitationsHandlers = orgInvitationsHandlers;
   }
   public getPaginatedInvitationsResult(invitations: OrganizationInvitation[], id: string, query: string) {
     const lowerCaseQuery = (query ?? "").trim();
@@ -507,6 +512,11 @@ export default class OrganizationInvitationService
       });
 
       await queryRunner.commitTransaction();
+      if (userExistedAlready && user) {
+        for (const handler of this.orgInvitationsHandlers) {
+          await handler.onCreateInvitation(organizationInvitation, organization, invitingUser, user)
+        }
+      }
       return {
         action: "INVITATION_CREATED",
         organizationInvitation,
@@ -740,6 +750,7 @@ export default class OrganizationInvitationService
       await this.contextFactory.createContext(OrganizationInvitationsContext);
     const cancelledInvitation =
       await organizationInvitationsContext.cancelInvite(organizationInvitation);
+
     if (!cancelledInvitation) {
       return {
         action: "LOG_ERROR",
@@ -748,6 +759,10 @@ export default class OrganizationInvitationService
           message: "Invitation not cancelled",
         },
       };
+    }
+
+    for (const handler of this.orgInvitationsHandlers) {
+      await handler.onCancelInvitation(organizationInvitation)
     }
     return {
       action: "INVITATION_CANCELLED",

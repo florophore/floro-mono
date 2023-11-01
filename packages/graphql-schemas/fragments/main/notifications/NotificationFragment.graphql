@@ -1,0 +1,70 @@
+fragment Notification on Notification {
+  id
+  eventName
+  updatedAt
+  createdAt
+  hasBeenChecked
+  isDeleted
+  performedByUser {
+    id
+    firstName
+    lastName
+    username
+    profilePhoto {
+      ...Photo
+    }
+  }
+  organization {
+    id
+    name
+    handle
+    profilePhoto {
+      ...Photo
+    }
+  }
+  repository {
+    id
+    name
+    repoType
+    user {
+      id
+      username
+    }
+    organization {
+      id
+      handle
+    }
+  }
+  reviewStatus {
+    id
+    approvalStatus
+  }
+  organizationInvitation {
+    id
+    invitationState
+  }
+  repoAnnouncement {
+    id
+    text
+    createdByUser {
+      id
+    }
+  }
+  repoAnnouncementReply {
+    id
+    text
+  }
+  mergeRequest {
+    id
+    title
+    mergeRequestCount
+  }
+  mergeRequestComment {
+    id
+    text
+  }
+  mergeRequestCommentReply {
+    id
+    text
+  }
+}

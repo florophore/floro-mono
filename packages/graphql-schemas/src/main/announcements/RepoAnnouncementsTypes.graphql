@@ -37,6 +37,20 @@ union FetchRepoAnnouncementsResponse =
   | FetchRepoAnnouncementsError
   | UnAuthenticatedError
 
+type FetchRepoAnnouncementResult {
+    repoAnnouncement: RepoAnnouncement
+}
+
+type FetchRepoAnnouncementError {
+  message: String
+  type: String
+}
+
+union FetchRepoAnnouncementResponse =
+    FetchRepoAnnouncementResult
+  | FetchRepoAnnouncementError
+  | UnAuthenticatedError
+
 
 type BookmarkRepoSuccess {
   repository: Repository

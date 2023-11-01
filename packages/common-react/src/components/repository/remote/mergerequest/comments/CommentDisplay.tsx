@@ -34,6 +34,7 @@ const Container = styled.div`
   padding: 16px 8px;
   border-radius: 8px;
   margin-bottom: 16px;
+  user-select: text;
 `;
 
 const TopContainer = styled.div`

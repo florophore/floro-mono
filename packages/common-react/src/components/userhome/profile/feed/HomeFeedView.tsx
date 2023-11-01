@@ -18,6 +18,7 @@ import HomeFeedHeader from "./HomeFeedHeader";
 import NewPluginsView from "./NewPluginsView";
 import NewReposView from "./NewReposView";
 import FeedAnnouncements from "./FeedAnnouncements";
+import { useSearchParams } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
@@ -31,8 +32,23 @@ interface Props {
 }
 
 const HomeFeedView = (props: Props) => {
-  const theme = useTheme();
-  const [feedOption, setFeedOption] = useState<'announcements'|'new_plugins'|'new_repos'>('announcements');
+  const [searchParams, setSearchParams] = useSearchParams({});
+
+  const setFeedOption = useCallback((feedOption: 'announcements'|'new_plugins'|'new_repos') => {
+    setSearchParams({
+      feed_option: feedOption
+    });
+  }, [setSearchParams])
+
+  const feedOption = useMemo(() => {
+    if (searchParams.get('feed_option') == 'new_plugins') {
+      return 'new_plugins';
+    }
+    if (searchParams.get('feed_option') == 'new_repos') {
+      return 'new_repos';
+    }
+    return 'announcements';
+  }, [searchParams])
 
   return (
     <Container>

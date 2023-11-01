@@ -1,0 +1,14 @@
+extend type Query {
+    fetchNotifications(lastId: ID): FetchNotificationsResponse
+}
+
+extend type Mutation {
+    clearNotification(notificationId: ID!): ClearNotificationResponse
+    clearMergeRequestNotifications(mergeRequestId: ID!): ClearNotificationsResponse
+    clearRepoAnnouncementNotifications(repoAnnouncementId: ID!): ClearNotificationsResponse
+    clearRepositoryNotifications(repositoryId: ID!): ClearNotificationsResponse
+}
+
+extend type Subscription {
+  userNotificationCountUpdated(userId: ID): User
+}

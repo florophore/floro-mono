@@ -1,0 +1,22 @@
+mutation ClearRepositoryNotifications(
+  $repositoryId: ID!
+) {
+  clearRepositoryNotifications(
+    repositoryId: $repositoryId
+  ) {
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+    ... on ClearNotificationsError {
+      type
+      message
+    }
+    ... on ClearNotificationsResult {
+      user {
+        id
+        unreadNotificationsCount
+      }
+    }
+  }
+}

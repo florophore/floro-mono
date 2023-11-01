@@ -219,4 +219,12 @@ export class User extends BinaryPKBaseEntity {
   @OneToMany("RepoAnnouncementReply", "user")
   @JoinColumn()
   repoAnnouncementReplies?: Relation<RepoAnnouncementReply>[];
+
+  @OneToMany("Notification", "user")
+  @JoinColumn()
+  notifications?: Relation<Notification>[];
+
+  @OneToMany("Notification", "performedByUser")
+  @JoinColumn()
+  performedNotifications?: Relation<Notification>[];
 }

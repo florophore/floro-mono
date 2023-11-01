@@ -18,6 +18,7 @@ fragment User on User {
   }
   hideOrganizationsInProfile
   hideBookmarksInProfile
+  unreadNotificationsCount
   bookmarkedRepositories {
     id
     name

@@ -67,7 +67,7 @@ const HeaderLink = (props: Props) => {
   }, [])
 
   const onClickLink = useCallback(() => {
-    const value = homeLink + "/web-redirect" + location.pathname + location.search;
+    const value = homeLink + "/app-proxy" + location.pathname + location.search;
     navigator.clipboard.writeText(value);
     setShowCopied(true);
   }, [location]);

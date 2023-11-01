@@ -15,6 +15,10 @@ extend type Query {
     organizationId: ID!
     lastId: ID
   ): FetchRepoAnnouncementsResponse
+
+  fetchRepoAnnouncement(
+    repoAnnouncementId: ID!
+  ): FetchRepoAnnouncementResponse
 }
 
 extend type Mutation {

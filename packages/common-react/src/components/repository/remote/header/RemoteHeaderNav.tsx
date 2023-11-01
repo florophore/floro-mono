@@ -91,6 +91,10 @@ const RemoteHeaderNav = (props: Props) => {
     return null;
   }
 
+  if (props.page == "announcement") {
+    return null;
+  }
+
   if (props.page == "settings") {
     return null;
   }

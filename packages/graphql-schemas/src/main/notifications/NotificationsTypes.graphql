@@ -1,0 +1,65 @@
+type Notification {
+  id: ID
+  eventName: String
+  performedByUser: User
+  organization: Organization
+  organizationInvitation: OrganizationInvitation
+  repository: Repository
+  isDeleted: Boolean
+  hasBeenChecked: Boolean
+  mergeRequest: MergeRequest
+  mergeRequestComment: MergeRequestComment
+  mergeRequestCommentReply: MergeRequestCommentReply
+  repoAnnouncement: RepoAnnouncement
+  repoAnnouncementReply: RepoAnnouncementReply
+  reviewStatus: ReviewStatus
+  updatedAt: DateTime
+  createdAt: DateTime
+}
+
+type FetchNotificationsResult {
+    notifications: [Notification]
+    hasMore: Boolean
+    lastId: String
+}
+
+type FetchNotificationsError {
+  message: String
+  type: String
+}
+
+union FetchNotificationsResponse =
+    FetchNotificationsResult
+  | FetchNotificationsError
+  | UnAuthenticatedError
+
+
+type ClearNotificationsResult {
+    user: User
+}
+
+type ClearNotificationsError {
+  message: String
+  type: String
+}
+
+union ClearNotificationsResponse =
+    ClearNotificationsResult
+  | ClearNotificationsError
+  | UnAuthenticatedError
+
+
+type ClearNotificationResult {
+    user: User
+    notification: Notification
+}
+
+type ClearNotificationError {
+  message: String
+  type: String
+}
+
+union ClearNotificationResponse =
+    ClearNotificationResult
+  | ClearNotificationError
+  | UnAuthenticatedError

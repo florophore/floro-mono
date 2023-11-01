@@ -2,27 +2,21 @@ import { injectable, inject, multiInject } from "inversify";
 
 import DatabaseConnection from "@floro/database/src/connection/DatabaseConnection";
 import ContextFactory from "@floro/database/src/contexts/ContextFactory";
-import RepoHelper from "@floro/database/src/contexts/utils/RepoHelper";
 import { User } from "@floro/database/src/entities/User";
 import RepositoriesContext from "@floro/database/src/contexts/repositories/RepositoriesContext";
 import CommitsContext from "@floro/database/src/contexts/repositories/CommitsContext";
 import BranchesContext from "@floro/database/src/contexts/repositories/BranchesContext";
-import { REPO_REGEX } from "@floro/common-web/src/utils/validators";
-import { Organization } from "@floro/database/src/entities/Organization";
 import { Repository } from "@floro/database/src/entities/Repository";
-import RepoAccessor from "@floro/storage/src/accessors/RepoAccessor";
 import { QueryRunner } from "typeorm";
 import ProtectedBranchRulesContext from "@floro/database/src/contexts/repositories/ProtectedBranchRulesContext";
 import ProtectedBranchRulesEnabledUserSettingsContext from "@floro/database/src/contexts/repositories/ProtectedBranchRulesEnabledUserSettingsContext";
 import ProtectedBranchRulesEnabledRoleSettingsContext from "@floro/database/src/contexts/repositories/ProtectedBranchRulesEnabledRoleSettingsContext";
 import IgnoredBranchNotificationsContext from "@floro/database/src/contexts/merge_requests/IgnoredBranchNotificationsContext";
 import OrganizationRolesContext from "@floro/database/src/contexts/organizations/OrganizationRolesContext";
-import { OrganizationRole } from "@floro/graphql-schemas/build/generated/main-graphql";
 import {
   Branch as FloroBranch,
   BRANCH_NAME_REGEX,
   getBranchIdFromName,
-  branchIdIsCyclic,
   RemoteSettings,
   getDivergenceOrigin,
   getMergeOriginSha,
@@ -363,7 +357,12 @@ export default class BranchService {
     queryRunner: QueryRunner
   ) {
     try {
-      if (!BRANCH_NAME_REGEX.test(floroBranch?.name ?? "")) {
+      if (
+        !BRANCH_NAME_REGEX.test(floroBranch?.name ?? "") &&
+        (floroBranch?.name ?? "")?.toLowerCase()?.toLowerCase() !=
+          "undefined" &&
+        (floroBranch?.id ?? "")?.toLowerCase()?.toLowerCase() != "undefined"
+      ) {
         return null;
       }
       const branchesContext = await this.contextFactory.createContext(

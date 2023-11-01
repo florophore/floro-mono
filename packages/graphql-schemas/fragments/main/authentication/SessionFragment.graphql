@@ -3,6 +3,7 @@ fragment Session on Session {
   clientKey
   user {
     ...User
+    unreadNotificationsCount
     bookmarkedRepositories {
       id
       name
