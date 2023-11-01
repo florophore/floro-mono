@@ -177,13 +177,15 @@ export default class NotificationsService
   }
 
   public async onCreateInvitation(
+    queryRunner: QueryRunner,
     organizationInvitation: OrganizationInvitation,
     organization: Organization,
     invitedByUser: User,
     user: User
   ): Promise<void> {
     const notificationsContext = await this.contextFactory.createContext(
-      NotificationsContext
+      NotificationsContext,
+      queryRunner
     );
     const notification = await notificationsContext.create({
       eventName: "ORG_INVITATION_CREATED",
@@ -200,7 +202,7 @@ export default class NotificationsService
     organizationInvitation: OrganizationInvitation
   ): Promise<void> {
     const notificationsContext = await this.contextFactory.createContext(
-      NotificationsContext
+      NotificationsContext,
     );
     await notificationsContext.deleteOrganizationInvitationNotifications(
       organizationInvitation.id
@@ -208,10 +210,12 @@ export default class NotificationsService
   }
 
   public async onAcceptInvitation(
+    queryRunner: QueryRunner,
     organizationInvitation: OrganizationInvitation
   ): Promise<void> {
     const notificationsContext = await this.contextFactory.createContext(
-      NotificationsContext
+      NotificationsContext,
+      queryRunner
     );
     await notificationsContext.markCheckedOrganizationInvitationNotifications(
       organizationInvitation.id
@@ -222,7 +226,7 @@ export default class NotificationsService
     organizationInvitation: OrganizationInvitation
   ): Promise<void> {
     const notificationsContext = await this.contextFactory.createContext(
-      NotificationsContext
+      NotificationsContext,
     );
     await notificationsContext.markCheckedOrganizationInvitationNotifications(
       organizationInvitation.id

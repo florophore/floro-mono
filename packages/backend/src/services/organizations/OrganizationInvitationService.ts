@@ -511,17 +511,18 @@ export default class OrganizationInvitationService
         subject: "Floro Invitation to " + organization.name,
       });
 
-      await queryRunner.commitTransaction();
       if (userExistedAlready && user) {
         for (const handler of this.orgInvitationsHandlers) {
-          await handler.onCreateInvitation(organizationInvitation, organization, invitingUser, user)
+          await handler.onCreateInvitation(queryRunner, organizationInvitation, organization, invitingUser, user)
         }
       }
+      await queryRunner.commitTransaction();
       return {
         action: "INVITATION_CREATED",
         organizationInvitation,
       };
     } catch (e: any) {
+      console.log("E", e)
       if (!queryRunner.isReleased) {
         await queryRunner?.rollbackTransaction?.();
       }
@@ -645,6 +646,9 @@ export default class OrganizationInvitationService
           },
         };
       }
+    for (const handler of this.orgInvitationsHandlers) {
+      await handler.onAcceptInvitation(queryRunner, organizationInvitation)
+    }
       await queryRunner?.commitTransaction();
       return {
         action: "INVITATION_ACCEPTED",
@@ -704,6 +708,9 @@ export default class OrganizationInvitationService
           message: "Invitation not cancelled",
         },
       };
+    }
+    for (const handler of this.orgInvitationsHandlers) {
+      await handler.onDeclineInvitation(organizationInvitation)
     }
     return {
       action: "INVITATION_REJECTED",

@@ -264,17 +264,6 @@ describe("OrganizationInvitationService", () => {
           );
           expect(result.action).to.eql("INVITATION_CREATED")
         }
-          //const result = await organizationInvitationService.createInvitation(
-          //  organization,
-          //  currentUser,
-          //  invitingMember,
-          //  permissions,
-          //  undefined,
-          //  "overflow@gmail.com",
-          //  "foo",
-          //  "bar"
-          //);
-          //expect(result.action).to.eql("NO_REMAINING_SEATS_ERROR")
       });
 
       test("creates invitation and respects roleIds if inviting member has canAssignRoles permission", async () => {
