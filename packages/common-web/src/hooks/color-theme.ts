@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 import { DarkTheme, LightTheme, ColorTheme } from '@floro/styles/ColorThemes';
 
-export const useColorTheme = (): ColorTheme => {
+export const useSelectedTheme = (themeName: "dark"| "light"): ColorTheme => {
+    return themeName == 'light' ? LightTheme : DarkTheme;
+}
+
+export const useSystemColorTheme = (): ColorTheme => {
     const [colorTheme, setColorTheme] = useState(LightTheme);
 
     useEffect(() => {

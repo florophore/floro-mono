@@ -6,6 +6,7 @@ fragment User on User {
   freeDiskSpaceBytes
   diskSpaceLimitBytes
   utilizedDiskSpaceBytes
+  ...UserSettings
   profilePhoto {
     ...Photo
   }
@@ -16,8 +17,6 @@ fragment User on User {
   publicPlugins {
     ...Plugin
   }
-  hideOrganizationsInProfile
-  hideBookmarksInProfile
   unreadNotificationsCount
   bookmarkedRepositories {
     id

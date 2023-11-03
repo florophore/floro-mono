@@ -159,7 +159,7 @@ const ProfileDashboard = (props: Props) => {
   return (
     <Container>
       <MainContainer>
-        {props.user && (
+        {props.user && ((props.user?.bookmarkedRepositories?.length ?? 0) > 0) && (
           <ProfileHeader user={props.user} page={page} onChangePage={setPage} />
         )}
         {page == "feed" && props.user && (

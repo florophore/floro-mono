@@ -66,6 +66,7 @@ import NumberedListUnSelectedDark from "@floro/common-assets/assets/images/rich_
 import NumberedListSelectedLight from "@floro/common-assets/assets/images/rich_text_icons/numberedlist.selected.light.svg";
 import NumberedListSelectedDark from "@floro/common-assets/assets/images/rich_text_icons/numberedlist.selected.dark.svg";
 import * as linkify from 'linkifyjs';
+import uEmojiParser from 'universal-emoji-parser'
 
 
 import Cursor from "./editor/Cursor";
@@ -248,7 +249,8 @@ const RichTextEditor = (props: Props) => {
 
   const handleChange = useCallback(
     (event) => {
-      const sanitizedValue = event.target.value == "<br>" ? "" : event.target.value;
+      const emojifiedString = uEmojiParser.parse(event.target.value ?? "", {parseToUnicode: true, parseToHtml: false})
+      const sanitizedValue = emojifiedString == "<br>" ? "" : emojifiedString;
       const sanitizizedString = sanitizeHtml(sanitizedValue, {
         allowedTags: [ 'b', 'i', 'u', 'br', 'sup', 's', 'strike', 'sub', 'ul', 'ol', 'li' ],
       });

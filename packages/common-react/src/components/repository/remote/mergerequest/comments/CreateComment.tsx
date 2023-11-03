@@ -10,6 +10,7 @@ import UserProfilePhoto from "@floro/storybook/stories/common-components/UserPro
 import Button from "@floro/storybook/stories/design-system/Button";
 import ColorPalette from "@floro/styles/ColorPalette";
 import { useOfflinePhoto, useOfflinePhotoMap } from "../../../../../offline/OfflinePhotoContext";
+import uEmojiParser from 'universal-emoji-parser'
 
 const Container = styled.div`
   width: 100%;
@@ -144,7 +145,8 @@ const CreateComment = (props: Props) => {
 
   const onChange = useCallback(
     (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-      props?.onChangeText?.(event?.target?.value ?? "");
+      const emojifiedString = uEmojiParser.parse(event.target.value ?? "", {parseToUnicode: true, parseToHtml: false})
+      props?.onChangeText?.(emojifiedString);
     },
     [props.onChangeText]
   );

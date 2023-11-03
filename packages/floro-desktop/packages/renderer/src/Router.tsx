@@ -32,6 +32,9 @@ import UserProfilePluginsPage from './user_plugins/UserProfilePluginsPage';
 import OrgPluginsPage from './org_plugins/OrgPluginsPage';
 import RepoAnnouncementsPage from './repository/RepoAnnouncementsPage';
 import RepoAnnouncementPage from './repository/RepoAnnouncementPage';
+import UserGeneralSettingsPage from './user_settings/UserGeneralSettingsPage';
+import UserPrivacySettingsPage from './user_settings/UserPrivacySettingsPage';
+import UserNotificationsSettingsPage from './user_settings/UserNotificationsSettingsPage';
 
 const Router = (): React.ReactElement => {
     const location = useLocation();
@@ -48,7 +51,9 @@ const Router = (): React.ReactElement => {
           <Route path="/home/plugins/:plugin" element={<UserPluginsPage />} />
           <Route path="/home/plugins" element={<UserPluginsPage />} />
 
-          <Route path="/home/settings" element={<UserPluginsPage />} />
+          <Route path="/home/settings/notifications" element={<UserNotificationsSettingsPage />} />
+          <Route path="/home/settings/privacy" element={<UserPrivacySettingsPage />} />
+          <Route path="/home/settings" element={<UserGeneralSettingsPage />} />
 
           <Route path="/home/local/api" element={<UserLocalApiHome />} />
           <Route path="/home/local/webhooks" element={<UserLocalWebhookHome />} />

@@ -5,10 +5,8 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-import { ApiResponse } from "floro/dist/src/repo";
+import {useTheme} from "@emotion/react";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
-import { useUpdatePluginState } from "../local/hooks/local-hooks";
-import { useLocalVCSNavContext } from "../local/vcsnav/LocalVCSContext";
 import { ComparisonState, RemoteCommitState, useBeforeCommitState, useMainCommitState, useRemoteCompareFrom, useViewMode } from "../remote/hooks/remote-state";
 import { RepoPage } from "../types";
 import { useCopyPasteContext } from "../copypaste/CopyPasteContext";
@@ -67,6 +65,7 @@ interface Props {
 }
 
 const RemotePluginController = (props: Props) => {
+  const theme = useTheme();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [hasLoaded, setHasLoaded] = useState(false);
   const [hasSentFirstData, setHasSetFirstData] = useState(false);
@@ -296,7 +295,8 @@ const RemotePluginController = (props: Props) => {
       isCopyMode,
       copyList,
       rootSchemaMap: rootSchemaMapRequest?.data,
-      clientStorage: {}
+      clientStorage: {},
+      themeName: theme.name
     };
   }, [
     applicationState,
@@ -308,7 +308,8 @@ const RemotePluginController = (props: Props) => {
     viewMode,
     isCopyMode,
     copyList,
-    rootSchemaMapRequest?.data
+    rootSchemaMapRequest?.data,
+    theme.name
   ]);
 
   useEffect(() => {

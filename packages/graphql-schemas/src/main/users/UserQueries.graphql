@@ -10,4 +10,6 @@ extend type Mutation {
     acceptOrganizationInvitation(invitationId: ID!): AcceptInvitationOrganizationResponse
     rejectOrganizationInvitation(invitationId: ID!): RejectInvitationOrganizationResponse
     updateUserName(firstName: String, lastName: String): UpdateUserNameResponse
+
+    updateUserSetting(settingName: ID!, value: Boolean!): UpdateUserSettingResponse
 }

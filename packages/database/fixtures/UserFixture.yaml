@@ -6,9 +6,24 @@ items:
     lastName: bar
     hideOrganizationsInProfile: false
     hideBookmarksInProfile: false
+    muteRepoAnnouncementReplyAdded: false
+    muteRepoWriteAccessGranted: false
+    muteMergeRequestBranchUpdated: false
+    muteMergeRequestMergedOrClosed: false
+    muteMergeRequestReviewStatusChanged: false
+    muteMergeRequestCommentAdded: false
+    muteMergeRequestCommentReplyAdded: false
+
   user_1:
     username: doggylover1
     firstName: fooy
     lastName: baz
     hideOrganizationsInProfile: false
     hideBookmarksInProfile: false
+    muteRepoAnnouncementReplyAdded: false
+    muteRepoWriteAccessGranted: false
+    muteMergeRequestBranchUpdated: false
+    muteMergeRequestMergedOrClosed: false
+    muteMergeRequestReviewStatusChanged: false
+    muteMergeRequestCommentAdded: false
+    muteMergeRequestCommentReplyAdded: false

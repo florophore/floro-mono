@@ -1,0 +1,12 @@
+
+fragment UserSettings on User {
+  hideOrganizationsInProfile
+  hideBookmarksInProfile
+  muteRepoAnnouncementReplyAdded
+  muteRepoWriteAccessGranted
+  muteMergeRequestBranchUpdated
+  muteMergeRequestMergedOrClosed
+  muteMergeRequestReviewStatusChanged
+  muteMergeRequestCommentAdded
+  muteMergeRequestCommentReplyAdded
+}

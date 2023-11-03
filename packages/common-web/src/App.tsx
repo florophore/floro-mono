@@ -1,7 +1,5 @@
 import { useMemo, useCallback } from "react";
 import NotFound from "@floro/common-web/src/pages/errors/NotFound";
-import { ThemeProvider } from "@emotion/react";
-import { useColorTheme } from "@floro/common-web/src/hooks/color-theme";
 import { Routes, Route } from "react-router-dom";
 import { IsomorphicRoute } from "./ssr/routing-helpers";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -14,6 +12,8 @@ import { OfflineIconProvider } from "@floro/common-react/src/offline/OfflineIcon
 import "./index.css";
 import FloroMount from "./floro_listener/FloroMount";
 import { LocalizedPhrases } from "@floro/common-generators/floro_modules/text-generator";
+import { ColorThemeProvider } from "./hooks/ColorThemeProvider";
+import ThemeMount from "./hooks/ThemeMount";
 
 export interface Props {
   routing: IsomorphicRoute[];
@@ -21,41 +21,42 @@ export interface Props {
 }
 
 function App(props: Props) {
-  const colorTheme = useColorTheme();
   const queryClient = useMemo(() => new QueryClient(), []);
   const notFound = useMemo(() => <NotFound />, []);
 
   const openUrl = useCallback((url: string) => {
-    window.open(url)
+    window.open(url);
   }, []);
   return (
     <OpenLinkProvider openUrl={openUrl}>
       <FloroMount text={props.text}>
-        <ThemeProvider theme={colorTheme}>
-          <QueryClientProvider client={queryClient}>
-            <FloroSocketProvider client={"web"}>
-              <OfflineIconProvider>
-                <OfflinePhotoProvider>
-                  <SessionProvider clientType="web">
-                    <Routes>
-                      {props.routing.map((route, key) => {
-                        const Page = route.component();
-                        return (
-                          <Route
-                            key={key}
-                            path={route.path}
-                            element={<Page />}
-                          />
-                        );
-                      })}
-                      <Route path="*" element={notFound} />
-                    </Routes>
-                  </SessionProvider>
-                </OfflinePhotoProvider>
-              </OfflineIconProvider>
-            </FloroSocketProvider>
-          </QueryClientProvider>
-        </ThemeProvider>
+        <ColorThemeProvider>
+          <ThemeMount>
+            <QueryClientProvider client={queryClient}>
+              <FloroSocketProvider client={"web"}>
+                <OfflineIconProvider>
+                  <OfflinePhotoProvider>
+                    <SessionProvider clientType="web">
+                      <Routes>
+                        {props.routing.map((route, key) => {
+                          const Page = route.component();
+                          return (
+                            <Route
+                              key={key}
+                              path={route.path}
+                              element={<Page />}
+                            />
+                          );
+                        })}
+                        <Route path="*" element={notFound} />
+                      </Routes>
+                    </SessionProvider>
+                  </OfflinePhotoProvider>
+                </OfflineIconProvider>
+              </FloroSocketProvider>
+            </QueryClientProvider>
+          </ThemeMount>
+        </ColorThemeProvider>
       </FloroMount>
     </OpenLinkProvider>
   );

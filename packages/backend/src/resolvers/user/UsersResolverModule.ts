@@ -36,6 +36,17 @@ import NotificationsContext from "@floro/database/src/contexts/notifications/Not
 import NotificationsService from "../../services/notifications/NotificationsService";
 import { withFilter } from "graphql-subscriptions";
 
+declare type UserSettingType =
+  | "hideBookmarksInProfile"
+  | "hideOrganizationsInProfile"
+  | "muteRepoAnnouncementReplyAdded"
+  | "muteRepoWriteAccessGranted"
+  | "muteMergeRequestBranchUpdated"
+  | "muteMergeRequestMergedOrClosed"
+  | "muteMergeRequestReviewStatusChanged"
+  | "muteMergeRequestCommentAdded"
+  | "muteMergeRequestCommentReplyAdded";
+
 @injectable()
 export default class UsersResolverModule extends BaseResolverModule {
   public resolvers: Array<keyof this & keyof main.ResolversTypes> = [
@@ -400,6 +411,40 @@ export default class UsersResolverModule extends BaseResolverModule {
         return {
           __typename: "ClearNotificationsResult",
           user: currentUser,
+        };
+      }
+    ),
+    updateUserSetting: runWithHooks(
+      () => [this.loggedInUserGuard],
+      async (_, args: main.MutationUpdateUserSettingArgs, context) => {
+
+        const settingsSet = new Set<UserSettingType>([
+          "hideBookmarksInProfile",
+          "hideOrganizationsInProfile",
+          "muteRepoAnnouncementReplyAdded",
+          "muteRepoWriteAccessGranted",
+          "muteMergeRequestBranchUpdated",
+          "muteMergeRequestMergedOrClosed",
+          "muteMergeRequestReviewStatusChanged",
+          "muteMergeRequestCommentAdded",
+          "muteMergeRequestCommentReplyAdded",
+        ]);
+        if (!settingsSet.has(args.settingName as UserSettingType)) {
+          return {
+            __typename: "UpdateUserSettingError",
+            message: "Unknown setting type",
+            type: "UNKNOWN_SETTING_TYPE",
+          };
+        }
+        const usersContext = await this.contextFactory.createContext(
+          UsersContext
+        );
+        const user = await usersContext.updateUserById(context.currentUser?.id, {
+          [args.settingName]: !!args.value
+        });
+        return {
+          __typename: "UpdateUserSettingSuccess",
+          user
         };
       }
     ),
@@ -777,6 +822,87 @@ export default class UsersResolverModule extends BaseResolverModule {
         return await notificationsContext.getUncheckedNotificationsCount(
           context?.currentUser?.id
         );
+      }
+    ),
+    hideBookmarksInProfile: runWithHooks(
+      () => [],
+      async (user, _, context) => {
+        if (user.id != context?.currentUser?.id) {
+          return null;
+        }
+        return user?.hideBookmarksInProfile ?? false;
+      }
+    ),
+    hideOrganizationsInProfile: runWithHooks(
+      () => [],
+      async (user, _, context) => {
+        if (user.id != context?.currentUser?.id) {
+          return null;
+        }
+        return user?.hideOrganizationsInProfile ?? false;
+      }
+    ),
+    muteRepoAnnouncementReplyAdded: runWithHooks(
+      () => [],
+      async (user, _, context) => {
+        if (user.id != context?.currentUser?.id) {
+          return null;
+        }
+        return user?.muteRepoAnnouncementReplyAdded ?? false;
+      }
+    ),
+    muteRepoWriteAccessGranted: runWithHooks(
+      () => [],
+      async (user, _, context) => {
+        if (user.id != context?.currentUser?.id) {
+          return null;
+        }
+        return user?.muteRepoWriteAccessGranted ?? false;
+      }
+    ),
+    muteMergeRequestBranchUpdated: runWithHooks(
+      () => [],
+      async (user, _, context) => {
+        if (user.id != context?.currentUser?.id) {
+          return null;
+        }
+        return user?.muteMergeRequestBranchUpdated ?? false;
+      }
+    ),
+    muteMergeRequestMergedOrClosed: runWithHooks(
+      () => [],
+      async (user, _, context) => {
+        if (user.id != context?.currentUser?.id) {
+          return null;
+        }
+        return user?.muteMergeRequestMergedOrClosed ?? false;
+      }
+    ),
+    muteMergeRequestReviewStatusChanged: runWithHooks(
+      () => [],
+      async (user, _, context) => {
+        if (user.id != context?.currentUser?.id) {
+          return null;
+        }
+        return user?.muteMergeRequestReviewStatusChanged ?? false;
+      }
+    ),
+    muteMergeRequestCommentAdded: runWithHooks(
+      () => [],
+      async (user, _, context) => {
+        if (user.id != context?.currentUser?.id) {
+          return null;
+        }
+        return user?.muteMergeRequestCommentAdded ?? false;
+      }
+    ),
+    muteMergeRequestCommentReplyAdded: runWithHooks(
+      () => [],
+      async (user, _, context) => {
+        if (user.id != context?.currentUser?.id) {
+          return null;
+        }
+        return user?.muteMergeRequestCommentReplyAdded ?? false;
       }
     ),
   };

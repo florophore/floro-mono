@@ -71,6 +71,44 @@ export class User extends BinaryPKBaseEntity {
   @IsOptional()
   hideBookmarksInProfile?: boolean;
 
+  /* STATE Email Mutes */
+  @Column("boolean", { default: false})
+  @IsBoolean()
+  @IsOptional()
+  muteRepoAnnouncementReplyAdded?: boolean;
+
+  @Column("boolean", { default: false})
+  @IsBoolean()
+  @IsOptional()
+  muteRepoWriteAccessGranted?: boolean;
+
+  @Column("boolean", { default: false})
+  @IsBoolean()
+  @IsOptional()
+  muteMergeRequestBranchUpdated?: boolean;
+
+  @Column("boolean", { default: false})
+  @IsBoolean()
+  @IsOptional()
+  muteMergeRequestMergedOrClosed?: boolean;
+
+  @Column("boolean", { default: false})
+  @IsBoolean()
+  @IsOptional()
+  muteMergeRequestReviewStatusChanged?: boolean;
+
+  @Column("boolean", { default: false})
+  @IsBoolean()
+  @IsOptional()
+  muteMergeRequestCommentAdded?: boolean;
+
+  @Column("boolean", { default: false})
+  @IsBoolean()
+  @IsOptional()
+  muteMergeRequestCommentReplyAdded?: boolean;
+  /* END Email Mutes */
+
+
   @OneToOne("UserServiceAgreement", "user")
   userServiceAgreement?: Relation<UserServiceAgreement>;
 

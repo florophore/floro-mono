@@ -5,6 +5,7 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
+import {useTheme} from "@emotion/react";
 import { ApiResponse } from "floro/dist/src/repo";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { useClearPluginStorage, useUpdatePluginState, useUpdatePluginStorage } from "../local/hooks/local-hooks";
@@ -65,6 +66,7 @@ const sendMessage = (
 };
 
 const LocalPluginController = (props: Props) => {
+  const theme = useTheme();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [hasLoaded, setHasLoaded] = useState(false);
   const [hasSentFirstData, setHasSetFirstData] = useState(false);
@@ -307,7 +309,8 @@ const LocalPluginController = (props: Props) => {
       isCopyMode,
       copyList,
       rootSchemaMap: rootSchemaMapRequest?.data,
-      clientStorage
+      clientStorage,
+      themeName: theme.name
     };
   }, [
     changeset,
@@ -321,7 +324,8 @@ const LocalPluginController = (props: Props) => {
     isCopyMode,
     copyList,
     rootSchemaMapRequest?.data,
-    clientStorage
+    clientStorage,
+    theme.name
   ]);
 
   useEffect(() => {

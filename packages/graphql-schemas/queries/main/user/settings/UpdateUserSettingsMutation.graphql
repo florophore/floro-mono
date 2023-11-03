@@ -1,0 +1,19 @@
+
+mutation UpdateUserSetting($settingName: ID!, $value: Boolean!) {
+  updateUserSetting(settingName: $settingName, value: $value) {
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+    ... on UpdateUserSettingError {
+      type
+      message
+    }
+    ... on UpdateUserSettingSuccess {
+      user {
+         id
+         ...UserSettings
+      }
+    }
+  }
+}

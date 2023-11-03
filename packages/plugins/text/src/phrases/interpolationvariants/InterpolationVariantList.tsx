@@ -202,7 +202,7 @@ const InterpolationVariantsList = (props: Props) => {
         if ((localeRule.defaultValue?.plainText ?? "") == "") {
           return true;
         }
-        for (const condition of localeRule.conditionals) {
+        for (const condition of localeRule?.conditionals ?? []) {
             if ((condition?.resultant?.plainText ?? "") == "") {
                 return true;
             }

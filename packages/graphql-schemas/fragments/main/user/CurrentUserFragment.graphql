@@ -6,8 +6,7 @@ fragment CurrentUser on User {
   freeDiskSpaceBytes
   diskSpaceLimitBytes
   utilizedDiskSpaceBytes
-  hideOrganizationsInProfile
-  hideBookmarksInProfile
+  ...UserSettings
   profilePhoto {
     ...Photo
   }

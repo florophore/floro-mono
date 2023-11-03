@@ -34,6 +34,7 @@ import { RepoAnnouncement } from "@floro/database/src/entities/RepoAnnouncement"
 import MergeRequestsContext from "@floro/database/src/contexts/merge_requests/MergeRequestsContext";
 import ReviewerRequestsContext from "@floro/database/src/contexts/merge_requests/ReviewerRequestsContext";
 import NotificationFanOutQueue from "./NotificationFanOutQueue";
+import MainConfig from "@floro/config/src/MainConfig";
 
 const PAGINATION_SIZE = 10;
 
@@ -56,15 +57,18 @@ export default class NotificationsService
   private databaseConnection!: DatabaseConnection;
   private contextFactory!: ContextFactory;
   private notificationFanOutQueue!: NotificationFanOutQueue;
+  private mainConfig!: MainConfig;
 
   constructor(
     @inject(DatabaseConnection) databaseConnection: DatabaseConnection,
     @inject(ContextFactory) contextFactory: ContextFactory,
-    @inject(NotificationFanOutQueue) notificationFanOutQueue: NotificationFanOutQueue
+    @inject(NotificationFanOutQueue) notificationFanOutQueue: NotificationFanOutQueue,
+    @inject(MainConfig) mainConfig: MainConfig
   ) {
     this.databaseConnection = databaseConnection;
     this.contextFactory = contextFactory;
     this.notificationFanOutQueue = notificationFanOutQueue;
+    this.mainConfig = mainConfig;
   }
   public async onCreateRepoAnnouncementReply(
     repoAnnouncement: RepoAnnouncement,
@@ -125,6 +129,9 @@ export default class NotificationsService
     repository: Repository
   ): Promise<void> {
     if (repository?.repoType == "user_repo") {
+      if (repoBookmark.userId == repository.userId) {
+        return;
+      }
       const notificationsContext = await this.contextFactory.createContext(
         NotificationsContext
       );
@@ -154,6 +161,9 @@ export default class NotificationsService
     repository: Repository
   ): Promise<void> {
     if (repository?.repoType == "user_repo") {
+      if (repoSubscription.userId == repository.userId) {
+        return;
+      }
       const notificationsContext = await this.contextFactory.createContext(
         NotificationsContext
       );
@@ -739,5 +749,77 @@ export default class NotificationsService
       lastId: null,
       hasMore: false,
     };
+  }
+
+  public getNotifcationRedirectLink(notification: Notification): string | null {
+    const prefix = `${this.mainConfig.url()}/app-proxy`;
+
+    const repoLink =
+      notification?.repository?.repoType == "user_repo"
+        ? `/repo/@/${notification?.repository?.user?.username}/${notification?.repository?.name}`
+        : `/repo/@/${notification?.repository?.organization?.handle}/${notification?.repository?.name}`;
+    const mergeRequestLink = `${repoLink}/mergerequests/${notification?.mergeRequest?.id}`;
+    const announcementLink = `${repoLink}/announcements/${notification?.repoAnnouncement?.id}`;
+
+    if (notification.eventName == "REPO_ANNOUNCEMENT_REPLY_CREATED") {
+      return `${prefix}/${announcementLink}`;
+    }
+
+    if (notification.eventName == "REPOSITORY_WRITE_ACCESS_GRANTED") {
+      return `${prefix}/${repoLink}`;
+    }
+
+    if (notification.eventName == "MERGE_REQUEST_BRANCH_UPDATED") {
+      return `${prefix}/${mergeRequestLink}`;
+    }
+
+    if (notification.eventName == "MERGE_REQUEST_CLOSED") {
+      return `${prefix}/${mergeRequestLink}`;
+    }
+
+    if (notification.eventName == "MERGE_REQUEST_MERGED") {
+      return `${prefix}/${mergeRequestLink}`;
+    }
+
+    if (notification.eventName == "REVIEWER_ADDED") {
+      return `${prefix}/${mergeRequestLink}`;
+    }
+
+    if (
+      notification.eventName == "REVIEW_STATUS_ADDED" &&
+      notification?.reviewStatus?.approvalStatus == "approved"
+    ) {
+      return `${prefix}/${mergeRequestLink}`;
+    }
+
+    if (
+      notification.eventName == "REVIEW_STATUS_ADDED" &&
+      notification?.reviewStatus?.approvalStatus == "blocked"
+    ) {
+      return `${prefix}/${mergeRequestLink}`;
+    }
+
+    if (
+      notification.eventName == "REVIEW_STATUS_CHANGED" &&
+      notification?.reviewStatus?.approvalStatus == "approved"
+    ) {
+      return `${prefix}/${mergeRequestLink}`;
+    }
+
+    if (
+      notification.eventName == "REVIEW_STATUS_CHANGED" &&
+      notification?.reviewStatus?.approvalStatus == "blocked"
+    ) {
+      return `${prefix}/${mergeRequestLink}`;
+    }
+
+    if (notification.eventName == "MERGE_REQUEST_COMMENT_ADDED") {
+      return `${prefix}/${mergeRequestLink}`;
+    }
+
+    if (notification.eventName == "MERGE_REQUEST_COMMENT_REPLY_ADDED") {
+      return `${prefix}/${mergeRequestLink}`;
+    }
+    return null;
   }
 }

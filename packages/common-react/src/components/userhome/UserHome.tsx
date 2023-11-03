@@ -176,7 +176,9 @@ const UserHome = () => {
           <BottomNavContainer>
             <TopInfo>
               <div style={{ marginTop: 0, display: "flex" }}>
-                <UserSettingsTab />
+                <Link to={'/home/settings'}>
+                  <UserSettingsTab />
+                </Link>
               </div>
               <div style={{ marginTop: 16, display: "flex" }}>
                 <Link to={'/home/local/api'}>

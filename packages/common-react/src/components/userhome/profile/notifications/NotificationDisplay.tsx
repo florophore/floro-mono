@@ -383,10 +383,10 @@ const NotificationDisplay = (props: Props) => {
           return (
             <span>
               {"replied "}
-              <i style={{color: theme.colors.contrastText}}>{repliedClampedText}</i>
+              <i style={{color: theme.colors.contrastText}}>{`"${repliedClampedText}"`}</i>
               {" to your announcement "}
               <Link to={announcementLink}>
-                <b style={{ color: theme.colors.linkColor }}>{clampedText}</b>
+                <b style={{ color: theme.colors.linkColor }}>{`"${clampedText}"`}</b>
               </Link>
               {" for repository "}
               <Link to={repoLink}>
@@ -398,10 +398,10 @@ const NotificationDisplay = (props: Props) => {
         return (
           <span>
             {"replied "}
-            <i style={{color: theme.colors.contrastText}}>{repliedClampedText}</i>
+              <i style={{color: theme.colors.contrastText}}>{`"${repliedClampedText}"`}</i>
             {" to announcement "}
             <Link to={announcementLink}>
-              <b style={{ color: theme.colors.linkColor }}>{clampedText}</b>
+                <b style={{ color: theme.colors.linkColor }}>{`"${clampedText}"`}</b>
             </Link>
             {" for repository "}
             <Link to={repoLink}>
@@ -592,7 +592,7 @@ const NotificationDisplay = (props: Props) => {
             <Link to={mergeRequestLink}>
               <b style={{ color: theme.colors.linkColor }}>{mergeRequestName}</b>
             </Link>
-            <i style={{color: theme.colors.contrastText}}>{" " + clampedText}</i>
+            <i style={{color: theme.colors.contrastText}}>{" " + `"${clampedText}"`}</i>
             {" for repository "}
             <Link to={repoLink}>
               <b style={{ color: theme.colors.linkColor }}>{repoName}</b>
@@ -607,9 +607,9 @@ const NotificationDisplay = (props: Props) => {
         return (
           <span>
             {"replied "}
-            <i style={{color: theme.colors.contrastText}}>{repliedClampedText}</i>
-            {"to your comment"}
-            <i style={{color: theme.colors.contrastText}}>{" " + clampedText}</i>
+            <i style={{color: theme.colors.contrastText}}>{`"${repliedClampedText}"`}</i>
+            {"to comment"}
+            <i style={{color: theme.colors.contrastText}}>{" " + `"${clampedText}"`}</i>
             {"on merge request "}
             <Link to={mergeRequestLink}>
               <b style={{ color: theme.colors.linkColor }}>{mergeRequestName}</b>

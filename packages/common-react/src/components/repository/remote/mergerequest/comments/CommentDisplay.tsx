@@ -26,6 +26,7 @@ import TrashIconDark from "@floro/common-assets/assets/images/icons/trash.dark.s
 import DotsLoader from "@floro/storybook/stories/design-system/DotsLoader";
 import EditComment from "./EditComment";
 import EditReply from "./EditReply";
+import uEmojiParser from 'universal-emoji-parser'
 
 const Container = styled.div`
   width: 100%;
@@ -270,12 +271,17 @@ const CommentDisplay = (props: Props) => {
 
   const onInput = useCallback(() => {
     if (growWrap?.current && growTextarea?.current) {
-        growWrap.current.dataset.replicatedValue = growTextarea.current.value;
+        const emojifiedString = uEmojiParser.parse(
+          growTextarea.current.value ?? "",
+          { parseToUnicode: true, parseToHtml: false }
+        );
+        growWrap.current.dataset.replicatedValue = emojifiedString;
     }
   }, []);
 
   const onChange = useCallback((event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setText(event?.target?.value ?? "")
+    const emojifiedString = uEmojiParser.parse(event.target.value ?? "", {parseToUnicode: true, parseToHtml: false})
+    setText(emojifiedString);
   }, [])
 
   const timeAgo = useMemo(() => new TimeAgo("en-US"), []);

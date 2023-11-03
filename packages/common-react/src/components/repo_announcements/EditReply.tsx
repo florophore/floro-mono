@@ -2,14 +2,8 @@ import React, { useMemo, useCallback, useEffect, useRef, useState } from "react"
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import {
-  MergeRequest,
-  MergeRequestComment,
-  MergeRequestCommentReply,
   RepoAnnouncement,
   RepoAnnouncementReply,
-  Repository,
-  useUpdateMergeRequestCommentMutation,
-  useUpdateMergeRequestCommentReplyMutation,
   useUpdateRepoAnnouncementReplyMutation,
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 
@@ -19,6 +13,7 @@ import ColorPalette from "@floro/styles/ColorPalette";
 import BackArrowIconLight from "@floro/common-assets/assets/images/icons/back_arrow.light.svg";
 import BackArrowIconDark from "@floro/common-assets/assets/images/icons/back_arrow.dark.svg";
 import { useSession } from "../../session/session-context";
+import uEmojiParser from 'universal-emoji-parser'
 
 const Container = styled.div`
   display: flex;
@@ -125,12 +120,20 @@ const CommentDisplay = (props: Props) => {
 
   const onInput = useCallback(() => {
     if (growWrap?.current && growTextarea?.current) {
-        growWrap.current.dataset.replicatedValue = growTextarea.current.value;
+        const emojifiedString = uEmojiParser.parse(
+          growTextarea.current.value ?? "",
+          { parseToUnicode: true, parseToHtml: false }
+        );
+        growWrap.current.dataset.replicatedValue = emojifiedString;
     }
   }, []);
 
   const onChange = useCallback((event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setText(event?.target?.value ?? "")
+    const emojifiedString = uEmojiParser.parse(event.target.value ?? "", {
+      parseToUnicode: true,
+      parseToHtml: false,
+    });
+    setText(emojifiedString);
   }, [])
 
   const isDisabled = useMemo(() => {

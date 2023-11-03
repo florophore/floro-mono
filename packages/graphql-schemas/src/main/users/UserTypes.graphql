@@ -25,6 +25,14 @@ type User {
     hideBookmarksInProfile: Boolean
     unreadNotificationsCount: Int
 
+    muteRepoAnnouncementReplyAdded: Boolean
+    muteRepoWriteAccessGranted: Boolean
+    muteMergeRequestBranchUpdated: Boolean
+    muteMergeRequestMergedOrClosed: Boolean
+    muteMergeRequestReviewStatusChanged: Boolean
+    muteMergeRequestCommentAdded: Boolean
+    muteMergeRequestCommentReplyAdded: Boolean
+
 }
 union CurrentUserResponse =
   | User
@@ -77,4 +85,19 @@ type UpdateUserNameError {
 union UpdateUserNameResponse =
     UpdateUserNameError
   | UpdateUserNameSuccess
+  | UnAuthenticatedError
+
+
+type UpdateUserSettingSuccess {
+  user: User
+}
+
+type UpdateUserSettingError {
+  message: String
+  type: String
+}
+
+union UpdateUserSettingResponse =
+    UpdateUserSettingError
+  | UpdateUserSettingSuccess
   | UnAuthenticatedError

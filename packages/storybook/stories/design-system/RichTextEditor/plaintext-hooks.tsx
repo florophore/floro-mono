@@ -185,14 +185,6 @@ const renderOrderedListNode = (
   }).join("");
 };
 
-const render = (
-  nodes: (StaticNode | StaticListNode)[],
-  renderers: PlainTextRenderers,
-): string => {
-    const content = renderers.renderStaticNodes(nodes, renderers);
-    return content
-};
-
 export const renderers: PlainTextRenderers = {
   renderStaticNodes,
   renderText,

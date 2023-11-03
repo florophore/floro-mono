@@ -133,6 +133,7 @@ import OrgInvitationsHandler from './services/events/OrgInvitationsHandler';
 import BookmarkSubscriptionsHandler from './services/events/BookmarkSubscriptionsHandler';
 import RepoAnnouncementReplyHandler from './services/events/RepoAnnouncementReplyHandler';
 import NotificationFanOutQueue from './services/notifications/NotificationFanOutQueue';
+import NotificationReceiverController from './controllers/NotificationReceiverController';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -336,6 +337,8 @@ export default new ContainerModule((bind): void => {
     bind<DeepLProxyController>("Controllers").to(DeepLProxyController);
     // Floro Plugin Webhooks
     bind<UpdateTextWebhookController>("Controllers").to(UpdateTextWebhookController);
+    // notifications
+    bind<NotificationReceiverController>("Controllers").to(NotificationReceiverController);
 
     // RESOLVER MODULES
     bind<UsersResolverModule>("ResolverModule").to(UsersResolverModule);

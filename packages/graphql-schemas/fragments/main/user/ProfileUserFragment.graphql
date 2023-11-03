@@ -10,8 +10,7 @@ fragment ProfileUser on User {
   publicPlugins {
     ...Plugin
   }
-  hideOrganizationsInProfile
-  hideBookmarksInProfile
+  ...UserSettings
   bookmarkedRepositories {
     id
     name

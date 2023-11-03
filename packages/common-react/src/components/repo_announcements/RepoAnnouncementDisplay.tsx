@@ -32,6 +32,7 @@ import CommentReply from "./CommentReply";
 import EditReply from "./EditReply";
 import { useFragment } from "@apollo/client";
 import { useOpenLink } from "../../links/OpenLinkContext";
+import uEmojiParser from 'universal-emoji-parser'
 
 const Container = styled.div`
   width: 100%;
@@ -449,7 +450,8 @@ const RepoAnnouncementDisplay = (props: Props) => {
   }, []);
 
   const onChange = useCallback((event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setText(event?.target?.value ?? "")
+    const emojifiedString = uEmojiParser.parse(event.target.value ?? "", {parseToUnicode: true, parseToHtml: false})
+    setText(emojifiedString);
   }, [])
 
   const timeAgo = useMemo(() => new TimeAgo("en-US"), []);
