@@ -35,6 +35,7 @@ import RepoAnnouncementPage from './repository/RepoAnnouncementPage';
 import UserGeneralSettingsPage from './user_settings/UserGeneralSettingsPage';
 import UserPrivacySettingsPage from './user_settings/UserPrivacySettingsPage';
 import UserNotificationsSettingsPage from './user_settings/UserNotificationsSettingsPage';
+import OrgAccountSettingsPage from './org_settings/OrgAccountSettingsPage';
 
 const Router = (): React.ReactElement => {
     const location = useLocation();
@@ -69,7 +70,7 @@ const Router = (): React.ReactElement => {
           <Route path="/org/@/:handle/remote/api" element={<OrgRemoteApiHome/>} />
           <Route path="/org/@/:handle/remote/webhooks" element={<OrgRemoteWebhookHome/>} />
 
-          <Route path="/org/@/:handle/settings" element={<OrganizationRolesPage/>} />
+          <Route path="/org/@/:handle/settings" element={<OrgAccountSettingsPage/>} />
 
           <Route path="/org/@/:handle/billing/overview" element={<OrganizationRolesPage/>} />
           <Route path="/org/@/:handle/billing/payment-details" element={<OrganizationRolesPage/>} />

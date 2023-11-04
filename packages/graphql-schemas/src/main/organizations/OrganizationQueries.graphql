@@ -7,6 +7,7 @@ extend type Query {
 extend type Mutation {
     createOrganization(name: String!, handle: String!, legalName: String!, contactEmail: String!, agreedToCustomerServiceAgreement: Boolean!): CreateOrganizationResponse
     updateOrganizationName(organizationId:ID!, name: String!, legalName: String!): UpdateOrganizationNameResponse
+    updateOrganizationContactEmail(organizationId:ID!, contactEmail: String!): UpdateOrganizationContactEmailResponse
 
     createInvitation(organizationId:ID!, userId: String, email: String, firstName: String, lastName: String, roleIds: [ID]): CreateInvitationOrganizationResponse
     cancelOrganizationInvitation(organizationId: ID!, invitationId: ID!): CancelInvitationOrganizationResponse

@@ -966,7 +966,7 @@ export default class OrganizationResolverModule extends BaseResolverModule {
           cacheKey,
           currentMember.id
         );
-        if (!permissions) {
+        if (!permissions?.canModifyOrganizationSettings) {
           return {
             __typename: "UpdateOrganizationNameError",
             message: "Forbidden Action",
@@ -997,6 +997,82 @@ export default class OrganizationResolverModule extends BaseResolverModule {
         }
         return {
           __typename: "UpdateOrganizationNameError",
+          message: result.error?.message ?? "Unknown Error",
+          type: result.error?.type ?? "UNKNOWN_ERROR",
+        };
+      }
+    ),
+
+    updateOrganizationContactEmail: runWithHooks(
+      () => [
+        this.loggedInUserGuard,
+        this.rootOrganizationMemberPermissionsLoader,
+      ],
+      async (
+        _,
+        {
+          organizationId,
+          contactEmail,
+        }: main.MutationUpdateOrganizationContactEmailArgs,
+        { cacheKey, currentUser }
+      ) => {
+        const organization = this.requestCache.getOrganization(
+          cacheKey,
+          organizationId
+        );
+        if (!organization) {
+          return {
+            __typename: "UpdateOrganizationContactEmailError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        const currentMember = this.requestCache.getOrganizationMembership(
+          cacheKey,
+          organizationId,
+          currentUser.id
+        );
+        if (!currentMember?.id) {
+          return {
+            __typename: "UpdateOrganizationContactEmailError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        const permissions = this.requestCache.getMembershipPermissions(
+          cacheKey,
+          currentMember.id
+        );
+        if (!permissions?.canModifyOrganizationSettings) {
+          return {
+            __typename: "UpdateOrganizationContactEmailError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        const result = await this.organizaionService.updateOrgContactEmail(
+          organization,
+          contactEmail
+        );
+        if (result.action == "UPDATE_ORGANIZATION_CONTACT_EMAIL_SUCCEEDED") {
+          this.requestCache.setOrganization(
+            cacheKey,
+            result.organization as Organization
+          );
+          return {
+            __typename: "UpdateOrganizationContactEmailSuccess",
+            organization: result.organization,
+          };
+        }
+        if (result.action == "LOG_ERROR") {
+          console.error(
+            result.error?.type,
+            result?.error?.message,
+            result?.error?.meta
+          );
+        }
+        return {
+          __typename: "UpdateOrganizationContactEmailError",
           message: result.error?.message ?? "Unknown Error",
           type: result.error?.type ?? "UNKNOWN_ERROR",
         };

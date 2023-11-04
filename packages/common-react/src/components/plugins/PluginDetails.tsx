@@ -14,8 +14,6 @@ import JSONPretty from "react-json-pretty";
 import { Organization } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import LockLight from "@floro/common-assets/assets/images/icons/lock.medium_gray.svg";
 import LockDark from "@floro/common-assets/assets/images/icons/lock.dark.svg";
-import OpenbookLight from "@floro/common-assets/assets/images/icons/openbook.medium_gray.svg";
-import OpenbookDark from "@floro/common-assets/assets/images/icons/openbook.dark.svg";
 
 const Container = styled.div`
   height: 100%;

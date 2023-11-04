@@ -48,6 +48,19 @@ export interface UpdateOrganizationNameReponse {
   };
 }
 
+export interface UpdateOrganizationContactEmailReponse {
+  action:
+    | "UPDATE_ORGANIZATION_CONTACT_EMAIL_SUCCEEDED"
+    | "INVALID_PARAMS"
+    | "LOG_ERROR";
+  organization?: Organization;
+  error?: {
+    type: string;
+    message: string;
+    meta?: any;
+  };
+}
+
 @injectable()
 export default class OrganizationService {
   private databaseConnection!: DatabaseConnection;
@@ -282,6 +295,49 @@ export default class OrganizationService {
     });
     return {
       action: "UPDATE_ORGANIZATION_NAME_SUCCEEDED",
+      organization: updatedOrg,
+    };
+  }
+
+  public async updateOrgContactEmail(
+    organization: Organization,
+    contactEmail?: string|null,
+  ): Promise<UpdateOrganizationContactEmailReponse> {
+    if (!contactEmail) {
+      return {
+        action: "INVALID_PARAMS",
+        error: {
+          type: "INVALID_PARAMS",
+          message: "Organization missing contact email",
+        },
+      };
+    }
+    if (!EmailValidator.validate(contactEmail)) {
+      return {
+        action: "INVALID_PARAMS",
+        error: {
+          type: "INVALID_PARAMS",
+          message: "Invalid contact email",
+        },
+      };
+    }
+    const isGoogleEmail = await EmailHelper.isGoogleEmail(contactEmail);
+    const normalizedContactEmail = EmailHelper.getUniqueEmail(
+      contactEmail,
+      isGoogleEmail
+    );
+    const contactEmailHash = EmailHelper.getEmailHash(
+      contactEmail,
+      isGoogleEmail
+    );
+    const organizationsContext = await this.contextFactory.createContext(OrganizationsContext);
+    const updatedOrg = await organizationsContext.updateOrganization(organization, {
+      contactEmail,
+      contactEmailHash,
+      normalizedContactEmail
+    });
+    return {
+      action: "UPDATE_ORGANIZATION_CONTACT_EMAIL_SUCCEEDED",
       organization: updatedOrg,
     };
   }

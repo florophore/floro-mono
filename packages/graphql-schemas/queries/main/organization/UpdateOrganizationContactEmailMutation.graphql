@@ -1,0 +1,17 @@
+mutation UpdateOrganizationContactEmail($organizationId: ID! $contactEmail: String!) {
+  updateOrganizationContactEmail(organizationId: $organizationId, contactEmail: $contactEmail) {
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+    ... on UpdateOrganizationContactEmailError {
+      type
+      message
+    }
+    ... on UpdateOrganizationContactEmailSuccess {
+      organization {
+         ...Organization
+      }
+    }
+  }
+}

@@ -145,6 +145,20 @@ union UpdateOrganizationNameResponse =
   | UpdateOrganizationNameSuccess
   | UnAuthenticatedError
 
+type UpdateOrganizationContactEmailSuccess {
+  organization: Organization
+}
+
+type UpdateOrganizationContactEmailError {
+  message: String
+  type: String
+}
+
+union UpdateOrganizationContactEmailResponse =
+    UpdateOrganizationContactEmailError
+  | UpdateOrganizationContactEmailSuccess
+  | UnAuthenticatedError
+
 type CreateOrganizationInvitationSuccess {
   organizationInvitation: OrganizationInvitation
   organization: Organization

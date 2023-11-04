@@ -481,8 +481,8 @@ export default class UsersResolverModule extends BaseResolverModule {
       return null;
     },
     organizations: async (user, _, { currentUser, cacheKey }) => {
-      if (user.id != currentUser.id) {
-        //return null;
+      if (user.id != currentUser.id && user?.hideOrganizationsInProfile) {
+        return [];
       }
       const cachedOrganizations = this.requestCache.getUserOrganizations(
         cacheKey,
