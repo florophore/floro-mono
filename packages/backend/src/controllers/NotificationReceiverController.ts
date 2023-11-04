@@ -37,6 +37,7 @@ export default class NotificationReceiverController extends BaseController {
       }
       const redirectLink =
         this.notificationsService.getNotifcationRedirectLink(notification);
+        console.log("LOL", redirectLink)
       res.redirect(redirectLink);
     } catch (e) {
       res.redirect("/404");

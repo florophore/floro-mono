@@ -12,7 +12,7 @@ import NotificationsContext from "@floro/database/src/contexts/notifications/Not
 import EmailQueue from "@floro/redis/src/queues/EmailQueue";
 import { User } from "@floro/database/src/entities/User";
 
-import * as sanitizeHtml from "sanitize-html";
+import sanitizeHtml from 'sanitize-html';
 import UserAuthCredentialsContext from "@floro/database/src/contexts/authentication/UserAuthCredentialsContext";
 import MainConfig from "@floro/config/src/MainConfig";
 
@@ -323,7 +323,7 @@ export default class NotificationFanOutQueue implements QueueService {
           });
         }
       },
-      { autorun: true, connection: redisClient.redis }
+      { autorun: true, connection: redisClient.redis, concurrency: 10 }
     );
   }
 

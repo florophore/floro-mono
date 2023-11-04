@@ -7,6 +7,7 @@ import MuteMergeRequestMergedOrClosedSetting from "./setting_boxes/MuteMergeRequ
 import MuteMergeRequestReviewStatusChangedSetting from "./setting_boxes/MuteMergeRequestReviewStatusChangedSetting";
 import MuteMergeRequestCommentAddedSetting from "./setting_boxes/MuteMergeRequestCommentAddedSetting";
 import MuteMergeRequestCommentReplyAddedSetting from "./setting_boxes/MuteMergeRequestCommentReplyAddedSetting";
+import ColorPalette from "@floro/styles/ColorPalette";
 
 const Container = styled.div`
   height: 100%;
@@ -45,6 +46,13 @@ const Title = styled.h1`
   color: ${(props) => props.theme.colors.pluginDisplayTitle};
 `;
 
+const SettingSectionText = styled.h3`
+  font-weight: 500;
+  font-size: 1.7rem;
+  font-family: "MavenPro";
+  color: ${ColorPalette.gray};
+`;
+
 interface Props {}
 
 const UserNotificationsSettings = (props: Props) => {
@@ -52,11 +60,20 @@ const UserNotificationsSettings = (props: Props) => {
   return (
     <Container>
       <InnerContainer>
-        <TitleContainer style={{ marginBottom: 48 }}>
+        <TitleContainer>
           <Title>{"Notification Settings"}</Title>
         </TitleContainer>
+        <SettingSectionText style={{marginTop: 24}}>
+          {'Announcement Emails'}
+        </SettingSectionText>
         <MuteRepoAnnouncementReplyAddedSetting/>
+        <SettingSectionText style={{marginTop: 24}}>
+          {'Repository Emails'}
+        </SettingSectionText>
         <MuteRepoWriteAccessGrantedSetting/>
+        <SettingSectionText style={{marginTop: 24}}>
+          {'Merge Request Emails'}
+        </SettingSectionText>
         <MuteMergeRequestBranchUpdatedSetting/>
         <MuteMergeRequestMergedOrClosedSetting/>
         <MuteMergeRequestReviewStatusChangedSetting/>

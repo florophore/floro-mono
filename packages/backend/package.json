@@ -45,6 +45,7 @@
     "object-sizeof": "^1.6.3",
     "readable-stream-clone": "^0.0.7",
     "reflect-metadata": "^0.1.13",
+    "sanitize-html": "^2.11.0",
     "sharp": "^0.31.2",
     "trie-search": "^1.3.6",
     "ts-jest": "^28.0.7",

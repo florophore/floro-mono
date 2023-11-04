@@ -98,6 +98,7 @@ const Router = (): React.ReactElement => {
           <Route path="/repo/@/:ownerHandle/:repoName/mergerequests" element={<RepoMergeRequestHistoryPage/>} />
           <Route path="/repo/@/:ownerHandle/:repoName/openbranches" element={<RepoMergeRequestHistoryPage/>} />
           <Route path="/repo/@/:ownerHandle/:repoName" element={<RepoHomePage page={'home'}/>} />
+          <Route path="*" element={<HomePage notFound/>} />
         </Routes>
       </AnimatePresence>
     );

@@ -74,7 +74,11 @@ const TopInfo = styled.div`
   flex-direction: column;
 `;
 
-const UserHome = () => {
+interface Props {
+  notFound?: boolean;
+}
+
+const UserHome = (props: Props) => {
   const { currentUser } = useSession();
   const isDaemonConnected = useDaemonIsConnected();
   const isOnline = useIsOnline();
@@ -216,7 +220,7 @@ const UserHome = () => {
         </UserNav>
         <MainContent>
           {currentUser &&
-            <HomeDashboard/>
+            <HomeDashboard notFound={props.notFound}/>
           }
         </MainContent>
       </Background>

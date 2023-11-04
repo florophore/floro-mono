@@ -7,7 +7,11 @@ import {useLinkTitle} from '@floro/common-react/src/components/header_links/Head
 import {useNavigate} from 'react-router-dom';
 import Cookies from 'js-cookie';
 
-const HomePage = () => {
+interface Props {
+  notFound?: boolean;
+}
+
+const HomePage = (props: Props) => {
   const {currentUser} = useSession();
   const navigate = useNavigate();
   const title = useLinkTitle(
@@ -39,7 +43,7 @@ const HomePage = () => {
 
   return (
     <OuterNavigator outerNavTab={'home'} page={'home'} title={title}>
-      <UserHome />
+      <UserHome notFound={props.notFound} />
     </OuterNavigator>
   );
 };

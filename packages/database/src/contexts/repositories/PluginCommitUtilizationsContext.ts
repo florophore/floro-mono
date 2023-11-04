@@ -31,4 +31,14 @@ export default class PluginCommitUtilizationsContext extends BaseContext {
       }
     });
   }
+
+  public async getUtilizedRepositoryIds(pluginId: string): Promise<string[]> {
+    const result: {utilization_repository_id: string}[] = await this.pluginCommitUtilization
+      .createQueryBuilder("utilization")
+      .select("utilization.repositoryId")
+      .where({ pluginId })
+      .distinctOn(["utilization.repositoryId"])
+      .getRawMany();
+    return result.map(r => r.utilization_repository_id);
+  }
 }

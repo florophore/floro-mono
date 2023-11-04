@@ -7,6 +7,7 @@ import CredentialVerifyCallback from './pages/common/authentication/CredentialVe
 import CredentialAuthCallback from './pages/common/authentication/CredentialAuthCallback';
 
 import { IsomorphicRoute, sortRoutes } from './ssr/routing-helpers';
+import AppProxyPage from './pages/common/app_proxy/AppProxyPage';
 
 /**
  *  put common shared page routes here
@@ -20,6 +21,10 @@ const CommonRouting: IsomorphicRoute[] = [
     path: "/about",
     component: () => About,
   },
+  {
+    path: "/app-proxy/*",
+    component: () => AppProxyPage
+  }
 ];
 
 /**
@@ -42,7 +47,7 @@ export const MainRoutes: IsomorphicRoute[] = sortRoutes([
   {
     path: "/credential/auth",
     component: () => CredentialAuthCallback
-  }
+  },
 ]);
 
 /**

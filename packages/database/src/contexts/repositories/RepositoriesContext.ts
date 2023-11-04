@@ -1,5 +1,6 @@
 import {
   DeepPartial,
+  In,
   QueryRunner,
   Repository as TypeormRepository,
 } from "typeorm";
@@ -32,7 +33,9 @@ export default class RepositoriesContext extends BaseContext {
         user: {
           profilePhoto: true,
         },
-        organization: true,
+        organization: {
+          profilePhoto: true,
+        },
       },
     });
   }
@@ -44,7 +47,9 @@ export default class RepositoriesContext extends BaseContext {
         user: {
           profilePhoto: true,
         },
-        organization: true,
+        organization: {
+          profilePhoto: true,
+        },
       },
     });
   }
@@ -56,7 +61,9 @@ export default class RepositoriesContext extends BaseContext {
         user: {
           profilePhoto: true,
         },
-        organization: true,
+        organization: {
+          profilePhoto: true,
+        },
       },
     });
   }
@@ -82,7 +89,9 @@ export default class RepositoriesContext extends BaseContext {
     return await this.queryRunner.manager.find(Repository, {
       where: { organizationId },
       relations: {
-        organization: true,
+        organization: {
+          profilePhoto: true,
+        },
       },
     });
   }
@@ -94,7 +103,9 @@ export default class RepositoriesContext extends BaseContext {
     return await this.queryRunner.manager.find(Repository, {
       where: { organizationId, isPrivate },
       relations: {
-        organization: true,
+        organization: {
+          profilePhoto: true,
+        },
       },
       order: {
         createdAt: "DESC",
@@ -154,5 +165,16 @@ export default class RepositoriesContext extends BaseContext {
       )
       .orderBy(`repo.created_at`, "DESC")
       .getMany();
+  }
+
+  public async getRankedRepositories(repositoryIds: string[]): Promise<Array<{repo_id: string, ranked_usage: number}>> {
+    const result: Array<{repo_id: string, ranked_usage: number}> = await this.repositoryRepo
+      .createQueryBuilder("repo")
+      .select('repo.id')
+      .addSelect('repo.bookmark_count + repo.subscription_count', 'ranked_usage')
+      .where({ id: In(repositoryIds) })
+      .orderBy('ranked_usage', 'DESC')
+      .getRawMany();
+      return result;
   }
 }

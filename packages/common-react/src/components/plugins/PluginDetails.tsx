@@ -7,6 +7,7 @@ import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import ColorPalette from "@floro/styles/ColorPalette";
 import PluginDependencyList from "@floro/storybook/stories/common-components/PluginDependencyList";
+import RepositoryUsingPluginList from "@floro/storybook/stories/common-components/RepositoryUsingPluginList";
 import PluginVersionList from "@floro/storybook/stories/common-components/PluginVersionList";
 import ReleasePluginModal from "./ReleasePluginModal";
 import JSONPretty from "react-json-pretty";
@@ -317,6 +318,13 @@ const PluginDetails = (props: Props) => {
           <BlurbText>{props?.pluginVersion?.description}</BlurbText>
         </BlurbBox>
       </SectionContainer>
+      {props.plugin?.repositoriesThatUsePlugin &&
+        (props.plugin?.repositoriesThatUsePlugin?.length ?? 0) > 0 && (
+          <RepositoryUsingPluginList
+            icons={props.icons}
+            plugin={props.plugin}
+          />
+        )}
       {!props.isProfileMode && (
         <SectionContainer>
           <SectionTitle>{"Plugin Icons"}</SectionTitle>

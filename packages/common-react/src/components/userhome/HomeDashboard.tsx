@@ -15,7 +15,8 @@ import HomeFeedView from "./profile/feed/HomeFeedView";
 import { useIsOnline } from "../../hooks/offline";
 import BookmarkedReposView from "./profile/feed/BookmarkedReposView";
 import NotificationsFeed from "./profile/feed/NotificationsFeed";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import Button from "@floro/storybook/stories/design-system/Button";
 
 const Container = styled.div`
   flex: 1;
@@ -151,14 +152,48 @@ const InvitationsInnerContainer = styled.div`
   }
 `;
 
+const NotFoundContainer = styled.div`
+  display: flex;
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
 
-const HomeDashboard = () => {
+const NotFoundTextWrapper = styled.div`
+  display: flex;
+  width: 80%;
+  max-width: 450px;
+  margin-top: -80px;
+  flex-direction: column;
+  justify-content: center;
+`;
+
+const NotFoundText = styled.h3`
+  font-weight: 600;
+  font-size: 2.5rem;
+  font-family: "MavenPro";
+  text-align: center;
+  color: ${(props) => props.theme.colors.contrastText};
+`;
+
+interface Props {
+  notFound?: boolean;
+}
+
+const HomeDashboard = (props: Props) => {
   const { repositories } = useCurrentUserRepos();
   const [invititationToReject, setInvitationToReject] =
     useState<OrganizationInvitation | null>(null);
   const [showRejectModal, setShowRejectModal] =
     useState<boolean>(false);
   const [searchParams, setSearchParams] = useSearchParams({});
+  const navigate = useNavigate();
+
+  const onGoHome = useCallback(() => {
+    navigate("/home");
+  }, []);
 
   const setPage = useCallback((page: 'feed'|'bookmarks'|'notifications') => {
     setSearchParams({
@@ -215,23 +250,37 @@ const HomeDashboard = () => {
         onDismiss={onDismissRejectModal}
       />
       <MainContainer>
-        <HomeProfileHeader
-          page={page}
-          onChangePage={setPage}
-        ></HomeProfileHeader>
-        {page == 'feed' && (
-          <HomeFeedView/>
-        )}
+        {!props.notFound && (
+          <>
+            <HomeProfileHeader
+              page={page}
+              onChangePage={setPage}
+            ></HomeProfileHeader>
+            {page == 'feed' && (
+              <HomeFeedView/>
+            )}
 
-        {page == "bookmarks" && currentUser && (
-          <BookmarkedReposView
-            repos={(currentUser?.bookmarkedRepositories ?? []) as Repository[]}
-            user={currentUser}
-            isSelf={true}
-          />
+            {page == "bookmarks" && currentUser && (
+              <BookmarkedReposView
+                repos={(currentUser?.bookmarkedRepositories ?? []) as Repository[]}
+                user={currentUser}
+                isSelf={true}
+              />
+            )}
+            {page == 'notifications' && currentUser && (
+              <NotificationsFeed/>
+            )}
+          </>
         )}
-        {page == 'notifications' && currentUser && (
-          <NotificationsFeed/>
+        {props.notFound && (
+          <NotFoundContainer>
+            <NotFoundTextWrapper>
+              <NotFoundText>
+                {'page not found'}
+              </NotFoundText>
+            </NotFoundTextWrapper>
+            <Button onClick={onGoHome} style={{marginTop: 36}} label={"go to home"} bg={"purple"} size={"big"} />
+          </NotFoundContainer>
         )}
       </MainContainer>
       <SideBar>

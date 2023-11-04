@@ -947,4 +947,22 @@ export default class RequestCache {
     const cache = this.getCache(cacheKey);
     cache[`repo-announcement-reply:${repoAnnouncementReplyId}`] = repoAnnouncementReply;
   }
+
+
+  public getUsedRepositories(
+    cacheKey: string,
+    pluginId: string,
+  ): Repository[] {
+    const cache = this.getCache(cacheKey);
+    return cache[`used-plugins:${pluginId}`];
+  }
+
+  public setUsedRepositories(
+    cacheKey: string,
+    pluginId: string,
+    repositories: Repository[],
+  ) {
+    const cache = this.getCache(cacheKey);
+    cache[`used-plugins:${pluginId}`] = repositories;
+  }
 }

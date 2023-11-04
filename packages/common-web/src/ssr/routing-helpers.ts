@@ -25,11 +25,34 @@ export const sortRoutes = (routing: IsomorphicRoute[]): IsomorphicRoute[] => {
   });
 };
 
+const matchesWildCard = (routeParts: Array<string>, urlParts: Array<string>): boolean => {
+  const graph: (1|0)[][] = [];
+  for (let i = 0; i < urlParts.length; ++i) {
+      graph.push([]);
+      for (let j = 0; j < routeParts.length; ++j) {
+          if (routeParts[j] == '*') {
+              graph[i].push(1)
+              continue;
+          }
+          if (routeParts[j] == urlParts[i]) {
+              graph[i].push(1)
+              continue;
+          }
+          graph[i].push(0)
+      }
+  }
+  return graph[urlParts.length - 1][routeParts.length - 1] == 1;
+}
+
 export const matchRoute = (fullPath: string, routing: IsomorphicRoute[]) => {
   const [path] = fullPath.split("?");
   const pathParts = path.split("/");
   return [...routing].reverse().find((route) => {
     const routeParts = route.path.split("/");
+
+    if (route.path.includes("*")) {
+      return matchesWildCard(routeParts, pathParts);
+    }
     if (routeParts.length != pathParts.length) {
       return false;
     }

@@ -23,6 +23,7 @@ import PluginsVersionsContext from "@floro/database/src/contexts/plugins/PluginV
 import RootRepositoryLoader from "../hooks/loaders/Root/RepositoryID/RepositoryLoader";
 import { User } from "@floro/database/src/entities/User";
 import RepoDataService from "../../services/repositories/RepoDataService";
+import PluginDiscoveryService from "../../services/plugins/PluginDiscoveryService";
 
 const NEW_PLUGINS_PAGINATION_SIZE = 12;
 
@@ -45,6 +46,7 @@ export default class PluginResolverModule extends BaseResolverModule {
   protected rootOrganizationMemberPermissionsLoader!: RootOrganizationMemberPermissionsLoader;
   protected pluginSearchService!: PluginSearchService;
   protected repositoryLoader!: RootRepositoryLoader;
+  protected pluginDiscoveryService!: PluginDiscoveryService;
 
   constructor(
     @inject(ContextFactory) contextFactory: ContextFactory,
@@ -56,7 +58,9 @@ export default class PluginResolverModule extends BaseResolverModule {
     @inject(PluginSearchService) pluginSearchService: PluginSearchService,
     @inject(RootOrganizationMemberPermissionsLoader)
     rootOrganizationMemberPermissionsLoader: RootOrganizationMemberPermissionsLoader,
-    @inject(RootRepositoryLoader) repositoryLoader: RootRepositoryLoader
+    @inject(RootRepositoryLoader) repositoryLoader: RootRepositoryLoader,
+    @inject(PluginDiscoveryService)
+    pluginDiscoveryService: PluginDiscoveryService
   ) {
     super();
     this.contextFactory = contextFactory;
@@ -71,6 +75,7 @@ export default class PluginResolverModule extends BaseResolverModule {
     this.rootOrganizationMemberPermissionsLoader =
       rootOrganizationMemberPermissionsLoader;
     this.repositoryLoader = repositoryLoader;
+    this.pluginDiscoveryService = pluginDiscoveryService;
   }
 
   private sortBySemver(pluginVersions: DBPluginVersion[]): DBPluginVersion[] {
@@ -730,6 +735,33 @@ export default class PluginResolverModule extends BaseResolverModule {
           return `${this.config.assetHost()}/assets/images/icons/plugin_default.selected.dark.svg`;
         }
         return null;
+      }
+    ),
+    repositoriesThatUsePlugin: runWithHooks(
+      () => [],
+      async (plugin, _, context) => {
+        if (!plugin.id) {
+          return [];
+        }
+        const cachedRepositories = this.requestCache.getUsedRepositories(
+          context.cacheKey,
+          plugin.id
+        );
+        if (cachedRepositories) {
+          return cachedRepositories;
+        }
+        const result = await this.pluginDiscoveryService.getReposThatUsePlugin(
+          plugin as DBPlugin,
+          context?.currentUser ?? null
+        );
+        if (result) {
+          this.requestCache.setUsedRepositories(
+            context.cacheKey,
+            plugin.id,
+            result
+          );
+        }
+        return result;
       }
     ),
   };

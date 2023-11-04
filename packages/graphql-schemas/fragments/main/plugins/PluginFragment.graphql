@@ -33,4 +33,7 @@ fragment Plugin on Plugin {
   versions {
     ...PluginVersion
   }
+  repositoriesThatUsePlugin {
+    ...Repository
+  }
 }

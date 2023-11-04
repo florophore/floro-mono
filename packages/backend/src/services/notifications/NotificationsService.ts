@@ -762,63 +762,63 @@ export default class NotificationsService
     const announcementLink = `${repoLink}/announcements/${notification?.repoAnnouncement?.id}`;
 
     if (notification.eventName == "REPO_ANNOUNCEMENT_REPLY_CREATED") {
-      return `${prefix}/${announcementLink}`;
+      return `${prefix}${announcementLink}`;
     }
 
     if (notification.eventName == "REPOSITORY_WRITE_ACCESS_GRANTED") {
-      return `${prefix}/${repoLink}`;
+      return `${prefix}${repoLink}`;
     }
 
     if (notification.eventName == "MERGE_REQUEST_BRANCH_UPDATED") {
-      return `${prefix}/${mergeRequestLink}`;
+      return `${prefix}${mergeRequestLink}`;
     }
 
     if (notification.eventName == "MERGE_REQUEST_CLOSED") {
-      return `${prefix}/${mergeRequestLink}`;
+      return `${prefix}${mergeRequestLink}`;
     }
 
     if (notification.eventName == "MERGE_REQUEST_MERGED") {
-      return `${prefix}/${mergeRequestLink}`;
+      return `${prefix}${mergeRequestLink}`;
     }
 
     if (notification.eventName == "REVIEWER_ADDED") {
-      return `${prefix}/${mergeRequestLink}`;
+      return `${prefix}${mergeRequestLink}`;
     }
 
     if (
       notification.eventName == "REVIEW_STATUS_ADDED" &&
       notification?.reviewStatus?.approvalStatus == "approved"
     ) {
-      return `${prefix}/${mergeRequestLink}`;
+      return `${prefix}${mergeRequestLink}`;
     }
 
     if (
       notification.eventName == "REVIEW_STATUS_ADDED" &&
       notification?.reviewStatus?.approvalStatus == "blocked"
     ) {
-      return `${prefix}/${mergeRequestLink}`;
+      return `${prefix}${mergeRequestLink}`;
     }
 
     if (
       notification.eventName == "REVIEW_STATUS_CHANGED" &&
       notification?.reviewStatus?.approvalStatus == "approved"
     ) {
-      return `${prefix}/${mergeRequestLink}`;
+      return `${prefix}${mergeRequestLink}`;
     }
 
     if (
       notification.eventName == "REVIEW_STATUS_CHANGED" &&
       notification?.reviewStatus?.approvalStatus == "blocked"
     ) {
-      return `${prefix}/${mergeRequestLink}`;
+      return `${prefix}${mergeRequestLink}`;
     }
 
     if (notification.eventName == "MERGE_REQUEST_COMMENT_ADDED") {
-      return `${prefix}/${mergeRequestLink}`;
+      return `${prefix}${mergeRequestLink}`;
     }
 
     if (notification.eventName == "MERGE_REQUEST_COMMENT_REPLY_ADDED") {
-      return `${prefix}/${mergeRequestLink}`;
+      return `${prefix}${mergeRequestLink}`;
     }
     return null;
   }
