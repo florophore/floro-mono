@@ -12,7 +12,7 @@ import NotificationsContext from "@floro/database/src/contexts/notifications/Not
 import EmailQueue from "@floro/redis/src/queues/EmailQueue";
 import { User } from "@floro/database/src/entities/User";
 
-import sanitizeHtml from 'sanitize-html';
+import {convert } from "html-to-text";
 import UserAuthCredentialsContext from "@floro/database/src/contexts/authentication/UserAuthCredentialsContext";
 import MainConfig from "@floro/config/src/MainConfig";
 
@@ -163,8 +163,14 @@ export default class NotificationFanOutQueue implements QueueService {
           if (user.muteRepoAnnouncementReplyAdded) {
             return;
           }
+          const plainText = convert(
+            notification?.repoAnnouncement?.text ?? "",
+            {
+              wordwrap: 130,
+            }
+          );
           const commentText = clampText(
-            notification?.repoAnnouncement?.text ?? ""
+            plainText ?? ""
           );
           const commentReplyText = clampText(
             notification?.repoAnnouncementReply?.text ?? ""
@@ -346,10 +352,10 @@ export default class NotificationFanOutQueue implements QueueService {
     const mergeRequestName = `[${notification?.mergeRequest?.mergeRequestCount}] ${mergeRequestTitle}`;
 
     if (notification.eventName == "REPO_ANNOUNCEMENT_REPLY_CREATED") {
-      const plainText = sanitizeHtml(
+      const plainText = convert(
         notification?.repoAnnouncement?.text ?? "",
         {
-          allowedTags: [],
+          wordwrap: 130,
         }
       );
       const clampedText = clampText(plainText, 30);

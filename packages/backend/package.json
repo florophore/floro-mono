@@ -37,6 +37,7 @@
     "graphql-subscriptions": "^2.0.0",
     "graphql-tools": "^8.3.6",
     "graphql-ws": "^5.11.2",
+    "html-to-text": "^9.0.5",
     "html-validator": "^6.0.1",
     "inversify": "^6.0.1",
     "is-svg": "^4.3.2",

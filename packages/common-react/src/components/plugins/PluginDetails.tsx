@@ -12,6 +12,10 @@ import PluginVersionList from "@floro/storybook/stories/common-components/Plugin
 import ReleasePluginModal from "./ReleasePluginModal";
 import JSONPretty from "react-json-pretty";
 import { Organization } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import LockLight from "@floro/common-assets/assets/images/icons/lock.medium_gray.svg";
+import LockDark from "@floro/common-assets/assets/images/icons/lock.dark.svg";
+import OpenbookLight from "@floro/common-assets/assets/images/icons/openbook.medium_gray.svg";
+import OpenbookDark from "@floro/common-assets/assets/images/icons/openbook.dark.svg";
 
 const Container = styled.div`
   height: 100%;
@@ -26,6 +30,12 @@ const TopContainer = styled.div`
   flex-direction: row;
   max-width: 528px;
   margin-bottom: 48px;
+  justify-content: space-between;
+`;
+
+const TopWrap = styled.div`
+  display: flex;
+  flex-direction: row;
 `;
 
 const Icon = styled.img`
@@ -127,6 +137,7 @@ const ColoredIcon = styled.img`
   height: 56px;
 `;
 
+
 const LightIconContainer = styled.div`
   flex: 1;
   height: 100%;
@@ -179,6 +190,19 @@ const DarkIconLabel = styled.h6`
   color: ${ColorPalette.white};
 `;
 
+const PrivateIcon = styled.img`
+  width: 32px;
+  height: 32px;
+`;
+
+const PrivateText = styled.h5`
+  font-family: "MavenPro";
+  font-weight: 600;
+  font-size: 1.2rem;
+  font-style: italic;
+  color: ${props => props.theme.colors.contrastText};
+`;
+
 export interface Props {
   plugin: Plugin;
   organization?: Organization;
@@ -211,6 +235,10 @@ const PluginDetails = (props: Props) => {
     props.pluginVersion?.selectedDarkIcon,
     props.pluginVersion?.selectedLightIcon,
   ]);
+
+  const privateIcon = useMemo(() => {
+    return theme.name == "light" ? LockLight : LockDark;
+  }, [theme.name]);
 
   const lightIcon = useMemo(() => {
     return (
@@ -301,16 +329,26 @@ const PluginDetails = (props: Props) => {
   return (
     <Container>
       <TopContainer>
-        <Icon src={icon} />
-        <TitleWrapper>
-          <Title>{props.pluginVersion?.displayName}</Title>
-          <SubTitleWrapper>
-            <SubTitle
-              style={{ fontWeight: 700 }}
-            >{`${props.pluginVersion?.name}`}</SubTitle>
-            <SubTitle>{`version ${props.pluginVersion?.version}`}</SubTitle>
-          </SubTitleWrapper>
-        </TitleWrapper>
+        <TopWrap>
+          <Icon src={icon} />
+          <TitleWrapper>
+            <Title>{props.pluginVersion?.displayName}</Title>
+            <SubTitleWrapper>
+              <SubTitle
+                style={{ fontWeight: 700 }}
+              >{`${props.pluginVersion?.name}`}</SubTitle>
+              <SubTitle>{`version ${props.pluginVersion?.version}`}</SubTitle>
+            </SubTitleWrapper>
+          </TitleWrapper>
+        </TopWrap>
+        {props.plugin.isPrivate && (
+          <div style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start'}}>
+            <div style={{display: 'flex', alignItems: 'center'}}>
+              <PrivateText style={{marginRight: 8}}>{'private'}</PrivateText>
+              <PrivateIcon src={privateIcon}/>
+            </div>
+          </div>
+        )}
       </TopContainer>
       <SectionContainer>
         <SectionTitle>{"Description"}</SectionTitle>

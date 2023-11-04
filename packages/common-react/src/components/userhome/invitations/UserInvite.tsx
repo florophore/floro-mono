@@ -11,6 +11,7 @@ import OrgProfilePhoto from "@floro/storybook/stories/common-components/OrgProfi
 import { OrganizationInvitation, useAcceptOrganizationInvitationMutation } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { useOfflinePhoto } from "../../../offline/OfflinePhotoContext";
 import Button from "@floro/storybook/stories/design-system/Button";
+import { Link } from "react-router-dom";
 
 const Container = styled.div`
   background: ${(props) => props.theme.background};
@@ -135,17 +136,19 @@ const UserInvite = (props: Props): React.ReactElement => {
             size={40}
             offlinePhoto={userProfilePhoto}
           />
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "flex-start",
-              marginLeft: 8,
-            }}
-          >
-            <NameText>{userFullname}</NameText>
-            <HandleText>{invitingUsernameFormatted}</HandleText>
-          </div>
+          <Link to={`/user/@/${props.invitation?.invitedByUser?.username}`}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "flex-start",
+                marginLeft: 8,
+              }}
+            >
+              <NameText>{userFullname}</NameText>
+              <HandleText>{invitingUsernameFormatted}</HandleText>
+            </div>
+          </Link>
         </InfoContainer>
         <div style={{ marginTop: 12 }}>
           <InviteText>{"has invited you to join"}</InviteText>
@@ -156,17 +159,19 @@ const UserInvite = (props: Props): React.ReactElement => {
             size={40}
             offlinePhoto={offlinePhoto}
           />
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "flex-start",
-              marginLeft: 8,
-            }}
-          >
-            <NameText>{props.invitation?.organization?.name}</NameText>
-            <HandleText>{orgHandleFormatted}</HandleText>
-          </div>
+          <Link to={`/org/@/${props.invitation?.organization?.handle}`}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "flex-start",
+                marginLeft: 8,
+              }}
+            >
+              <NameText>{props.invitation?.organization?.name}</NameText>
+              <HandleText>{orgHandleFormatted}</HandleText>
+            </div>
+          </Link>
         </InfoContainer>
         <ButtonRow style={{ marginTop: 16 }}>
           <Button
