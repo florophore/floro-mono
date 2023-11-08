@@ -1,9 +1,10 @@
 import React, { useMemo } from "react";
-import { Branch, Edge, SourceCommitNodeWithGridDimensions } from "./grid";
+import { Edge, SourceCommitNodeWithGridDimensions } from "./grid";
 import { useTheme } from "@emotion/react";
 import { motion } from "framer-motion";
 import ColorPalette from "@floro/styles/ColorPalette";
 import { getColorForRow } from "./color-mod";
+import { Branch } from "floro/dist/src/repo";
 
 interface Props {
   edge: Edge;
@@ -87,12 +88,12 @@ const CommitEdge = (props: Props) => {
 
   const stroke = useMemo(() => {
     if (highlightCommit && isHighlighted && highlightColor) {
-      if (highlightCommit.branchIds.length == 0) {
+      if (highlightCommit?.branchIds?.length == 0) {
         return theme.colors.sourceGraphNodeOutline;
       }
       return highlightColor;
     }
-    if (props.edge.child.branchIds.length == 0) {
+    if (props?.edge?.child?.branchIds?.length == 0) {
       if (isSelected) {
         return theme.colors.sourceGraphNodeOutline;
       }
@@ -102,7 +103,7 @@ const CommitEdge = (props: Props) => {
   }, [theme, props.edge.child.branchIds, highlightColor, isHighlighted, isSelected, highlightCommit]);
 
   const strokeDashArray = useMemo(() => {
-    if (props.edge.child.branchIds.length == 0) {
+    if (props.edge.child.branchIds?.length == 0) {
       if (props.edge.child.isInCurrentLineage) {
         return 15;
       }

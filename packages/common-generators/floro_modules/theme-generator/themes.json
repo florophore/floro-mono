@@ -33,7 +33,7 @@
     "main-theme": {
       "default": {
         "light": "#FFFFFFFF",
-        "dark": "#23C2B9FF"
+        "dark": "#2452DBFF"
       },
       "variants": {}
     },
@@ -47,12 +47,12 @@
     "primary-negative": {
       "default": {
         "light": "#000000FF",
-        "dark": "#7C7C7CFF"
+        "dark": "#FFFFFFFF"
       },
       "variants": {
         "hovered": {
-          "light": "#23C2B9FF",
-          "dark": "#3DD43AFF"
+          "light": "#2452DBFF",
+          "dark": "#5445C4FF"
         },
         "selected": {
           "light": null,

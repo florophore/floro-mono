@@ -22,9 +22,9 @@ function UserHome() {
   }, [theme.name, icons])
 
 
-  if (!data?.session && !loading) {
-    return redirect("/");
-  }
+  //if (!data?.session && !loading) {
+  //  return redirect("/");
+  //}
 
   if (loading) {
     return <SubPageLoader/>

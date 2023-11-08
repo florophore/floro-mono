@@ -361,7 +361,10 @@ export default class BranchService {
         !BRANCH_NAME_REGEX.test(floroBranch?.name ?? "") &&
         (floroBranch?.name ?? "")?.toLowerCase()?.toLowerCase() !=
           "undefined" &&
-        (floroBranch?.id ?? "")?.toLowerCase()?.toLowerCase() != "undefined"
+        (floroBranch?.id ?? "")?.toLowerCase()?.toLowerCase() != "undefined" &&
+        (floroBranch?.name ?? "")?.toLowerCase()?.toLowerCase() !=
+          "none" &&
+        (floroBranch?.id ?? "")?.toLowerCase()?.toLowerCase() != "none"
       ) {
         return null;
       }

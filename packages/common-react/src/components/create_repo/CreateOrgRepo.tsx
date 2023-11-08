@@ -51,7 +51,6 @@ const CreateOrgRepo = (props: Props) => {
   const isOnline = useIsOnline();
   const [name, setName] = useState("");
   const [isPrivate, setIsPrivate] = useState(true);
-  const [licenseCode, setLicenseCode] = useState<string | null>(null);
   const offlinePhoto = useOfflinePhoto(
     props.organization?.profilePhoto ?? null
   );
@@ -68,11 +67,8 @@ const CreateOrgRepo = (props: Props) => {
     if (profanityFilter.isProfane(name)) {
       return false;
     }
-    if (!isPrivate) {
-      return !!licenseCode;
-    }
     return !nameIsTaken;
-  }, [nameIsTaken, name, isPrivate, licenseCode, profanityFilter]);
+  }, [nameIsTaken, name, isPrivate, profanityFilter]);
 
   const [createRepo, { data, loading }] =
     useCreateOrgRepositoryMutation();
@@ -84,7 +80,6 @@ const CreateOrgRepo = (props: Props) => {
           organizationId: props.organization.id,
           name,
           isPrivate,
-          licenseCode,
         },
       });
     }
@@ -94,7 +89,6 @@ const CreateOrgRepo = (props: Props) => {
     isValid,
     name,
     isPrivate,
-    licenseCode,
   ]);
 
   useEffect(() => {
@@ -112,7 +106,7 @@ const CreateOrgRepo = (props: Props) => {
   return (
     <Background>
       <div>
-        <Title>{"New Repository"}</Title>
+        <Title>{"New Organization Repository"}</Title>
         <CreateRepoInputs
           name={name}
           repoType={"org_repo"}
@@ -122,8 +116,6 @@ const CreateOrgRepo = (props: Props) => {
           offlinePhoto={offlinePhoto}
           isPrivate={isPrivate}
           onChangeIsPrivate={setIsPrivate}
-          license={licenseCode}
-          onChangeLicense={setLicenseCode}
         />
       </div>
       <div>

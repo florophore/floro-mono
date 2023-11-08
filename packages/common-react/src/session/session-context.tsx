@@ -77,7 +77,9 @@ export const SessionProvider = (props: Props) => {
             completed: true
           }
         });
-        navigate("/home");
+        if (props.clientType == 'app') {
+          navigate("/home");
+        }
       }
     }
   }, [floroSessionQuery?.data, currentUser]);

@@ -102,7 +102,7 @@ const ComparisonSourceGraphSelector = (props: Props) => {
             highlightedBranchId={
               props?.apiResponse?.repoState?.branch ?? undefined
             }
-            htmlContentHeight={160}
+            htmlContentHeight={240}
           />
         </div>
       );

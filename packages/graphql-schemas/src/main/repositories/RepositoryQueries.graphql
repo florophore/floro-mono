@@ -9,13 +9,11 @@ extend type Mutation {
     name: String!
     organizationId: ID!
     isPrivate: Boolean!
-    licenseCode: String
   ): CreateOrganizationRepositoryResponse
 
   createUserRepository(
     name: String!
     isPrivate: Boolean!
-    licenseCode: String
   ): CreateUserRepositoryResponse
 
   ignoreBranch(

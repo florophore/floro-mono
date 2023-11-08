@@ -35,60 +35,14 @@ const SlashSpan = styled.span`
   color: ${(props) => props.theme.colors.slashRepoCreateColor};
 `;
 
-const options = [
-  {
-    value: "apache_2",
-    label: "Apache License 2.0",
-  },
-  {
-    value: "gnu_general_public_3",
-    label: "GNU General Public License v3.0",
-  },
-  {
-    value: "mit",
-    label: "MIT License",
-  },
-  {
-    value: "bsd2_simplified",
-    label: 'BSD 2-Clause "Simplified" License',
-  },
-  {
-    value: "bsd3_new_or_revised",
-    label: 'BSD 3-Clause "New" or "Revised" License',
-  },
-  {
-    value: "boost",
-    label: "Boost Software License",
-  },
-  {
-    value: "creative_commons_zero_1_0",
-    label: "Creative Commons Zero v1.0 Universal",
-  },
-  {
-    value: "eclipse_2",
-    label: "Eclipse Public License 2.0",
-  },
-  {
-    value: "gnu_affero_3",
-    label: "GNU Affero General Public License v3.0",
-  },
-  {
-    value: "gnu_general_2",
-    label: "GNU General Public License v2.0",
-  },
-  {
-    value: "gnu_lesser_2_1",
-    label: "GNU Lesser General Public License v2.1",
-  },
-  {
-    value: "mozilla_2",
-    label: "Mozilla Public License v2.0",
-  },
-  {
-    value: "unlicense",
-    label: "The Unlicense",
-  },
-];
+const Disclaimer = styled.p`
+  font-size: 1.4rem;
+  font-weight: 500;
+  font-family: "MavenPro";
+  padding: 0;
+  display: block;
+  color: ${(props) => props.theme.colors.contrastText};
+`;
 
 export interface Props {
   name: string;
@@ -100,12 +54,9 @@ export interface Props {
   offlinePhoto?: string|null;
   isPrivate: boolean;
   onChangeIsPrivate: (isPrivate: boolean) => void;
-  license: string|null;
-  onChangeLicense: (license: string|null) => void;
 }
 
 const CreateRepoInputs = (props: Props): React.ReactElement => {
-  const theme = useTheme();
   const profanityFilter = useMemo(() => new ProfanityFilter(), []);
 
   const nameInputIsValid = useMemo(() => {
@@ -117,10 +68,6 @@ const CreateRepoInputs = (props: Props): React.ReactElement => {
     }
     return false;
   }, [props.name, props.nameIsTaken]);
-
-  const onChangeLicense = useCallback((option) => {
-    props.onChangeLicense(option?.value ?? null)
-  }, [props.onChangeLicense]);
 
   return (
     <Container>
@@ -178,9 +125,11 @@ const CreateRepoInputs = (props: Props): React.ReactElement => {
       >
         <RepoPrivateSelect isPrivate={props.isPrivate} onChange={props.onChangeIsPrivate} />
       </div>
-      {!props.isPrivate &&
-        <div>
-          <InputSelector value={props.license} onChange={onChangeLicense} label={"license"} placeholder={"select a license"} options={options} />
+      {props.isPrivate && props.repoType == "org_repo" &&
+        <div style={{width: 880, marginTop: 48}}>
+          <Disclaimer>
+            {'Organization with privates repositories will be charged monthly when the organization has more than 5 active users.'}
+          </Disclaimer>
         </div>
       }
     </Container>

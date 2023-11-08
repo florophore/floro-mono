@@ -1,7 +1,7 @@
 {
   "teal": {
-    "light": null,
-    "regular": "#23C2B9",
+    "light": "#900404",
+    "regular": "#2452DB",
     "dark": "#AF3131"
   },
   "white": {

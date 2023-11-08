@@ -2860,7 +2860,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
       () => [this.loggedInUserGuard],
       async (
         _root,
-        { name, isPrivate, licenseCode }: main.MutationCreateUserRepositoryArgs,
+        { name, isPrivate }: main.MutationCreateUserRepositoryArgs,
         { currentUser }
       ) => {
         if (!currentUser) {
@@ -2873,8 +2873,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         const result = await this.repositoryService.createUserRepository(
           currentUser,
           name,
-          isPrivate,
-          licenseCode
+          isPrivate
         );
         if (result.action == "REPO_CREATED") {
           return {
@@ -2913,7 +2912,6 @@ export default class RepositoryResolverModule extends BaseResolverModule {
           organizationId,
           name,
           isPrivate,
-          licenseCode,
         }: main.MutationCreateOrgRepositoryArgs,
         { currentUser, cacheKey }
       ) => {
@@ -2965,7 +2963,6 @@ export default class RepositoryResolverModule extends BaseResolverModule {
             currentUser,
             name,
             isPrivate,
-            licenseCode
           );
         if (result.action == "REPO_CREATED") {
           return {

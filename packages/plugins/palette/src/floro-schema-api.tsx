@@ -85,6 +85,7 @@ interface Packet {
 interface PluginState {
   commandMode: "view" | "edit" | "compare";
   compareFrom: "none" | "before" | "after";
+  themeName: "light" | "dark";
   applicationState: SchemaRoot | null;
   apiStoreInvalidity: {[key: string]: Array<string>};
   conflictList: Array<string>;
@@ -147,6 +148,7 @@ const FloroContext = createContext({
   pluginState: {
     commandMode: "view",
     compareFrom: "none",
+    themeName: "light",
     isCopyMode: false,
     copyList: [],
     pathKeys: [],
@@ -197,6 +199,7 @@ export const FloroProvider = (props: Props) => {
   const [pluginState, setPluginState] = useState<PluginState>({
     commandMode: "view",
     compareFrom: "none",
+    themeName: "light",
     applicationState: null,
     apiStoreInvalidity: {},
     conflictList: [],
@@ -633,8 +636,8 @@ const decodeSchemaPathWithArrays = (
   pathString: string
 ): Array<{key: string, value: string} | string | number> => {
   return splitPath(pathString).map((part) => {
-    if (/^[(d+)]$/.test(part)) {
-      return parseInt(((/^[(d+)]$/.exec(part) as Array<string>)[1]));
+    if (/^\[(\d+)\]$/.test(part)) {
+      return parseInt(((/^\[(\d+)\]$/.exec(part) as Array<string>)[1]));
     }
     if (/^(.+)<(.+)>$/.test(part) && getCounterArrowBalanance(part) == 0) {
       const { key, value } = extractKeyValueFromRefString(part);
@@ -1131,6 +1134,69 @@ const flattenStateToSchemaPathKV = (
   return kv;
 };
 
+export const reIndexSchemaArrays = (kvs: Array<DiffElement>): Array<string> => {
+  const out: Array<string> = [];
+  const indexMap: {[path: string]: number} = {};
+  for (const { key } of kvs) {
+    const decodedPath = decodeSchemaPath(key);
+    const parts: Array<string|DiffElement> = [];
+    const indexStack: Array<number> = [];
+    for (const part of decodedPath) {
+      if (typeof part == "object" && part.key == "(id)") {
+        const parentPathString = writePathString(parts);
+        if (!indexMap[parentPathString]) {
+          indexMap[parentPathString] = 0;
+        } else {
+          indexMap[parentPathString]++;
+        }
+        indexStack.push(indexMap[parentPathString])
+      }
+      parts.push(part);
+    }
+    let pathIdx = 0;
+    const pathWithNumbers = decodedPath.map((part) => {
+      if (typeof part == "object" && part.key == "(id)") {
+        return indexStack[pathIdx++];
+      }
+      return part;
+    });
+    const arrayPath = writePathStringWithArrays(pathWithNumbers);
+    out.push(arrayPath);
+  }
+  return out;
+};
+
+export const decodeSchemaPath = (
+  pathString: string
+): Array<DiffElement | string> => {
+  return splitPath(pathString).map((part) => {
+    if (/^(.+)<(.+)>$/.test(part) && getCounterArrowBalanance(part) == 0) {
+      const { key, value } = extractKeyValueFromRefString(part);
+      return {
+        key,
+        value,
+      };
+    }
+    return part;
+  });
+};
+
+export const writePathStringWithArrays = (
+  pathParts: Array<DiffElement | string | number>
+): string => {
+  return pathParts
+    .map((part) => {
+      if (typeof part == "string") {
+        return part;
+      }
+      if (typeof part == "number") {
+        return `[${part}]`;
+      }
+      return `${part.key}<${part.value}>`;
+    })
+    .join(".");
+};
+
 const getNextApplicationState = (currentApplicationState: {[key: string]: object}, nextApplicationState: {[key: string]: object}, rootSchemaMap: TypeStruct, lastEditKey: React.MutableRefObject<null|string>, isStale: boolean): SchemaRoot | null => {
   try {
     if (!currentApplicationState && !nextApplicationState) {
@@ -1143,18 +1209,57 @@ const getNextApplicationState = (currentApplicationState: {[key: string]: object
       return currentApplicationState as SchemaRoot;
     }
     const key = lastEditKey.current;
+    const nextKV = generateKVState(rootSchemaMap, nextApplicationState);
+    const currentKV = generateKVState(rootSchemaMap, currentApplicationState);
     if (key) {
-      const object = getObjectInStateMap(currentApplicationState, key);
-      const nextObject = getObjectInStateMap(nextApplicationState, key);
-      if (object && nextObject && JSON.stringify(object) != JSON.stringify(nextObject)) {
-        if (isStale) {
+      const nextReindexedKeys = reIndexSchemaArrays(nextKV);
+      const currentReindexedKeys = reIndexSchemaArrays(currentKV);
+      let nextKeyIndex = -1;
+      for (let i = 0; i < nextReindexedKeys.length; ++i) {
+        if (key.startsWith(nextReindexedKeys[i])) {
+          nextKeyIndex = i;
+        }
+      }
+      let currentKeyIndex = -1;
+      for (let i = 0; i < currentReindexedKeys.length; ++i) {
+        if (key.startsWith(currentReindexedKeys[i])) {
+          currentKeyIndex = i;
+        }
+      }
+      if (nextKeyIndex != -1 && currentKeyIndex != -1 && nextKeyIndex == currentKeyIndex){
+        const currentKey = nextReindexedKeys[nextKeyIndex];
+        const nextKey = currentReindexedKeys[currentKeyIndex];
+        const object = getObjectInStateMap(currentApplicationState, currentKey + key.substring(currentKey.length));
+        const nextObject = getObjectInStateMap(nextApplicationState, nextKey + key.substring(nextKey.length));
+        let pastKeyCount = 0;
+        let nextKeyCount = 0;
+        let pastKeys = new Set<string>();
+        for(let i = 0; i < currentReindexedKeys.length; ++i) {
+          const k = currentReindexedKeys[i];
+          pastKeys.add(k)
+          pastKeyCount++;
+        }
+        let hasAllKeys = true;
+        for(let i = 0; i < nextReindexedKeys.length; ++i) {
+          const k = nextReindexedKeys[i];
+          if (!pastKeys.has(k)) {
+            hasAllKeys = false;
+            break;
+          }
+          nextKeyCount++;
+        }
+        hasAllKeys = hasAllKeys && pastKeyCount == nextKeyCount;
+        if (hasAllKeys && object && nextObject && JSON.stringify(object) != JSON.stringify(nextObject)) {
+          if (isStale) {
+            return currentApplicationState as SchemaRoot;
+          }
+          return updateObjectInStateMap(nextApplicationState, key, object) as SchemaRoot;
+        }
+        if (hasAllKeys && !isStale) {
           return currentApplicationState as SchemaRoot;
         }
-        return updateObjectInStateMap(nextApplicationState, key, object) as SchemaRoot;
       }
     }
-    const currentKV = generateKVState(rootSchemaMap, currentApplicationState);
-    const nextKV = generateKVState(rootSchemaMap, nextApplicationState);
     const diff = getDiff(currentKV, nextKV);
     if (Object.keys(diff.add).length == 0 && Object.keys(diff.remove).length == 0) {
       return currentApplicationState as SchemaRoot;

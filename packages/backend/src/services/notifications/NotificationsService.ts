@@ -302,6 +302,7 @@ export default class NotificationsService
       );
 
     const involvedUserIds = new Set<string>();
+    involvedUserIds.add(mergeRequest.openedByUserId);
     for (const reviewerRequest of openReviewerRequests) {
       involvedUserIds.add(reviewerRequest?.requestedByUserId);
       involvedUserIds.add(reviewerRequest?.requestedReviewerUserId);
@@ -347,6 +348,7 @@ export default class NotificationsService
       );
 
     const involvedUserIds = new Set<string>();
+    involvedUserIds.add(mergeRequest.openedByUserId);
     for (const reviewerRequest of openReviewerRequests) {
       involvedUserIds.add(reviewerRequest?.requestedByUserId);
       involvedUserIds.add(reviewerRequest?.requestedReviewerUserId);
@@ -388,6 +390,7 @@ export default class NotificationsService
       );
 
     const involvedUserIds = new Set<string>();
+    involvedUserIds.add(mergeRequest.openedByUserId);
     for (const reviewerRequest of openReviewerRequests) {
       involvedUserIds.add(reviewerRequest?.requestedByUserId);
       involvedUserIds.add(reviewerRequest?.requestedReviewerUserId);
@@ -458,6 +461,7 @@ export default class NotificationsService
       );
 
     const involvedUserIds = new Set<string>();
+    involvedUserIds.add(mergeRequest.openedByUserId);
     for (const reviewerRequest of openReviewerRequests) {
       involvedUserIds.add(reviewerRequest?.requestedByUserId);
       involvedUserIds.add(reviewerRequest?.requestedReviewerUserId);
@@ -502,6 +506,7 @@ export default class NotificationsService
       );
 
     const involvedUserIds = new Set<string>();
+    involvedUserIds.add(mergeRequest.openedByUserId);
     for (const reviewerRequest of openReviewerRequests) {
       involvedUserIds.add(reviewerRequest?.requestedByUserId);
       involvedUserIds.add(reviewerRequest?.requestedReviewerUserId);
@@ -568,6 +573,7 @@ export default class NotificationsService
       involvedUserIds.add(reviewerRequest?.requestedReviewerUserId);
     }
 
+    involvedUserIds.add(mergeRequest.openedByUserId);
     involvedUserIds.add(comment.userId);
     const notificationsContext = await this.contextFactory.createContext(
         NotificationsContext,
@@ -630,6 +636,7 @@ export default class NotificationsService
       );
 
     const involvedUserIds = new Set<string>();
+    involvedUserIds.add(mergeRequest.openedByUserId);
     for (const reviewerRequest of openReviewerRequests) {
       involvedUserIds.add(reviewerRequest?.requestedByUserId);
       involvedUserIds.add(reviewerRequest?.requestedReviewerUserId);

@@ -13,8 +13,16 @@ export interface LocalizedPhrases {
 }
 
 export interface Locales {
+    DE?: De;
     EN?: En;
     ES?: Es;
+}
+
+export interface De {
+    defaultFallbackCode: null | string;
+    isGlobalDefault:     boolean;
+    localeCode:          string;
+    name:                string;
 }
 
 export interface En {
@@ -32,13 +40,17 @@ export interface Es {
 }
 
 export interface LocalizedPhraseKeys {
+    DE: PhraseKeys;
     EN: PhraseKeys;
     ES: PhraseKeys;
 }
 
 export interface PhraseKeys {
-    "main.hello_world": MainHelloWorld;
-    "main.new_phrase":  MainNewPhrase;
+    "main.hello_world":         MainHelloWorld;
+    "main.hi_don":              MainHiDon;
+    "main.new_phrase":          MainNewPhrase;
+    "main.say_hello_to_arthur": MainSayHelloToArthur;
+    "main.welcome_banner":      MainWelcomeBanner;
 }
 
 export interface MainHelloWorld {
@@ -84,16 +96,16 @@ export enum PhraseType {
 export interface MainHelloWorldVariables {
 }
 
-export interface MainNewPhrase {
-    interpolations: MainNewPhraseInterpolations;
-    links:          MainNewPhraseLinks;
+export interface MainHiDon {
+    interpolations: MainHiDonInterpolations;
+    links:          MainHiDonLinks;
     phrase:         TextNode[];
     phraseKey:      string;
-    variables:      MainNewPhraseVariables;
+    variables:      MainHiDonVariables;
 }
 
-export interface MainNewPhraseInterpolations {
-    "some condition": Interpolation;
+export interface MainHiDonInterpolations {
+    files: Interpolation;
 }
 
 export interface Interpolation {
@@ -130,6 +142,25 @@ export enum Conjunction {
     And = "AND",
 }
 
+export interface MainHiDonLinks {
+}
+
+export interface MainHiDonVariables {
+    numberOfFiles: number;
+}
+
+export interface MainNewPhrase {
+    interpolations: MainNewPhraseInterpolations;
+    links:          MainNewPhraseLinks;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      MainNewPhraseVariables;
+}
+
+export interface MainNewPhraseInterpolations {
+    "some condition": Interpolation;
+}
+
 export interface MainNewPhraseLinks {
     "my link": Link;
 }
@@ -154,9 +185,48 @@ export interface MainNewPhraseVariables {
     username: string;
 }
 
+export interface MainSayHelloToArthur {
+    interpolations: MainSayHelloToArthurInterpolations;
+    links:          MainSayHelloToArthurLinks;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      MainSayHelloToArthurVariables;
+}
+
+export interface MainSayHelloToArthurInterpolations {
+}
+
+export interface MainSayHelloToArthurLinks {
+}
+
+export interface MainSayHelloToArthurVariables {
+}
+
+export interface MainWelcomeBanner {
+    interpolations: MainWelcomeBannerInterpolations;
+    links:          MainWelcomeBannerLinks;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      MainWelcomeBannerVariables;
+}
+
+export interface MainWelcomeBannerInterpolations {
+}
+
+export interface MainWelcomeBannerLinks {
+}
+
+export interface MainWelcomeBannerVariables {
+    name:          string;
+    numberOfFiles: number;
+}
+
 export interface PhraseKeyDebugInfo {
-    "main.hello_world": DebugInfo;
-    "main.new_phrase":  DebugInfo;
+    "main.hello_world":         DebugInfo;
+    "main.hi_don":              DebugInfo;
+    "main.new_phrase":          DebugInfo;
+    "main.say_hello_to_arthur": DebugInfo;
+    "main.welcome_banner":      DebugInfo;
 }
 
 export interface DebugInfo {

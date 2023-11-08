@@ -14,7 +14,7 @@ const client = createApolloClient(import.meta.env?.['VITE_HOST'] ?? 'localhost:9
 
 const ClientApp = () => {
   //@ts-ignore
-  const text = window.__FLORO_TEXT__ ?? initText;
+  const text = initText;
   return (
     <ApolloProvider client={client as unknown as ApolloClient<NormalizedCache>}>
       <BrowserRouter>

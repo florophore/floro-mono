@@ -336,7 +336,7 @@ const RepoAnnouncementDisplay = (props: Props) => {
         {children}
       </a>
     );
-  }, [theme.colors]);
+  }, [theme.colors, openLink]);
 
   const textRenderers = useMemo(() => {
     return {

@@ -334,6 +334,7 @@ interface Packet {
 interface PluginState {
   commandMode: "view" | "edit" | "compare";
   compareFrom: "none" | "before" | "after";
+  themeName: "light" | "dark";
   applicationState: SchemaRoot | null;
   apiStoreInvalidity: {[key: string]: Array<string>};
   conflictList: Array<string>;
@@ -396,6 +397,7 @@ const FloroContext = createContext({
   pluginState: {
     commandMode: "view",
     compareFrom: "none",
+    themeName: "light",
     isCopyMode: false,
     copyList: [],
     pathKeys: [],
@@ -446,6 +448,7 @@ export const FloroProvider = (props: Props) => {
   const [pluginState, setPluginState] = useState<PluginState>({
     commandMode: "view",
     compareFrom: "none",
+    themeName: "light",
     applicationState: null,
     apiStoreInvalidity: {},
     conflictList: [],

@@ -72,7 +72,7 @@ const renderStaticNodes = (
 
 const renderText = (node: StaticTextNode, renderers: TextRenderers) => {
   let children = renderers.renderStaticNodes(node.children, renderers);
-  const lineBreaks = node.content.split("\n");
+  const lineBreaks = node?.content?.split?.("\n") ?? [];
   const breakContent = lineBreaks.map((c, i) => (
     <React.Fragment key={i}>
       {c}

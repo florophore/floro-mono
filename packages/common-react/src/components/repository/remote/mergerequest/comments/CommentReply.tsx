@@ -26,6 +26,8 @@ import TrashIconLight from "@floro/common-assets/assets/images/icons/trash.light
 import TrashIconDark from "@floro/common-assets/assets/images/icons/trash.dark.svg";
 import DotsLoader from "@floro/storybook/stories/design-system/DotsLoader";
 import { Link } from "react-router-dom";
+import Linkify from "linkify-react";
+import { useOpenLink } from "../../../../../links/OpenLinkContext";
 
 const TopContainer = styled.div`
   margin-top: 12px;
@@ -221,6 +223,17 @@ const CommentReply = (props: Props) => {
     return EditIconDark;
   }, [theme.name]);
 
+  const openLink = useOpenLink();
+
+  const renderLink = useCallback(({ attributes, content }) => {
+    const { href, ...props } = attributes;
+    const onClick= (e) => {
+      e.preventDefault();
+      openLink(href);
+    }
+    return <a style={{color: theme.colors.linkColor}} onClick={onClick} {...props}>{content}</a>;
+  }, [openLink]);
+
   return (
     <TopContainer>
       <LeftColumn>
@@ -263,7 +276,9 @@ const CommentReply = (props: Props) => {
               </MetaDataControlRow>
               <DateTitle>{elapsedTime}</DateTitle>
             </MetaDataRow>
-            <MainText>{props.reply.text}</MainText>
+            <MainText>
+              <Linkify options={{render: renderLink}}>{props.reply.text}</Linkify>
+            </MainText>
           </CommentDisplayInnerContainer>
         </CommentDisplayBox>
       </RightColumn>

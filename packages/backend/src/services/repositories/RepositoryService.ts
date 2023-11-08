@@ -74,8 +74,7 @@ export default class RepositoryService {
   public async createUserRepository(
     user: User,
     name: string,
-    isPrivate: boolean,
-    licenseCode?: string | null
+    isPrivate: boolean
   ): Promise<CreateRepositoryResponse> {
     if (!REPO_REGEX.test(name)) {
       return {
@@ -118,17 +117,6 @@ export default class RepositoryService {
         };
       }
 
-      if (!isPrivate && (!licenseCode || !LICENSE_CODE_LIST.has(licenseCode))) {
-        await queryRunner.rollbackTransaction();
-        return {
-          action: "INVALID_PARAMS_ERROR",
-          error: {
-            type: "INVALID_PARAMS_ERROR",
-            message: "Missing license code",
-          },
-        };
-      }
-
       if (isPrivate) {
         const repository = await repositoriesContext.createRepo({
           userId: user.id,
@@ -166,7 +154,6 @@ export default class RepositoryService {
           hashKey,
           isPrivate,
           name: name.trim(),
-          licenseCode: licenseCode as string,
           repoType: "user_repo",
         });
         const loadedRepository = await repositoriesContext.getById(
@@ -214,8 +201,7 @@ export default class RepositoryService {
     organization: Organization,
     currentUser: User,
     name: string,
-    isPrivate: boolean,
-    licenseCode?: string | null
+    isPrivate: boolean
   ): Promise<CreateRepositoryResponse> {
     if (!REPO_REGEX.test(name)) {
       return {
@@ -258,16 +244,6 @@ export default class RepositoryService {
         };
       }
 
-      if (!isPrivate && (!licenseCode || !LICENSE_CODE_LIST.has(licenseCode))) {
-        await queryRunner.rollbackTransaction();
-        return {
-          action: "INVALID_PARAMS_ERROR",
-          error: {
-            type: "INVALID_PARAMS_ERROR",
-            message: "Missing license code",
-          },
-        };
-      }
       if (isPrivate) {
         const repository = await repositoriesContext.createRepo({
           organizationId: organization.id,
@@ -308,7 +284,6 @@ export default class RepositoryService {
           hashKey,
           isPrivate,
           name: name.trim(),
-          licenseCode: licenseCode as string,
           repoType: "org_repo",
         });
         // we should add setting access rules here

@@ -1,7 +1,4 @@
-import React, {
-  useMemo,
-  useCallback,
-} from "react";
+import React, { useMemo, useCallback } from "react";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import {
@@ -29,6 +26,9 @@ import TrashIconDark from "@floro/common-assets/assets/images/icons/trash.dark.s
 import DotsLoader from "@floro/storybook/stories/design-system/DotsLoader";
 import { Link } from "react-router-dom";
 import { useSession } from "../../session/session-context";
+import Linkify from "linkify-react";
+import { useOpenLink } from "../../links/OpenLinkContext";
+
 
 const TopContainer = styled.div`
   margin-top: 12px;
@@ -144,6 +144,7 @@ interface Props {
 const CommentReply = (props: Props) => {
   const theme = useTheme();
   const { session } = useSession();
+  const openLink = useOpenLink();
 
   const firstName = useMemo(
     () => upcaseFirst(props.reply?.user?.firstName ?? ""),
@@ -158,7 +159,7 @@ const CommentReply = (props: Props) => {
 
   const onEdit = useCallback(() => {
     props.onEditReply(props.reply);
-  }, [props.reply, props.onEditReply])
+  }, [props.reply, props.onEditReply]);
 
   const onDelete = useCallback(() => {
     if (
@@ -219,6 +220,16 @@ const CommentReply = (props: Props) => {
     return EditIconDark;
   }, [theme.name]);
 
+  const renderLink = useCallback(({ attributes, content }) => {
+    const { href, ...props } = attributes;
+    const onClick= (e) => {
+      e.preventDefault();
+      openLink(href);
+    }
+    return <a style={{color: theme.colors.linkColor}} onClick={onClick} {...props}>{content}</a>;
+  }, [openLink]);
+
+
   return (
     <TopContainer>
       <LeftColumn>
@@ -234,7 +245,7 @@ const CommentReply = (props: Props) => {
         <CommentDisplayBox style={{ flexGrow: 1 }}>
           <CommentDisplayInnerContainer>
             <MetaDataRow>
-              <MetaDataControlRow style={{marginRight: 12}}>
+              <MetaDataControlRow style={{ marginRight: 12 }}>
                 <Link to={`/user/@/${props.reply.user?.username}`}>
                   <AuthorTitle>{userFullname}</AuthorTitle>
                 </Link>
@@ -243,7 +254,11 @@ const CommentReply = (props: Props) => {
                     {!props.isInEditMode && !deleteReplyMutation.loading && (
                       <MetaDataIconRow style={{ marginLeft: 12 }}>
                         <Icon onClick={onEdit} src={editIcon} />
-                        <Icon onClick={onDelete} style={{ marginLeft: 12 }} src={trashIcon} />
+                        <Icon
+                          onClick={onDelete}
+                          style={{ marginLeft: 12 }}
+                          src={trashIcon}
+                        />
                       </MetaDataIconRow>
                     )}
                     {deleteReplyMutation.loading && (
@@ -261,7 +276,9 @@ const CommentReply = (props: Props) => {
               </MetaDataControlRow>
               <DateTitle>{elapsedTime}</DateTitle>
             </MetaDataRow>
-            <MainText>{props.reply.text}</MainText>
+            <MainText>
+              <Linkify options={{render: renderLink}}>{props.reply.text}</Linkify>
+            </MainText>
           </CommentDisplayInnerContainer>
         </CommentDisplayBox>
       </RightColumn>

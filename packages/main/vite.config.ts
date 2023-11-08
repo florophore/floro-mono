@@ -1,13 +1,31 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
+function JSONHmr() {
+  return {
+    name: 'json-hmr',
+    enforce: 'post',
+    // HMR
+    handleHotUpdate({ file, server }) {
+      if (file.includes("text") && file.endsWith('.json')) {
+        console.log('reloading json file...');
+
+        server.ws.send({
+          type: 'full-reload',
+          path: '*'
+        });
+      }
+    },
+  }
+}
+
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }): any => {
   const cdnHost = process.env?.CDN_HOST ?? "";
   return {
     mode: process.env.MODE,
     outDir: 'dist',
-    plugins: [react()],
+    plugins: [react(), JSONHmr()],
     publicDir: 'public',
     assetsInclude: [
       '../common-assets/assets/**/*.svg',

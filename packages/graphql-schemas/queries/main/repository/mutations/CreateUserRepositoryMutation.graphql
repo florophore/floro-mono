@@ -1,12 +1,10 @@
 mutation CreateUserRepository(
   $name: String!
   $isPrivate: Boolean!
-  $licenseCode: String
 ) {
   createUserRepository(
     name: $name
     isPrivate: $isPrivate
-    licenseCode: $licenseCode
   ) {
     ... on UnAuthenticatedError {
       type

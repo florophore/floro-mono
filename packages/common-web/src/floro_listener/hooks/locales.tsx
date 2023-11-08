@@ -87,13 +87,15 @@ export const useRichText = <
     () => getDebugInfo(floroText.phraseKeyDebugInfo, phraseKey),
     [phraseKey, floroText.phraseKeyDebugInfo]
   );
+
+  const nodes = getPhraseValue(
+    floroText,
+    selectedLocaleCode,
+    phraseKey,
+    phraseArgs
+  );
+  console.log("NODES", nodes)
   return useMemo(() => {
-    const nodes = getPhraseValue(
-      floroText,
-      selectedLocaleCode,
-      phraseKey,
-      phraseArgs
-    );
     return renderers.render(
       nodes,
       renderers,

@@ -2,14 +2,9 @@ import { useMemo, useState, useCallback } from "react";
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { useFloroPalette } from '../../floro_listener/FloroPaletteProvider';
-import { useIsDebugMode } from '../../floro_listener/FloroDebugProvider';
 import { useFloroIcons } from '../../floro_listener/FloroIconsProvider';
 import { getIcon } from '@floro/common-generators/floro_modules/icon-generator';
 import { useTheme} from "@emotion/react";
-import { useFloroText } from "../../floro_listener/FloroTextProvider";
-import { getDebugInfo, getPhraseValue } from "@floro/common-generators/floro_modules/text-generator";
-import { renderers } from "../../floro_listener/FloroTextRenderer";
-import { renderers as plainTextRenderers } from "../../floro_listener/FloroPlainTextRenderer";
 import { useLocales, usePlainText, useRichText } from "../../floro_listener/hooks/locales";
 
 function Home() {
@@ -24,13 +19,15 @@ function Home() {
   }, [theme.name, icons])
 
   const { selectedLocaleCode, setSelectedLocaleCode} = useLocales();
-
-  const rt = useRichText("main.new_phrase", {username})
-  const pt = usePlainText("main.new_phrase", {username})
+  const welcome = useRichText("main.welcome_banner", {
+    name: username,
+    numberOfFiles: 12,
+  });
 
   const onChange = useCallback((event) => {
     setUsername(event.target.value);
   }, []);
+
   return (
     <div>
         <Helmet>
@@ -42,9 +39,9 @@ function Home() {
         <Link to={'/about'}>Go to About</Link>
         <p>Testing the waters</p>
         {selectedLocaleCode == "EN" && (
-          <button onClick={() => setSelectedLocaleCode("ES")}>{"ES"}</button>
+          <button onClick={() => setSelectedLocaleCode("DE")}>{"DE"}</button>
         )}
-        {selectedLocaleCode == "ES" && (
+        {selectedLocaleCode == "DE" && (
           <button onClick={() => setSelectedLocaleCode("EN")}>{"EN"}</button>
         )}
         <p></p>
@@ -53,13 +50,7 @@ function Home() {
         <img style={{width: 100, height: 100}} src={icon}/>
       </div>
       <div style={{fontFamily: 'Helvetica'}}>
-        {rt}
-      </div>
-      <h1>{'plain text'}</h1>
-      <div style={{fontFamily: 'Helvetica'}}>
-        <pre>
-          {pt}
-        </pre>
+        {welcome}
       </div>
     </div>
   )

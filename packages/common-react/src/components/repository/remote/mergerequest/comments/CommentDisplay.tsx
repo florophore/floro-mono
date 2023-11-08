@@ -27,6 +27,8 @@ import DotsLoader from "@floro/storybook/stories/design-system/DotsLoader";
 import EditComment from "./EditComment";
 import EditReply from "./EditReply";
 import uEmojiParser from 'universal-emoji-parser'
+import Linkify from "linkify-react";
+import { useOpenLink } from "../../../../../links/OpenLinkContext";
 
 const Container = styled.div`
   width: 100%;
@@ -325,6 +327,17 @@ const CommentDisplay = (props: Props) => {
     return "white";
   }, [theme.name])
 
+  const openLink = useOpenLink();
+
+  const renderLink = useCallback(({ attributes, content }) => {
+    const { href, ...props } = attributes;
+    const onClick= (e) => {
+      e.preventDefault();
+      openLink(href);
+    }
+    return <a style={{color: theme.colors.linkColor}} onClick={onClick} {...props}>{content}</a>;
+  }, [openLink]);
+
   const onReply = useCallback(() => {
     if (isDisabled) {
       return;
@@ -410,7 +423,9 @@ const CommentDisplay = (props: Props) => {
                 </MetaDataControlRow>
                 <DateTitle>{elapsedTime}</DateTitle>
               </MetaDataRow>
-              <MainText>{props.comment.text}</MainText>
+              <MainText>
+                <Linkify options={{render: renderLink}}>{props.comment.text}</Linkify>
+              </MainText>
             </CommentDisplayInnerContainer>
           </CommentDisplayBox>
         </RightColumn>

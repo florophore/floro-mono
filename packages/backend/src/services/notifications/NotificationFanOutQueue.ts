@@ -66,7 +66,7 @@ export default class NotificationFanOutQueue implements QueueService {
     jobId: string;
     notification: Notification;
   }): Promise<void> {
-    await this.queue.add(NotificationFanOutQueue.QUEUE_NAME, args);
+    await this.queue.add(NotificationFanOutQueue.QUEUE_NAME, args, { delay: 100});
   }
 
   public startQueueWorker(redisClient: RedisClient): void {
@@ -329,7 +329,7 @@ export default class NotificationFanOutQueue implements QueueService {
           });
         }
       },
-      { autorun: true, connection: redisClient.redis, concurrency: 10 }
+      { autorun: true, connection: redisClient.redis }
     );
   }
 

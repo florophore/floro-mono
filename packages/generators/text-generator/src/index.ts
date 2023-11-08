@@ -192,7 +192,7 @@ const getStaticNodes = <
       const variableValue = variableMap?.[variableName] ?? "" as string;
       return {
         type: "text",
-        content: variableValue,
+        content: variableValue?.toString?.() ?? "",
         styles: textNode.styles,
         children: [],
       } as StaticTextNode;

@@ -1,10 +1,11 @@
 import React, { useRef, useEffect, useState } from "react";
-import { Branch, Edge, SourceCommitNodeWithGridDimensions } from "./grid";
+import { Edge, SourceCommitNodeWithGridDimensions } from "./grid";
 import DebugGraph from "./DebugGraph";
 import CommitVertice from "./CommitVertice";
 import CommitEdge from "./CommitEdge";
 import SVGPortalProvider from "./SVGPortalContext";
 import { useTheme } from "@emotion/react";
+import { Branch } from "floro/dist/src/repo";
 
 interface Props {
   width: number;

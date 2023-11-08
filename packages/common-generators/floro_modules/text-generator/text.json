@@ -11,10 +11,327 @@
       "name": "Spanish",
       "defaultFallbackCode": "EN",
       "isGlobalDefault": false
+    },
+    "DE": {
+      "localeCode": "DE",
+      "name": "German",
+      "defaultFallbackCode": "EN",
+      "isGlobalDefault": false
     }
   },
   "localizedPhraseKeys": {
     "EN": {
+      "main.hi_don": {
+        "phraseKey": "main.hi_don",
+        "variables": {
+          "numberOfFiles": 0
+        },
+        "links": {},
+        "interpolations": {
+          "files": {
+            "cases": [
+              {
+                "variable": "numberOfFiles",
+                "operator": "eq",
+                "value": 1,
+                "subcases": [],
+                "resultant": [
+                  {
+                    "children": [],
+                    "content": "one file",
+                    "type": "text",
+                    "styles": {
+                      "isBold": false,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  }
+                ]
+              },
+              {
+                "variable": "numberOfFiles",
+                "operator": "neq",
+                "value": 1,
+                "subcases": [],
+                "resultant": [
+                  {
+                    "children": [],
+                    "content": "some files",
+                    "type": "text",
+                    "styles": {
+                      "isBold": false,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  }
+                ]
+              }
+            ],
+            "default": []
+          }
+        },
+        "phrase": [
+          {
+            "children": [],
+            "content": "Hello DON!!!!😀 you have ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{files}",
+            "type": "interpolation",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " ready to download. ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "This should work. okay I this will work too!",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "main.welcome_banner": {
+        "phraseKey": "main.welcome_banner",
+        "variables": {
+          "name": "",
+          "numberOfFiles": 0
+        },
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "Hello ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{name}",
+            "type": "variable",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ",",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Welcome to our website. This is a demo. And the number of files is ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{numberOfFiles}",
+            "type": "variable",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ". ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "main.say_hello_to_arthur": {
+        "phraseKey": "main.say_hello_to_arthur",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "Hi Arthur!",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " How are you today? Is everything okay?",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
       "main.new_phrase": {
         "phraseKey": "main.new_phrase",
         "variables": {
@@ -25,12 +342,12 @@
             "displayValue": [
               {
                 "children": [],
-                "content": "visit page (",
+                "content": "visit page!!! (",
                 "type": "text",
                 "styles": {
                   "isBold": false,
                   "isItalic": false,
-                  "isUnderlined": false,
+                  "isUnderlined": true,
                   "isStrikethrough": false,
                   "isSuperscript": false,
                   "isSubscript": false
@@ -43,7 +360,7 @@
                 "styles": {
                   "isBold": false,
                   "isItalic": false,
-                  "isUnderlined": false,
+                  "isUnderlined": true,
                   "isStrikethrough": false,
                   "isSuperscript": false,
                   "isSubscript": false
@@ -51,12 +368,12 @@
               },
               {
                 "children": [],
-                "content": ")",
+                "content": ")🧨",
                 "type": "text",
                 "styles": {
                   "isBold": false,
                   "isItalic": false,
-                  "isUnderlined": false,
+                  "isUnderlined": true,
                   "isStrikethrough": false,
                   "isSuperscript": false,
                   "isSubscript": false
@@ -67,7 +384,7 @@
             "href": [
               {
                 "type": "text",
-                "content": "/home"
+                "content": "/home?locale=123"
               }
             ]
           }
@@ -83,7 +400,20 @@
                 "resultant": [
                   {
                     "children": [],
-                    "content": "welcome ",
+                    "content": "welcome",
+                    "type": "text",
+                    "styles": {
+                      "isBold": false,
+                      "isItalic": true,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  },
+                  {
+                    "children": [],
+                    "content": " ",
                     "type": "text",
                     "styles": {
                       "isBold": false,
@@ -104,6 +434,19 @@
                       "isUnderlined": false,
                       "isStrikethrough": false,
                       "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  },
+                  {
+                    "children": [],
+                    "content": "1",
+                    "type": "text",
+                    "styles": {
+                      "isBold": true,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": true,
                       "isSubscript": false
                     }
                   }
@@ -131,6 +474,32 @@
           {
             "children": [],
             "content": "Hello ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{username}",
+            "type": "variable",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -256,6 +625,99 @@
                     "type": "interpolation",
                     "styles": {
                       "isBold": false,
+                      "isItalic": true,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  }
+                ],
+                "content": "",
+                "type": "li",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "content": "Done. asdf what",
+                    "type": "text",
+                    "styles": {
+                      "isBold": false,
+                      "isItalic": false,
+                      "isUnderlined": true,
+                      "isStrikethrough": true,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  }
+                ],
+                "content": "",
+                "type": "li",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "content": "Holy  ",
+                    "type": "text",
+                    "styles": {
+                      "isBold": true,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  },
+                  {
+                    "children": [],
+                    "content": "{username}",
+                    "type": "variable",
+                    "styles": {
+                      "isBold": true,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  },
+                  {
+                    "children": [],
+                    "content": "123",
+                    "type": "text",
+                    "styles": {
+                      "isBold": true,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": true,
+                      "isSubscript": false
+                    }
+                  },
+                  {
+                    "children": [],
+                    "content": "🥰🫡🤑",
+                    "type": "text",
+                    "styles": {
+                      "isBold": true,
                       "isItalic": false,
                       "isUnderlined": false,
                       "isStrikethrough": false,
@@ -279,11 +741,24 @@
                 "children": [
                   {
                     "children": [],
-                    "content": "Done",
+                    "content": "Testing ",
                     "type": "text",
                     "styles": {
-                      "isBold": false,
+                      "isBold": true,
                       "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  },
+                  {
+                    "children": [],
+                    "content": "underline and italic!",
+                    "type": "text",
+                    "styles": {
+                      "isBold": true,
+                      "isItalic": true,
                       "isUnderlined": true,
                       "isStrikethrough": false,
                       "isSuperscript": false,
@@ -308,6 +783,201 @@
             "styles": {
               "isBold": false,
               "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "asdfasdf asdfasdf",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "asdfasdf",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "asdfasdf",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "asdfasdf ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "asdfasdfasdf",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
               "isUnderlined": false,
               "isStrikethrough": false,
               "isSuperscript": false,
@@ -378,6 +1048,278 @@
       }
     },
     "ES": {
+      "main.hi_don": {
+        "phraseKey": "main.hi_don",
+        "variables": {
+          "numberOfFiles": 0
+        },
+        "links": {},
+        "interpolations": {
+          "files": {
+            "cases": [
+              {
+                "variable": "numberOfFiles",
+                "operator": "eq",
+                "value": 1,
+                "subcases": [],
+                "resultant": [
+                  {
+                    "children": [],
+                    "content": "one file",
+                    "type": "text",
+                    "styles": {
+                      "isBold": false,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  }
+                ]
+              },
+              {
+                "variable": "numberOfFiles",
+                "operator": "neq",
+                "value": 1,
+                "subcases": [],
+                "resultant": [
+                  {
+                    "children": [],
+                    "content": "some files",
+                    "type": "text",
+                    "styles": {
+                      "isBold": false,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  }
+                ]
+              }
+            ],
+            "default": []
+          }
+        },
+        "phrase": [
+          {
+            "children": [],
+            "content": "Hola DON!!!!😀 tienes ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": true,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{files}",
+            "type": "interpolation",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": true,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " listo para descargar",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": true,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": true,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "main.welcome_banner": {
+        "phraseKey": "main.welcome_banner",
+        "variables": {
+          "name": "",
+          "numberOfFiles": 0
+        },
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "Hello ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{name}",
+            "type": "variable",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ",",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Welcome to our website. This is a demo. And the number of files is ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{numberOfFiles}",
+            "type": "variable",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ". ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "main.say_hello_to_arthur": {
+        "phraseKey": "main.say_hello_to_arthur",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "¡Hola Arthur!",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " ¿Cómo estás hoy? ¿Va todo bien?",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
       "main.new_phrase": {
         "phraseKey": "main.new_phrase",
         "variables": {
@@ -484,7 +1426,33 @@
           },
           {
             "children": [],
-            "content": ",",
+            "content": " ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{username}",
+            "type": "variable",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " ,",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -584,7 +1552,7 @@
                     "type": "interpolation",
                     "styles": {
                       "isBold": false,
-                      "isItalic": false,
+                      "isItalic": true,
                       "isUnderlined": false,
                       "isStrikethrough": false,
                       "isSuperscript": false,
@@ -607,11 +1575,104 @@
                 "children": [
                   {
                     "children": [],
-                    "content": "Hecho",
+                    "content": "Hecho. asdf que",
                     "type": "text",
                     "styles": {
                       "isBold": false,
                       "isItalic": false,
+                      "isUnderlined": true,
+                      "isStrikethrough": true,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  }
+                ],
+                "content": "",
+                "type": "li",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "content": "Santo ",
+                    "type": "text",
+                    "styles": {
+                      "isBold": true,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  },
+                  {
+                    "children": [],
+                    "content": "{username}",
+                    "type": "variable",
+                    "styles": {
+                      "isBold": true,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  },
+                  {
+                    "children": [],
+                    "content": "123🥰🫡🤑",
+                    "type": "text",
+                    "styles": {
+                      "isBold": true,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": true,
+                      "isSubscript": false
+                    }
+                  }
+                ],
+                "content": "",
+                "type": "li",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "content": "Probando ",
+                    "type": "text",
+                    "styles": {
+                      "isBold": true,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  },
+                  {
+                    "children": [],
+                    "content": "¡subrayado y cursiva!",
+                    "type": "text",
+                    "styles": {
+                      "isBold": true,
+                      "isItalic": true,
                       "isUnderlined": true,
                       "isStrikethrough": false,
                       "isSuperscript": false,
@@ -636,6 +1697,201 @@
             "styles": {
               "isBold": false,
               "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "asdfasdf asdfasdf",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "asdfasdf",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "asdfasdf",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "asdfasdf ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "asdfasdfasdf",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
               "isUnderlined": false,
               "isStrikethrough": false,
               "isSuperscript": false,
@@ -678,9 +1934,941 @@
           }
         ]
       }
+    },
+    "DE": {
+      "main.hi_don": {
+        "phraseKey": "main.hi_don",
+        "variables": {
+          "numberOfFiles": 0
+        },
+        "links": {},
+        "interpolations": {
+          "files": {
+            "cases": [],
+            "default": [
+              {
+                "children": [],
+                "content": "files",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              }
+            ]
+          }
+        },
+        "phrase": [
+          {
+            "children": [],
+            "content": "Hallo DON!!!!😀 Sie haben ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": true,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{files}",
+            "type": "interpolation",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": true,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " zum Download bereit.",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": true,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": true,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "main.welcome_banner": {
+        "phraseKey": "main.welcome_banner",
+        "variables": {
+          "name": "",
+          "numberOfFiles": 0
+        },
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "Hallo ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{name}",
+            "type": "variable",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Willkommen auf unserer Website. Dies ist eine Demo.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "main.say_hello_to_arthur": {
+        "phraseKey": "main.say_hello_to_arthur",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "Hi Arthur!",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " How are you today? Is everything okay?",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "main.new_phrase": {
+        "phraseKey": "main.new_phrase",
+        "variables": {
+          "username": ""
+        },
+        "links": {
+          "my link": {
+            "displayValue": [
+              {
+                "children": [],
+                "content": "visit page!!! (",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": true,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              },
+              {
+                "children": [],
+                "content": "{some condition}",
+                "type": "interpolation",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": true,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              },
+              {
+                "children": [],
+                "content": ")🧨",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": true,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              }
+            ],
+            "linkName": "my link",
+            "href": [
+              {
+                "type": "text",
+                "content": "/home?locale=123"
+              }
+            ]
+          }
+        },
+        "interpolations": {
+          "some condition": {
+            "cases": [
+              {
+                "variable": "username",
+                "operator": "eq",
+                "value": "jamie",
+                "subcases": [],
+                "resultant": [
+                  {
+                    "children": [],
+                    "content": "welcome",
+                    "type": "text",
+                    "styles": {
+                      "isBold": false,
+                      "isItalic": true,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  },
+                  {
+                    "children": [],
+                    "content": " ",
+                    "type": "text",
+                    "styles": {
+                      "isBold": false,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  },
+                  {
+                    "children": [],
+                    "content": "jamie",
+                    "type": "text",
+                    "styles": {
+                      "isBold": true,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  },
+                  {
+                    "children": [],
+                    "content": "1",
+                    "type": "text",
+                    "styles": {
+                      "isBold": true,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": true,
+                      "isSubscript": false
+                    }
+                  }
+                ]
+              }
+            ],
+            "default": [
+              {
+                "children": [],
+                "content": "welcome someone else",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              }
+            ]
+          }
+        },
+        "phrase": [
+          {
+            "children": [],
+            "content": "Hello ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{username}",
+            "type": "variable",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{username}",
+            "type": "variable",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ",",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "content": "Here is ",
+                    "type": "text",
+                    "styles": {
+                      "isBold": false,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  },
+                  {
+                    "children": [],
+                    "content": "{my link}",
+                    "type": "link",
+                    "styles": {
+                      "isBold": false,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  }
+                ],
+                "content": "",
+                "type": "li",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "content": "And here is my condition ",
+                    "type": "text",
+                    "styles": {
+                      "isBold": false,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  },
+                  {
+                    "children": [],
+                    "content": "{some condition}",
+                    "type": "interpolation",
+                    "styles": {
+                      "isBold": false,
+                      "isItalic": true,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  }
+                ],
+                "content": "",
+                "type": "li",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "content": "Done. asdf what",
+                    "type": "text",
+                    "styles": {
+                      "isBold": false,
+                      "isItalic": false,
+                      "isUnderlined": true,
+                      "isStrikethrough": true,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  }
+                ],
+                "content": "",
+                "type": "li",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "content": "Holy  ",
+                    "type": "text",
+                    "styles": {
+                      "isBold": true,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  },
+                  {
+                    "children": [],
+                    "content": "{username}",
+                    "type": "variable",
+                    "styles": {
+                      "isBold": true,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  },
+                  {
+                    "children": [],
+                    "content": "123",
+                    "type": "text",
+                    "styles": {
+                      "isBold": true,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": true,
+                      "isSubscript": false
+                    }
+                  },
+                  {
+                    "children": [],
+                    "content": "🥰🫡🤑",
+                    "type": "text",
+                    "styles": {
+                      "isBold": true,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  }
+                ],
+                "content": "",
+                "type": "li",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "content": "Testing ",
+                    "type": "text",
+                    "styles": {
+                      "isBold": true,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  },
+                  {
+                    "children": [],
+                    "content": "underline and italic!",
+                    "type": "text",
+                    "styles": {
+                      "isBold": true,
+                      "isItalic": true,
+                      "isUnderlined": true,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  }
+                ],
+                "content": "",
+                "type": "li",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              }
+            ],
+            "content": "",
+            "type": "ul",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "asdfasdf asdfasdf",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "asdfasdf",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "asdfasdf",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "asdfasdf ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "asdfasdfasdf",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "main.hello_world": {
+        "phraseKey": "main.hello_world",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "Hello World from ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "! ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      }
     }
   },
   "phraseKeyDebugInfo": {
+    "main.hi_don": {
+      "groupName": "Main",
+      "phraseKey": "hi don"
+    },
+    "main.welcome_banner": {
+      "groupName": "Main",
+      "phraseKey": "welcome_banner"
+    },
+    "main.say_hello_to_arthur": {
+      "groupName": "Main",
+      "phraseKey": "say hello to arthur"
+    },
     "main.new_phrase": {
       "groupName": "Main",
       "phraseKey": "new phrase"

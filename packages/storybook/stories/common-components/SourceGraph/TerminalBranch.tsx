@@ -3,8 +3,8 @@ import React, {
   useCallback,
 } from "react";
 
-import { Branch } from "./grid";
 import { motion } from "framer-motion";
+import { Branch } from "floro/dist/src/repo";
 
 interface Props {
     branchStemX2: number;

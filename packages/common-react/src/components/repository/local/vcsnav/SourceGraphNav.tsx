@@ -618,7 +618,7 @@ const SourceGraphNav = (props: Props) => {
             renderPopup={renderPopup}
             currentBranchId={props?.apiResponse?.branch?.id ?? undefined}
             highlightedBranchId={props?.apiResponse?.branch?.id}
-            htmlContentHeight={160}
+            htmlContentHeight={240}
             currentSha={selectedSha}
             onSelectBranch={onSelectBranch}
           />

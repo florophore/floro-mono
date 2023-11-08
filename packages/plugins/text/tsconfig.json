@@ -20,7 +20,10 @@
       "jsxImportSource": "@emotion/react",
       "types": [
         "react"
-      ]
+      ],
+      "paths": {
+        "react": [ "./node_modules/@types/react" ]
+      }
     },
     "exclude": ["node_modules"],
     "ts-node": {

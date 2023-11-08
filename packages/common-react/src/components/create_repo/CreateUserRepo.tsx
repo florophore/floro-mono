@@ -52,7 +52,6 @@ const CreateUserRepo = (props: Props) => {
   const isOnline = useIsOnline();
   const [name, setName] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
-  const [licenseCode, setLicenseCode] = useState<string|null>(null);
   const offlinePhoto = useOfflinePhoto(currentUser?.profilePhoto ?? null);
   const nameIsTaken = useMemo(() => {
     return !!props.repositories?.find(repo => {
@@ -67,11 +66,8 @@ const CreateUserRepo = (props: Props) => {
     if (profanityFilter.isProfane(name)) {
       return false;
     }
-    if (!isPrivate) {
-      return !!licenseCode;
-    }
     return !nameIsTaken;
-  }, [nameIsTaken, name, isPrivate, licenseCode, profanityFilter]);
+  }, [nameIsTaken, name, isPrivate, profanityFilter]);
 
   const [createRepo, { loading, data }] = useCreateUserRepositoryMutation();
 
@@ -81,7 +77,6 @@ const CreateUserRepo = (props: Props) => {
         variables: {
           name,
           isPrivate,
-          licenseCode,
         },
       });
     }
@@ -90,7 +85,6 @@ const CreateUserRepo = (props: Props) => {
     isValid,
     name,
     isPrivate,
-    licenseCode,
   ]);
 
   useEffect(() => {
@@ -108,7 +102,7 @@ const CreateUserRepo = (props: Props) => {
   return (
     <Background>
       <div>
-        <Title>{"New Repository"}</Title>
+        <Title>{"New Personal Repository"}</Title>
         <CreateRepoInputs
           name={name}
           repoType={"user_repo"}
@@ -118,8 +112,6 @@ const CreateUserRepo = (props: Props) => {
           offlinePhoto={offlinePhoto}
           isPrivate={isPrivate}
           onChangeIsPrivate={setIsPrivate}
-          license={licenseCode}
-          onChangeLicense={setLicenseCode}
         />
       </div>
       <div>

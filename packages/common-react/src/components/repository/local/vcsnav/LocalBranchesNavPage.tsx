@@ -246,6 +246,7 @@ const LocalBranchesNavPage = (props: Props) => {
             currentBranchId={props?.apiResponse?.repoState?.branch ?? undefined}
             filterBranchlessNodes
             filteredBranchIds={filteredBranches?.map(b => b.id)}
+            htmlContentHeight={200}
           />
         </div>
       );

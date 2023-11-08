@@ -15342,10 +15342,10 @@ flatted@^3.2.9:
   resolved "https://registry.yarnpkg.com/flatted/-/flatted-3.2.9.tgz#7eb4c67ca1ba34232ca9d2d93e9886e611ad7daf"
   integrity sha512-36yxDn5H7OFZQla0/jFJmbIKTdZAQHngCedGxiMmpNfEZM0sdEeT+WczLQrjK6D7o2aiyLYDnkw0R3JK0Qv1RQ==
 
-floro@0.0.20:
-  version "0.0.20"
-  resolved "https://registry.yarnpkg.com/floro/-/floro-0.0.20.tgz#6e829dddcb5e4fc44a916dfbc92b25f57ffb3f5a"
-  integrity sha512-VYKC+/nfooqwjgnsafC7mup3w58T3EiG53Qav38iVaGQc7+SbfMUMPVbxqYcVMxSNNo3T5tWNJNUrGNMJyuB6w==
+floro@0.0.21:
+  version "0.0.21"
+  resolved "https://registry.yarnpkg.com/floro/-/floro-0.0.21.tgz#c587ddee09db716c45ca6de48e98fe6c8ca5b005"
+  integrity sha512-LSVWrheowoK95+2BvcBlPiitCMoSExtPm3mLRdGX50RLXGwgZXYnK00APfYHjKZe2wTHE6PwJwe0+lpgGA4tMA==
   dependencies:
     "@types/busboy" "^1.5.0"
     "@types/express" "^4.17.15"
@@ -18828,6 +18828,16 @@ lines-and-columns@^1.1.6:
   version "1.2.4"
   resolved "https://registry.yarnpkg.com/lines-and-columns/-/lines-and-columns-1.2.4.tgz#eca284f75d2965079309dc0ad9255abb2ebc1632"
   integrity sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==
+
+linkify-react@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/linkify-react/-/linkify-react-4.1.1.tgz#79cc29c6e5c0fd660be74a6a51d25c1b36977cf7"
+  integrity sha512-2K9Y1cUdvq40dFWqCJ//X+WP19nlzIVITFGI93RjLnA0M7KbnxQ/ffC3AZIZaEIrLangF9Hjt3i0GQ9/anEG5A==
+
+linkify@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/linkify/-/linkify-0.2.1.tgz#a1b66435eae0495ed1b34143277c4b09c14cad73"
+  integrity sha512-Esq4rfRRHmH3RTqAsnGq33MwE0HqyeNWHpNbWFsV8jEnuPKseiOPjzWvK2i3REqwZpnbCxTh1yxAKzceKKFDGQ==
 
 linkifyjs@^4.1.1:
   version "4.1.1"

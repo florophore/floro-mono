@@ -1,17 +1,14 @@
-import { useCallback, useState, useRef } from 'react';
+import { useCallback, useState, useRef } from "react";
 import { ThemeProvider } from "@emotion/react";
-import styled from '@emotion/styled';
-import { useColorTheme } from "@floro/common-web/src/hooks/color-theme";
+import styled from "@emotion/styled";
+import { useSelectedTheme } from "@floro/common-web/src/hooks/color-theme";
 import "./index.css";
-import {
-  FloroProvider,
-  useFloroContext,
-} from "./floro-schema-api";
-import ThemeEditList from './themes/ThemeEditList';
-import ThemeReadList from './themes/ThemeReadList';
-import ThemeDefMatrix from './themedefmatrix/ThemeDefMatrix';
-import StateVariantEditList from './statevariants/StateVariantEditList';
-import StateVariantReadList from './statevariants/StateVariantReadList';
+import { FloroProvider, useFloroContext } from "./floro-schema-api";
+import ThemeEditList from "./themes/ThemeEditList";
+import ThemeReadList from "./themes/ThemeReadList";
+import ThemeDefMatrix from "./themedefmatrix/ThemeDefMatrix";
+import StateVariantEditList from "./statevariants/StateVariantEditList";
+import StateVariantReadList from "./statevariants/StateVariantReadList";
 
 const Container = styled.div`
   width: 100%;
@@ -22,25 +19,24 @@ const Container = styled.div`
 
   ::-webkit-scrollbar {
     width: 4px;
-    background: ${props => props.theme.background};
+    background: ${(props) => props.theme.background};
   }
   ::-webkit-scrollbar-thumb {
     background-color: rgba(155, 155, 155, 0.5);
     border-radius: 10px;
-    border: ${props => props.theme.background};
+    border: ${(props) => props.theme.background};
   }
 `;
 
 const Layout = () => {
-
   const container = useRef<HTMLDivElement>(null);
   const [showThemeEdit, setShowThemeEdit] = useState(false);
   const [showStateVariantEdit, setShowStateVariantEdit] = useState(false);
-  const { commandMode } = useFloroContext();
+  const { commandMode, pluginState } = useFloroContext();
 
   const onShowThemeList = useCallback(() => {
     if (container?.current) {
-      container?.current?.scrollTo({top: 0, behavior: "smooth"});
+      container?.current?.scrollTo({ top: 0, behavior: "smooth" });
     }
     setShowThemeEdit(true);
   }, []);
@@ -50,7 +46,7 @@ const Layout = () => {
 
   const onShowStateVariantList = useCallback(() => {
     if (container?.current) {
-      container?.current?.scrollTo({top: 0, behavior: "smooth"});
+      container?.current?.scrollTo({ top: 0, behavior: "smooth" });
     }
     setShowStateVariantEdit(true);
   }, []);
@@ -59,36 +55,41 @@ const Layout = () => {
   }, []);
 
   const onScrollToBottom = useCallback(() => {
-      container?.current?.scrollTo({top: container?.current?.scrollHeight, behavior: "smooth"})
+    container?.current?.scrollTo({
+      top: container?.current?.scrollHeight,
+      behavior: "smooth",
+    });
   }, []);
 
+  const colorTheme = useSelectedTheme(pluginState?.themeName ?? "light");
+
   return (
-    <Container ref={container}>
-      {commandMode == "edit" && showThemeEdit && <ThemeEditList />}
-      {commandMode != "edit" && <ThemeReadList />}
-      {commandMode == "edit" && showStateVariantEdit && <StateVariantEditList />}
-      {commandMode != "edit" && <StateVariantReadList />}
-      <ThemeDefMatrix
-        showThemeList={showThemeEdit}
-        onHideThemeList={onHideThemeList}
-        onShowThemeList={onShowThemeList}
-        showVariantList={showStateVariantEdit}
-        onHideVariantList={onHideStateVariantList}
-        onShowVariantList={onShowStateVariantList}
-        onScrollToBottom={onScrollToBottom}
-      />
-    </Container>
+    <ThemeProvider theme={colorTheme}>
+      <Container ref={container}>
+        {commandMode == "edit" && showThemeEdit && <ThemeEditList />}
+        {commandMode != "edit" && <ThemeReadList />}
+        {commandMode == "edit" && showStateVariantEdit && (
+          <StateVariantEditList />
+        )}
+        {commandMode != "edit" && <StateVariantReadList />}
+        <ThemeDefMatrix
+          showThemeList={showThemeEdit}
+          onHideThemeList={onHideThemeList}
+          onShowThemeList={onShowThemeList}
+          showVariantList={showStateVariantEdit}
+          onHideVariantList={onHideStateVariantList}
+          onShowVariantList={onShowStateVariantList}
+          onScrollToBottom={onScrollToBottom}
+        />
+      </Container>
+    </ThemeProvider>
   );
 };
 
 function App() {
-  const colorTheme = useColorTheme();
-
   return (
     <FloroProvider>
-      <ThemeProvider theme={colorTheme}>
-        <Layout />
-      </ThemeProvider>
+      <Layout />
     </FloroProvider>
   );
 }

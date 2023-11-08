@@ -118,7 +118,7 @@ const Row = styled.div`
 `;
 
 export const BRANCH_NAME_REGEX = /^[-_ ()[\]'"|a-zA-Z0-9]{3,100}$/;
-export const ILLEGAL_BRANCH_NAMES = new Set(["none"]);
+export const ILLEGAL_BRANCH_NAMES = new Set(["none", "undefined"]);
 
 export const getBranchIdFromName = (name: string): string => {
   return name
@@ -444,7 +444,7 @@ const EditBranchNavPage = (props: Props) => {
             onSelectBranch={onClickBaseBranch}
             filterBranches
             filteredBranches={baseBranches}
-            htmlContentHeight={showSurgery ? 160 : 120}
+            htmlContentHeight={showSurgery ? 240 : 200}
             disableZoomToHighlightedBranchOnLoad
           />
         </div>

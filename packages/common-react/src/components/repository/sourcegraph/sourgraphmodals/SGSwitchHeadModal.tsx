@@ -1,10 +1,12 @@
 import React, { useMemo, useCallback } from 'react';
-import { Branch, SourceCommitNodeWithGridDimensions } from '@floro/storybook/stories/common-components/SourceGraph/grid';
+import { SourceCommitNodeWithGridDimensions } from '@floro/storybook/stories/common-components/SourceGraph/grid';
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import Button from "@floro/storybook/stories/design-system/Button";
 import ExitIconLight from '@floro/common-assets/assets/images/icons/exit_icon.light.svg';
 import ExitIconDark from '@floro/common-assets/assets/images/icons/exit_icon.dark.svg';
+import { Branch } from 'floro/dist/src/repo';
+import { Link } from "react-router-dom";
 
 const InnerContent = styled.div`
   display: flex;
@@ -72,6 +74,19 @@ const ExitIcon = styled.img`
     cursor: pointer;
 `;
 
+const UsernameValue = styled.span`
+  display: inline;
+  margin-left: 16px;
+  font-weight: 500;
+  font-size: 1rem;
+  font-family: "MavenPro";
+  color: ${props => props.theme.colors.contrastText};
+  &:hover {
+    color: ${props => props.theme.colors.linkColor};
+    cursor: pointer;
+  }
+`;
+
 interface Props {
     onHidePopup?: () => void;
     sourceCommit?: SourceCommitNodeWithGridDimensions;
@@ -94,6 +109,11 @@ const SGSwitchHeadModal = (props: Props) => {
         props?.onHidePopup?.();
     }, [props?.onSwitchHead, props?.sourceCommit, props?.onHidePopup]);
 
+  const timestamp = useMemo(() => {
+    const date = new Date(props.sourceCommit?.timestamp ?? "");
+    return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
+  }, [props.sourceCommit?.timestamp])
+
     return (
       <InnerContent>
         <TopContainer>
@@ -108,6 +128,24 @@ const SGSwitchHeadModal = (props: Props) => {
             <TextRow>
               <Label>{"Message:"}</Label>
               <Value>{props.sourceCommit?.message}</Value>
+            </TextRow>
+          </Row>
+          <Row>
+              <TextRow>
+                  <Label>
+                      {'User:'}
+                  </Label>
+                  <Link to={`/user/@/${props.sourceCommit?.username}`}>
+                    <UsernameValue>
+                        {`@${props.sourceCommit?.username}`}
+                    </UsernameValue>
+                  </Link>
+              </TextRow>
+          </Row>
+          <Row>
+            <TextRow>
+              <Label>{"Time:"}</Label>
+              <Value>{timestamp}</Value>
             </TextRow>
           </Row>
         </TopContainer>
