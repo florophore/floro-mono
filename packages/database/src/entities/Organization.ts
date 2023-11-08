@@ -3,6 +3,7 @@ import {
   IsDefined,
   IsEmail,
   IsIn,
+  IsOptional,
   IsString,
   MaxLength,
   MinLength,
@@ -77,6 +78,11 @@ export class Organization extends BinaryPKBaseEntity {
   @IsIn([true])
   @IsBoolean()
   agreedToCustomerServiceAgreement?: boolean;
+
+  @Column("boolean")
+  @IsOptional()
+  @IsBoolean()
+  hasAcknowledgedBetaPricing?: boolean;
 
   @Column("varchar", { default: "free"})
   @IsDefined()

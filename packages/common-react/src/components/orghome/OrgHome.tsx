@@ -265,7 +265,9 @@ const OrgHome = (props: Props) => {
                 </div>
                 {props?.organization?.membership?.permissions?.canModifyBilling && (
                   <div style={{ marginTop: 16, display: "flex" }}>
-                    <BillingTab />
+                    <Link to={`/org/@/${props?.organization?.handle}/billing`}>
+                      <BillingTab />
+                    </Link>
                   </div>
                 )}
                 <div style={{ marginTop: 16, display: "flex" }}>

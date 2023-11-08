@@ -790,6 +790,9 @@ export default class RepoDataService {
   }
 
   public async getAccountStandingOkay(repository: Repository) {
+    if (!repository.isPrivate) {
+      return true;
+    }
     if (repository.repoType == "org_repo") {
       const organizationsContext = await this.contextFactory.createContext(
         OrganizationsContext
@@ -797,23 +800,7 @@ export default class RepoDataService {
       const organization = await organizationsContext.getById(
         repository.organizationId
       );
-      if (organization?.billingStatus == "delinquent") {
-        return false;
-      }
-    } else {
-      const usersContext = await this.contextFactory.createContext(
-        UsersContext
-      );
-      const user = await usersContext.getById(repository.userId);
-      const diskSpaceLimitBytes = parseInt(
-        user?.diskSpaceLimitBytes as unknown as string
-      );
-      const utilizedDiskSpaceBytes = parseInt(
-        user?.utilizedDiskSpaceBytes as unknown as string
-      );
-      if (utilizedDiskSpaceBytes > diskSpaceLimitBytes) {
-        return false;
-      }
+      return organization?.hasAcknowledgedBetaPricing ?? false;
     }
     return true;
   }

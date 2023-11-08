@@ -111,7 +111,7 @@ export default class OrganizationResolverModule extends BaseResolverModule {
       organizationSentInvitationsCountLoader;
     this.organizationActiveMemberCountLoader =
       organizationActiveMemberCountLoader;
-      this.organizationMemberCountLoader = organizationMemberCountLoader;
+    this.organizationMemberCountLoader = organizationMemberCountLoader;
     this.rootOrganizationMemberPermissionsLoader =
       rootOrganizationMemberPermissionsLoader;
   }
@@ -272,11 +272,10 @@ export default class OrganizationResolverModule extends BaseResolverModule {
         if (organizationMembership?.membershipState != "active") {
           return null;
         }
-        const membersCount =
-          this.requestCache.getOrganizationMemberCount(
-            cacheKey,
-            organization.id as string
-          );
+        const membersCount = this.requestCache.getOrganizationMemberCount(
+          cacheKey,
+          organization.id as string
+        );
         return membersCount ?? null;
       }
     ),
@@ -342,17 +341,21 @@ export default class OrganizationResolverModule extends BaseResolverModule {
         );
         const organanizationMembersContext =
           await this.contextFactory.createContext(OrganizationMembersContext);
-        const members = !!cachedMembers ? cachedMembers :
-          await organanizationMembersContext.getAllMembersForOrganization(
-            organization.id as string
-          );
+        const members = !!cachedMembers
+          ? cachedMembers
+          : await organanizationMembersContext.getAllMembersForOrganization(
+              organization.id as string
+            );
         if (members && organization) {
-          this.requestCache.setOrganizationMembers(cacheKey, organization as Organization, members);
+          this.requestCache.setOrganizationMembers(
+            cacheKey,
+            organization as Organization,
+            members
+          );
         }
 
-        const organizationRolesContext = await this.contextFactory.createContext(
-          OrganizationRolesContext
-        );
+        const organizationRolesContext =
+          await this.contextFactory.createContext(OrganizationRolesContext);
         const roles = await organizationRolesContext.getAllForOrg(
           organization as Organization
         );
@@ -685,7 +688,10 @@ export default class OrganizationResolverModule extends BaseResolverModule {
           organization.id as string,
           true
         );
-        const filteredRepos = await this.repoRBACService.filterPrivateOrgRepos(privateRepos, organizationMembership);
+        const filteredRepos = await this.repoRBACService.filterPrivateOrgRepos(
+          privateRepos,
+          organizationMembership
+        );
         this.requestCache.setOrganizationPrivateRepos(
           cacheKey,
           organization as Organization,
@@ -803,11 +809,7 @@ export default class OrganizationResolverModule extends BaseResolverModule {
     ),
     apiKeys: runWithHooks(
       () => [this.organizationMemberPermissionsLoader],
-      async (
-        organization,
-        _,
-        { currentUser, cacheKey }
-      ) => {
+      async (organization, _, { currentUser, cacheKey }) => {
         if (!currentUser) {
           return null;
         }
@@ -830,17 +832,15 @@ export default class OrganizationResolverModule extends BaseResolverModule {
         if (!permissions.canModifyOrganizationDeveloperSettings) {
           return null;
         }
-        const apiKeysContext = await this.contextFactory.createContext(ApiKeysContext);
-        return await apiKeysContext.getOrganizationApiKeys(organization.id)
+        const apiKeysContext = await this.contextFactory.createContext(
+          ApiKeysContext
+        );
+        return await apiKeysContext.getOrganizationApiKeys(organization.id);
       }
     ),
     webhookKeys: runWithHooks(
       () => [this.organizationMemberPermissionsLoader],
-      async (
-        organization,
-        _,
-        { currentUser, cacheKey }
-      ) => {
+      async (organization, _, { currentUser, cacheKey }) => {
         if (!currentUser) {
           return null;
         }
@@ -863,8 +863,40 @@ export default class OrganizationResolverModule extends BaseResolverModule {
         if (!permissions.canModifyOrganizationDeveloperSettings) {
           return null;
         }
-        const webhookKeysContext = await this.contextFactory.createContext(WebhookKeysContext);
-        return await webhookKeysContext.getOrganizationWebhookKeys(organization.id);
+        const webhookKeysContext = await this.contextFactory.createContext(
+          WebhookKeysContext
+        );
+        return await webhookKeysContext.getOrganizationWebhookKeys(
+          organization.id
+        );
+      }
+    ),
+    hasAcknowledgedBetaPricing: runWithHooks(
+      () => [this.organizationMemberPermissionsLoader],
+      async (organization, _, { currentUser, cacheKey }) => {
+        if (!currentUser) {
+          return null;
+        }
+        if (!organization.id) {
+          return null;
+        }
+        const organizationMembership =
+          this.requestCache.getOrganizationMembership(
+            cacheKey,
+            organization.id as string,
+            currentUser.id
+          );
+        if (organizationMembership?.membershipState != "active") {
+          return null;
+        }
+        const permissions = this.requestCache.getMembershipPermissions(
+          cacheKey,
+          organizationMembership.id
+        );
+        if (!permissions.canModifyBilling) {
+          return null;
+        }
+        return organization?.hasAcknowledgedBetaPricing ?? false;
       }
     ),
   };
@@ -1078,6 +1110,79 @@ export default class OrganizationResolverModule extends BaseResolverModule {
         };
       }
     ),
+    updateOrganizationAcknowledgeBetaPricing: runWithHooks(
+      () => [
+        this.loggedInUserGuard,
+        this.rootOrganizationMemberPermissionsLoader,
+      ],
+      async (
+        _,
+        {
+          organizationId,
+        }: main.MutationUpdateOrganizationAcknowledgeBetaPricingArgs,
+        { cacheKey, currentUser }
+      ) => {
+        const organization = this.requestCache.getOrganization(
+          cacheKey,
+          organizationId
+        );
+        if (!organization) {
+          return {
+            __typename: "AcknowledgeBetaPricingError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        const currentMember = this.requestCache.getOrganizationMembership(
+          cacheKey,
+          organizationId,
+          currentUser.id
+        );
+        if (!currentMember?.id) {
+          return {
+            __typename: "AcknowledgeBetaPricingError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        const permissions = this.requestCache.getMembershipPermissions(
+          cacheKey,
+          currentMember.id
+        );
+        if (!permissions?.canModifyBilling) {
+          return {
+            __typename: "AcknowledgeBetaPricingError",
+            message: "Forbidden Action",
+            type: "FORBIDDEN_ACTION_ERROR",
+          };
+        }
+        const result = await this.organizaionService.acknowledgeBetaPricing(
+          organization,
+        );
+        if (result.action == "UPDATE_ORGANIZATION_ACKNOWLEDGE_BETA_PRICING_SUCCEEDED") {
+          this.requestCache.setOrganization(
+            cacheKey,
+            result.organization as Organization
+          );
+          return {
+            __typename: "AcknowledgeBetaPricingSuccess",
+            organization: result.organization,
+          };
+        }
+        if (result.action == "LOG_ERROR") {
+          console.error(
+            result.error?.type,
+            result?.error?.message,
+            result?.error?.meta
+          );
+        }
+        return {
+          __typename: "AcknowledgeBetaPricingError",
+          message: result.error?.message ?? "Unknown Error",
+          type: result.error?.type ?? "UNKNOWN_ERROR",
+        };
+      }
+    )
   };
 
   public Query: main.QueryResolvers = {
@@ -1088,7 +1193,7 @@ export default class OrganizationResolverModule extends BaseResolverModule {
       }
       return organization;
     },
-    organizationByHandle: async (_, { handle }, { cacheKey}) => {
+    organizationByHandle: async (_, { handle }, { cacheKey }) => {
       const organization =
         await this.organizaionService.fetchOrganizationByHandle(handle);
       if (organization) {
@@ -1137,10 +1242,16 @@ export default class OrganizationResolverModule extends BaseResolverModule {
             OrganizationInvitationsContext
           );
 
-        const allInvites = await organizationInvitationsContext.getAllInvitationsForOrganization(organizationId);
-        const sentUserIds = allInvites.map((i) => i.userId)?.filter(v => !!v);
+        const allInvites =
+          await organizationInvitationsContext.getAllInvitationsForOrganization(
+            organizationId
+          );
+        const sentUserIds = allInvites.map((i) => i.userId)?.filter((v) => !!v);
 
-        const excludedIds = [...allMembers.map((m) => m.userId), ...sentUserIds];
+        const excludedIds = [
+          ...allMembers.map((m) => m.userId),
+          ...sentUserIds,
+        ];
         const usersContext = await this.contextFactory.createContext(
           UsersContext
         );

@@ -13,6 +13,7 @@ fragment Organization on Organization {
   utilizedDiskSpaceBytes
   billingStatus
   billingPlan
+  hasAcknowledgedBetaPricing
   profilePhoto {
     ...Photo
   }

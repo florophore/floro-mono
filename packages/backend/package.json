@@ -43,6 +43,7 @@
     "is-svg": "^4.3.2",
     "isomorphic-fetch": "^3.0.0",
     "memfs": "^3.4.13",
+    "node-cron": "^3.0.2",
     "object-sizeof": "^1.6.3",
     "readable-stream-clone": "^0.0.7",
     "reflect-metadata": "^0.1.13",

@@ -8,4 +8,5 @@ items:
     normalizedContactEmail: test@gmail.com
     contactEmailHash: Gu242dxHUeIpozXjcduAWA==
     agreedToCustomerServiceAgreement: true
+    hasAcknowledgedBetaPricing: true
     createdByUser: '@user_0'

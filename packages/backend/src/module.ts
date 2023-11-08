@@ -134,6 +134,7 @@ import BookmarkSubscriptionsHandler from './services/events/BookmarkSubscription
 import RepoAnnouncementReplyHandler from './services/events/RepoAnnouncementReplyHandler';
 import NotificationFanOutQueue from './services/notifications/NotificationFanOutQueue';
 import NotificationReceiverController from './controllers/NotificationReceiverController';
+import OrganizationDailyActiveMemberQueue from './services/organizations/OrganizationDailyActiveMemberQueue';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -178,6 +179,8 @@ export default new ContainerModule((bind): void => {
     bind(OrganizationMemberCountLoader).toSelf();
     bind(OrganizationActiveMemberCountLoader).toSelf();
     bind(OrganizationSentInvitationsCountLoader).toSelf();
+
+    bind(OrganizationDailyActiveMemberQueue).toSelf().inSingletonScope();
 
     //MEMBERSHIP LOADERS
     bind(MembershipPermissionsLoader).toSelf();
@@ -323,6 +326,7 @@ export default new ContainerModule((bind): void => {
     bind<QueueService>("QueueServices").toService(PreMergeCommitQueue);
     bind<QueueService>("QueueServices").toService(BranchUpdateWebhookQueue);
     bind<QueueService>("QueueServices").toService(NotificationFanOutQueue);
+    bind<QueueService>("QueueServices").toService(OrganizationDailyActiveMemberQueue);
 
     // Controllers
     bind<HealthCheckController>("Controllers").to(HealthCheckController);

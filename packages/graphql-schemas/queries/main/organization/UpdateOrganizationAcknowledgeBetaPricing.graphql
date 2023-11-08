@@ -1,0 +1,17 @@
+mutation UpdateOrganizationAcknowledgeBetaPricing($organizationId: ID!) {
+  updateOrganizationAcknowledgeBetaPricing(organizationId: $organizationId) {
+    ... on UnAuthenticatedError {
+      type
+      message
+    }
+    ... on AcknowledgeBetaPricingError {
+      type
+      message
+    }
+    ... on AcknowledgeBetaPricingSuccess {
+      organization {
+         ...Organization
+      }
+    }
+  }
+}

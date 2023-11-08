@@ -61,6 +61,19 @@ export interface UpdateOrganizationContactEmailReponse {
   };
 }
 
+export interface UpdateOrganizationAcknowledgeBetaPricingReponse {
+  action:
+    | "UPDATE_ORGANIZATION_ACKNOWLEDGE_BETA_PRICING_SUCCEEDED"
+    | "INVALID_PARAMS"
+    | "LOG_ERROR";
+  organization?: Organization;
+  error?: {
+    type: string;
+    message: string;
+    meta?: any;
+  };
+}
+
 @injectable()
 export default class OrganizationService {
   private databaseConnection!: DatabaseConnection;
@@ -338,6 +351,19 @@ export default class OrganizationService {
     });
     return {
       action: "UPDATE_ORGANIZATION_CONTACT_EMAIL_SUCCEEDED",
+      organization: updatedOrg,
+    };
+  }
+
+  public async acknowledgeBetaPricing(
+    organization: Organization,
+  ): Promise<UpdateOrganizationAcknowledgeBetaPricingReponse> {
+    const organizationsContext = await this.contextFactory.createContext(OrganizationsContext);
+    const updatedOrg = await organizationsContext.updateOrganization(organization, {
+      hasAcknowledgedBetaPricing: true
+    });
+    return {
+      action: "UPDATE_ORGANIZATION_ACKNOWLEDGE_BETA_PRICING_SUCCEEDED",
       organization: updatedOrg,
     };
   }

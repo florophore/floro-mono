@@ -8,9 +8,9 @@ import ColorPalette from "@floro/styles/ColorPalette";
 import Button from "@floro/storybook/stories/design-system/Button";
 import RedHexagonWarningLight from "@floro/common-assets/assets/images/icons/red_hexagon_warning.light.svg";
 import RedHexagonWarningDark from "@floro/common-assets/assets/images/icons/red_hexagon_warning.dark.svg";
-import { Repository } from "@floro/graphql-schemas/build/generated/main-client-graphql";
-import { ApiResponse } from "floro/dist/src/repo";
-import { useCheckoutCommitSha } from "../hooks/local-hooks";
+import { useFragment } from "@apollo/client";
+import { UserOrganizationFragmentDoc, Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import { useNavigate } from "react-router-dom";
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -88,6 +88,30 @@ const UpdateBillingModal = (props: Props) => {
       ? RedHexagonWarningLight
       : RedHexagonWarningDark;
   }, [theme.name]);
+
+  const organizationDoc = useFragment({
+    fragment: UserOrganizationFragmentDoc,
+    fragmentName: 'UserOrganization',
+    from: {
+      id: props?.repository.organization?.id as string,
+      __typename: 'Organization'
+    }
+  });
+
+  const navigate = useNavigate();
+
+  const billingLink = useMemo(() => {
+    return `/org/@/${organizationDoc?.data.handle}/billing`;
+  }, [])
+
+  const onClick = useCallback(() => {
+    navigate(billingLink);
+  }, [billingLink])
+
+  const canUpdate = useMemo(() => {
+    return organizationDoc?.data?.membership?.permissions?.canModifyBilling ?? false;
+  }, [organizationDoc?.data?.membership?.permissions?.canModifyBilling])
+
   const title = useMemo(() => {
     return (
       <HeaderContainer>
@@ -95,6 +119,35 @@ const UpdateBillingModal = (props: Props) => {
       </HeaderContainer>
     );
   }, []);
+
+  if (!canUpdate) {
+    return (
+      <RootModal
+        headerSize="small"
+        headerChildren={title}
+        show={props.show}
+        onDismiss={props.onDismiss}
+      >
+        <ContentContainer>
+          <TopContentContainer>
+            <WarningIcon src={icon} />
+            <PromptText>
+              {`Please ask a billing admin to update your organization's plan.`}
+            </PromptText>
+          </TopContentContainer>
+          <BottomContentContainer style={{ justifyContent: 'center'}}>
+            <Button
+              onClick={props.onDismiss}
+              label={"done"}
+              bg={"gray"}
+              size={"extra-big"}
+            />
+          </BottomContentContainer>
+        </ContentContainer>
+      </RootModal>
+    );
+
+  }
 
   return (
     <RootModal
@@ -107,7 +160,7 @@ const UpdateBillingModal = (props: Props) => {
         <TopContentContainer>
           <WarningIcon src={icon} />
           <PromptText>
-            {`Unfortunately, this account cannot push at this time. In order to enable pushing please update the account billing.`}
+            {`In order to enable pushing please acknowledge our future pricing plans from the billing page.`}
           </PromptText>
         </TopContentContainer>
         <BottomContentContainer>
@@ -118,6 +171,7 @@ const UpdateBillingModal = (props: Props) => {
             size={"medium"}
           />
           <Button
+            onClick={onClick}
             label={"update billing"}
             bg={"orange"}
             size={"medium"}

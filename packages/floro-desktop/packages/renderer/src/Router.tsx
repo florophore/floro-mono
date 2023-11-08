@@ -36,6 +36,7 @@ import UserGeneralSettingsPage from './user_settings/UserGeneralSettingsPage';
 import UserPrivacySettingsPage from './user_settings/UserPrivacySettingsPage';
 import UserNotificationsSettingsPage from './user_settings/UserNotificationsSettingsPage';
 import OrgAccountSettingsPage from './org_settings/OrgAccountSettingsPage';
+import OrgBillingPage from './billing/OrgBillingPage';
 
 const Router = (): React.ReactElement => {
     const location = useLocation();
@@ -72,9 +73,7 @@ const Router = (): React.ReactElement => {
 
           <Route path="/org/@/:handle/settings" element={<OrgAccountSettingsPage/>} />
 
-          <Route path="/org/@/:handle/billing/overview" element={<OrganizationRolesPage/>} />
-          <Route path="/org/@/:handle/billing/payment-details" element={<OrganizationRolesPage/>} />
-          <Route path="/org/@/:handle/billing/invoices" element={<OrganizationRolesPage/>} />
+          <Route path="/org/@/:handle/billing" element={<OrgBillingPage/>} />
 
           <Route path="/user/@/:handle/plugins" element={<UserProfilePluginsPage />} />
           <Route path="/user/@/:handle/plugins/:plugin" element={<UserProfilePluginsPage />} />

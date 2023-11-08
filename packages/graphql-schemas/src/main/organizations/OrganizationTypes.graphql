@@ -14,6 +14,7 @@ type Organization {
   utilizedDiskSpaceBytes: Float
   billingStatus: String
   billingPlan: String
+  hasAcknowledgedBetaPricing: Boolean
 
   membership: OrganizationMember
   roles: [OrganizationRole]
@@ -333,4 +334,18 @@ type InviteSearchResultError {
 union InviteSearchResultResponse =
     InviteSearchResultError
   | InviteSearchResultSuccess
+  | UnAuthenticatedError
+
+type AcknowledgeBetaPricingSuccess {
+  organization: Organization
+}
+
+type AcknowledgeBetaPricingError {
+  message: String
+  type: String
+}
+
+union AcknowledgeBetaPricingResponse =
+    AcknowledgeBetaPricingError
+  | AcknowledgeBetaPricingSuccess
   | UnAuthenticatedError

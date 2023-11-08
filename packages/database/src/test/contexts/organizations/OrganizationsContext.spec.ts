@@ -54,9 +54,10 @@ describe("OrganizationsContext", () => {
       normalizedContactEmail,
       contactEmailHash,
       agreedToCustomerServiceAgreement: true,
+      hasAcknowledgedBetaPricing: true,
     };
 
-    test("can create org when required params are presetn", async () => {
+    test("can create org when required params are present", async () => {
       const createdOrg = await organizationsContext.createOrganization({
         ...defaultParams,
         createdByUserId: user.id,

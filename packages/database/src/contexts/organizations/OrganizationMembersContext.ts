@@ -90,6 +90,17 @@ export default class OrganizationMembersContext extends BaseContext {
     return count ?? 0;
   }
 
+  public async getActiveMemebersForOrganization(
+    organizationId: string
+  ): Promise<Array<OrganizationMember>> {
+    return await this.queryRunner.manager.find(OrganizationMember, {
+      where: {
+        organizationId,
+        membershipState: "active"
+      }
+    });
+  }
+
   public async getActiveMemeberCountForOrganization(
     organizationId: string
   ): Promise<number> {

@@ -33,6 +33,9 @@ const TextSpan = styled.span`
     font-family: "MavenPro";
     font-weight: 600;
     color: ${props => props.theme.colors.followerTextColor};
+    &:hover {
+        color: ${ColorPalette.linkBlue};
+    }
 `;
 
 

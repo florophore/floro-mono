@@ -46,6 +46,9 @@ const LeftColumn = styled.div`
 const RightColumn = styled.div`
   flex-grow: 1;
   display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-left: 4px;
 `;
 
 const CommentDisplayBox = styled.div`

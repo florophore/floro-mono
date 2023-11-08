@@ -1,0 +1,15 @@
+fragment UserOrganization on Organization {
+  ...Organization
+  membership {
+    ...OrganizationMember
+    permissions {
+      ...OrganizationPermissions
+    }
+    roles {
+      ...OrganizationRole
+    }
+  }
+  roles {
+    ...OrganizationRole
+  }
+}

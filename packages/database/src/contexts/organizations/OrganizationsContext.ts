@@ -50,6 +50,15 @@ export default class OrganizationsContext extends BaseContext {
     return count > 0;
   }
 
+  public async getOrganizationIds(): Promise<string[]> {
+    const qb = this.organizationRepo.createQueryBuilder(
+      "org",
+      this.queryRunner
+    );
+    const rawResults = await qb.select("org.id").getRawMany();
+    return rawResults.map(result => result.org_id);
+  }
+
   public async updateOrganization(
     org: Organization,
     orgArgs: DeepPartial<Organization>
