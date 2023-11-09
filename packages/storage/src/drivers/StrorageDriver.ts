@@ -1,4 +1,5 @@
-import { Readable } from "stream";
+import { WriteStream } from "fs";
+import { PassThrough, Readable } from "stream";
 
 export default interface StorageDriver {
     init: () => Promise<void>;
@@ -7,5 +8,6 @@ export default interface StorageDriver {
     read: (path: string) => Promise<Buffer|string|null>;
     mkdir: (path: string) => Promise<void>;
     write: (path: string, data: Buffer|string) => Promise<void>;
+    writeStream: (path: string) => WriteStream|PassThrough;
     staticRoot?: () => string;
 }

@@ -39,7 +39,8 @@ export default class PluginTarAccessor {
         }
       }
       const tarPath = path.join(this.rootDirectory(), `${uploadHash}.tar.gz`);
-      const writeStream = fs.createWriteStream(tarPath);
+      console.log("TAR PATH", tarPath);
+      const writeStream = this.driver.writeStream(tarPath);
       let hasFinished = false;
       return await new Promise((resolve) => {
         writeStream.on("finish", () => {
@@ -49,6 +50,7 @@ export default class PluginTarAccessor {
           }
         });
         writeStream.on("error", (e) => {
+          console.log("UPLOAD ERROR", e);
           if (!hasFinished) {
             resolve(false);
             hasFinished = true;

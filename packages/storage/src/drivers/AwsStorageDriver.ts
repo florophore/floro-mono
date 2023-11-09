@@ -1,7 +1,7 @@
 import { injectable } from "inversify";
 import StorageDriver from "./StrorageDriver";
 import tar from "tar";
-import { Readable } from "stream";
+import { PassThrough, Readable } from "stream";
 import { env } from "process";
 import path from 'path';
 import {
@@ -10,10 +10,12 @@ import {
   PutObjectCommand,
   HeadObjectCommand,
 } from "@aws-sdk/client-s3";
+import { Upload } from '@aws-sdk/lib-storage';
 import StorageAuthenticator from "../StorageAuthenticator";
 import MainConfig from "@floro/config/src/MainConfig";
 import fetch from 'node-fetch';
 import mime from 'mime-types';
+import stream from 'stream';
 
 async function streamToString (stream: Readable): Promise<string> {
   return await new Promise((resolve, reject) => {
@@ -73,6 +75,23 @@ export default class AwsStorageDriver implements StorageDriver {
       return false;
     }
   }
+
+  public writeStream(path: string): PassThrough {
+    const passThroughStream = new stream.PassThrough();
+    new Upload({
+      client: this.s3Client,
+      params: {
+        Bucket: this.bucket,
+        Key: path,
+        Body: passThroughStream,
+        ContentType: 'application/gzip'
+      },
+      queueSize: 4,
+      partSize: 1024 * 1024 * 5,
+      leavePartsOnError: false,
+    })
+    return passThroughStream;
+  };
 
   public async read(fpath: string) {
     try {

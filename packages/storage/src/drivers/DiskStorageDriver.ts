@@ -2,7 +2,7 @@ import { injectable } from "inversify";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 import StorageDriver from "./StrorageDriver";
-import fs from "fs";
+import fs, { WriteStream } from "fs";
 import tar from "tar";
 import { Readable } from "stream";
 import { env } from "process";
@@ -26,6 +26,9 @@ export default class DiskStorageDriver implements StorageDriver {
   constructor(storageType: "public" | "private") {
     this.root = storageType == "public" ? root : privateRoot;
   }
+  public writeStream(path: string): WriteStream {
+    return fs.createWriteStream(path);
+  };
 
   public async mkdir(path: string) {
     await fs.promises.mkdir(path, { recursive: true });
