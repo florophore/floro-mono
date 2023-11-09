@@ -19,9 +19,7 @@ import OrganizationMembersContext from "@floro/database/src/contexts/organizatio
 import PluginSearchService from "../../services/plugins/PluginSearchService";
 import OrganizationsContext from "@floro/database/src/contexts/organizations/OrganizationsContext";
 import PluginsContext from "@floro/database/src/contexts/plugins/PluginsContext";
-import PluginsVersionsContext from "@floro/database/src/contexts/plugins/PluginVersionsContext";
 import RootRepositoryLoader from "../hooks/loaders/Root/RepositoryID/RepositoryLoader";
-import { User } from "@floro/database/src/entities/User";
 import RepoDataService from "../../services/repositories/RepoDataService";
 import PluginDiscoveryService from "../../services/plugins/PluginDiscoveryService";
 
@@ -545,7 +543,7 @@ export default class PluginResolverModule extends BaseResolverModule {
           if (lastVersion) {
             return lastVersion.lightIcon;
           }
-          return `${this.config.assetHost()}/assets/images/icons/plugin_default.unselected.light.svg`;
+          return `${this.config.assetHost()}/svgs/plugin_default.unselected.light.svg`;
         }
 
         if (
@@ -564,13 +562,13 @@ export default class PluginResolverModule extends BaseResolverModule {
           if (lastVersion) {
             return lastVersion.lightIcon;
           }
-          return `${this.config.assetHost()}/assets/images/icons/plugin_default.unselected.light.svg`;
+          return `${this.config.assetHost()}/svgs/plugin_default.unselected.light.svg`;
         }
         if (!dbPlugin.isPrivate) {
           if (dbPlugin.lastReleasedPublicPluginVersion) {
             return dbPlugin.lastReleasedPublicPluginVersion.lightIcon;
           }
-          return `${this.config.assetHost()}/assets/images/icons/plugin_default.unselected.light.svg`;
+          return `${this.config.assetHost()}/svgs/plugin_default.unselected.light.svg`;
         }
         return null;
       }
@@ -599,7 +597,7 @@ export default class PluginResolverModule extends BaseResolverModule {
           if (lastVersion) {
             return lastVersion.darkIcon;
           }
-          return `${this.config.assetHost()}/assets/images/icons/plugin_default.unselected.dark.svg`;
+          return `${this.config.assetHost()}/svgs/plugin_default.unselected.dark.svg`;
         }
 
         if (
@@ -618,13 +616,13 @@ export default class PluginResolverModule extends BaseResolverModule {
           if (lastVersion) {
             return lastVersion.darkIcon;
           }
-          return `${this.config.assetHost()}/assets/images/icons/plugin_default.unselected.dark.svg`;
+          return `${this.config.assetHost()}/svgs/plugin_default.unselected.dark.svg`;
         }
         if (!dbPlugin.isPrivate) {
           if (dbPlugin.lastReleasedPublicPluginVersion) {
             return dbPlugin.lastReleasedPublicPluginVersion.darkIcon;
           }
-          return `${this.config.assetHost()}/assets/images/icons/plugin_default.unselected.dark.svg`;
+          return `${this.config.assetHost()}/svgs/plugin_default.unselected.dark.svg`;
         }
         return null;
       }
@@ -653,7 +651,7 @@ export default class PluginResolverModule extends BaseResolverModule {
           if (lastVersion) {
             return lastVersion.selectedLightIcon;
           }
-          return `${this.config.assetHost()}/assets/images/icons/plugin_default.selected.light.svg`;
+          return `${this.config.assetHost()}/svgs/plugin_default.selected.light.svg`;
         }
 
         if (
@@ -672,13 +670,13 @@ export default class PluginResolverModule extends BaseResolverModule {
           if (lastVersion) {
             return lastVersion.selectedLightIcon;
           }
-          return `${this.config.assetHost()}/assets/images/icons/plugin_default.selected.light.svg`;
+          return `${this.config.assetHost()}/svgs/plugin_default.selected.light.svg`;
         }
         if (!dbPlugin.isPrivate) {
           if (dbPlugin.lastReleasedPublicPluginVersion) {
             return dbPlugin.lastReleasedPublicPluginVersion.selectedLightIcon;
           }
-          return `${this.config.assetHost()}/assets/images/icons/plugin_default.selected.light.svg`;
+          return `${this.config.assetHost()}/svgs/plugin_default.selected.light.svg`;
         }
         return null;
       }
@@ -707,7 +705,7 @@ export default class PluginResolverModule extends BaseResolverModule {
           if (lastVersion) {
             return lastVersion.selectedDarkIcon;
           }
-          return `${this.config.assetHost()}/assets/images/icons/plugin_default.selected.dark.svg`;
+          return `${this.config.assetHost()}/svgs/plugin_default.selected.dark.svg`;
         }
 
         if (
@@ -726,13 +724,13 @@ export default class PluginResolverModule extends BaseResolverModule {
           if (lastVersion) {
             return lastVersion.selectedDarkIcon;
           }
-          return `${this.config.assetHost()}/assets/images/icons/plugin_default.selected.dark.svg`;
+          return `${this.config.assetHost()}/svgs/plugin_default.selected.dark.svg`;
         }
         if (!dbPlugin.isPrivate) {
           if (dbPlugin.lastReleasedPublicPluginVersion) {
             return dbPlugin.lastReleasedPublicPluginVersion.selectedDarkIcon;
           }
-          return `${this.config.assetHost()}/assets/images/icons/plugin_default.selected.dark.svg`;
+          return `${this.config.assetHost()}/svgs/plugin_default.selected.dark.svg`;
         }
         return null;
       }
