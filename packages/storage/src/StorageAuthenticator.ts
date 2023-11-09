@@ -31,13 +31,14 @@ export default class StorageAuthenticator {
 
   public signURL(url: string, path: string, ttlSec: number) {
     if (isProduction) {
-      const dateLessThan = new Date((new Date()).getTime() + 1000 * ttlSec);
+      const dateLessThan = new Date(Date.now() + 1000 * ttlSec);
       const keyPairId = this.config.cdnKeypairId();
       const privateKey = this.config.cdnPrivatePEM();
+      console.log("SIGNING EXPIRATION", dateLessThan.toUTCString())
       return getSignedUrl({
         url,
         keyPairId,
-        dateLessThan: dateLessThan.toDateString(),
+        dateLessThan: dateLessThan.toUTCString(),
         privateKey,
       });
     }

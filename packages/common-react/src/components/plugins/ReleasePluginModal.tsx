@@ -129,11 +129,11 @@ const RegisterPluginModal = (props: Props) => {
       if (
         props?.pluginVersion?.ownerType == "org_plugin" &&
         props?.pluginVersion.id &&
-        props?.pluginVersion?.organization?.id
+        props?.plugin?.organization?.id
       ) {
         releaseOrgPlugin({
           variables: {
-            organizationId: props.pluginVersion.organization?.id,
+            organizationId: props?.plugin?.organization?.id,
             pluginVersionId: props.pluginVersion.id,
           },
         });

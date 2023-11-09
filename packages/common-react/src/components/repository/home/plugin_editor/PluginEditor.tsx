@@ -215,10 +215,10 @@ const PluginEditor = (props: Props) => {
                 {"suggested plugins"}
               </DevelopmentPluginsTitle>
               <DevelopmentPluginsList>
-                {suggestedPlugins?.map?.((developerPlugin, index) => {
+                {suggestedPlugins?.map?.((suggestedPlugin, index) => {
                   return (
                     <PreviewPlugin
-                      developmentPlugin={developerPlugin}
+                      developmentPlugin={suggestedPlugin}
                       onChangePluginVersion={props.onChangePluginVersion}
                       key={index}
                     />

@@ -48,7 +48,12 @@ const PreviewPlugin = (props: Props) => {
     const theme = useTheme();
 
     const pluginVersion = useMemo(() => {
-        return props.developmentPlugin?.versions?.[0] as PluginVersion;
+        return (
+          (props.developmentPlugin?.versions?.[0] as PluginVersion) ??
+          (props.developmentPlugin
+            ?.lastReleasedPublicVersion as PluginVersion) ??
+          (props.developmentPlugin?.lastReleasedPrivateVersion as PluginVersion)
+        );
 
     }, [props.developmentPlugin]);
     const icon = useMemo(() => {
