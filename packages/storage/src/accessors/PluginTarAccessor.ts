@@ -57,6 +57,7 @@ export default class PluginTarAccessor {
         readStream.pipe(writeStream);
       });
     } catch (e) {
+      console.log("E", e);
       return false;
     }
   }
