@@ -26,8 +26,8 @@ export default class DiskStorageDriver implements StorageDriver {
   constructor(storageType: "public" | "private") {
     this.root = storageType == "public" ? root : privateRoot;
   }
-  public writeStream(path: string): WriteStream {
-    return fs.createWriteStream(path);
+  public writeStream(path: string): [WriteStream, null] {
+    return [fs.createWriteStream(path), null];
   };
 
   public async mkdir(path: string) {

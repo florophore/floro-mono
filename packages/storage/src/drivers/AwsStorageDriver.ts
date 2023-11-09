@@ -76,21 +76,22 @@ export default class AwsStorageDriver implements StorageDriver {
     }
   }
 
-  public writeStream(path: string): PassThrough {
+  public writeStream(fpath: string): [PassThrough, Upload] {
     const passThroughStream = new stream.PassThrough();
-    new Upload({
+    const key = fpath[0] == "/" ? fpath.substring(1) : fpath;
+    const upload = new Upload({
       client: this.s3Client,
       params: {
         Bucket: this.bucket,
-        Key: path,
+        Key: key,
         Body: passThroughStream,
         ContentType: 'application/gzip'
       },
       queueSize: 4,
       partSize: 1024 * 1024 * 5,
       leavePartsOnError: false,
-    })
-    return passThroughStream;
+    });
+    return [passThroughStream, upload];
   };
 
   public async read(fpath: string) {

@@ -8,14 +8,14 @@ import DiskStorageDriver from "../drivers/DiskStorageDriver";
 
 @injectable()
 export default class PluginTarAccessor {
-  private driver!: StorageDriver;
+  private privateDriver!: StorageDriver;
 
   constructor(@inject(StorageClient) storageClient: StorageClient) {
-    this.driver = storageClient.privateDriver;
+    this.privateDriver = storageClient.privateDriver;
   }
 
   public rootDirectory() {
-    const rootDir = path.join(this.driver.staticRoot?.() ?? "", "plugin-tars");
+    const rootDir = path.join(this.privateDriver.staticRoot?.() ?? "", "plugin-tars");
     if (rootDir[0] == "/") {
       return rootDir;
     }
@@ -32,17 +32,16 @@ export default class PluginTarAccessor {
     readStream: ReadStream
   ): Promise<boolean> {
     try {
-      if (this.driver instanceof DiskStorageDriver) {
-        const rootDirExists = await this.driver.exists(this.rootDirectory());
+      if (this.privateDriver instanceof DiskStorageDriver) {
+        const rootDirExists = await this.privateDriver.exists(this.rootDirectory());
         if (!rootDirExists) {
-          await this.driver.mkdir(this.rootDirectory());
+          await this.privateDriver.mkdir(this.rootDirectory());
         }
       }
       const tarPath = path.join(this.rootDirectory(), `${uploadHash}.tar.gz`);
-      console.log("TAR PATH", tarPath);
-      const writeStream = this.driver.writeStream(tarPath);
+      const [writeStream, upload] = this.privateDriver.writeStream(tarPath);
       let hasFinished = false;
-      return await new Promise((resolve) => {
+      return await new Promise(async (resolve) => {
         writeStream.on("finish", () => {
           if (!hasFinished) {
             resolve(true);
@@ -50,16 +49,17 @@ export default class PluginTarAccessor {
           }
         });
         writeStream.on("error", (e) => {
-          console.log("UPLOAD ERROR", e);
           if (!hasFinished) {
             resolve(false);
             hasFinished = true;
           }
         });
         readStream.pipe(writeStream);
+        if (upload) {
+          await upload.done();
+        }
       });
     } catch (e) {
-      console.log("E", e);
       return false;
     }
   }

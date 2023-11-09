@@ -38,6 +38,9 @@ export default class PrivateCDNTestController extends BaseController {
       }
       const pathParts = reqRelativePath.split("/").slice(1);
       const staticRoot = this.storageClient.getStaticRoot("private");
+      if (!staticRoot) {
+        return;
+      }
       const assetPath = path.join(staticRoot as string, ...pathParts);
 
       const file = await fs.promises.readFile(assetPath);
