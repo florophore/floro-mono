@@ -36,6 +36,18 @@ jobs:
           cond: ${{ github.event.inputs.buildType == 'prod' }}
           if_true: 'floro.io'
           if_false: 'floro-staging.com'
+      - uses: haya14busa/action-cond@v1
+        id: awsAccessKeyId
+        with:
+          cond: ${{ github.event.inputs.buildType == 'prod' }}
+          if_true: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
+          if_false: ${{ secrets.STAGING_AWS_ACCESS_KEY_ID }}
+      - uses: haya14busa/action-cond@v1
+        id: awsSecretAccessKey
+        with:
+          cond: ${{ github.event.inputs.buildType == 'prod' }}
+          if_true: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
+          if_false: ${{ secrets.STAGING_AWS_SECRET_ACCESS_KEY }}
       - name: Yarn install cache
         uses: c-hive/gha-yarn-cache@v1
 
@@ -54,8 +66,8 @@ jobs:
           args: --follow-symlinks
         env:
           AWS_S3_BUCKET: ${{ steps.bucketName.outputs.value }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ steps.awsAccessKeyId.outputs.value }}
+          AWS_SECRET_ACCESS_KEY: ${{ steps.awsSecretAccessKey.outputs.value }}
           SOURCE_DIR: 'packages/main/dist/client'
   build-image:
     name: 'Build Image & Push to ECR'
@@ -81,11 +93,23 @@ jobs:
           cond: ${{ github.event.inputs.buildType == 'prod' }}
           if_true: 'floro.io'
           if_false: 'floro-staging.com'
+      - uses: haya14busa/action-cond@v1
+        id: awsAccessKeyId
+        with:
+          cond: ${{ github.event.inputs.buildType == 'prod' }}
+          if_true: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
+          if_false: ${{ secrets.STAGING_AWS_ACCESS_KEY_ID }}
+      - uses: haya14busa/action-cond@v1
+        id: awsSecretAccessKey
+        with:
+          cond: ${{ github.event.inputs.buildType == 'prod' }}
+          if_true: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
+          if_false: ${{ secrets.STAGING_AWS_SECRET_ACCESS_KEY }}
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ steps.awsAccessKeyId.outputs.value }}
+          aws-secret-access-key: ${{ steps.awsSecretAccessKey.outputs.value }}
           aws-region: us-east-1
 
       - name: Set tag var
