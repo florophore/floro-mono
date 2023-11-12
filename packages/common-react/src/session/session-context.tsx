@@ -5,9 +5,9 @@ import {
   Session,
   useExchangeSessionMutation,
   User,
-  UserFragmentDoc,
   SessionFragmentDoc,
-  Repository
+  Repository,
+  CurrentUserFragmentDoc
 } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { useDaemonIsConnected, useFloroSocket, useSocketEvent } from "../pubsub/socket";
 import { useQueryClient } from "react-query";
@@ -48,8 +48,8 @@ export const SessionProvider = (props: Props) => {
   const saveIcon = useSaveOfflineIcon();
 
   const fragmentUser = useFragment({
-    fragment: UserFragmentDoc,
-    fragmentName: 'User',
+    fragment: CurrentUserFragmentDoc,
+    fragmentName: 'CurrentUser',
     from: {
       id: currentUser?.id,
       __typename: 'User'

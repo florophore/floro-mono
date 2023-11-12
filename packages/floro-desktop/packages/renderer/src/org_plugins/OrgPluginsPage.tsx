@@ -39,7 +39,6 @@ const NotFoundText = styled.h3`
 
 
 const OrgPluginsPage = () => {
-  const {currentUser} = useSession();
   const navigate = useNavigate();
   const params = useParams();
   const handle = params?.['handle'] ?? '';
@@ -48,6 +47,7 @@ const OrgPluginsPage = () => {
     variables: {
       handle:  handle ?? "",
     },
+    fetchPolicy: 'cache-and-network'
   });
 
   const organizations = useUserOrganizations();

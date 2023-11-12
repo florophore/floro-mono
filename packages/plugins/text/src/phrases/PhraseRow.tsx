@@ -128,6 +128,7 @@ const PhraseRow = (props: Props) => {
   const [selectedLocaleCode, setSelectedLocaleCode] = useState(props.selectedTopLevelLocale);
   const localeSettings = useReferencedObject("$(text).localeSettings");
   const [phrase, setPhrase] = useFloroState(props.phraseRef);
+  const [description, setDescription] = useFloroState(`${props.phraseRef}.description`);
   const selectedLocale = useMemo(
     () =>
       localeSettings.locales.find((l) => l.localeCode == selectedLocaleCode),
@@ -233,16 +234,16 @@ const PhraseRow = (props: Props) => {
     ];
   }, [locales]);
 
-  const onUpdateDescription = useCallback((description: string) => {
-    if (!phrase) {
+  const onUpdateDescription = useCallback((value: string) => {
+    if (!description) {
       return;
     }
-    setPhrase({
-      ...phrase,
-      description
+    setDescription({
+      ...description,
+      value
     });
 
-  }, [phrase, setPhrase]);
+  }, [description, setDescription]);
 
   const hasUnTranslatedParts = useMemo(() => {
     const localeRef = makeQueryRef(
@@ -473,16 +474,17 @@ const PhraseRow = (props: Props) => {
         </div>
       )}
       {(commandMode == "edit" ||
-        (props?.phrase?.description?.trim() ?? "") != "") && (
+        (props?.phrase?.description?.value?.trim() ?? "") != "") && (
         <div
           style={{
             marginTop: 24,
           }}
         >
           <DescriptionContainer
-            description={props.phrase?.description ?? ""}
+            description={description?.value ?? ""}
             onUpdateDescription={onUpdateDescription}
             isReadOnly={commandMode != "edit"}
+            phraseRef={props.phraseRef}
           />
         </div>
       )}

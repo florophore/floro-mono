@@ -143,8 +143,12 @@ const NewRepoRow = (props: Props) => {
         <div
           style={{
             display: "inline-block",
-            maxWidth: 450,
+            maxWidth: 624,
             width: "100%",
+            borderRadius: 8,
+            margin: 16,
+            border: `1px solid ${theme.colors.commonBorder}`,
+            boxShadow: `0px 2px 2px 2px ${theme.colors.tooltipOuterShadowColor}`
           }}
         >
           <Row onMouseOver={onMouseOver} onMouseLeave={onMouseLeave}>

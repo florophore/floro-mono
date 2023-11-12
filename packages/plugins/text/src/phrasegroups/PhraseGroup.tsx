@@ -597,7 +597,7 @@ const PhraseGroup = (props: Props) => {
         (phrase?.phraseKey ?? "")
           ?.toLowerCase()
           .indexOf(props.searchText.toLowerCase().trim()) != -1 ||
-        (phrase?.description ?? "")
+        (phrase?.description?.value ?? "")
           ?.toLowerCase()
           .indexOf(props.searchText.toLowerCase().trim()) != -1
       ) {
@@ -901,7 +901,7 @@ const PhraseGroup = (props: Props) => {
             (phrase?.phraseKey ?? "")
               ?.toLowerCase()
               .indexOf(props.searchText.toLowerCase().trim()) != -1 ||
-            (phrase?.description ?? "")
+            (phrase?.description?.value ?? "")
               ?.toLowerCase()
               .indexOf(props.searchText.toLowerCase().trim()) != -1
           ) {

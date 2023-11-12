@@ -228,7 +228,7 @@ const PluginInstaller = (props: Props) => {
       return (
         fetchPluginRequest?.data?.getPlugin?.plugin?.versions?.find?.((v) => {
           return v?.version == props.pluginVersion.version;
-        }) ?? pluginVersion
+        }) ?? props.pluginVersion
       );
     }
     return props.pluginVersion;

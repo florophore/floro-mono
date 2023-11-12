@@ -1,5 +1,5 @@
 {
-  "version": "0.0.6",
+  "version": "0.0.8",
   "name": "text",
   "displayName": "Text",
   "description": "A plugin for managing strings and translations.",
@@ -98,9 +98,11 @@
               "type": "string"
             },
             "description": {
-              "type": "string",
-              "default": "",
-              "nullable": true
+              "value": {
+                "type": "string",
+                "default": "",
+                "nullable": true
+              }
             },
             "tags": {
               "type": "array",

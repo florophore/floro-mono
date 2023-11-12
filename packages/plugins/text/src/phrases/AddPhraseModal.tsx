@@ -219,7 +219,9 @@ const AddPhraseModal = (props: Props) => {
         {
           id: newId,
           phraseKey,
-          description: description ?? "",
+          description: {
+            value: description ?? ""
+          },
           tags: [],
           phraseTranslations: [],
           variables: [],
