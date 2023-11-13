@@ -194,7 +194,7 @@ const getStaticNodes = <
         1,
         textNode.content.length - 1
       ) as keyof PhraseKeys[K]["variables"]&string;
-      const variableValue = variableMap?.[variableName] ?? "" as string;
+      const variableValue = variableMap?.[variableName]?.toString?.() ?? "" as string;
       return {
         type: "text",
         content: variableValue,
@@ -299,7 +299,7 @@ const getStaticText = <
         1,
         textNode.content.length - 1
       ) as keyof PhraseKeys[K]["variables"]&string;
-      const variableValue = variableMap?.[variableName] ?? "" as string;
+      const variableValue = variableMap?.[variableName]?.toString() ?? "" as string;
       return variableValue;
     }
     return textNode.content;

@@ -94,7 +94,6 @@ export const useRichText = <
     phraseKey,
     phraseArgs
   );
-  console.log("NODES", nodes)
   return useMemo(() => {
     return renderers.render(
       nodes,

@@ -337,7 +337,7 @@ const NewBranchNavPage = (props: Props) => {
             onSelectBranch={onClickBaseBranch}
             filterBranches
             filteredBranches={baseBranches}
-            htmlContentHeight={160}
+            htmlContentHeight={240}
           />
         </div>
       );

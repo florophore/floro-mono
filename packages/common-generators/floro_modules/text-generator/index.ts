@@ -47,10 +47,10 @@ export interface LocalizedPhraseKeys {
 
 export interface PhraseKeys {
     "main.hello_world":         MainHelloWorld;
-    "main.hi_don":              MainHiDon;
     "main.new_phrase":          MainNewPhrase;
     "main.say_hello_to_arthur": MainSayHelloToArthur;
     "main.welcome_banner":      MainWelcomeBanner;
+    "main.welcome_page.cta":    MainWelcomePageCta;
 }
 
 export interface MainHelloWorld {
@@ -96,16 +96,16 @@ export enum PhraseType {
 export interface MainHelloWorldVariables {
 }
 
-export interface MainHiDon {
-    interpolations: MainHiDonInterpolations;
-    links:          MainHiDonLinks;
+export interface MainNewPhrase {
+    interpolations: MainNewPhraseInterpolations;
+    links:          MainNewPhraseLinks;
     phrase:         TextNode[];
     phraseKey:      string;
-    variables:      MainHiDonVariables;
+    variables:      MainNewPhraseVariables;
 }
 
-export interface MainHiDonInterpolations {
-    files: Interpolation;
+export interface MainNewPhraseInterpolations {
+    "some condition": Interpolation;
 }
 
 export interface Interpolation {
@@ -140,25 +140,6 @@ export interface SubCase {
 
 export enum Conjunction {
     And = "AND",
-}
-
-export interface MainHiDonLinks {
-}
-
-export interface MainHiDonVariables {
-    numberOfFiles: number;
-}
-
-export interface MainNewPhrase {
-    interpolations: MainNewPhraseInterpolations;
-    links:          MainNewPhraseLinks;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      MainNewPhraseVariables;
-}
-
-export interface MainNewPhraseInterpolations {
-    "some condition": Interpolation;
 }
 
 export interface MainNewPhraseLinks {
@@ -221,12 +202,29 @@ export interface MainWelcomeBannerVariables {
     numberOfFiles: number;
 }
 
+export interface MainWelcomePageCta {
+    interpolations: MainWelcomePageCtaInterpolations;
+    links:          MainWelcomePageCtaLinks;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      MainWelcomePageCtaVariables;
+}
+
+export interface MainWelcomePageCtaInterpolations {
+}
+
+export interface MainWelcomePageCtaLinks {
+}
+
+export interface MainWelcomePageCtaVariables {
+}
+
 export interface PhraseKeyDebugInfo {
     "main.hello_world":         DebugInfo;
-    "main.hi_don":              DebugInfo;
     "main.new_phrase":          DebugInfo;
     "main.say_hello_to_arthur": DebugInfo;
     "main.welcome_banner":      DebugInfo;
+    "main.welcome_page.cta":    DebugInfo;
 }
 
 export interface DebugInfo {
@@ -412,7 +410,7 @@ const getStaticNodes = <
         1,
         textNode.content.length - 1
       ) as keyof PhraseKeys[K]["variables"]&string;
-      const variableValue = variableMap?.[variableName] ?? "" as string;
+      const variableValue = variableMap?.[variableName]?.toString?.() ?? "" as string;
       return {
         type: "text",
         content: variableValue,
@@ -517,7 +515,7 @@ const getStaticText = <
         1,
         textNode.content.length - 1
       ) as keyof PhraseKeys[K]["variables"]&string;
-      const variableValue = variableMap?.[variableName] ?? "" as string;
+      const variableValue = variableMap?.[variableName]?.toString() ?? "" as string;
       return variableValue;
     }
     return textNode.content;

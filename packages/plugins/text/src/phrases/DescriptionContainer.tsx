@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
+import { useDiffColor } from "../diff";
+import { PointerTypes } from "../floro-schema-api";
 
 const TextAreaBlurbBox = styled.div`
   font-family: "MavenPro";
@@ -148,11 +150,12 @@ interface Props {
     description: string
     onUpdateDescription: (description: string) => void;
     isReadOnly: boolean;
-    diffColor?: string;
+    phraseRef: PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>"];
 }
 
 const DescriptionContainer = (props: Props) => {
   const theme = useTheme();
+  const diffColor = useDiffColor(`${props.phraseRef}.description`, false, 'darker');
 
   const textareaContainer = useRef<HTMLDivElement>(null);
   const growWrap = useRef<HTMLDivElement>(null);
@@ -180,7 +183,7 @@ const DescriptionContainer = (props: Props) => {
   return (
     <TextAreaBlurbBox
       style={{
-        border: `2px solid ${props.diffColor ?? theme.colors.contrastTextLight}`,
+        border: `2px solid ${diffColor ?? theme.colors.contrastTextLight}`,
         position: "relative",
       }}
       ref={textareaContainer}
@@ -189,16 +192,16 @@ const DescriptionContainer = (props: Props) => {
         <LabelBorderEnd
           style={{
             left: -1,
-            background: props.diffColor ?? theme.colors.contrastTextLight,
+            background: diffColor ?? theme.colors.contrastTextLight,
           }}
         />
-        <LabelText style={{ color: props.diffColor ?? theme.colors.contrastTextLight }}>
+        <LabelText style={{ color: diffColor ?? theme.colors.contrastTextLight }}>
           {"phrase description"}
         </LabelText>
         <LabelBorderEnd
           style={{
             right: -1,
-            background: props.diffColor ?? theme.colors.contrastTextLight,
+            background: diffColor ?? theme.colors.contrastTextLight,
           }}
         />
       </LabelContainer>

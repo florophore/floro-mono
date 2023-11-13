@@ -1,9 +1,9 @@
 {
   "moduleFile": "floro.module.js",
   "repositoryId": "52812594-5b6e-43f3-ab1e-afa6978cfa4d",
-  "sha": "296b6b6755228b14ea7a31e9db0b86eabb06e1785dfc416905d3f7fa700eacdf",
-  "message": "added text",
-  "idx": 3,
+  "sha": "5a4cacc01a6c7b8f4cc1e7b8ce89532c58d9c823967ed15ceddafd5836ad3a8f",
+  "message": "added todos normal",
+  "idx": 48,
   "genratorDependencies": {
     "palette-generator": {
       "palette": "0.0.37"
@@ -16,6 +16,9 @@
     },
     "text-generator": {
       "text": "0.0.1"
+    },
+    "todo-generator": {
+      "todo": "0.0.0"
     }
   }
 }

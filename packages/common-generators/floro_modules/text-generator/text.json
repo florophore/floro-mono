@@ -21,146 +21,18 @@
   },
   "localizedPhraseKeys": {
     "EN": {
-      "main.hi_don": {
-        "phraseKey": "main.hi_don",
-        "variables": {
-          "numberOfFiles": 0
-        },
+      "main.welcome_page.cta": {
+        "phraseKey": "main.welcome_page.cta",
+        "variables": {},
         "links": {},
-        "interpolations": {
-          "files": {
-            "cases": [
-              {
-                "variable": "numberOfFiles",
-                "operator": "eq",
-                "value": 1,
-                "subcases": [],
-                "resultant": [
-                  {
-                    "children": [],
-                    "content": "one file",
-                    "type": "text",
-                    "styles": {
-                      "isBold": false,
-                      "isItalic": false,
-                      "isUnderlined": false,
-                      "isStrikethrough": false,
-                      "isSuperscript": false,
-                      "isSubscript": false
-                    }
-                  }
-                ]
-              },
-              {
-                "variable": "numberOfFiles",
-                "operator": "neq",
-                "value": 1,
-                "subcases": [],
-                "resultant": [
-                  {
-                    "children": [],
-                    "content": "some files",
-                    "type": "text",
-                    "styles": {
-                      "isBold": false,
-                      "isItalic": false,
-                      "isUnderlined": false,
-                      "isStrikethrough": false,
-                      "isSuperscript": false,
-                      "isSubscript": false
-                    }
-                  }
-                ]
-              }
-            ],
-            "default": []
-          }
-        },
+        "interpolations": {},
         "phrase": [
           {
             "children": [],
-            "content": "Hello DON!!!!😀 you have ",
+            "content": "welcome to my website",
             "type": "text",
             "styles": {
-              "isBold": true,
-              "isItalic": false,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": "{files}",
-            "type": "interpolation",
-            "styles": {
-              "isBold": true,
-              "isItalic": false,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": " ready to download. ",
-            "type": "text",
-            "styles": {
-              "isBold": true,
-              "isItalic": false,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": "This should work. okay I this will work too!",
-            "type": "text",
-            "styles": {
-              "isBold": true,
-              "isItalic": true,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": "\n",
-            "type": "text",
-            "styles": {
-              "isBold": true,
-              "isItalic": true,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": "\n",
-            "type": "text",
-            "styles": {
-              "isBold": true,
-              "isItalic": false,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": "\n",
-            "type": "text",
-            "styles": {
-              "isBold": true,
+              "isBold": false,
               "isItalic": false,
               "isUnderlined": false,
               "isStrikethrough": false,
@@ -246,7 +118,33 @@
           },
           {
             "children": [],
-            "content": "Welcome to our website. This is a demo. And the number of files is ",
+            "content": "Welcome to ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "our",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " website. This is a demo. And the number of files is ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -272,7 +170,7 @@
           },
           {
             "children": [],
-            "content": ". ",
+            "content": ".  asdfasdf??? testing",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -1048,109 +946,20 @@
       }
     },
     "ES": {
-      "main.hi_don": {
-        "phraseKey": "main.hi_don",
-        "variables": {
-          "numberOfFiles": 0
-        },
+      "main.welcome_page.cta": {
+        "phraseKey": "main.welcome_page.cta",
+        "variables": {},
         "links": {},
-        "interpolations": {
-          "files": {
-            "cases": [
-              {
-                "variable": "numberOfFiles",
-                "operator": "eq",
-                "value": 1,
-                "subcases": [],
-                "resultant": [
-                  {
-                    "children": [],
-                    "content": "one file",
-                    "type": "text",
-                    "styles": {
-                      "isBold": false,
-                      "isItalic": false,
-                      "isUnderlined": false,
-                      "isStrikethrough": false,
-                      "isSuperscript": false,
-                      "isSubscript": false
-                    }
-                  }
-                ]
-              },
-              {
-                "variable": "numberOfFiles",
-                "operator": "neq",
-                "value": 1,
-                "subcases": [],
-                "resultant": [
-                  {
-                    "children": [],
-                    "content": "some files",
-                    "type": "text",
-                    "styles": {
-                      "isBold": false,
-                      "isItalic": false,
-                      "isUnderlined": false,
-                      "isStrikethrough": false,
-                      "isSuperscript": false,
-                      "isSubscript": false
-                    }
-                  }
-                ]
-              }
-            ],
-            "default": []
-          }
-        },
+        "interpolations": {},
         "phrase": [
           {
             "children": [],
-            "content": "Hola DON!!!!😀 tienes ",
+            "content": "welcome to my website",
             "type": "text",
             "styles": {
-              "isBold": true,
+              "isBold": false,
               "isItalic": false,
-              "isUnderlined": true,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": "{files}",
-            "type": "interpolation",
-            "styles": {
-              "isBold": true,
-              "isItalic": false,
-              "isUnderlined": true,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": " listo para descargar",
-            "type": "text",
-            "styles": {
-              "isBold": true,
-              "isItalic": false,
-              "isUnderlined": true,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": "\n",
-            "type": "text",
-            "styles": {
-              "isBold": true,
-              "isItalic": false,
-              "isUnderlined": true,
+              "isUnderlined": false,
               "isStrikethrough": false,
               "isSuperscript": false,
               "isSubscript": false
@@ -1234,7 +1043,33 @@
           },
           {
             "children": [],
-            "content": "Welcome to our website. This is a demo. And the number of files is ",
+            "content": "Welcome to ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "our",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " website. This is a demo. And the number of files is ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -1260,7 +1095,7 @@
           },
           {
             "children": [],
-            "content": ". ",
+            "content": ".  asdfasdf??? testing",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -1936,80 +1771,20 @@
       }
     },
     "DE": {
-      "main.hi_don": {
-        "phraseKey": "main.hi_don",
-        "variables": {
-          "numberOfFiles": 0
-        },
+      "main.welcome_page.cta": {
+        "phraseKey": "main.welcome_page.cta",
+        "variables": {},
         "links": {},
-        "interpolations": {
-          "files": {
-            "cases": [],
-            "default": [
-              {
-                "children": [],
-                "content": "files",
-                "type": "text",
-                "styles": {
-                  "isBold": false,
-                  "isItalic": false,
-                  "isUnderlined": false,
-                  "isStrikethrough": false,
-                  "isSuperscript": false,
-                  "isSubscript": false
-                }
-              }
-            ]
-          }
-        },
+        "interpolations": {},
         "phrase": [
           {
             "children": [],
-            "content": "Hallo DON!!!!😀 Sie haben ",
+            "content": "welcome to my website",
             "type": "text",
             "styles": {
-              "isBold": true,
+              "isBold": false,
               "isItalic": false,
-              "isUnderlined": true,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": "{files}",
-            "type": "interpolation",
-            "styles": {
-              "isBold": true,
-              "isItalic": false,
-              "isUnderlined": true,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": " zum Download bereit.",
-            "type": "text",
-            "styles": {
-              "isBold": true,
-              "isItalic": false,
-              "isUnderlined": true,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": "\n",
-            "type": "text",
-            "styles": {
-              "isBold": true,
-              "isItalic": false,
-              "isUnderlined": true,
+              "isUnderlined": false,
               "isStrikethrough": false,
               "isSuperscript": false,
               "isSubscript": false
@@ -2080,7 +1855,33 @@
           },
           {
             "children": [],
-            "content": "Willkommen auf unserer Website. Dies ist eine Demo.",
+            "content": "Willkommen auf unserer Website. Dies ist eine Demo. Und die Anzahl der Dateien ist ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{numberOfFiles}",
+            "type": "variable",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ". asdfasdf??? testing",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -2857,9 +2658,9 @@
     }
   },
   "phraseKeyDebugInfo": {
-    "main.hi_don": {
+    "main.welcome_page.cta": {
       "groupName": "Main",
-      "phraseKey": "hi don"
+      "phraseKey": "welcome_page.cta"
     },
     "main.welcome_banner": {
       "groupName": "Main",

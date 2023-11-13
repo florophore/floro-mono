@@ -3,7 +3,7 @@ import { ThemeProvider } from "@emotion/react";
 import styled from "@emotion/styled";
 import { useSelectedTheme } from "@floro/common-web/src/hooks/color-theme";
 import "./index.css";
-import { FloroProvider, useFloroContext } from "./floro-schema-api";
+import { FloroProvider, useFloroContext, useQueryRef, useReferencedObject } from "./floro-schema-api";
 import ShadeEditList from "./shades/ShadeEditList";
 import ShadeReadList from "./shades/ShadeReadList";
 import ColorPaletteMatrix from "./colormatrix/ColorPaletteMatrix";

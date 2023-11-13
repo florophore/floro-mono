@@ -6,6 +6,7 @@ import { useFloroIcons } from '../../floro_listener/FloroIconsProvider';
 import { getIcon } from '@floro/common-generators/floro_modules/icon-generator';
 import { useTheme} from "@emotion/react";
 import { useLocales, usePlainText, useRichText } from "../../floro_listener/hooks/locales";
+import { useTodo } from "../../floro_listener/FloroTodoProvider";
 
 function Home() {
 
@@ -19,10 +20,18 @@ function Home() {
   }, [theme.name, icons])
 
   const { selectedLocaleCode, setSelectedLocaleCode} = useLocales();
+
   const welcome = useRichText("main.welcome_banner", {
     name: username,
-    numberOfFiles: 12,
+    numberOfFiles: 2
   });
+
+  const welcomePlainText = usePlainText("main.welcome_banner", {
+    name: username,
+    numberOfFiles: 2
+  });
+
+  const someTodo = useTodo("one more todo");
 
   const onChange = useCallback((event) => {
     setUsername(event.target.value);
@@ -51,6 +60,14 @@ function Home() {
       </div>
       <div style={{fontFamily: 'Helvetica'}}>
         {welcome}
+      </div>
+      <div style={{fontFamily: 'Helvetica'}}>
+        <p>
+          {someTodo?.id}
+        </p>
+        <p>
+          {'in Progress: ' + someTodo?.inProgress}
+        </p>
       </div>
     </div>
   )

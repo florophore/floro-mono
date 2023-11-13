@@ -6,7 +6,6 @@ import App from '@floro/common-web/src/App';
 import { MainRoutes } from '@floro/common-web/src/Routing';
 import { createApolloClient } from '@floro/common-web/src/apollo/create-apollo-client';
 import FloroMount from '@floro/common-web/src/floro_listener/FloroMount';
-//import text from "@floro/common-web/src/floro_listener/FloroTextHyrdate";
 import initText from "@floro/common-generators/floro_modules/text-generator";
 
 
@@ -14,7 +13,7 @@ const client = createApolloClient(import.meta.env?.['VITE_HOST'] ?? 'localhost:9
 
 const ClientApp = () => {
   //@ts-ignore
-  const text = initText;
+  const text = import.meta.env?.MODE == "development" ? initText : window.__FLORO_TEXT__ ?? initText;
   return (
     <ApolloProvider client={client as unknown as ApolloClient<NormalizedCache>}>
       <BrowserRouter>
