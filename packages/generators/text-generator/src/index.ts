@@ -816,6 +816,8 @@ export async function generate(
   outDir: string,
   args: { lang: Languages } = { lang: "typescript" }
 ) {
+  let noLinks = true;
+  let noInterpolations = true;
   const SCHEMA = {
     $schema: "http://json-schema.org/draft-06/schema#",
     $ref: "#/definitions/LocalizedPhrases",
@@ -1159,6 +1161,7 @@ export async function generate(
         );
       }
       for (const interpolation of phrase?.interpolationVariants ?? []) {
+        noInterpolations = false;
         SCHEMA.definitions.PhraseKeys.properties[phraseKey].properties.interpolations.properties[
           interpolation.name
         ] = {
@@ -1169,6 +1172,7 @@ export async function generate(
         );
       }
       for (const linkVariables of phrase?.linkVariables ?? []) {
+        noLinks = false;
         SCHEMA.definitions.PhraseKeys.properties[phraseKey].properties.links.properties[
           linkVariables.linkName
         ] = {
@@ -1202,6 +1206,32 @@ export async function generate(
     tsCode += code + '\n';
     tsCode += CODE + '\n\n';
     tsCode += `export default textJSON as unknown as LocalizedPhrases;`;
+    if (noLinks) {
+      tsCode += '\n\n' +`
+interface PlainTextNode {
+  content: string;
+  type: "text" | "variable";
+}
+`.trim()
+
+    }
+    if (noInterpolations) {
+      tsCode += '\n\n' +`
+interface Interpolation {
+  cases: Array<{
+    resultant: TextNode[];
+    variable: string;
+    value: string | number | boolean;
+    operator: string;
+    subcases: Array<{
+      value: string | number | boolean;
+    }>;
+  }>;
+  default: [];
+}
+`.trim()
+
+    }
     await fs.promises.writeFile(tsFile, tsCode, 'utf-8');
 
     const textJson = await getJSON(state);

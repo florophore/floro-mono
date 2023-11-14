@@ -640,6 +640,8 @@ export async function getJSON(state) {
     return localizedPhrases;
 }
 export async function generate(state, outDir, args = { lang: "typescript" }) {
+    let noLinks = true;
+    let noInterpolations = true;
     const SCHEMA = {
         $schema: "http://json-schema.org/draft-06/schema#",
         $ref: "#/definitions/LocalizedPhrases",
@@ -975,12 +977,14 @@ export async function generate(state, outDir, args = { lang: "typescript" }) {
                 SCHEMA.definitions.PhraseKeys.properties[phraseKey].properties.variables.required.push(variable.name);
             }
             for (const interpolation of phrase?.interpolationVariants ?? []) {
+                noInterpolations = false;
                 SCHEMA.definitions.PhraseKeys.properties[phraseKey].properties.interpolations.properties[interpolation.name] = {
                     $ref: "#/definitions/Interpolation",
                 };
                 SCHEMA.definitions.PhraseKeys.properties[phraseKey].properties.interpolations.required.push(interpolation.name);
             }
             for (const linkVariables of phrase?.linkVariables ?? []) {
+                noLinks = false;
                 SCHEMA.definitions.PhraseKeys.properties[phraseKey].properties.links.properties[linkVariables.linkName] = {
                     $ref: "#/definitions/Link",
                 };
@@ -1004,6 +1008,30 @@ export async function generate(state, outDir, args = { lang: "typescript" }) {
         tsCode += code + '\n';
         tsCode += CODE + '\n\n';
         tsCode += `export default textJSON as unknown as LocalizedPhrases;`;
+        if (noLinks) {
+            tsCode += '\n\n' + `
+interface PlainTextNode {
+  content: string;
+  type: "text" | "variable";
+}
+`.trim();
+        }
+        if (noInterpolations) {
+            tsCode += '\n\n' + `
+interface Interpolation {
+  cases: Array<{
+    resultant: TextNode[];
+    variable: string;
+    value: string | number | boolean;
+    operator: string;
+    subcases: Array<{
+      value: string | number | boolean;
+    }>;
+  }>;
+  default: [];
+}
+`.trim();
+        }
         await fs.promises.writeFile(tsFile, tsCode, 'utf-8');
         const textJson = await getJSON(state);
         const jsonFile = path.join(outDir, 'text.json');

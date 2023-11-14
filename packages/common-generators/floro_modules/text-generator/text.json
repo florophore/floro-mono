@@ -9,6 +9,174 @@
   },
   "localizedPhraseKeys": {
     "EN": {
+      "front_page.subtext_of_tag_line": {
+        "phraseKey": "front_page.subtext_of_tag_line",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "floro is a distributed version control system for creating and managing interoperable static assets and templates",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "front_page.tag_line": {
+        "phraseKey": "front_page.tag_line",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "git for the rest of your product team",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "front_page.nav_consulting": {
+        "phraseKey": "front_page.nav_consulting",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "consulting",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "front_page.nav_foss": {
+        "phraseKey": "front_page.nav_foss",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "foss",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "front_page.nav_pricing": {
+        "phraseKey": "front_page.nav_pricing",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "pricing",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "front_page.nav_download": {
+        "phraseKey": "front_page.nav_download",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "download",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "front_page.nav_docs": {
+        "phraseKey": "front_page.nav_docs",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "docs",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "front_page.nav_about": {
+        "phraseKey": "front_page.nav_about",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "about",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
       "main.hello_world": {
         "phraseKey": "main.hello_world",
         "variables": {},
@@ -46,6 +214,38 @@
     }
   },
   "phraseKeyDebugInfo": {
+    "front_page.subtext_of_tag_line": {
+      "groupName": "Front Page",
+      "phraseKey": "subtext of tag line"
+    },
+    "front_page.tag_line": {
+      "groupName": "Front Page",
+      "phraseKey": "tag line"
+    },
+    "front_page.nav_consulting": {
+      "groupName": "Front Page",
+      "phraseKey": "nav consulting"
+    },
+    "front_page.nav_foss": {
+      "groupName": "Front Page",
+      "phraseKey": "nav foss"
+    },
+    "front_page.nav_pricing": {
+      "groupName": "Front Page",
+      "phraseKey": "nav pricing"
+    },
+    "front_page.nav_download": {
+      "groupName": "Front Page",
+      "phraseKey": "nav download"
+    },
+    "front_page.nav_docs": {
+      "groupName": "Front Page",
+      "phraseKey": "nav docs"
+    },
+    "front_page.nav_about": {
+      "groupName": "Front Page",
+      "phraseKey": "nav about"
+    },
     "main.hello_world": {
       "groupName": "Main",
       "phraseKey": "hello world"

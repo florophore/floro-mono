@@ -14,14 +14,6 @@ function UserHome() {
   const redirect = useRedirect();
   const theme = useTheme();
 
-  const palette = useFloroPalette();
-  const icons = useFloroIcons();
-  const isDebugMode = useIsDebugMode();
-  const icon = useMemo(() => {
-    return getIcon(icons, theme.name as "light"|"dark", "main.discard", "hovered");
-  }, [theme.name, icons])
-
-
   //if (!data?.session && !loading) {
   //  return redirect("/");
   //}
@@ -36,10 +28,6 @@ function UserHome() {
         <title>{"User Home"}</title>
       </Helmet>
       <p>{"User Home"}</p>
-      <div style={{width: 100, background: palette.purple.light ?? 'transparent'}}>
-        {isDebugMode ? 'debug': 'normal'}
-        <img style={{width: 100, height: 100}} src={icon}/>
-      </div>
     </div>
   );
 }

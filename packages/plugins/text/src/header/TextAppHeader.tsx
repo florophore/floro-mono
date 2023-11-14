@@ -308,7 +308,7 @@ const TextAppHeader = (props: Props) => {
                 )}
                   <>
                     <div style={{ display: "flex" }}>
-                      {props.isEditGroups && (
+                      {!props.isEditGroups && !props.isEditLocales && (
                         <div style={{ marginLeft: 24, width: 120 }}>
                           <Button
                             onClick={props.onShowEditGroups}
@@ -321,7 +321,7 @@ const TextAppHeader = (props: Props) => {
                         </div>
                       )}
                       <div style={{ marginLeft: 24, width: 120 }}>
-                        {!props.isEditLocales && (
+                        {!props.isEditLocales && !props.isEditGroups && (
                           <Button
                             onClick={props.onShowEditLocales}
                             label={"show locales"}

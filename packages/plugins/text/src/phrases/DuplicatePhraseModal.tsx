@@ -123,11 +123,11 @@ const createPhraseCopyWithUpdatedVariableRefs = (
     };
   });
 
-  return {
+  return JSON.parse(JSON.stringify({
     ...phrase,
     interpolationVariants,
     testCases,
-  };
+  }));
 };
 
 interface Props {

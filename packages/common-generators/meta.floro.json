@@ -1,9 +1,9 @@
 {
   "moduleFile": "floro.module.js",
   "repositoryId": "12aa1618-9e0b-404c-8423-7c38047e18c9",
-  "sha": "d00ec42e191e1c16e858b63b0b9829b17eeb27f23b53abbb5e8d9171528619ab",
-  "message": "first real floro commit",
-  "idx": 0,
+  "sha": "439257a4c0f93f0416325cc2995d26345cd33c32f9d64a238a584e226750d9bd",
+  "message": "finished the first set of changes to the front page",
+  "idx": 4,
   "genratorDependencies": {
     "text-generator": {
       "text": "0.0.8"

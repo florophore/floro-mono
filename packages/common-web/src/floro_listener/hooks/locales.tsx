@@ -1,5 +1,5 @@
 import React, { useContext, useMemo, useState} from "react";
-import initText, { Locales, LocalizedPhrases, PhraseKeys, PhraseType, getDebugInfo, getPhraseValue } from "@floro/common-generators/floro_modules/text-generator";
+import initText, { Locales, LocalizedPhrases, PhraseKeys, getDebugInfo, getPhraseValue } from "@floro/common-generators/floro_modules/text-generator";
 import { useFloroText } from "../FloroTextProvider";
 import { TextRenderers, renderers as richTextRenderers } from "../FloroTextRenderer";
 import { useIsDebugMode } from "../FloroDebugProvider";
@@ -73,7 +73,7 @@ export const useRichText = <
   A extends PhraseKeys[K]["variables"]
 >(
   phraseKey: K,
-  phraseArgs: A,
+  phraseArgs?: A|undefined,
   renderers: TextRenderers = richTextRenderers,
   debugOptions = {
     debugHex: "#FF0000" as `#${string}`,
@@ -92,7 +92,7 @@ export const useRichText = <
     floroText,
     selectedLocaleCode,
     phraseKey,
-    phraseArgs
+    phraseArgs ?? {}
   );
   return useMemo(() => {
     return renderers.render(
@@ -117,7 +117,7 @@ export const useRichText = <
 export const usePlainText =<
 K extends keyof PhraseKeys,
 A extends PhraseKeys[K]["variables"]
-> (phraseKey: K, phraseArgs: A, renderers: PlainTextRenderers = plainTextRenderers) => {
+> (phraseKey: K, phraseArgs?: A|undefined, renderers: PlainTextRenderers = plainTextRenderers) => {
     const floroText = useFloroText();
     const {selectedLocaleCode } = useLocales();
     return useMemo(() => {
@@ -125,7 +125,7 @@ A extends PhraseKeys[K]["variables"]
         floroText,
         selectedLocaleCode,
         phraseKey,
-        phraseArgs
+        phraseArgs ?? {}
       );
       return renderers.render(nodes, renderers);
     }, [

@@ -28,21 +28,29 @@ export interface LocalizedPhraseKeys {
 }
 
 export interface PhraseKeys {
-    "main.hello_world": MainHelloWorld;
+    "front_page.nav_about":           FrontPageNavAbout;
+    "front_page.nav_consulting":      FrontPageNavConsulting;
+    "front_page.nav_docs":            FrontPageNavDocs;
+    "front_page.nav_download":        FrontPageNavDownload;
+    "front_page.nav_foss":            FrontPageNavFOSS;
+    "front_page.nav_pricing":         FrontPageNavPricing;
+    "front_page.subtext_of_tag_line": FrontPageSubtextOfTagLine;
+    "front_page.tag_line":            FrontPageTagLine;
+    "main.hello_world":               MainHelloWorld;
 }
 
-export interface MainHelloWorld {
-    interpolations: Interpolations;
-    links:          Links;
+export interface FrontPageNavAbout {
+    interpolations: FrontPageNavAboutInterpolations;
+    links:          FrontPageNavAboutLinks;
     phrase:         TextNode[];
     phraseKey:      string;
-    variables:      Variables;
+    variables:      FrontPageNavAboutVariables;
 }
 
-export interface Interpolations {
+export interface FrontPageNavAboutInterpolations {
 }
 
-export interface Links {
+export interface FrontPageNavAboutLinks {
 }
 
 export interface TextNode {
@@ -71,11 +79,155 @@ export enum Type {
     Variable = "variable",
 }
 
-export interface Variables {
+export interface FrontPageNavAboutVariables {
+}
+
+export interface FrontPageNavConsulting {
+    interpolations: FrontPageNavConsultingInterpolations;
+    links:          FrontPageNavConsultingLinks;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      FrontPageNavConsultingVariables;
+}
+
+export interface FrontPageNavConsultingInterpolations {
+}
+
+export interface FrontPageNavConsultingLinks {
+}
+
+export interface FrontPageNavConsultingVariables {
+}
+
+export interface FrontPageNavDocs {
+    interpolations: FrontPageNavDocsInterpolations;
+    links:          FrontPageNavDocsLinks;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      FrontPageNavDocsVariables;
+}
+
+export interface FrontPageNavDocsInterpolations {
+}
+
+export interface FrontPageNavDocsLinks {
+}
+
+export interface FrontPageNavDocsVariables {
+}
+
+export interface FrontPageNavDownload {
+    interpolations: FrontPageNavDownloadInterpolations;
+    links:          FrontPageNavDownloadLinks;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      FrontPageNavDownloadVariables;
+}
+
+export interface FrontPageNavDownloadInterpolations {
+}
+
+export interface FrontPageNavDownloadLinks {
+}
+
+export interface FrontPageNavDownloadVariables {
+}
+
+export interface FrontPageNavFOSS {
+    interpolations: FrontPageNavFOSSInterpolations;
+    links:          FrontPageNavFOSSLinks;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      FrontPageNavFOSSVariables;
+}
+
+export interface FrontPageNavFOSSInterpolations {
+}
+
+export interface FrontPageNavFOSSLinks {
+}
+
+export interface FrontPageNavFOSSVariables {
+}
+
+export interface FrontPageNavPricing {
+    interpolations: FrontPageNavPricingInterpolations;
+    links:          FrontPageNavPricingLinks;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      FrontPageNavPricingVariables;
+}
+
+export interface FrontPageNavPricingInterpolations {
+}
+
+export interface FrontPageNavPricingLinks {
+}
+
+export interface FrontPageNavPricingVariables {
+}
+
+export interface FrontPageSubtextOfTagLine {
+    interpolations: FrontPageSubtextOfTagLineInterpolations;
+    links:          FrontPageSubtextOfTagLineLinks;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      FrontPageSubtextOfTagLineVariables;
+}
+
+export interface FrontPageSubtextOfTagLineInterpolations {
+}
+
+export interface FrontPageSubtextOfTagLineLinks {
+}
+
+export interface FrontPageSubtextOfTagLineVariables {
+}
+
+export interface FrontPageTagLine {
+    interpolations: FrontPageTagLineInterpolations;
+    links:          FrontPageTagLineLinks;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      FrontPageTagLineVariables;
+}
+
+export interface FrontPageTagLineInterpolations {
+}
+
+export interface FrontPageTagLineLinks {
+}
+
+export interface FrontPageTagLineVariables {
+}
+
+export interface MainHelloWorld {
+    interpolations: MainHelloWorldInterpolations;
+    links:          MainHelloWorldLinks;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      MainHelloWorldVariables;
+}
+
+export interface MainHelloWorldInterpolations {
+}
+
+export interface MainHelloWorldLinks {
+}
+
+export interface MainHelloWorldVariables {
 }
 
 export interface PhraseKeyDebugInfo {
-    "main.hello_world": DebugInfo;
+    "front_page.nav_about":           DebugInfo;
+    "front_page.nav_consulting":      DebugInfo;
+    "front_page.nav_docs":            DebugInfo;
+    "front_page.nav_download":        DebugInfo;
+    "front_page.nav_foss":            DebugInfo;
+    "front_page.nav_pricing":         DebugInfo;
+    "front_page.subtext_of_tag_line": DebugInfo;
+    "front_page.tag_line":            DebugInfo;
+    "main.hello_world":               DebugInfo;
 }
 
 export interface DebugInfo {
@@ -383,3 +535,21 @@ export const getDebugInfo = <
 };
 
 export default textJSON as unknown as LocalizedPhrases;
+
+interface PlainTextNode {
+  content: string;
+  type: "text" | "variable";
+}
+
+interface Interpolation {
+  cases: Array<{
+    resultant: TextNode[];
+    variable: string;
+    value: string | number | boolean;
+    operator: string;
+    subcases: Array<{
+      value: string | number | boolean;
+    }>;
+  }>;
+  default: [];
+}

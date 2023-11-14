@@ -667,6 +667,8 @@ exports.getJSON = getJSON;
 function generate(state, outDir, args = { lang: "typescript" }) {
     var _a, _b, _c;
     return __awaiter(this, void 0, void 0, function* () {
+        let noLinks = true;
+        let noInterpolations = true;
         const SCHEMA = {
             $schema: "http://json-schema.org/draft-06/schema#",
             $ref: "#/definitions/LocalizedPhrases",
@@ -1002,12 +1004,14 @@ function generate(state, outDir, args = { lang: "typescript" }) {
                     SCHEMA.definitions.PhraseKeys.properties[phraseKey].properties.variables.required.push(variable.name);
                 }
                 for (const interpolation of (_b = phrase === null || phrase === void 0 ? void 0 : phrase.interpolationVariants) !== null && _b !== void 0 ? _b : []) {
+                    noInterpolations = false;
                     SCHEMA.definitions.PhraseKeys.properties[phraseKey].properties.interpolations.properties[interpolation.name] = {
                         $ref: "#/definitions/Interpolation",
                     };
                     SCHEMA.definitions.PhraseKeys.properties[phraseKey].properties.interpolations.required.push(interpolation.name);
                 }
                 for (const linkVariables of (_c = phrase === null || phrase === void 0 ? void 0 : phrase.linkVariables) !== null && _c !== void 0 ? _c : []) {
+                    noLinks = false;
                     SCHEMA.definitions.PhraseKeys.properties[phraseKey].properties.links.properties[linkVariables.linkName] = {
                         $ref: "#/definitions/Link",
                     };
@@ -1031,6 +1035,30 @@ function generate(state, outDir, args = { lang: "typescript" }) {
             tsCode += code + '\n';
             tsCode += CODE + '\n\n';
             tsCode += `export default textJSON as unknown as LocalizedPhrases;`;
+            if (noLinks) {
+                tsCode += '\n\n' + `
+interface PlainTextNode {
+  content: string;
+  type: "text" | "variable";
+}
+`.trim();
+            }
+            if (noInterpolations) {
+                tsCode += '\n\n' + `
+interface Interpolation {
+  cases: Array<{
+    resultant: TextNode[];
+    variable: string;
+    value: string | number | boolean;
+    operator: string;
+    subcases: Array<{
+      value: string | number | boolean;
+    }>;
+  }>;
+  default: [];
+}
+`.trim();
+            }
             yield fs_1.default.promises.writeFile(tsFile, tsCode, 'utf-8');
             const textJson = yield getJSON(state);
             const jsonFile = path_1.default.join(outDir, 'text.json');
