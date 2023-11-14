@@ -13,16 +13,7 @@ export interface LocalizedPhrases {
 }
 
 export interface Locales {
-    DE?: De;
     EN?: En;
-    ES?: Es;
-}
-
-export interface De {
-    defaultFallbackCode: null | string;
-    isGlobalDefault:     boolean;
-    localeCode:          string;
-    name:                string;
 }
 
 export interface En {
@@ -32,46 +23,33 @@ export interface En {
     name:                string;
 }
 
-export interface Es {
-    defaultFallbackCode: null | string;
-    isGlobalDefault:     boolean;
-    localeCode:          string;
-    name:                string;
-}
-
 export interface LocalizedPhraseKeys {
-    DE: PhraseKeys;
     EN: PhraseKeys;
-    ES: PhraseKeys;
 }
 
 export interface PhraseKeys {
-    "main.hello_world":         MainHelloWorld;
-    "main.new_phrase":          MainNewPhrase;
-    "main.say_hello_to_arthur": MainSayHelloToArthur;
-    "main.welcome_banner":      MainWelcomeBanner;
-    "main.welcome_page.cta":    MainWelcomePageCta;
+    "main.hello_world": MainHelloWorld;
 }
 
 export interface MainHelloWorld {
-    interpolations: MainHelloWorldInterpolations;
-    links:          MainHelloWorldLinks;
+    interpolations: Interpolations;
+    links:          Links;
     phrase:         TextNode[];
     phraseKey:      string;
-    variables:      MainHelloWorldVariables;
+    variables:      Variables;
 }
 
-export interface MainHelloWorldInterpolations {
+export interface Interpolations {
 }
 
-export interface MainHelloWorldLinks {
+export interface Links {
 }
 
 export interface TextNode {
     children: TextNode[];
     content:  string;
     styles:   Styles;
-    type:     PhraseType;
+    type:     Type;
 }
 
 export interface Styles {
@@ -83,7 +61,7 @@ export interface Styles {
     isUnderlined:    boolean;
 }
 
-export enum PhraseType {
+export enum Type {
     Interpolation = "interpolation",
     Li = "li",
     Link = "link",
@@ -93,138 +71,11 @@ export enum PhraseType {
     Variable = "variable",
 }
 
-export interface MainHelloWorldVariables {
-}
-
-export interface MainNewPhrase {
-    interpolations: MainNewPhraseInterpolations;
-    links:          MainNewPhraseLinks;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      MainNewPhraseVariables;
-}
-
-export interface MainNewPhraseInterpolations {
-    "some condition": Interpolation;
-}
-
-export interface Interpolation {
-    cases:   Case[];
-    default: TextNode[];
-}
-
-export interface Case {
-    operator:  Operator;
-    resultant: TextNode[];
-    subcases:  SubCase[];
-    value?:    boolean | number | string;
-    variable:  string;
-}
-
-export enum Operator {
-    Eq = "eq",
-    Gt = "gt",
-    Gte = "gte",
-    IsFractional = "is_fractional",
-    LTE = "lte",
-    Lt = "lt",
-    Neq = "neq",
-}
-
-export interface SubCase {
-    conjunction: Conjunction;
-    operator:    Operator;
-    value?:      boolean | number | string;
-    variable:    string;
-}
-
-export enum Conjunction {
-    And = "AND",
-}
-
-export interface MainNewPhraseLinks {
-    "my link": Link;
-}
-
-export interface Link {
-    displayValue: TextNode[];
-    href?:        PlainTextNode[];
-    linkName:     string;
-}
-
-export interface PlainTextNode {
-    content: string;
-    type:    HrefType;
-}
-
-export enum HrefType {
-    Text = "text",
-    Variable = "variable",
-}
-
-export interface MainNewPhraseVariables {
-    username: string;
-}
-
-export interface MainSayHelloToArthur {
-    interpolations: MainSayHelloToArthurInterpolations;
-    links:          MainSayHelloToArthurLinks;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      MainSayHelloToArthurVariables;
-}
-
-export interface MainSayHelloToArthurInterpolations {
-}
-
-export interface MainSayHelloToArthurLinks {
-}
-
-export interface MainSayHelloToArthurVariables {
-}
-
-export interface MainWelcomeBanner {
-    interpolations: MainWelcomeBannerInterpolations;
-    links:          MainWelcomeBannerLinks;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      MainWelcomeBannerVariables;
-}
-
-export interface MainWelcomeBannerInterpolations {
-}
-
-export interface MainWelcomeBannerLinks {
-}
-
-export interface MainWelcomeBannerVariables {
-    name:          string;
-    numberOfFiles: number;
-}
-
-export interface MainWelcomePageCta {
-    interpolations: MainWelcomePageCtaInterpolations;
-    links:          MainWelcomePageCtaLinks;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      MainWelcomePageCtaVariables;
-}
-
-export interface MainWelcomePageCtaInterpolations {
-}
-
-export interface MainWelcomePageCtaLinks {
-}
-
-export interface MainWelcomePageCtaVariables {
+export interface Variables {
 }
 
 export interface PhraseKeyDebugInfo {
-    "main.hello_world":         DebugInfo;
-    "main.new_phrase":          DebugInfo;
-    "main.say_hello_to_arthur": DebugInfo;
-    "main.welcome_banner":      DebugInfo;
-    "main.welcome_page.cta":    DebugInfo;
+    "main.hello_world": DebugInfo;
 }
 
 export interface DebugInfo {

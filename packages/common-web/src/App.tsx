@@ -18,6 +18,7 @@ import ThemeMount from "./hooks/ThemeMount";
 export interface Props {
   routing: IsomorphicRoute[];
   text: LocalizedPhrases;
+  env: string;
 }
 
 function App(props: Props) {
@@ -36,7 +37,7 @@ function App(props: Props) {
               <FloroSocketProvider client={"web"}>
                 <OfflineIconProvider>
                   <OfflinePhotoProvider>
-                    <SessionProvider clientType="web">
+                    <SessionProvider clientType="web" env={props.env}>
                       <Routes>
                         {props.routing.map((route, key) => {
                           const Page = route.component();

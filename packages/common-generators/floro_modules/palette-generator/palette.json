@@ -1,28 +1,13 @@
 {
-  "teal": {
-    "light": "#900404",
-    "regular": "#2452DB",
-    "dark": "#AF3131"
-  },
   "white": {
     "light": null,
     "regular": "#FFFFFF",
-    "dark": "#E52A2A"
+    "dark": null
   },
   "black": {
     "light": null,
     "regular": "#000000",
     "dark": null
-  },
-  "gray": {
-    "light": "#414141",
-    "regular": "#7C7C7C",
-    "dark": "#E3E2E2"
-  },
-  "purple": {
-    "light": "#9B8FF7",
-    "regular": "#5445C4",
-    "dark": "#251F51"
   },
   "red": {
     "light": "#F93D44",

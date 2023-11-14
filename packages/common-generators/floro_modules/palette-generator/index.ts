@@ -7,14 +7,11 @@ import paletteJSON from './palette.json';
 //   const palette = Convert.toPalette(json);
 
 export interface Palette {
-    black:  Shade;
-    blue:   Shade;
-    gray:   Shade;
-    green:  Shade;
-    purple: Shade;
-    red:    Shade;
-    teal:   Shade;
-    white:  Shade;
+    black: Shade;
+    blue:  Shade;
+    green: Shade;
+    red:   Shade;
+    white: Shade;
 }
 
 export interface Shade {

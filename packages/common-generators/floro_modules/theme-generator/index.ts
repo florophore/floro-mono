@@ -12,46 +12,10 @@ export interface Themes {
 }
 
 export interface ThemeColors {
-    "main-background":      MainBackground;
-    "main-theme":           MainTheme;
-    "new-theme":            NewTheme;
     "primary-color":        PrimaryColor;
     "primary-font-color":   PrimaryFontColor;
-    "primary-negative":     PrimaryNegative;
     "secondary-color":      SecondaryColor;
     "secondary-font-color": SecondaryFontColor;
-}
-
-export interface MainBackground {
-    default:  ThemeSet;
-    variants: MainBackgroundVariants;
-}
-
-export interface ThemeSet {
-    dark:  null | string;
-    light: null | string;
-}
-
-export interface MainBackgroundVariants {
-}
-
-export interface MainTheme {
-    default:  ThemeSet;
-    variants: MainThemeVariants;
-}
-
-export interface MainThemeVariants {
-}
-
-export interface NewTheme {
-    default:  ThemeSet;
-    variants: NewThemeVariants;
-}
-
-export interface NewThemeVariants {
-    focused:  ThemeSet;
-    hovered:  ThemeSet;
-    selected: ThemeSet;
 }
 
 export interface PrimaryColor {
@@ -59,7 +23,15 @@ export interface PrimaryColor {
     variants: PrimaryColorVariants;
 }
 
+export interface ThemeSet {
+    dark:  null | string;
+    light: null | string;
+}
+
 export interface PrimaryColorVariants {
+    focused:  ThemeSet;
+    hovered:  ThemeSet;
+    selected: ThemeSet;
 }
 
 export interface PrimaryFontColor {
@@ -68,14 +40,6 @@ export interface PrimaryFontColor {
 }
 
 export interface PrimaryFontColorVariants {
-}
-
-export interface PrimaryNegative {
-    default:  ThemeSet;
-    variants: PrimaryNegativeVariants;
-}
-
-export interface PrimaryNegativeVariants {
     focused:  ThemeSet;
     hovered:  ThemeSet;
     selected: ThemeSet;
@@ -87,6 +51,9 @@ export interface SecondaryColor {
 }
 
 export interface SecondaryColorVariants {
+    focused:  ThemeSet;
+    hovered:  ThemeSet;
+    selected: ThemeSet;
 }
 
 export interface SecondaryFontColor {
@@ -95,6 +62,9 @@ export interface SecondaryFontColor {
 }
 
 export interface SecondaryFontColorVariants {
+    focused:  ThemeSet;
+    hovered:  ThemeSet;
+    selected: ThemeSet;
 }
 
 export interface ThemeDefinitions {

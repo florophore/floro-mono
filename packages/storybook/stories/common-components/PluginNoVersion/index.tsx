@@ -56,6 +56,7 @@ const BlurbBox = styled.div`
   border: 1px solid ${(props) => props.theme.colors.blurbBorder};
   padding: 16px;
   border-radius: 8px;
+  user-select: text;
 `;
 
 const BlurbText = styled.p`
@@ -112,7 +113,7 @@ documentation listed below helpful in getting started.
 Otherewise feel free to run the following command from the
 floro cli to start building.
 
-<b>$</b> <b style="user-select: all;">floro create-plugin ${name}</b>
+<b style="user-select: none;">$</b> <b style="user-select: all;">floro create-plugin ${name}</b>
 
 We can't wait to see what you make!
 `,

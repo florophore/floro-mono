@@ -221,7 +221,7 @@ export default class AppServer {
         });
         const { appHtml, appState, helmet } = await render(
           url,
-          { client, floroText: this.backend.floroTextStore.getText() },
+          { client, floroText: this.backend.floroTextStore.getText(), env: env.VITE_BUILD_ENV_NORMALIZED ?? "development" },
           context
         );
         this.backend.requestCache.release(cacheKey);

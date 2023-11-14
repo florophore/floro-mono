@@ -37,6 +37,12 @@ jobs:
           if_true: 'floro.io'
           if_false: 'floro-staging.com'
       - uses: haya14busa/action-cond@v1
+        id: viteBuildEnvNormalized
+        with:
+          cond: ${{ github.event.inputs.buildType == 'prod' }}
+          if_true: 'production'
+          if_false: 'staging'
+      - uses: haya14busa/action-cond@v1
         id: awsAccessKeyId
         with:
           cond: ${{ github.event.inputs.buildType == 'prod' }}
@@ -58,7 +64,7 @@ jobs:
         run: yarn graphql-schemas:build
 
       - name: Build Main
-        run: CDN_HOST=${{ steps.cdnHost.outputs.value }} VITE_HOST=${{ steps.viteHost.outputs.value }} VITE_IS_SECURE=true yarn main build
+        run: CDN_HOST=${{ steps.cdnHost.outputs.value }} VITE_HOST=${{ steps.viteHost.outputs.value }} VITE_IS_SECURE=true VITE_BUILD_ENV_NORMALIZED=${{ viteBuildEnvNormalized.outputs.value }} yarn main build
 
       - name: Push build to S3
         uses: jakejarvis/s3-sync-action@master
@@ -93,6 +99,12 @@ jobs:
           cond: ${{ github.event.inputs.buildType == 'prod' }}
           if_true: 'floro.io'
           if_false: 'floro-staging.com'
+      - uses: haya14busa/action-cond@v1
+        id: viteBuildEnvNormalized
+        with:
+          cond: ${{ github.event.inputs.buildType == 'prod' }}
+          if_true: 'production'
+          if_false: 'staging'
       - uses: haya14busa/action-cond@v1
         id: awsAccessKeyId
         with:
@@ -131,5 +143,5 @@ jobs:
           ECR_REPOSITORY: ${{ steps.repositoryName.outputs.value }}
           IMAGE_TAG: ${{ steps.vars.outputs.docker_tag }}
         run: |
-          docker build --build-arg vite_is_secure_arg=true --build-arg vite_host_arg=${{ steps.viteHost.outputs.value }} --build-arg cdn_host_arg=${{ steps.cdnHost.outputs.value }} -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
+          docker build --build-arg vite_is_secure_arg=true --build-arg vite_host_arg=${{ steps.viteHost.outputs.value }} --build-arg cdn_host_arg=${{ steps.cdnHost.outputs.value }} --build-arg vite_build_env_normalized_arg=${{ viteBuildEnvNormalized.outputs.value }} -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG

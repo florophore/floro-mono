@@ -1,5 +1,6 @@
 import { useMemo, useState, useCallback } from "react";
 import { Link } from 'react-router-dom';
+import styled from "@emotion/styled";
 import { Helmet } from 'react-helmet';
 import { useFloroPalette } from '../../floro_listener/FloroPaletteProvider';
 import { useFloroIcons } from '../../floro_listener/FloroIconsProvider';
@@ -8,68 +9,29 @@ import { useTheme} from "@emotion/react";
 import { useLocales, usePlainText, useRichText } from "../../floro_listener/hooks/locales";
 import { useTodo } from "../../floro_listener/FloroTodoProvider";
 
+const HomeWrapper = styled.div`
+  height: 100%;
+  @media screen and (min-width: 1024px) {
+    background: blue;
+  }
+  @media screen and (min-width: 768px) and (max-width: 1023px) {
+    background: green;
+  }
+  @media screen and (max-width: 767px){
+    background: red;
+  }
+`;
+
 function Home() {
 
   const theme = useTheme();
 
-  const palette = useFloroPalette();
-  const icons = useFloroIcons();
-  const [username, setUsername] = useState("jamie");
-  const icon = useMemo(() => {
-    return getIcon(icons, theme.name as "light"|"dark", "main.discard", "hovered");
-  }, [theme.name, icons])
-
-  const { selectedLocaleCode, setSelectedLocaleCode} = useLocales();
-
-  const welcome = useRichText("main.welcome_banner", {
-    name: username,
-    numberOfFiles: 2
-  });
-
-  const welcomePlainText = usePlainText("main.welcome_banner", {
-    name: username,
-    numberOfFiles: 2
-  });
-
-  const someTodo = useTodo("one more todo");
-
-  const onChange = useCallback((event) => {
-    setUsername(event.target.value);
-  }, []);
-
   return (
-    <div>
-        <Helmet>
-          <title>{'Floro'}</title>
-        </Helmet>
-        <p>
-            {'Home'}
-        </p>
-        <Link to={'/about'}>Go to About</Link>
-        <p>Testing the waters</p>
-        {selectedLocaleCode == "EN" && (
-          <button onClick={() => setSelectedLocaleCode("DE")}>{"DE"}</button>
-        )}
-        {selectedLocaleCode == "DE" && (
-          <button onClick={() => setSelectedLocaleCode("EN")}>{"EN"}</button>
-        )}
-        <p></p>
-        <input type="text" onChange={onChange} value={username}/>
-      <div style={{width: 100, background: palette.purple.light ?? 'transparent'}}>
-        <img style={{width: 100, height: 100}} src={icon}/>
-      </div>
-      <div style={{fontFamily: 'Helvetica'}}>
-        {welcome}
-      </div>
-      <div style={{fontFamily: 'Helvetica'}}>
-        <p>
-          {someTodo?.id}
-        </p>
-        <p>
-          {'in Progress: ' + someTodo?.inProgress}
-        </p>
-      </div>
-    </div>
+    <HomeWrapper>
+      <p style={{fontSize: '1.2rem'}}>
+        {'hello world'}
+      </p>
+    </HomeWrapper>
   )
 }
 

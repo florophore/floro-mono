@@ -127,7 +127,7 @@ const App = (props: Props): React.ReactElement => {
                   <FloroSocketProvider client={'desktop'}>
                     <OfflineIconProvider>
                       <OfflinePhotoProvider>
-                        <SessionProvider clientType="web">
+                        <SessionProvider env={import.meta.env.VITE_BUILD_ENV_NORMALIZED} clientType={"app"}>
                           <CurrentUserSubscriberMount>
                             <DesktopSocketProvider>
                               <DOMMount>

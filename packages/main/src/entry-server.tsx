@@ -8,13 +8,13 @@ import { ApolloProvider, ApolloClient } from '@apollo/client';
 import { Helmet } from 'react-helmet';
 import { LocalizedPhrases } from '@floro/common-generators/floro_modules/text-generator';
 
-export const render = async (url: string, deps: {client: ApolloClient<any>, floroText: LocalizedPhrases}, context: {url?: string, should404: boolean, isSSR: boolean}) => {
+export const render = async (url: string, deps: {client: ApolloClient<any>, floroText: LocalizedPhrases, env: string}, context: {url?: string, should404: boolean, isSSR: boolean}) => {
   try {
       const SSRApp = (
         <ApolloProvider client={deps.client}>
           <StaticRouter location={url}>
             <RedirectProvider routing={MainRoutes} context={context}>
-              <App text={deps.floroText} routing={MainRoutes} />
+              <App text={deps.floroText} routing={MainRoutes} env={deps.env} />
             </RedirectProvider>
           </StaticRouter>
         </ApolloProvider>

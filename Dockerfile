@@ -16,6 +16,8 @@ ARG vite_is_secure_arg
 
 ENV VITE_IS_SECURE=$vite_is_secure_arg
 
+ENV VITE_BUILD_ENV_NORMALIZED=$vite_build_env_normalized_arg
+
 WORKDIR /app
 
 COPY package.json /app

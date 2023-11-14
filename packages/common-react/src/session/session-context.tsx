@@ -34,6 +34,7 @@ const SessionContext = React.createContext<{
 export interface Props {
   children: React.ReactElement;
   clientType: 'web'|'app';
+  env: string;
 }
 
 export const SessionProvider = (props: Props) => {
@@ -95,12 +96,14 @@ export const SessionProvider = (props: Props) => {
     reset();
     try {
       // fire and forget
-      axios.post("http://localhost:63403/logout");
+      axios.post("http://localhost:63403/logout", {
+        env: props.env
+      });
     } catch (e) {
       //dont log
     }
     navigate("/");
-  }, [navigate]);
+  }, [navigate, props.env]);
 
   useSocketEvent(
     "login",
@@ -252,10 +255,11 @@ export const SessionProvider = (props: Props) => {
     if (session?.clientKey && data?.exchangeSession?.user?.id) {
       axios.post(`http://localhost:63403/session`, {
         session: session,
-        user: session?.user
+        user: session?.user,
+        env: props.env
       });
     }
-  }, [session?.clientKey, data?.exchangeSession?.user?.id, props.clientType])
+  }, [props?.env, session?.clientKey, data?.exchangeSession?.user?.id, props.clientType])
 
   return (
     <SessionContext.Provider

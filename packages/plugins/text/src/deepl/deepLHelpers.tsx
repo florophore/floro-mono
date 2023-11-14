@@ -24,7 +24,7 @@ export const sendTranslationRequest = async (
   const xhr = new XMLHttpRequest();
   let promise = new Promise<{translation: string}>((resolve, reject) => {
     xhr.responseType = "json";
-    xhr.open("POST", "http://localhost:9000/proxy/deepL/translate/richText");
+    xhr.open("POST", "http://floro.io/proxy/deepL/translate/richText");
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     xhr.onerror = function (e) {
       reject(e);

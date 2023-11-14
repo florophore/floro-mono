@@ -17,7 +17,7 @@ const ClientApp = () => {
   return (
     <ApolloProvider client={client as unknown as ApolloClient<NormalizedCache>}>
       <BrowserRouter>
-          <App text={text} routing={MainRoutes} />
+          <App text={text} routing={MainRoutes} env={import.meta.env?.VITE_BUILD_ENV_NORMALIZED ?? "development"} />
       </BrowserRouter>
     </ApolloProvider>
   )

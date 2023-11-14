@@ -7,7 +7,6 @@ import { FloroIconsProvider } from "./FloroIconsProvider";
 import { FloroTextProvider } from "./FloroTextProvider";
 import { LocalizedPhrases } from "@floro/common-generators/floro_modules/text-generator";
 import { FloroLocalesProvider } from "./hooks/locales";
-import { FloroTodoProvider } from "./FloroTodoProvider";
 
 interface Props {
   children: React.ReactElement;
@@ -21,9 +20,7 @@ const FloroMount = (props: Props) => {
         <FloroThemesProvider>
           <FloroIconsProvider>
             <FloroTextProvider text={props.text}>
-              <FloroTodoProvider>
-                <FloroLocalesProvider>{props.children}</FloroLocalesProvider>
-              </FloroTodoProvider>
+              <FloroLocalesProvider>{props.children}</FloroLocalesProvider>
             </FloroTextProvider>
           </FloroIconsProvider>
         </FloroThemesProvider>

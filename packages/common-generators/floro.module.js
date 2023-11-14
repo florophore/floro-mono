@@ -2,20 +2,13 @@ const paletteGenerator = require("../generators/palette-generator");
 const themeGenerator = require("../generators/theme-generator");
 const iconGenerator = require("../generators/icon-generator");
 const textGenerator = require("../generators/text-generator");
-const todoGenerator = require("../generators/todo-generator");
 
 module.exports = function () {
   return {
-    repository: "@jamiesunderland/test-repo",
+    repository: "@floro/floro-mono",
     generators: [
       {
-        generator: paletteGenerator,
-        args: {
-          lang: "typescript",
-        },
-      },
-      {
-        generator: themeGenerator,
+        generator: textGenerator,
         args: {
           lang: "typescript",
         },
@@ -27,17 +20,17 @@ module.exports = function () {
         },
       },
       {
-        generator: textGenerator,
+        generator: themeGenerator,
         args: {
           lang: "typescript",
         },
       },
       {
-        generator: todoGenerator,
+        generator: paletteGenerator,
         args: {
           lang: "typescript",
         },
-      },
+      }
     ],
   };
 };

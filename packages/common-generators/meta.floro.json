@@ -1,24 +1,21 @@
 {
   "moduleFile": "floro.module.js",
-  "repositoryId": "52812594-5b6e-43f3-ab1e-afa6978cfa4d",
-  "sha": "5a4cacc01a6c7b8f4cc1e7b8ce89532c58d9c823967ed15ceddafd5836ad3a8f",
-  "message": "added todos normal",
-  "idx": 48,
+  "repositoryId": "12aa1618-9e0b-404c-8423-7c38047e18c9",
+  "sha": "d00ec42e191e1c16e858b63b0b9829b17eeb27f23b53abbb5e8d9171528619ab",
+  "message": "first real floro commit",
+  "idx": 0,
   "genratorDependencies": {
-    "palette-generator": {
-      "palette": "0.0.37"
-    },
-    "theme-generator": {
-      "theme": "0.0.37"
+    "text-generator": {
+      "text": "0.0.8"
     },
     "icon-generator": {
-      "icons": "0.0.37"
+      "icons": "0.0.40"
     },
-    "text-generator": {
-      "text": "0.0.1"
+    "theme-generator": {
+      "theme": "0.0.40"
     },
-    "todo-generator": {
-      "todo": "0.0.0"
+    "palette-generator": {
+      "palette": "0.0.39"
     }
   }
 }
