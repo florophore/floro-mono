@@ -22,7 +22,6 @@ export interface Props {
 }
 
 function App(props: Props) {
-  console.log("ENV", props.env)
   const queryClient = useMemo(() => new QueryClient(), []);
   const notFound = useMemo(() => <NotFound />, []);
 
