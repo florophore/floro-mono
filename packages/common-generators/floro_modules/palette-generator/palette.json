@@ -1,27 +1,50 @@
 {
   "white": {
+    "lighter": null,
     "light": null,
     "regular": "#FFFFFF",
     "dark": null
   },
   "black": {
+    "lighter": null,
     "light": null,
     "regular": "#000000",
     "dark": null
   },
-  "red": {
-    "light": "#F93D44",
-    "regular": "#CC2F35",
-    "dark": "#AA2227"
+  "gray": {
+    "lighter": "#E3E2E2",
+    "light": "#7C7C7C",
+    "regular": "#414141",
+    "dark": "#222222"
   },
-  "green": {
-    "light": "#77F075",
-    "regular": "#3DD43A",
-    "dark": "#26A324"
+  "purple": {
+    "lighter": null,
+    "light": "#9B8EF6",
+    "regular": "#5445C4",
+    "dark": "#251F51"
+  },
+  "orange": {
+    "lighter": null,
+    "light": "#FEB76C",
+    "regular": "#FC8C17",
+    "dark": "#C97318"
+  },
+  "red": {
+    "lighter": null,
+    "light": "#FF3D43",
+    "regular": "#CD2E34",
+    "dark": "#602A2C"
+  },
+  "teal": {
+    "lighter": null,
+    "light": "#91ECE6",
+    "regular": "#23C2B8",
+    "dark": "#235753"
   },
   "blue": {
-    "light": "#7E91EC",
-    "regular": "#3D65DB",
-    "dark": "#1F38B2"
+    "lighter": null,
+    "light": "#55A4F9",
+    "regular": "#1C82F4",
+    "dark": null
   }
 }

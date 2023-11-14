@@ -1,17 +1,11 @@
-import { useMemo, useState, useCallback } from "react";
-import { Link } from 'react-router-dom';
+import { useMemo, useState } from "react";
 import styled from "@emotion/styled";
-import { Helmet } from 'react-helmet';
-import { useFloroPalette } from '../../floro_listener/FloroPaletteProvider';
-import { useFloroIcons, useIcon } from '../../floro_listener/FloroIconsProvider';
-import { getIcon } from '@floro/common-generators/floro_modules/icon-generator';
+import {  useIcon } from '../../floro_listener/FloroIconsProvider';
 import { useTheme} from "@emotion/react";
-import { useLocales, usePlainText, useRichText } from "../../floro_listener/hooks/locales";
-import { useTodo } from "../../floro_listener/FloroTodoProvider";
+import { usePlainText, useRichText } from "../../floro_listener/hooks/locales";
 import Button from "@floro/storybook/stories/design-system/Button";
 import ScreenShotLight from "@floro/main/public/pngs/light.no_edge.png";
 import ScreenShotDark from "@floro/main/public/pngs/dark.no_edge.png";
-console.log(import.meta?.['env'])
 
 const HomeWrapper = styled.div`
   height: 100%;
@@ -250,6 +244,35 @@ const SubTextTagLine = styled.h4`
   color: ${props => props.theme.colors.contrastText};
 `;
 
+const DownloadSection = styled.div`
+  width: 100%;
+`;
+
+const DownloadSectionHeader = styled.h3`
+  padding: 0;
+  margin: 0;
+  font-family: "MavenPro";
+  font-weight: 600;
+  font-size: 1.2rem;
+  margin-top: 48px;
+  @media screen and (min-width: 768px) and (max-width: 1023px) {
+    font-size: 1rem;
+  }
+  color: ${props => props.theme.colors.titleText};
+`;
+
+const DownloadRow = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  margin-top: 24px;
+`;
+
+const DownloadIcon = styled.img`
+  height: 56px;
+  cursor: pointer;
+`;
+
 
 function Home() {
   const theme = useTheme();
@@ -264,6 +287,13 @@ function Home() {
   const downloadText = usePlainText("front_page.nav_download");
   const tagLine = useRichText("front_page.tag_line");
   const subTextTagLine = useRichText("front_page.subtext_of_tag_line");
+  const downloadDesktopText = useRichText("front_page.download_desktop_client");
+  const [isHoveringMac, setIsHoveringMac] = useState(false);
+  const macOSIcon = useIcon("front-page.apple", isHoveringMac ? "hovered" : undefined);
+  const [isHoveringWindows, setIsHoveringWindows] = useState(false);
+  const windowsOSIcon = useIcon("front-page.windows", isHoveringWindows ? "hovered" : undefined);
+  const [isHoveringLinux, setIsHoveringLinux] = useState(false);
+  const linuxOSIcon = useIcon("front-page.linux", isHoveringLinux ? "hovered" : undefined);
 
   const screenShot = useMemo(() => {
     if (theme.name == 'dark') {
@@ -307,6 +337,28 @@ function Home() {
           <LeftColumn>
             <TagLine>{tagLine}</TagLine>
             <SubTextTagLine>{subTextTagLine}</SubTextTagLine>
+            <DownloadSection>
+              <DownloadSectionHeader>
+                {downloadDesktopText}
+              </DownloadSectionHeader>
+              <DownloadRow>
+                <DownloadIcon
+                  onMouseEnter={() => setIsHoveringMac(true)}
+                  onMouseLeave={() => setIsHoveringMac(false)}
+                  src={macOSIcon}
+                  style={{marginRight: 24}}
+                />
+                <DownloadIcon
+                  onMouseEnter={() => setIsHoveringLinux(true)}
+                  onMouseLeave={() => setIsHoveringLinux(false)}
+                  style={{marginRight: 24}}
+                 src={linuxOSIcon} />
+                <DownloadIcon
+                  onMouseEnter={() => setIsHoveringWindows(true)}
+                  onMouseLeave={() => setIsHoveringWindows(false)}
+                 src={windowsOSIcon} />
+              </DownloadRow>
+            </DownloadSection>
           </LeftColumn>
           <RightColumn
             style={{
@@ -322,7 +374,7 @@ function Home() {
                 alignSelf: "center",
                 width: "40%",
                 position: "absolute",
-                marginLeft: '10%',
+                marginLeft: "10%",
                 bottom: "-10%",
               }}
             >

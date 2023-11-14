@@ -5,20 +5,32 @@
 //   const icons = Convert.toIcons(json);
 
 export interface Icons {
+    "front-page.apple":               FrontPageApple;
     "front-page.floro-round":         FrontPageFloroRound;
     "front-page.front-page-backdrop": FrontPageFrontPageBackdrop;
+    "front-page.linux":               FrontPageLinux;
+    "front-page.windows":             FrontPageWindows;
     "main.floro":                     MainFloro;
     "main.floro-text":                MainFloroText;
 }
 
-export interface FrontPageFloroRound {
+export interface FrontPageApple {
     default:  Theme;
-    variants: FrontPageFloroRoundVariants;
+    variants: FrontPageAppleVariants;
 }
 
 export interface Theme {
     dark:  string;
     light: string;
+}
+
+export interface FrontPageAppleVariants {
+    hovered: Theme;
+}
+
+export interface FrontPageFloroRound {
+    default:  Theme;
+    variants: FrontPageFloroRoundVariants;
 }
 
 export interface FrontPageFloroRoundVariants {
@@ -30,6 +42,24 @@ export interface FrontPageFrontPageBackdrop {
 }
 
 export interface FrontPageFrontPageBackdropVariants {
+}
+
+export interface FrontPageLinux {
+    default:  Theme;
+    variants: FrontPageLinuxVariants;
+}
+
+export interface FrontPageLinuxVariants {
+    hovered: Theme;
+}
+
+export interface FrontPageWindows {
+    default:  Theme;
+    variants: FrontPageWindowsVariants;
+}
+
+export interface FrontPageWindowsVariants {
+    hovered: Theme;
 }
 
 export interface MainFloro {

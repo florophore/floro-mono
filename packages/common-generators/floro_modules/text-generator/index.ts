@@ -28,29 +28,30 @@ export interface LocalizedPhraseKeys {
 }
 
 export interface PhraseKeys {
-    "front_page.nav_about":           FrontPageNavAbout;
-    "front_page.nav_consulting":      FrontPageNavConsulting;
-    "front_page.nav_docs":            FrontPageNavDocs;
-    "front_page.nav_download":        FrontPageNavDownload;
-    "front_page.nav_foss":            FrontPageNavFOSS;
-    "front_page.nav_pricing":         FrontPageNavPricing;
-    "front_page.subtext_of_tag_line": FrontPageSubtextOfTagLine;
-    "front_page.tag_line":            FrontPageTagLine;
-    "main.hello_world":               MainHelloWorld;
+    "front_page.download_desktop_client": FrontPageDownloadDesktopClient;
+    "front_page.nav_about":               FrontPageNavAbout;
+    "front_page.nav_consulting":          FrontPageNavConsulting;
+    "front_page.nav_docs":                FrontPageNavDocs;
+    "front_page.nav_download":            FrontPageNavDownload;
+    "front_page.nav_foss":                FrontPageNavFOSS;
+    "front_page.nav_pricing":             FrontPageNavPricing;
+    "front_page.subtext_of_tag_line":     FrontPageSubtextOfTagLine;
+    "front_page.tag_line":                FrontPageTagLine;
+    "main.hello_world":                   MainHelloWorld;
 }
 
-export interface FrontPageNavAbout {
-    interpolations: FrontPageNavAboutInterpolations;
-    links:          FrontPageNavAboutLinks;
+export interface FrontPageDownloadDesktopClient {
+    interpolations: FrontPageDownloadDesktopClientInterpolations;
+    links:          FrontPageDownloadDesktopClientLinks;
     phrase:         TextNode[];
     phraseKey:      string;
-    variables:      FrontPageNavAboutVariables;
+    variables:      FrontPageDownloadDesktopClientVariables;
 }
 
-export interface FrontPageNavAboutInterpolations {
+export interface FrontPageDownloadDesktopClientInterpolations {
 }
 
-export interface FrontPageNavAboutLinks {
+export interface FrontPageDownloadDesktopClientLinks {
 }
 
 export interface TextNode {
@@ -77,6 +78,23 @@ export enum Type {
     Text = "text",
     UL = "ul",
     Variable = "variable",
+}
+
+export interface FrontPageDownloadDesktopClientVariables {
+}
+
+export interface FrontPageNavAbout {
+    interpolations: FrontPageNavAboutInterpolations;
+    links:          FrontPageNavAboutLinks;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      FrontPageNavAboutVariables;
+}
+
+export interface FrontPageNavAboutInterpolations {
+}
+
+export interface FrontPageNavAboutLinks {
 }
 
 export interface FrontPageNavAboutVariables {
@@ -219,15 +237,16 @@ export interface MainHelloWorldVariables {
 }
 
 export interface PhraseKeyDebugInfo {
-    "front_page.nav_about":           DebugInfo;
-    "front_page.nav_consulting":      DebugInfo;
-    "front_page.nav_docs":            DebugInfo;
-    "front_page.nav_download":        DebugInfo;
-    "front_page.nav_foss":            DebugInfo;
-    "front_page.nav_pricing":         DebugInfo;
-    "front_page.subtext_of_tag_line": DebugInfo;
-    "front_page.tag_line":            DebugInfo;
-    "main.hello_world":               DebugInfo;
+    "front_page.download_desktop_client": DebugInfo;
+    "front_page.nav_about":               DebugInfo;
+    "front_page.nav_consulting":          DebugInfo;
+    "front_page.nav_docs":                DebugInfo;
+    "front_page.nav_download":            DebugInfo;
+    "front_page.nav_foss":                DebugInfo;
+    "front_page.nav_pricing":             DebugInfo;
+    "front_page.subtext_of_tag_line":     DebugInfo;
+    "front_page.tag_line":                DebugInfo;
+    "main.hello_world":                   DebugInfo;
 }
 
 export interface DebugInfo {

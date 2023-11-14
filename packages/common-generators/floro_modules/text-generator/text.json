@@ -9,6 +9,27 @@
   },
   "localizedPhraseKeys": {
     "EN": {
+      "front_page.download_desktop_client": {
+        "phraseKey": "front_page.download_desktop_client",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "download the desktop client",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
       "front_page.subtext_of_tag_line": {
         "phraseKey": "front_page.subtext_of_tag_line",
         "variables": {},
@@ -214,6 +235,10 @@
     }
   },
   "phraseKeyDebugInfo": {
+    "front_page.download_desktop_client": {
+      "groupName": "Front Page",
+      "phraseKey": "download desktop client"
+    },
     "front_page.subtext_of_tag_line": {
       "groupName": "Front Page",
       "phraseKey": "subtext of tag line"

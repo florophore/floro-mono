@@ -10,75 +10,15 @@
     }
   },
   "themeColors": {
-    "primary-color": {
+    "icon-contrast-fg": {
       "default": {
-        "light": "#CC2F35FF",
-        "dark": "#F93D44FF"
-      },
-      "variants": {
-        "hovered": {
-          "light": null,
-          "dark": null
-        },
-        "selected": {
-          "light": null,
-          "dark": null
-        },
-        "focused": {
-          "light": null,
-          "dark": null
-        }
-      }
-    },
-    "primary-font-color": {
-      "default": {
-        "light": "#3DD43AFF",
-        "dark": "#77F075FF"
-      },
-      "variants": {
-        "hovered": {
-          "light": null,
-          "dark": null
-        },
-        "selected": {
-          "light": null,
-          "dark": null
-        },
-        "focused": {
-          "light": null,
-          "dark": null
-        }
-      }
-    },
-    "secondary-color": {
-      "default": {
-        "light": "#3D65DBFF",
-        "dark": "#7E91ECFF"
-      },
-      "variants": {
-        "hovered": {
-          "light": null,
-          "dark": null
-        },
-        "selected": {
-          "light": null,
-          "dark": null
-        },
-        "focused": {
-          "light": null,
-          "dark": null
-        }
-      }
-    },
-    "secondary-font-color": {
-      "default": {
-        "light": "#000000FF",
+        "light": "#414141FF",
         "dark": "#FFFFFFFF"
       },
       "variants": {
         "hovered": {
-          "light": null,
-          "dark": null
+          "light": "#FFFFFFFF",
+          "dark": "#FFFFFFFF"
         },
         "selected": {
           "light": null,
@@ -89,6 +29,47 @@
           "dark": null
         }
       }
+    },
+    "icon-bg": {
+      "default": {
+        "light": "#E3E2E2FF",
+        "dark": "#414141FF"
+      },
+      "variants": {
+        "hovered": {
+          "light": "#1C82F4FF",
+          "dark": "#1C82F4FF"
+        },
+        "selected": {
+          "light": null,
+          "dark": null
+        },
+        "focused": {
+          "light": null,
+          "dark": null
+        }
+      }
+    },
+    "icon-purple": {
+      "default": {
+        "light": "#5445C4FF",
+        "dark": "#9B8EF6FF"
+      },
+      "variants": {}
+    },
+    "contrast-text-light": {
+      "default": {
+        "light": "#7C7C7CFF",
+        "dark": "#FFFFFFFF"
+      },
+      "variants": {}
+    },
+    "contrast-text": {
+      "default": {
+        "light": "#414141FF",
+        "dark": "#FFFFFFFF"
+      },
+      "variants": {}
     }
   }
 }

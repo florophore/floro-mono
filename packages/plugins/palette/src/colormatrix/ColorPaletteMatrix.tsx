@@ -94,7 +94,7 @@ const ColorPaletteMatrix = (props: Props) => {
         setColorPalettes(values);
       }
     },
-    []
+    [colorPalettes]
   );
 
   const newId = useMemo((): string | null => {

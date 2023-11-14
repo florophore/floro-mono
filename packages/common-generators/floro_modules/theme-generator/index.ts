@@ -12,15 +12,16 @@ export interface Themes {
 }
 
 export interface ThemeColors {
-    "primary-color":        PrimaryColor;
-    "primary-font-color":   PrimaryFontColor;
-    "secondary-color":      SecondaryColor;
-    "secondary-font-color": SecondaryFontColor;
+    "contrast-text":       ContrastText;
+    "contrast-text-light": ContrastTextLight;
+    "icon-bg":             IconBg;
+    "icon-contrast-fg":    IconContrastFg;
+    "icon-purple":         IconPurple;
 }
 
-export interface PrimaryColor {
+export interface ContrastText {
     default:  ThemeSet;
-    variants: PrimaryColorVariants;
+    variants: ContrastTextVariants;
 }
 
 export interface ThemeSet {
@@ -28,43 +29,45 @@ export interface ThemeSet {
     light: null | string;
 }
 
-export interface PrimaryColorVariants {
-    focused:  ThemeSet;
-    hovered:  ThemeSet;
-    selected: ThemeSet;
+export interface ContrastTextVariants {
 }
 
-export interface PrimaryFontColor {
+export interface ContrastTextLight {
     default:  ThemeSet;
-    variants: PrimaryFontColorVariants;
+    variants: ContrastTextLightVariants;
 }
 
-export interface PrimaryFontColorVariants {
-    focused:  ThemeSet;
-    hovered:  ThemeSet;
-    selected: ThemeSet;
+export interface ContrastTextLightVariants {
 }
 
-export interface SecondaryColor {
+export interface IconBg {
     default:  ThemeSet;
-    variants: SecondaryColorVariants;
+    variants: IconBgVariants;
 }
 
-export interface SecondaryColorVariants {
+export interface IconBgVariants {
     focused:  ThemeSet;
     hovered:  ThemeSet;
     selected: ThemeSet;
 }
 
-export interface SecondaryFontColor {
+export interface IconContrastFg {
     default:  ThemeSet;
-    variants: SecondaryFontColorVariants;
+    variants: IconContrastFgVariants;
 }
 
-export interface SecondaryFontColorVariants {
+export interface IconContrastFgVariants {
     focused:  ThemeSet;
     hovered:  ThemeSet;
     selected: ThemeSet;
+}
+
+export interface IconPurple {
+    default:  ThemeSet;
+    variants: IconPurpleVariants;
+}
+
+export interface IconPurpleVariants {
 }
 
 export interface ThemeDefinitions {

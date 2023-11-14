@@ -1,9 +1,9 @@
 {
   "moduleFile": "floro.module.js",
   "repositoryId": "12aa1618-9e0b-404c-8423-7c38047e18c9",
-  "sha": "439257a4c0f93f0416325cc2995d26345cd33c32f9d64a238a584e226750d9bd",
-  "message": "finished the first set of changes to the front page",
-  "idx": 4,
+  "sha": "9d27532729e34831fd1a3508960dcd7d2997f19b417701fc6b416a11c0d53cde",
+  "message": "added palette icons and themed icons",
+  "idx": 5,
   "genratorDependencies": {
     "text-generator": {
       "text": "0.0.8"

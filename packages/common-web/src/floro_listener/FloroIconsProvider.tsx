@@ -35,5 +35,5 @@ export const useIcon = <T extends keyof Icons>  (key: T, variant?: string): stri
         return icons[key].variants[variant][theme.name];
       }
       return icons[key].default?.[theme.name];
-    }, [icons, theme.name]);
+    }, [icons, theme.name, variant]);
 }
