@@ -6,6 +6,7 @@
 
 export interface Icons {
     "front-page.apple":               FrontPageApple;
+    "front-page.copy":                FrontPageCopy;
     "front-page.floro-round":         FrontPageFloroRound;
     "front-page.front-page-backdrop": FrontPageFrontPageBackdrop;
     "front-page.linux":               FrontPageLinux;
@@ -26,6 +27,14 @@ export interface Theme {
 
 export interface FrontPageAppleVariants {
     hovered: Theme;
+}
+
+export interface FrontPageCopy {
+    default:  Theme;
+    variants: FrontPageCopyVariants;
+}
+
+export interface FrontPageCopyVariants {
 }
 
 export interface FrontPageFloroRound {

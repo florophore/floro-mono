@@ -6,6 +6,7 @@ import { usePlainText, useRichText } from "../../floro_listener/hooks/locales";
 import Button from "@floro/storybook/stories/design-system/Button";
 import ScreenShotLight from "@floro/main/public/pngs/light.no_edge.png";
 import ScreenShotDark from "@floro/main/public/pngs/dark.no_edge.png";
+import CLICopy from "../../components/home/CLICopy";
 
 const HomeWrapper = styled.div`
   height: 100%;
@@ -271,6 +272,29 @@ const DownloadRow = styled.div`
 const DownloadIcon = styled.img`
   height: 56px;
   cursor: pointer;
+  border-radius: 8px;
+  box-shadow: 0px 2px 8px 4px ${props => props.theme.colors.tooltipOuterShadowColor};
+  transition: background-image 300ms, box-shadow 600ms;
+  &:hover {
+    box-shadow: 0px 0px 2px 2px ${props => props.theme.colors.tooltipOuterShadowColor};
+  }
+`;
+
+const InstallCLISection = styled.div`
+  width: 100%;
+`;
+
+const InstallCLISectionHeader = styled.h3`
+  padding: 0;
+  margin: 0;
+  font-family: "MavenPro";
+  font-weight: 600;
+  font-size: 1.2rem;
+  margin-top: 48px;
+  @media screen and (min-width: 768px) and (max-width: 1023px) {
+    font-size: 1rem;
+  }
+  color: ${props => props.theme.colors.titleText};
 `;
 
 
@@ -284,7 +308,7 @@ function Home() {
   const pricingText = useRichText("front_page.nav_pricing");
   const fossText = useRichText("front_page.nav_foss");
   const consultingText = useRichText("front_page.nav_consulting");
-  const downloadText = usePlainText("front_page.nav_download");
+  const downloadText = useRichText("front_page.nav_download");
   const tagLine = useRichText("front_page.tag_line");
   const subTextTagLine = useRichText("front_page.subtext_of_tag_line");
   const downloadDesktopText = useRichText("front_page.download_desktop_client");
@@ -359,6 +383,12 @@ function Home() {
                  src={windowsOSIcon} />
               </DownloadRow>
             </DownloadSection>
+            <InstallCLISection>
+              <InstallCLISectionHeader>{'install the cli'}</InstallCLISectionHeader>
+              <div style={{marginTop: 24, maxWidth: 320}}>
+                <CLICopy/>
+              </div>
+            </InstallCLISection>
           </LeftColumn>
           <RightColumn
             style={{

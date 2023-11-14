@@ -14,6 +14,7 @@ export interface LocalizedPhrases {
 
 export interface Locales {
     EN?: En;
+    ZH?: Zh;
 }
 
 export interface En {
@@ -23,11 +24,20 @@ export interface En {
     name:                string;
 }
 
+export interface Zh {
+    defaultFallbackCode: null | string;
+    isGlobalDefault:     boolean;
+    localeCode:          string;
+    name:                string;
+}
+
 export interface LocalizedPhraseKeys {
     EN: PhraseKeys;
+    ZH: PhraseKeys;
 }
 
 export interface PhraseKeys {
+    "components.copied":                  ComponentsCopied;
     "front_page.download_desktop_client": FrontPageDownloadDesktopClient;
     "front_page.nav_about":               FrontPageNavAbout;
     "front_page.nav_consulting":          FrontPageNavConsulting;
@@ -40,18 +50,18 @@ export interface PhraseKeys {
     "main.hello_world":                   MainHelloWorld;
 }
 
-export interface FrontPageDownloadDesktopClient {
-    interpolations: FrontPageDownloadDesktopClientInterpolations;
-    links:          FrontPageDownloadDesktopClientLinks;
+export interface ComponentsCopied {
+    interpolations: ComponentsCopiedInterpolations;
+    links:          ComponentsCopiedLinks;
     phrase:         TextNode[];
     phraseKey:      string;
-    variables:      FrontPageDownloadDesktopClientVariables;
+    variables:      ComponentsCopiedVariables;
 }
 
-export interface FrontPageDownloadDesktopClientInterpolations {
+export interface ComponentsCopiedInterpolations {
 }
 
-export interface FrontPageDownloadDesktopClientLinks {
+export interface ComponentsCopiedLinks {
 }
 
 export interface TextNode {
@@ -78,6 +88,23 @@ export enum Type {
     Text = "text",
     UL = "ul",
     Variable = "variable",
+}
+
+export interface ComponentsCopiedVariables {
+}
+
+export interface FrontPageDownloadDesktopClient {
+    interpolations: FrontPageDownloadDesktopClientInterpolations;
+    links:          FrontPageDownloadDesktopClientLinks;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      FrontPageDownloadDesktopClientVariables;
+}
+
+export interface FrontPageDownloadDesktopClientInterpolations {
+}
+
+export interface FrontPageDownloadDesktopClientLinks {
 }
 
 export interface FrontPageDownloadDesktopClientVariables {
@@ -237,6 +264,7 @@ export interface MainHelloWorldVariables {
 }
 
 export interface PhraseKeyDebugInfo {
+    "components.copied":                  DebugInfo;
     "front_page.download_desktop_client": DebugInfo;
     "front_page.nav_about":               DebugInfo;
     "front_page.nav_consulting":          DebugInfo;

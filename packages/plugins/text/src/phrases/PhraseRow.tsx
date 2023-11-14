@@ -67,6 +67,9 @@ const MissingTranslationsPill = styled.div`
   padding-left: 12px;
   padding-right: 12px;
   margin-left: 12px;
+  overflow-x: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 `;
 
 const MissingTranslationsTitle = styled.div`
