@@ -211,7 +211,7 @@ const ScreenShotWrapper = styled.div`
 const ScreenShot = styled.img`
   width: 100%;
   border-radius: 4px;
-  box-shadow: 0px 2px 12px 2px ${props => props.theme.colors.tooltipOuterShadowColor};
+  box-shadow: 0px 4px 16px 12px ${props => props.theme.colors.tooltipOuterShadowColor};
 `;
 
 const FloroText = styled.img`

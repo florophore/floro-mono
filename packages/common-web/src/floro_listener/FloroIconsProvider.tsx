@@ -27,13 +27,22 @@ export const useFloroIcons = () => {
 }
 
 
-export const useIcon = <T extends keyof Icons>  (key: T, variant?: string): string => {
-    const theme = useTheme();
-    const icons = useFloroIcons()
-    return useMemo(() => {
-      if (variant && icons[key].variants[variant]) {
-        return icons[key].variants[variant][theme.name];
-      }
-      return icons[key].default?.[theme.name];
-    }, [icons, theme.name, variant]);
-}
+export const useIcon = <
+  T extends keyof Icons,
+  K extends Icons[T],
+  V extends K["variants"]
+>(
+  key: T,
+  variant?: string & keyof V
+): string => {
+  const theme = useTheme();
+  const icons = useFloroIcons();
+  return useMemo(() => {
+    const icon = icons[key] as Icons[T];
+    if (variant && icon?.variants && icon.variants[variant as string]) {
+      const variantValues = icon.variants[variant as string];
+      return variantValues[theme.name];
+    }
+    return icons[key].default?.[theme.name];
+  }, [icons, theme.name, variant]);
+};
