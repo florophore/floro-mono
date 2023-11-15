@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 import {  useIcon } from '../../floro_listener/FloroIconsProvider';
 import { useTheme} from "@emotion/react";
 import { usePlainText, useRichText } from "../../floro_listener/hooks/locales";
+import {Helmet} from "react-helmet";
 import Button from "@floro/storybook/stories/design-system/Button";
 import ScreenShotLight from "@floro/main/public/pngs/light.no_edge.png";
 import ScreenShotDark from "@floro/main/public/pngs/dark.no_edge.png";
@@ -14,8 +15,7 @@ const HomeWrapper = styled.div`
   flex-direction: column;
   flex: 1;
   width: 100%;
-  min-height: 100vh;
-  overflow-y: scroll;
+  height: 100vh;
   background: ${props => props.theme.background};
 `;
 
@@ -33,7 +33,7 @@ const HomeNav = styled.nav`
   flex-direction: row;
   background: ${props => props.theme.background};
   box-shadow: 0px 2px 6px 2px ${props => props.theme.colors.tooltipOuterShadowColor};
-  position: sticky;
+  position: relative;
   z-index: 1;
   @media screen and (min-width: 1024px) {
     height: 101px;
@@ -143,13 +143,22 @@ const HeaderLinkText = styled.p`
   }
 `;
 
+const MainScrollWrapper = styled.div`
+  position: relative;
+  width: 100%;
+  background: ${props => props.theme.background};
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  align-self: center;
+  overflow-y: scroll;
+`;
+
 const HomeContent = styled.main`
   position: relative;
   width: 100%;
   z-index: 0;
-  background: ${props => props.theme.background};
   display: flex;
-  flex-direction: column;
   align-self: center;
   @media screen and (min-width: 1024px) {
     max-width: 1440px;
@@ -170,6 +179,15 @@ const LargeTopSection = styled.section`
   justify-content: space-between;
   z-index: 0;
   @media screen and (max-width: 767px){
+    display: none;
+  }
+`;
+
+const MobileTopSection = styled.section`
+  display: flex;
+  flex-direction: column;
+  z-index: 0;
+  @media screen and (min-width: 768px) {
     display: none;
   }
 `;
@@ -201,6 +219,17 @@ const RightColumn = styled.div`
   }
 `;
 
+const MobileScreenShotBox = styled.div`
+  width: 100%;
+  height: 80vw;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 24px;
+`;
+
 const ScreenShotWrapper = styled.div`
   width: 70%;
   align-self: center;
@@ -230,6 +259,9 @@ const TagLine = styled.h1`
     font-size: 1.9rem;
   }
   color: ${props => props.theme.colors.contrastText};
+  @media screen and (max-width: 767px){
+    margin-top: 24px;
+  }
 `;
 
 const SubTextTagLine = styled.h4`
@@ -328,6 +360,11 @@ function Home() {
 
   return (
     <HomeWrapper>
+      <Helmet>
+        <title>
+          {'Floro'}
+        </title>
+      </Helmet>
       <HomeNav>
         <InnerContainer>
           <NavContent>
@@ -356,63 +393,134 @@ function Home() {
           </NavContent>
         </InnerContainer>
       </HomeNav>
-      <HomeContent>
-        <LargeTopSection>
-          <LeftColumn>
-            <TagLine>{tagLine}</TagLine>
-            <SubTextTagLine>{subTextTagLine}</SubTextTagLine>
-            <DownloadSection>
-              <DownloadSectionHeader>
-                {downloadDesktopText}
-              </DownloadSectionHeader>
-              <DownloadRow>
-                <DownloadIcon
-                  onMouseEnter={() => setIsHoveringMac(true)}
-                  onMouseLeave={() => setIsHoveringMac(false)}
-                  src={macOSIcon}
-                  style={{marginRight: 24}}
-                />
-                <DownloadIcon
-                  onMouseEnter={() => setIsHoveringLinux(true)}
-                  onMouseLeave={() => setIsHoveringLinux(false)}
-                  style={{marginRight: 24}}
-                 src={linuxOSIcon} />
-                <DownloadIcon
-                  onMouseEnter={() => setIsHoveringWindows(true)}
-                  onMouseLeave={() => setIsHoveringWindows(false)}
-                 src={windowsOSIcon} />
-              </DownloadRow>
-            </DownloadSection>
-            <InstallCLISection>
-              <InstallCLISectionHeader>{'install the cli'}</InstallCLISectionHeader>
-              <div style={{marginTop: 24, maxWidth: 320}}>
-                <CLICopy/>
-              </div>
-            </InstallCLISection>
-          </LeftColumn>
-          <RightColumn
-            style={{
-              backgroundImage: `url( '${frontPageBackdrop}' )`,
-              backgroundSize: "cover",
-            }}
+      <MainScrollWrapper>
+        <HomeContent>
+          <MobileTopSection
           >
-            <ScreenShotWrapper>
-              <ScreenShot src={screenShot} />
-            </ScreenShotWrapper>
-            <div
+            <div style={{
+              padding: 8
+            }}>
+              <TagLine>{tagLine}</TagLine>
+              <SubTextTagLine>{subTextTagLine}</SubTextTagLine>
+            </div>
+            <MobileScreenShotBox
               style={{
-                alignSelf: "center",
-                width: "40%",
-                position: "absolute",
-                marginLeft: "10%",
-                bottom: "-10%",
+                backgroundImage: `url( '${frontPageBackdrop}' )`,
+                backgroundSize: "cover",
               }}
             >
-              <FloroText src={floroText} />
+              <ScreenShotWrapper>
+                <ScreenShot src={screenShot} />
+              </ScreenShotWrapper>
+              <div
+                style={{
+                  alignSelf: "center",
+                  width: "40%",
+                  position: "absolute",
+                  marginLeft: "6%",
+                  bottom: "-10%",
+                }}
+              >
+                <FloroText src={floroText} />
+              </div>
+            </MobileScreenShotBox>
+            <div style={{ padding: 8, display: 'flex', alignItems: 'center', flexDirection: 'column', width: '100%'}}>
+              <DownloadSection style={{textAlign: 'center'}}>
+                <DownloadSectionHeader>
+                  {downloadDesktopText}
+                </DownloadSectionHeader>
+                <DownloadRow style={{justifyContent: 'center'}}>
+                  <DownloadIcon
+                    onMouseEnter={() => setIsHoveringMac(true)}
+                    onMouseLeave={() => setIsHoveringMac(false)}
+                    src={macOSIcon}
+                    style={{marginRight: 18, marginLeft: 18}}
+                  />
+                  <DownloadIcon
+                    onMouseEnter={() => setIsHoveringLinux(true)}
+                    onMouseLeave={() => setIsHoveringLinux(false)}
+                    style={{marginRight: 18, marginLeft: 18}}
+                    src={linuxOSIcon} />
+                  <DownloadIcon
+                    style={{marginRight: 18, marginLeft: 18}}
+                    onMouseEnter={() => setIsHoveringWindows(true)}
+                    onMouseLeave={() => setIsHoveringWindows(false)}
+                    src={windowsOSIcon} />
+                </DownloadRow>
+              </DownloadSection>
+
             </div>
-          </RightColumn>
-        </LargeTopSection>
-      </HomeContent>
+            <div style={{ padding: 8, display: 'flex', alignItems: 'center', flexDirection: 'column', width: '100%'}}>
+              <InstallCLISection style={{textAlign: 'center'}}>
+                <InstallCLISectionHeader>{'install the cli'}</InstallCLISectionHeader>
+                <div style={{marginTop: 24, width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
+                  <div style={{ maxWidth: 320, width: '100%'}}>
+                    <CLICopy/>
+                  </div>
+                </div>
+              </InstallCLISection>
+
+            </div>
+
+
+          </MobileTopSection>
+          <LargeTopSection>
+            <LeftColumn>
+              <TagLine>{tagLine}</TagLine>
+              <SubTextTagLine>{subTextTagLine}</SubTextTagLine>
+              <DownloadSection>
+                <DownloadSectionHeader>
+                  {downloadDesktopText}
+                </DownloadSectionHeader>
+                <DownloadRow>
+                  <DownloadIcon
+                    onMouseEnter={() => setIsHoveringMac(true)}
+                    onMouseLeave={() => setIsHoveringMac(false)}
+                    src={macOSIcon}
+                    style={{marginRight: 24}}
+                  />
+                  <DownloadIcon
+                    onMouseEnter={() => setIsHoveringLinux(true)}
+                    onMouseLeave={() => setIsHoveringLinux(false)}
+                    style={{marginRight: 24}}
+                  src={linuxOSIcon} />
+                  <DownloadIcon
+                    onMouseEnter={() => setIsHoveringWindows(true)}
+                    onMouseLeave={() => setIsHoveringWindows(false)}
+                  src={windowsOSIcon} />
+                </DownloadRow>
+              </DownloadSection>
+              <InstallCLISection>
+                <InstallCLISectionHeader>{'install the cli'}</InstallCLISectionHeader>
+                <div style={{marginTop: 24, maxWidth: 320}}>
+                  <CLICopy/>
+                </div>
+              </InstallCLISection>
+            </LeftColumn>
+            <RightColumn
+              style={{
+                backgroundImage: `url( '${frontPageBackdrop}' )`,
+                backgroundSize: "cover",
+              }}
+            >
+              <ScreenShotWrapper>
+                <ScreenShot src={screenShot} />
+              </ScreenShotWrapper>
+              <div
+                style={{
+                  alignSelf: "center",
+                  width: "40%",
+                  position: "absolute",
+                  marginLeft: "10%",
+                  bottom: "-10%",
+                }}
+              >
+                <FloroText src={floroText} />
+              </div>
+            </RightColumn>
+          </LargeTopSection>
+        </HomeContent>
+      </MainScrollWrapper>
     </HomeWrapper>
   );
 }

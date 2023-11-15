@@ -68,7 +68,7 @@
     "dotenv": "^16.3.1",
     "electron-updater": "6.1.4",
     "esbuild-plugins-node-modules-polyfill": "^1.4.0",
-    "floro": "0.0.26",
+    "floro": "0.0.27",
     "framer-motion": "^10.10.0",
     "http-terminator": "^3.2.0",
     "isomorphic-fetch": "^3.0.0",

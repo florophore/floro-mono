@@ -44,7 +44,20 @@
         "phrase": [
           {
             "children": [],
-            "content": "floro is a distributed version control system for creating and managing interoperable static assets and templates",
+            "content": "floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " is a distributed version control system for creating and managing interoperable static assets and templates",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -290,7 +303,20 @@
         "phrase": [
           {
             "children": [],
-            "content": "floro is a distributed version control system for creating and managing interoperable static assets and templates",
+            "content": "floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " is a distributed version control system for creating and managing interoperable static assets and templates",
             "type": "text",
             "styles": {
               "isBold": false,

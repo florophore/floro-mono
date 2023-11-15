@@ -4,6 +4,7 @@ import Router from './Router';
 import {SystemAPIProvider} from './contexts/SystemAPIContext';
 import {ApolloClient, ApolloProvider, InMemoryCache, split} from '@apollo/client';
 import {ColorThemeProvider} from '@floro/common-web/src/hooks/ColorThemeProvider';
+import { EnvProvider } from "@floro/common-react/src/env/EnvContext";
 import ThemeMount from '@floro/common-web/src/hooks/ThemeMount';
 
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
@@ -106,6 +107,7 @@ const client = new ApolloClient({
 
 interface Props {
   systemAPI: SystemAPI;
+  env: string;
 }
 
 const App = (props: Props): React.ReactElement => {
@@ -117,35 +119,37 @@ const App = (props: Props): React.ReactElement => {
   }, []);
 
   return (
-    <MemoryRouter>
-      <ApolloProvider client={client}>
-        <OpenLinkProvider openUrl={openUrl}>
-          <SystemAPIProvider systemAPI={props.systemAPI}>
-            <QueryClientProvider client={queryClient}>
-              <ColorThemeProvider>
-                <ThemeMount>
-                  <FloroSocketProvider client={'desktop'}>
-                    <OfflineIconProvider>
-                      <OfflinePhotoProvider>
-                        <SessionProvider env={import.meta.env.VITE_BUILD_ENV_NORMALIZED} clientType={"app"}>
-                          <CurrentUserSubscriberMount>
-                            <DesktopSocketProvider>
-                              <DOMMount>
-                                <Router />
-                              </DOMMount>
-                            </DesktopSocketProvider>
-                          </CurrentUserSubscriberMount>
-                        </SessionProvider>
-                      </OfflinePhotoProvider>
-                    </OfflineIconProvider>
-                  </FloroSocketProvider>
-                </ThemeMount>
-              </ColorThemeProvider>
-            </QueryClientProvider>
-          </SystemAPIProvider>
-        </OpenLinkProvider>
-      </ApolloProvider>
-    </MemoryRouter>
+    <EnvProvider env={props.env}>
+      <MemoryRouter>
+        <ApolloProvider client={client}>
+          <OpenLinkProvider openUrl={openUrl}>
+            <SystemAPIProvider systemAPI={props.systemAPI}>
+              <QueryClientProvider client={queryClient}>
+                <ColorThemeProvider>
+                  <ThemeMount>
+                    <FloroSocketProvider client={'desktop'}>
+                      <OfflineIconProvider>
+                        <OfflinePhotoProvider>
+                          <SessionProvider env={import.meta.env.VITE_BUILD_ENV_NORMALIZED} clientType={"app"}>
+                            <CurrentUserSubscriberMount>
+                              <DesktopSocketProvider>
+                                <DOMMount>
+                                  <Router />
+                                </DOMMount>
+                              </DesktopSocketProvider>
+                            </CurrentUserSubscriberMount>
+                          </SessionProvider>
+                        </OfflinePhotoProvider>
+                      </OfflineIconProvider>
+                    </FloroSocketProvider>
+                  </ThemeMount>
+                </ColorThemeProvider>
+              </QueryClientProvider>
+            </SystemAPIProvider>
+          </OpenLinkProvider>
+        </ApolloProvider>
+      </MemoryRouter>
+    </EnvProvider>
   );
 };
 export default App;

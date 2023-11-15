@@ -1,18 +1,20 @@
 import React, { useMemo, useContext, useEffect, useCallback, useState } from 'react';
 import { Manager, Socket } from "socket.io-client";
+import { useEnv } from '../env/EnvContext';
 
-export const createSocket = (client: 'web'|'desktop'|'cli') => {
+export const createSocket = (client: 'web'|'desktop'|'cli', env: string) => {
     const manager = new Manager('ws://localhost:63403', {
       reconnectionDelayMax: 10000,
       query: {
-        client
+        client,
+        env
       }
     });
     return manager.socket("/"); // main namespace
 };
 
-export const useDefineFloroSocket = (client: 'web'|'desktop') => {
-  return useMemo(() => createSocket(client), []);
+export const useDefineFloroSocket = (client: 'web'|'desktop', env: string) => {
+  return useMemo(() => createSocket(client, env), []);
 }
 
 const FloroSocketContext = React.createContext<{socket: null|Socket, client: 'web'|'desktop'|'cli'}>({
@@ -26,7 +28,8 @@ export interface Props {
 }
 
 export const FloroSocketProvider = (props: Props) => {
-    const socket = useDefineFloroSocket(props.client);
+    const { env} = useEnv();
+    const socket = useDefineFloroSocket(props.client, env);
     return (
       <FloroSocketContext.Provider value={{socket, client: props.client}}>
         {props?.children}

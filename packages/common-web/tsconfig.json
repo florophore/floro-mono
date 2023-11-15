@@ -12,7 +12,7 @@
             "node",
         ]
     },
-    "include": ["global.d.ts","src", "svgTransform.js"],
+    "include": ["global.d.ts","src", "svgTransform.js", "../common-react/src/env/EnvContext.tsx"],
     "exclude": [
         "node_modules",
         "build"

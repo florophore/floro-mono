@@ -12,6 +12,7 @@ import { OfflineIconProvider } from "@floro/common-react/src/offline/OfflineIcon
 import "./index.css";
 import FloroMount from "./floro_listener/FloroMount";
 import { LocalizedPhrases } from "@floro/common-generators/floro_modules/text-generator";
+import { EnvProvider } from "@floro/common-react/src/env/EnvContext";
 import { ColorThemeProvider } from "./hooks/ColorThemeProvider";
 import ThemeMount from "./hooks/ThemeMount";
 
@@ -29,37 +30,39 @@ function App(props: Props) {
     window.open(url);
   }, []);
   return (
-    <OpenLinkProvider openUrl={openUrl}>
-      <FloroMount text={props.text}>
-        <ColorThemeProvider>
-          <ThemeMount>
-            <QueryClientProvider client={queryClient}>
-              <FloroSocketProvider client={"web"}>
-                <OfflineIconProvider>
-                  <OfflinePhotoProvider>
-                    <SessionProvider clientType="web" env={props.env}>
-                      <Routes>
-                        {props.routing.map((route, key) => {
-                          const Page = route.component();
-                          return (
-                            <Route
-                              key={key}
-                              path={route.path}
-                              element={<Page />}
-                            />
-                          );
-                        })}
-                        <Route path="*" element={notFound} />
-                      </Routes>
-                    </SessionProvider>
-                  </OfflinePhotoProvider>
-                </OfflineIconProvider>
-              </FloroSocketProvider>
-            </QueryClientProvider>
-          </ThemeMount>
-        </ColorThemeProvider>
-      </FloroMount>
-    </OpenLinkProvider>
+    <EnvProvider env={props.env}>
+      <OpenLinkProvider openUrl={openUrl}>
+        <FloroMount text={props.text}>
+          <ColorThemeProvider>
+            <ThemeMount>
+              <QueryClientProvider client={queryClient}>
+                <FloroSocketProvider client={"web"}>
+                  <OfflineIconProvider>
+                    <OfflinePhotoProvider>
+                      <SessionProvider clientType="web" env={props.env}>
+                        <Routes>
+                          {props.routing.map((route, key) => {
+                            const Page = route.component();
+                            return (
+                              <Route
+                                key={key}
+                                path={route.path}
+                                element={<Page />}
+                              />
+                            );
+                          })}
+                          <Route path="*" element={notFound} />
+                        </Routes>
+                      </SessionProvider>
+                    </OfflinePhotoProvider>
+                  </OfflineIconProvider>
+                </FloroSocketProvider>
+              </QueryClientProvider>
+            </ThemeMount>
+          </ColorThemeProvider>
+        </FloroMount>
+      </OpenLinkProvider>
+    </EnvProvider>
   );
 }
 

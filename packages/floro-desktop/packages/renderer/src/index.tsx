@@ -12,6 +12,6 @@ const root = createRoot(
   mixpanel.init(import.meta.env.VITE_MIX_PANEL_KEY, {debug: isDebug});
   const systemAPI = await window.systemAPI;
   root.render(
-    <App systemAPI={systemAPI} />
+    <App systemAPI={systemAPI} env={import.meta.env.VITE_BUILD_ENV_NORMALIZED ?? "development"}/>
   );
 })();
