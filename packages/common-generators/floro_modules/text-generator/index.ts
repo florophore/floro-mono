@@ -38,7 +38,11 @@ export interface LocalizedPhraseKeys {
 
 export interface PhraseKeys {
     "components.copied":                  ComponentsCopied;
+    "components.copyright":               ComponentsCopyright;
+    "components.released_under_mit":      ComponentsReleasedUnderMIT;
     "front_page.download_desktop_client": FrontPageDownloadDesktopClient;
+    "front_page.get_help_and_contribute": FrontPageGetHelpAndContribute;
+    "front_page.install_the_cli":         FrontPageInstallTheCLI;
     "front_page.nav_about":               FrontPageNavAbout;
     "front_page.nav_consulting":          FrontPageNavConsulting;
     "front_page.nav_docs":                FrontPageNavDocs;
@@ -93,6 +97,40 @@ export enum Type {
 export interface ComponentsCopiedVariables {
 }
 
+export interface ComponentsCopyright {
+    interpolations: ComponentsCopyrightInterpolations;
+    links:          ComponentsCopyrightLinks;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      ComponentsCopyrightVariables;
+}
+
+export interface ComponentsCopyrightInterpolations {
+}
+
+export interface ComponentsCopyrightLinks {
+}
+
+export interface ComponentsCopyrightVariables {
+}
+
+export interface ComponentsReleasedUnderMIT {
+    interpolations: ComponentsReleasedUnderMITInterpolations;
+    links:          ComponentsReleasedUnderMITLinks;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      ComponentsReleasedUnderMITVariables;
+}
+
+export interface ComponentsReleasedUnderMITInterpolations {
+}
+
+export interface ComponentsReleasedUnderMITLinks {
+}
+
+export interface ComponentsReleasedUnderMITVariables {
+}
+
 export interface FrontPageDownloadDesktopClient {
     interpolations: FrontPageDownloadDesktopClientInterpolations;
     links:          FrontPageDownloadDesktopClientLinks;
@@ -108,6 +146,40 @@ export interface FrontPageDownloadDesktopClientLinks {
 }
 
 export interface FrontPageDownloadDesktopClientVariables {
+}
+
+export interface FrontPageGetHelpAndContribute {
+    interpolations: FrontPageGetHelpAndContributeInterpolations;
+    links:          FrontPageGetHelpAndContributeLinks;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      FrontPageGetHelpAndContributeVariables;
+}
+
+export interface FrontPageGetHelpAndContributeInterpolations {
+}
+
+export interface FrontPageGetHelpAndContributeLinks {
+}
+
+export interface FrontPageGetHelpAndContributeVariables {
+}
+
+export interface FrontPageInstallTheCLI {
+    interpolations: FrontPageInstallTheCLIInterpolations;
+    links:          FrontPageInstallTheCLILinks;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      FrontPageInstallTheCLIVariables;
+}
+
+export interface FrontPageInstallTheCLIInterpolations {
+}
+
+export interface FrontPageInstallTheCLILinks {
+}
+
+export interface FrontPageInstallTheCLIVariables {
 }
 
 export interface FrontPageNavAbout {
@@ -265,7 +337,11 @@ export interface MainHelloWorldVariables {
 
 export interface PhraseKeyDebugInfo {
     "components.copied":                  DebugInfo;
+    "components.copyright":               DebugInfo;
+    "components.released_under_mit":      DebugInfo;
     "front_page.download_desktop_client": DebugInfo;
+    "front_page.get_help_and_contribute": DebugInfo;
+    "front_page.install_the_cli":         DebugInfo;
     "front_page.nav_about":               DebugInfo;
     "front_page.nav_consulting":          DebugInfo;
     "front_page.nav_docs":                DebugInfo;

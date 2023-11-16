@@ -7,8 +7,10 @@
 export interface Icons {
     "front-page.apple":               FrontPageApple;
     "front-page.copy":                FrontPageCopy;
+    "front-page.discord":             FrontPageDiscord;
     "front-page.floro-round":         FrontPageFloroRound;
     "front-page.front-page-backdrop": FrontPageFrontPageBackdrop;
+    "front-page.github":              FrontPageGithub;
     "front-page.linux":               FrontPageLinux;
     "front-page.windows":             FrontPageWindows;
     "main.floro":                     MainFloro;
@@ -37,6 +39,15 @@ export interface FrontPageCopy {
 export interface FrontPageCopyVariants {
 }
 
+export interface FrontPageDiscord {
+    default:  Theme;
+    variants: FrontPageDiscordVariants;
+}
+
+export interface FrontPageDiscordVariants {
+    hovered: Theme;
+}
+
 export interface FrontPageFloroRound {
     default:  Theme;
     variants: FrontPageFloroRoundVariants;
@@ -51,6 +62,15 @@ export interface FrontPageFrontPageBackdrop {
 }
 
 export interface FrontPageFrontPageBackdropVariants {
+}
+
+export interface FrontPageGithub {
+    default:  Theme;
+    variants: FrontPageGithubVariants;
+}
+
+export interface FrontPageGithubVariants {
+    hovered: Theme;
 }
 
 export interface FrontPageLinux {

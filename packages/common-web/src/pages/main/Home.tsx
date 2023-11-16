@@ -8,6 +8,8 @@ import Button from "@floro/storybook/stories/design-system/Button";
 import ScreenShotLight from "@floro/main/public/pngs/light.no_edge.png";
 import ScreenShotDark from "@floro/main/public/pngs/dark.no_edge.png";
 import CLICopy from "../../components/home/CLICopy";
+import { Link } from "react-router-dom";
+import ColorPalette from "@floro/styles/ColorPalette";
 
 const HomeWrapper = styled.div`
   height: 100%;
@@ -160,6 +162,7 @@ const HomeContent = styled.main`
   z-index: 0;
   display: flex;
   align-self: center;
+  flex-direction: column;
   @media screen and (min-width: 1024px) {
     max-width: 1440px;
     padding-left: 120px;
@@ -195,7 +198,6 @@ const MobileTopSection = styled.section`
 const LeftColumn = styled.div`
   padding: 16px;
   flex-grow: 1;
-  height: 300px;
   box-sizing: border-box;
   padding-right: 8px;
   max-width: 40%;
@@ -329,6 +331,26 @@ const InstallCLISectionHeader = styled.h3`
   color: ${props => props.theme.colors.titleText};
 `;
 
+const Flatcon = styled.img`
+  height: 56px;
+  cursor: pointer;
+  transition: background-image 300ms;
+`;
+
+const Footer = styled.footer`
+  padding: 32px;
+  border-top: 1px solid ${props => props.theme.name == 'light' ? ColorPalette.lightGray : ColorPalette.darkerGray};
+`;
+
+const FooterText = styled.p`
+  padding: 0;
+  margin: 0;
+  font-family: "MavenPro";
+  font-weight: 400;
+  font-size: 1rem;
+  color: ${props => props.theme.colors.contrastTextLight};
+`;
+
 
 function Home() {
   const theme = useTheme();
@@ -344,12 +366,25 @@ function Home() {
   const tagLine = useRichText("front_page.tag_line");
   const subTextTagLine = useRichText("front_page.subtext_of_tag_line");
   const downloadDesktopText = useRichText("front_page.download_desktop_client");
+  const installCliText = useRichText("front_page.install_the_cli");
+  const getHelpAndContributeText = useRichText("front_page.get_help_and_contribute");
+  const copyrightText = useRichText("components.copyright");
+  const releasedUnderMITText = useRichText("components.released_under_mit");
+
+
+
   const [isHoveringMac, setIsHoveringMac] = useState(false);
   const macOSIcon = useIcon("front-page.apple", isHoveringMac ? "hovered" : undefined);
   const [isHoveringWindows, setIsHoveringWindows] = useState(false);
   const windowsOSIcon = useIcon("front-page.windows", isHoveringWindows ? "hovered" : undefined);
   const [isHoveringLinux, setIsHoveringLinux] = useState(false);
   const linuxOSIcon = useIcon("front-page.linux", isHoveringLinux ? "hovered" : undefined);
+
+  const [isHoveringDiscord, setIsHoveringDiscord] = useState(false);
+  const discordIcon = useIcon("front-page.discord", isHoveringDiscord ? "hovered" : undefined);
+
+  const [isHoveringGithub, setIsHoveringGithub] = useState(false);
+  const githubIcon = useIcon("front-page.github", isHoveringGithub ? "hovered" : undefined);
 
   const screenShot = useMemo(() => {
     if (theme.name == 'dark') {
@@ -368,7 +403,9 @@ function Home() {
       <HomeNav>
         <InnerContainer>
           <NavContent>
-            <NavIcon src={floroRound} />
+            <Link to={"/"}>
+              <NavIcon src={floroRound} />
+            </Link>
             <NavData>
               <MobileNavInfo></MobileNavInfo>
               <LargeNavInfo>
@@ -448,21 +485,35 @@ function Home() {
                     src={windowsOSIcon} />
                 </DownloadRow>
               </DownloadSection>
-
             </div>
             <div style={{ padding: 8, display: 'flex', alignItems: 'center', flexDirection: 'column', width: '100%'}}>
               <InstallCLISection style={{textAlign: 'center'}}>
-                <InstallCLISectionHeader>{'install the cli'}</InstallCLISectionHeader>
+                <InstallCLISectionHeader>{installCliText}</InstallCLISectionHeader>
                 <div style={{marginTop: 24, width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
                   <div style={{ maxWidth: 320, width: '100%'}}>
                     <CLICopy/>
                   </div>
                 </div>
               </InstallCLISection>
-
+              <div style={{ padding: 8, display: 'flex', alignItems: 'center', flexDirection: 'column', width: '100%'}}>
+                <DownloadSection style={{textAlign: 'center'}}>
+                  <InstallCLISectionHeader>{getHelpAndContributeText}</InstallCLISectionHeader>
+                  <DownloadRow style={{justifyContent: 'center'}}>
+                    <Flatcon
+                      onMouseEnter={() => setIsHoveringGithub(true)}
+                      onMouseLeave={() => setIsHoveringGithub(false)}
+                      src={githubIcon}
+                      style={{marginRight: 24}}
+                    />
+                    <Flatcon
+                      onMouseEnter={() => setIsHoveringDiscord(true)}
+                      onMouseLeave={() => setIsHoveringDiscord(false)}
+                      src={discordIcon}
+                    />
+                  </DownloadRow>
+                </DownloadSection>
+              </div>
             </div>
-
-
           </MobileTopSection>
           <LargeTopSection>
             <LeftColumn>
@@ -491,11 +542,31 @@ function Home() {
                 </DownloadRow>
               </DownloadSection>
               <InstallCLISection>
-                <InstallCLISectionHeader>{'install the cli'}</InstallCLISectionHeader>
+                <InstallCLISectionHeader>{installCliText}</InstallCLISectionHeader>
                 <div style={{marginTop: 24, maxWidth: 320}}>
                   <CLICopy/>
                 </div>
               </InstallCLISection>
+              <DownloadSection>
+                <InstallCLISectionHeader>{getHelpAndContributeText}</InstallCLISectionHeader>
+                <DownloadRow>
+                  <a href="https://github.com/florophore/floro" target="_blank">
+                    <Flatcon
+                      onMouseEnter={() => setIsHoveringGithub(true)}
+                      onMouseLeave={() => setIsHoveringGithub(false)}
+                      src={githubIcon}
+                      style={{marginRight: 24}}
+                    />
+                  </a>
+                  <a href={"https://discord.gg/SD2DqEKQ"} target="_blank">
+                    <Flatcon
+                      onMouseEnter={() => setIsHoveringDiscord(true)}
+                      onMouseLeave={() => setIsHoveringDiscord(false)}
+                      src={discordIcon}
+                    />
+                  </a>
+                </DownloadRow>
+              </DownloadSection>
             </LeftColumn>
             <RightColumn
               style={{
@@ -519,7 +590,19 @@ function Home() {
               </div>
             </RightColumn>
           </LargeTopSection>
+          <div style={{height: 300}}></div>
         </HomeContent>
+        <Footer>
+          <div style={{textAlign: 'center'}}>
+            <FooterText>
+              {releasedUnderMITText}
+            </FooterText>
+            <FooterText style={{marginTop: 12}}>
+              {copyrightText}
+            </FooterText>
+          </div>
+
+        </Footer>
       </MainScrollWrapper>
     </HomeWrapper>
   );

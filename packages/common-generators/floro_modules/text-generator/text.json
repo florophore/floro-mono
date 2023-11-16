@@ -15,6 +15,48 @@
   },
   "localizedPhraseKeys": {
     "EN": {
+      "front_page.get_help_and_contribute": {
+        "phraseKey": "front_page.get_help_and_contribute",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "get help & contribute",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "front_page.install_the_cli": {
+        "phraseKey": "front_page.install_the_cli",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "install the cli",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
       "front_page.download_desktop_client": {
         "phraseKey": "front_page.download_desktop_client",
         "variables": {},
@@ -217,6 +259,48 @@
           }
         ]
       },
+      "components.copyright": {
+        "phraseKey": "components.copyright",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "Copyright © 2023-present Cheqout Payments Inc & Floro Contributors",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "components.released_under_mit": {
+        "phraseKey": "components.released_under_mit",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "Released under the MIT License.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
       "components.copied": {
         "phraseKey": "components.copied",
         "variables": {},
@@ -274,6 +358,48 @@
       }
     },
     "ZH": {
+      "front_page.get_help_and_contribute": {
+        "phraseKey": "front_page.get_help_and_contribute",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "下载桌面客户端",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "front_page.install_the_cli": {
+        "phraseKey": "front_page.install_the_cli",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "下载桌面客户端",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
       "front_page.download_desktop_client": {
         "phraseKey": "front_page.download_desktop_client",
         "variables": {},
@@ -476,6 +602,48 @@
           }
         ]
       },
+      "components.copyright": {
+        "phraseKey": "components.copyright",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "Copyright © 2023-present Cheqout Payments Inc & Floro Contributors",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "components.released_under_mit": {
+        "phraseKey": "components.released_under_mit",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "Released under the MIT License.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
       "components.copied": {
         "phraseKey": "components.copied",
         "variables": {},
@@ -534,6 +702,14 @@
     }
   },
   "phraseKeyDebugInfo": {
+    "front_page.get_help_and_contribute": {
+      "groupName": "Front Page",
+      "phraseKey": "get help and contribute"
+    },
+    "front_page.install_the_cli": {
+      "groupName": "Front Page",
+      "phraseKey": "install the cli"
+    },
     "front_page.download_desktop_client": {
       "groupName": "Front Page",
       "phraseKey": "download desktop client"
@@ -569,6 +745,14 @@
     "front_page.nav_about": {
       "groupName": "Front Page",
       "phraseKey": "nav about"
+    },
+    "components.copyright": {
+      "groupName": "Components",
+      "phraseKey": "copyright"
+    },
+    "components.released_under_mit": {
+      "groupName": "Components",
+      "phraseKey": "released under mit"
     },
     "components.copied": {
       "groupName": "Components",

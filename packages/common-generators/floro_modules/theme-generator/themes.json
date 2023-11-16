@@ -10,6 +10,26 @@
     }
   },
   "themeColors": {
+    "icon-single-contrast": {
+      "default": {
+        "light": "#414141FF",
+        "dark": "#FFFFFFFF"
+      },
+      "variants": {
+        "hovered": {
+          "light": "#1C82F4FF",
+          "dark": "#1C82F4FF"
+        },
+        "selected": {
+          "light": null,
+          "dark": null
+        },
+        "focused": {
+          "light": null,
+          "dark": null
+        }
+      }
+    },
     "icon-contrast-fg": {
       "default": {
         "light": "#414141FF",

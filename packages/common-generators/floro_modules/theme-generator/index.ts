@@ -12,11 +12,12 @@ export interface Themes {
 }
 
 export interface ThemeColors {
-    "contrast-text":       ContrastText;
-    "contrast-text-light": ContrastTextLight;
-    "icon-bg":             IconBg;
-    "icon-contrast-fg":    IconContrastFg;
-    "icon-purple":         IconPurple;
+    "contrast-text":        ContrastText;
+    "contrast-text-light":  ContrastTextLight;
+    "icon-bg":              IconBg;
+    "icon-contrast-fg":     IconContrastFg;
+    "icon-purple":          IconPurple;
+    "icon-single-contrast": IconSingleContrast;
 }
 
 export interface ContrastText {
@@ -68,6 +69,17 @@ export interface IconPurple {
 }
 
 export interface IconPurpleVariants {
+}
+
+export interface IconSingleContrast {
+    default:  ThemeSet;
+    variants: IconSingleContrastVariants;
+}
+
+export interface IconSingleContrastVariants {
+    focused:  ThemeSet;
+    hovered:  ThemeSet;
+    selected: ThemeSet;
 }
 
 export interface ThemeDefinitions {
