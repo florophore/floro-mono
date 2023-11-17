@@ -429,7 +429,7 @@
         "phrase": [
           {
             "children": [],
-            "content": "Appearance",
+            "content": "外观",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -450,7 +450,7 @@
         "phrase": [
           {
             "children": [],
-            "content": "下载桌面客户端",
+            "content": "获取帮助并作出贡献",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -471,7 +471,7 @@
         "phrase": [
           {
             "children": [],
-            "content": "下载桌面客户端",
+            "content": "安装CLI",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -513,20 +513,7 @@
         "phrase": [
           {
             "children": [],
-            "content": "floro",
-            "type": "text",
-            "styles": {
-              "isBold": false,
-              "isItalic": false,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": " is a distributed version control system for creating and managing interoperable static assets and templates",
+            "content": "floro 是一个分布式版本控制系统，用于创建和管理可互操作的静态资产和模板",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -547,7 +534,20 @@
         "phrase": [
           {
             "children": [],
-            "content": "git for the rest of your product team",
+            "content": "为程式员以外所制造的",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "git",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -568,7 +568,7 @@
         "phrase": [
           {
             "children": [],
-            "content": "consulting",
+            "content": "咨询",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -589,10 +589,10 @@
         "phrase": [
           {
             "children": [],
-            "content": "foss",
+            "content": "开源软件",
             "type": "text",
             "styles": {
-              "isBold": false,
+              "isBold": true,
               "isItalic": false,
               "isUnderlined": false,
               "isStrikethrough": false,
@@ -610,7 +610,7 @@
         "phrase": [
           {
             "children": [],
-            "content": "pricing",
+            "content": "定价",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -631,7 +631,7 @@
         "phrase": [
           {
             "children": [],
-            "content": "download",
+            "content": "下载",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -652,7 +652,7 @@
         "phrase": [
           {
             "children": [],
-            "content": "docs",
+            "content": "文档",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -673,7 +673,7 @@
         "phrase": [
           {
             "children": [],
-            "content": "about",
+            "content": "关于",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -694,7 +694,7 @@
         "phrase": [
           {
             "children": [],
-            "content": "terms of service",
+            "content": "服务条款",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -715,7 +715,7 @@
         "phrase": [
           {
             "children": [],
-            "content": "privacy policy",
+            "content": "隐私政策",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -736,7 +736,7 @@
         "phrase": [
           {
             "children": [],
-            "content": "Copyright © 2023-present Cheqout Payments Inc & Floro Contributors",
+            "content": "版权所有 © 2023-至今 Cheqout Payments Inc & Floro Contributors",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -757,7 +757,7 @@
         "phrase": [
           {
             "children": [],
-            "content": "Released under the MIT License.",
+            "content": "根据 MIT 许可发布。",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -778,7 +778,7 @@
         "phrase": [
           {
             "children": [],
-            "content": "copied!",
+            "content": "复制的！",
             "type": "text",
             "styles": {
               "isBold": false,

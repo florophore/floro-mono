@@ -1,9 +1,9 @@
 {
   "moduleFile": "floro.module.js",
   "repositoryId": "12aa1618-9e0b-404c-8423-7c38047e18c9",
-  "sha": "0078e0763f6f289cb0f895035f50de6211e0d512cf5b76c90cc7ea01d9b03427",
-  "message": "added more text to front page",
-  "idx": 8,
+  "sha": "59513eb94df6746f4043012c8c2c85e7be7b7216f348f7259f6d42c2210e25ab",
+  "message": "added chinese translations",
+  "idx": 9,
   "genratorDependencies": {
     "text-generator": {
       "text": "0.0.8"
