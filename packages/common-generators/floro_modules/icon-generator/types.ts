@@ -8,10 +8,14 @@ export interface Icons {
     "front-page.apple":               FrontPageApple;
     "front-page.copy":                FrontPageCopy;
     "front-page.discord":             FrontPageDiscord;
+    "front-page.drop-down-arrow":     FrontPageDropDownArrow;
     "front-page.floro-round":         FrontPageFloroRound;
     "front-page.front-page-backdrop": FrontPageFrontPageBackdrop;
     "front-page.github":              FrontPageGithub;
+    "front-page.language":            FrontPageLanguage;
     "front-page.linux":               FrontPageLinux;
+    "front-page.moon":                FrontPageMoon;
+    "front-page.sun":                 FrontPageSun;
     "front-page.windows":             FrontPageWindows;
     "main.floro":                     MainFloro;
     "main.floro-text":                MainFloroText;
@@ -48,6 +52,15 @@ export interface FrontPageDiscordVariants {
     hovered: Theme;
 }
 
+export interface FrontPageDropDownArrow {
+    default:  Theme;
+    variants: FrontPageDropDownArrowVariants;
+}
+
+export interface FrontPageDropDownArrowVariants {
+    hovered: Theme;
+}
+
 export interface FrontPageFloroRound {
     default:  Theme;
     variants: FrontPageFloroRoundVariants;
@@ -73,6 +86,15 @@ export interface FrontPageGithubVariants {
     hovered: Theme;
 }
 
+export interface FrontPageLanguage {
+    default:  Theme;
+    variants: FrontPageLanguageVariants;
+}
+
+export interface FrontPageLanguageVariants {
+    hovered: Theme;
+}
+
 export interface FrontPageLinux {
     default:  Theme;
     variants: FrontPageLinuxVariants;
@@ -80,6 +102,22 @@ export interface FrontPageLinux {
 
 export interface FrontPageLinuxVariants {
     hovered: Theme;
+}
+
+export interface FrontPageMoon {
+    default:  Theme;
+    variants: FrontPageMoonVariants;
+}
+
+export interface FrontPageMoonVariants {
+}
+
+export interface FrontPageSun {
+    default:  Theme;
+    variants: FrontPageSunVariants;
+}
+
+export interface FrontPageSunVariants {
 }
 
 export interface FrontPageWindows {

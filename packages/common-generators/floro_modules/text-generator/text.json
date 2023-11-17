@@ -15,6 +15,27 @@
   },
   "localizedPhraseKeys": {
     "EN": {
+      "front_page.appearance": {
+        "phraseKey": "front_page.appearance",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "Appearance",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
       "front_page.get_help_and_contribute": {
         "phraseKey": "front_page.get_help_and_contribute",
         "variables": {},
@@ -259,6 +280,48 @@
           }
         ]
       },
+      "components.terms_of_service": {
+        "phraseKey": "components.terms_of_service",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "terms of service",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "components.privacy_policy": {
+        "phraseKey": "components.privacy_policy",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "privacy policy",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
       "components.copyright": {
         "phraseKey": "components.copyright",
         "variables": {},
@@ -358,6 +421,27 @@
       }
     },
     "ZH": {
+      "front_page.appearance": {
+        "phraseKey": "front_page.appearance",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "Appearance",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
       "front_page.get_help_and_contribute": {
         "phraseKey": "front_page.get_help_and_contribute",
         "variables": {},
@@ -602,6 +686,48 @@
           }
         ]
       },
+      "components.terms_of_service": {
+        "phraseKey": "components.terms_of_service",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "terms of service",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "components.privacy_policy": {
+        "phraseKey": "components.privacy_policy",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "privacy policy",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
       "components.copyright": {
         "phraseKey": "components.copyright",
         "variables": {},
@@ -702,6 +828,10 @@
     }
   },
   "phraseKeyDebugInfo": {
+    "front_page.appearance": {
+      "groupName": "Front Page",
+      "phraseKey": "appearance"
+    },
     "front_page.get_help_and_contribute": {
       "groupName": "Front Page",
       "phraseKey": "get help and contribute"
@@ -745,6 +875,14 @@
     "front_page.nav_about": {
       "groupName": "Front Page",
       "phraseKey": "nav about"
+    },
+    "components.terms_of_service": {
+      "groupName": "Components",
+      "phraseKey": "terms of service"
+    },
+    "components.privacy_policy": {
+      "groupName": "Components",
+      "phraseKey": "privacy policy"
     },
     "components.copyright": {
       "groupName": "Components",

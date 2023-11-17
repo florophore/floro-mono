@@ -39,7 +39,10 @@ export interface LocalizedPhraseKeys {
 export interface PhraseKeys {
     "components.copied":                  ComponentsCopied;
     "components.copyright":               ComponentsCopyright;
+    "components.privacy_policy":          ComponentsPrivacyPolicy;
     "components.released_under_mit":      ComponentsReleasedUnderMIT;
+    "components.terms_of_service":        ComponentsTermsOfService;
+    "front_page.appearance":              FrontPageAppearance;
     "front_page.download_desktop_client": FrontPageDownloadDesktopClient;
     "front_page.get_help_and_contribute": FrontPageGetHelpAndContribute;
     "front_page.install_the_cli":         FrontPageInstallTheCLI;
@@ -114,6 +117,23 @@ export interface ComponentsCopyrightLinks {
 export interface ComponentsCopyrightVariables {
 }
 
+export interface ComponentsPrivacyPolicy {
+    interpolations: ComponentsPrivacyPolicyInterpolations;
+    links:          ComponentsPrivacyPolicyLinks;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      ComponentsPrivacyPolicyVariables;
+}
+
+export interface ComponentsPrivacyPolicyInterpolations {
+}
+
+export interface ComponentsPrivacyPolicyLinks {
+}
+
+export interface ComponentsPrivacyPolicyVariables {
+}
+
 export interface ComponentsReleasedUnderMIT {
     interpolations: ComponentsReleasedUnderMITInterpolations;
     links:          ComponentsReleasedUnderMITLinks;
@@ -129,6 +149,40 @@ export interface ComponentsReleasedUnderMITLinks {
 }
 
 export interface ComponentsReleasedUnderMITVariables {
+}
+
+export interface ComponentsTermsOfService {
+    interpolations: ComponentsTermsOfServiceInterpolations;
+    links:          ComponentsTermsOfServiceLinks;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      ComponentsTermsOfServiceVariables;
+}
+
+export interface ComponentsTermsOfServiceInterpolations {
+}
+
+export interface ComponentsTermsOfServiceLinks {
+}
+
+export interface ComponentsTermsOfServiceVariables {
+}
+
+export interface FrontPageAppearance {
+    interpolations: FrontPageAppearanceInterpolations;
+    links:          FrontPageAppearanceLinks;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      FrontPageAppearanceVariables;
+}
+
+export interface FrontPageAppearanceInterpolations {
+}
+
+export interface FrontPageAppearanceLinks {
+}
+
+export interface FrontPageAppearanceVariables {
 }
 
 export interface FrontPageDownloadDesktopClient {
@@ -338,7 +392,10 @@ export interface MainHelloWorldVariables {
 export interface PhraseKeyDebugInfo {
     "components.copied":                  DebugInfo;
     "components.copyright":               DebugInfo;
+    "components.privacy_policy":          DebugInfo;
     "components.released_under_mit":      DebugInfo;
+    "components.terms_of_service":        DebugInfo;
+    "front_page.appearance":              DebugInfo;
     "front_page.download_desktop_client": DebugInfo;
     "front_page.get_help_and_contribute": DebugInfo;
     "front_page.install_the_cli":         DebugInfo;

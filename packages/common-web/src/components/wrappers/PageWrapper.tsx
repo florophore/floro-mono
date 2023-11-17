@@ -1,10 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "@emotion/styled";
-import {  useIcon } from '../../floro_listener/FloroIconsProvider';
+import { useIcon } from "../../floro_listener/FloroIconsProvider";
 import { useRichText } from "../../floro_listener/hooks/locales";
 import Button from "@floro/storybook/stories/design-system/Button";
 import { Link } from "react-router-dom";
 import ColorPalette from "@floro/styles/ColorPalette";
+import HamburgerToggle from "./HamburgerToggle";
+import LanguageSelect from "./LanguageSelect";
+import ThemeSwitcher from "./ThemeSwitcher";
+import MobileLanguageSelectList from "./MobileLanguageSelectList";
 
 const PageWrapper = styled.div`
   height: 100%;
@@ -13,12 +17,11 @@ const PageWrapper = styled.div`
   flex: 1;
   width: 100%;
   height: 100vh;
-  background: ${props => props.theme.background};
+  background: ${(props) => props.theme.background};
 `;
 
 const InnerContainer = styled.div`
-  box-shadow: inset 0px -1px 3px
-    ${(props) => props.theme.colors.tooltipInnerShadowColor};
+  box-shadow: inset 0px -1px 3px ${(props) => props.theme.colors.tooltipInnerShadowColor};
   height: 100%;
   width: 100%;
   justify-content: center;
@@ -28,17 +31,18 @@ const InnerContainer = styled.div`
 const PageNav = styled.nav`
   display: flex;
   flex-direction: row;
-  background: ${props => props.theme.background};
-  box-shadow: 0px 2px 6px 2px ${props => props.theme.colors.tooltipOuterShadowColor};
+  background: ${(props) => props.theme.background};
+  box-shadow: 0px 2px 6px 2px
+    ${(props) => props.theme.colors.tooltipOuterShadowColor};
   position: relative;
-  z-index: 1;
+  z-index: 2;
   @media screen and (min-width: 1024px) {
     height: 101px;
   }
   @media screen and (min-width: 768px) and (max-width: 1023px) {
     height: 72px;
   }
-  @media screen and (max-width: 767px){
+  @media screen and (max-width: 767px) {
     height: 56px;
   }
 `;
@@ -46,7 +50,7 @@ const PageNav = styled.nav`
 const NavContent = styled.div`
   width: 100%;
   height: calc(100% - 6px);
-  background: ${props => props.theme.background};
+  background: ${(props) => props.theme.background};
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -59,7 +63,7 @@ const NavContent = styled.div`
     max-width: 100%;
     padding: 10px 8px 8px 8px;
   }
-  @media screen and (max-width: 767px){
+  @media screen and (max-width: 767px) {
     max-width: 100%;
     padding: 7px 4px 4px 4px;
   }
@@ -79,7 +83,7 @@ const NavIcon = styled.img`
   @media screen and (min-width: 768px) and (max-width: 1023px) {
     height: 56px;
   }
-  @media screen and (max-width: 767px){
+  @media screen and (max-width: 767px) {
     height: 40px;
   }
 `;
@@ -96,8 +100,9 @@ const LargeNavInfo = styled.div`
   }
   @media screen and (min-width: 768px) and (max-width: 1023px) {
     display: flex;
+    padding-left: 24px;
   }
-  @media screen and (max-width: 767px){
+  @media screen and (max-width: 767px) {
     display: none;
   }
 `;
@@ -119,7 +124,7 @@ const MobileNavInfo = styled.div`
   @media screen and (min-width: 768px) and (max-width: 1023px) {
     display: none;
   }
-  @media screen and (max-width: 767px){
+  @media screen and (max-width: 767px) {
     display: flex;
   }
 `;
@@ -130,12 +135,19 @@ const HeaderLinkText = styled.p`
   font-family: "MavenPro";
   font-weight: 600;
   font-size: 1.44rem;
+  margin-right: 24px;
+  color: ${(props) => props.theme.colors.contrastText};
   @media screen and (min-width: 768px) and (max-width: 1023px) {
-  font-size: 1.2rem;
+    font-size: 1.2rem;
+    margin-right: 18px;
   }
-  color: ${props => props.theme.colors.contrastText};
+  @media screen and (max-width: 767px) {
+    font-size: 1.7rem;
+    margin: 12px 0;
+    display: inline-block;
+  }
   &:hover {
-    color: ${props => props.theme.colors.linkColor};
+    color: ${(props) => props.theme.colors.linkColor};
     cursor: pointer;
   }
 `;
@@ -143,7 +155,7 @@ const HeaderLinkText = styled.p`
 const MainScrollWrapper = styled.div`
   position: relative;
   width: 100%;
-  background: ${props => props.theme.background};
+  background: ${(props) => props.theme.background};
   display: flex;
   flex-grow: 1;
   flex-direction: column;
@@ -166,15 +178,18 @@ const MainContent = styled.main`
     max-width: 100%;
     padding-left: 72px;
   }
-  @media screen and (max-width: 767px){
+  @media screen and (max-width: 767px) {
     max-width: 100%;
   }
 `;
 
-
 const Footer = styled.footer`
   padding: 32px;
-  border-top: 1px solid ${props => props.theme.name == 'light' ? ColorPalette.lightGray : ColorPalette.darkerGray};
+  border-top: 1px solid
+    ${(props) =>
+      props.theme.name == "light"
+        ? ColorPalette.lightGray
+        : ColorPalette.darkerGray};
 `;
 
 const FooterText = styled.p`
@@ -183,7 +198,7 @@ const FooterText = styled.p`
   font-family: "MavenPro";
   font-weight: 400;
   font-size: 1rem;
-  color: ${props => props.theme.colors.contrastTextLight};
+  color: ${(props) => props.theme.colors.contrastTextLight};
 `;
 
 const FooterExtra = styled.div`
@@ -193,15 +208,78 @@ const FooterExtra = styled.div`
   @media screen and (min-width: 768px) and (max-width: 1023px) {
     height: 72px;
   }
-  @media screen and (max-width: 767px){
+  @media screen and (max-width: 767px) {
     height: 56px;
   }
 `;
 
-interface Props {
-    children: React.ReactElement|React.ReactElement[];
-}
+const FooterPolicyText = styled.span`
+  padding: 0;
+  margin: 0;
+  font-family: "MavenPro";
+  font-weight: 400;
+  font-size: 1rem;
+  color: ${(props) => props.theme.colors.contrastTextLight};
+  &:hover {
+    color: ${(props) => props.theme.colors.linkColor};
+    cursor: pointer;
+  }
+`;
 
+const MobileDropDown = styled.div`
+  width: 100%;
+  position: absolute;
+  left: 0;
+  transition: opacity 300ms;
+  background: ${(props) => props.theme.background};
+  padding: 8px 48px;
+  overflow-y: scroll;
+  height: 100%;
+  @media screen and (min-width: 1024px) {
+    display: none;
+    top: 100px;
+    max-height: calc(100vh - 100px);
+  }
+  @media screen and (min-width: 768px) and (max-width: 1023px) {
+    display: none;
+    top: 71px;
+    max-height: calc(100vh - 71px);
+  }
+  @media screen and (max-width: 767px) {
+    display: flex;
+    flex-direction: column;
+    top: 55px;
+    max-height: calc(100vh - 55px);
+    z-index: 1;
+  }
+`;
+
+const BottomContainer =styled.div`
+  margin-top: 96px;
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+`;
+
+
+const AppearanceText = styled.span`
+  padding: 0;
+  margin: 0;
+  font-family: "MavenPro";
+  font-weight: 500;
+  font-size: 1.2rem;
+  color: ${(props) => props.theme.colors.titleText};
+`;
+
+const Row =styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+interface Props {
+  children: React.ReactElement | React.ReactElement[];
+}
 
 const PageWrapperComponent = (props: Props) => {
   const floroRound = useIcon("front-page.floro-round");
@@ -213,6 +291,11 @@ const PageWrapperComponent = (props: Props) => {
   const downloadText = useRichText("front_page.nav_download");
   const copyrightText = useRichText("components.copyright");
   const releasedUnderMITText = useRichText("components.released_under_mit");
+  const privacyPolicy = useRichText("components.privacy_policy");
+  const termsOfService = useRichText("components.terms_of_service");
+  const appearanceText = useRichText("front_page.appearance");
+
+  const [isExpanded, setIsExpanded] = useState(false);
 
   return (
     <PageWrapper>
@@ -223,47 +306,133 @@ const PageWrapperComponent = (props: Props) => {
               <NavIcon src={floroRound} />
             </Link>
             <NavData>
-              <MobileNavInfo></MobileNavInfo>
+              <MobileNavInfo
+                style={{
+                  justifyContent: "flex-end",
+                  alignItems: "center",
+                  paddingRight: 8,
+                }}
+              >
+                <MobileLanguageSelectList />
+                <HamburgerToggle
+                  isOpen={isExpanded}
+                  setIsOpen={setIsExpanded}
+                />
+              </MobileNavInfo>
               <LargeNavInfo>
                 <LargeNavMainContainer>
                   <HeaderLinkText>{aboutText}</HeaderLinkText>
-                  <HeaderLinkText style={{ marginLeft: 24 }}>
-                    {docsText}
-                  </HeaderLinkText>
-                  <HeaderLinkText style={{ marginLeft: 24 }}>
-                    {pricingText}
-                  </HeaderLinkText>
-                  <HeaderLinkText style={{ marginLeft: 24 }}>
-                    {fossText}
-                  </HeaderLinkText>
-                  <HeaderLinkText style={{ marginLeft: 24 }}>
-                    {consultingText}
-                  </HeaderLinkText>
+                  <HeaderLinkText>{docsText}</HeaderLinkText>
+                  <HeaderLinkText>{pricingText}</HeaderLinkText>
+                  <HeaderLinkText>{fossText}</HeaderLinkText>
+                  <HeaderLinkText>{consultingText}</HeaderLinkText>
                 </LargeNavMainContainer>
-                <Button size="small" label={downloadText} bg={"orange"} />
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <ThemeSwitcher />
+                  <LanguageSelect />
+                  <div style={{ width: 120 }}>
+                    <Button size="small" label={downloadText} bg={"orange"} />
+                  </div>
+                </div>
               </LargeNavInfo>
             </NavData>
           </NavContent>
         </InnerContainer>
       </PageNav>
+      <MobileDropDown
+        style={{
+          pointerEvents: isExpanded ? "all" : "none",
+          opacity: isExpanded ? 1 : 0,
+        }}
+      >
+        <div style={{ marginTop: 24}}>
+          <div>
+            <HeaderLinkText>{aboutText}</HeaderLinkText>
+          </div>
+          <div>
+            <HeaderLinkText>{docsText}</HeaderLinkText>
+          </div>
+          <div>
+            <HeaderLinkText>{pricingText}</HeaderLinkText>
+          </div>
+          <div>
+            <HeaderLinkText>{fossText}</HeaderLinkText>
+          </div>
+          <div>
+            <HeaderLinkText>{consultingText}</HeaderLinkText>
+          </div>
+        </div>
+        <Row style={{marginTop: 36}}>
+          <AppearanceText style={{ marginTop: -4, marginRight: 12}}>{appearanceText}</AppearanceText>
+          <ThemeSwitcher />
+        </Row>
+        <BottomContainer>
+            <Button style={{alignSelf: 'center'}} size="big" label={downloadText} bg={"orange"} />
+        </BottomContainer>
+        <BottomContainer style={{ justifyContent: 'flex-end'}}>
+          <Footer>
+            <div style={{ textAlign: "center" }}>
+              <FooterText style={{ marginTop: 0 }}>
+                <Link to={"/privacy"}>
+                  <FooterPolicyText>{privacyPolicy}</FooterPolicyText>
+                </Link>
+                <span
+                  style={{
+                    marginLeft: 12,
+                    marginRight: 12,
+                  }}
+                >
+                  {"|"}
+                </span>
+                <Link to={"/tos"}>
+                  <FooterPolicyText>{termsOfService}</FooterPolicyText>
+                </Link>
+              </FooterText>
+              <FooterText style={{ marginTop: 12 }}>
+                {releasedUnderMITText}
+              </FooterText>
+              <FooterText style={{ marginTop: 12 }}>{copyrightText}</FooterText>
+            </div>
+            <FooterExtra />
+          </Footer>
+        </BottomContainer>
+      </MobileDropDown>
       <MainScrollWrapper>
-        <MainContent>
-            {props.children}
-        </MainContent>
+        <MainContent>{props.children}</MainContent>
         <Footer>
-          <div style={{textAlign: 'center'}}>
-            <FooterText>
+          <div style={{ textAlign: "center" }}>
+            <FooterText style={{ marginTop: 0 }}>
+              <Link to={"/privacy"}>
+                <FooterPolicyText>{privacyPolicy}</FooterPolicyText>
+              </Link>
+              <span
+                style={{
+                  marginLeft: 12,
+                  marginRight: 12,
+                }}
+              >
+                {"|"}
+              </span>
+              <Link to={"/tos"}>
+                <FooterPolicyText>{termsOfService}</FooterPolicyText>
+              </Link>
+            </FooterText>
+            <FooterText style={{ marginTop: 12 }}>
               {releasedUnderMITText}
             </FooterText>
-            <FooterText style={{marginTop: 12}}>
-              {copyrightText}
-            </FooterText>
+            <FooterText style={{ marginTop: 12 }}>{copyrightText}</FooterText>
           </div>
-          <FooterExtra/>
+          <FooterExtra />
         </Footer>
       </MainScrollWrapper>
     </PageWrapper>
   );
-}
+};
 
 export default React.memo(PageWrapperComponent);

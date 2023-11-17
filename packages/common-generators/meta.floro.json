@@ -1,9 +1,9 @@
 {
   "moduleFile": "floro.module.js",
   "repositoryId": "12aa1618-9e0b-404c-8423-7c38047e18c9",
-  "sha": "c79091725d4bddf5652d5a999d966df1bc080d6f508562c4a16294cc0640a70d",
-  "message": "added footer text and community text to front page",
-  "idx": 7,
+  "sha": "0078e0763f6f289cb0f895035f50de6211e0d512cf5b76c90cc7ea01d9b03427",
+  "message": "added more text to front page",
+  "idx": 8,
   "genratorDependencies": {
     "text-generator": {
       "text": "0.0.8"

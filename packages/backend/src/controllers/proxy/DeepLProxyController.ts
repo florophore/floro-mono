@@ -17,7 +17,7 @@ interface TranslationRequest {
 export default class DeepLProxyController extends BaseController {
   @Post("/proxy/deepL/translate/richText")
   public async deepLProxy(request, response): Promise<void> {
-    response.header("Access-Control-Allow-Origin", "null, ");
+    response.header("Access-Control-Allow-Origin", "null");
     const body: TranslationRequest = request.body;
     const url = body?.is_free_plan ? "https://api-free.deepl.com" : "https://api.deepl.com";
     let hasResponded = false;
