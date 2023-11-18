@@ -19,7 +19,6 @@ const ClientApp = () => {
     (Cookies.get?.("locale-code") as keyof LocalizedPhrases["locales"] &
       string) ?? "EN";
   const initTheme = Cookies.get?.("theme-preference") ?? "light";
-  console.log("OH", initTheme)
   return (
     <ApolloProvider client={client as unknown as ApolloClient<NormalizedCache>}>
       <BrowserRouter>

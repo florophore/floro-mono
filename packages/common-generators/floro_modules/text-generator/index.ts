@@ -37,25 +37,29 @@ export interface LocalizedPhraseKeys {
 }
 
 export interface PhraseKeys {
-    "components.copied":                  ComponentsCopied;
-    "components.copyright":               ComponentsCopyright;
-    "components.privacy_policy":          ComponentsPrivacyPolicy;
-    "components.released_under_mit":      ComponentsReleasedUnderMIT;
-    "components.terms_of_service":        ComponentsTermsOfService;
-    "front_page.appearance":              FrontPageAppearance;
-    "front_page.download_desktop_client": FrontPageDownloadDesktopClient;
-    "front_page.get_help_and_contribute": FrontPageGetHelpAndContribute;
-    "front_page.install_the_cli":         FrontPageInstallTheCLI;
-    "front_page.nav_about":               FrontPageNavAbout;
-    "front_page.nav_consulting":          FrontPageNavConsulting;
-    "front_page.nav_docs":                FrontPageNavDocs;
-    "front_page.nav_download":            FrontPageNavDownload;
-    "front_page.nav_foss":                FrontPageNavFOSS;
-    "front_page.nav_pricing":             FrontPageNavPricing;
-    "front_page.subtext_of_tag_line":     FrontPageSubtextOfTagLine;
-    "front_page.tag_line":                FrontPageTagLine;
-    "main.hello_world":                   MainHelloWorld;
-    "meta_tags.about":                    MetaTagsAbout;
+    "components.copied":                   ComponentsCopied;
+    "components.copyright":                ComponentsCopyright;
+    "components.privacy_policy":           ComponentsPrivacyPolicy;
+    "components.released_under_mit":       ComponentsReleasedUnderMIT;
+    "components.terms_of_service":         ComponentsTermsOfService;
+    "front_page.appearance":               FrontPageAppearance;
+    "front_page.download_desktop_client":  FrontPageDownloadDesktopClient;
+    "front_page.get_help_and_contribute":  FrontPageGetHelpAndContribute;
+    "front_page.install_the_cli":          FrontPageInstallTheCLI;
+    "front_page.nav_about":                FrontPageNavAbout;
+    "front_page.nav_consulting":           FrontPageNavConsulting;
+    "front_page.nav_docs":                 FrontPageNavDocs;
+    "front_page.nav_download":             FrontPageNavDownload;
+    "front_page.nav_foss":                 FrontPageNavFOSS;
+    "front_page.nav_pricing":              FrontPageNavPricing;
+    "front_page.subtext_of_tag_line":      FrontPageSubtextOfTagLine;
+    "front_page.tag_line":                 FrontPageTagLine;
+    "main.hello_world":                    MainHelloWorld;
+    "meta_tags.about":                     MetaTagsAbout;
+    "meta_tags.how_it_works_blurb":        MetaTagsHowItWorksBlurb;
+    "meta_tags.how_it_works_blurb_part_2": MetaTagsHowItWorksBlurbPart2;
+    "meta_tags.how_it_works_blurb_part_3": MetaTagsHowItWorksBlurbPart3;
+    "meta_tags.how_it_works_blurb_part_4": MetaTagsHowItWorksBlurbPart4;
 }
 
 export interface ComponentsCopied {
@@ -76,7 +80,7 @@ export interface TextNode {
     children: TextNode[];
     content:  string;
     styles:   Styles;
-    type:     Type;
+    type:     PhraseType;
 }
 
 export interface Styles {
@@ -88,7 +92,7 @@ export interface Styles {
     isUnderlined:    boolean;
 }
 
-export enum Type {
+export enum PhraseType {
     Interpolation = "interpolation",
     Li = "li",
     Link = "link",
@@ -407,26 +411,115 @@ export interface MetaTagsAboutLinks {
 export interface MetaTagsAboutVariables {
 }
 
+export interface MetaTagsHowItWorksBlurb {
+    interpolations: MetaTagsHowItWorksBlurbInterpolations;
+    links:          MetaTagsHowItWorksBlurbLinks;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      MetaTagsHowItWorksBlurbVariables;
+}
+
+export interface MetaTagsHowItWorksBlurbInterpolations {
+}
+
+export interface MetaTagsHowItWorksBlurbLinks {
+    redux: Link;
+}
+
+export interface Link {
+    displayValue: TextNode[];
+    href?:        PlainTextNode[];
+    linkName:     string;
+}
+
+export interface PlainTextNode {
+    content: string;
+    type:    HrefType;
+}
+
+export enum HrefType {
+    Text = "text",
+    Variable = "variable",
+}
+
+export interface MetaTagsHowItWorksBlurbVariables {
+}
+
+export interface MetaTagsHowItWorksBlurbPart2 {
+    interpolations: MetaTagsHowItWorksBlurbPart2_Interpolations;
+    links:          MetaTagsHowItWorksBlurbPart2_Links;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      MetaTagsHowItWorksBlurbPart2_Variables;
+}
+
+export interface MetaTagsHowItWorksBlurbPart2_Interpolations {
+}
+
+export interface MetaTagsHowItWorksBlurbPart2_Links {
+}
+
+export interface MetaTagsHowItWorksBlurbPart2_Variables {
+}
+
+export interface MetaTagsHowItWorksBlurbPart3 {
+    interpolations: MetaTagsHowItWorksBlurbPart3_Interpolations;
+    links:          MetaTagsHowItWorksBlurbPart3_Links;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      MetaTagsHowItWorksBlurbPart3_Variables;
+}
+
+export interface MetaTagsHowItWorksBlurbPart3_Interpolations {
+}
+
+export interface MetaTagsHowItWorksBlurbPart3_Links {
+}
+
+export interface MetaTagsHowItWorksBlurbPart3_Variables {
+}
+
+export interface MetaTagsHowItWorksBlurbPart4 {
+    interpolations: MetaTagsHowItWorksBlurbPart4_Interpolations;
+    links:          MetaTagsHowItWorksBlurbPart4_Links;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      MetaTagsHowItWorksBlurbPart4_Variables;
+}
+
+export interface MetaTagsHowItWorksBlurbPart4_Interpolations {
+}
+
+export interface MetaTagsHowItWorksBlurbPart4_Links {
+}
+
+export interface MetaTagsHowItWorksBlurbPart4_Variables {
+}
+
 export interface PhraseKeyDebugInfo {
-    "components.copied":                  DebugInfo;
-    "components.copyright":               DebugInfo;
-    "components.privacy_policy":          DebugInfo;
-    "components.released_under_mit":      DebugInfo;
-    "components.terms_of_service":        DebugInfo;
-    "front_page.appearance":              DebugInfo;
-    "front_page.download_desktop_client": DebugInfo;
-    "front_page.get_help_and_contribute": DebugInfo;
-    "front_page.install_the_cli":         DebugInfo;
-    "front_page.nav_about":               DebugInfo;
-    "front_page.nav_consulting":          DebugInfo;
-    "front_page.nav_docs":                DebugInfo;
-    "front_page.nav_download":            DebugInfo;
-    "front_page.nav_foss":                DebugInfo;
-    "front_page.nav_pricing":             DebugInfo;
-    "front_page.subtext_of_tag_line":     DebugInfo;
-    "front_page.tag_line":                DebugInfo;
-    "main.hello_world":                   DebugInfo;
-    "meta_tags.about":                    DebugInfo;
+    "components.copied":                   DebugInfo;
+    "components.copyright":                DebugInfo;
+    "components.privacy_policy":           DebugInfo;
+    "components.released_under_mit":       DebugInfo;
+    "components.terms_of_service":         DebugInfo;
+    "front_page.appearance":               DebugInfo;
+    "front_page.download_desktop_client":  DebugInfo;
+    "front_page.get_help_and_contribute":  DebugInfo;
+    "front_page.install_the_cli":          DebugInfo;
+    "front_page.nav_about":                DebugInfo;
+    "front_page.nav_consulting":           DebugInfo;
+    "front_page.nav_docs":                 DebugInfo;
+    "front_page.nav_download":             DebugInfo;
+    "front_page.nav_foss":                 DebugInfo;
+    "front_page.nav_pricing":              DebugInfo;
+    "front_page.subtext_of_tag_line":      DebugInfo;
+    "front_page.tag_line":                 DebugInfo;
+    "main.hello_world":                    DebugInfo;
+    "meta_tags.about":                     DebugInfo;
+    "meta_tags.how_it_works_blurb":        DebugInfo;
+    "meta_tags.how_it_works_blurb_part_2": DebugInfo;
+    "meta_tags.how_it_works_blurb_part_3": DebugInfo;
+    "meta_tags.how_it_works_blurb_part_4": DebugInfo;
 }
 
 export interface DebugInfo {
@@ -734,11 +827,6 @@ export const getDebugInfo = <
 };
 
 export default textJSON as unknown as LocalizedPhrases;
-
-interface PlainTextNode {
-  content: string;
-  type: "text" | "variable";
-}
 
 interface Interpolation {
   cases: Array<{

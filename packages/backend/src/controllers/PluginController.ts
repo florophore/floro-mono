@@ -360,7 +360,6 @@ export default class PluginController extends BaseController {
             user
           );
         }
-        console.log("TEST", uploadResponse)
         if (uploadResponse.action == "PLUGIN_VERSION_CREATED") {
           request.unpipe(response.busboy);
           if (plugin.ownerType == "user_plugin") {

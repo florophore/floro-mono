@@ -5,6 +5,9 @@
 //   const icons = Convert.toIcons(json);
 
 export interface Icons {
+    "about.floro-pipeline":           AboutFloroPipeline;
+    "about.key-syntax":               AboutKeySyntax;
+    "about.list-transform":           AboutListTransform;
     "front-page.apple":               FrontPageApple;
     "front-page.copy":                FrontPageCopy;
     "front-page.discord":             FrontPageDiscord;
@@ -21,14 +24,38 @@ export interface Icons {
     "main.floro-text":                MainFloroText;
 }
 
-export interface FrontPageApple {
+export interface AboutFloroPipeline {
     default:  Theme;
-    variants: FrontPageAppleVariants;
+    variants: AboutFloroPipelineVariants;
 }
 
 export interface Theme {
     dark:  string;
     light: string;
+}
+
+export interface AboutFloroPipelineVariants {
+}
+
+export interface AboutKeySyntax {
+    default:  Theme;
+    variants: AboutKeySyntaxVariants;
+}
+
+export interface AboutKeySyntaxVariants {
+}
+
+export interface AboutListTransform {
+    default:  Theme;
+    variants: AboutListTransformVariants;
+}
+
+export interface AboutListTransformVariants {
+}
+
+export interface FrontPageApple {
+    default:  Theme;
+    variants: FrontPageAppleVariants;
 }
 
 export interface FrontPageAppleVariants {

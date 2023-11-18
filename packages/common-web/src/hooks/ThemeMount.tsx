@@ -12,7 +12,6 @@ interface Props {
 }
 
 const ThemeMount = (props: Props) => {
-  console.log("IT", props?.initTheme)
   const systemColor = useSystemColorTheme(props?.initTheme ?? "light");
   const { themePreference } = useColorTheme();
 

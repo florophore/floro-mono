@@ -17,7 +17,6 @@ interface Props {
 
 export const ColorThemeProvider = (props: Props): React.ReactElement => {
 
-    console.log("T", props.initThemePreference)
     const [themePreference, setThemePreference] = useState<
       "system" | "light" | "dark"
     >(
@@ -28,7 +27,6 @@ export const ColorThemeProvider = (props: Props): React.ReactElement => {
         : "system"
     );
 
-    console.log("TP", themePreference);
     useEffect(() => {
         const localPreference = localStorage.get?.('theme-preference') ?? 'system';
         setThemePreference(localPreference);
