@@ -23,7 +23,956 @@
         "phrase": [
           {
             "children": [],
-            "content": "test",
+            "content": "Disclaimer: This is not exactly the syntax floro uses and is a simplification of the actual floro syntax, with some inaccuracies to help illustrate the example of how it works.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "To dissect it. It's basically a path to the struct (the ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "value ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "of the ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "key-value pair",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ") inside the tree-state representation.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "$(LocalizedKeys)",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": true,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " gets wrapped by ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "$(<plugin-name>)",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " syntax",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "since it is the root. The ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "$",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " syntax is used to select from a specific ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "plugin state store",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ".",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Next we have this weird \".",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Key",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "<",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Welcome Hero",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ">\" bit. What it basically says is look in the list (Localized Keys) and search for the first object with a property called \"",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Key",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\" that has a value equal to \"",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Welcome Hero",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\". If you look in the plugin schema, you might notice that the ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Key",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " property of the LocalizedKeys set has the property value pair ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\"isKey\": true. ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "You can think of this property as a primary key for that structure.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "At this point in iterating, we've successfully traversed our way to the \"Welcome Hero\" struct. Next we select the \".Translations\" part of the path and have another list, this time with two structures at the current nesting level. Again, we see the ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Key",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "<",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Value",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "> syntax, but this time with \".",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Locale",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "<",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "English",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ">\". So we search the list for the first element with a ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Locale",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " equal to ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "English.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "And that's it!",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "All the Intermediate state representation is, is a list of",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " key-value pairs ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "of the form:",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "  ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "key",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ": ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "identity path,",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "  ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "value",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ": ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "struct",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "}",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -1703,7 +2652,956 @@
         "phrase": [
           {
             "children": [],
-            "content": "test",
+            "content": "Disclaimer: This is not exactly the syntax floro uses and is a simplification of the actual floro syntax, with some inaccuracies to help illustrate the example of how it works.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "To dissect it. It's basically a path to the struct (the ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "value ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "of the ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "key-value pair",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ") inside the tree-state representation.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "$(LocalizedKeys)",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": true,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " gets wrapped by ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "$(<plugin-name>)",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " syntax",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "since it is the root. The ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "$",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " syntax is used to select from a specific ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "plugin state store",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ".",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Next we have this weird \".",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Key",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "<",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Welcome Hero",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ">\" bit. What it basically says is look in the list (Localized Keys) and search for the first object with a property called \"",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Key",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\" that has a value equal to \"",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Welcome Hero",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\". If you look in the plugin schema, you might notice that the ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Key",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " property of the LocalizedKeys set has the property value pair ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\"isKey\": true. ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "You can think of this property as a primary key for that structure.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "At this point in iterating, we've successfully traversed our way to the \"Welcome Hero\" struct. Next we select the \".Translations\" part of the path and have another list, this time with two structures at the current nesting level. Again, we see the ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Key",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "<",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Value",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "> syntax, but this time with \".",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Locale",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "<",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "English",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ">\". So we search the list for the first element with a ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Locale",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " equal to ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "English.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "And that's it!",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "All the Intermediate state representation is, is a list of",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " key-value pairs ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "of the form:",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "  ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "key",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ": ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "identity path,",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "  ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "value",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ": ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "struct",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "}",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
             "type": "text",
             "styles": {
               "isBold": false,
