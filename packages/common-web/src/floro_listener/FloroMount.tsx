@@ -11,6 +11,7 @@ import { FloroLocalesProvider } from "./hooks/locales";
 interface Props {
   children: React.ReactElement;
   text: LocalizedPhrases;
+  initLocaleCode: keyof LocalizedPhrases["locales"]&string;
 }
 
 const FloroMount = (props: Props) => {
@@ -20,7 +21,7 @@ const FloroMount = (props: Props) => {
         <FloroThemesProvider>
           <FloroIconsProvider>
             <FloroTextProvider text={props.text}>
-              <FloroLocalesProvider>{props.children}</FloroLocalesProvider>
+              <FloroLocalesProvider initLocaleCode={props.initLocaleCode}>{props.children}</FloroLocalesProvider>
             </FloroTextProvider>
           </FloroIconsProvider>
         </FloroThemesProvider>

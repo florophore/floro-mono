@@ -1,3 +1,4 @@
+import Cookies from 'js-cookie';
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
 
@@ -11,12 +12,23 @@ const ColorThemeContext = createContext<{
 
 interface Props {
     children: React.ReactElement;
+    initThemePreference: string;
 }
 
 export const ColorThemeProvider = (props: Props): React.ReactElement => {
 
-    const [themePreference, setThemePreference] = useState<'system'|'light'|'dark'>('system');
+    console.log("T", props.initThemePreference)
+    const [themePreference, setThemePreference] = useState<
+      "system" | "light" | "dark"
+    >(
+      props.initThemePreference == "light"
+        ? "light"
+        : props.initThemePreference == "dark"
+        ? "dark"
+        : "system"
+    );
 
+    console.log("TP", themePreference);
     useEffect(() => {
         const localPreference = localStorage.get?.('theme-preference') ?? 'system';
         setThemePreference(localPreference);
@@ -24,6 +36,7 @@ export const ColorThemeProvider = (props: Props): React.ReactElement => {
 
     const selectColorTheme = useCallback((themePreference: 'system'|'light'|'dark') => {
         localStorage.set?.('theme-preference', themePreference);
+        Cookies.set("theme-preference", themePreference);
         setThemePreference(themePreference);
     }, []);
 

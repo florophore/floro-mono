@@ -6,7 +6,8 @@ import App from '@floro/common-web/src/App';
 import { MainRoutes } from '@floro/common-web/src/Routing';
 import { createApolloClient } from '@floro/common-web/src/apollo/create-apollo-client';
 import FloroMount from '@floro/common-web/src/floro_listener/FloroMount';
-import initText from "@floro/common-generators/floro_modules/text-generator";
+import initText, { LocalizedPhrases } from "@floro/common-generators/floro_modules/text-generator";
+import Cookies from 'js-cookie';
 
 
 const client = createApolloClient(import.meta.env?.['VITE_HOST'] ?? 'localhost:9000', !!import.meta.env?.['VITE_IS_SECURE']);
@@ -14,10 +15,19 @@ const client = createApolloClient(import.meta.env?.['VITE_HOST'] ?? 'localhost:9
 const ClientApp = () => {
   //@ts-ignore
   const text = import.meta.env?.MODE == "development" ? initText : window.__FLORO_TEXT__ ?? initText;
+  const initLocaleCode =
+    (Cookies.get?.("locale-code") as keyof LocalizedPhrases["locales"] &
+      string) ?? "EN";
+  const initTheme = Cookies.get?.("theme-preference") ?? "light";
+  console.log("OH", initTheme)
   return (
     <ApolloProvider client={client as unknown as ApolloClient<NormalizedCache>}>
       <BrowserRouter>
-          <App text={text} routing={MainRoutes} env={import.meta.env?.VITE_BUILD_ENV_NORMALIZED ?? "development"} />
+          <App
+
+          initLocaleCode={initLocaleCode}
+          initTheme={initTheme}
+           text={text} routing={MainRoutes} env={import.meta.env?.VITE_BUILD_ENV_NORMALIZED ?? "development"} />
       </BrowserRouter>
     </ApolloProvider>
   )

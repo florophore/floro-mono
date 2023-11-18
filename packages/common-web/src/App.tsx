@@ -15,11 +15,14 @@ import { LocalizedPhrases } from "@floro/common-generators/floro_modules/text-ge
 import { EnvProvider } from "@floro/common-react/src/env/EnvContext";
 import { ColorThemeProvider } from "./hooks/ColorThemeProvider";
 import ThemeMount from "./hooks/ThemeMount";
+import { ThemeSet } from "@floro/common-generators/floro_modules/theme-generator";
 
 export interface Props {
   routing: IsomorphicRoute[];
   text: LocalizedPhrases;
   env: string;
+  initTheme: string;
+  initLocaleCode: keyof LocalizedPhrases["locales"]&string;
 }
 
 function App(props: Props) {
@@ -32,9 +35,9 @@ function App(props: Props) {
   return (
     <EnvProvider env={props.env}>
       <OpenLinkProvider openUrl={openUrl}>
-        <FloroMount text={props.text}>
-          <ColorThemeProvider>
-            <ThemeMount>
+        <FloroMount text={props.text} initLocaleCode={props.initLocaleCode}>
+          <ColorThemeProvider initThemePreference={props.initTheme}>
+            <ThemeMount initTheme={props.initTheme as keyof ThemeSet}>
               <QueryClientProvider client={queryClient}>
                 <FloroSocketProvider client={"web"}>
                   <OfflineIconProvider>

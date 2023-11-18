@@ -15,6 +15,27 @@
   },
   "localizedPhraseKeys": {
     "EN": {
+      "meta_tags.about": {
+        "phraseKey": "meta_tags.about",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "Floro | About",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
       "front_page.appearance": {
         "phraseKey": "front_page.appearance",
         "variables": {},
@@ -421,6 +442,27 @@
       }
     },
     "ZH": {
+      "meta_tags.about": {
+        "phraseKey": "meta_tags.about",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "Floro | 关于",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
       "front_page.appearance": {
         "phraseKey": "front_page.appearance",
         "variables": {},
@@ -828,6 +870,10 @@
     }
   },
   "phraseKeyDebugInfo": {
+    "meta_tags.about": {
+      "groupName": "Meta Tags",
+      "phraseKey": "about"
+    },
     "front_page.appearance": {
       "groupName": "Front Page",
       "phraseKey": "appearance"

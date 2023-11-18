@@ -1,9 +1,10 @@
-import React, { useContext, useMemo, useState} from "react";
+import React, { useContext, useMemo, useState, useCallback} from "react";
 import initText, { Locales, LocalizedPhrases, PhraseKeys, getDebugInfo, getPhraseValue } from "@floro/common-generators/floro_modules/text-generator";
 import { useFloroText } from "../FloroTextProvider";
 import { TextRenderers, renderers as richTextRenderers } from "../FloroTextRenderer";
 import { useIsDebugMode } from "../FloroDebugProvider";
 import { PlainTextRenderers, renderers as plainTextRenderers } from "../FloroPlainTextRenderer";
+import Cookies from "js-cookie";
 
 
 const FloroLocalesContext = React.createContext({
@@ -42,9 +43,14 @@ export const FloroLocalesProvider = (props: Props) => {
       }) as keyof LocalizedPhrases["locales"] & string;
     }, [floroText?.locales]);
 
-    const [selectedLocaleCode, setSelectedLocaleCode] = useState<keyof LocalizedPhrases["locales"] & string>(
+    const [selectedLocaleCode, _setSelectedLocaleCode] = useState<keyof LocalizedPhrases["locales"] & string>(
         props?.initLocaleCode && !!floroText.locales?.[props?.initLocaleCode] ? props.initLocaleCode : defaultLocaleCode
     )
+
+    const setSelectedLocaleCode = useCallback((localeCode: keyof LocalizedPhrases["locales"] & string) => {
+      _setSelectedLocaleCode(localeCode);
+      Cookies.set("locale-code", localeCode);
+    }, []);
 
   return (
     <FloroLocalesContext.Provider value={{

@@ -4,13 +4,16 @@ import { useSystemColorTheme } from "./color-theme";
 import { useColorTheme } from "./ColorThemeProvider";
 import { DarkTheme, LightTheme } from "@floro/styles/ColorThemes";
 import ColorPalette from "@floro/styles/ColorPalette";
+import { ThemeSet } from "@floro/common-generators/floro_modules/theme-generator";
 
 interface Props {
+  initTheme?: keyof ThemeSet;
   children: React.ReactElement;
 }
 
 const ThemeMount = (props: Props) => {
-  const systemColor = useSystemColorTheme();
+  console.log("IT", props?.initTheme)
+  const systemColor = useSystemColorTheme(props?.initTheme ?? "light");
   const { themePreference } = useColorTheme();
 
   const colorTheme = useMemo(() => {

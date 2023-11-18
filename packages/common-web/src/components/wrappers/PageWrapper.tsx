@@ -321,7 +321,9 @@ const PageWrapperComponent = (props: Props) => {
               </MobileNavInfo>
               <LargeNavInfo>
                 <LargeNavMainContainer>
-                  <HeaderLinkText>{aboutText}</HeaderLinkText>
+                  <Link to={"/about"}>
+                    <HeaderLinkText>{aboutText}</HeaderLinkText>
+                  </Link>
                   <HeaderLinkText>{docsText}</HeaderLinkText>
                   <HeaderLinkText>{pricingText}</HeaderLinkText>
                   <HeaderLinkText>{fossText}</HeaderLinkText>
@@ -353,7 +355,9 @@ const PageWrapperComponent = (props: Props) => {
       >
         <div style={{ marginTop: 24}}>
           <div>
-            <HeaderLinkText>{aboutText}</HeaderLinkText>
+            <Link to={"/about"}>
+              <HeaderLinkText>{aboutText}</HeaderLinkText>
+            </Link>
           </div>
           <div>
             <HeaderLinkText>{docsText}</HeaderLinkText>

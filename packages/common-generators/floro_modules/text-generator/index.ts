@@ -55,6 +55,7 @@ export interface PhraseKeys {
     "front_page.subtext_of_tag_line":     FrontPageSubtextOfTagLine;
     "front_page.tag_line":                FrontPageTagLine;
     "main.hello_world":                   MainHelloWorld;
+    "meta_tags.about":                    MetaTagsAbout;
 }
 
 export interface ComponentsCopied {
@@ -389,6 +390,23 @@ export interface MainHelloWorldLinks {
 export interface MainHelloWorldVariables {
 }
 
+export interface MetaTagsAbout {
+    interpolations: MetaTagsAboutInterpolations;
+    links:          MetaTagsAboutLinks;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      MetaTagsAboutVariables;
+}
+
+export interface MetaTagsAboutInterpolations {
+}
+
+export interface MetaTagsAboutLinks {
+}
+
+export interface MetaTagsAboutVariables {
+}
+
 export interface PhraseKeyDebugInfo {
     "components.copied":                  DebugInfo;
     "components.copyright":               DebugInfo;
@@ -408,6 +426,7 @@ export interface PhraseKeyDebugInfo {
     "front_page.subtext_of_tag_line":     DebugInfo;
     "front_page.tag_line":                DebugInfo;
     "main.hello_world":                   DebugInfo;
+    "meta_tags.about":                    DebugInfo;
 }
 
 export interface DebugInfo {

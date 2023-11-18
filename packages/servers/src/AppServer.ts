@@ -20,6 +20,7 @@ import { createServer as createViteServer } from "vite";
 import { SchemaLink } from "@apollo/client/link/schema";
 // eslint-disable-next-line
 import ApolloPkg from '@apollo/client';
+import { LocalizedPhrases } from "@floro/common-generators/floro_modules/text-generator";
 
 const { ApolloClient, InMemoryCache } = ApolloPkg;
 
@@ -198,6 +199,8 @@ export default class AppServer {
       res.header("Referrer-Policy", "no-referrer");
       try {
         const sessionContext = await this.backend.fetchSessionUserContext(req.cookies?.["user-session"]);
+        const initTheme = req.cookies?.["theme-preference"] ?? "light";
+        const initLocaleCode = req.cookies?.["locale-code"] as keyof LocalizedPhrases["locales"]&string ?? "EN";
         const url = req.originalUrl;
         const template = isProduction
           ? indexHTMLTemplate
@@ -221,7 +224,13 @@ export default class AppServer {
         });
         const { appHtml, appState, helmet } = await render(
           url,
-          { client, floroText: this.backend.floroTextStore.getText(), env: env.VITE_BUILD_ENV_NORMALIZED ?? "development" },
+          {
+            client,
+            floroText: this.backend.floroTextStore.getText(),
+            env: env.VITE_BUILD_ENV_NORMALIZED ?? "development",
+            initLocaleCode,
+            initTheme,
+          },
           context
         );
         this.backend.requestCache.release(cacheKey);

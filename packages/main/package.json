@@ -17,6 +17,7 @@
   "dependencies": {
     "@apollo/client": "^3.6.9",
     "@emotion/react": "^11.10.0",
+    "@emotion/server": "^11.11.0",
     "@emotion/styled": "^11.10.0",
     "@floro/styles": "1.0.0",
     "apollo-server": "^3.10.1",

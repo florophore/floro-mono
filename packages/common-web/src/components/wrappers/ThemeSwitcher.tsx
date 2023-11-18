@@ -47,7 +47,8 @@ const Icon = styled.img`
   height: 16px;
 `;
 
-interface Props {}
+interface Props {
+}
 
 const LanguageSelect = (props: Props) => {
   const theme = useTheme();
