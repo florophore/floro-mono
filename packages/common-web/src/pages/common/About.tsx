@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback } from "react";
+import { useMemo, useState, useCallback, useEffect } from "react";
 import styled from "@emotion/styled";
 import { useIcon } from "../../floro_listener/FloroIconsProvider";
 import { useTheme } from "@emotion/react";
@@ -13,6 +13,7 @@ import ColorPalette from "@floro/styles/ColorPalette";
 import PageWrapper from "../../components/wrappers/PageWrapper";
 import { TextRenderers, renderers as richTextRenderers } from  "@floro/common-web/src/floro_listener/FloroTextRenderer";
 import { StaticLinkNode } from "@floro/common-generators/floro_modules/text-generator";
+import { useEnv } from "@floro/common-react/src/env/EnvContext";
 
 const AboutWrapper = styled.div`
   width: 100%;
@@ -32,12 +33,21 @@ const AboutHeaderTitle = styled.h1`
 `;
 
 const SectionTitle = styled.h2`
-  font-size: 2rem;
+  font-size: 2.4rem;
   font-weight: 600;
   padding: 0;
   margin: 0;
   font-family: "MavenPro";
   color: ${props => props.theme.colors.titleText};
+`;
+
+const SubSectionTitle = styled.h2`
+  font-size: 2rem;
+  font-weight: 500;
+  padding: 0;
+  margin: 0;
+  font-family: "MavenPro";
+  color: ${props => props.theme.colors.contrastText};
 `;
 
 const SectionParagraph = styled.p`
@@ -72,6 +82,35 @@ function AboutPage() {
   const floroText = useIcon("main.floro-text");
   const aboutMetaTitle = usePlainText("meta_tags.about");
 
+  const [sequenceCount, setSequenceCount] = useState(4);
+  const [direction, setDirection] = useState('descending');
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if ( sequenceCount == 4) {
+        setDirection('descending');
+        setSequenceCount(3);
+        return;
+      }
+      if ( sequenceCount == 1) {
+        setDirection('ascending');
+        setSequenceCount(2);
+        return;
+      }
+      if (direction == 'ascending') {
+        setSequenceCount(sequenceCount + 1);
+        return;
+      }
+      if (direction == 'descending') {
+        setSequenceCount(sequenceCount - 1);
+        return;
+      }
+    }, 800);
+    return () => {
+      clearTimeout(timeout);
+    }
+  }, [sequenceCount, direction]);
+
   const renderLinkNode = useCallback(
     (node: StaticLinkNode, renderers: TextRenderers): React.ReactElement => {
       let children = renderers.renderStaticNodes(node.children, renderers);
@@ -83,22 +122,72 @@ function AboutPage() {
   const dependentTypes = useIcon("about.floro-pipeline");
   const listTransfrom = useIcon("about.list-transform");
   const keySyntax = useIcon("about.key-syntax");
-  const howItWorksBlurb = useRichText("meta_tags.how_it_works_blurb", {}, {
+
+  const treeListSequence1 = useIcon("about.treelist-sequence-1");
+  const treeListSequence2 = useIcon("about.treelist-sequence-2");
+  const treeListSequence3 = useIcon("about.treelist-sequence-3");
+  const treeListSequence4 = useIcon("about.treelist-sequence-4");
+  const versionUpdates = useIcon("about.version-updates");
+  const setsToTypesUpdates = useIcon("about.set-to-types");
+
+  const treeListSequenceIcon = useMemo(() => {
+    if (sequenceCount == 1) {
+      return treeListSequence1;
+    }
+    if (sequenceCount == 2) {
+      return treeListSequence2;
+    }
+    if (sequenceCount == 3) {
+      return treeListSequence3;
+    }
+    return treeListSequence4;
+  }, [
+    sequenceCount,
+    treeListSequence1,
+    treeListSequence2,
+    treeListSequence3,
+    treeListSequence4,
+  ]);
+  const howItWorksTitle = useRichText("about.how_floro_works_title", {}, {
+    ...richTextRenderers,
+    renderLinkNode
+  });
+  const howItWorksBlurb = useRichText("about.how_it_works_blurb", {}, {
     ...richTextRenderers,
     renderLinkNode
   });
 
-  const howItWorksBlurbPart2 = useRichText("meta_tags.how_it_works_blurb_part_2", {}, {
+  const howItWorksBlurbPart2 = useRichText("about.how_it_works_blurb_part_2", {}, {
     ...richTextRenderers,
     renderLinkNode
   });
 
-  const howItWorksBlurbPart3 = useRichText("meta_tags.how_it_works_blurb_part_3", {}, {
+  const howItWorksBlurbPart3 = useRichText("about.how_it_works_blurb_part_3", {}, {
     ...richTextRenderers,
     renderLinkNode
   });
 
-  const howItWorksBlurbPart4 = useRichText("meta_tags.how_it_works_blurb_part_4", {}, {
+  const howItWorksBlurbPart4 = useRichText("about.how_it_works_blurb_part_4", {}, {
+    ...richTextRenderers,
+    renderLinkNode
+  });
+
+  const thingsChangeTitle = useRichText("about.things_change_title", {}, {
+    ...richTextRenderers,
+    renderLinkNode
+  });
+
+  const thingsChangeBlurb1 = useRichText("about.things_change_blurb_1", {}, {
+    ...richTextRenderers,
+    renderLinkNode
+  });
+
+  const thingsChangeBlurb2 = useRichText("about.things_change_blurb_2", {}, {
+    ...richTextRenderers,
+    renderLinkNode
+  });
+
+  const thingsChangeBlurb3 = useRichText("about.things_change_blurb_3", {}, {
     ...richTextRenderers,
     renderLinkNode
   });
@@ -113,7 +202,7 @@ function AboutPage() {
           padding: 16
         }}>
           <section>
-            <SectionTitle>{'How floro works'}</SectionTitle>
+            <SectionTitle>{howItWorksTitle}</SectionTitle>
             <SectionParagraph style={{marginTop: 24}}>
               {howItWorksBlurb}
             </SectionParagraph>
@@ -142,7 +231,35 @@ function AboutPage() {
             <SectionParagraph style={{marginTop: 24}}>
               {howItWorksBlurbPart4}
             </SectionParagraph>
+            <div style={{ marginTop: 24}}>
+              <img src={treeListSequenceIcon} style={{
+                width: '100%'
+              }}/>
+            </div>
           </section>
+
+          <SubSectionTitle style={{
+            marginTop: 24
+          }}>{thingsChangeTitle}</SubSectionTitle>
+          <SectionParagraph style={{marginTop: 24}}>
+            {thingsChangeBlurb1}
+          </SectionParagraph>
+            <div style={{ marginTop: 24}}>
+              <img src={versionUpdates} style={{
+                width: '100%'
+              }}/>
+            </div>
+          <SectionParagraph style={{marginTop: 24}}>
+            {thingsChangeBlurb2}
+          </SectionParagraph>
+            <div style={{ marginTop: 24}}>
+              <img src={setsToTypesUpdates} style={{
+                width: '100%'
+              }}/>
+            </div>
+          <SectionParagraph style={{marginTop: 24}}>
+            {thingsChangeBlurb3}
+          </SectionParagraph>
         </div>
       </AboutWrapper>
     </PageWrapper>

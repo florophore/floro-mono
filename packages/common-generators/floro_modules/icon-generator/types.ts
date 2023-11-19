@@ -8,6 +8,12 @@ export interface Icons {
     "about.floro-pipeline":           AboutFloroPipeline;
     "about.key-syntax":               AboutKeySyntax;
     "about.list-transform":           AboutListTransform;
+    "about.set-to-types":             AboutSetToTypes;
+    "about.treelist-sequence-1":      AboutTreelistSequence1;
+    "about.treelist-sequence-2":      AboutTreelistSequence2;
+    "about.treelist-sequence-3":      AboutTreelistSequence3;
+    "about.treelist-sequence-4":      AboutTreelistSequence4;
+    "about.version-updates":          AboutVersionUpdates;
     "front-page.apple":               FrontPageApple;
     "front-page.copy":                FrontPageCopy;
     "front-page.discord":             FrontPageDiscord;
@@ -51,6 +57,54 @@ export interface AboutListTransform {
 }
 
 export interface AboutListTransformVariants {
+}
+
+export interface AboutSetToTypes {
+    default:  Theme;
+    variants: AboutSetToTypesVariants;
+}
+
+export interface AboutSetToTypesVariants {
+}
+
+export interface AboutTreelistSequence1 {
+    default:  Theme;
+    variants: AboutTreelistSequence1_Variants;
+}
+
+export interface AboutTreelistSequence1_Variants {
+}
+
+export interface AboutTreelistSequence2 {
+    default:  Theme;
+    variants: AboutTreelistSequence2_Variants;
+}
+
+export interface AboutTreelistSequence2_Variants {
+}
+
+export interface AboutTreelistSequence3 {
+    default:  Theme;
+    variants: AboutTreelistSequence3_Variants;
+}
+
+export interface AboutTreelistSequence3_Variants {
+}
+
+export interface AboutTreelistSequence4 {
+    default:  Theme;
+    variants: AboutTreelistSequence4_Variants;
+}
+
+export interface AboutTreelistSequence4_Variants {
+}
+
+export interface AboutVersionUpdates {
+    default:  Theme;
+    variants: AboutVersionUpdatesVariants;
+}
+
+export interface AboutVersionUpdatesVariants {
 }
 
 export interface FrontPageApple {

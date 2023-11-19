@@ -37,43 +37,48 @@ export interface LocalizedPhraseKeys {
 }
 
 export interface PhraseKeys {
-    "components.copied":                   ComponentsCopied;
-    "components.copyright":                ComponentsCopyright;
-    "components.privacy_policy":           ComponentsPrivacyPolicy;
-    "components.released_under_mit":       ComponentsReleasedUnderMIT;
-    "components.terms_of_service":         ComponentsTermsOfService;
-    "front_page.appearance":               FrontPageAppearance;
-    "front_page.download_desktop_client":  FrontPageDownloadDesktopClient;
-    "front_page.get_help_and_contribute":  FrontPageGetHelpAndContribute;
-    "front_page.install_the_cli":          FrontPageInstallTheCLI;
-    "front_page.nav_about":                FrontPageNavAbout;
-    "front_page.nav_consulting":           FrontPageNavConsulting;
-    "front_page.nav_docs":                 FrontPageNavDocs;
-    "front_page.nav_download":             FrontPageNavDownload;
-    "front_page.nav_foss":                 FrontPageNavFOSS;
-    "front_page.nav_pricing":              FrontPageNavPricing;
-    "front_page.subtext_of_tag_line":      FrontPageSubtextOfTagLine;
-    "front_page.tag_line":                 FrontPageTagLine;
-    "main.hello_world":                    MainHelloWorld;
-    "meta_tags.about":                     MetaTagsAbout;
-    "meta_tags.how_it_works_blurb":        MetaTagsHowItWorksBlurb;
-    "meta_tags.how_it_works_blurb_part_2": MetaTagsHowItWorksBlurbPart2;
-    "meta_tags.how_it_works_blurb_part_3": MetaTagsHowItWorksBlurbPart3;
-    "meta_tags.how_it_works_blurb_part_4": MetaTagsHowItWorksBlurbPart4;
+    "about.how_floro_works_title":        AboutHowFloroWorksTitle;
+    "about.how_it_works_blurb":           AboutHowItWorksBlurb;
+    "about.how_it_works_blurb_part_2":    AboutHowItWorksBlurbPart2;
+    "about.how_it_works_blurb_part_3":    AboutHowItWorksBlurbPart3;
+    "about.how_it_works_blurb_part_4":    AboutHowItWorksBlurbPart4;
+    "about.things_change_blurb_1":        AboutThingsChangeBlurb1;
+    "about.things_change_blurb_2":        AboutThingsChangeBlurb2;
+    "about.things_change_blurb_3":        AboutThingsChangeBlurb3;
+    "about.things_change_title":          AboutThingsChangeTitle;
+    "components.copied":                  ComponentsCopied;
+    "components.copyright":               ComponentsCopyright;
+    "components.privacy_policy":          ComponentsPrivacyPolicy;
+    "components.released_under_mit":      ComponentsReleasedUnderMIT;
+    "components.terms_of_service":        ComponentsTermsOfService;
+    "front_page.appearance":              FrontPageAppearance;
+    "front_page.download_desktop_client": FrontPageDownloadDesktopClient;
+    "front_page.get_help_and_contribute": FrontPageGetHelpAndContribute;
+    "front_page.install_the_cli":         FrontPageInstallTheCLI;
+    "front_page.nav_about":               FrontPageNavAbout;
+    "front_page.nav_consulting":          FrontPageNavConsulting;
+    "front_page.nav_docs":                FrontPageNavDocs;
+    "front_page.nav_download":            FrontPageNavDownload;
+    "front_page.nav_foss":                FrontPageNavFOSS;
+    "front_page.nav_pricing":             FrontPageNavPricing;
+    "front_page.subtext_of_tag_line":     FrontPageSubtextOfTagLine;
+    "front_page.tag_line":                FrontPageTagLine;
+    "main.hello_world":                   MainHelloWorld;
+    "meta_tags.about":                    MetaTagsAbout;
 }
 
-export interface ComponentsCopied {
-    interpolations: ComponentsCopiedInterpolations;
-    links:          ComponentsCopiedLinks;
+export interface AboutHowFloroWorksTitle {
+    interpolations: AboutHowFloroWorksTitleInterpolations;
+    links:          AboutHowFloroWorksTitleLinks;
     phrase:         TextNode[];
     phraseKey:      string;
-    variables:      ComponentsCopiedVariables;
+    variables:      AboutHowFloroWorksTitleVariables;
 }
 
-export interface ComponentsCopiedInterpolations {
+export interface AboutHowFloroWorksTitleInterpolations {
 }
 
-export interface ComponentsCopiedLinks {
+export interface AboutHowFloroWorksTitleLinks {
 }
 
 export interface TextNode {
@@ -100,6 +105,176 @@ export enum PhraseType {
     Text = "text",
     UL = "ul",
     Variable = "variable",
+}
+
+export interface AboutHowFloroWorksTitleVariables {
+}
+
+export interface AboutHowItWorksBlurb {
+    interpolations: AboutHowItWorksBlurbInterpolations;
+    links:          AboutHowItWorksBlurbLinks;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      AboutHowItWorksBlurbVariables;
+}
+
+export interface AboutHowItWorksBlurbInterpolations {
+}
+
+export interface AboutHowItWorksBlurbLinks {
+    redux: Link;
+}
+
+export interface Link {
+    displayValue: TextNode[];
+    href?:        PlainTextNode[];
+    linkName:     string;
+}
+
+export interface PlainTextNode {
+    content: string;
+    type:    HrefType;
+}
+
+export enum HrefType {
+    Text = "text",
+    Variable = "variable",
+}
+
+export interface AboutHowItWorksBlurbVariables {
+}
+
+export interface AboutHowItWorksBlurbPart2 {
+    interpolations: AboutHowItWorksBlurbPart2_Interpolations;
+    links:          AboutHowItWorksBlurbPart2_Links;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      AboutHowItWorksBlurbPart2_Variables;
+}
+
+export interface AboutHowItWorksBlurbPart2_Interpolations {
+}
+
+export interface AboutHowItWorksBlurbPart2_Links {
+}
+
+export interface AboutHowItWorksBlurbPart2_Variables {
+}
+
+export interface AboutHowItWorksBlurbPart3 {
+    interpolations: AboutHowItWorksBlurbPart3_Interpolations;
+    links:          AboutHowItWorksBlurbPart3_Links;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      AboutHowItWorksBlurbPart3_Variables;
+}
+
+export interface AboutHowItWorksBlurbPart3_Interpolations {
+}
+
+export interface AboutHowItWorksBlurbPart3_Links {
+}
+
+export interface AboutHowItWorksBlurbPart3_Variables {
+}
+
+export interface AboutHowItWorksBlurbPart4 {
+    interpolations: AboutHowItWorksBlurbPart4_Interpolations;
+    links:          AboutHowItWorksBlurbPart4_Links;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      AboutHowItWorksBlurbPart4_Variables;
+}
+
+export interface AboutHowItWorksBlurbPart4_Interpolations {
+}
+
+export interface AboutHowItWorksBlurbPart4_Links {
+}
+
+export interface AboutHowItWorksBlurbPart4_Variables {
+}
+
+export interface AboutThingsChangeBlurb1 {
+    interpolations: AboutThingsChangeBlurb1_Interpolations;
+    links:          AboutThingsChangeBlurb1_Links;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      AboutThingsChangeBlurb1_Variables;
+}
+
+export interface AboutThingsChangeBlurb1_Interpolations {
+}
+
+export interface AboutThingsChangeBlurb1_Links {
+}
+
+export interface AboutThingsChangeBlurb1_Variables {
+}
+
+export interface AboutThingsChangeBlurb2 {
+    interpolations: AboutThingsChangeBlurb2_Interpolations;
+    links:          AboutThingsChangeBlurb2_Links;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      AboutThingsChangeBlurb2_Variables;
+}
+
+export interface AboutThingsChangeBlurb2_Interpolations {
+}
+
+export interface AboutThingsChangeBlurb2_Links {
+}
+
+export interface AboutThingsChangeBlurb2_Variables {
+}
+
+export interface AboutThingsChangeBlurb3 {
+    interpolations: AboutThingsChangeBlurb3_Interpolations;
+    links:          AboutThingsChangeBlurb3_Links;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      AboutThingsChangeBlurb3_Variables;
+}
+
+export interface AboutThingsChangeBlurb3_Interpolations {
+}
+
+export interface AboutThingsChangeBlurb3_Links {
+}
+
+export interface AboutThingsChangeBlurb3_Variables {
+}
+
+export interface AboutThingsChangeTitle {
+    interpolations: AboutThingsChangeTitleInterpolations;
+    links:          AboutThingsChangeTitleLinks;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      AboutThingsChangeTitleVariables;
+}
+
+export interface AboutThingsChangeTitleInterpolations {
+}
+
+export interface AboutThingsChangeTitleLinks {
+}
+
+export interface AboutThingsChangeTitleVariables {
+}
+
+export interface ComponentsCopied {
+    interpolations: ComponentsCopiedInterpolations;
+    links:          ComponentsCopiedLinks;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      ComponentsCopiedVariables;
+}
+
+export interface ComponentsCopiedInterpolations {
+}
+
+export interface ComponentsCopiedLinks {
 }
 
 export interface ComponentsCopiedVariables {
@@ -411,115 +586,35 @@ export interface MetaTagsAboutLinks {
 export interface MetaTagsAboutVariables {
 }
 
-export interface MetaTagsHowItWorksBlurb {
-    interpolations: MetaTagsHowItWorksBlurbInterpolations;
-    links:          MetaTagsHowItWorksBlurbLinks;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      MetaTagsHowItWorksBlurbVariables;
-}
-
-export interface MetaTagsHowItWorksBlurbInterpolations {
-}
-
-export interface MetaTagsHowItWorksBlurbLinks {
-    redux: Link;
-}
-
-export interface Link {
-    displayValue: TextNode[];
-    href?:        PlainTextNode[];
-    linkName:     string;
-}
-
-export interface PlainTextNode {
-    content: string;
-    type:    HrefType;
-}
-
-export enum HrefType {
-    Text = "text",
-    Variable = "variable",
-}
-
-export interface MetaTagsHowItWorksBlurbVariables {
-}
-
-export interface MetaTagsHowItWorksBlurbPart2 {
-    interpolations: MetaTagsHowItWorksBlurbPart2_Interpolations;
-    links:          MetaTagsHowItWorksBlurbPart2_Links;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      MetaTagsHowItWorksBlurbPart2_Variables;
-}
-
-export interface MetaTagsHowItWorksBlurbPart2_Interpolations {
-}
-
-export interface MetaTagsHowItWorksBlurbPart2_Links {
-}
-
-export interface MetaTagsHowItWorksBlurbPart2_Variables {
-}
-
-export interface MetaTagsHowItWorksBlurbPart3 {
-    interpolations: MetaTagsHowItWorksBlurbPart3_Interpolations;
-    links:          MetaTagsHowItWorksBlurbPart3_Links;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      MetaTagsHowItWorksBlurbPart3_Variables;
-}
-
-export interface MetaTagsHowItWorksBlurbPart3_Interpolations {
-}
-
-export interface MetaTagsHowItWorksBlurbPart3_Links {
-}
-
-export interface MetaTagsHowItWorksBlurbPart3_Variables {
-}
-
-export interface MetaTagsHowItWorksBlurbPart4 {
-    interpolations: MetaTagsHowItWorksBlurbPart4_Interpolations;
-    links:          MetaTagsHowItWorksBlurbPart4_Links;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      MetaTagsHowItWorksBlurbPart4_Variables;
-}
-
-export interface MetaTagsHowItWorksBlurbPart4_Interpolations {
-}
-
-export interface MetaTagsHowItWorksBlurbPart4_Links {
-}
-
-export interface MetaTagsHowItWorksBlurbPart4_Variables {
-}
-
 export interface PhraseKeyDebugInfo {
-    "components.copied":                   DebugInfo;
-    "components.copyright":                DebugInfo;
-    "components.privacy_policy":           DebugInfo;
-    "components.released_under_mit":       DebugInfo;
-    "components.terms_of_service":         DebugInfo;
-    "front_page.appearance":               DebugInfo;
-    "front_page.download_desktop_client":  DebugInfo;
-    "front_page.get_help_and_contribute":  DebugInfo;
-    "front_page.install_the_cli":          DebugInfo;
-    "front_page.nav_about":                DebugInfo;
-    "front_page.nav_consulting":           DebugInfo;
-    "front_page.nav_docs":                 DebugInfo;
-    "front_page.nav_download":             DebugInfo;
-    "front_page.nav_foss":                 DebugInfo;
-    "front_page.nav_pricing":              DebugInfo;
-    "front_page.subtext_of_tag_line":      DebugInfo;
-    "front_page.tag_line":                 DebugInfo;
-    "main.hello_world":                    DebugInfo;
-    "meta_tags.about":                     DebugInfo;
-    "meta_tags.how_it_works_blurb":        DebugInfo;
-    "meta_tags.how_it_works_blurb_part_2": DebugInfo;
-    "meta_tags.how_it_works_blurb_part_3": DebugInfo;
-    "meta_tags.how_it_works_blurb_part_4": DebugInfo;
+    "about.how_floro_works_title":        DebugInfo;
+    "about.how_it_works_blurb":           DebugInfo;
+    "about.how_it_works_blurb_part_2":    DebugInfo;
+    "about.how_it_works_blurb_part_3":    DebugInfo;
+    "about.how_it_works_blurb_part_4":    DebugInfo;
+    "about.things_change_blurb_1":        DebugInfo;
+    "about.things_change_blurb_2":        DebugInfo;
+    "about.things_change_blurb_3":        DebugInfo;
+    "about.things_change_title":          DebugInfo;
+    "components.copied":                  DebugInfo;
+    "components.copyright":               DebugInfo;
+    "components.privacy_policy":          DebugInfo;
+    "components.released_under_mit":      DebugInfo;
+    "components.terms_of_service":        DebugInfo;
+    "front_page.appearance":              DebugInfo;
+    "front_page.download_desktop_client": DebugInfo;
+    "front_page.get_help_and_contribute": DebugInfo;
+    "front_page.install_the_cli":         DebugInfo;
+    "front_page.nav_about":               DebugInfo;
+    "front_page.nav_consulting":          DebugInfo;
+    "front_page.nav_docs":                DebugInfo;
+    "front_page.nav_download":            DebugInfo;
+    "front_page.nav_foss":                DebugInfo;
+    "front_page.nav_pricing":             DebugInfo;
+    "front_page.subtext_of_tag_line":     DebugInfo;
+    "front_page.tag_line":                DebugInfo;
+    "main.hello_world":                   DebugInfo;
+    "meta_tags.about":                    DebugInfo;
 }
 
 export interface DebugInfo {

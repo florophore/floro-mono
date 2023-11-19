@@ -70,8 +70,8 @@ export default class AppServer {
         fileSize: 1024 * 1024 * 20, //20MB limit
       },
     }));
-    this.app.use(express.json());
-    this.app.use(express.urlencoded({ extended: true }));
+    this.app.use(express.json({limit: '20mb'}));
+    this.app.use(express.urlencoded({ extended: true, limit: '20mb' }));
 
     this.app.use("/graphql", graphqlUploadExpress());
 
