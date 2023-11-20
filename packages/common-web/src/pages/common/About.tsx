@@ -119,6 +119,7 @@ function AboutPage() {
     [theme]
   );
 
+  const overviewIcon = useIcon("about.overview");
   const dependentTypes = useIcon("about.floro-pipeline");
   const listTransfrom = useIcon("about.list-transform");
   const keySyntax = useIcon("about.key-syntax");
@@ -129,6 +130,9 @@ function AboutPage() {
   const treeListSequence4 = useIcon("about.treelist-sequence-4");
   const versionUpdates = useIcon("about.version-updates");
   const setsToTypesUpdates = useIcon("about.set-to-types");
+  const relationsRefactorPart1 = useIcon("about.relations-refactor-part-1");
+  const cascadingRelations = useIcon("about.cascading-relations");
+  const spreadsheetIcon = useIcon("about.spreadsheet");
 
   const treeListSequenceIcon = useMemo(() => {
     if (sequenceCount == 1) {
@@ -192,6 +196,26 @@ function AboutPage() {
     renderLinkNode
   });
 
+  const itsAllRelatedTitle = useRichText("about.how_it's_all_related", {}, {
+    ...richTextRenderers,
+    renderLinkNode
+  });
+
+  const itsAllRelatedBlurb1 = useRichText("about.how_it_is_all_related_blurb_1", {}, {
+    ...richTextRenderers,
+    renderLinkNode
+  });
+
+  const itsAllRelatedBlurb2 = useRichText("about.how_it_is_all_related_part_2", {}, {
+    ...richTextRenderers,
+    renderLinkNode
+  });
+
+  const itsAllRelatedBlurb3 = useRichText("about.how_its_all_related_part_3", {}, {
+    ...richTextRenderers,
+    renderLinkNode
+  });
+
   return (
     <PageWrapper>
       <Helmet>
@@ -203,6 +227,11 @@ function AboutPage() {
         }}>
           <section>
             <SectionTitle>{howItWorksTitle}</SectionTitle>
+            <div style={{ marginTop: 24}}>
+              <img src={overviewIcon} style={{
+                width: '100%'
+              }}/>
+            </div>
             <SectionParagraph style={{marginTop: 24}}>
               {howItWorksBlurb}
             </SectionParagraph>
@@ -260,6 +289,33 @@ function AboutPage() {
           <SectionParagraph style={{marginTop: 24}}>
             {thingsChangeBlurb3}
           </SectionParagraph>
+          <SubSectionTitle style={{
+            marginTop: 24
+          }}>{itsAllRelatedTitle}</SubSectionTitle>
+          <SectionParagraph style={{marginTop: 24}}>
+            {itsAllRelatedBlurb1}
+          </SectionParagraph>
+            <div style={{ marginTop: 24}}>
+              <img src={relationsRefactorPart1} style={{
+                width: '100%'
+              }}/>
+            </div>
+          <SectionParagraph style={{marginTop: 24}}>
+            {itsAllRelatedBlurb2}
+          </SectionParagraph>
+            <div style={{ marginTop: 24}}>
+              <img src={cascadingRelations} style={{
+                width: '100%'
+              }}/>
+            </div>
+          <SectionParagraph style={{marginTop: 24}}>
+            {itsAllRelatedBlurb3}
+          </SectionParagraph>
+            <div style={{ marginTop: 24}}>
+              <img src={spreadsheetIcon} style={{
+                width: '100%'
+              }}/>
+            </div>
         </div>
       </AboutWrapper>
     </PageWrapper>

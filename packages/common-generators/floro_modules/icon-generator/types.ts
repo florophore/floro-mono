@@ -5,39 +5,51 @@
 //   const icons = Convert.toIcons(json);
 
 export interface Icons {
-    "about.floro-pipeline":           AboutFloroPipeline;
-    "about.key-syntax":               AboutKeySyntax;
-    "about.list-transform":           AboutListTransform;
-    "about.set-to-types":             AboutSetToTypes;
-    "about.treelist-sequence-1":      AboutTreelistSequence1;
-    "about.treelist-sequence-2":      AboutTreelistSequence2;
-    "about.treelist-sequence-3":      AboutTreelistSequence3;
-    "about.treelist-sequence-4":      AboutTreelistSequence4;
-    "about.version-updates":          AboutVersionUpdates;
-    "front-page.apple":               FrontPageApple;
-    "front-page.copy":                FrontPageCopy;
-    "front-page.discord":             FrontPageDiscord;
-    "front-page.drop-down-arrow":     FrontPageDropDownArrow;
-    "front-page.floro-round":         FrontPageFloroRound;
-    "front-page.front-page-backdrop": FrontPageFrontPageBackdrop;
-    "front-page.github":              FrontPageGithub;
-    "front-page.language":            FrontPageLanguage;
-    "front-page.linux":               FrontPageLinux;
-    "front-page.moon":                FrontPageMoon;
-    "front-page.sun":                 FrontPageSun;
-    "front-page.windows":             FrontPageWindows;
-    "main.floro":                     MainFloro;
-    "main.floro-text":                MainFloroText;
+    "about.cascading-relations":       AboutCascadingRelations;
+    "about.floro-pipeline":            AboutFloroPipeline;
+    "about.key-syntax":                AboutKeySyntax;
+    "about.list-transform":            AboutListTransform;
+    "about.overview":                  AboutOverview;
+    "about.relations-refactor-part-1": AboutRelationsRefactorPart1;
+    "about.set-to-types":              AboutSetToTypes;
+    "about.spreadsheet":               AboutSpreadsheet;
+    "about.treelist-sequence-1":       AboutTreelistSequence1;
+    "about.treelist-sequence-2":       AboutTreelistSequence2;
+    "about.treelist-sequence-3":       AboutTreelistSequence3;
+    "about.treelist-sequence-4":       AboutTreelistSequence4;
+    "about.version-updates":           AboutVersionUpdates;
+    "front-page.apple":                FrontPageApple;
+    "front-page.copy":                 FrontPageCopy;
+    "front-page.discord":              FrontPageDiscord;
+    "front-page.drop-down-arrow":      FrontPageDropDownArrow;
+    "front-page.floro-round":          FrontPageFloroRound;
+    "front-page.front-page-backdrop":  FrontPageFrontPageBackdrop;
+    "front-page.github":               FrontPageGithub;
+    "front-page.language":             FrontPageLanguage;
+    "front-page.linux":                FrontPageLinux;
+    "front-page.moon":                 FrontPageMoon;
+    "front-page.sun":                  FrontPageSun;
+    "front-page.windows":              FrontPageWindows;
+    "main.floro":                      MainFloro;
+    "main.floro-text":                 MainFloroText;
 }
 
-export interface AboutFloroPipeline {
+export interface AboutCascadingRelations {
     default:  Theme;
-    variants: AboutFloroPipelineVariants;
+    variants: AboutCascadingRelationsVariants;
 }
 
 export interface Theme {
     dark:  string;
     light: string;
+}
+
+export interface AboutCascadingRelationsVariants {
+}
+
+export interface AboutFloroPipeline {
+    default:  Theme;
+    variants: AboutFloroPipelineVariants;
 }
 
 export interface AboutFloroPipelineVariants {
@@ -59,12 +71,36 @@ export interface AboutListTransform {
 export interface AboutListTransformVariants {
 }
 
+export interface AboutOverview {
+    default:  Theme;
+    variants: AboutOverviewVariants;
+}
+
+export interface AboutOverviewVariants {
+}
+
+export interface AboutRelationsRefactorPart1 {
+    default:  Theme;
+    variants: AboutRelationsRefactorPart1_Variants;
+}
+
+export interface AboutRelationsRefactorPart1_Variants {
+}
+
 export interface AboutSetToTypes {
     default:  Theme;
     variants: AboutSetToTypesVariants;
 }
 
 export interface AboutSetToTypesVariants {
+}
+
+export interface AboutSpreadsheet {
+    default:  Theme;
+    variants: AboutSpreadsheetVariants;
+}
+
+export interface AboutSpreadsheetVariants {
 }
 
 export interface AboutTreelistSequence1 {

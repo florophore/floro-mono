@@ -18,6 +18,7 @@ export interface ThemeColors {
     "icon-contrast-fg":     IconContrastFg;
     "icon-purple":          IconPurple;
     "icon-single-contrast": IconSingleContrast;
+    "reverse-contrast-bg":  ReverseContrastBg;
 }
 
 export interface ContrastText {
@@ -80,6 +81,14 @@ export interface IconSingleContrastVariants {
     focused:  ThemeSet;
     hovered:  ThemeSet;
     selected: ThemeSet;
+}
+
+export interface ReverseContrastBg {
+    default:  ThemeSet;
+    variants: ReverseContrastBgVariants;
+}
+
+export interface ReverseContrastBgVariants {
 }
 
 export interface ThemeDefinitions {

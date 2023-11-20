@@ -37,34 +37,38 @@ export interface LocalizedPhraseKeys {
 }
 
 export interface PhraseKeys {
-    "about.how_floro_works_title":        AboutHowFloroWorksTitle;
-    "about.how_it_works_blurb":           AboutHowItWorksBlurb;
-    "about.how_it_works_blurb_part_2":    AboutHowItWorksBlurbPart2;
-    "about.how_it_works_blurb_part_3":    AboutHowItWorksBlurbPart3;
-    "about.how_it_works_blurb_part_4":    AboutHowItWorksBlurbPart4;
-    "about.things_change_blurb_1":        AboutThingsChangeBlurb1;
-    "about.things_change_blurb_2":        AboutThingsChangeBlurb2;
-    "about.things_change_blurb_3":        AboutThingsChangeBlurb3;
-    "about.things_change_title":          AboutThingsChangeTitle;
-    "components.copied":                  ComponentsCopied;
-    "components.copyright":               ComponentsCopyright;
-    "components.privacy_policy":          ComponentsPrivacyPolicy;
-    "components.released_under_mit":      ComponentsReleasedUnderMIT;
-    "components.terms_of_service":        ComponentsTermsOfService;
-    "front_page.appearance":              FrontPageAppearance;
-    "front_page.download_desktop_client": FrontPageDownloadDesktopClient;
-    "front_page.get_help_and_contribute": FrontPageGetHelpAndContribute;
-    "front_page.install_the_cli":         FrontPageInstallTheCLI;
-    "front_page.nav_about":               FrontPageNavAbout;
-    "front_page.nav_consulting":          FrontPageNavConsulting;
-    "front_page.nav_docs":                FrontPageNavDocs;
-    "front_page.nav_download":            FrontPageNavDownload;
-    "front_page.nav_foss":                FrontPageNavFOSS;
-    "front_page.nav_pricing":             FrontPageNavPricing;
-    "front_page.subtext_of_tag_line":     FrontPageSubtextOfTagLine;
-    "front_page.tag_line":                FrontPageTagLine;
-    "main.hello_world":                   MainHelloWorld;
-    "meta_tags.about":                    MetaTagsAbout;
+    "about.how_floro_works_title":         AboutHowFloroWorksTitle;
+    "about.how_it's_all_related":          AboutHowItSAllRelated;
+    "about.how_it_is_all_related_blurb_1": AboutHowItIsAllRelatedBlurb1;
+    "about.how_it_is_all_related_part_2":  AboutHowItIsAllRelatedPart2;
+    "about.how_it_works_blurb":            AboutHowItWorksBlurb;
+    "about.how_it_works_blurb_part_2":     AboutHowItWorksBlurbPart2;
+    "about.how_it_works_blurb_part_3":     AboutHowItWorksBlurbPart3;
+    "about.how_it_works_blurb_part_4":     AboutHowItWorksBlurbPart4;
+    "about.how_its_all_related_part_3":    AboutHowItsAllRelatedPart3;
+    "about.things_change_blurb_1":         AboutThingsChangeBlurb1;
+    "about.things_change_blurb_2":         AboutThingsChangeBlurb2;
+    "about.things_change_blurb_3":         AboutThingsChangeBlurb3;
+    "about.things_change_title":           AboutThingsChangeTitle;
+    "components.copied":                   ComponentsCopied;
+    "components.copyright":                ComponentsCopyright;
+    "components.privacy_policy":           ComponentsPrivacyPolicy;
+    "components.released_under_mit":       ComponentsReleasedUnderMIT;
+    "components.terms_of_service":         ComponentsTermsOfService;
+    "front_page.appearance":               FrontPageAppearance;
+    "front_page.download_desktop_client":  FrontPageDownloadDesktopClient;
+    "front_page.get_help_and_contribute":  FrontPageGetHelpAndContribute;
+    "front_page.install_the_cli":          FrontPageInstallTheCLI;
+    "front_page.nav_about":                FrontPageNavAbout;
+    "front_page.nav_consulting":           FrontPageNavConsulting;
+    "front_page.nav_docs":                 FrontPageNavDocs;
+    "front_page.nav_download":             FrontPageNavDownload;
+    "front_page.nav_foss":                 FrontPageNavFOSS;
+    "front_page.nav_pricing":              FrontPageNavPricing;
+    "front_page.subtext_of_tag_line":      FrontPageSubtextOfTagLine;
+    "front_page.tag_line":                 FrontPageTagLine;
+    "main.hello_world":                    MainHelloWorld;
+    "meta_tags.about":                     MetaTagsAbout;
 }
 
 export interface AboutHowFloroWorksTitle {
@@ -108,6 +112,57 @@ export enum PhraseType {
 }
 
 export interface AboutHowFloroWorksTitleVariables {
+}
+
+export interface AboutHowItSAllRelated {
+    interpolations: AboutHowItSAllRelatedInterpolations;
+    links:          AboutHowItSAllRelatedLinks;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      AboutHowItSAllRelatedVariables;
+}
+
+export interface AboutHowItSAllRelatedInterpolations {
+}
+
+export interface AboutHowItSAllRelatedLinks {
+}
+
+export interface AboutHowItSAllRelatedVariables {
+}
+
+export interface AboutHowItIsAllRelatedBlurb1 {
+    interpolations: AboutHowItIsAllRelatedBlurb1_Interpolations;
+    links:          AboutHowItIsAllRelatedBlurb1_Links;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      AboutHowItIsAllRelatedBlurb1_Variables;
+}
+
+export interface AboutHowItIsAllRelatedBlurb1_Interpolations {
+}
+
+export interface AboutHowItIsAllRelatedBlurb1_Links {
+}
+
+export interface AboutHowItIsAllRelatedBlurb1_Variables {
+}
+
+export interface AboutHowItIsAllRelatedPart2 {
+    interpolations: AboutHowItIsAllRelatedPart2_Interpolations;
+    links:          AboutHowItIsAllRelatedPart2_Links;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      AboutHowItIsAllRelatedPart2_Variables;
+}
+
+export interface AboutHowItIsAllRelatedPart2_Interpolations {
+}
+
+export interface AboutHowItIsAllRelatedPart2_Links {
+}
+
+export interface AboutHowItIsAllRelatedPart2_Variables {
 }
 
 export interface AboutHowItWorksBlurb {
@@ -195,6 +250,23 @@ export interface AboutHowItWorksBlurbPart4_Links {
 export interface AboutHowItWorksBlurbPart4_Variables {
 }
 
+export interface AboutHowItsAllRelatedPart3 {
+    interpolations: AboutHowItsAllRelatedPart3_Interpolations;
+    links:          AboutHowItsAllRelatedPart3_Links;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      AboutHowItsAllRelatedPart3_Variables;
+}
+
+export interface AboutHowItsAllRelatedPart3_Interpolations {
+}
+
+export interface AboutHowItsAllRelatedPart3_Links {
+}
+
+export interface AboutHowItsAllRelatedPart3_Variables {
+}
+
 export interface AboutThingsChangeBlurb1 {
     interpolations: AboutThingsChangeBlurb1_Interpolations;
     links:          AboutThingsChangeBlurb1_Links;
@@ -241,6 +313,7 @@ export interface AboutThingsChangeBlurb3_Interpolations {
 }
 
 export interface AboutThingsChangeBlurb3_Links {
+    "unit test": Link;
 }
 
 export interface AboutThingsChangeBlurb3_Variables {
@@ -587,34 +660,38 @@ export interface MetaTagsAboutVariables {
 }
 
 export interface PhraseKeyDebugInfo {
-    "about.how_floro_works_title":        DebugInfo;
-    "about.how_it_works_blurb":           DebugInfo;
-    "about.how_it_works_blurb_part_2":    DebugInfo;
-    "about.how_it_works_blurb_part_3":    DebugInfo;
-    "about.how_it_works_blurb_part_4":    DebugInfo;
-    "about.things_change_blurb_1":        DebugInfo;
-    "about.things_change_blurb_2":        DebugInfo;
-    "about.things_change_blurb_3":        DebugInfo;
-    "about.things_change_title":          DebugInfo;
-    "components.copied":                  DebugInfo;
-    "components.copyright":               DebugInfo;
-    "components.privacy_policy":          DebugInfo;
-    "components.released_under_mit":      DebugInfo;
-    "components.terms_of_service":        DebugInfo;
-    "front_page.appearance":              DebugInfo;
-    "front_page.download_desktop_client": DebugInfo;
-    "front_page.get_help_and_contribute": DebugInfo;
-    "front_page.install_the_cli":         DebugInfo;
-    "front_page.nav_about":               DebugInfo;
-    "front_page.nav_consulting":          DebugInfo;
-    "front_page.nav_docs":                DebugInfo;
-    "front_page.nav_download":            DebugInfo;
-    "front_page.nav_foss":                DebugInfo;
-    "front_page.nav_pricing":             DebugInfo;
-    "front_page.subtext_of_tag_line":     DebugInfo;
-    "front_page.tag_line":                DebugInfo;
-    "main.hello_world":                   DebugInfo;
-    "meta_tags.about":                    DebugInfo;
+    "about.how_floro_works_title":         DebugInfo;
+    "about.how_it's_all_related":          DebugInfo;
+    "about.how_it_is_all_related_blurb_1": DebugInfo;
+    "about.how_it_is_all_related_part_2":  DebugInfo;
+    "about.how_it_works_blurb":            DebugInfo;
+    "about.how_it_works_blurb_part_2":     DebugInfo;
+    "about.how_it_works_blurb_part_3":     DebugInfo;
+    "about.how_it_works_blurb_part_4":     DebugInfo;
+    "about.how_its_all_related_part_3":    DebugInfo;
+    "about.things_change_blurb_1":         DebugInfo;
+    "about.things_change_blurb_2":         DebugInfo;
+    "about.things_change_blurb_3":         DebugInfo;
+    "about.things_change_title":           DebugInfo;
+    "components.copied":                   DebugInfo;
+    "components.copyright":                DebugInfo;
+    "components.privacy_policy":           DebugInfo;
+    "components.released_under_mit":       DebugInfo;
+    "components.terms_of_service":         DebugInfo;
+    "front_page.appearance":               DebugInfo;
+    "front_page.download_desktop_client":  DebugInfo;
+    "front_page.get_help_and_contribute":  DebugInfo;
+    "front_page.install_the_cli":          DebugInfo;
+    "front_page.nav_about":                DebugInfo;
+    "front_page.nav_consulting":           DebugInfo;
+    "front_page.nav_docs":                 DebugInfo;
+    "front_page.nav_download":             DebugInfo;
+    "front_page.nav_foss":                 DebugInfo;
+    "front_page.nav_pricing":              DebugInfo;
+    "front_page.subtext_of_tag_line":      DebugInfo;
+    "front_page.tag_line":                 DebugInfo;
+    "main.hello_world":                    DebugInfo;
+    "meta_tags.about":                     DebugInfo;
 }
 
 export interface DebugInfo {

@@ -10,6 +10,13 @@
     }
   },
   "themeColors": {
+    "reverse-contrast-bg": {
+      "default": {
+        "light": "#FFFFFFFF",
+        "dark": "#414141FF"
+      },
+      "variants": {}
+    },
     "icon-single-contrast": {
       "default": {
         "light": "#414141FF",
