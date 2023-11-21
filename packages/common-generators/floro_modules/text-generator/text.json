@@ -15,6 +15,540 @@
   },
   "localizedPhraseKeys": {
     "EN": {
+      "about.whats_the_difference_part_7": {
+        "phraseKey": "about.whats_the_difference_part_7",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "And that's the way that plugin diffing really work. While the user interfaces with the plugin via a user interface and alters the plugin's state tree through the GUI, the plugin interfaces with ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " through its keys. In fact all that is communicated to a plugin about a diff, is which keys were removed and which keys were added.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "The idea that all a document diff requires is two views, the before, and the after, as well as the keys that were removed from the before state and the keys that were to the after state is the fundamental idea of document diffing.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "In the next section we discuss merging and data granularity. One key thing to know at this point, is that if something can be diffed (meaningfully) then it can also be merged (meaningfully)... even when conflicts arise.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "about.whats_the_difference_part_6": {
+        "phraseKey": "about.whats_the_difference_part_6",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "We should now be able to see this diff far more easily in our spreadsheet interface!",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "about.whats_the_difference_part_5": {
+        "phraseKey": "about.whats_the_difference_part_5",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "To see the diff we're going to change the colors that are highlighted. Instead of highlighting the key relationships to the plugins, we highlight the keys that were ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "removed from the before state",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " and the keys that were ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "added to the after state.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "about.whats_the_difference_part_4": {
+        "phraseKey": "about.whats_the_difference_part_4",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "If we imagine these two states, in their key value form it becomes a lot easier to see how we could actually diff them. If we just imagine the keys of the spreadsheets above, we see the two states would be the following",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Before Keys -> After Keys",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "about.whats_the_different_part_3": {
+        "phraseKey": "about.whats_the_different_part_3",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "Finally, we can return back to our Localization example to see how we can apply diffing to our plugin states. ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "The big philosophical question in diffing is how do you produce a meaningful diff? ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Unfortunately, diffing documents is highly subjective to the task at hand. However, ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " has a couple of tricks for making good diffs easy for plugin developers.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "First let's think about the ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "before ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "and ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "after ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "states of our localization document.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Before State  --",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Δ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "-> After State",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
       "about.whats_the_difference_blurb_2": {
         "phraseKey": "about.whats_the_difference_blurb_2",
         "variables": {},
@@ -1527,7 +2061,7 @@
         "phrase": [
           {
             "children": [],
-            "content": "It's all related man 🍄",
+            "content": "It's all related 🍄",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -5356,6 +5890,540 @@
       }
     },
     "ZH": {
+      "about.whats_the_difference_part_7": {
+        "phraseKey": "about.whats_the_difference_part_7",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "And that's the way that plugin diffing really work. While the user interfaces with the plugin via a user interface and alters the plugin's state tree through the GUI, the plugin interfaces with ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " through its keys. In fact all that is communicated to a plugin about a diff, is which keys were removed and which keys were added.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "The idea that all a document diff requires is two views, the before, and the after, as well as the keys that were removed from the before state and the keys that were to the after state is the fundamental idea of document diffing.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "In the next section we discuss merging and data granularity. One key thing to know at this point, is that if something can be diffed (meaningfully) then it can also be merged (meaningfully)... even when conflicts arise.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "about.whats_the_difference_part_6": {
+        "phraseKey": "about.whats_the_difference_part_6",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "We should now be able to see this diff far more easily in our spreadsheet interface!",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "about.whats_the_difference_part_5": {
+        "phraseKey": "about.whats_the_difference_part_5",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "To see the diff we're going to change the colors that are highlighted. Instead of highlighting the key relationships to the plugins, we highlight the keys that were ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "removed from the before state",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " and the keys that were ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "added to the after state.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "about.whats_the_difference_part_4": {
+        "phraseKey": "about.whats_the_difference_part_4",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "If we imagine these two states, in their key value form it becomes a lot easier to see how we could actually diff them. If we just imagine the keys of the spreadsheets above, we see the two states would be the following",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Before Keys -> After Keys",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "about.whats_the_different_part_3": {
+        "phraseKey": "about.whats_the_different_part_3",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "Finally, we can return back to our Localization example to see how we can apply diffing to our plugin states. ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "The big philosophical question in diffing is how do you produce a meaningful diff? ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Unfortunately, diffing documents is highly subjective to the task at hand. However, ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " has a couple of tricks for making good diffs easy for plugin developers.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "First let's think about the ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "before ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "and ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "after ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "states of our localization document.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Before State  --",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Δ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "-> After State",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
       "about.whats_the_difference_blurb_2": {
         "phraseKey": "about.whats_the_difference_blurb_2",
         "variables": {},
@@ -6868,7 +7936,7 @@
         "phrase": [
           {
             "children": [],
-            "content": "It's all related man 🍄",
+            "content": "It's all related 🍄",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -10698,6 +11766,26 @@
     }
   },
   "phraseKeyDebugInfo": {
+    "about.whats_the_difference_part_7": {
+      "groupName": "About",
+      "phraseKey": "whats the difference part 7"
+    },
+    "about.whats_the_difference_part_6": {
+      "groupName": "About",
+      "phraseKey": "whats the difference part 6"
+    },
+    "about.whats_the_difference_part_5": {
+      "groupName": "About",
+      "phraseKey": "whats the difference part 5"
+    },
+    "about.whats_the_difference_part_4": {
+      "groupName": "About",
+      "phraseKey": "whats the difference part 4"
+    },
+    "about.whats_the_different_part_3": {
+      "groupName": "About",
+      "phraseKey": "whats the different part 3"
+    },
     "about.whats_the_difference_blurb_2": {
       "groupName": "About",
       "phraseKey": "whats the difference blurb 2"

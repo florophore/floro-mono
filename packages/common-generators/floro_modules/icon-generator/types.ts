@@ -7,6 +7,7 @@
 export interface Icons {
     "about.backward":                  AboutBackward;
     "about.cascading-relations":       AboutCascadingRelations;
+    "about.diff-keys":                 AboutDiffKeys;
     "about.floro-pipeline":            AboutFloroPipeline;
     "about.forward":                   AboutForward;
     "about.key-syntax":                AboutKeySyntax;
@@ -18,12 +19,15 @@ export interface Icons {
     "about.set-to-types":              AboutSetToTypes;
     "about.set-updates":               AboutSetUpdates;
     "about.spreadsheet":               AboutSpreadsheet;
+    "about.spreadsheet-keys":          AboutSpreadsheetKeys;
+    "about.state-change":              AboutStateChange;
     "about.treelist-sequence-1":       AboutTreelistSequence1;
     "about.treelist-sequence-2":       AboutTreelistSequence2;
     "about.treelist-sequence-3":       AboutTreelistSequence3;
     "about.treelist-sequence-4":       AboutTreelistSequence4;
     "about.version-update-revised":    AboutVersionUpdateRevised;
     "about.version-updates":           AboutVersionUpdates;
+    "about.visual-diff":               AboutVisualDiff;
     "front-page.apple":                FrontPageApple;
     "front-page.copy":                 FrontPageCopy;
     "front-page.discord":              FrontPageDiscord;
@@ -59,6 +63,14 @@ export interface AboutCascadingRelations {
 }
 
 export interface AboutCascadingRelationsVariants {
+}
+
+export interface AboutDiffKeys {
+    default:  Theme;
+    variants: AboutDiffKeysVariants;
+}
+
+export interface AboutDiffKeysVariants {
 }
 
 export interface AboutFloroPipeline {
@@ -149,6 +161,22 @@ export interface AboutSpreadsheet {
 export interface AboutSpreadsheetVariants {
 }
 
+export interface AboutSpreadsheetKeys {
+    default:  Theme;
+    variants: AboutSpreadsheetKeysVariants;
+}
+
+export interface AboutSpreadsheetKeysVariants {
+}
+
+export interface AboutStateChange {
+    default:  Theme;
+    variants: AboutStateChangeVariants;
+}
+
+export interface AboutStateChangeVariants {
+}
+
 export interface AboutTreelistSequence1 {
     default:  Theme;
     variants: AboutTreelistSequence1_Variants;
@@ -195,6 +223,14 @@ export interface AboutVersionUpdates {
 }
 
 export interface AboutVersionUpdatesVariants {
+}
+
+export interface AboutVisualDiff {
+    default:  Theme;
+    variants: AboutVisualDiffVariants;
+}
+
+export interface AboutVisualDiffVariants {
 }
 
 export interface FrontPageApple {

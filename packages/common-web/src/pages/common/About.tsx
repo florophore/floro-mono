@@ -225,6 +225,10 @@ function AboutPage() {
   const pauseIcon = useIcon("about.pause");
   const forwardIcon = useIcon("about.forward");
   const backwardIcon = useIcon("about.backward");
+  const stateChangeIcon = useIcon("about.state-change");
+  const spreadsheetKeys = useIcon("about.spreadsheet-keys");
+  const diffKeys = useIcon("about.diff-keys");
+  const visualDiff = useIcon("about.visual-diff");
 
   const treeListSequenceIcon = useMemo(() => {
     if (sequenceCount == 1) {
@@ -380,6 +384,52 @@ function AboutPage() {
 
   const whatsTheDifferenceBlurb2 = useRichText(
     "about.whats_the_difference_blurb_2",
+    {},
+    {
+      ...richTextRenderers,
+      renderLinkNode,
+    }
+  );
+
+  const whatsTheDifferenceBlurb3 = useRichText(
+    "about.whats_the_different_part_3",
+    {},
+    {
+      ...richTextRenderers,
+      renderLinkNode,
+    }
+  );
+
+  const whatsTheDifferenceBlurb4 = useRichText(
+    "about.whats_the_difference_part_4",
+    {},
+    {
+      ...richTextRenderers,
+      renderLinkNode,
+    }
+  );
+
+
+  const whatsTheDifferenceBlurb5 = useRichText(
+    "about.whats_the_difference_part_5",
+    {},
+    {
+      ...richTextRenderers,
+      renderLinkNode,
+    }
+  );
+
+  const whatsTheDifferenceBlurb6 = useRichText(
+    "about.whats_the_difference_part_6",
+    {},
+    {
+      ...richTextRenderers,
+      renderLinkNode,
+    }
+  );
+
+  const whatsTheDifferenceBlurb7 = useRichText(
+    "about.whats_the_difference_part_7",
     {},
     {
       ...richTextRenderers,
@@ -797,7 +847,7 @@ function AboutPage() {
             />
           </div>
           <SectionParagraph style={{ marginTop: 24 }}>
-            <p>
+            <p style={{display: 'flex'}}>
               <span style={{ width: 120, display: "inline-block" }}>
                 {"Before: "}
               </span>
@@ -806,8 +856,7 @@ function AboutPage() {
             <p
               style={{
                 marginTop: 8,
-                display: "inline-block",
-                paddingRight: 12,
+                display: "flex",
               }}
             >
               <span style={{ width: 120, display: "inline-block" }}>
@@ -876,7 +925,7 @@ function AboutPage() {
                 <div
                   style={{
                     display: "flex",
-                    padding: 16,
+                    padding: 8,
                     flexDirection: "column",
                     justifyContent: "flex-start",
                     flex: 1,
@@ -920,7 +969,7 @@ function AboutPage() {
                 <div
                   style={{
                     display: "flex",
-                    padding: 16,
+                    padding: 8,
                     flexDirection: "column",
                     justifyContent: "flex-start",
                     flex: 1,
@@ -963,6 +1012,57 @@ function AboutPage() {
               <li>{lcsDiffSequence}</li>
               <li>{afterDiffOut}</li>
             </ol>
+          </SectionParagraph>
+          <SectionParagraph style={{ marginTop: 64 }}>
+            {whatsTheDifferenceBlurb3}
+          </SectionParagraph>
+          <div style={{ marginTop: 24 }}>
+            <img
+              src={stateChangeIcon}
+              style={{
+                width: "100%",
+                maxWidth: 800
+              }}
+            />
+          </div>
+          <SectionParagraph style={{ marginTop: 64 }}>
+            {whatsTheDifferenceBlurb4}
+          </SectionParagraph>
+          <div style={{ marginTop: 24 }}>
+            <img
+              src={spreadsheetKeys}
+              style={{
+                width: "100%",
+                maxWidth: 800
+              }}
+            />
+          </div>
+          <SectionParagraph style={{ marginTop: 64 }}>
+            {whatsTheDifferenceBlurb5}
+          </SectionParagraph>
+          <div style={{ marginTop: 24 }}>
+            <img
+              src={diffKeys}
+              style={{
+                width: "100%",
+                maxWidth: 800
+              }}
+            />
+          </div>
+          <SectionParagraph style={{ marginTop: 64 }}>
+            {whatsTheDifferenceBlurb6}
+          </SectionParagraph>
+          <div style={{ marginTop: 24 }}>
+            <img
+              src={visualDiff}
+              style={{
+                width: "100%",
+                maxWidth: 800
+              }}
+            />
+          </div>
+          <SectionParagraph style={{ marginTop: 64 }}>
+            {whatsTheDifferenceBlurb7}
           </SectionParagraph>
         </div>
       </AboutWrapper>

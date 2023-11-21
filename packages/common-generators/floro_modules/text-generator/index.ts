@@ -52,7 +52,12 @@ export interface PhraseKeys {
     "about.things_change_title":           AboutThingsChangeTitle;
     "about.whats_the_difference_blurb_1":  AboutWhatsTheDifferenceBlurb1;
     "about.whats_the_difference_blurb_2":  AboutWhatsTheDifferenceBlurb2;
+    "about.whats_the_difference_part_4":   AboutWhatsTheDifferencePart4;
+    "about.whats_the_difference_part_5":   AboutWhatsTheDifferencePart5;
+    "about.whats_the_difference_part_6":   AboutWhatsTheDifferencePart6;
+    "about.whats_the_difference_part_7":   AboutWhatsTheDifferencePart7;
     "about.whats_the_difference_title":    AboutWhatsTheDifferenceTitle;
+    "about.whats_the_different_part_3":    AboutWhatsTheDifferentPart3;
     "components.copied":                   ComponentsCopied;
     "components.copyright":                ComponentsCopyright;
     "components.privacy_policy":           ComponentsPrivacyPolicy;
@@ -375,6 +380,74 @@ export interface AboutWhatsTheDifferenceBlurb2_Links {
 export interface AboutWhatsTheDifferenceBlurb2_Variables {
 }
 
+export interface AboutWhatsTheDifferencePart4 {
+    interpolations: AboutWhatsTheDifferencePart4_Interpolations;
+    links:          AboutWhatsTheDifferencePart4_Links;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      AboutWhatsTheDifferencePart4_Variables;
+}
+
+export interface AboutWhatsTheDifferencePart4_Interpolations {
+}
+
+export interface AboutWhatsTheDifferencePart4_Links {
+}
+
+export interface AboutWhatsTheDifferencePart4_Variables {
+}
+
+export interface AboutWhatsTheDifferencePart5 {
+    interpolations: AboutWhatsTheDifferencePart5_Interpolations;
+    links:          AboutWhatsTheDifferencePart5_Links;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      AboutWhatsTheDifferencePart5_Variables;
+}
+
+export interface AboutWhatsTheDifferencePart5_Interpolations {
+}
+
+export interface AboutWhatsTheDifferencePart5_Links {
+}
+
+export interface AboutWhatsTheDifferencePart5_Variables {
+}
+
+export interface AboutWhatsTheDifferencePart6 {
+    interpolations: AboutWhatsTheDifferencePart6_Interpolations;
+    links:          AboutWhatsTheDifferencePart6_Links;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      AboutWhatsTheDifferencePart6_Variables;
+}
+
+export interface AboutWhatsTheDifferencePart6_Interpolations {
+}
+
+export interface AboutWhatsTheDifferencePart6_Links {
+}
+
+export interface AboutWhatsTheDifferencePart6_Variables {
+}
+
+export interface AboutWhatsTheDifferencePart7 {
+    interpolations: AboutWhatsTheDifferencePart7_Interpolations;
+    links:          AboutWhatsTheDifferencePart7_Links;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      AboutWhatsTheDifferencePart7_Variables;
+}
+
+export interface AboutWhatsTheDifferencePart7_Interpolations {
+}
+
+export interface AboutWhatsTheDifferencePart7_Links {
+}
+
+export interface AboutWhatsTheDifferencePart7_Variables {
+}
+
 export interface AboutWhatsTheDifferenceTitle {
     interpolations: AboutWhatsTheDifferenceTitleInterpolations;
     links:          AboutWhatsTheDifferenceTitleLinks;
@@ -390,6 +463,23 @@ export interface AboutWhatsTheDifferenceTitleLinks {
 }
 
 export interface AboutWhatsTheDifferenceTitleVariables {
+}
+
+export interface AboutWhatsTheDifferentPart3 {
+    interpolations: AboutWhatsTheDifferentPart3_Interpolations;
+    links:          AboutWhatsTheDifferentPart3_Links;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      AboutWhatsTheDifferentPart3_Variables;
+}
+
+export interface AboutWhatsTheDifferentPart3_Interpolations {
+}
+
+export interface AboutWhatsTheDifferentPart3_Links {
+}
+
+export interface AboutWhatsTheDifferentPart3_Variables {
 }
 
 export interface ComponentsCopied {
@@ -731,7 +821,12 @@ export interface PhraseKeyDebugInfo {
     "about.things_change_title":           DebugInfo;
     "about.whats_the_difference_blurb_1":  DebugInfo;
     "about.whats_the_difference_blurb_2":  DebugInfo;
+    "about.whats_the_difference_part_4":   DebugInfo;
+    "about.whats_the_difference_part_5":   DebugInfo;
+    "about.whats_the_difference_part_6":   DebugInfo;
+    "about.whats_the_difference_part_7":   DebugInfo;
     "about.whats_the_difference_title":    DebugInfo;
+    "about.whats_the_different_part_3":    DebugInfo;
     "components.copied":                   DebugInfo;
     "components.copyright":                DebugInfo;
     "components.privacy_policy":           DebugInfo;
