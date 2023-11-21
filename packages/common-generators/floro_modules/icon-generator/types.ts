@@ -5,18 +5,24 @@
 //   const icons = Convert.toIcons(json);
 
 export interface Icons {
+    "about.backward":                  AboutBackward;
     "about.cascading-relations":       AboutCascadingRelations;
     "about.floro-pipeline":            AboutFloroPipeline;
+    "about.forward":                   AboutForward;
     "about.key-syntax":                AboutKeySyntax;
     "about.list-transform":            AboutListTransform;
     "about.overview":                  AboutOverview;
+    "about.pause":                     AboutPause;
+    "about.play":                      AboutPlay;
     "about.relations-refactor-part-1": AboutRelationsRefactorPart1;
     "about.set-to-types":              AboutSetToTypes;
+    "about.set-updates":               AboutSetUpdates;
     "about.spreadsheet":               AboutSpreadsheet;
     "about.treelist-sequence-1":       AboutTreelistSequence1;
     "about.treelist-sequence-2":       AboutTreelistSequence2;
     "about.treelist-sequence-3":       AboutTreelistSequence3;
     "about.treelist-sequence-4":       AboutTreelistSequence4;
+    "about.version-update-revised":    AboutVersionUpdateRevised;
     "about.version-updates":           AboutVersionUpdates;
     "front-page.apple":                FrontPageApple;
     "front-page.copy":                 FrontPageCopy;
@@ -34,14 +40,22 @@ export interface Icons {
     "main.floro-text":                 MainFloroText;
 }
 
-export interface AboutCascadingRelations {
+export interface AboutBackward {
     default:  Theme;
-    variants: AboutCascadingRelationsVariants;
+    variants: AboutBackwardVariants;
 }
 
 export interface Theme {
     dark:  string;
     light: string;
+}
+
+export interface AboutBackwardVariants {
+}
+
+export interface AboutCascadingRelations {
+    default:  Theme;
+    variants: AboutCascadingRelationsVariants;
 }
 
 export interface AboutCascadingRelationsVariants {
@@ -53,6 +67,14 @@ export interface AboutFloroPipeline {
 }
 
 export interface AboutFloroPipelineVariants {
+}
+
+export interface AboutForward {
+    default:  Theme;
+    variants: AboutForwardVariants;
+}
+
+export interface AboutForwardVariants {
 }
 
 export interface AboutKeySyntax {
@@ -79,6 +101,22 @@ export interface AboutOverview {
 export interface AboutOverviewVariants {
 }
 
+export interface AboutPause {
+    default:  Theme;
+    variants: AboutPauseVariants;
+}
+
+export interface AboutPauseVariants {
+}
+
+export interface AboutPlay {
+    default:  Theme;
+    variants: AboutPlayVariants;
+}
+
+export interface AboutPlayVariants {
+}
+
 export interface AboutRelationsRefactorPart1 {
     default:  Theme;
     variants: AboutRelationsRefactorPart1_Variants;
@@ -93,6 +131,14 @@ export interface AboutSetToTypes {
 }
 
 export interface AboutSetToTypesVariants {
+}
+
+export interface AboutSetUpdates {
+    default:  Theme;
+    variants: AboutSetUpdatesVariants;
+}
+
+export interface AboutSetUpdatesVariants {
 }
 
 export interface AboutSpreadsheet {
@@ -133,6 +179,14 @@ export interface AboutTreelistSequence4 {
 }
 
 export interface AboutTreelistSequence4_Variants {
+}
+
+export interface AboutVersionUpdateRevised {
+    default:  Theme;
+    variants: AboutVersionUpdateRevisedVariants;
+}
+
+export interface AboutVersionUpdateRevisedVariants {
 }
 
 export interface AboutVersionUpdates {

@@ -50,6 +50,9 @@ export interface PhraseKeys {
     "about.things_change_blurb_2":         AboutThingsChangeBlurb2;
     "about.things_change_blurb_3":         AboutThingsChangeBlurb3;
     "about.things_change_title":           AboutThingsChangeTitle;
+    "about.whats_the_difference_blurb_1":  AboutWhatsTheDifferenceBlurb1;
+    "about.whats_the_difference_blurb_2":  AboutWhatsTheDifferenceBlurb2;
+    "about.whats_the_difference_title":    AboutWhatsTheDifferenceTitle;
     "components.copied":                   ComponentsCopied;
     "components.copyright":                ComponentsCopyright;
     "components.privacy_policy":           ComponentsPrivacyPolicy;
@@ -334,6 +337,59 @@ export interface AboutThingsChangeTitleLinks {
 }
 
 export interface AboutThingsChangeTitleVariables {
+}
+
+export interface AboutWhatsTheDifferenceBlurb1 {
+    interpolations: AboutWhatsTheDifferenceBlurb1_Interpolations;
+    links:          AboutWhatsTheDifferenceBlurb1_Links;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      AboutWhatsTheDifferenceBlurb1_Variables;
+}
+
+export interface AboutWhatsTheDifferenceBlurb1_Interpolations {
+}
+
+export interface AboutWhatsTheDifferenceBlurb1_Links {
+    "Longest Common Subsequence": Link;
+    "YouTube Link":               Link;
+}
+
+export interface AboutWhatsTheDifferenceBlurb1_Variables {
+}
+
+export interface AboutWhatsTheDifferenceBlurb2 {
+    interpolations: AboutWhatsTheDifferenceBlurb2_Interpolations;
+    links:          AboutWhatsTheDifferenceBlurb2_Links;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      AboutWhatsTheDifferenceBlurb2_Variables;
+}
+
+export interface AboutWhatsTheDifferenceBlurb2_Interpolations {
+}
+
+export interface AboutWhatsTheDifferenceBlurb2_Links {
+}
+
+export interface AboutWhatsTheDifferenceBlurb2_Variables {
+}
+
+export interface AboutWhatsTheDifferenceTitle {
+    interpolations: AboutWhatsTheDifferenceTitleInterpolations;
+    links:          AboutWhatsTheDifferenceTitleLinks;
+    phrase:         TextNode[];
+    phraseKey:      string;
+    variables:      AboutWhatsTheDifferenceTitleVariables;
+}
+
+export interface AboutWhatsTheDifferenceTitleInterpolations {
+}
+
+export interface AboutWhatsTheDifferenceTitleLinks {
+}
+
+export interface AboutWhatsTheDifferenceTitleVariables {
 }
 
 export interface ComponentsCopied {
@@ -673,6 +729,9 @@ export interface PhraseKeyDebugInfo {
     "about.things_change_blurb_2":         DebugInfo;
     "about.things_change_blurb_3":         DebugInfo;
     "about.things_change_title":           DebugInfo;
+    "about.whats_the_difference_blurb_1":  DebugInfo;
+    "about.whats_the_difference_blurb_2":  DebugInfo;
+    "about.whats_the_difference_title":    DebugInfo;
     "components.copied":                   DebugInfo;
     "components.copyright":                DebugInfo;
     "components.privacy_policy":           DebugInfo;

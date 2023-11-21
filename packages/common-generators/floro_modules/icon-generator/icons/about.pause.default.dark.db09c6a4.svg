@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg  viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>pause</title>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="pause">
+            <circle id="Oval" fill="#9B8EF6ff" cx="16" cy="16" r="16"></circle>
+            <g id="Symbols" transform="translate(9.75, 6)" fill="#FFFFFFFF" fill-rule="nonzero">
+                <path d="M3.75,18.125 C3.75,19.1605339 2.91053391,20 1.875,20 C0.839466094,20 0,19.1605339 0,18.125 L0,1.875 C0,0.839466094 0.839466094,0 1.875,0 C2.91053391,0 3.75,0.839466094 3.75,1.875 L3.75,18.125 Z M12.5,18.125 C12.5,19.1605339 11.6605339,20 10.625,20 C9.58946609,20 8.75,19.1605339 8.75,18.125 L8.75,1.875 C8.75,0.839466094 9.58946609,0 10.625,0 C11.6605339,0 12.5,0.839466094 12.5,1.875 L12.5,18.125 Z" id="pause"></path>
+            </g>
+        </g>
+    </g>
+</svg>
