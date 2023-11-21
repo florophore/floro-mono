@@ -367,7 +367,7 @@
           },
           {
             "children": [],
-            "content": " has a couple of tricks for making good diffs easy for plugin developers.",
+            "content": " has a couple of tricks for making good diffs easy for plugin developers to create.",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -6242,7 +6242,7 @@
           },
           {
             "children": [],
-            "content": " has a couple of tricks for making good diffs easy for plugin developers.",
+            "content": " has a couple of tricks for making good diffs easy for plugin developers to create.",
             "type": "text",
             "styles": {
               "isBold": false,
