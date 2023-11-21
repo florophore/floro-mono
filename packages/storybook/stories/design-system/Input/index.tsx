@@ -37,6 +37,7 @@ const Container = styled.div`
   border-radius: 8px;
   transition: 500ms border-color;
   cursor: pointer;
+  max-width: 100%;
 `;
 
 const LabelContainer = styled.div`
