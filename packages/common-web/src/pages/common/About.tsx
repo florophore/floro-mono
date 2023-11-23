@@ -23,6 +23,7 @@ import {
   getArrayStringDiff,
   getDiff,
   getLCS,
+  getMergeSequence,
   getTextDiff,
 } from "floro/dist/src/sequenceoperations";
 import { after } from "node:test";
@@ -229,6 +230,8 @@ function AboutPage() {
   const spreadsheetKeys = useIcon("about.spreadsheet-keys");
   const diffKeys = useIcon("about.diff-keys");
   const visualDiff = useIcon("about.visual-diff");
+  const checkMark = useIcon("about.check-mark");
+  const redX = useIcon("about.red-x");
 
   const treeListSequenceIcon = useMemo(() => {
     if (sequenceCount == 1) {
@@ -437,8 +440,31 @@ function AboutPage() {
     }
   );
 
+  const bringingItAllTogetherTitle = useRichText(
+    "about.bringing_it_all_together_title",
+    {},
+    {
+      ...richTextRenderers,
+      renderLinkNode,
+    }
+  );
+
+  const bringingItAllTogetherPart1 = useRichText(
+    "about.bringing_it_all_together_part_1",
+    {},
+    {
+      ...richTextRenderers,
+      renderLinkNode,
+    }
+  );
+
   const [lcsString1, setLcsString1] = useState("ACBAACD");
   const [lcsString2, setLcsString2] = useState("ADBDADC");
+
+
+  const [origin, setOrigin] = useState("BCE");
+  const [left, setLeft] = useState("BCDE");
+  const [right, setRight] = useState("ABC");
 
   const lcsSequence = useMemo(() => {
     return getLCS(lcsString1.split(""), lcsString2.split(""));
@@ -571,6 +597,14 @@ function AboutPage() {
       diffAfterString.split("")
     );
   }, [diffAfterString, diffBeforeString]);
+
+  const leftMerge = useMemo(() => {
+    return getMergeSequence(origin.split(''), left.split(''), right.split(''), "yours").join('');
+  }, [origin, left, right])
+
+  const rightMerge = useMemo(() => {
+    return getMergeSequence(origin.split(''), left.split(''), right.split(''), "theirs").join('');
+  }, [origin, left, right])
 
   return (
     <PageWrapper>
@@ -1065,6 +1099,80 @@ function AboutPage() {
             {whatsTheDifferenceBlurb7}
           </SectionParagraph>
         </div>
+          <SubSectionTitle
+            style={{
+              marginTop: 24,
+            }}
+          >
+            {bringingItAllTogetherTitle}
+          </SubSectionTitle>
+          <SectionParagraph style={{ marginTop: 64 }}>
+            {bringingItAllTogetherPart1}
+          </SectionParagraph>
+          <div style={{ marginTop: 64 }}>
+            <Input
+              value={origin}
+              label={"origin string"}
+              placeholder={"origin string"}
+              onTextChanged={(text: string) => {
+                setOrigin(text);
+              }}
+              style={{ marginBottom: 12 }}
+            />
+            <Input
+              value={left}
+              label={"left string"}
+              placeholder={"left string"}
+              onTextChanged={(text: string) => {
+                setLeft(text);
+              }}
+              style={{ marginBottom: 12 }}
+            />
+            <Input
+              value={right}
+              label={"right string"}
+              placeholder={"right string"}
+              onTextChanged={(text: string) => {
+                setRight(text);
+              }}
+            />
+          </div>
+          <SectionParagraph style={{ marginTop: 24 }}>
+            <p style={{display: 'flex'}}>
+              <span style={{ width: 160, display: "inline-block" }}>
+                {"Left Merge: "}
+              </span>
+              <span>{leftMerge}</span>
+            </p>
+            <p
+              style={{
+                marginTop: 8,
+                display: "flex",
+              }}
+            >
+              <span style={{ width: 160, display: "inline-block" }}>
+                {"Right Merge: "}
+              </span>
+              <span>{rightMerge}</span>
+            </p>
+            <p
+              style={{
+                marginTop: 8,
+                display: "flex",
+                flexDirection: 'row',
+                alignItems: 'center'
+              }}
+            >
+              <span style={{ width: 160, display: "inline-block" }}>
+                {"Automerges? "}
+              </span>
+              {rightMerge == leftMerge ? (
+                <img style={{height: 20}} src={checkMark}/>
+              ) : (
+                <img style={{height: 20}} src={redX}/>
+              )}
+            </p>
+          </SectionParagraph>
       </AboutWrapper>
     </PageWrapper>
   );

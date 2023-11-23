@@ -15,6 +15,383 @@
   },
   "localizedPhraseKeys": {
     "EN": {
+      "about.bringing_it_all_together_part_1": {
+        "phraseKey": "about.bringing_it_all_together_part_1",
+        "variables": {},
+        "links": {
+          "CRDT Link": {
+            "displayValue": [
+              {
+                "children": [],
+                "content": "Conflict Free Replicated Data Types",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": true,
+                  "isUnderlined": true,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              }
+            ],
+            "linkName": "CRDT Link",
+            "href": [
+              {
+                "type": "text",
+                "content": "https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type"
+              }
+            ]
+          },
+          "Git Merge Link": {
+            "displayValue": [
+              {
+                "children": [],
+                "content": "merge algorithm here",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": true,
+                  "isUnderlined": true,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              }
+            ],
+            "linkName": "Git Merge Link",
+            "href": [
+              {
+                "type": "text",
+                "content": "https://github.com/florophore/floro/blob/main/src/sequenceoperations.ts#L294"
+              }
+            ]
+          }
+        },
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "Unfortunately, there isn't a lot of great content that comprehensively covers the sequence merging cases ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " deals with. There are some similar problems that come up in ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{CRDT Link}",
+            "type": "link",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ", however, they're divergent enough from our use-case that it's probably best for us to explain merging ourselves. With that said, this section is going to be quite a bit more technical than the previous sections. To add to the confusion, there are two distinct types of merges that occur in version control, that we need to delineate between.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "The first type of merging is ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "merging of sequences",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ". We will be covering that in this section. The second type of merging is ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "merging of the commit trees",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ", which focuses on how commit graphs are merged. We will cover how ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " handles commit tree merging in the next section.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ", like most version control systems, uses a variant of three-way merging, you can see the implementation of ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "'s ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{Git Merge Link}",
+            "type": "link",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ".",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "about.bringing_it_all_together_title": {
+        "phraseKey": "about.bringing_it_all_together_title",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "Bringing it all together",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
       "about.whats_the_difference_part_7": {
         "phraseKey": "about.whats_the_difference_part_7",
         "variables": {},
@@ -23,7 +400,7 @@
         "phrase": [
           {
             "children": [],
-            "content": "And that's the way that plugin diffing really work. While the user interfaces with the plugin via a user interface and alters the plugin's state tree through the GUI, the plugin interfaces with ",
+            "content": "And that's the way that plugin diffing really works. While the user interfaces with the plugin via a user interface and alters the plugin's state tree through the GUI, the plugin interfaces with ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -182,7 +559,7 @@
         "phrase": [
           {
             "children": [],
-            "content": "To see the diff we're going to change the colors that are highlighted. Instead of highlighting the key relationships to the plugins, we highlight the keys that were ",
+            "content": "To see the diff we're going to change the colors that are highlighted. Instead of highlighting the key relationships of the plugins, we highlight the keys that were ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -769,7 +1146,7 @@
                 "children": [
                   {
                     "children": [],
-                    "content": "We remove the removed characters from the diff to the ",
+                    "content": "We remove the removed characters in the diff from the ",
                     "type": "text",
                     "styles": {
                       "isBold": false,
@@ -822,7 +1199,7 @@
                 "children": [
                   {
                     "children": [],
-                    "content": "We add the added characters from the diff to the LCS, which gives us the ",
+                    "content": "Next, we add the added characters in the diff to the LCS, which gives us the ",
                     "type": "text",
                     "styles": {
                       "isBold": false,
@@ -5890,6 +6267,383 @@
       }
     },
     "ZH": {
+      "about.bringing_it_all_together_part_1": {
+        "phraseKey": "about.bringing_it_all_together_part_1",
+        "variables": {},
+        "links": {
+          "CRDT Link": {
+            "displayValue": [
+              {
+                "children": [],
+                "content": "Conflict Free Replicated Data Types",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": true,
+                  "isUnderlined": true,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              }
+            ],
+            "linkName": "CRDT Link",
+            "href": [
+              {
+                "type": "text",
+                "content": "https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type"
+              }
+            ]
+          },
+          "Git Merge Link": {
+            "displayValue": [
+              {
+                "children": [],
+                "content": "merge algorithm here",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": true,
+                  "isUnderlined": true,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              }
+            ],
+            "linkName": "Git Merge Link",
+            "href": [
+              {
+                "type": "text",
+                "content": "https://github.com/florophore/floro/blob/main/src/sequenceoperations.ts#L294"
+              }
+            ]
+          }
+        },
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "Unfortunately, there isn't a lot of great content that comprehensively covers the sequence merging cases ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " deals with. There are some similar problems that come up in ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{CRDT Link}",
+            "type": "link",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ", however, they're divergent enough from our use-case that it's probably best for us to explain merging ourselves. With that said, this section is going to be quite a bit more technical than the previous sections. To add to the confusion, there are two distinct types of merges that occur in version control, that we need to delineate between.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "The first type of merging is ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "merging of sequences",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ". We will be covering that in this section. The second type of merging is ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "merging of the commit trees",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ", which focuses on how commit graphs are merged. We will cover how ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " handles commit tree merging in the next section.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ", like most version control systems, uses a variant of three-way merging, you can see the implementation of ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "'s ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{Git Merge Link}",
+            "type": "link",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ".",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "about.bringing_it_all_together_title": {
+        "phraseKey": "about.bringing_it_all_together_title",
+        "variables": {},
+        "links": {},
+        "interpolations": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "Bringing it all together",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
       "about.whats_the_difference_part_7": {
         "phraseKey": "about.whats_the_difference_part_7",
         "variables": {},
@@ -5898,7 +6652,7 @@
         "phrase": [
           {
             "children": [],
-            "content": "And that's the way that plugin diffing really work. While the user interfaces with the plugin via a user interface and alters the plugin's state tree through the GUI, the plugin interfaces with ",
+            "content": "And that's the way that plugin diffing really works. While the user interfaces with the plugin via a user interface and alters the plugin's state tree through the GUI, the plugin interfaces with ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -6057,7 +6811,7 @@
         "phrase": [
           {
             "children": [],
-            "content": "To see the diff we're going to change the colors that are highlighted. Instead of highlighting the key relationships to the plugins, we highlight the keys that were ",
+            "content": "To see the diff we're going to change the colors that are highlighted. Instead of highlighting the key relationships of the plugins, we highlight the keys that were ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -6644,7 +7398,7 @@
                 "children": [
                   {
                     "children": [],
-                    "content": "We remove the removed characters from the diff to the ",
+                    "content": "We remove the removed characters in the diff from the ",
                     "type": "text",
                     "styles": {
                       "isBold": false,
@@ -6697,7 +7451,7 @@
                 "children": [
                   {
                     "children": [],
-                    "content": "We add the added characters from the diff to the LCS, which gives us the ",
+                    "content": "Next, we add the added characters in the diff to the LCS, which gives us the ",
                     "type": "text",
                     "styles": {
                       "isBold": false,
@@ -11766,6 +12520,14 @@
     }
   },
   "phraseKeyDebugInfo": {
+    "about.bringing_it_all_together_part_1": {
+      "groupName": "About",
+      "phraseKey": "bringing it all together part 1"
+    },
+    "about.bringing_it_all_together_title": {
+      "groupName": "About",
+      "phraseKey": "bringing it all together title"
+    },
     "about.whats_the_difference_part_7": {
       "groupName": "About",
       "phraseKey": "whats the difference part 7"

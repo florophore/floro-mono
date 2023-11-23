@@ -7,6 +7,7 @@
 export interface Icons {
     "about.backward":                  AboutBackward;
     "about.cascading-relations":       AboutCascadingRelations;
+    "about.check-mark":                AboutCheckMark;
     "about.diff-keys":                 AboutDiffKeys;
     "about.floro-pipeline":            AboutFloroPipeline;
     "about.forward":                   AboutForward;
@@ -15,6 +16,7 @@ export interface Icons {
     "about.overview":                  AboutOverview;
     "about.pause":                     AboutPause;
     "about.play":                      AboutPlay;
+    "about.red-x":                     AboutRedX;
     "about.relations-refactor-part-1": AboutRelationsRefactorPart1;
     "about.set-to-types":              AboutSetToTypes;
     "about.set-updates":               AboutSetUpdates;
@@ -63,6 +65,14 @@ export interface AboutCascadingRelations {
 }
 
 export interface AboutCascadingRelationsVariants {
+}
+
+export interface AboutCheckMark {
+    default:  Theme;
+    variants: AboutCheckMarkVariants;
+}
+
+export interface AboutCheckMarkVariants {
 }
 
 export interface AboutDiffKeys {
@@ -127,6 +137,14 @@ export interface AboutPlay {
 }
 
 export interface AboutPlayVariants {
+}
+
+export interface AboutRedX {
+    default:  Theme;
+    variants: AboutRedXVariants;
+}
+
+export interface AboutRedXVariants {
 }
 
 export interface AboutRelationsRefactorPart1 {
