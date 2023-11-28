@@ -31,8 +31,15 @@ import deepLSourceLocales from "../../deep_l_source_locales.json";
 import deepLTargetLocales from "../../deep_l_target_locales.json";
 import TestCaseList from "../testcases/TestCaseList";
 import { useTranslationMemory } from "../../memory/TranslationMemoryContext";
-import TranslationMemoryList from "../tranlsationmemory/TranslationMemoryList";
+import TranslationMemoryList from "../translationmemory/TranslationMemoryList";
 import { useDiffColor } from "../../diff";
+import ContentVariablesList from "../contentvariables/ContentVariablesList";
+import StyledClassList from "../styledclasses/StyledClassList";
+import StyledContentList from "../styledcontents/StyledContentList";
+import FeatureEnabler from "./FeatureEnabler";
+import PromptModal from "../promptmodal/PromptModal";
+import TermModal from "../termmodal/TermModal";
+import PhraseSectionList from "../phrasesections/PhraseSectionList";
 
 const Container = styled.div``;
 
@@ -114,6 +121,16 @@ const TermIcon = styled.img`
   width: 24px;
 `;
 
+const AddPhraseFeatures = styled.h3`
+  font-family: "MavenPro";
+  font-weight: 600;
+  font-size: 1.4rem;
+  color: ${ColorPalette.linkBlue};
+  cursor: pointer;
+  padding: 0;
+  margin-top: 24px;
+`;
+
 interface Props {
   phrase: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>"];
   selectedLocale: SchemaTypes["$(text).localeSettings.locales.localeCode<?>"];
@@ -131,9 +148,12 @@ interface Props {
   setPinnedPhrases: (phraseRegs: Array<string>) => void;
   globalFilterUntranslated: boolean;
   isPinned: boolean;
+  setShowEnabledFeatures: (showEnabledFeatures: boolean) => void;
+  showEnabledFeatures: boolean;
 }
 
 const PhraseTranslation = (props: Props) => {
+  const theme = useTheme();
   const [phraseGroupId, phraseId] = useExtractQueryArgs(props.phraseRef);
   const { commandMode, applicationState, conflictSet, changeset } =
     useFloroContext();
@@ -191,14 +211,17 @@ const PhraseTranslation = (props: Props) => {
 
   const mentionedTerms = useMemo(() => {
     const json = JSON.parse(phraseTranslation?.json ?? "{}");
-    const children: Array<TextNode> = (json?.children ?? [])?.flatMap?.((child: TextNode) => {
-      if (child.type == "ol-tag" || child.type == "ul-tag") {
-        return child?.children?.flatMap(li => {
-          return li?.children ?? []
-        }) ?? [];
-      }
-      return [child];
-    }) ?? [];
+    const children: Array<TextNode> =
+      (json?.children ?? [])?.flatMap?.((child: TextNode) => {
+        if (child.type == "ol-tag" || child.type == "ul-tag") {
+          return (
+            child?.children?.flatMap((li) => {
+              return li?.children ?? [];
+            }) ?? []
+          );
+        }
+        return [child];
+      }) ?? [];
     const foundTerms: Array<{
       value: string;
       id: string;
@@ -264,16 +287,24 @@ const PhraseTranslation = (props: Props) => {
       props?.phrase.linkVariables?.map?.((v) => v.linkName) ?? [];
     const interpolationVariants =
       props.phrase?.interpolationVariants?.map?.((v) => v.name) ?? [];
+    const contentVariables =
+      props.phrase?.contentVariables?.map?.((v) => v.name) ?? [];
+    const styledContents =
+      props.phrase?.styledContents?.map?.((v) => v.name) ?? [];
     return new Observer(
       variables,
       linkVariables,
       interpolationVariants,
-      enabledMentionedValues ?? []
+      enabledMentionedValues ?? [],
+      contentVariables ?? [],
+      styledContents ?? []
     );
   }, [
     props.phrase.variables,
     props.phrase.linkVariables,
     props.phrase.interpolationVariants,
+    props.phrase.contentVariables,
+    props.phrase.styledContents,
     enabledMentionedValues,
   ]);
 
@@ -291,6 +322,48 @@ const PhraseTranslation = (props: Props) => {
       props.selectedLocale.localeCode?.toLowerCase() ?? "en"
     );
   }, [props.selectedLocale.localeCode, editorObserver]);
+
+  const targetEditorObserver = useMemo(() => {
+    const variables = props.phrase.variables?.map((v) => v.name) ?? [];
+    const linkVariables =
+      props?.phrase.linkVariables?.map?.((v) => v.linkName) ?? [];
+    const interpolationVariants =
+      props.phrase?.interpolationVariants?.map?.((v) => v.name) ?? [];
+    const contentVariables =
+      props.phrase?.contentVariables?.map?.((v) => v.name) ?? [];
+    const styledContents =
+      props.phrase?.styledContents?.map?.((v) => v.name) ?? [];
+    return new Observer(
+      variables,
+      linkVariables,
+      interpolationVariants,
+      enabledMentionedValues ?? [],
+      contentVariables ?? [],
+      styledContents ?? []
+    );
+  }, [
+    props.phrase.variables,
+    props.phrase.linkVariables,
+    props.phrase.interpolationVariants,
+    props.phrase.contentVariables,
+    props.phrase.styledContents,
+    enabledMentionedValues,
+  ]);
+
+  const targetEditorDoc = useMemo(() => {
+    if (phraseTranslation) {
+      const doc = new EditorDocument(
+        targetEditorObserver,
+        props.selectedLocale.localeCode?.toLowerCase() ?? "en"
+      );
+      doc.tree.updateRootFromHTML(phraseTranslation?.richTextHtml ?? "");
+      return doc;
+    }
+    return new EditorDocument(
+      targetEditorObserver,
+      props.selectedLocale.localeCode?.toLowerCase() ?? "en"
+    );
+  }, [props.selectedLocale.localeCode, targetEditorObserver]);
 
   const contentIsEmpty = useMemo(() => {
     return (phraseTranslation?.plainText ?? "") == "";
@@ -431,16 +504,24 @@ const PhraseTranslation = (props: Props) => {
       props?.phrase.linkVariables?.map?.((v) => v.linkName) ?? [];
     const interpolationVariants =
       props.phrase?.interpolationVariants?.map?.((v) => v.name) ?? [];
+    const contentVariables =
+      props.phrase?.contentVariables?.map?.((v) => v.name) ?? [];
+    const styledContents =
+      props.phrase?.styledContents?.map?.((v) => v.name) ?? [];
     return new Observer(
       variables,
       linkVariables,
       interpolationVariants,
-      sourceEnabledMentionedValues ?? []
+      sourceEnabledMentionedValues ?? [],
+      contentVariables,
+      styledContents ?? []
     );
   }, [
     props.phrase.variables,
     props.phrase.linkVariables,
     props.phrase.interpolationVariants,
+    props.phrase.contentVariables,
+    props.phrase.styledContents,
     sourceEnabledMentionedValues,
   ]);
 
@@ -467,6 +548,10 @@ const PhraseTranslation = (props: Props) => {
     return sourceEditorDoc.tree.getHtml();
   }, [sourceEditorDoc]);
 
+  const targetMockHtml = useMemo(() => {
+    return editorDoc.tree.getHtml();
+  }, [editorDoc]);
+
   const [showMLTranslate, setShowMLTranslate] = useState(false);
 
   const onShowMLTranslate = useCallback(() => {
@@ -475,6 +560,26 @@ const PhraseTranslation = (props: Props) => {
 
   const onHideMLTranslate = useCallback(() => {
     setShowMLTranslate(false);
+  }, []);
+
+  const [showPrompt, setShowPrompt] = useState(false);
+
+  const onShowPrompt = useCallback(() => {
+    setShowPrompt(true);
+  }, []);
+
+  const onHidePrompt = useCallback(() => {
+    setShowPrompt(false);
+  }, []);
+
+  const [showFindTerms, setShowFindTerms] = useState(false);
+
+  const onShowFindTerms = useCallback(() => {
+    setShowFindTerms(true);
+  }, []);
+
+  const onHideFindTerms = useCallback(() => {
+    setShowFindTerms(false);
   }, []);
 
   const translationMemory = useTranslationMemory();
@@ -512,8 +617,76 @@ const PhraseTranslation = (props: Props) => {
     return Array.from(termSet);
   }, [translationMemory, sourcePhraseTranslation, props.selectedLocale]);
 
+  const showMiddleBox = useMemo(() => {
+    if (
+      props.phrase.phraseVariablesEnabled ||
+      (props.phrase.variables?.length ?? 0) > 0
+    ) {
+      return true;
+    }
+    if (
+      props.phrase.contentVariablesEnabled ||
+      (props.phrase.contentVariables?.length ?? 0) > 0
+    ) {
+      return true;
+    }
+    if (
+      props.phrase.interpolationsEnabled ||
+      (props.phrase.interpolationVariants?.length ?? 0) > 0
+    ) {
+      return true;
+    }
+    if (
+      props.phrase.linkVariablesEnabled ||
+      (props.phrase.linkVariables?.length ?? 0) > 0
+    ) {
+      return true;
+    }
+    if (
+      props.phrase.styledContentEnabled ||
+      (props.phrase.styleClasses?.length ?? 0) > 0 ||
+      (props.phrase.styledContents?.length ?? 0)
+    ) {
+      return true;
+    }
+    return false;
+  }, [
+    props.phrase.phraseVariablesEnabled,
+    props.phrase.variables,
+    props.phrase.contentVariablesEnabled,
+    props.phrase.contentVariables,
+    props.phrase.interpolationsEnabled,
+    props.phrase.interpolationVariants,
+    props.phrase.linkVariablesEnabled,
+    props.phrase.linkVariables,
+    props.phrase.styledContentEnabled,
+    props.phrase.styleClasses,
+    props.phrase.styledContents,
+    props.phrase.testCases,
+  ]);
+
   return (
     <>
+      <TermModal
+        show={showFindTerms && commandMode == "edit"}
+        onDismiss={onHideFindTerms}
+        targetPlainText={phraseTranslation?.plainText ?? ""}
+        targetEditorDoc={targetEditorDoc}
+      />
+      <PromptModal
+        show={showPrompt && commandMode == "edit"}
+        selectedLocale={props.selectedLocale}
+        systemSourceLocale={props.systemSourceLocale}
+        targetRichText={phraseTranslation?.richTextHtml ?? ""}
+        sourceRichText={sourcePhraseTranslation?.richTextHtml}
+        sourceMockText={sourceMockHtml}
+        targetMockText={targetMockHtml}
+        targetEditorDoc={targetEditorDoc}
+        sourceEditorDoc={sourceEditorDoc}
+        onDismiss={onHidePrompt}
+        enabledTermIds={sourcePhraseTranslation?.enabledTerms ?? []}
+        onApplyTranslation={onSetContent}
+      />
       {sourcePhraseTranslation?.richTextHtml && commandMode == "edit" && (
         <MLModal
           show={showMLTranslate && commandMode == "edit"}
@@ -527,138 +700,8 @@ const PhraseTranslation = (props: Props) => {
           onApplyTranslation={onSetContent}
         />
       )}
-      <Container>
-        <TitleRow style={{ marginBottom: 12, height: 40 }}>
-          <RowTitle
-            style={{
-              fontWeight: 600,
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-            }}
-          >
-            <span style={{ color: diffColor }}>
-              {`Phrase Value (${props.selectedLocale.localeCode}):`}
-            </span>
-            {props.systemSourceLocale && commandMode == "edit" && (
-              <div style={{ width: 120, marginLeft: 12 }}>
-                <Button
-                  isDisabled={
-                    sourceIsEmpty ||
-                    !deepLSourceLocales[
-                      props.systemSourceLocale?.localeCode?.toUpperCase()
-                    ] ||
-                    !deepLTargetLocales?.[
-                      props?.selectedLocale?.localeCode?.toUpperCase()
-                    ]
-                  }
-                  label={"ML translate"}
-                  bg={"teal"}
-                  size={"small"}
-                  textSize="small"
-                  onClick={onShowMLTranslate}
-                />
-              </div>
-            )}
-            <span>
-              {contentIsEmpty && (
-                <MissingTranslationsPill>
-                  <MissingTranslationsTitle>{`missing ${props.selectedLocale.localeCode} phrase value`}</MissingTranslationsTitle>
-                </MissingTranslationsPill>
-              )}
-            </span>
-          </RowTitle>
-          <div>
-            {requireRevision && (
-              <div
-                style={{
-                  fontWeight: 600,
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <RequiresRevision style={{ marginRight: 12 }}>
-                  {"requires revision"}
-                </RequiresRevision>
-                {commandMode == "edit" && (
-                  <Button
-                    onClick={onMarkResolved}
-                    style={{ width: 120 }}
-                    label={"mark resolved"}
-                    bg={"orange"}
-                    size={"small"}
-                    textSize="small"
-                  />
-                )}
-              </div>
-            )}
-          </div>
-        </TitleRow>
-        {commandMode == "edit" && (
-          <ContentEditor
-            lang={props.selectedLocale.localeCode?.toLowerCase() ?? "en"}
-            editorDoc={editorDoc}
-            content={phraseTranslation?.richTextHtml ?? ""}
-            onSetContent={onSetContent}
-            placeholder={`write the (${props.selectedLocale.localeCode}) value for ${props.phrase.phraseKey}...`}
-          />
-        )}
-        {commandMode != "edit" && (
-          <PlainTextDocument
-            lang={props.selectedLocale.localeCode?.toLowerCase() ?? "en"}
-            editorDoc={editorDoc}
-            content={phraseTranslation?.richTextHtml ?? ""}
-          />
-        )}
-        {mentionedTerms?.length > 0 && phraseTranslation && (
-          <TermList
-            terms={mentionedTerms ?? []}
-            selectedLocale={props.selectedLocale}
-            systemSourceLocale={props.systemSourceLocale}
-            onChange={onChangeTerm}
-            enabledTerms={phraseTranslation?.enabledTerms ?? []}
-            title={
-              <>
-                {`Recognized Terms in Phrase Value (${props.selectedLocale.localeCode}):`}
-              </>
-            }
-          />
-        )}
-        {translationMemories.length > 0 &&
-          (phraseTranslation?.plainText ?? "").trim() == "" &&
-          commandMode == "edit" && (
-            <TranslationMemoryList
-              memories={translationMemories}
-              observer={editorObserver}
-              onApply={onSetContent}
-              lang={props.selectedLocale?.localeCode}
-            />
-          )}
-      </Container>
-      {props.systemSourceLocale && phraseTranslation && (
-        <SourcePhraseTranslation
-          phrase={props.phrase}
-          systemSourceLocale={props.systemSourceLocale}
-          phraseRef={props.phraseRef}
-          targetPhraseTranslation={phraseTranslation}
-          selectedLocale={props.selectedLocale}
-        />
-      )}
-      <VariablesList phraseRef={props.phraseRef} />
-      <LinkVariablesList
-        phrase={props.phrase}
-        phraseRef={props.phraseRef}
-        selectedLocale={props.selectedLocale}
-        systemSourceLocale={props.systemSourceLocale}
-        globalFilterUntranslated={props.globalFilterUntranslated}
-        fallbackLocale={props.fallbackLocale}
-        pinnedPhrases={props.pinnedPhrases}
-        setPinnedPhrases={props.setPinnedPhrases}
-        isPinned={props.isPinned}
-      />
-      {(props.phrase?.variables?.length ?? 0) > 0 && (
-        <InterpolationVariantList
+      {props.phrase.usePhraseSections && (
+        <PhraseSectionList
           phrase={props.phrase}
           phraseRef={props.phraseRef}
           selectedLocale={props.selectedLocale}
@@ -669,14 +712,256 @@ const PhraseTranslation = (props: Props) => {
           isPinned={props.isPinned}
         />
       )}
-      {(props.phrase?.variables?.length ?? 0) > 0 && (
-        <TestCaseList
-          phrase={props.phrase}
-          phraseRef={props.phraseRef}
-          selectedLocale={props.selectedLocale}
-          fallbackLocale={props.fallbackLocale}
-          globalFallbackLocale={props.globalFallbackLocale}
-        />
+      {!props.phrase.usePhraseSections && (
+        <>
+          <Container>
+            <TitleRow style={{ marginBottom: 12, height: 40 }}>
+              <RowTitle
+                style={{
+                  fontWeight: 600,
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <span style={{ color: diffColor }}>
+                  {`Phrase Value (${props.selectedLocale.localeCode}):`}
+                </span>
+                {props.systemSourceLocale && commandMode == "edit" && (
+                  <div style={{ width: 120, marginLeft: 12 }}>
+                    <Button
+                      isDisabled={
+                        sourceIsEmpty ||
+                        !deepLSourceLocales[
+                          props.systemSourceLocale?.localeCode?.toUpperCase()
+                        ] ||
+                        !deepLTargetLocales?.[
+                          props?.selectedLocale?.localeCode?.toUpperCase()
+                        ]
+                      }
+                      label={"ML translate"}
+                      bg={"teal"}
+                      size={"small"}
+                      textSize="small"
+                      onClick={onShowMLTranslate}
+                    />
+                  </div>
+                )}
+                <span>
+                  {contentIsEmpty && (
+                    <MissingTranslationsPill>
+                      <MissingTranslationsTitle>{`missing ${props.selectedLocale.localeCode} phrase value`}</MissingTranslationsTitle>
+                    </MissingTranslationsPill>
+                  )}
+                </span>
+              </RowTitle>
+              <div>
+                {requireRevision && (
+                  <div
+                    style={{
+                      fontWeight: 600,
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                    }}
+                  >
+                    <RequiresRevision style={{ marginRight: 12 }}>
+                      {"requires revision"}
+                    </RequiresRevision>
+                    {commandMode == "edit" && (
+                      <Button
+                        onClick={onMarkResolved}
+                        style={{ width: 120 }}
+                        label={"mark resolved"}
+                        bg={"orange"}
+                        size={"small"}
+                        textSize="small"
+                      />
+                    )}
+                  </div>
+                )}
+              </div>
+            </TitleRow>
+            {commandMode == "edit" && (
+              <ContentEditor
+                lang={props.selectedLocale.localeCode?.toLowerCase() ?? "en"}
+                editorDoc={editorDoc}
+                content={phraseTranslation?.richTextHtml ?? ""}
+                onSetContent={onSetContent}
+                placeholder={`write the (${props.selectedLocale.localeCode}) value for ${props.phrase.phraseKey}...`}
+                onOpenGPT={onShowPrompt}
+                showGPTIcon={
+                  (!!sourcePhraseTranslation &&
+                    (sourcePhraseTranslation?.richTextHtml?.trim() ?? "") !=
+                      "" &&
+                    (phraseTranslation?.richTextHtml?.trim() ?? "") != "") ||
+                  (!sourcePhraseTranslation &&
+                    (phraseTranslation?.richTextHtml?.trim() ?? "") != "")
+                }
+              />
+            )}
+            {commandMode != "edit" && (
+              <PlainTextDocument
+                lang={props.selectedLocale.localeCode?.toLowerCase() ?? "en"}
+                editorDoc={editorDoc}
+                content={phraseTranslation?.richTextHtml ?? ""}
+              />
+            )}
+            {phraseTranslation && (
+              <TermList
+                terms={mentionedTerms ?? []}
+                selectedLocale={props.selectedLocale}
+                systemSourceLocale={props.systemSourceLocale}
+                onChange={onChangeTerm}
+                enabledTerms={phraseTranslation?.enabledTerms ?? []}
+                showFindTerms={!props.systemSourceLocale}
+                onShowFindTerms={onShowFindTerms}
+                isEmpty={(phraseTranslation?.plainText?.trim?.() ?? "") == ""}
+                title={
+                  <>
+                    {`Recognized Terms in Phrase Value (${props.selectedLocale.localeCode}):`}
+                  </>
+                }
+              />
+            )}
+            {translationMemories.length > 0 &&
+              (phraseTranslation?.plainText ?? "").trim() == "" &&
+              commandMode == "edit" && (
+                <TranslationMemoryList
+                  memories={translationMemories}
+                  observer={editorObserver}
+                  onApply={onSetContent}
+                  lang={props.selectedLocale?.localeCode}
+                />
+              )}
+          </Container>
+          {props.systemSourceLocale && phraseTranslation && (
+            <SourcePhraseTranslation
+              phrase={props.phrase}
+              systemSourceLocale={props.systemSourceLocale}
+              phraseRef={props.phraseRef}
+              targetPhraseTranslation={phraseTranslation}
+              selectedLocale={props.selectedLocale}
+            />
+          )}
+        </>
+      )}
+      {commandMode == "edit" && (
+        <>
+          {!props.showEnabledFeatures && (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "flex-end",
+              }}
+            >
+              <AddPhraseFeatures
+                onClick={() => {
+                  props.setShowEnabledFeatures(true);
+                }}
+              >
+                {"+ edit enabled features & settings"}
+              </AddPhraseFeatures>
+            </div>
+          )}
+          {props.showEnabledFeatures && (
+            <div
+              style={{
+                borderTop: `1px solid ${theme.colors.contrastTextLight}`,
+                marginTop: 36,
+              }}
+            >
+              <FeatureEnabler
+                onHide={() => {
+                  props.setShowEnabledFeatures(false);
+                }}
+                phraseRef={props.phraseRef}
+                mockRichText={
+                  props.systemSourceLocale ? sourceMockHtml : targetMockHtml
+                }
+                isEmpty={
+                  !!props.systemSourceLocale
+                    ? (sourcePhraseTranslation?.plainText?.trim?.() ?? "") == ""
+                    : (phraseTranslation?.plainText?.trim?.() ?? "") == ""
+                }
+              />
+            </div>
+          )}
+        </>
+      )}
+      {showMiddleBox && (
+        <div
+          style={{
+            borderTop:
+              commandMode != "edit"
+                ? `0px solid transparent`
+                : `1px solid ${theme.colors.contrastTextLight}`,
+            marginTop: 24,
+          }}
+        >
+          {(props.phrase.phraseVariablesEnabled ||
+            (props.phrase.variables?.length ?? 0) > 0) && (
+            <VariablesList phraseRef={props.phraseRef} />
+          )}
+          {(props.phrase.contentVariablesEnabled ||
+            (props.phrase.contentVariables?.length ?? 0) > 0) && (
+            <ContentVariablesList phraseRef={props.phraseRef} />
+          )}
+          {(props.phrase.styledContentEnabled ||
+            (props.phrase.styleClasses?.length ?? 0) > 0) && (
+            <StyledClassList phraseRef={props.phraseRef} />
+          )}
+          {(props.phrase?.styleClasses?.length ?? 0) > 0 && (
+            <StyledContentList
+              phrase={props.phrase}
+              phraseRef={props.phraseRef}
+              selectedLocale={props.selectedLocale}
+              systemSourceLocale={props.systemSourceLocale}
+              globalFilterUntranslated={props.globalFilterUntranslated}
+              pinnedPhrases={props.pinnedPhrases}
+              setPinnedPhrases={props.setPinnedPhrases}
+              isPinned={props.isPinned}
+            />
+          )}
+          {(props.phrase?.linkVariablesEnabled ||
+            (props.phrase.linkVariables?.length ?? 0) > 0) && (
+            <LinkVariablesList
+              phrase={props.phrase}
+              phraseRef={props.phraseRef}
+              selectedLocale={props.selectedLocale}
+              systemSourceLocale={props.systemSourceLocale}
+              globalFilterUntranslated={props.globalFilterUntranslated}
+              fallbackLocale={props.fallbackLocale}
+              pinnedPhrases={props.pinnedPhrases}
+              setPinnedPhrases={props.setPinnedPhrases}
+              isPinned={props.isPinned}
+            />
+          )}
+          {(props.phrase.interpolationsEnabled ||
+            (props.phrase.interpolationVariants?.length ?? 0) > 0) &&
+            (props.phrase?.variables?.length ?? 0) > 0 && (
+              <InterpolationVariantList
+                phrase={props.phrase}
+                phraseRef={props.phraseRef}
+                selectedLocale={props.selectedLocale}
+                systemSourceLocale={props.systemSourceLocale}
+                globalFilterUntranslated={props.globalFilterUntranslated}
+                pinnedPhrases={props.pinnedPhrases}
+                setPinnedPhrases={props.setPinnedPhrases}
+                isPinned={props.isPinned}
+              />
+            )}
+          {(props.phrase?.variables?.length ?? 0) > 0 && (
+            <TestCaseList
+              phrase={props.phrase}
+              phraseRef={props.phraseRef}
+              selectedLocale={props.selectedLocale}
+              fallbackLocale={props.fallbackLocale}
+              globalFallbackLocale={props.globalFallbackLocale}
+            />
+          )}
+        </div>
       )}
     </>
   );

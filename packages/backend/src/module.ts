@@ -135,6 +135,7 @@ import RepoAnnouncementReplyHandler from './services/events/RepoAnnouncementRepl
 import NotificationFanOutQueue from './services/notifications/NotificationFanOutQueue';
 import NotificationReceiverController from './controllers/NotificationReceiverController';
 import OrganizationDailyActiveMemberQueue from './services/organizations/OrganizationDailyActiveMemberQueue';
+import ChatGPTController from './controllers/proxy/ChatGPTController';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -339,6 +340,7 @@ export default new ContainerModule((bind): void => {
     bind<SyncController>("Controllers").to(SyncController);
     // Plugin Controllers
     bind<DeepLProxyController>("Controllers").to(DeepLProxyController);
+    bind<ChatGPTController>("Controllers").to(ChatGPTController);
     // Floro Plugin Webhooks
     bind<UpdateTextWebhookController>("Controllers").to(UpdateTextWebhookController);
     // notifications

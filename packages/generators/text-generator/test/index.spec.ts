@@ -20,7 +20,7 @@ describe("generate", () => {
   });
 
   test("generates json and typescript mocks", async () => {
-    console.log("S", mockState);
+    //console.log("S", mockState);
     await generate(mockState, outDir, { lang: "typescript" });
     //const files = fs.readdirSync(outDir);
     //expect(files).toEqual(["index.ts", "palette.json"]);

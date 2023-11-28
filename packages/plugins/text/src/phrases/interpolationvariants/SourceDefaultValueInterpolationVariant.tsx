@@ -184,8 +184,19 @@ const SourceDefaultValueInterpolationVariant = (props: Props) => {
 
   const editorObserver = useMemo(() => {
     const variables = props.phrase.variables.map((v) => v.name);
-    return new Observer(variables, [], [], enabledMentionedTerms?.map((mentionedTerm) => mentionedTerm.value) ?? []);
-  }, [props.phrase.variables, props.interpolationVariant, enabledMentionedTerms]);
+    const contentVariables = props.phrase.contentVariables.map((v) => v.name);
+    return new Observer(
+      variables,
+      [],
+      [],
+      enabledMentionedTerms?.map((mentionedTerm) => mentionedTerm.value) ?? [],
+      contentVariables
+    );
+  }, [
+    props.phrase.variables,
+    props.phrase.contentVariables,
+    enabledMentionedTerms,
+  ]);
 
   const localeRuleEditorDoc = useMemo(() => {
     if (defaultValue) {
@@ -345,6 +356,7 @@ const SourceDefaultValueInterpolationVariant = (props: Props) => {
             systemSourceLocale={props.systemSourceLocale}
             isReadOnly
             enabledTerms={[]}
+            isEmpty={(sourceDefaultValue?.plainText?.trim?.() ?? "") == ""}
             title={(
               <>
                 <span style={{ color: theme.colors.contrastText }}>

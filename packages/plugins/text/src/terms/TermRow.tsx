@@ -49,7 +49,7 @@ const TitleRow = styled.div`
 `;
 
 const MissingTranslationsPill = styled.div`
-  height: 24px;
+  min-height: 24px;
   border-radius: 12px;
   display: flex;
   justify-content: center;

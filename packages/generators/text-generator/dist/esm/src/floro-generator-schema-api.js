@@ -109,6 +109,9 @@ export function makeQueryRef(query, arg0, arg1, arg2, arg3, arg4) {
     if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && query == '$(text).phraseGroups.id<?>.phrases.id<?>') {
         return `$(text).phraseGroups.id<${arg0}>.phrases.id<${arg1}>`;
     }
+    if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && (arg2 != null && arg2 != undefined) && query == '$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables.id<?>') {
+        return `$(text).phraseGroups.id<${arg0}>.phrases.id<${arg1}>.contentVariables.id<${arg2}>`;
+    }
     if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && (arg2 != null && arg2 != undefined) && query == '$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>') {
         return `$(text).phraseGroups.id<${arg0}>.phrases.id<${arg1}>.interpolationVariants.name<${arg2}>`;
     }
@@ -121,8 +124,23 @@ export function makeQueryRef(query, arg0, arg1, arg2, arg3, arg4) {
     if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && (arg2 != null && arg2 != undefined) && (arg3 != null && arg3 != undefined) && query == '$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>') {
         return `$(text).phraseGroups.id<${arg0}>.phrases.id<${arg1}>.linkVariables.linkName<${arg2}>.translations.id<${arg3}>`;
     }
+    if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && (arg2 != null && arg2 != undefined) && query == '$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>') {
+        return `$(text).phraseGroups.id<${arg0}>.phrases.id<${arg1}>.phraseSections.name<${arg2}>`;
+    }
+    if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && (arg2 != null && arg2 != undefined) && (arg3 != null && arg3 != undefined) && query == '$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>') {
+        return `$(text).phraseGroups.id<${arg0}>.phrases.id<${arg1}>.phraseSections.name<${arg2}>.localeRules.id<${arg3}>`;
+    }
     if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && (arg2 != null && arg2 != undefined) && query == '$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>') {
         return `$(text).phraseGroups.id<${arg0}>.phrases.id<${arg1}>.phraseTranslations.id<${arg2}>`;
+    }
+    if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && (arg2 != null && arg2 != undefined) && query == '$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>') {
+        return `$(text).phraseGroups.id<${arg0}>.phrases.id<${arg1}>.styleClasses.id<${arg2}>`;
+    }
+    if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && (arg2 != null && arg2 != undefined) && query == '$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>') {
+        return `$(text).phraseGroups.id<${arg0}>.phrases.id<${arg1}>.styledContents.name<${arg2}>`;
+    }
+    if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && (arg2 != null && arg2 != undefined) && (arg3 != null && arg3 != undefined) && query == '$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>') {
+        return `$(text).phraseGroups.id<${arg0}>.phrases.id<${arg1}>.styledContents.name<${arg2}>.localeRules.id<${arg3}>`;
     }
     if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && (arg2 != null && arg2 != undefined) && query == '$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>') {
         return `$(text).phraseGroups.id<${arg0}>.phrases.id<${arg1}>.testCases.id<${arg2}>`;

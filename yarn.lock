@@ -15543,10 +15543,10 @@ flatted@^3.2.9:
   resolved "https://registry.yarnpkg.com/flatted/-/flatted-3.2.9.tgz#7eb4c67ca1ba34232ca9d2d93e9886e611ad7daf"
   integrity sha512-36yxDn5H7OFZQla0/jFJmbIKTdZAQHngCedGxiMmpNfEZM0sdEeT+WczLQrjK6D7o2aiyLYDnkw0R3JK0Qv1RQ==
 
-floro@0.0.27:
-  version "0.0.27"
-  resolved "https://registry.yarnpkg.com/floro/-/floro-0.0.27.tgz#a6607ed028186a00aa4188395fcc2044b3dba8fb"
-  integrity sha512-vnE/Ln2VWPMJjsJJSSskRWEBXd/g0/q/WvIFHp/5Mfa6v8xj/K0z1fQ5UQPqq5yV1sXbgfPkQlnT43/Mac49aQ==
+floro@0.0.29:
+  version "0.0.29"
+  resolved "https://registry.yarnpkg.com/floro/-/floro-0.0.29.tgz#51f25880ca740a5f2145690b0009bc5a0e374fef"
+  integrity sha512-PAmdaURGUjUutCqkVaegLHxG6aMaJxRJODINjkHHXE05R9NmZzHw+uFPv79fuIW7jB+wYbIqC+ppX0UQITnXLg==
   dependencies:
     "@types/busboy" "^1.5.0"
     "@types/express" "^4.17.15"

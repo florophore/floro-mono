@@ -3,6 +3,12 @@ import Observer from "../Observer";
 import escape from 'escape-html';
 import RootNode from "./RootNode";
 
+import VariantTagNode from "./VariantTagNode";
+import MentionedTagNode from "./MentionedTagNode";
+import LinkVariableTagNode from "./LinkVariableTagNode";
+import VariableTagNode from "./VariableTagNode";
+import ContentVariableTagNode from "./ContentVariableTagNode";import StyledContentTagNode from "./StyledContentTagNode";
+
 export interface TextNodeJSON extends NodeJSON {
   children: NodeJSON[];
   marks: {
@@ -114,12 +120,6 @@ export default class TextNode extends Node {
         text-decoration: ${textDecoration};
         font-weight: ${fontWeight};
         font-style: ${fontStyle};
-        -webkit-user-select: none;
-        -webkit-touch-callout: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-        pointer-events: none;
         display: inline;
       "
      >${subcontent}</span>`;
@@ -291,6 +291,10 @@ export default class TextNode extends Node {
         nodes.push(new LinkVariableTagNode(this.observer, tagValue, this.lang, this.marks))
       } else if (this.observer.getInterpolationVariantRemapSet().has(tagValue)) {
         nodes.push(new VariantTagNode(this.observer, tagValue, this.lang, this.marks))
+      } else if (this.observer.getContentVariableRemapSet().has(tagValue)) {
+        nodes.push(new ContentVariableTagNode(this.observer, tagValue, this.lang, this.marks))
+      } else if (this.observer.getStyledContentsRemapSet().has(tagValue)) {
+        nodes.push(new StyledContentTagNode(this.observer, tagValue, this.lang, this.marks))
       } else if (mentionedTerms.includes(tagValue?.toLowerCase())) {
         nodes.push(new MentionedTagNode(this.observer, tagValue, this.lang, this.marks))
       }
@@ -303,8 +307,3 @@ export default class TextNode extends Node {
   return nodes;
  }
 }
-
-import VariantTagNode from "./VariantTagNode";
-import MentionedTagNode from "./MentionedTagNode";
-import LinkVariableTagNode from "./LinkVariableTagNode";
-import VariableTagNode from "./VariableTagNode";

@@ -2,8 +2,22 @@ import ColorPalette from "@floro/styles/ColorPalette";
 import Node from "../Node"
 import Observer from "../Observer";
 import escape from 'escape-html';
+import { TextNodeJSON } from "./TextNode";
 
-export default class MentionedTagNode extends Node {
+export interface MentionedTagJSON extends TextNodeJSON {
+  type: string;
+  content: string;
+  marks: {
+    isBold: boolean;
+    isItalic: boolean;
+    isUnderlined: boolean;
+    isStrikethrough: boolean;
+    isSuperscript: boolean;
+    isSubscript: boolean;
+  }
+}
+
+export default class MentionedTagNode extends Node implements TextNodeJSON {
 
   public marks: {
     isBold: boolean;
@@ -45,6 +59,19 @@ export default class MentionedTagNode extends Node {
     }
   }
 
+  public toJSON(): MentionedTagJSON {
+    return {
+      content: this.content,
+      type: 'mentioned-tag',
+      marks: this.marks,
+      children: []
+    };
+  }
+
+  public static fromJSON(json: MentionedTagJSON, observer: Observer, lang: string): MentionedTagNode {
+    return new MentionedTagNode(observer, json.content, lang, json.marks);
+  }
+
   public toHTMLString(): string {
     let textDecoration = "none";
     if (this.marks.isUnderlined == true) {
@@ -76,12 +103,6 @@ export default class MentionedTagNode extends Node {
         font-style: ${fontStyle};
         border-radius:4px;
         position: relative;
-        pointer-events: none;
-        -webkit-user-select: none;
-        -webkit-touch-callout: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
      "
     >${subcontent}</span>`;
   }

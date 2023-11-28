@@ -6,8 +6,10 @@ import SearchInput from "@floro/storybook/stories/design-system/SearchInput";
 import ColorPalette from "@floro/styles/ColorPalette";
 import Button from "@floro/storybook/stories/design-system/Button";
 import {
+  SchemaTypes,
   useFloroContext,
   useFloroState,
+  useHasIndication,
 } from "../floro-schema-api";
 import Checkbox from "@floro/storybook/stories/design-system/Checkbox";
 
@@ -98,7 +100,7 @@ interface Props {
 
 const TermGlossaryHeader = (props: Props) => {
   const theme = useTheme();
-  const { commandMode, clientStorage } = useFloroContext();
+  const { commandMode, clientStorage, applicationState } = useFloroContext();
   const clientStorageIsEnabled = clientStorage != null;
   const isSearching = useMemo(
     () => props.searchTermText.trim() != "",
@@ -106,6 +108,8 @@ const TermGlossaryHeader = (props: Props) => {
   );
   const [newTermName, setNewTermName] = useState("");
   const [terms, setTerms] = useFloroState("$(text).terms");
+
+  const defaultLocaleRef = applicationState?.text.localeSettings.defaultLocaleRef;
 
   useEffect(() => {
     if (
@@ -150,12 +154,16 @@ const TermGlossaryHeader = (props: Props) => {
   }, [newId, terms]);
 
   const onAppendNewGroup = useCallback(() => {
-    if (!newId || !newTermName || !canAddNewName || !terms) {
+    if (!newId || !newTermName || !canAddNewName || !terms || !applicationState?.text.localeSettings.defaultLocaleRef) {
       return;
     }
-    setTerms([...terms, { id: newId, name: newTermName, localizedTerms: [] }]);
+    const localizedTerm: SchemaTypes['$(text).terms.id<?>.localizedTerms.id<?>'] = {
+      id: applicationState?.text.localeSettings.defaultLocaleRef,
+      termValue: newTermName
+    }
+    setTerms([{ id: newId, name: newTermName, localizedTerms: [localizedTerm] }, ...terms]);
     setNewTermName("");
-  }, [newTermName, newId, canAddNewName, terms]);
+  }, [newTermName, newId, canAddNewName, terms, applicationState?.text.localeSettings.defaultLocaleRef]);
 
   const onToggleFilterUntranslated = useCallback(() => {
     props.setGlobalFilterUnstranslatedTerms(
@@ -173,6 +181,16 @@ const TermGlossaryHeader = (props: Props) => {
   const onClearPinnedTerms = useCallback(() => {
     props.removePinnedTerms?.();
   }, [props.removePinnedTerms, props.setShowOnlyPinnedTerms]);
+
+  const hasIndications = useHasIndication("$(text).terms");
+
+  if (commandMode == "compare" && !hasIndications) {
+    return null;
+  }
+
+  if (commandMode != "edit" && terms?.length == 0) {
+    return null;
+  }
 
   return (
     <div>
@@ -277,6 +295,9 @@ const TermGlossaryHeader = (props: Props) => {
                             marginLeft: 0,
                             marginRight: 12,
                             fontWeight: 600,
+                            color: !props.showOnlyPinnedTerms
+                              ? theme.colors.contrastTextLight
+                              : theme.colors.warningTextColor,
                           }}
                         >
                           {`Show Only pinned terms`}
@@ -290,7 +311,15 @@ const TermGlossaryHeader = (props: Props) => {
                   </Row>
                 </div>
                 <Row>
-                  <FilterUntranslated style={{ marginLeft: 0, marginRight: 12 }}>
+                  <FilterUntranslated
+                    style={{
+                      marginLeft: 0,
+                      marginRight: 12,
+                      color: !props.globalFilterUntranslatedTerms
+                        ? theme.colors.contrastTextLight
+                        : theme.colors.warningTextColor,
+                    }}
+                  >
                     {`Filter un-translated (${props.selectedTopLevelLocale}) terms`}
                   </FilterUntranslated>
                   <Checkbox

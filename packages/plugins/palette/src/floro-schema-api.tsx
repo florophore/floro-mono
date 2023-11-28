@@ -2057,3 +2057,4 @@ export const useBinaryData = <K extends keyof BinaryReturn>(
 
   return { isLoading, status, data };
 };
+

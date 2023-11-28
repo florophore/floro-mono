@@ -154,15 +154,24 @@ const SourceLinkDisplayTranslation = (props: Props) => {
   }, [mentionedTerms, sourceLinkDisplayTranslation?.enabledTerms])
 
   const editorObserver = useMemo(() => {
-    const variables = props.phrase.variables.map(v => v.name);
-    const interpolationVariants = props.phrase.interpolationVariants.map((v) => v.name);
+    const variables = props.phrase.variables.map((v) => v.name);
+    const interpolationVariants = props.phrase.interpolationVariants.map(
+      (v) => v.name
+    );
+    const contentVariables = props.phrase.contentVariables.map((v) => v.name);
     return new Observer(
       variables,
       [],
       interpolationVariants,
-      enabledMentionedTerms?.map((mentionedTerm) => mentionedTerm.value) ?? []
+      enabledMentionedTerms?.map((mentionedTerm) => mentionedTerm.value) ?? [],
+      contentVariables
     );
-  }, [props.phrase.variables, enabledMentionedTerms]);
+  }, [
+    props.phrase.variables,
+    props.phrase.contentVariables,
+    props.phrase.interpolationVariants,
+    enabledMentionedTerms,
+  ]);
 
   const editorDoc = useMemo(() => {
     if (sourceLinkDisplayTranslation) {
@@ -295,6 +304,7 @@ const SourceLinkDisplayTranslation = (props: Props) => {
             systemSourceLocale={props.systemSourceLocale}
             isReadOnly
             enabledTerms={[]}
+            isEmpty={(sourceLinkDisplayTranslation?.plainText?.trim?.() ?? "") == ""}
             title={
               <>
                 <span style={{ color: theme.colors.contrastText }}>

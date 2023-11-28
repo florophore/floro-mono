@@ -28,6 +28,10 @@ export interface ColorPalette {
   variableBlueInset: string;
   variableYellow: string;
   variableYellowInset: string;
+  variableMagenta: string;
+  variableMagentaInset: string;
+  variableRed: string;
+  variableRedInset: string;
   beigeDark: string;
   beigeLight: string;
 }
@@ -62,6 +66,10 @@ const ColorPalette = {
     variableBlueInset: '#1B5E97FF',
     variableYellow: '#FFFA4BFF',
     variableYellowInset: '#D2C71BFF',
+    variableMagenta: '#930995FF',
+    variableMagentaInset: '#D78FF7FF',
+    variableRed: '#CC2E34FF',
+    variableRedInset: '#FF3D44FF',
     beigeDark: '#E1BF92FF',
     beigeLight: '#FFEACFFF'
 } as ColorPalette;

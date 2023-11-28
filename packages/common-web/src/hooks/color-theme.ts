@@ -21,12 +21,34 @@ export const useSystemColorTheme = (initTheme: keyof ThemeSet): ColorTheme => {
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
             const colorScheme = event.matches ? "dark" : "light";
             if (colorScheme == 'dark') {
-            setColorTheme(DarkTheme);
+                setColorTheme(DarkTheme);
             } else {
-            setColorTheme(LightTheme);
+                setColorTheme(LightTheme);
             }
         });
 
     }, [initTheme]);
+    return colorTheme;
+}
+
+export const useDesktopSystemColorTheme = (): ColorTheme => {
+    const [colorTheme, setColorTheme] = useState(LightTheme);
+
+    useEffect(() => {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            setColorTheme(DarkTheme);
+        } else {
+            setColorTheme(LightTheme);
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            const colorScheme = event.matches ? "dark" : "light";
+            if (colorScheme == 'dark') {
+                setColorTheme(DarkTheme);
+            } else {
+                setColorTheme(LightTheme);
+            }
+        });
+
+    }, []);
     return colorTheme;
 }

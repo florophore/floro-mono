@@ -173,16 +173,24 @@ const SourcePhraseTranslation = (props: Props) => {
       props.phrase?.linkVariables?.map((v) => v.linkName) ?? [];
     const interpolationVariants =
       props.phrase?.interpolationVariants?.map((v) => v.name) ?? [];
+    const contentVariables =
+      props.phrase?.contentVariables?.map((v) => v.name) ?? [];
+    const styledContents =
+      props.phrase?.styledContents?.map((v) => v.name) ?? [];
     return new Observer(
       variables,
       linkVariables,
       interpolationVariants,
-      enabledMentionedTerms?.map((mentionedTerm) => mentionedTerm.value) ?? []
+      enabledMentionedTerms?.map((mentionedTerm) => mentionedTerm.value) ?? [],
+      contentVariables ?? [],
+      styledContents,
     );
   }, [
     props.phrase.variables,
     props.phrase.linkVariables,
     props.phrase.interpolationVariants,
+    props.phrase.contentVariables,
+    props.phrase.styledContents,
     enabledMentionedTerms,
   ]);
 
@@ -322,6 +330,7 @@ const SourcePhraseTranslation = (props: Props) => {
             systemSourceLocale={props.systemSourceLocale}
             isReadOnly
             enabledTerms={[]}
+            isEmpty={(sourcePhraseTranslation?.plainText?.trim?.() ?? "") == ""}
             title={
               <>
                 {`Mentioned Terms in Source Phrase Value (${props.systemSourceLocale.localeCode}):`}

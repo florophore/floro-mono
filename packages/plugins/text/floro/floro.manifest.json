@@ -1,5 +1,5 @@
 {
-  "version": "0.0.12",
+  "version": "0.0.13",
   "name": "text",
   "displayName": "Text",
   "description": "A plugin for managing strings and translations.",
@@ -108,6 +108,35 @@
               "type": "array",
               "values": "string"
             },
+
+            "usePhraseSections": {
+              "type": "boolean",
+              "default": false
+            },
+            "tagsEnabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "phraseVariablesEnabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "linkVariablesEnabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "interpolationsEnabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "contentVariablesEnabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "styledContentEnabled": {
+              "type": "boolean",
+              "default": false
+            },
             "variables": {
               "type": "set",
               "values": {
@@ -120,6 +149,96 @@
                 },
                 "varType": {
                   "type": "string"
+                }
+              }
+            },
+            "contentVariables": {
+              "type": "set",
+              "values": {
+                "id": {
+                  "type": "string",
+                  "isKey": true
+                },
+                "name": {
+                  "type": "string"
+                }
+              }
+            },
+            "styleClasses": {
+              "type": "set",
+              "values": {
+                "id": {
+                  "type": "string",
+                  "isKey": true
+                },
+                "name": {
+                  "type": "string"
+                }
+              }
+            },
+            "styledContents": {
+              "type": "set",
+              "values": {
+                "name": {
+                  "type": "string",
+                  "isKey": true
+                },
+                "styleClassRef": {
+                  "type": "ref<$.phraseGroups.values.phrases.values.styleClasses.values>"
+                },
+                "localeRules": {
+                  "type": "set",
+                  "bounded": true,
+                  "values": {
+                    "id": {
+                      "type": "ref<$.localeSettings.locales.values>",
+                      "isKey": true
+                    },
+                    "displayValue": {
+                      "richTextHtml": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "json": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "plainText": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "revisionCount": {
+                        "type": "int",
+                        "default": 0
+                      },
+                      "revisionTimestamp": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "enabledTerms": {
+                        "type": "set",
+                        "values": "string"
+                      },
+                      "sourceAtRevision": {
+                        "sourceLocaleRef": {
+                          "type": "ref<$.localeSettings.locales.values>",
+                          "nullable": true
+                        },
+                        "richTextHtml": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "json": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "plainText": {
+                          "type": "string",
+                          "nullable": true
+                        }
+                      }
+                    }
+                  }
                 }
               }
             },
@@ -417,6 +536,69 @@
                 }
               }
             },
+            "phraseSections": {
+              "type": "set",
+              "values": {
+                "name": {
+                  "type": "string",
+                  "isKey": true
+                },
+                "localeRules": {
+                  "type": "set",
+                  "bounded": true,
+                  "values": {
+                    "id": {
+                      "type": "ref<$.localeSettings.locales.values>",
+                      "isKey": true
+                    },
+                    "displayValue": {
+                      "richTextHtml": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "json": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "plainText": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "revisionCount": {
+                        "type": "int",
+                        "default": 0
+                      },
+                      "revisionTimestamp": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "enabledTerms": {
+                        "type": "set",
+                        "values": "string"
+                      },
+                      "sourceAtRevision": {
+                        "sourceLocaleRef": {
+                          "type": "ref<$.localeSettings.locales.values>",
+                          "nullable": true
+                        },
+                        "richTextHtml": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "json": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "plainText": {
+                          "type": "string",
+                          "nullable": true
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
             "testCases": {
               "type": "set",
               "bounded": true,
@@ -513,7 +695,10 @@
             ],
             "interpolationVariants": [],
             "linkVariables": [],
-            "variables": []
+            "variables": [],
+            "contentVariables": [],
+            "styleClasses": [],
+            "styledContents": []
           }
         ]
       }

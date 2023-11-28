@@ -102,45 +102,13 @@ export default class VariableTagNode extends Node implements TextNodeJSON {
      class="${this.marks.isSuperscript ? "sup" : this.marks.isSubscript ? "sub" : ""}"
      style="
         background-color: ${ColorPalette.variableGreen};
-        color: transparent;
+        color: ${ColorPalette.white};
         border-radius:4px;
         position: relative;
         text-decoration: ${textDecoration};
         font-weight: ${fontWeight};
         font-style: ${fontStyle};
-        pointer-events: none;
-        -webkit-user-select: none;
-        -webkit-touch-callout: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
      "
-    >${escape(this.content)}<span
-     spellcheck="false"
-     style="
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        width: 100%;
-        border-radius: 4px;
-        display: block;
-        height: 100%;
-        color: white;
-        box-shadow: inset 0px 0px 2px 2px ${ColorPalette.variableGreenInset};
-        text-decoration: ${textDecoration};
-        font-weight: ${fontWeight};
-        font-style: ${fontStyle};
-        line-height: ${bottomLineHeight};
-        pointer-events: none;
-        -webkit-user-select: none;
-        -webkit-touch-callout: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-        text-align: center;
-     "
-    >${escape(unescaped)}</span></span>`;
+    >${escape(this.content)}</span>`;
   }
 }

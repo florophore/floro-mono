@@ -1,32 +1,21 @@
-import { useMemo, useState, useCallback, useEffect, ChangeEvent } from "react";
+import { useMemo, useState, useCallback, useEffect } from "react";
 import styled from "@emotion/styled";
 import { useIcon } from "../../floro_listener/FloroIconsProvider";
 import { useTheme } from "@emotion/react";
 import { usePlainText, useRichText } from "../../floro_listener/hooks/locales";
 import { Helmet } from "react-helmet";
-import Button from "@floro/storybook/stories/design-system/Button";
-import ScreenShotLight from "@floro/main/public/pngs/light.no_edge.png";
-import ScreenShotDark from "@floro/main/public/pngs/dark.no_edge.png";
-import CLICopy from "../../components/home/CLICopy";
-import { Link } from "react-router-dom";
 import ColorPalette from "@floro/styles/ColorPalette";
 import PageWrapper from "../../components/wrappers/PageWrapper";
 import {
-  TextRenderers,
-  renderers as richTextRenderers,
+  richTextRenderers,
 } from "@floro/common-web/src/floro_listener/FloroTextRenderer";
 import { StaticLinkNode } from "@floro/common-generators/floro_modules/text-generator";
-import { useEnv } from "@floro/common-react/src/env/EnvContext";
 import Input from "@floro/storybook/stories/design-system/Input";
 import {
-  StringDiff,
   getArrayStringDiff,
-  getDiff,
   getLCS,
   getMergeSequence,
-  getTextDiff,
 } from "floro/dist/src/sequenceoperations";
-import { after } from "node:test";
 
 const AboutWrapper = styled.div`
   width: 100%;
@@ -191,7 +180,10 @@ function AboutPage() {
   }, [sequenceCount, direction, isPlaying]);
 
   const renderLinkNode = useCallback(
-    (node: StaticLinkNode, renderers: TextRenderers): React.ReactElement => {
+    (
+      node: StaticLinkNode<React.ReactElement>,
+      renderers
+    ): React.ReactElement => {
       let children = renderers.renderStaticNodes(node.children, renderers);
       return (
         <a
@@ -205,6 +197,13 @@ function AboutPage() {
     },
     [theme]
   );
+
+  const rtRenderers = useMemo(() => {
+    return {
+      ...richTextRenderers,
+      renderLinkNode,
+    }
+  }, [renderLinkNode])
 
   const overviewIcon = useIcon("about.overview");
   const dependentTypes = useIcon("about.floro-pipeline");
@@ -262,201 +261,136 @@ function AboutPage() {
   const howItWorksBlurb = useRichText(
     "about.how_it_works_blurb",
     {},
-    {
-      ...richTextRenderers,
-      renderLinkNode,
-    }
+    rtRenderers
   );
 
   const howItWorksBlurbPart2 = useRichText(
     "about.how_it_works_blurb_part_2",
     {},
-    {
-      ...richTextRenderers,
-      renderLinkNode,
-    }
+    rtRenderers
   );
 
   const howItWorksBlurbPart3 = useRichText(
     "about.how_it_works_blurb_part_3",
     {},
-    {
-      ...richTextRenderers,
-      renderLinkNode,
-    }
+    rtRenderers
   );
 
   const howItWorksBlurbPart4 = useRichText(
     "about.how_it_works_blurb_part_4",
     {},
-    {
-      ...richTextRenderers,
-      renderLinkNode,
-    }
+    rtRenderers
   );
 
   const thingsChangeTitle = useRichText(
     "about.things_change_title",
     {},
-    {
-      ...richTextRenderers,
-      renderLinkNode,
-    }
+    rtRenderers
   );
 
   const thingsChangeBlurb1 = useRichText(
     "about.things_change_blurb_1",
     {},
-    {
-      ...richTextRenderers,
-      renderLinkNode,
-    }
+    rtRenderers
   );
 
   const thingsChangeBlurb2 = useRichText(
     "about.things_change_blurb_2",
     {},
-    {
-      ...richTextRenderers,
-      renderLinkNode,
-    }
+    rtRenderers
   );
 
   const thingsChangeBlurb3 = useRichText(
     "about.things_change_blurb_3",
     {},
-    {
-      ...richTextRenderers,
-      renderLinkNode,
-    }
+    rtRenderers
   );
 
   const itsAllRelatedTitle = useRichText(
     "about.how_it's_all_related",
     {},
-    {
-      ...richTextRenderers,
-      renderLinkNode,
-    }
+    rtRenderers
   );
 
   const itsAllRelatedBlurb1 = useRichText(
     "about.how_it_is_all_related_blurb_1",
     {},
-    {
-      ...richTextRenderers,
-      renderLinkNode,
-    }
+    rtRenderers
   );
 
   const itsAllRelatedBlurb2 = useRichText(
     "about.how_it_is_all_related_part_2",
     {},
-    {
-      ...richTextRenderers,
-      renderLinkNode,
-    }
+    rtRenderers
   );
 
   const itsAllRelatedBlurb3 = useRichText(
     "about.how_its_all_related_part_3",
     {},
-    {
-      ...richTextRenderers,
-      renderLinkNode,
-    }
+    rtRenderers
   );
 
   const whatsTheDifferenceTitle = useRichText(
     "about.whats_the_difference_title",
     {},
-    {
-      ...richTextRenderers,
-      renderLinkNode,
-    }
+    rtRenderers
   );
 
   const whatsTheDifferenceBlurb1 = useRichText(
     "about.whats_the_difference_blurb_1",
     {},
-    {
-      ...richTextRenderers,
-      renderLinkNode,
-    }
+    rtRenderers
   );
 
   const whatsTheDifferenceBlurb2 = useRichText(
     "about.whats_the_difference_blurb_2",
     {},
-    {
-      ...richTextRenderers,
-      renderLinkNode,
-    }
+    rtRenderers
   );
 
   const whatsTheDifferenceBlurb3 = useRichText(
     "about.whats_the_different_part_3",
     {},
-    {
-      ...richTextRenderers,
-      renderLinkNode,
-    }
+    rtRenderers
   );
 
   const whatsTheDifferenceBlurb4 = useRichText(
     "about.whats_the_difference_part_4",
     {},
-    {
-      ...richTextRenderers,
-      renderLinkNode,
-    }
+    rtRenderers
   );
 
 
   const whatsTheDifferenceBlurb5 = useRichText(
     "about.whats_the_difference_part_5",
     {},
-    {
-      ...richTextRenderers,
-      renderLinkNode,
-    }
+    rtRenderers
   );
 
   const whatsTheDifferenceBlurb6 = useRichText(
     "about.whats_the_difference_part_6",
     {},
-    {
-      ...richTextRenderers,
-      renderLinkNode,
-    }
+    rtRenderers
   );
 
   const whatsTheDifferenceBlurb7 = useRichText(
     "about.whats_the_difference_part_7",
     {},
-    {
-      ...richTextRenderers,
-      renderLinkNode,
-    }
+    rtRenderers
   );
 
   const bringingItAllTogetherTitle = useRichText(
     "about.bringing_it_all_together_title",
     {},
-    {
-      ...richTextRenderers,
-      renderLinkNode,
-    }
+    rtRenderers
   );
 
   const bringingItAllTogetherPart1 = useRichText(
     "about.bringing_it_all_together_part_1",
     {},
-    {
-      ...richTextRenderers,
-      renderLinkNode,
-    }
+    rtRenderers
   );
+
 
   const [lcsString1, setLcsString1] = useState("ACBAACD");
   const [lcsString2, setLcsString2] = useState("ADBDADC");

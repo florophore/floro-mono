@@ -94,7 +94,7 @@ const DeleteVar = styled.img`
 
 const DisplayText = styled.p`
   font-family: "MavenPro";
-  font-weight: 500;
+  font-weight: 400;
   font-size: 1.4rem;
   color: ${(props) => props.theme.colors.contrastText};
 `;
@@ -106,7 +106,7 @@ interface Comparator {
   booleanComparatorValue: boolean;
 }
 
-const getComparatorValue = <T extends number | string | boolean>(
+const getComparatorValue = (
   varType: "integer" | "float" | "boolean" | "string",
   comparator: Comparator
 ) => {
@@ -303,6 +303,16 @@ const TestCase = (props: Props) => {
       return {
         ...acc,
         [`${variable.name}`]: value,
+      };
+    }, {} as { [key: string]: number | string | boolean });
+  }, [mockValues, props.phrase?.variables, applicationState]);
+
+  const contentVarReplacementMap = useMemo(() => {
+    return props.phrase?.contentVariables?.reduce((acc, contentVariable) => {
+      return {
+        ...acc,
+        [`${contentVariable.name}`]: `<div style="border: 2px dashed ${theme.colors.contrastText}; padding: 16px; margin-top: 16px; margin-bottom: 16px;"><h1>content inserted here</h1></div>`,
+
       };
     }, {} as { [key: string]: number | string | boolean });
   }, [mockValues, props.phrase?.variables, applicationState]);
@@ -771,6 +781,288 @@ const TestCase = (props: Props) => {
     globalFallbackLocaleRef,
   ]);
 
+  const styledContentsDisplayValueReplacementMap = useMemo(() => {
+    return props.phrase?.styledContents?.reduce(
+      (acc, styledContent) => {
+        const styledContentLocaleRule = styledContent?.localeRules?.find(
+          (lv) => lv.id == selectedLocaleRef
+        );
+        if ((styledContentLocaleRule?.displayValue?.plainText ?? "").trim() != "") {
+          const richTextWithInterpolations = Object.keys(
+            interpolationVariantReplacementMap ?? {}
+          ).reduce((s, iv) => {
+            return s.replaceAll(
+              `{${iv}}`,
+              interpolationVariantReplacementMap[iv]?.richText ?? ""
+            );
+          }, styledContentLocaleRule?.displayValue?.richTextHtml ?? "");
+
+          const richText = Object.keys(
+            linkVariablesDisplayValueReplacementMap ?? {}
+          ).reduce((s, l) => {
+            return s.replaceAll(
+              `{${l}}`,
+              `<span style="color: ${ColorPalette.linkBlue};">${
+                linkVariablesDisplayValueReplacementMap[l]?.richText ?? ""
+              }</span>`
+            );
+          }, richTextWithInterpolations);
+
+          return {
+            ...acc,
+            [styledContent.name]: {
+              richText,
+              plainText: styledContentLocaleRule?.displayValue?.plainText ?? "",
+            },
+          };
+        }
+
+        const fallbackStyledContentLocaleRule = styledContent?.localeRules?.find(
+          (lv) => lv.id == fallbackLocaleRef
+        );
+        if (
+          (fallbackStyledContentLocaleRule?.displayValue?.plainText ?? "").trim() !=
+          ""
+        ) {
+          const richTextWithInterpolations = Object.keys(
+            interpolationVariantReplacementMap ?? {}
+          ).reduce((s, iv) => {
+            return s.replaceAll(
+              `{${iv}}`,
+              interpolationVariantReplacementMap[iv]?.richText ?? ""
+            );
+          }, fallbackStyledContentLocaleRule?.displayValue?.richTextHtml ?? "");
+
+          const richText = Object.keys(
+            linkVariablesDisplayValueReplacementMap ?? {}
+          ).reduce((s, l) => {
+            return s.replaceAll(
+              `{${l}}`,
+              `<span style="color: ${ColorPalette.linkBlue};">${
+                linkVariablesDisplayValueReplacementMap[l]?.richText ?? ""
+              }</span>`
+            );
+          }, richTextWithInterpolations);
+
+          return {
+            ...acc,
+            [styledContent.name]: {
+              richText,
+              plainText:
+                fallbackStyledContentLocaleRule?.displayValue?.plainText ?? "",
+            },
+          };
+        }
+
+        const globalFallbackStyledContentLocaleRule = styledContent?.localeRules?.find(
+          (lv) => lv.id == globalFallbackLocaleRef
+        );
+        if (
+          (
+            globalFallbackStyledContentLocaleRule?.displayValue?.plainText ?? ""
+          ).trim() != ""
+        ) {
+          const richTextWithInterpolations = Object.keys(
+            interpolationVariantReplacementMap ?? {}
+          ).reduce((s, iv) => {
+            return s.replaceAll(
+              `{${iv}}`,
+              interpolationVariantReplacementMap[iv]?.richText ?? ""
+            );
+          }, globalFallbackStyledContentLocaleRule?.displayValue?.richTextHtml ?? "");
+          const richText = Object.keys(
+            linkVariablesDisplayValueReplacementMap ?? {}
+          ).reduce((s, l) => {
+            return s.replaceAll(
+              `{${l}}`,
+              `<span style="color: ${ColorPalette.linkBlue};">${
+                linkVariablesDisplayValueReplacementMap[l]?.richText ?? ""
+              }</span>`
+            );
+          }, richTextWithInterpolations);
+          return {
+            ...acc,
+            [styledContent.name]: {
+              richText,
+              plainText:
+                globalFallbackStyledContentLocaleRule?.displayValue?.plainText ??
+                "",
+            },
+          };
+        }
+        return {
+          ...acc,
+          [styledContent.name]: {
+            plainText: "",
+            richText: "",
+          },
+        };
+      },
+      {} as {
+        [key: string]: {
+          plainText: string;
+          richText: string;
+        };
+      }
+    );
+  }, [
+    applicationState,
+    props.phrase?.interpolationVariants,
+    props.phrase?.linkVariables,
+    props.phrase?.variables,
+    interpolationVariantReplacementMap,
+    linkVariablesDisplayValueReplacementMap,
+    varReplacementMap,
+    contentVarReplacementMap,
+    mockValues,
+    selectedLocaleRef,
+    fallbackLocaleRef,
+    globalFallbackLocaleRef,
+  ]);
+
+  const phraseSectionsResult = useMemo(() => {
+    return props.phrase.phraseSections.map(phraseSection => {
+      const phraseSectionTranslation = phraseSection.localeRules?.find(
+        (t) => t.id == selectedLocaleRef
+      );
+
+      if ((phraseSectionTranslation?.displayValue?.plainText ?? "").trim() != "") {
+        const richTextWithInterpolations = Object.keys(
+          interpolationVariantReplacementMap ?? {}
+        ).reduce((s, iv) => {
+          return s.replaceAll(
+            `{${iv}}`,
+            interpolationVariantReplacementMap[iv]?.richText ?? ""
+          );
+        }, phraseSectionTranslation?.displayValue?.richTextHtml ?? "");
+        const richTextWithLinks = Object.keys(
+          linkVariablesDisplayValueReplacementMap ?? {}
+        ).reduce((s, l) => {
+          return s.replaceAll(
+            `{${l}}`,
+            `<span style="color: ${ColorPalette.linkBlue};">${
+              linkVariablesDisplayValueReplacementMap[l]?.richText ?? ""
+            }</span>`
+          );
+        }, richTextWithInterpolations);
+
+        const richTextWithStyledContents = Object.keys(
+          styledContentsDisplayValueReplacementMap ?? {}
+        ).reduce((s, l) => {
+          return s.replaceAll(
+            `{${l}}`,
+            `<span style="color: ${theme.colors.warningTextColor};">${
+              styledContentsDisplayValueReplacementMap[l]?.richText ?? ""
+            }</span>`
+          );
+        }, richTextWithLinks);
+
+        const richTextWithVars = Object.keys(varReplacementMap ?? {}).reduce((s, v) => {
+          return s.replaceAll(`{${v}}`, varReplacementMap[v]?.toString() ?? "");
+        }, richTextWithStyledContents);
+        return Object.keys(contentVarReplacementMap ?? {}).reduce((s, v) => {
+          return s.replaceAll(`{${v}}`, contentVarReplacementMap[v]?.toString() ?? "");
+        }, richTextWithVars)
+      }
+
+      const fallbackPhraseSectionTranslation = phraseSection?.localeRules?.find(
+        (t) => t.id == fallbackLocaleRef
+      );
+      if ((fallbackPhraseSectionTranslation?.displayValue?.plainText ?? "").trim() != "") {
+        const richTextWithInterpolations = Object.keys(
+          interpolationVariantReplacementMap ?? {}
+        ).reduce((s, iv) => {
+          return s.replaceAll(
+            `{${iv}}`,
+            interpolationVariantReplacementMap[iv]?.richText ?? ""
+          );
+        }, fallbackPhraseSectionTranslation?.displayValue?.richTextHtml ?? "");
+        const richTextWithLinks = Object.keys(
+          linkVariablesDisplayValueReplacementMap ?? {}
+        ).reduce((s, l) => {
+          return s.replaceAll(
+            `{${l}}`,
+            `<span style="color: ${ColorPalette.linkBlue};">${
+              linkVariablesDisplayValueReplacementMap[l]?.richText ?? ""
+            }</span>`
+          );
+        }, richTextWithInterpolations);
+
+        const richTextWithStyledContents = Object.keys(
+          styledContentsDisplayValueReplacementMap ?? {}
+        ).reduce((s, l) => {
+          return s.replaceAll(
+            `{${l}}`,
+            `<span style="color: ${ColorPalette.variableRed};">${
+              styledContentsDisplayValueReplacementMap[l]?.richText ?? ""
+            }</span>`
+          );
+        }, richTextWithLinks);
+        const richTextWithVars = Object.keys(varReplacementMap ?? {}).reduce((s, v) => {
+          return s.replaceAll(`{${v}}`, varReplacementMap[v]?.toString() ?? "");
+        }, richTextWithStyledContents);
+        return Object.keys(contentVarReplacementMap ?? {}).reduce((s, v) => {
+          return s.replaceAll(`{${v}}`, contentVarReplacementMap[v]?.toString() ?? "");
+        }, richTextWithVars)
+      }
+      const globalFallbackPhraseSectionTranslation =
+        phraseSection.localeRules?.find((t) => t.id == fallbackLocaleRef);
+      if ((globalFallbackPhraseSectionTranslation?.displayValue?.plainText ?? "").trim() != "") {
+        const richTextWithInterpolations = Object.keys(
+          interpolationVariantReplacementMap ?? {}
+        ).reduce((s, iv) => {
+          return s.replaceAll(
+            `{${iv}}`,
+            interpolationVariantReplacementMap[iv]?.richText ?? ""
+          );
+        }, globalFallbackPhraseSectionTranslation?.displayValue?.richTextHtml ?? "");
+        const richTextWithLinks = Object.keys(
+          linkVariablesDisplayValueReplacementMap ?? {}
+        ).reduce((s, l) => {
+          return s.replaceAll(
+            `{${l}}`,
+            `<span style="color: ${ColorPalette.linkBlue};">${
+              linkVariablesDisplayValueReplacementMap[l]?.richText ?? ""
+            }</span>`
+          );
+        }, richTextWithInterpolations);
+
+        const richTextWithStyledContents = Object.keys(
+          styledContentsDisplayValueReplacementMap ?? {}
+        ).reduce((s, l) => {
+          return s.replaceAll(
+            `{${l}}`,
+            `<span style="color: ${ColorPalette.variableRed};">${
+              styledContentsDisplayValueReplacementMap[l]?.richText ?? ""
+            }</span>`
+          );
+        }, richTextWithLinks);
+        const richTextWithVars = Object.keys(varReplacementMap ?? {}).reduce((s, v) => {
+          return s.replaceAll(`{${v}}`, varReplacementMap[v]?.toString() ?? "");
+        }, richTextWithStyledContents);
+        return Object.keys(contentVarReplacementMap ?? {}).reduce((s, v) => {
+          return s.replaceAll(`{${v}}`, contentVarReplacementMap[v]?.toString() ?? "");
+        }, richTextWithVars)
+      }
+      return "";
+    }).join("<br/>");
+  }, [
+    props.phrase?.linkVariables,
+    props.phrase?.variables,
+    props.phrase?.phraseTranslations,
+    props.phrase?.phraseSections,
+    linkVariablesDisplayValueReplacementMap,
+    interpolationVariantReplacementMap,
+    styledContentsDisplayValueReplacementMap,
+    varReplacementMap,
+    contentVarReplacementMap,
+    mockValues,
+    selectedLocaleRef,
+    fallbackLocaleRef,
+    globalFallbackLocaleRef,
+    theme.colors
+  ])
+
   const phraseResult = useMemo(() => {
     const phraseTranslation = props.phrase?.phraseTranslations?.find(
       (t) => t.id == selectedLocaleRef
@@ -794,9 +1086,24 @@ const TestCase = (props: Props) => {
           }</span>`
         );
       }, richTextWithInterpolations);
-      return Object.keys(varReplacementMap ?? {}).reduce((s, v) => {
-        return s.replaceAll(`{${v}}`, varReplacementMap[v]?.toString() ?? "");
+
+      const richTextWithStyledContents = Object.keys(
+        styledContentsDisplayValueReplacementMap ?? {}
+      ).reduce((s, l) => {
+        return s.replaceAll(
+          `{${l}}`,
+          `<span style="color: ${theme.colors.warningTextColor};">${
+            styledContentsDisplayValueReplacementMap[l]?.richText ?? ""
+          }</span>`
+        );
       }, richTextWithLinks);
+
+      const richTextWithVars = Object.keys(varReplacementMap ?? {}).reduce((s, v) => {
+        return s.replaceAll(`{${v}}`, varReplacementMap[v]?.toString() ?? "");
+      }, richTextWithStyledContents);
+      return Object.keys(contentVarReplacementMap ?? {}).reduce((s, v) => {
+        return s.replaceAll(`{${v}}`, contentVarReplacementMap[v]?.toString() ?? "");
+      }, richTextWithVars)
     }
 
     const fallbackPhraseTranslation = props.phrase?.phraseTranslations?.find(
@@ -821,9 +1128,23 @@ const TestCase = (props: Props) => {
           }</span>`
         );
       }, richTextWithInterpolations);
-      return Object.keys(varReplacementMap ?? {}).reduce((s, v) => {
-        return s.replaceAll(`{${v}}`, varReplacementMap[v]?.toString() ?? "");
+
+      const richTextWithStyledContents = Object.keys(
+        styledContentsDisplayValueReplacementMap ?? {}
+      ).reduce((s, l) => {
+        return s.replaceAll(
+          `{${l}}`,
+          `<span style="color: ${ColorPalette.variableRed};">${
+            styledContentsDisplayValueReplacementMap[l]?.richText ?? ""
+          }</span>`
+        );
       }, richTextWithLinks);
+      const richTextWithVars = Object.keys(varReplacementMap ?? {}).reduce((s, v) => {
+        return s.replaceAll(`{${v}}`, varReplacementMap[v]?.toString() ?? "");
+      }, richTextWithStyledContents);
+      return Object.keys(contentVarReplacementMap ?? {}).reduce((s, v) => {
+        return s.replaceAll(`{${v}}`, contentVarReplacementMap[v]?.toString() ?? "");
+      }, richTextWithVars)
     }
 
     const globalFallbackPhraseTranslation =
@@ -847,9 +1168,23 @@ const TestCase = (props: Props) => {
           }</span>`
         );
       }, richTextWithInterpolations);
-      return Object.keys(varReplacementMap ?? {}).reduce((s, v) => {
-        return s.replaceAll(`{${v}}`, varReplacementMap[v]?.toString() ?? "");
+
+      const richTextWithStyledContents = Object.keys(
+        styledContentsDisplayValueReplacementMap ?? {}
+      ).reduce((s, l) => {
+        return s.replaceAll(
+          `{${l}}`,
+          `<span style="color: ${ColorPalette.variableRed};">${
+            styledContentsDisplayValueReplacementMap[l]?.richText ?? ""
+          }</span>`
+        );
       }, richTextWithLinks);
+      const richTextWithVars = Object.keys(varReplacementMap ?? {}).reduce((s, v) => {
+        return s.replaceAll(`{${v}}`, varReplacementMap[v]?.toString() ?? "");
+      }, richTextWithStyledContents);
+      return Object.keys(contentVarReplacementMap ?? {}).reduce((s, v) => {
+        return s.replaceAll(`{${v}}`, contentVarReplacementMap[v]?.toString() ?? "");
+      }, richTextWithVars)
     }
 
     return "";
@@ -859,11 +1194,14 @@ const TestCase = (props: Props) => {
     props.phrase?.phraseTranslations,
     linkVariablesDisplayValueReplacementMap,
     interpolationVariantReplacementMap,
+    styledContentsDisplayValueReplacementMap,
     varReplacementMap,
+    contentVarReplacementMap,
     mockValues,
     selectedLocaleRef,
     fallbackLocaleRef,
     globalFallbackLocaleRef,
+    theme.colors
   ]);
 
   const diffColor = useDiffColor(props.localeTestRef);
@@ -895,7 +1233,7 @@ const TestCase = (props: Props) => {
           </DeleteVarContainer>
         )}
       </TitleRow>
-      <SubContainer style={{borderColor: diffColor}}>
+      <SubContainer style={{ borderColor: diffColor }}>
         <Container>
           <TitleRow style={{ marginBottom: 24 }}>
             <RowTitle
@@ -951,7 +1289,13 @@ const TestCase = (props: Props) => {
           </TitleRow>
           <InputsContainer>
             <Container>
-              <DisplayText dangerouslySetInnerHTML={{ __html: phraseResult }} />
+              <DisplayText
+                dangerouslySetInnerHTML={{
+                  __html: props.phrase.usePhraseSections
+                    ? phraseSectionsResult
+                    : phraseResult,
+                }}
+              />
             </Container>
           </InputsContainer>
         </Container>
@@ -1007,14 +1351,15 @@ const TestCase = (props: Props) => {
                   <InputsContainer>
                     <Container>
                       <DisplayText>
-                        {(linkVariableOutputTest.hrefValue?.length == 0) && (
-                          <span style={{color: theme.colors.warningTextColor}}>{'Not Set'}</span>
+                        {linkVariableOutputTest.hrefValue?.length == 0 && (
+                          <span
+                            style={{ color: theme.colors.warningTextColor }}
+                          >
+                            {"Not Set"}
+                          </span>
                         )}
-                        {(linkVariableOutputTest.hrefValue?.trim()?.length > 0) && (
-                          <>
-                            {linkVariableOutputTest.hrefValue}
-                          </>
-                        )}
+                        {linkVariableOutputTest.hrefValue?.trim()?.length >
+                          0 && <>{linkVariableOutputTest.hrefValue}</>}
                       </DisplayText>
                     </Container>
                   </InputsContainer>

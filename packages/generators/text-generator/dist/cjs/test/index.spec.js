@@ -28,6 +28,7 @@ describe("generate", () => {
         memfs_1.vol.reset();
     });
     test("generates json and typescript mocks", () => __awaiter(void 0, void 0, void 0, function* () {
+        //console.log("S", mockState);
         yield (0, index_1.generate)(mockState, outDir, { lang: "typescript" });
         //const files = fs.readdirSync(outDir);
         //expect(files).toEqual(["index.ts", "palette.json"]);

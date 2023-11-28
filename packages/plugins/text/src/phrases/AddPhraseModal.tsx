@@ -198,7 +198,7 @@ const AddPhraseModal = (props: Props) => {
 
   const onTextBoxChanged = useCallback(
     (event: React.ChangeEvent<HTMLTextAreaElement>): void => {
-      setDescription(event.target.value?.toLowerCase());
+      setDescription(event.target.value);
     },
     []
   );
@@ -228,6 +228,17 @@ const AddPhraseModal = (props: Props) => {
           linkVariables: [],
           interpolationVariants: [],
           testCases: [],
+          styleClasses: [],
+          styledContents: [],
+          contentVariables: [],
+          phraseSections: [],
+          usePhraseSections: false,
+          tagsEnabled: false,
+          phraseVariablesEnabled: false,
+          linkVariablesEnabled: false,
+          interpolationsEnabled: false,
+          contentVariablesEnabled: false,
+          styledContentEnabled: false,
         },
         ...(phraseGroup.phrases ?? []),
       ],

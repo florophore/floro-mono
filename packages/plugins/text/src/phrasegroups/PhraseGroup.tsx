@@ -464,12 +464,48 @@ const PhraseGroup = (props: Props) => {
           if (props.pinnedPhrases?.includes(phraseRef)) {
             return true;
           }
-          for (let localeGroup of phrase.phraseTranslations ?? []) {
-            if (localeGroup.id != topLevelLocaleRef) {
-              continue;
+          if (!phrase.usePhraseSections) {
+            for (let localeGroup of phrase.phraseTranslations ?? []) {
+              if (localeGroup.id != topLevelLocaleRef) {
+                continue;
+              }
+              if ((localeGroup.plainText ?? "").trim() == "") {
+                return true;
+              }
             }
-            if ((localeGroup.plainText ?? "").trim() == "") {
+          } else {
+            for (let phraseSection of phrase?.phraseSections ?? []) {
+              if ((phraseSection.name ?? "").trim() == "") {
+                return true;
+              }
+              for (let translation of phraseSection.localeRules ?? []) {
+                if (translation.id != topLevelLocaleRef) {
+                  continue;
+                }
+                if ((translation.displayValue.plainText ?? "").trim() == "") {
+                  return true;
+                }
+                if ((translation.displayValue.plainText ?? "").trim() == "") {
+                  return true;
+                }
+              }
+            }
+          }
+
+          for (let styledContent of phrase?.styledContents ?? []) {
+            if ((styledContent.name ?? "").trim() == "") {
               return true;
+            }
+            for (let translation of styledContent.localeRules ?? []) {
+              if (translation.id != topLevelLocaleRef) {
+                continue;
+              }
+              if ((translation.displayValue.plainText ?? "").trim() == "") {
+                return true;
+              }
+              if ((translation.displayValue.plainText ?? "").trim() == "") {
+                return true;
+              }
             }
           }
 
@@ -514,18 +550,42 @@ const PhraseGroup = (props: Props) => {
           if (shouldSkipUpdates) {
             return false;
           }
-          for (let localeGroup of phrase.phraseTranslations ?? []) {
-            if (localeGroup.id != topLevelLocaleRef) {
-              continue;
+
+          if (phrase.usePhraseSections) {
+            for (let phraseSection of phrase?.phraseSections ?? []) {
+              if ((phraseSection.name ?? "").trim() == "") {
+                return true;
+              }
+              for (let translation of phraseSection.localeRules ?? []) {
+                if (translation.id != topLevelLocaleRef) {
+                  continue;
+                }
+                const translateFromDisplayValue = phraseSection.localeRules.find(
+                  (l) => l.id == translateFromLocaleRef
+                );
+                if (
+                  (translation.displayValue.revisionCount ?? 0) <
+                  (translateFromDisplayValue?.displayValue?.revisionCount ??
+                    0)
+                ) {
+                  return true;
+                }
+              }
             }
-            const translateFrom = phrase.phraseTranslations.find(
-              (l) => l.id == translateFromLocaleRef
-            );
-            if (
-              (localeGroup.revisionCount ?? 0) <
-              (translateFrom?.revisionCount ?? 0)
-            ) {
-              return true;
+          } else {
+            for (let localeGroup of phrase.phraseTranslations ?? []) {
+              if (localeGroup.id != topLevelLocaleRef) {
+                continue;
+              }
+              const translateFrom = phrase.phraseTranslations.find(
+                (l) => l.id == translateFromLocaleRef
+              );
+              if (
+                (localeGroup.revisionCount ?? 0) <
+                (translateFrom?.revisionCount ?? 0)
+              ) {
+                return true;
+              }
             }
           }
 
@@ -574,6 +634,22 @@ const PhraseGroup = (props: Props) => {
               }
             }
           }
+          for (let styledContent of phrase?.styledContents ?? []) {
+            for (let translation of styledContent?.localeRules ?? []) {
+              if (translation.id != topLevelLocaleRef) {
+                continue;
+              }
+              const translateFrom = styledContent?.localeRules.find(
+                (l) => l.id == translateFromLocaleRef
+              );
+              if (
+                (translation.displayValue.revisionCount ?? 0) <
+                (translateFrom?.displayValue?.revisionCount ?? 0)
+              ) {
+                return true;
+              }
+            }
+          }
           return false;
         });
       if (
@@ -603,16 +679,40 @@ const PhraseGroup = (props: Props) => {
       ) {
         return true;
       }
-      for (let localeGroup of phrase.phraseTranslations ?? []) {
-        if (localeGroup.id != topLevelLocaleRef) {
-          continue;
+      if (phrase.usePhraseSections) {
+        for (let phraseSection of phrase?.phraseSections ?? []) {
+          if (
+            (phraseSection.name ?? "")
+              ?.toLowerCase()
+              .indexOf(props.searchText.toLowerCase().trim()) != -1
+          ) {
+            return true;
+          }
+          for (let translation of phraseSection.localeRules ?? []) {
+            if (translation.id != topLevelLocaleRef) {
+              continue;
+            }
+            if (
+              (translation.displayValue.plainText ?? "")
+                ?.toLowerCase()
+                .indexOf(props.searchText.toLowerCase().trim()) != -1
+            ) {
+              return true;
+            }
+          }
         }
-        if (
-          (localeGroup.plainText ?? "")
-            ?.toLowerCase()
-            .indexOf(props.searchText.toLowerCase().trim()) != -1
-        ) {
-          return true;
+      } else {
+        for (let localeGroup of phrase.phraseTranslations ?? []) {
+          if (localeGroup.id != topLevelLocaleRef) {
+            continue;
+          }
+          if (
+            (localeGroup.plainText ?? "")
+              ?.toLowerCase()
+              .indexOf(props.searchText.toLowerCase().trim()) != -1
+          ) {
+            return true;
+          }
         }
       }
       for (let variable of phrase?.variables ?? []) {
@@ -624,6 +724,46 @@ const PhraseGroup = (props: Props) => {
           return true;
         }
       }
+      for (let contentVariable of phrase?.contentVariables ?? []) {
+        if (
+          (contentVariable.name ?? "")
+            ?.toLowerCase()
+            .indexOf(props.searchText.toLowerCase().trim()) != -1
+        ) {
+          return true;
+        }
+      }
+      for (let styleClass of phrase?.styleClasses ?? []) {
+        if (
+          (styleClass.name ?? "")
+            ?.toLowerCase()
+            .indexOf(props.searchText.toLowerCase().trim()) != -1
+        ) {
+          return true;
+        }
+      }
+
+      for (let styledContent of phrase?.styledContents ?? []) {
+        if (
+          (styledContent.name ?? "")
+            ?.toLowerCase()
+            .indexOf(props.searchText.toLowerCase().trim()) != -1
+        ) {
+          return true;
+        }
+        for (let translation of styledContent.localeRules ?? []) {
+          if (translation.id != topLevelLocaleRef) {
+            continue;
+          }
+          if (
+            (translation.displayValue.plainText ?? "")
+              ?.toLowerCase()
+              .indexOf(props.searchText.toLowerCase().trim()) != -1
+          ) {
+            return true;
+          }
+        }
+      }
       for (let linkVariable of phrase?.linkVariables ?? []) {
         if (
           (linkVariable.linkName ?? "")
@@ -633,6 +773,9 @@ const PhraseGroup = (props: Props) => {
           return true;
         }
         for (let translation of linkVariable.translations ?? []) {
+          if (translation.id != topLevelLocaleRef) {
+            continue;
+          }
           if (
             (translation.linkDisplayValue.plainText ?? "")
               ?.toLowerCase()
@@ -780,12 +923,32 @@ const PhraseGroup = (props: Props) => {
           if (props.pinnedPhrases?.includes(phraseRef)) {
             return true;
           }
-          for (let localeGroup of phrase.phraseTranslations ?? []) {
-            if (localeGroup.id != topLevelLocaleRef) {
-              continue;
+          if (phrase.usePhraseSections) {
+            for (let phraseSection of phrase?.phraseSections ?? []) {
+              if ((phraseSection.name ?? "").trim() == "") {
+                return true;
+              }
+              for (let translation of phraseSection.localeRules ?? []) {
+                if (translation.id != topLevelLocaleRef) {
+                  continue;
+                }
+                if ((translation.displayValue.plainText ?? "").trim() == "") {
+                  return true;
+                }
+                if ((translation.displayValue.plainText ?? "").trim() == "") {
+                  return true;
+                }
+              }
             }
-            if ((localeGroup.plainText ?? "").trim() == "") {
-              return true;
+
+          } else {
+            for (let localeGroup of phrase.phraseTranslations ?? []) {
+              if (localeGroup.id != topLevelLocaleRef) {
+                continue;
+              }
+              if ((localeGroup.plainText ?? "").trim() == "") {
+                return true;
+              }
             }
           }
 
@@ -821,6 +984,16 @@ const PhraseGroup = (props: Props) => {
               }
             }
           }
+          for (let styledContent of phrase?.styledContents ?? []) {
+            for (let translation of styledContent?.localeRules ?? []) {
+              if (translation.id != topLevelLocaleRef) {
+                continue;
+              }
+              if ((translation.displayValue?.plainText ?? "").trim() == "") {
+                return true;
+              }
+            }
+          }
           return false;
         })
         ?.filter((phrase) => {
@@ -830,19 +1003,41 @@ const PhraseGroup = (props: Props) => {
           if (shouldSkipUpdates) {
             return false;
           }
-
-          for (let localeGroup of phrase.phraseTranslations ?? []) {
-            if (localeGroup.id != topLevelLocaleRef) {
-              continue;
+          if (phrase.usePhraseSections) {
+            for (let phraseSection of phrase?.phraseSections ?? []) {
+              if ((phraseSection.name ?? "").trim() == "") {
+                return true;
+              }
+              for (let translation of phraseSection.localeRules ?? []) {
+                if (translation.id != topLevelLocaleRef) {
+                  continue;
+                }
+                const translateFromDisplayValue = phraseSection.localeRules.find(
+                  (l) => l.id == translateFromLocaleRef
+                );
+                if (
+                  (translation.displayValue.revisionCount ?? 0) <
+                  (translateFromDisplayValue?.displayValue?.revisionCount ??
+                    0)
+                ) {
+                  return true;
+                }
+              }
             }
-            const translateFrom = phrase.phraseTranslations.find(
-              (l) => l.id == translateFromLocaleRef
-            );
-            if (
-              (localeGroup.revisionCount ?? 0) <
-              (translateFrom?.revisionCount ?? 0)
-            ) {
-              return true;
+          } else {
+            for (let localeGroup of phrase.phraseTranslations ?? []) {
+              if (localeGroup.id != topLevelLocaleRef) {
+                continue;
+              }
+              const translateFrom = phrase.phraseTranslations.find(
+                (l) => l.id == translateFromLocaleRef
+              );
+              if (
+                (localeGroup.revisionCount ?? 0) <
+                (translateFrom?.revisionCount ?? 0)
+              ) {
+                return true;
+              }
             }
           }
 
@@ -891,21 +1086,61 @@ const PhraseGroup = (props: Props) => {
               }
             }
           }
+          for (let styledContent of phrase?.styledContents ?? []) {
+            for (let translation of styledContent?.localeRules ?? []) {
+              if (translation.id != topLevelLocaleRef) {
+                continue;
+              }
+              const translateFrom = styledContent?.localeRules.find(
+                (l) => l.id == translateFromLocaleRef
+              );
+              if (
+                (translation.displayValue.revisionCount ?? 0) <
+                (translateFrom?.displayValue?.revisionCount ?? 0)
+              ) {
+                return true;
+              }
+            }
+          }
           return false;
         })
         .filter?.((phrase) => {
           if (!phrase?.phraseKey) {
             return false;
           }
-          if (
-            (phrase?.phraseKey ?? "")
-              ?.toLowerCase()
-              .indexOf(props.searchText.toLowerCase().trim()) != -1 ||
-            (phrase?.description?.value ?? "")
-              ?.toLowerCase()
-              .indexOf(props.searchText.toLowerCase().trim()) != -1
-          ) {
-            return true;
+          if (phrase.usePhraseSections) {
+            for (let phraseSection of phrase?.phraseSections ?? []) {
+              if (
+                (phraseSection.name ?? "")
+                  ?.toLowerCase()
+                  .indexOf(props.searchText.toLowerCase().trim()) != -1
+              ) {
+                return true;
+              }
+              for (let localeRule of phraseSection.localeRules ?? []) {
+                if (localeRule.id != topLevelLocaleRef) {
+                  continue;
+                }
+                if (
+                  (localeRule?.displayValue?.plainText ?? "")
+                    ?.toLowerCase()
+                    .indexOf(props.searchText.toLowerCase().trim()) != -1
+                ) {
+                  return true;
+                }
+              }
+            }
+          } else {
+            if (
+              (phrase?.phraseKey ?? "")
+                ?.toLowerCase()
+                .indexOf(props.searchText.toLowerCase().trim()) != -1 ||
+              (phrase?.description?.value ?? "")
+                ?.toLowerCase()
+                .indexOf(props.searchText.toLowerCase().trim()) != -1
+            ) {
+              return true;
+            }
           }
           for (let localeGroup of phrase?.phraseTranslations ?? []) {
             if (localeGroup.id != topLevelLocaleRef) {
@@ -922,6 +1157,24 @@ const PhraseGroup = (props: Props) => {
           for (let variable of phrase?.variables ?? []) {
             if (
               (variable.name ?? "")
+                ?.toLowerCase()
+                .indexOf(props.searchText.toLowerCase().trim()) != -1
+            ) {
+              return true;
+            }
+          }
+          for (let contentVariable of phrase?.contentVariables ?? []) {
+            if (
+              (contentVariable.name ?? "")
+                ?.toLowerCase()
+                .indexOf(props.searchText.toLowerCase().trim()) != -1
+            ) {
+              return true;
+            }
+          }
+          for (let styleClass of phrase?.styleClasses ?? []) {
+            if (
+              (styleClass.name ?? "")
                 ?.toLowerCase()
                 .indexOf(props.searchText.toLowerCase().trim()) != -1
             ) {
@@ -956,6 +1209,22 @@ const PhraseGroup = (props: Props) => {
               }
             }
           }
+
+          for (let phraseSection of phrase?.phraseSections ?? []) {
+            for (let localeRule of phraseSection?.localeRules ?? []) {
+              if (localeRule.id != topLevelLocaleRef) {
+                continue;
+              }
+              if (
+                (localeRule.displayValue?.plainText ?? "")
+                  ?.toLowerCase()
+                  .indexOf(props.searchText.toLowerCase().trim()) != -1
+              ) {
+                return true;
+              }
+            }
+          }
+
           for (let variant of phrase?.interpolationVariants ?? []) {
             for (let translation of variant?.localeRules ?? []) {
               if (translation.id != topLevelLocaleRef) {
@@ -1098,6 +1367,17 @@ const PhraseGroup = (props: Props) => {
   if (isSearching && phrasesToRender.length == 0) {
     return null;
   }
+  if (props.showOnlyPinnedPhrases && phrasesToRender.length == 0) {
+    return null;
+  }
+
+  if ((props.globalFilterRequiresUpdate) && phrasesToRender.length == 0) {
+    return null;
+  }
+
+  if ((props.globalFilterUntranslated) && phrasesToRender.length == 0) {
+    return null;
+  }
 
   const container = (
     <Container>
@@ -1198,7 +1478,9 @@ const PhraseGroup = (props: Props) => {
                   alignItems: "center",
                 }}
               >
-                <FilterUntranslated>
+                <FilterUntranslated style={{
+                  color: !filterUntranslatedForGroup ? theme.colors.contrastTextLight : theme.colors.warningTextColor
+                }}>
                   {`Filter un-translated (${props.selectedTopLevelLocale}) phrases`}
                 </FilterUntranslated>
                 <Checkbox
@@ -1213,7 +1495,9 @@ const PhraseGroup = (props: Props) => {
                   alignItems: "center",
                 }}
               >
-                <FilterUntranslated>
+                <FilterUntranslated style={{
+                  color: !filterRequiresUpdate ? theme.colors.contrastTextLight : theme.colors.warningTextColor
+                }}>
                   {`Filter (${props.selectedTopLevelLocale}) phrases to update`}
                 </FilterUntranslated>
                 <Checkbox
@@ -1274,6 +1558,19 @@ const PhraseGroup = (props: Props) => {
       )}
     </Container>
   );
+  //if (
+  //  (
+  //    commandMode == "edit" &&
+  //    isExpanded &&
+  //    !isSearching &&
+  //    !(props.showOnlyPinnedPhrases && props.pinnedPhrases) &&
+  //    !props.filterTag &&
+  //    (props?.phraseGroup?.phrases?.length ?? 0) > 0 &&
+  //    !props.isEditingGroups
+  //  )
+  //) {
+  //  return null;
+  //}
   if (!props.isEditingGroups) {
     return <>{container}</>;
   }

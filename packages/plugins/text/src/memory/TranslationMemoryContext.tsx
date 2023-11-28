@@ -48,6 +48,12 @@ const TranslationMemoryProvider = (props: Props) => {
               const sourcePhrase = phrase?.phraseTranslations.find(
                 (pt) => pt.id == sourceLocaleRef
               );
+              const targetPhraseSections = phrase?.phraseSections
+                ?.flatMap((iv) => iv?.localeRules ?? [])
+                ?.filter((lr) => lr.id == localeRef) ?? [];
+              const sourcePhraseSections = phrase?.phraseSections
+                ?.flatMap((iv) => iv?.localeRules ?? [])
+                ?.filter((lr) => lr.id == sourceLocaleRef) ?? [];
               const targetLinkVariants = phrase?.linkVariables
                 ?.flatMap((lv) => lv?.translations ?? [])
                 ?.filter((t) => t.id == localeRef) ?? [];
@@ -58,6 +64,13 @@ const TranslationMemoryProvider = (props: Props) => {
                 ?.flatMap((iv) => iv?.localeRules ?? [])
                 ?.filter((lr) => lr.id == localeRef) ?? [];
               const sourceInterpolationVariants = phrase?.interpolationVariants
+                ?.flatMap((iv) => iv?.localeRules ?? [])
+                ?.filter((lr) => lr.id == sourceLocaleRef) ?? [];
+
+              const targetStyledContents = phrase?.styledContents
+                ?.flatMap((iv) => iv?.localeRules ?? [])
+                ?.filter((lr) => lr.id == localeRef) ?? [];
+              const sourceStyledContents = phrase?.styledContents
                 ?.flatMap((iv) => iv?.localeRules ?? [])
                 ?.filter((lr) => lr.id == sourceLocaleRef) ?? [];
               if (
@@ -81,6 +94,70 @@ const TranslationMemoryProvider = (props: Props) => {
                 translationAgg[
                   sourcePhrase?.plainText?.trim().toLowerCase() as string
                 ]?.add(targetPhrase?.richTextHtml as string);
+              }
+
+              for (let i = 0; i < targetPhraseSections?.length; ++i) {
+                const targetPhraseSection = targetPhraseSections?.[i];
+                const sourcePhraseSection = sourcePhraseSections?.[i];
+
+                if (
+                  (sourcePhraseSection?.displayValue?.plainText?.trim() ?? "") !=
+                    "" &&
+                  !translationAgg[
+                    sourcePhraseSection?.displayValue?.plainText?.trim().toLowerCase() as string
+                  ]
+                ) {
+                  translationAgg[
+                    sourcePhraseSection?.displayValue?.plainText?.trim().toLowerCase() as string
+                  ] = new Set<string>();
+                }
+
+                if (
+                  (targetPhraseSection?.displayValue?.plainText?.trim() ?? "") !=
+                    "" &&
+                  (sourcePhraseSection?.displayValue?.plainText?.trim() ?? "") !=
+                    "" &&
+                  (targetPhraseSection?.displayValue?.richTextHtml?.trim() ?? "") != "" &&
+                  !translationAgg[
+                    sourcePhraseSection?.displayValue?.plainText?.trim().toLowerCase() as string
+                  ]?.has(targetPhraseSection?.displayValue?.richTextHtml ?? "")
+                ) {
+                  translationAgg[
+                    sourcePhraseSection?.displayValue?.plainText?.trim().toLowerCase() as string
+                  ]?.add(targetPhraseSection?.displayValue?.richTextHtml as string);
+                }
+              }
+
+              for (let i = 0; i < targetStyledContents?.length; ++i) {
+                const targetStyledContent = targetStyledContents?.[i];
+                const sourceStyledContent = sourceStyledContents?.[i];
+
+                if (
+                  (sourceStyledContent?.displayValue?.plainText?.trim() ?? "") !=
+                    "" &&
+                  !translationAgg[
+                    sourceStyledContent?.displayValue?.plainText?.trim().toLowerCase() as string
+                  ]
+                ) {
+                  translationAgg[
+                    sourceStyledContent?.displayValue?.plainText?.trim().toLowerCase() as string
+                  ] = new Set<string>();
+                }
+
+                if (
+                  (targetStyledContent?.displayValue?.plainText?.trim() ?? "") !=
+                    "" &&
+                  (sourceStyledContent?.displayValue?.plainText?.trim() ?? "") !=
+                    "" &&
+                  (targetStyledContent?.displayValue?.richTextHtml?.trim() ?? "") != "" &&
+                  !translationAgg[
+                    sourceStyledContent?.displayValue?.plainText?.trim().toLowerCase() as string
+                  ]?.has(targetStyledContent?.displayValue?.richTextHtml ?? "")
+                ) {
+                  translationAgg[
+                    sourceStyledContent?.displayValue?.plainText?.trim().toLowerCase() as string
+                  ]?.add(targetStyledContent?.displayValue?.richTextHtml as string);
+                }
               }
 
               for (let i = 0; i < targetLinkVariants?.length; ++i) {

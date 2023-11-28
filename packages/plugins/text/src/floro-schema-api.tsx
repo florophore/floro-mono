@@ -3,9 +3,9 @@ import mdiff from "mdiff";
 
 export type FileRef = `${string}.${string}`;
 
-export type PartialDiffableQuery = `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.conditionals.[${number}].subconditions.[${number}]`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.conditionals.[${number}].resultant`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.conditionals.[${number}].subconditions`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.conditionals.[${number}]`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.defaultValue.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkDisplayValue.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkHrefValue.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.localeTests.description<${string}>.mockValues.variableRef<${QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.conditionals`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.defaultValue`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkDisplayValue`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkHrefValue`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.localeTests.description<${string}>.mockValues`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.localeTests.description<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseTranslations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.localeTests`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseTranslations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.variables.id<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.description`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseTranslations`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.variables`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>`|`$(text).terms.id<${string}>.localizedTerms.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).localeSettings.locales.localeCode<${string}>`|`$(text).phraseGroups.id<${string}>.phrases`|`$(text).terms.id<${string}>.localizedTerms`|`$(text).localeSettings.locales`|`$(text).phraseGroups.id<${string}>`|`$(text).terms.id<${string}>`|`$(text).localeSettings`|`$(text).phraseGroups`|`$(text).terms`;
+export type PartialDiffableQuery = `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.conditionals.[${number}].subconditions.[${number}]`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.conditionals.[${number}].resultant`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.conditionals.[${number}].subconditions`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.conditionals.[${number}]`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.defaultValue.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkDisplayValue.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkHrefValue.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseSections.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.displayValue.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.styledContents.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.displayValue.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.localeTests.description<${string}>.mockValues.variableRef<${QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.conditionals`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.defaultValue`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkDisplayValue`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkHrefValue`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseSections.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.displayValue`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.styledContents.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.displayValue`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.localeTests.description<${string}>.mockValues`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseSections.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.styledContents.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.localeTests.description<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseSections.name<${string}>.localeRules`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseTranslations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.styledContents.name<${string}>.localeRules`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.localeTests`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.contentVariables.id<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseSections.name<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseTranslations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.styleClasses.id<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.styledContents.name<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.variables.id<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.contentVariables`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.description`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseSections`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseTranslations`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.styleClasses`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.styledContents`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.variables`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>`|`$(text).terms.id<${string}>.localizedTerms.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).localeSettings.locales.localeCode<${string}>`|`$(text).phraseGroups.id<${string}>.phrases`|`$(text).terms.id<${string}>.localizedTerms`|`$(text).localeSettings.locales`|`$(text).phraseGroups.id<${string}>`|`$(text).terms.id<${string}>`|`$(text).localeSettings`|`$(text).phraseGroups`|`$(text).terms`;
 
-export type DiffableQuery = `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.conditionals.[${number}].subconditions.[${number}]`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.conditionals.[${number}].resultant`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.conditionals.[${number}]`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.defaultValue.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkDisplayValue.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkHrefValue.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.localeTests.description<${string}>.mockValues.variableRef<${QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.defaultValue`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkDisplayValue`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkHrefValue`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.localeTests.description<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseTranslations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseTranslations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.variables.id<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.description`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>`|`$(text).terms.id<${string}>.localizedTerms.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).localeSettings.locales.localeCode<${string}>`|`$(text).phraseGroups.id<${string}>`|`$(text).terms.id<${string}>`|`$(text).localeSettings`;
+export type DiffableQuery = `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.conditionals.[${number}].subconditions.[${number}]`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.conditionals.[${number}].resultant`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.conditionals.[${number}]`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.defaultValue.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkDisplayValue.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkHrefValue.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseSections.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.displayValue.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.styledContents.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.displayValue.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.localeTests.description<${string}>.mockValues.variableRef<${QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.defaultValue`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkDisplayValue`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkHrefValue`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseSections.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.displayValue`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.styledContents.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.displayValue`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseSections.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.styledContents.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.localeTests.description<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseTranslations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.sourceAtRevision`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.contentVariables.id<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseSections.name<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseTranslations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.styleClasses.id<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.styledContents.name<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.variables.id<${string}>`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>.description`|`$(text).phraseGroups.id<${string}>.phrases.id<${string}>`|`$(text).terms.id<${string}>.localizedTerms.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`|`$(text).localeSettings.locales.localeCode<${string}>`|`$(text).phraseGroups.id<${string}>`|`$(text).terms.id<${string}>`|`$(text).localeSettings`;
 
 export type SchemaTypes = {
   ['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals.[?].subconditions.[?]']: {
@@ -70,6 +70,18 @@ export type SchemaTypes = {
     ['richTextHtml']?: string;
     ['sourceLocaleRef']?: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
   };
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>.displayValue.sourceAtRevision']: {
+    ['json']?: string;
+    ['plainText']?: string;
+    ['richTextHtml']?: string;
+    ['sourceLocaleRef']?: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+  };
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>.displayValue.sourceAtRevision']: {
+    ['json']?: string;
+    ['plainText']?: string;
+    ['richTextHtml']?: string;
+    ['sourceLocaleRef']?: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+  };
   ['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues.variableRef<?>']: {
     ['booleanMockValue']?: boolean;
     ['floatMockValue']?: number;
@@ -127,6 +139,34 @@ export type SchemaTypes = {
     };
   };
   ['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkHrefValue']: {
+    ['json']?: string;
+    ['plainText']?: string;
+    ['revisionCount']: number;
+    ['revisionTimestamp']?: string;
+    ['richTextHtml']?: string;
+    ['sourceAtRevision']: {
+      ['json']?: string;
+      ['plainText']?: string;
+      ['richTextHtml']?: string;
+      ['sourceLocaleRef']?: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+    };
+  };
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>.displayValue']: {
+    ['enabledTerms']: Array<string>;
+    ['json']?: string;
+    ['plainText']?: string;
+    ['revisionCount']: number;
+    ['revisionTimestamp']?: string;
+    ['richTextHtml']?: string;
+    ['sourceAtRevision']: {
+      ['json']?: string;
+      ['plainText']?: string;
+      ['richTextHtml']?: string;
+      ['sourceLocaleRef']?: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+    };
+  };
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>.displayValue']: {
+    ['enabledTerms']: Array<string>;
     ['json']?: string;
     ['plainText']?: string;
     ['revisionCount']: number;
@@ -214,6 +254,40 @@ export type SchemaTypes = {
       };
     };
   };
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>']: {
+    ['displayValue']: {
+      ['enabledTerms']: Array<string>;
+      ['json']?: string;
+      ['plainText']?: string;
+      ['revisionCount']: number;
+      ['revisionTimestamp']?: string;
+      ['richTextHtml']?: string;
+      ['sourceAtRevision']: {
+        ['json']?: string;
+        ['plainText']?: string;
+        ['richTextHtml']?: string;
+        ['sourceLocaleRef']?: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+      };
+    };
+    ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+  };
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>']: {
+    ['displayValue']: {
+      ['enabledTerms']: Array<string>;
+      ['json']?: string;
+      ['plainText']?: string;
+      ['revisionCount']: number;
+      ['revisionTimestamp']?: string;
+      ['richTextHtml']?: string;
+      ['sourceAtRevision']: {
+        ['json']?: string;
+        ['plainText']?: string;
+        ['richTextHtml']?: string;
+        ['sourceLocaleRef']?: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+      };
+    };
+    ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+  };
   ['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>']: {
     ['description']: string;
     ['mockValues']: Array<{
@@ -292,12 +366,46 @@ export type SchemaTypes = {
       };
     };
   }>;
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules']: Array<{
+    ['displayValue']: {
+      ['enabledTerms']: Array<string>;
+      ['json']?: string;
+      ['plainText']?: string;
+      ['revisionCount']: number;
+      ['revisionTimestamp']?: string;
+      ['richTextHtml']?: string;
+      ['sourceAtRevision']: {
+        ['json']?: string;
+        ['plainText']?: string;
+        ['richTextHtml']?: string;
+        ['sourceLocaleRef']?: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+      };
+    };
+    ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+  }>;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>.sourceAtRevision']: {
     ['json']?: string;
     ['plainText']?: string;
     ['richTextHtml']?: string;
     ['sourceLocaleRef']?: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
   };
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules']: Array<{
+    ['displayValue']: {
+      ['enabledTerms']: Array<string>;
+      ['json']?: string;
+      ['plainText']?: string;
+      ['revisionCount']: number;
+      ['revisionTimestamp']?: string;
+      ['richTextHtml']?: string;
+      ['sourceAtRevision']: {
+        ['json']?: string;
+        ['plainText']?: string;
+        ['richTextHtml']?: string;
+        ['sourceLocaleRef']?: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+      };
+    };
+    ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+  }>;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests']: Array<{
     ['description']: string;
     ['mockValues']: Array<{
@@ -308,6 +416,10 @@ export type SchemaTypes = {
       ['variableRef']: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'];
     }>;
   }>;
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables.id<?>']: {
+    ['id']: string;
+    ['name']: string;
+  };
   ['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>']: {
     ['localeRules']: Array<{
       ['conditionals']: Array<{
@@ -383,6 +495,26 @@ export type SchemaTypes = {
       };
     }>;
   };
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>']: {
+    ['localeRules']: Array<{
+      ['displayValue']: {
+        ['enabledTerms']: Array<string>;
+        ['json']?: string;
+        ['plainText']?: string;
+        ['revisionCount']: number;
+        ['revisionTimestamp']?: string;
+        ['richTextHtml']?: string;
+        ['sourceAtRevision']: {
+          ['json']?: string;
+          ['plainText']?: string;
+          ['richTextHtml']?: string;
+          ['sourceLocaleRef']?: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+        };
+      };
+      ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+    }>;
+    ['name']: string;
+  };
   ['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>']: {
     ['enabledTerms']: Array<string>;
     ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
@@ -397,6 +529,31 @@ export type SchemaTypes = {
       ['richTextHtml']?: string;
       ['sourceLocaleRef']?: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
     };
+  };
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>']: {
+    ['id']: string;
+    ['name']: string;
+  };
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>']: {
+    ['localeRules']: Array<{
+      ['displayValue']: {
+        ['enabledTerms']: Array<string>;
+        ['json']?: string;
+        ['plainText']?: string;
+        ['revisionCount']: number;
+        ['revisionTimestamp']?: string;
+        ['richTextHtml']?: string;
+        ['sourceAtRevision']: {
+          ['json']?: string;
+          ['plainText']?: string;
+          ['richTextHtml']?: string;
+          ['sourceLocaleRef']?: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+        };
+      };
+      ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+    }>;
+    ['name']: string;
+    ['styleClassRef']: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>'];
   };
   ['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>']: {
     ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
@@ -416,6 +573,10 @@ export type SchemaTypes = {
     ['name']: string;
     ['varType']: string;
   };
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables']: Array<{
+    ['id']: string;
+    ['name']: string;
+  }>;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.description']: {
     ['value']?: string;
   };
@@ -494,6 +655,26 @@ export type SchemaTypes = {
       };
     }>;
   }>;
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections']: Array<{
+    ['localeRules']: Array<{
+      ['displayValue']: {
+        ['enabledTerms']: Array<string>;
+        ['json']?: string;
+        ['plainText']?: string;
+        ['revisionCount']: number;
+        ['revisionTimestamp']?: string;
+        ['richTextHtml']?: string;
+        ['sourceAtRevision']: {
+          ['json']?: string;
+          ['plainText']?: string;
+          ['richTextHtml']?: string;
+          ['sourceLocaleRef']?: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+        };
+      };
+      ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+    }>;
+    ['name']: string;
+  }>;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations']: Array<{
     ['enabledTerms']: Array<string>;
     ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
@@ -508,6 +689,31 @@ export type SchemaTypes = {
       ['richTextHtml']?: string;
       ['sourceLocaleRef']?: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
     };
+  }>;
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses']: Array<{
+    ['id']: string;
+    ['name']: string;
+  }>;
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents']: Array<{
+    ['localeRules']: Array<{
+      ['displayValue']: {
+        ['enabledTerms']: Array<string>;
+        ['json']?: string;
+        ['plainText']?: string;
+        ['revisionCount']: number;
+        ['revisionTimestamp']?: string;
+        ['richTextHtml']?: string;
+        ['sourceAtRevision']: {
+          ['json']?: string;
+          ['plainText']?: string;
+          ['richTextHtml']?: string;
+          ['sourceLocaleRef']?: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+        };
+      };
+      ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+    }>;
+    ['name']: string;
+    ['styleClassRef']: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>'];
   }>;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.testCases']: Array<{
     ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
@@ -528,6 +734,11 @@ export type SchemaTypes = {
     ['varType']: string;
   }>;
   ['$(text).phraseGroups.id<?>.phrases.id<?>']: {
+    ['contentVariables']: Array<{
+      ['id']: string;
+      ['name']: string;
+    }>;
+    ['contentVariablesEnabled']: boolean;
     ['description']: {
       ['value']?: string;
     };
@@ -574,6 +785,7 @@ export type SchemaTypes = {
       ['name']: string;
       ['variableRef']: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'];
     }>;
+    ['interpolationsEnabled']: boolean;
     ['linkVariables']: Array<{
       ['linkName']: string;
       ['translations']: Array<{
@@ -607,7 +819,28 @@ export type SchemaTypes = {
         };
       }>;
     }>;
+    ['linkVariablesEnabled']: boolean;
     ['phraseKey']: string;
+    ['phraseSections']: Array<{
+      ['localeRules']: Array<{
+        ['displayValue']: {
+          ['enabledTerms']: Array<string>;
+          ['json']?: string;
+          ['plainText']?: string;
+          ['revisionCount']: number;
+          ['revisionTimestamp']?: string;
+          ['richTextHtml']?: string;
+          ['sourceAtRevision']: {
+            ['json']?: string;
+            ['plainText']?: string;
+            ['richTextHtml']?: string;
+            ['sourceLocaleRef']?: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+          };
+        };
+        ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+      }>;
+      ['name']: string;
+    }>;
     ['phraseTranslations']: Array<{
       ['enabledTerms']: Array<string>;
       ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
@@ -623,7 +856,35 @@ export type SchemaTypes = {
         ['sourceLocaleRef']?: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
       };
     }>;
+    ['phraseVariablesEnabled']: boolean;
+    ['styleClasses']: Array<{
+      ['id']: string;
+      ['name']: string;
+    }>;
+    ['styledContentEnabled']: boolean;
+    ['styledContents']: Array<{
+      ['localeRules']: Array<{
+        ['displayValue']: {
+          ['enabledTerms']: Array<string>;
+          ['json']?: string;
+          ['plainText']?: string;
+          ['revisionCount']: number;
+          ['revisionTimestamp']?: string;
+          ['richTextHtml']?: string;
+          ['sourceAtRevision']: {
+            ['json']?: string;
+            ['plainText']?: string;
+            ['richTextHtml']?: string;
+            ['sourceLocaleRef']?: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+          };
+        };
+        ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+      }>;
+      ['name']: string;
+      ['styleClassRef']: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>'];
+    }>;
     ['tags']: Array<string>;
+    ['tagsEnabled']: boolean;
     ['testCases']: Array<{
       ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
       ['localeTests']: Array<{
@@ -637,6 +898,7 @@ export type SchemaTypes = {
         }>;
       }>;
     }>;
+    ['usePhraseSections']: boolean;
     ['variables']: Array<{
       ['id']: string;
       ['name']: string;
@@ -655,6 +917,11 @@ export type SchemaTypes = {
     ['name']: string;
   };
   ['$(text).phraseGroups.id<?>.phrases']: Array<{
+    ['contentVariables']: Array<{
+      ['id']: string;
+      ['name']: string;
+    }>;
+    ['contentVariablesEnabled']: boolean;
     ['description']: {
       ['value']?: string;
     };
@@ -701,6 +968,7 @@ export type SchemaTypes = {
       ['name']: string;
       ['variableRef']: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'];
     }>;
+    ['interpolationsEnabled']: boolean;
     ['linkVariables']: Array<{
       ['linkName']: string;
       ['translations']: Array<{
@@ -734,7 +1002,28 @@ export type SchemaTypes = {
         };
       }>;
     }>;
+    ['linkVariablesEnabled']: boolean;
     ['phraseKey']: string;
+    ['phraseSections']: Array<{
+      ['localeRules']: Array<{
+        ['displayValue']: {
+          ['enabledTerms']: Array<string>;
+          ['json']?: string;
+          ['plainText']?: string;
+          ['revisionCount']: number;
+          ['revisionTimestamp']?: string;
+          ['richTextHtml']?: string;
+          ['sourceAtRevision']: {
+            ['json']?: string;
+            ['plainText']?: string;
+            ['richTextHtml']?: string;
+            ['sourceLocaleRef']?: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+          };
+        };
+        ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+      }>;
+      ['name']: string;
+    }>;
     ['phraseTranslations']: Array<{
       ['enabledTerms']: Array<string>;
       ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
@@ -750,7 +1039,35 @@ export type SchemaTypes = {
         ['sourceLocaleRef']?: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
       };
     }>;
+    ['phraseVariablesEnabled']: boolean;
+    ['styleClasses']: Array<{
+      ['id']: string;
+      ['name']: string;
+    }>;
+    ['styledContentEnabled']: boolean;
+    ['styledContents']: Array<{
+      ['localeRules']: Array<{
+        ['displayValue']: {
+          ['enabledTerms']: Array<string>;
+          ['json']?: string;
+          ['plainText']?: string;
+          ['revisionCount']: number;
+          ['revisionTimestamp']?: string;
+          ['richTextHtml']?: string;
+          ['sourceAtRevision']: {
+            ['json']?: string;
+            ['plainText']?: string;
+            ['richTextHtml']?: string;
+            ['sourceLocaleRef']?: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+          };
+        };
+        ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+      }>;
+      ['name']: string;
+      ['styleClassRef']: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>'];
+    }>;
     ['tags']: Array<string>;
+    ['tagsEnabled']: boolean;
     ['testCases']: Array<{
       ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
       ['localeTests']: Array<{
@@ -764,6 +1081,7 @@ export type SchemaTypes = {
         }>;
       }>;
     }>;
+    ['usePhraseSections']: boolean;
     ['variables']: Array<{
       ['id']: string;
       ['name']: string;
@@ -785,6 +1103,11 @@ export type SchemaTypes = {
     ['id']: string;
     ['name']: string;
     ['phrases']: Array<{
+      ['contentVariables']: Array<{
+        ['id']: string;
+        ['name']: string;
+      }>;
+      ['contentVariablesEnabled']: boolean;
       ['description']: {
         ['value']?: string;
       };
@@ -831,6 +1154,7 @@ export type SchemaTypes = {
         ['name']: string;
         ['variableRef']: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'];
       }>;
+      ['interpolationsEnabled']: boolean;
       ['linkVariables']: Array<{
         ['linkName']: string;
         ['translations']: Array<{
@@ -864,7 +1188,28 @@ export type SchemaTypes = {
           };
         }>;
       }>;
+      ['linkVariablesEnabled']: boolean;
       ['phraseKey']: string;
+      ['phraseSections']: Array<{
+        ['localeRules']: Array<{
+          ['displayValue']: {
+            ['enabledTerms']: Array<string>;
+            ['json']?: string;
+            ['plainText']?: string;
+            ['revisionCount']: number;
+            ['revisionTimestamp']?: string;
+            ['richTextHtml']?: string;
+            ['sourceAtRevision']: {
+              ['json']?: string;
+              ['plainText']?: string;
+              ['richTextHtml']?: string;
+              ['sourceLocaleRef']?: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+            };
+          };
+          ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+        }>;
+        ['name']: string;
+      }>;
       ['phraseTranslations']: Array<{
         ['enabledTerms']: Array<string>;
         ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
@@ -880,7 +1225,35 @@ export type SchemaTypes = {
           ['sourceLocaleRef']?: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
         };
       }>;
+      ['phraseVariablesEnabled']: boolean;
+      ['styleClasses']: Array<{
+        ['id']: string;
+        ['name']: string;
+      }>;
+      ['styledContentEnabled']: boolean;
+      ['styledContents']: Array<{
+        ['localeRules']: Array<{
+          ['displayValue']: {
+            ['enabledTerms']: Array<string>;
+            ['json']?: string;
+            ['plainText']?: string;
+            ['revisionCount']: number;
+            ['revisionTimestamp']?: string;
+            ['richTextHtml']?: string;
+            ['sourceAtRevision']: {
+              ['json']?: string;
+              ['plainText']?: string;
+              ['richTextHtml']?: string;
+              ['sourceLocaleRef']?: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+            };
+          };
+          ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+        }>;
+        ['name']: string;
+        ['styleClassRef']: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>'];
+      }>;
       ['tags']: Array<string>;
+      ['tagsEnabled']: boolean;
       ['testCases']: Array<{
         ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
         ['localeTests']: Array<{
@@ -894,6 +1267,7 @@ export type SchemaTypes = {
           }>;
         }>;
       }>;
+      ['usePhraseSections']: boolean;
       ['variables']: Array<{
         ['id']: string;
         ['name']: string;
@@ -923,6 +1297,11 @@ export type SchemaTypes = {
     ['id']: string;
     ['name']: string;
     ['phrases']: Array<{
+      ['contentVariables']: Array<{
+        ['id']: string;
+        ['name']: string;
+      }>;
+      ['contentVariablesEnabled']: boolean;
       ['description']: {
         ['value']?: string;
       };
@@ -969,6 +1348,7 @@ export type SchemaTypes = {
         ['name']: string;
         ['variableRef']: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'];
       }>;
+      ['interpolationsEnabled']: boolean;
       ['linkVariables']: Array<{
         ['linkName']: string;
         ['translations']: Array<{
@@ -1002,7 +1382,28 @@ export type SchemaTypes = {
           };
         }>;
       }>;
+      ['linkVariablesEnabled']: boolean;
       ['phraseKey']: string;
+      ['phraseSections']: Array<{
+        ['localeRules']: Array<{
+          ['displayValue']: {
+            ['enabledTerms']: Array<string>;
+            ['json']?: string;
+            ['plainText']?: string;
+            ['revisionCount']: number;
+            ['revisionTimestamp']?: string;
+            ['richTextHtml']?: string;
+            ['sourceAtRevision']: {
+              ['json']?: string;
+              ['plainText']?: string;
+              ['richTextHtml']?: string;
+              ['sourceLocaleRef']?: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+            };
+          };
+          ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+        }>;
+        ['name']: string;
+      }>;
       ['phraseTranslations']: Array<{
         ['enabledTerms']: Array<string>;
         ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
@@ -1018,7 +1419,35 @@ export type SchemaTypes = {
           ['sourceLocaleRef']?: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
         };
       }>;
+      ['phraseVariablesEnabled']: boolean;
+      ['styleClasses']: Array<{
+        ['id']: string;
+        ['name']: string;
+      }>;
+      ['styledContentEnabled']: boolean;
+      ['styledContents']: Array<{
+        ['localeRules']: Array<{
+          ['displayValue']: {
+            ['enabledTerms']: Array<string>;
+            ['json']?: string;
+            ['plainText']?: string;
+            ['revisionCount']: number;
+            ['revisionTimestamp']?: string;
+            ['richTextHtml']?: string;
+            ['sourceAtRevision']: {
+              ['json']?: string;
+              ['plainText']?: string;
+              ['richTextHtml']?: string;
+              ['sourceLocaleRef']?: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+            };
+          };
+          ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+        }>;
+        ['name']: string;
+        ['styleClassRef']: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>'];
+      }>;
       ['tags']: Array<string>;
+      ['tagsEnabled']: boolean;
       ['testCases']: Array<{
         ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
         ['localeTests']: Array<{
@@ -1032,6 +1461,7 @@ export type SchemaTypes = {
           }>;
         }>;
       }>;
+      ['usePhraseSections']: boolean;
       ['variables']: Array<{
         ['id']: string;
         ['name']: string;
@@ -1059,28 +1489,44 @@ export type PointerTypes = {
   ['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue.sourceAtRevision']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.defaultValue.sourceAtRevision`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue.sourceAtRevision']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkDisplayValue.sourceAtRevision`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkHrefValue.sourceAtRevision']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkHrefValue.sourceAtRevision`;
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>.displayValue.sourceAtRevision']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseSections.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.displayValue.sourceAtRevision`;
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>.displayValue.sourceAtRevision']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.styledContents.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.displayValue.sourceAtRevision`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues.variableRef<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.localeTests.description<${string}>.mockValues.variableRef<${QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>']}>`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.conditionals`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.defaultValue`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkDisplayValue`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkHrefValue']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.linkHrefValue`;
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>.displayValue']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseSections.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.displayValue`;
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>.displayValue']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.styledContents.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.displayValue`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.localeTests.description<${string}>.mockValues`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`;
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseSections.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`;
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.styledContents.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.localeTests.description<${string}>`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations`;
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseSections.name<${string}>.localeRules`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>.sourceAtRevision']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseTranslations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.sourceAtRevision`;
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.styledContents.name<${string}>.localeRules`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.localeTests`;
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables.id<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.contentVariables.id<${string}>`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>`;
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseSections.name<${string}>`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseTranslations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`;
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.styleClasses.id<${string}>`;
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.styledContents.name<${string}>`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.variables.id<${string}>`;
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.contentVariables`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.description']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.description`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables`;
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseSections`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseTranslations`;
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.styleClasses`;
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.styledContents`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.testCases']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.variables']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.variables`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>`;
@@ -1112,6 +1558,11 @@ export type SchemaRoot = {
       ['id']: string;
       ['name']: string;
       ['phrases']: Array<{
+        ['contentVariables']: Array<{
+          ['id']: string;
+          ['name']: string;
+        }>;
+        ['contentVariablesEnabled']: boolean;
         ['description']: {
           ['value']?: string;
         };
@@ -1158,6 +1609,7 @@ export type SchemaRoot = {
           ['name']: string;
           ['variableRef']: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'];
         }>;
+        ['interpolationsEnabled']: boolean;
         ['linkVariables']: Array<{
           ['linkName']: string;
           ['translations']: Array<{
@@ -1191,7 +1643,28 @@ export type SchemaRoot = {
             };
           }>;
         }>;
+        ['linkVariablesEnabled']: boolean;
         ['phraseKey']: string;
+        ['phraseSections']: Array<{
+          ['localeRules']: Array<{
+            ['displayValue']: {
+              ['enabledTerms']: Array<string>;
+              ['json']?: string;
+              ['plainText']?: string;
+              ['revisionCount']: number;
+              ['revisionTimestamp']?: string;
+              ['richTextHtml']?: string;
+              ['sourceAtRevision']: {
+                ['json']?: string;
+                ['plainText']?: string;
+                ['richTextHtml']?: string;
+                ['sourceLocaleRef']?: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+              };
+            };
+            ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+          }>;
+          ['name']: string;
+        }>;
         ['phraseTranslations']: Array<{
           ['enabledTerms']: Array<string>;
           ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
@@ -1207,7 +1680,35 @@ export type SchemaRoot = {
             ['sourceLocaleRef']?: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
           };
         }>;
+        ['phraseVariablesEnabled']: boolean;
+        ['styleClasses']: Array<{
+          ['id']: string;
+          ['name']: string;
+        }>;
+        ['styledContentEnabled']: boolean;
+        ['styledContents']: Array<{
+          ['localeRules']: Array<{
+            ['displayValue']: {
+              ['enabledTerms']: Array<string>;
+              ['json']?: string;
+              ['plainText']?: string;
+              ['revisionCount']: number;
+              ['revisionTimestamp']?: string;
+              ['richTextHtml']?: string;
+              ['sourceAtRevision']: {
+                ['json']?: string;
+                ['plainText']?: string;
+                ['richTextHtml']?: string;
+                ['sourceLocaleRef']?: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+              };
+            };
+            ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
+          }>;
+          ['name']: string;
+          ['styleClassRef']: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>'];
+        }>;
         ['tags']: Array<string>;
+        ['tagsEnabled']: boolean;
         ['testCases']: Array<{
           ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
           ['localeTests']: Array<{
@@ -1221,6 +1722,7 @@ export type SchemaRoot = {
             }>;
           }>;
         }>;
+        ['usePhraseSections']: boolean;
         ['variables']: Array<{
           ['id']: string;
           ['name']: string;
@@ -1257,32 +1759,35 @@ interface PluginState {
   compareFrom: "none" | "before" | "after";
   themeName: "light" | "dark";
   applicationState: SchemaRoot | null;
-  apiStoreInvalidity: {[key: string]: Array<string>};
+  apiStoreInvalidity: { [key: string]: Array<string> };
   conflictList: Array<string>;
   changeset: Array<string>;
   binaryUrls: {
-    upload: null|string,
-    download: null|string,
-    binaryToken: null|string,
+    upload: null | string;
+    download: null | string;
+    binaryToken: null | string;
   };
-  binaryMap: {[key: string]: string};
+  binaryMap: { [key: string]: string };
   isCopyMode: boolean;
   copyList: Array<ValueOf<QueryTypes>>;
   rootSchemaMap: TypeStruct;
-  clientStorage: object;
+  clientStorage: { [key: string]: unknown };
 }
 
 interface IFloroContext {
   commandMode: "view" | "edit" | "compare";
   compareFrom: "none" | "before" | "after";
   applicationState: SchemaRoot | null;
-  currentPluginAppState: React.MutableRefObject<SchemaRoot|null>,
+  currentPluginAppState: React.MutableRefObject<SchemaRoot | null>;
   changeset: Set<string>;
-  apiStoreInvalidity: {[key: string]: Array<string>};
-  apiStoreInvaliditySets: {[key: string]: Set<string>};
+  apiStoreInvalidity: { [key: string]: Array<string> };
+  apiStoreInvaliditySets: { [key: string]: Set<string> };
   conflictSet: Set<string>;
   hasLoaded: boolean;
-  saveState: <T extends keyof SchemaRoot>(pluginName: T, state: SchemaRoot|null) => number | null;
+  saveState: <T extends keyof SchemaRoot>(
+    pluginName: T,
+    state: SchemaRoot | null
+  ) => number | null;
   setPluginState: (state: PluginState) => void;
   saveCopyList: (copyList: Array<ValueOf<QueryTypes>>) => void;
   saveClientStorage: (_: object) => void;
@@ -1290,8 +1795,8 @@ interface IFloroContext {
   isCopyMode: boolean;
   copyList: Array<ValueOf<QueryTypes>>;
   pluginState: PluginState;
-  clientStorage: object;
-  lastEditKey: React.MutableRefObject<string|null>
+  clientStorage: { [key: string]: unknown };
+  lastEditKey: React.MutableRefObject<string | null>;
 }
 
 const FloroContext = createContext({
@@ -1313,8 +1818,8 @@ const FloroContext = createContext({
   pathKeys: [],
   rootSchemaMap: {},
   clientStorage: {},
-  lastEditKey: { current: null},
-  currentPluginAppState: { current: null},
+  lastEditKey: { current: null },
+  currentPluginAppState: { current: null },
   pluginState: {
     commandMode: "view",
     compareFrom: "none",
@@ -1342,7 +1847,12 @@ export interface Props {
 }
 
 const MAX_DATA_SIZE = 10_000;
-const sendMessagetoParent = (id: number, pluginName: string|null, command: string, data: object) => {
+const sendMessagetoParent = (
+  id: number,
+  pluginName: string | null,
+  command: string,
+  data: object
+) => {
   const dataString = JSON.stringify({ command, data });
   const totalPackets = Math.floor(dataString.length / MAX_DATA_SIZE);
   for (let i = 0; i < dataString.length; i += MAX_DATA_SIZE) {
@@ -1357,7 +1867,7 @@ const sendMessagetoParent = (id: number, pluginName: string|null, command: strin
           chunk,
           index: i / MAX_DATA_SIZE,
           totalPackets,
-          pluginName
+          pluginName,
         },
         "*"
       );
@@ -1383,30 +1893,34 @@ export const FloroProvider = (props: Props) => {
     isCopyMode: false,
     copyList: [],
     rootSchemaMap: {},
-    clientStorage: {}
+    clientStorage: {},
   });
-  const currentPluginAppState = useRef<PluginState["applicationState"]>({...pluginState.applicationState} as PluginState["applicationState"]);
-  const currentClientStorage = useRef<object>({...pluginState.clientStorage});
+  const currentPluginAppState = useRef<PluginState["applicationState"]>({
+    ...pluginState.applicationState,
+  } as PluginState["applicationState"]);
+  const currentClientStorage = useRef<object>({ ...pluginState.clientStorage });
   const rootSchemaMap = useRef(pluginState.rootSchemaMap);
   const [hasLoaded, setHasLoaded] = useState(false);
   const ids = useRef<Set<number>>(new Set());
   const [copyList, setCopyList] = useState<Array<ValueOf<QueryTypes>>>([]);
   const updateTimeout = useRef<NodeJS.Timeout>();
-  const lastEditKey = useRef<string|null>(null);
+  const lastEditKey = useRef<string | null>(null);
   const currentPluginState = useRef<PluginState>(pluginState);
 
   useEffect(() => {
     currentPluginState.current = pluginState;
-  }, [pluginState])
+  }, [pluginState]);
 
   useEffect(() => {
     setCopyList(pluginState?.copyList);
-  }, [pluginState?.isCopyMode])
+  }, [pluginState?.isCopyMode]);
 
-  const incoming = useRef<{[id: number]: {
-    data: Array<string>,
-    counter: number
-  }}>({});
+  const incoming = useRef<{
+    [id: number]: {
+      data: Array<string>;
+      counter: number;
+    };
+  }>({});
   const updateCounter = useRef(1);
 
   const commandMode = useMemo(() => {
@@ -1459,7 +1973,10 @@ export const FloroProvider = (props: Props) => {
   }, []);
 
   const saveState = useCallback(
-    <T extends keyof SchemaRoot>(pluginName: T, state: SchemaRoot|null): number | null => {
+    <T extends keyof SchemaRoot>(
+      pluginName: T,
+      state: SchemaRoot | null
+    ): number | null => {
       if (commandMode != "edit") {
         return null;
       }
@@ -1481,40 +1998,44 @@ export const FloroProvider = (props: Props) => {
     [commandMode]
   );
 
-  const saveCopyList = useCallback((copyList: Array<ValueOf<QueryTypes>>) => {
-    if (!pluginState.isCopyMode) {
-      return;
-    }
-    clearTimeout(updateTimeout.current);
-    setCopyList(copyList);
-    if (ids.current) {
-      updateCounter.current += 2;
-      const id = updateCounter.current;
-      ids.current = new Set([...Array.from(ids.current), id]);
-      setTimeout(() => {
-        sendMessagetoParent(id, null, "update-copy", copyList);
-      }, 0);
-      return id;
-    }
+  const saveCopyList = useCallback(
+    (copyList: Array<ValueOf<QueryTypes>>) => {
+      if (!pluginState.isCopyMode) {
+        return;
+      }
+      clearTimeout(updateTimeout.current);
+      setCopyList(copyList);
+      if (ids.current) {
+        updateCounter.current += 2;
+        const id = updateCounter.current;
+        ids.current = new Set([...Array.from(ids.current), id]);
+        setTimeout(() => {
+          sendMessagetoParent(id, null, "update-copy", copyList);
+        }, 0);
+        return id;
+      }
       return null;
-  }, [pluginState.isCopyMode])
+    },
+    [pluginState.isCopyMode]
+  );
 
-
-  const saveClientStorage = useCallback((clientStorage: object) => {
-    clearTimeout(updateTimeout.current);
-    if (ids.current) {
-      updateCounter.current += 2;
-      const id = updateCounter.current;
-      ids.current = new Set([...Array.from(ids.current), id]);
-      currentClientStorage.current = {...clientStorage};
-      setTimeout(() => {
-        sendMessagetoParent(id, null, "update-client-storage", clientStorage);
-      }, 0);
-      return id;
-    }
-    return null;
-  }, [commandMode, pluginState]);
-
+  const saveClientStorage = useCallback(
+    (clientStorage: object) => {
+      clearTimeout(updateTimeout.current);
+      if (ids.current) {
+        updateCounter.current += 2;
+        const id = updateCounter.current;
+        ids.current = new Set([...Array.from(ids.current), id]);
+        currentClientStorage.current = { ...clientStorage };
+        setTimeout(() => {
+          sendMessagetoParent(id, null, "update-client-storage", clientStorage);
+        }, 0);
+        return id;
+      }
+      return null;
+    },
+    [commandMode, pluginState]
+  );
 
   const clearClientStorage = useCallback(() => {
     if (ids.current) {
@@ -1522,8 +2043,8 @@ export const FloroProvider = (props: Props) => {
       window.parent?.postMessage("clear-client-storage", "*");
       setPluginState({
         ...pluginState,
-        clientStorage: {}
-      })
+        clientStorage: {},
+      });
     }
     return null;
   }, [pluginState]);
@@ -1537,7 +2058,7 @@ export const FloroProvider = (props: Props) => {
 
   const apiStoreInvalidity = useMemo(() => {
     if (!hasLoaded) {
-      return {} as {[key: string]: Array<string>};
+      return {} as { [key: string]: Array<string> };
     }
     return pluginState.apiStoreInvalidity ?? {};
   }, [pluginState.apiStoreInvalidity, hasLoaded]);
@@ -1547,11 +2068,11 @@ export const FloroProvider = (props: Props) => {
   }, [apiStoreInvalidity]);
 
   const apiStoreInvaliditySets = useMemo(() => {
-    const out: {[key: string]: Set<string>} = {};
-     for (let plugin in apiStoreInvalidity) {
+    const out: { [key: string]: Set<string> } = {};
+    for (let plugin in apiStoreInvalidity) {
       out[plugin] = new Set(apiStoreInvalidity?.[plugin] ?? []);
-     }
-     return out;
+    }
+    return out;
   }, [apiStoreInvalidityStr]);
 
   useEffect(() => {
@@ -1565,57 +2086,59 @@ export const FloroProvider = (props: Props) => {
       incoming.current[data.id].data[data.index] = data.chunk;
       incoming.current[data.id].counter++;
       if (incoming.current[data.id].counter == data.totalPackets + 1) {
-        const response: {event: string, data: unknown} = JSON.parse(
+        const response: { event: string; data: unknown } = JSON.parse(
           incoming.current[data.id].data.join("")
         );
         if (response.event == "load") {
-            const state: PluginState = response.data as PluginState;
-            rootSchemaMap.current = state.rootSchemaMap;
-            setPluginState(state);
-            currentPluginAppState.current = state.applicationState;
-            commandModeRef.current = state.commandMode;
-            setHasLoaded(true);
+          const state: PluginState = response.data as PluginState;
+          rootSchemaMap.current = state.rootSchemaMap;
+          setPluginState(state);
+          currentPluginAppState.current = state.applicationState;
+          commandModeRef.current = state.commandMode;
+          setHasLoaded(true);
         }
         if (response.event == "ack" || response.event == "update") {
-            clearTimeout(updateTimeout.current);
-              const isStale = updateCounter?.current > data.id;
-              const state: PluginState = response.data as PluginState;
-              if (currentPluginAppState.current && state.applicationState) {
-                const nextApplicationState = getNextApplicationState(
-                  currentPluginAppState.current,
-                  state.applicationState,
-                  state.rootSchemaMap,
-                  lastEditKey,
-                  isStale
-                );
-                const didChangeStorage = JSON.stringify(state.clientStorage) !=
-                    JSON.stringify(currentClientStorage.current);
-                const nextClientStorage =
-                  didChangeStorage
-                    ? state.clientStorage
-                    : { ...currentClientStorage.current };
-                const nextState = {
-                  ...state,
-                  applicationState: nextApplicationState ? nextApplicationState : currentClientStorage.current as SchemaRoot,
-                  clientStorage: nextClientStorage
-                }
-                rootSchemaMap.current = state.rootSchemaMap;
-                currentPluginAppState.current = nextState.applicationState;
-                currentClientStorage.current = {...nextClientStorage};
-                commandModeRef.current = state.commandMode;
-                if (nextState.applicationState) {
-                  setPluginState(nextState);
-                }
-                updateTimeout.current = setTimeout(() => {
-                  lastEditKey.current = null;
-                }, 200);
-              }
+          clearTimeout(updateTimeout.current);
+          const isStale = updateCounter?.current > data.id;
+          const state: PluginState = response.data as PluginState;
+          if (currentPluginAppState.current && state.applicationState) {
+            const nextApplicationState = getNextApplicationState(
+              currentPluginAppState.current,
+              state.applicationState,
+              state.rootSchemaMap,
+              lastEditKey,
+              isStale
+            );
+            const didChangeStorage =
+              JSON.stringify(state.clientStorage) !=
+              JSON.stringify(currentClientStorage.current);
+            const nextClientStorage = didChangeStorage
+              ? state.clientStorage
+              : { ...currentClientStorage.current };
+            const nextState = {
+              ...state,
+              applicationState: nextApplicationState
+                ? nextApplicationState
+                : (currentClientStorage.current as SchemaRoot),
+              clientStorage: nextClientStorage,
+            };
+            rootSchemaMap.current = state.rootSchemaMap;
+            currentPluginAppState.current = nextState.applicationState;
+            currentClientStorage.current = { ...nextClientStorage };
+            commandModeRef.current = state.commandMode;
+            if (nextState.applicationState) {
+              setPluginState(nextState);
+            }
+            updateTimeout.current = setTimeout(() => {
+              lastEditKey.current = null;
+            }, 200);
+          }
         }
         for (const id in incoming.current) {
           const idInt = parseInt(id);
           if (idInt < (updateCounter?.current ?? 0)) {
-              delete incoming.current[data.id];
-              ids.current.delete(idInt);
+            delete incoming.current[data.id];
+            ids.current.delete(idInt);
           }
         }
       }
@@ -1651,7 +2174,7 @@ export const FloroProvider = (props: Props) => {
         clearClientStorage,
         isCopyMode: pluginState.isCopyMode,
         copyList,
-        lastEditKey
+        lastEditKey,
       }}
     >
       {props.children}
@@ -1663,7 +2186,7 @@ export const useFloroContext = () => {
   return useContext(FloroContext);
 };
 
-function getPluginNameFromQuery(query: string|null): keyof SchemaRoot|null {
+function getPluginNameFromQuery(query: string | null): keyof SchemaRoot | null {
   if (query == null) {
     return null;
   }
@@ -1675,7 +2198,7 @@ function getPluginNameFromQuery(query: string|null): keyof SchemaRoot|null {
   return pluginName as keyof SchemaRoot;
 }
 
-export const useCopyApi = (pointer: ValueOf<QueryTypes>|null) => {
+export const useCopyApi = (pointer: ValueOf<QueryTypes> | null) => {
   const { copyList, saveCopyList, isCopyMode } = useFloroContext();
   const isCopied = useMemo(() => {
     if (!pointer) {
@@ -1692,23 +2215,33 @@ export const useCopyApi = (pointer: ValueOf<QueryTypes>|null) => {
       const nextList = [...copyList, pointer];
       saveCopyList(nextList);
     } else {
-      const nextList = copyList.filter(copiedPointer => copiedPointer != pointer);
+      const nextList = copyList.filter(
+        (copiedPointer) => copiedPointer != pointer
+      );
       saveCopyList(nextList);
     }
-  }, [isCopied, isCopyMode, copyList, pointer])
+  }, [isCopied, isCopyMode, copyList, pointer]);
   return {
     isCopied,
-    toggleCopy
-  }
-}
+    toggleCopy,
+  };
+};
 
-export const useClientStorageApi = <T,> (clientStorageKey: string): [T|null, (value: T|null) => void, () => void] => {
-  const { clientStorage, saveClientStorage, pluginState, setPluginState, commandMode } = useFloroContext();
+export const useClientStorageApi = <T,>(
+  clientStorageKey: string
+): [T | null, (value: T | null) => void, () => void] => {
+  const {
+    clientStorage,
+    saveClientStorage,
+    pluginState,
+    setPluginState,
+    commandMode,
+  } = useFloroContext();
 
-  const value = useMemo((): T|null => {
-    return clientStorage?.[clientStorageKey] ?? null
+  const value = useMemo((): T | null => {
+    return (clientStorage?.[clientStorageKey] as T) ?? (null as T);
   }, [clientStorageKey, clientStorage?.[clientStorageKey], commandMode]);
-  const [getter, setter] = useState<T|null>(value);
+  const [getter, setter] = useState<T | null>(value);
   const timeout = useRef<NodeJS.Timeout>();
   useEffect(() => {
     clearTimeout(timeout?.current);
@@ -1719,17 +2252,27 @@ export const useClientStorageApi = <T,> (clientStorageKey: string): [T|null, (va
     }, 300);
     return () => {
       clearTimeout(timeout.current);
-    }
-  }, [value])
-
-  const set = useCallback((value: T|null) => {
-    const next = {
-      ...clientStorage,
-      [clientStorageKey]: value
     };
-    setter(value);
-    saveClientStorage(next)
-  }, [clientStorage, clientStorageKey, pluginState, commandMode, setPluginState, saveClientStorage]);
+  }, [value]);
+
+  const set = useCallback(
+    (value: T | null) => {
+      const next = {
+        ...clientStorage,
+        [clientStorageKey]: value,
+      };
+      setter(value);
+      saveClientStorage(next);
+    },
+    [
+      clientStorage,
+      clientStorageKey,
+      pluginState,
+      commandMode,
+      setPluginState,
+      saveClientStorage,
+    ]
+  );
 
   const remove = useCallback(() => {
     const next = {
@@ -1737,12 +2280,22 @@ export const useClientStorageApi = <T,> (clientStorageKey: string): [T|null, (va
     };
     delete next[clientStorageKey];
     setter(null);
-    saveClientStorage(next)
-  }, [clientStorage, clientStorageKey, pluginState, commandMode, setPluginState, saveClientStorage]);
+    saveClientStorage(next);
+  }, [
+    clientStorage,
+    clientStorageKey,
+    pluginState,
+    commandMode,
+    setPluginState,
+    saveClientStorage,
+  ]);
 
   return [getter, set, remove];
-}
+};
 
+interface StateObject {
+  [key: string | number]: string | StateObject | number | null;
+}
 const getCounterArrowBalanance = (str: string): number => {
   let counter = 0;
   for (let i = 0; i < str.length; ++i) {
@@ -2444,11 +2997,17 @@ const getNextApplicationState = (currentApplicationState: {[key: string]: object
 export type QueryTypes = {
   ['$(text).phraseGroups.id<?>']: `$(text).phraseGroups.id<${string}>`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>`;
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables.id<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.contentVariables.id<${string}>`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.interpolationVariants.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.linkVariables.linkName<${string}>.translations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`;
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseSections.name<${string}>`;
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseSections.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.phraseTranslations.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`;
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.styleClasses.id<${string}>`;
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.styledContents.name<${string}>`;
+  ['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.styledContents.name<${string}>.localeRules.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.localeTests.description<${string}>`;
   ['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues.variableRef<?>']: `$(text).phraseGroups.id<${string}>.phrases.id<${string}>.testCases.id<${QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>.localeTests.description<${string}>.mockValues.variableRef<${QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>']}>`;
@@ -2462,9 +3021,15 @@ export function makeQueryRef(query: '$(text).phraseGroups.id<?>.phrases.id<?>.te
 export function makeQueryRef(query: '$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>', arg0: string, arg1: string, arg2: string, arg3: QueryTypes['$(text).localeSettings.locales.localeCode<?>']): QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>'];
 export function makeQueryRef(query: '$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>', arg0: string, arg1: string, arg2: string, arg3: QueryTypes['$(text).localeSettings.locales.localeCode<?>']): QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>'];
 export function makeQueryRef(query: '$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>', arg0: string, arg1: string, arg2: QueryTypes['$(text).localeSettings.locales.localeCode<?>'], arg3: string): QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>'];
+export function makeQueryRef(query: '$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>', arg0: string, arg1: string, arg2: string, arg3: QueryTypes['$(text).localeSettings.locales.localeCode<?>']): QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>'];
+export function makeQueryRef(query: '$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>', arg0: string, arg1: string, arg2: string, arg3: QueryTypes['$(text).localeSettings.locales.localeCode<?>']): QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>'];
 export function makeQueryRef(query: '$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>', arg0: string, arg1: string, arg2: string): QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>'];
 export function makeQueryRef(query: '$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>', arg0: string, arg1: string, arg2: string): QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>'];
 export function makeQueryRef(query: '$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>', arg0: string, arg1: string, arg2: QueryTypes['$(text).localeSettings.locales.localeCode<?>']): QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>'];
+export function makeQueryRef(query: '$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables.id<?>', arg0: string, arg1: string, arg2: string): QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables.id<?>'];
+export function makeQueryRef(query: '$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>', arg0: string, arg1: string, arg2: string): QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>'];
+export function makeQueryRef(query: '$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>', arg0: string, arg1: string, arg2: string): QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>'];
+export function makeQueryRef(query: '$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>', arg0: string, arg1: string, arg2: string): QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>'];
 export function makeQueryRef(query: '$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>', arg0: string, arg1: string, arg2: QueryTypes['$(text).localeSettings.locales.localeCode<?>']): QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>'];
 export function makeQueryRef(query: '$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>', arg0: string, arg1: string, arg2: string): QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'];
 export function makeQueryRef(query: '$(text).localeSettings.locales.localeCode<?>', arg0: string): QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
@@ -2472,12 +3037,15 @@ export function makeQueryRef(query: '$(text).phraseGroups.id<?>.phrases.id<?>', 
 export function makeQueryRef(query: '$(text).terms.id<?>.localizedTerms.id<?>', arg0: string, arg1: QueryTypes['$(text).localeSettings.locales.localeCode<?>']): QueryTypes['$(text).terms.id<?>.localizedTerms.id<?>'];
 export function makeQueryRef(query: '$(text).phraseGroups.id<?>', arg0: string): QueryTypes['$(text).phraseGroups.id<?>'];
 export function makeQueryRef(query: '$(text).terms.id<?>', arg0: string): QueryTypes['$(text).terms.id<?>'];
-export function makeQueryRef(query: '$(text).phraseGroups.id<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues.variableRef<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'|'$(text).terms.id<?>'|'$(text).terms.id<?>.localizedTerms.id<?>'|'$(text).localeSettings.locales.localeCode<?>', arg0: string, arg1?: string|QueryTypes['$(text).localeSettings.locales.localeCode<?>'], arg2?: string|QueryTypes['$(text).localeSettings.locales.localeCode<?>'], arg3?: QueryTypes['$(text).localeSettings.locales.localeCode<?>']|string, arg4?: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>']): QueryTypes['$(text).phraseGroups.id<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues.variableRef<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>']|QueryTypes['$(text).terms.id<?>']|QueryTypes['$(text).terms.id<?>.localizedTerms.id<?>']|QueryTypes['$(text).localeSettings.locales.localeCode<?>']|null {
+export function makeQueryRef(query: '$(text).phraseGroups.id<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables.id<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues.variableRef<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'|'$(text).terms.id<?>'|'$(text).terms.id<?>.localizedTerms.id<?>'|'$(text).localeSettings.locales.localeCode<?>', arg0: string, arg1?: string|QueryTypes['$(text).localeSettings.locales.localeCode<?>'], arg2?: string|QueryTypes['$(text).localeSettings.locales.localeCode<?>'], arg3?: QueryTypes['$(text).localeSettings.locales.localeCode<?>']|string, arg4?: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>']): QueryTypes['$(text).phraseGroups.id<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables.id<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues.variableRef<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>']|QueryTypes['$(text).terms.id<?>']|QueryTypes['$(text).terms.id<?>.localizedTerms.id<?>']|QueryTypes['$(text).localeSettings.locales.localeCode<?>']|null {
   if ((arg0 != null && arg0 != undefined) && query == '$(text).phraseGroups.id<?>') {
     return `$(text).phraseGroups.id<${arg0 as string}>`;
   }
   if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && query == '$(text).phraseGroups.id<?>.phrases.id<?>') {
     return `$(text).phraseGroups.id<${arg0 as string}>.phrases.id<${arg1 as string}>`;
+  }
+  if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && (arg2 != null && arg2 != undefined) && query == '$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables.id<?>') {
+    return `$(text).phraseGroups.id<${arg0 as string}>.phrases.id<${arg1 as string}>.contentVariables.id<${arg2 as string}>`;
   }
   if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && (arg2 != null && arg2 != undefined) && query == '$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>') {
     return `$(text).phraseGroups.id<${arg0 as string}>.phrases.id<${arg1 as string}>.interpolationVariants.name<${arg2 as string}>`;
@@ -2491,8 +3059,23 @@ export function makeQueryRef(query: '$(text).phraseGroups.id<?>'|'$(text).phrase
   if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && (arg2 != null && arg2 != undefined) && (arg3 != null && arg3 != undefined) && query == '$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>') {
     return `$(text).phraseGroups.id<${arg0 as string}>.phrases.id<${arg1 as string}>.linkVariables.linkName<${arg2 as string}>.translations.id<${arg3 as QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`;
   }
+  if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && (arg2 != null && arg2 != undefined) && query == '$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>') {
+    return `$(text).phraseGroups.id<${arg0 as string}>.phrases.id<${arg1 as string}>.phraseSections.name<${arg2 as string}>`;
+  }
+  if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && (arg2 != null && arg2 != undefined) && (arg3 != null && arg3 != undefined) && query == '$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>') {
+    return `$(text).phraseGroups.id<${arg0 as string}>.phrases.id<${arg1 as string}>.phraseSections.name<${arg2 as string}>.localeRules.id<${arg3 as QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`;
+  }
   if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && (arg2 != null && arg2 != undefined) && query == '$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>') {
     return `$(text).phraseGroups.id<${arg0 as string}>.phrases.id<${arg1 as string}>.phraseTranslations.id<${arg2 as QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`;
+  }
+  if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && (arg2 != null && arg2 != undefined) && query == '$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>') {
+    return `$(text).phraseGroups.id<${arg0 as string}>.phrases.id<${arg1 as string}>.styleClasses.id<${arg2 as string}>`;
+  }
+  if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && (arg2 != null && arg2 != undefined) && query == '$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>') {
+    return `$(text).phraseGroups.id<${arg0 as string}>.phrases.id<${arg1 as string}>.styledContents.name<${arg2 as string}>`;
+  }
+  if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && (arg2 != null && arg2 != undefined) && (arg3 != null && arg3 != undefined) && query == '$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>') {
+    return `$(text).phraseGroups.id<${arg0 as string}>.phrases.id<${arg1 as string}>.styledContents.name<${arg2 as string}>.localeRules.id<${arg3 as QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`;
   }
   if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && (arg2 != null && arg2 != undefined) && query == '$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>') {
     return `$(text).phraseGroups.id<${arg0 as string}>.phrases.id<${arg1 as string}>.testCases.id<${arg2 as QueryTypes['$(text).localeSettings.locales.localeCode<?>']}>`;
@@ -2522,9 +3105,15 @@ export function useQueryRef(query: '$(text).phraseGroups.id<?>.phrases.id<?>.tes
 export function useQueryRef(query: '$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>', arg0: string, arg1: string, arg2: string, arg3: QueryTypes['$(text).localeSettings.locales.localeCode<?>']): QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>'];
 export function useQueryRef(query: '$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>', arg0: string, arg1: string, arg2: string, arg3: QueryTypes['$(text).localeSettings.locales.localeCode<?>']): QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>'];
 export function useQueryRef(query: '$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>', arg0: string, arg1: string, arg2: QueryTypes['$(text).localeSettings.locales.localeCode<?>'], arg3: string): QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>'];
+export function useQueryRef(query: '$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>', arg0: string, arg1: string, arg2: string, arg3: QueryTypes['$(text).localeSettings.locales.localeCode<?>']): QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>'];
+export function useQueryRef(query: '$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>', arg0: string, arg1: string, arg2: string, arg3: QueryTypes['$(text).localeSettings.locales.localeCode<?>']): QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>'];
 export function useQueryRef(query: '$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>', arg0: string, arg1: string, arg2: string): QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>'];
 export function useQueryRef(query: '$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>', arg0: string, arg1: string, arg2: string): QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>'];
 export function useQueryRef(query: '$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>', arg0: string, arg1: string, arg2: QueryTypes['$(text).localeSettings.locales.localeCode<?>']): QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>'];
+export function useQueryRef(query: '$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables.id<?>', arg0: string, arg1: string, arg2: string): QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables.id<?>'];
+export function useQueryRef(query: '$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>', arg0: string, arg1: string, arg2: string): QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>'];
+export function useQueryRef(query: '$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>', arg0: string, arg1: string, arg2: string): QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>'];
+export function useQueryRef(query: '$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>', arg0: string, arg1: string, arg2: string): QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>'];
 export function useQueryRef(query: '$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>', arg0: string, arg1: string, arg2: QueryTypes['$(text).localeSettings.locales.localeCode<?>']): QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>'];
 export function useQueryRef(query: '$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>', arg0: string, arg1: string, arg2: string): QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'];
 export function useQueryRef(query: '$(text).localeSettings.locales.localeCode<?>', arg0: string): QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
@@ -2532,13 +3121,16 @@ export function useQueryRef(query: '$(text).phraseGroups.id<?>.phrases.id<?>', a
 export function useQueryRef(query: '$(text).terms.id<?>.localizedTerms.id<?>', arg0: string, arg1: QueryTypes['$(text).localeSettings.locales.localeCode<?>']): QueryTypes['$(text).terms.id<?>.localizedTerms.id<?>'];
 export function useQueryRef(query: '$(text).phraseGroups.id<?>', arg0: string): QueryTypes['$(text).phraseGroups.id<?>'];
 export function useQueryRef(query: '$(text).terms.id<?>', arg0: string): QueryTypes['$(text).terms.id<?>'];
-export function useQueryRef(query: '$(text).phraseGroups.id<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues.variableRef<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'|'$(text).terms.id<?>'|'$(text).terms.id<?>.localizedTerms.id<?>'|'$(text).localeSettings.locales.localeCode<?>', arg0: string, arg1?: string|QueryTypes['$(text).localeSettings.locales.localeCode<?>'], arg2?: string|QueryTypes['$(text).localeSettings.locales.localeCode<?>'], arg3?: QueryTypes['$(text).localeSettings.locales.localeCode<?>']|string, arg4?: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>']): QueryTypes['$(text).phraseGroups.id<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues.variableRef<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>']|QueryTypes['$(text).terms.id<?>']|QueryTypes['$(text).terms.id<?>.localizedTerms.id<?>']|QueryTypes['$(text).localeSettings.locales.localeCode<?>']|null {
+export function useQueryRef(query: '$(text).phraseGroups.id<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables.id<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues.variableRef<?>'|'$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'|'$(text).terms.id<?>'|'$(text).terms.id<?>.localizedTerms.id<?>'|'$(text).localeSettings.locales.localeCode<?>', arg0: string, arg1?: string|QueryTypes['$(text).localeSettings.locales.localeCode<?>'], arg2?: string|QueryTypes['$(text).localeSettings.locales.localeCode<?>'], arg3?: QueryTypes['$(text).localeSettings.locales.localeCode<?>']|string, arg4?: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>']): QueryTypes['$(text).phraseGroups.id<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables.id<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues.variableRef<?>']|QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>']|QueryTypes['$(text).terms.id<?>']|QueryTypes['$(text).terms.id<?>.localizedTerms.id<?>']|QueryTypes['$(text).localeSettings.locales.localeCode<?>']|null {
   return useMemo(() => {
     if (query == '$(text).phraseGroups.id<?>') {
       return makeQueryRef(query, arg0 as string);
     }
     if (query == '$(text).phraseGroups.id<?>.phrases.id<?>') {
       return makeQueryRef(query, arg0 as string, arg1 as string);
+    }
+    if (query == '$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables.id<?>') {
+      return makeQueryRef(query, arg0 as string, arg1 as string, arg2 as string);
     }
     if (query == '$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>') {
       return makeQueryRef(query, arg0 as string, arg1 as string, arg2 as string);
@@ -2552,8 +3144,23 @@ export function useQueryRef(query: '$(text).phraseGroups.id<?>'|'$(text).phraseG
     if (query == '$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>') {
       return makeQueryRef(query, arg0 as string, arg1 as string, arg2 as string, arg3 as QueryTypes['$(text).localeSettings.locales.localeCode<?>']);
     }
+    if (query == '$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>') {
+      return makeQueryRef(query, arg0 as string, arg1 as string, arg2 as string);
+    }
+    if (query == '$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>') {
+      return makeQueryRef(query, arg0 as string, arg1 as string, arg2 as string, arg3 as QueryTypes['$(text).localeSettings.locales.localeCode<?>']);
+    }
     if (query == '$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>') {
       return makeQueryRef(query, arg0 as string, arg1 as string, arg2 as QueryTypes['$(text).localeSettings.locales.localeCode<?>']);
+    }
+    if (query == '$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>') {
+      return makeQueryRef(query, arg0 as string, arg1 as string, arg2 as string);
+    }
+    if (query == '$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>') {
+      return makeQueryRef(query, arg0 as string, arg1 as string, arg2 as string);
+    }
+    if (query == '$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>') {
+      return makeQueryRef(query, arg0 as string, arg1 as string, arg2 as string, arg3 as QueryTypes['$(text).localeSettings.locales.localeCode<?>']);
     }
     if (query == '$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>') {
       return makeQueryRef(query, arg0 as string, arg1 as string, arg2 as QueryTypes['$(text).localeSettings.locales.localeCode<?>']);
@@ -2584,9 +3191,15 @@ export function extractQueryArgs(query?: QueryTypes['$(text).phraseGroups.id<?>.
 export function extractQueryArgs(query?: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>']): [string, string, string, QueryTypes['$(text).localeSettings.locales.localeCode<?>']];
 export function extractQueryArgs(query?: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>']): [string, string, string, QueryTypes['$(text).localeSettings.locales.localeCode<?>']];
 export function extractQueryArgs(query?: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>']): [string, string, QueryTypes['$(text).localeSettings.locales.localeCode<?>'], string];
+export function extractQueryArgs(query?: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>']): [string, string, string, QueryTypes['$(text).localeSettings.locales.localeCode<?>']];
+export function extractQueryArgs(query?: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>']): [string, string, string, QueryTypes['$(text).localeSettings.locales.localeCode<?>']];
 export function extractQueryArgs(query?: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>']): [string, string, string];
 export function extractQueryArgs(query?: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>']): [string, string, string];
 export function extractQueryArgs(query?: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>']): [string, string, QueryTypes['$(text).localeSettings.locales.localeCode<?>']];
+export function extractQueryArgs(query?: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables.id<?>']): [string, string, string];
+export function extractQueryArgs(query?: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>']): [string, string, string];
+export function extractQueryArgs(query?: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>']): [string, string, string];
+export function extractQueryArgs(query?: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>']): [string, string, string];
 export function extractQueryArgs(query?: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>']): [string, string, QueryTypes['$(text).localeSettings.locales.localeCode<?>']];
 export function extractQueryArgs(query?: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>']): [string, string, string];
 export function extractQueryArgs(query?: QueryTypes['$(text).localeSettings.locales.localeCode<?>']): [string];
@@ -2609,9 +3222,15 @@ export function useExtractQueryArgs(query?: QueryTypes['$(text).phraseGroups.id<
 export function useExtractQueryArgs(query?: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>']): [string, string, string, QueryTypes['$(text).localeSettings.locales.localeCode<?>']];
 export function useExtractQueryArgs(query?: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>']): [string, string, string, QueryTypes['$(text).localeSettings.locales.localeCode<?>']];
 export function useExtractQueryArgs(query?: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>']): [string, string, QueryTypes['$(text).localeSettings.locales.localeCode<?>'], string];
+export function useExtractQueryArgs(query?: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>']): [string, string, string, QueryTypes['$(text).localeSettings.locales.localeCode<?>']];
+export function useExtractQueryArgs(query?: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>']): [string, string, string, QueryTypes['$(text).localeSettings.locales.localeCode<?>']];
 export function useExtractQueryArgs(query?: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>']): [string, string, string];
 export function useExtractQueryArgs(query?: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>']): [string, string, string];
 export function useExtractQueryArgs(query?: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>']): [string, string, QueryTypes['$(text).localeSettings.locales.localeCode<?>']];
+export function useExtractQueryArgs(query?: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables.id<?>']): [string, string, string];
+export function useExtractQueryArgs(query?: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>']): [string, string, string];
+export function useExtractQueryArgs(query?: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>']): [string, string, string];
+export function useExtractQueryArgs(query?: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>']): [string, string, string];
 export function useExtractQueryArgs(query?: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>']): [string, string, QueryTypes['$(text).localeSettings.locales.localeCode<?>']];
 export function useExtractQueryArgs(query?: QueryTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>']): [string, string, string];
 export function useExtractQueryArgs(query?: QueryTypes['$(text).localeSettings.locales.localeCode<?>']): [string];
@@ -2661,28 +3280,44 @@ export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(te
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue.sourceAtRevision']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue.sourceAtRevision'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue.sourceAtRevision']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue.sourceAtRevision'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkHrefValue.sourceAtRevision']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkHrefValue.sourceAtRevision'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>.displayValue.sourceAtRevision']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>.displayValue.sourceAtRevision'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>.displayValue.sourceAtRevision']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>.displayValue.sourceAtRevision'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues.variableRef<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues.variableRef<?>'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkHrefValue']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkHrefValue'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>.displayValue']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>.displayValue'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>.displayValue']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>.displayValue'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>.sourceAtRevision']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>.sourceAtRevision'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables.id<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables.id<?>'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.description']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.description'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>'];
@@ -2718,28 +3353,44 @@ export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.i
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue.sourceAtRevision']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue.sourceAtRevision'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue.sourceAtRevision']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue.sourceAtRevision'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkHrefValue.sourceAtRevision']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkHrefValue.sourceAtRevision'];
+export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>.displayValue.sourceAtRevision']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>.displayValue.sourceAtRevision'];
+export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>.displayValue.sourceAtRevision']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>.displayValue.sourceAtRevision'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues.variableRef<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues.variableRef<?>'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkHrefValue']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkHrefValue'];
+export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>.displayValue']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>.displayValue'];
+export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>.displayValue']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>.displayValue'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>'];
+export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>'];
+export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations'];
+export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>.sourceAtRevision']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>.sourceAtRevision'];
+export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests'];
+export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables.id<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables.id<?>'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>'];
+export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>'];
+export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>'];
+export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'];
+export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.description']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.description'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables'];
+export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations'];
+export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses'];
+export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables'];
 export function useReferencedObject(query?: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>']): SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>'];
@@ -2778,28 +3429,44 @@ export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.ph
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue.sourceAtRevision'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue.sourceAtRevision']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue.sourceAtRevision']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue.sourceAtRevision'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue.sourceAtRevision'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue.sourceAtRevision']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue.sourceAtRevision']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue.sourceAtRevision'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkHrefValue.sourceAtRevision'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkHrefValue.sourceAtRevision']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkHrefValue.sourceAtRevision']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkHrefValue.sourceAtRevision'], doSave?: boolean) => void, () => void];
+export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>.displayValue.sourceAtRevision'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>.displayValue.sourceAtRevision']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>.displayValue.sourceAtRevision']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>.displayValue.sourceAtRevision'], doSave?: boolean) => void, () => void];
+export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>.displayValue.sourceAtRevision'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>.displayValue.sourceAtRevision']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>.displayValue.sourceAtRevision']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>.displayValue.sourceAtRevision'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues.variableRef<?>'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues.variableRef<?>']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues.variableRef<?>']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues.variableRef<?>'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkHrefValue'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkHrefValue']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkHrefValue']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkHrefValue'], doSave?: boolean) => void, () => void];
+export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>.displayValue'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>.displayValue']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>.displayValue']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>.displayValue'], doSave?: boolean) => void, () => void];
+export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>.displayValue'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>.displayValue']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>.displayValue']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>.displayValue'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>'], doSave?: boolean) => void, () => void];
+export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>'], doSave?: boolean) => void, () => void];
+export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations'], doSave?: boolean) => void, () => void];
+export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>.sourceAtRevision'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>.sourceAtRevision']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>.sourceAtRevision']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>.sourceAtRevision'], doSave?: boolean) => void, () => void];
+export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests'], doSave?: boolean) => void, () => void];
+export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables.id<?>'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables.id<?>']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables.id<?>']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables.id<?>'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>'], doSave?: boolean) => void, () => void];
+export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>'], doSave?: boolean) => void, () => void];
+export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>'], doSave?: boolean) => void, () => void];
+export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'], doSave?: boolean) => void, () => void];
+export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.description'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.description']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.description']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.description'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables'], doSave?: boolean) => void, () => void];
+export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations'], doSave?: boolean) => void, () => void];
+export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses'], doSave?: boolean) => void, () => void];
+export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>'], defaultData?: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>']): [SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>']|null, (t: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>'], doSave?: boolean) => void, () => void];
@@ -2879,28 +3546,44 @@ export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue.sourceAtRevision'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue.sourceAtRevision'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkHrefValue.sourceAtRevision'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>.displayValue.sourceAtRevision'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>.displayValue.sourceAtRevision'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues.variableRef<?>'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkHrefValue'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>.displayValue'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>.displayValue'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>.sourceAtRevision'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables.id<?>'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.description'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>'], fuzzy?: boolean): boolean;
@@ -2941,28 +3624,44 @@ export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phra
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue.sourceAtRevision'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue.sourceAtRevision'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkHrefValue.sourceAtRevision'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>.displayValue.sourceAtRevision'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>.displayValue.sourceAtRevision'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues.variableRef<?>'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkHrefValue'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>.displayValue'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>.displayValue'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>.sourceAtRevision'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables.id<?>'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.description'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>'], fuzzy?: boolean): boolean;
@@ -2996,28 +3695,44 @@ export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.ph
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue.sourceAtRevision'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue.sourceAtRevision'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkHrefValue.sourceAtRevision'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>.displayValue.sourceAtRevision'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>.displayValue.sourceAtRevision'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues.variableRef<?>'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkHrefValue'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>.displayValue'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>.displayValue'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>.sourceAtRevision'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables.id<?>'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.description'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>'], fuzzy?: boolean): boolean;
@@ -3051,28 +3766,44 @@ export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.p
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue.sourceAtRevision'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue.sourceAtRevision'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkHrefValue.sourceAtRevision'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>.displayValue.sourceAtRevision'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>.displayValue.sourceAtRevision'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues.variableRef<?>'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkHrefValue'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>.displayValue'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>.displayValue'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>.sourceAtRevision'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables.id<?>'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.description'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>'], fuzzy?: boolean): boolean;
@@ -3106,28 +3837,44 @@ export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.ph
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue.sourceAtRevision'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue.sourceAtRevision'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkHrefValue.sourceAtRevision'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>.displayValue.sourceAtRevision'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>.displayValue.sourceAtRevision'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues.variableRef<?>'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkHrefValue'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>.displayValue'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>.displayValue'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>.sourceAtRevision'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables.id<?>'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.description'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>'], fuzzy?: boolean): boolean;
@@ -3172,28 +3919,44 @@ export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue.sourceAtRevision'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue.sourceAtRevision'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkHrefValue.sourceAtRevision'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>.displayValue.sourceAtRevision'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>.displayValue.sourceAtRevision'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues.variableRef<?>'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkHrefValue'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>.displayValue'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>.displayValue'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>.mockValues'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests.description<?>'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>.sourceAtRevision'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables.id<?>'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.description'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>'], fuzzy?: boolean): boolean;

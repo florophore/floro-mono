@@ -65,6 +65,8 @@ export interface PhraseKeys {
     "components.privacy_policy":             ComponentsPrivacyPolicy;
     "components.released_under_mit":         ComponentsReleasedUnderMIT;
     "components.terms_of_service":           ComponentsTermsOfService;
+    "dev.anotha_one":                        DevAnothaOne;
+    "dev.my_dev_phrase":                     DevMyDevPhrase;
     "front_page.appearance":                 FrontPageAppearance;
     "front_page.download_desktop_client":    FrontPageDownloadDesktopClient;
     "front_page.get_help_and_contribute":    FrontPageGetHelpAndContribute;
@@ -82,19 +84,30 @@ export interface PhraseKeys {
 }
 
 export interface AboutBringingItAllTogetherPart1 {
-    interpolations: AboutBringingItAllTogetherPart1_Interpolations;
-    links:          AboutBringingItAllTogetherPart1_Links;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      AboutBringingItAllTogetherPart1_Variables;
+    args:             AboutBringingItAllTogetherPart1_Args;
+    contentVariables: AboutBringingItAllTogetherPart1_ContentVariables;
+    interpolations:   AboutBringingItAllTogetherPart1_Interpolations;
+    links:            AboutBringingItAllTogetherPart1_Links;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     AboutBringingItAllTogetherPart1_StyleClasses;
+    styledContents:   AboutBringingItAllTogetherPart1_StyledContents;
+    variables:        AboutBringingItAllTogetherPart1_Variables;
+}
+
+export interface AboutBringingItAllTogetherPart1_Args {
+}
+
+export interface AboutBringingItAllTogetherPart1_ContentVariables {
 }
 
 export interface AboutBringingItAllTogetherPart1_Interpolations {
 }
 
 export interface AboutBringingItAllTogetherPart1_Links {
-    "CRDT Link":      Link;
-    "Git Merge Link": Link;
+    "CRDT Link":            Link;
+    "Git Merge Link":       Link;
+    "Three Way Merge Link": Link;
 }
 
 export interface Link {
@@ -120,10 +133,12 @@ export interface Styles {
 }
 
 export enum PhraseType {
+    ContentVariable = "content-variable",
     Interpolation = "interpolation",
     Li = "li",
     Link = "link",
     Ol = "ol",
+    StyledContent = "styled-content",
     Text = "text",
     UL = "ul",
     Variable = "variable",
@@ -139,15 +154,31 @@ export enum HrefType {
     Variable = "variable",
 }
 
+export interface AboutBringingItAllTogetherPart1_StyleClasses {
+}
+
+export interface AboutBringingItAllTogetherPart1_StyledContents {
+}
+
 export interface AboutBringingItAllTogetherPart1_Variables {
 }
 
 export interface AboutBringingItAllTogetherTitle {
-    interpolations: AboutBringingItAllTogetherTitleInterpolations;
-    links:          AboutBringingItAllTogetherTitleLinks;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      AboutBringingItAllTogetherTitleVariables;
+    args:             AboutBringingItAllTogetherTitleArgs;
+    contentVariables: AboutBringingItAllTogetherTitleContentVariables;
+    interpolations:   AboutBringingItAllTogetherTitleInterpolations;
+    links:            AboutBringingItAllTogetherTitleLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     AboutBringingItAllTogetherTitleStyleClasses;
+    styledContents:   AboutBringingItAllTogetherTitleStyledContents;
+    variables:        AboutBringingItAllTogetherTitleVariables;
+}
+
+export interface AboutBringingItAllTogetherTitleArgs {
+}
+
+export interface AboutBringingItAllTogetherTitleContentVariables {
 }
 
 export interface AboutBringingItAllTogetherTitleInterpolations {
@@ -156,15 +187,31 @@ export interface AboutBringingItAllTogetherTitleInterpolations {
 export interface AboutBringingItAllTogetherTitleLinks {
 }
 
+export interface AboutBringingItAllTogetherTitleStyleClasses {
+}
+
+export interface AboutBringingItAllTogetherTitleStyledContents {
+}
+
 export interface AboutBringingItAllTogetherTitleVariables {
 }
 
 export interface AboutHowFloroWorksTitle {
-    interpolations: AboutHowFloroWorksTitleInterpolations;
-    links:          AboutHowFloroWorksTitleLinks;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      AboutHowFloroWorksTitleVariables;
+    args:             AboutHowFloroWorksTitleArgs;
+    contentVariables: AboutHowFloroWorksTitleContentVariables;
+    interpolations:   AboutHowFloroWorksTitleInterpolations;
+    links:            AboutHowFloroWorksTitleLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     AboutHowFloroWorksTitleStyleClasses;
+    styledContents:   AboutHowFloroWorksTitleStyledContents;
+    variables:        AboutHowFloroWorksTitleVariables;
+}
+
+export interface AboutHowFloroWorksTitleArgs {
+}
+
+export interface AboutHowFloroWorksTitleContentVariables {
 }
 
 export interface AboutHowFloroWorksTitleInterpolations {
@@ -173,15 +220,31 @@ export interface AboutHowFloroWorksTitleInterpolations {
 export interface AboutHowFloroWorksTitleLinks {
 }
 
+export interface AboutHowFloroWorksTitleStyleClasses {
+}
+
+export interface AboutHowFloroWorksTitleStyledContents {
+}
+
 export interface AboutHowFloroWorksTitleVariables {
 }
 
 export interface AboutHowItSAllRelated {
-    interpolations: AboutHowItSAllRelatedInterpolations;
-    links:          AboutHowItSAllRelatedLinks;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      AboutHowItSAllRelatedVariables;
+    args:             AboutHowItSAllRelatedArgs;
+    contentVariables: AboutHowItSAllRelatedContentVariables;
+    interpolations:   AboutHowItSAllRelatedInterpolations;
+    links:            AboutHowItSAllRelatedLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     AboutHowItSAllRelatedStyleClasses;
+    styledContents:   AboutHowItSAllRelatedStyledContents;
+    variables:        AboutHowItSAllRelatedVariables;
+}
+
+export interface AboutHowItSAllRelatedArgs {
+}
+
+export interface AboutHowItSAllRelatedContentVariables {
 }
 
 export interface AboutHowItSAllRelatedInterpolations {
@@ -190,15 +253,31 @@ export interface AboutHowItSAllRelatedInterpolations {
 export interface AboutHowItSAllRelatedLinks {
 }
 
+export interface AboutHowItSAllRelatedStyleClasses {
+}
+
+export interface AboutHowItSAllRelatedStyledContents {
+}
+
 export interface AboutHowItSAllRelatedVariables {
 }
 
 export interface AboutHowItIsAllRelatedBlurb1 {
-    interpolations: AboutHowItIsAllRelatedBlurb1_Interpolations;
-    links:          AboutHowItIsAllRelatedBlurb1_Links;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      AboutHowItIsAllRelatedBlurb1_Variables;
+    args:             AboutHowItIsAllRelatedBlurb1_Args;
+    contentVariables: AboutHowItIsAllRelatedBlurb1_ContentVariables;
+    interpolations:   AboutHowItIsAllRelatedBlurb1_Interpolations;
+    links:            AboutHowItIsAllRelatedBlurb1_Links;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     AboutHowItIsAllRelatedBlurb1_StyleClasses;
+    styledContents:   AboutHowItIsAllRelatedBlurb1_StyledContents;
+    variables:        AboutHowItIsAllRelatedBlurb1_Variables;
+}
+
+export interface AboutHowItIsAllRelatedBlurb1_Args {
+}
+
+export interface AboutHowItIsAllRelatedBlurb1_ContentVariables {
 }
 
 export interface AboutHowItIsAllRelatedBlurb1_Interpolations {
@@ -207,15 +286,31 @@ export interface AboutHowItIsAllRelatedBlurb1_Interpolations {
 export interface AboutHowItIsAllRelatedBlurb1_Links {
 }
 
+export interface AboutHowItIsAllRelatedBlurb1_StyleClasses {
+}
+
+export interface AboutHowItIsAllRelatedBlurb1_StyledContents {
+}
+
 export interface AboutHowItIsAllRelatedBlurb1_Variables {
 }
 
 export interface AboutHowItIsAllRelatedPart2 {
-    interpolations: AboutHowItIsAllRelatedPart2_Interpolations;
-    links:          AboutHowItIsAllRelatedPart2_Links;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      AboutHowItIsAllRelatedPart2_Variables;
+    args:             AboutHowItIsAllRelatedPart2_Args;
+    contentVariables: AboutHowItIsAllRelatedPart2_ContentVariables;
+    interpolations:   AboutHowItIsAllRelatedPart2_Interpolations;
+    links:            AboutHowItIsAllRelatedPart2_Links;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     AboutHowItIsAllRelatedPart2_StyleClasses;
+    styledContents:   AboutHowItIsAllRelatedPart2_StyledContents;
+    variables:        AboutHowItIsAllRelatedPart2_Variables;
+}
+
+export interface AboutHowItIsAllRelatedPart2_Args {
+}
+
+export interface AboutHowItIsAllRelatedPart2_ContentVariables {
 }
 
 export interface AboutHowItIsAllRelatedPart2_Interpolations {
@@ -224,15 +319,31 @@ export interface AboutHowItIsAllRelatedPart2_Interpolations {
 export interface AboutHowItIsAllRelatedPart2_Links {
 }
 
+export interface AboutHowItIsAllRelatedPart2_StyleClasses {
+}
+
+export interface AboutHowItIsAllRelatedPart2_StyledContents {
+}
+
 export interface AboutHowItIsAllRelatedPart2_Variables {
 }
 
 export interface AboutHowItWorksBlurb {
-    interpolations: AboutHowItWorksBlurbInterpolations;
-    links:          AboutHowItWorksBlurbLinks;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      AboutHowItWorksBlurbVariables;
+    args:             AboutHowItWorksBlurbArgs;
+    contentVariables: AboutHowItWorksBlurbContentVariables;
+    interpolations:   AboutHowItWorksBlurbInterpolations;
+    links:            AboutHowItWorksBlurbLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     AboutHowItWorksBlurbStyleClasses;
+    styledContents:   AboutHowItWorksBlurbStyledContents;
+    variables:        AboutHowItWorksBlurbVariables;
+}
+
+export interface AboutHowItWorksBlurbArgs {
+}
+
+export interface AboutHowItWorksBlurbContentVariables {
 }
 
 export interface AboutHowItWorksBlurbInterpolations {
@@ -242,15 +353,31 @@ export interface AboutHowItWorksBlurbLinks {
     redux: Link;
 }
 
+export interface AboutHowItWorksBlurbStyleClasses {
+}
+
+export interface AboutHowItWorksBlurbStyledContents {
+}
+
 export interface AboutHowItWorksBlurbVariables {
 }
 
 export interface AboutHowItWorksBlurbPart2 {
-    interpolations: AboutHowItWorksBlurbPart2_Interpolations;
-    links:          AboutHowItWorksBlurbPart2_Links;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      AboutHowItWorksBlurbPart2_Variables;
+    args:             AboutHowItWorksBlurbPart2_Args;
+    contentVariables: AboutHowItWorksBlurbPart2_ContentVariables;
+    interpolations:   AboutHowItWorksBlurbPart2_Interpolations;
+    links:            AboutHowItWorksBlurbPart2_Links;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     AboutHowItWorksBlurbPart2_StyleClasses;
+    styledContents:   AboutHowItWorksBlurbPart2_StyledContents;
+    variables:        AboutHowItWorksBlurbPart2_Variables;
+}
+
+export interface AboutHowItWorksBlurbPart2_Args {
+}
+
+export interface AboutHowItWorksBlurbPart2_ContentVariables {
 }
 
 export interface AboutHowItWorksBlurbPart2_Interpolations {
@@ -259,15 +386,31 @@ export interface AboutHowItWorksBlurbPart2_Interpolations {
 export interface AboutHowItWorksBlurbPart2_Links {
 }
 
+export interface AboutHowItWorksBlurbPart2_StyleClasses {
+}
+
+export interface AboutHowItWorksBlurbPart2_StyledContents {
+}
+
 export interface AboutHowItWorksBlurbPart2_Variables {
 }
 
 export interface AboutHowItWorksBlurbPart3 {
-    interpolations: AboutHowItWorksBlurbPart3_Interpolations;
-    links:          AboutHowItWorksBlurbPart3_Links;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      AboutHowItWorksBlurbPart3_Variables;
+    args:             AboutHowItWorksBlurbPart3_Args;
+    contentVariables: AboutHowItWorksBlurbPart3_ContentVariables;
+    interpolations:   AboutHowItWorksBlurbPart3_Interpolations;
+    links:            AboutHowItWorksBlurbPart3_Links;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     AboutHowItWorksBlurbPart3_StyleClasses;
+    styledContents:   AboutHowItWorksBlurbPart3_StyledContents;
+    variables:        AboutHowItWorksBlurbPart3_Variables;
+}
+
+export interface AboutHowItWorksBlurbPart3_Args {
+}
+
+export interface AboutHowItWorksBlurbPart3_ContentVariables {
 }
 
 export interface AboutHowItWorksBlurbPart3_Interpolations {
@@ -276,15 +419,31 @@ export interface AboutHowItWorksBlurbPart3_Interpolations {
 export interface AboutHowItWorksBlurbPart3_Links {
 }
 
+export interface AboutHowItWorksBlurbPart3_StyleClasses {
+}
+
+export interface AboutHowItWorksBlurbPart3_StyledContents {
+}
+
 export interface AboutHowItWorksBlurbPart3_Variables {
 }
 
 export interface AboutHowItWorksBlurbPart4 {
-    interpolations: AboutHowItWorksBlurbPart4_Interpolations;
-    links:          AboutHowItWorksBlurbPart4_Links;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      AboutHowItWorksBlurbPart4_Variables;
+    args:             AboutHowItWorksBlurbPart4_Args;
+    contentVariables: AboutHowItWorksBlurbPart4_ContentVariables;
+    interpolations:   AboutHowItWorksBlurbPart4_Interpolations;
+    links:            AboutHowItWorksBlurbPart4_Links;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     AboutHowItWorksBlurbPart4_StyleClasses;
+    styledContents:   AboutHowItWorksBlurbPart4_StyledContents;
+    variables:        AboutHowItWorksBlurbPart4_Variables;
+}
+
+export interface AboutHowItWorksBlurbPart4_Args {
+}
+
+export interface AboutHowItWorksBlurbPart4_ContentVariables {
 }
 
 export interface AboutHowItWorksBlurbPart4_Interpolations {
@@ -293,15 +452,31 @@ export interface AboutHowItWorksBlurbPart4_Interpolations {
 export interface AboutHowItWorksBlurbPart4_Links {
 }
 
+export interface AboutHowItWorksBlurbPart4_StyleClasses {
+}
+
+export interface AboutHowItWorksBlurbPart4_StyledContents {
+}
+
 export interface AboutHowItWorksBlurbPart4_Variables {
 }
 
 export interface AboutHowItsAllRelatedPart3 {
-    interpolations: AboutHowItsAllRelatedPart3_Interpolations;
-    links:          AboutHowItsAllRelatedPart3_Links;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      AboutHowItsAllRelatedPart3_Variables;
+    args:             AboutHowItsAllRelatedPart3_Args;
+    contentVariables: AboutHowItsAllRelatedPart3_ContentVariables;
+    interpolations:   AboutHowItsAllRelatedPart3_Interpolations;
+    links:            AboutHowItsAllRelatedPart3_Links;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     AboutHowItsAllRelatedPart3_StyleClasses;
+    styledContents:   AboutHowItsAllRelatedPart3_StyledContents;
+    variables:        AboutHowItsAllRelatedPart3_Variables;
+}
+
+export interface AboutHowItsAllRelatedPart3_Args {
+}
+
+export interface AboutHowItsAllRelatedPart3_ContentVariables {
 }
 
 export interface AboutHowItsAllRelatedPart3_Interpolations {
@@ -310,15 +485,31 @@ export interface AboutHowItsAllRelatedPart3_Interpolations {
 export interface AboutHowItsAllRelatedPart3_Links {
 }
 
+export interface AboutHowItsAllRelatedPart3_StyleClasses {
+}
+
+export interface AboutHowItsAllRelatedPart3_StyledContents {
+}
+
 export interface AboutHowItsAllRelatedPart3_Variables {
 }
 
 export interface AboutThingsChangeBlurb1 {
-    interpolations: AboutThingsChangeBlurb1_Interpolations;
-    links:          AboutThingsChangeBlurb1_Links;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      AboutThingsChangeBlurb1_Variables;
+    args:             AboutThingsChangeBlurb1_Args;
+    contentVariables: AboutThingsChangeBlurb1_ContentVariables;
+    interpolations:   AboutThingsChangeBlurb1_Interpolations;
+    links:            AboutThingsChangeBlurb1_Links;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     AboutThingsChangeBlurb1_StyleClasses;
+    styledContents:   AboutThingsChangeBlurb1_StyledContents;
+    variables:        AboutThingsChangeBlurb1_Variables;
+}
+
+export interface AboutThingsChangeBlurb1_Args {
+}
+
+export interface AboutThingsChangeBlurb1_ContentVariables {
 }
 
 export interface AboutThingsChangeBlurb1_Interpolations {
@@ -327,15 +518,31 @@ export interface AboutThingsChangeBlurb1_Interpolations {
 export interface AboutThingsChangeBlurb1_Links {
 }
 
+export interface AboutThingsChangeBlurb1_StyleClasses {
+}
+
+export interface AboutThingsChangeBlurb1_StyledContents {
+}
+
 export interface AboutThingsChangeBlurb1_Variables {
 }
 
 export interface AboutThingsChangeBlurb2 {
-    interpolations: AboutThingsChangeBlurb2_Interpolations;
-    links:          AboutThingsChangeBlurb2_Links;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      AboutThingsChangeBlurb2_Variables;
+    args:             AboutThingsChangeBlurb2_Args;
+    contentVariables: AboutThingsChangeBlurb2_ContentVariables;
+    interpolations:   AboutThingsChangeBlurb2_Interpolations;
+    links:            AboutThingsChangeBlurb2_Links;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     AboutThingsChangeBlurb2_StyleClasses;
+    styledContents:   AboutThingsChangeBlurb2_StyledContents;
+    variables:        AboutThingsChangeBlurb2_Variables;
+}
+
+export interface AboutThingsChangeBlurb2_Args {
+}
+
+export interface AboutThingsChangeBlurb2_ContentVariables {
 }
 
 export interface AboutThingsChangeBlurb2_Interpolations {
@@ -344,15 +551,31 @@ export interface AboutThingsChangeBlurb2_Interpolations {
 export interface AboutThingsChangeBlurb2_Links {
 }
 
+export interface AboutThingsChangeBlurb2_StyleClasses {
+}
+
+export interface AboutThingsChangeBlurb2_StyledContents {
+}
+
 export interface AboutThingsChangeBlurb2_Variables {
 }
 
 export interface AboutThingsChangeBlurb3 {
-    interpolations: AboutThingsChangeBlurb3_Interpolations;
-    links:          AboutThingsChangeBlurb3_Links;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      AboutThingsChangeBlurb3_Variables;
+    args:             AboutThingsChangeBlurb3_Args;
+    contentVariables: AboutThingsChangeBlurb3_ContentVariables;
+    interpolations:   AboutThingsChangeBlurb3_Interpolations;
+    links:            AboutThingsChangeBlurb3_Links;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     AboutThingsChangeBlurb3_StyleClasses;
+    styledContents:   AboutThingsChangeBlurb3_StyledContents;
+    variables:        AboutThingsChangeBlurb3_Variables;
+}
+
+export interface AboutThingsChangeBlurb3_Args {
+}
+
+export interface AboutThingsChangeBlurb3_ContentVariables {
 }
 
 export interface AboutThingsChangeBlurb3_Interpolations {
@@ -362,15 +585,31 @@ export interface AboutThingsChangeBlurb3_Links {
     "unit test": Link;
 }
 
+export interface AboutThingsChangeBlurb3_StyleClasses {
+}
+
+export interface AboutThingsChangeBlurb3_StyledContents {
+}
+
 export interface AboutThingsChangeBlurb3_Variables {
 }
 
 export interface AboutThingsChangeTitle {
-    interpolations: AboutThingsChangeTitleInterpolations;
-    links:          AboutThingsChangeTitleLinks;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      AboutThingsChangeTitleVariables;
+    args:             AboutThingsChangeTitleArgs;
+    contentVariables: AboutThingsChangeTitleContentVariables;
+    interpolations:   AboutThingsChangeTitleInterpolations;
+    links:            AboutThingsChangeTitleLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     AboutThingsChangeTitleStyleClasses;
+    styledContents:   AboutThingsChangeTitleStyledContents;
+    variables:        AboutThingsChangeTitleVariables;
+}
+
+export interface AboutThingsChangeTitleArgs {
+}
+
+export interface AboutThingsChangeTitleContentVariables {
 }
 
 export interface AboutThingsChangeTitleInterpolations {
@@ -379,15 +618,31 @@ export interface AboutThingsChangeTitleInterpolations {
 export interface AboutThingsChangeTitleLinks {
 }
 
+export interface AboutThingsChangeTitleStyleClasses {
+}
+
+export interface AboutThingsChangeTitleStyledContents {
+}
+
 export interface AboutThingsChangeTitleVariables {
 }
 
 export interface AboutWhatsTheDifferenceBlurb1 {
-    interpolations: AboutWhatsTheDifferenceBlurb1_Interpolations;
-    links:          AboutWhatsTheDifferenceBlurb1_Links;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      AboutWhatsTheDifferenceBlurb1_Variables;
+    args:             AboutWhatsTheDifferenceBlurb1_Args;
+    contentVariables: AboutWhatsTheDifferenceBlurb1_ContentVariables;
+    interpolations:   AboutWhatsTheDifferenceBlurb1_Interpolations;
+    links:            AboutWhatsTheDifferenceBlurb1_Links;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     AboutWhatsTheDifferenceBlurb1_StyleClasses;
+    styledContents:   AboutWhatsTheDifferenceBlurb1_StyledContents;
+    variables:        AboutWhatsTheDifferenceBlurb1_Variables;
+}
+
+export interface AboutWhatsTheDifferenceBlurb1_Args {
+}
+
+export interface AboutWhatsTheDifferenceBlurb1_ContentVariables {
 }
 
 export interface AboutWhatsTheDifferenceBlurb1_Interpolations {
@@ -398,15 +653,31 @@ export interface AboutWhatsTheDifferenceBlurb1_Links {
     "YouTube Link":               Link;
 }
 
+export interface AboutWhatsTheDifferenceBlurb1_StyleClasses {
+}
+
+export interface AboutWhatsTheDifferenceBlurb1_StyledContents {
+}
+
 export interface AboutWhatsTheDifferenceBlurb1_Variables {
 }
 
 export interface AboutWhatsTheDifferenceBlurb2 {
-    interpolations: AboutWhatsTheDifferenceBlurb2_Interpolations;
-    links:          AboutWhatsTheDifferenceBlurb2_Links;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      AboutWhatsTheDifferenceBlurb2_Variables;
+    args:             AboutWhatsTheDifferenceBlurb2_Args;
+    contentVariables: AboutWhatsTheDifferenceBlurb2_ContentVariables;
+    interpolations:   AboutWhatsTheDifferenceBlurb2_Interpolations;
+    links:            AboutWhatsTheDifferenceBlurb2_Links;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     AboutWhatsTheDifferenceBlurb2_StyleClasses;
+    styledContents:   AboutWhatsTheDifferenceBlurb2_StyledContents;
+    variables:        AboutWhatsTheDifferenceBlurb2_Variables;
+}
+
+export interface AboutWhatsTheDifferenceBlurb2_Args {
+}
+
+export interface AboutWhatsTheDifferenceBlurb2_ContentVariables {
 }
 
 export interface AboutWhatsTheDifferenceBlurb2_Interpolations {
@@ -415,15 +686,31 @@ export interface AboutWhatsTheDifferenceBlurb2_Interpolations {
 export interface AboutWhatsTheDifferenceBlurb2_Links {
 }
 
+export interface AboutWhatsTheDifferenceBlurb2_StyleClasses {
+}
+
+export interface AboutWhatsTheDifferenceBlurb2_StyledContents {
+}
+
 export interface AboutWhatsTheDifferenceBlurb2_Variables {
 }
 
 export interface AboutWhatsTheDifferencePart4 {
-    interpolations: AboutWhatsTheDifferencePart4_Interpolations;
-    links:          AboutWhatsTheDifferencePart4_Links;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      AboutWhatsTheDifferencePart4_Variables;
+    args:             AboutWhatsTheDifferencePart4_Args;
+    contentVariables: AboutWhatsTheDifferencePart4_ContentVariables;
+    interpolations:   AboutWhatsTheDifferencePart4_Interpolations;
+    links:            AboutWhatsTheDifferencePart4_Links;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     AboutWhatsTheDifferencePart4_StyleClasses;
+    styledContents:   AboutWhatsTheDifferencePart4_StyledContents;
+    variables:        AboutWhatsTheDifferencePart4_Variables;
+}
+
+export interface AboutWhatsTheDifferencePart4_Args {
+}
+
+export interface AboutWhatsTheDifferencePart4_ContentVariables {
 }
 
 export interface AboutWhatsTheDifferencePart4_Interpolations {
@@ -432,15 +719,31 @@ export interface AboutWhatsTheDifferencePart4_Interpolations {
 export interface AboutWhatsTheDifferencePart4_Links {
 }
 
+export interface AboutWhatsTheDifferencePart4_StyleClasses {
+}
+
+export interface AboutWhatsTheDifferencePart4_StyledContents {
+}
+
 export interface AboutWhatsTheDifferencePart4_Variables {
 }
 
 export interface AboutWhatsTheDifferencePart5 {
-    interpolations: AboutWhatsTheDifferencePart5_Interpolations;
-    links:          AboutWhatsTheDifferencePart5_Links;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      AboutWhatsTheDifferencePart5_Variables;
+    args:             AboutWhatsTheDifferencePart5_Args;
+    contentVariables: AboutWhatsTheDifferencePart5_ContentVariables;
+    interpolations:   AboutWhatsTheDifferencePart5_Interpolations;
+    links:            AboutWhatsTheDifferencePart5_Links;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     AboutWhatsTheDifferencePart5_StyleClasses;
+    styledContents:   AboutWhatsTheDifferencePart5_StyledContents;
+    variables:        AboutWhatsTheDifferencePart5_Variables;
+}
+
+export interface AboutWhatsTheDifferencePart5_Args {
+}
+
+export interface AboutWhatsTheDifferencePart5_ContentVariables {
 }
 
 export interface AboutWhatsTheDifferencePart5_Interpolations {
@@ -449,15 +752,31 @@ export interface AboutWhatsTheDifferencePart5_Interpolations {
 export interface AboutWhatsTheDifferencePart5_Links {
 }
 
+export interface AboutWhatsTheDifferencePart5_StyleClasses {
+}
+
+export interface AboutWhatsTheDifferencePart5_StyledContents {
+}
+
 export interface AboutWhatsTheDifferencePart5_Variables {
 }
 
 export interface AboutWhatsTheDifferencePart6 {
-    interpolations: AboutWhatsTheDifferencePart6_Interpolations;
-    links:          AboutWhatsTheDifferencePart6_Links;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      AboutWhatsTheDifferencePart6_Variables;
+    args:             AboutWhatsTheDifferencePart6_Args;
+    contentVariables: AboutWhatsTheDifferencePart6_ContentVariables;
+    interpolations:   AboutWhatsTheDifferencePart6_Interpolations;
+    links:            AboutWhatsTheDifferencePart6_Links;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     AboutWhatsTheDifferencePart6_StyleClasses;
+    styledContents:   AboutWhatsTheDifferencePart6_StyledContents;
+    variables:        AboutWhatsTheDifferencePart6_Variables;
+}
+
+export interface AboutWhatsTheDifferencePart6_Args {
+}
+
+export interface AboutWhatsTheDifferencePart6_ContentVariables {
 }
 
 export interface AboutWhatsTheDifferencePart6_Interpolations {
@@ -466,15 +785,31 @@ export interface AboutWhatsTheDifferencePart6_Interpolations {
 export interface AboutWhatsTheDifferencePart6_Links {
 }
 
+export interface AboutWhatsTheDifferencePart6_StyleClasses {
+}
+
+export interface AboutWhatsTheDifferencePart6_StyledContents {
+}
+
 export interface AboutWhatsTheDifferencePart6_Variables {
 }
 
 export interface AboutWhatsTheDifferencePart7 {
-    interpolations: AboutWhatsTheDifferencePart7_Interpolations;
-    links:          AboutWhatsTheDifferencePart7_Links;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      AboutWhatsTheDifferencePart7_Variables;
+    args:             AboutWhatsTheDifferencePart7_Args;
+    contentVariables: AboutWhatsTheDifferencePart7_ContentVariables;
+    interpolations:   AboutWhatsTheDifferencePart7_Interpolations;
+    links:            AboutWhatsTheDifferencePart7_Links;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     AboutWhatsTheDifferencePart7_StyleClasses;
+    styledContents:   AboutWhatsTheDifferencePart7_StyledContents;
+    variables:        AboutWhatsTheDifferencePart7_Variables;
+}
+
+export interface AboutWhatsTheDifferencePart7_Args {
+}
+
+export interface AboutWhatsTheDifferencePart7_ContentVariables {
 }
 
 export interface AboutWhatsTheDifferencePart7_Interpolations {
@@ -483,15 +818,31 @@ export interface AboutWhatsTheDifferencePart7_Interpolations {
 export interface AboutWhatsTheDifferencePart7_Links {
 }
 
+export interface AboutWhatsTheDifferencePart7_StyleClasses {
+}
+
+export interface AboutWhatsTheDifferencePart7_StyledContents {
+}
+
 export interface AboutWhatsTheDifferencePart7_Variables {
 }
 
 export interface AboutWhatsTheDifferenceTitle {
-    interpolations: AboutWhatsTheDifferenceTitleInterpolations;
-    links:          AboutWhatsTheDifferenceTitleLinks;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      AboutWhatsTheDifferenceTitleVariables;
+    args:             AboutWhatsTheDifferenceTitleArgs;
+    contentVariables: AboutWhatsTheDifferenceTitleContentVariables;
+    interpolations:   AboutWhatsTheDifferenceTitleInterpolations;
+    links:            AboutWhatsTheDifferenceTitleLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     AboutWhatsTheDifferenceTitleStyleClasses;
+    styledContents:   AboutWhatsTheDifferenceTitleStyledContents;
+    variables:        AboutWhatsTheDifferenceTitleVariables;
+}
+
+export interface AboutWhatsTheDifferenceTitleArgs {
+}
+
+export interface AboutWhatsTheDifferenceTitleContentVariables {
 }
 
 export interface AboutWhatsTheDifferenceTitleInterpolations {
@@ -500,15 +851,31 @@ export interface AboutWhatsTheDifferenceTitleInterpolations {
 export interface AboutWhatsTheDifferenceTitleLinks {
 }
 
+export interface AboutWhatsTheDifferenceTitleStyleClasses {
+}
+
+export interface AboutWhatsTheDifferenceTitleStyledContents {
+}
+
 export interface AboutWhatsTheDifferenceTitleVariables {
 }
 
 export interface AboutWhatsTheDifferentPart3 {
-    interpolations: AboutWhatsTheDifferentPart3_Interpolations;
-    links:          AboutWhatsTheDifferentPart3_Links;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      AboutWhatsTheDifferentPart3_Variables;
+    args:             AboutWhatsTheDifferentPart3_Args;
+    contentVariables: AboutWhatsTheDifferentPart3_ContentVariables;
+    interpolations:   AboutWhatsTheDifferentPart3_Interpolations;
+    links:            AboutWhatsTheDifferentPart3_Links;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     AboutWhatsTheDifferentPart3_StyleClasses;
+    styledContents:   AboutWhatsTheDifferentPart3_StyledContents;
+    variables:        AboutWhatsTheDifferentPart3_Variables;
+}
+
+export interface AboutWhatsTheDifferentPart3_Args {
+}
+
+export interface AboutWhatsTheDifferentPart3_ContentVariables {
 }
 
 export interface AboutWhatsTheDifferentPart3_Interpolations {
@@ -517,15 +884,31 @@ export interface AboutWhatsTheDifferentPart3_Interpolations {
 export interface AboutWhatsTheDifferentPart3_Links {
 }
 
+export interface AboutWhatsTheDifferentPart3_StyleClasses {
+}
+
+export interface AboutWhatsTheDifferentPart3_StyledContents {
+}
+
 export interface AboutWhatsTheDifferentPart3_Variables {
 }
 
 export interface ComponentsCopied {
-    interpolations: ComponentsCopiedInterpolations;
-    links:          ComponentsCopiedLinks;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      ComponentsCopiedVariables;
+    args:             ComponentsCopiedArgs;
+    contentVariables: ComponentsCopiedContentVariables;
+    interpolations:   ComponentsCopiedInterpolations;
+    links:            ComponentsCopiedLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     ComponentsCopiedStyleClasses;
+    styledContents:   ComponentsCopiedStyledContents;
+    variables:        ComponentsCopiedVariables;
+}
+
+export interface ComponentsCopiedArgs {
+}
+
+export interface ComponentsCopiedContentVariables {
 }
 
 export interface ComponentsCopiedInterpolations {
@@ -534,15 +917,31 @@ export interface ComponentsCopiedInterpolations {
 export interface ComponentsCopiedLinks {
 }
 
+export interface ComponentsCopiedStyleClasses {
+}
+
+export interface ComponentsCopiedStyledContents {
+}
+
 export interface ComponentsCopiedVariables {
 }
 
 export interface ComponentsCopyright {
-    interpolations: ComponentsCopyrightInterpolations;
-    links:          ComponentsCopyrightLinks;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      ComponentsCopyrightVariables;
+    args:             ComponentsCopyrightArgs;
+    contentVariables: ComponentsCopyrightContentVariables;
+    interpolations:   ComponentsCopyrightInterpolations;
+    links:            ComponentsCopyrightLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     ComponentsCopyrightStyleClasses;
+    styledContents:   ComponentsCopyrightStyledContents;
+    variables:        ComponentsCopyrightVariables;
+}
+
+export interface ComponentsCopyrightArgs {
+}
+
+export interface ComponentsCopyrightContentVariables {
 }
 
 export interface ComponentsCopyrightInterpolations {
@@ -551,15 +950,31 @@ export interface ComponentsCopyrightInterpolations {
 export interface ComponentsCopyrightLinks {
 }
 
+export interface ComponentsCopyrightStyleClasses {
+}
+
+export interface ComponentsCopyrightStyledContents {
+}
+
 export interface ComponentsCopyrightVariables {
 }
 
 export interface ComponentsPrivacyPolicy {
-    interpolations: ComponentsPrivacyPolicyInterpolations;
-    links:          ComponentsPrivacyPolicyLinks;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      ComponentsPrivacyPolicyVariables;
+    args:             ComponentsPrivacyPolicyArgs;
+    contentVariables: ComponentsPrivacyPolicyContentVariables;
+    interpolations:   ComponentsPrivacyPolicyInterpolations;
+    links:            ComponentsPrivacyPolicyLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     ComponentsPrivacyPolicyStyleClasses;
+    styledContents:   ComponentsPrivacyPolicyStyledContents;
+    variables:        ComponentsPrivacyPolicyVariables;
+}
+
+export interface ComponentsPrivacyPolicyArgs {
+}
+
+export interface ComponentsPrivacyPolicyContentVariables {
 }
 
 export interface ComponentsPrivacyPolicyInterpolations {
@@ -568,15 +983,31 @@ export interface ComponentsPrivacyPolicyInterpolations {
 export interface ComponentsPrivacyPolicyLinks {
 }
 
+export interface ComponentsPrivacyPolicyStyleClasses {
+}
+
+export interface ComponentsPrivacyPolicyStyledContents {
+}
+
 export interface ComponentsPrivacyPolicyVariables {
 }
 
 export interface ComponentsReleasedUnderMIT {
-    interpolations: ComponentsReleasedUnderMITInterpolations;
-    links:          ComponentsReleasedUnderMITLinks;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      ComponentsReleasedUnderMITVariables;
+    args:             ComponentsReleasedUnderMITArgs;
+    contentVariables: ComponentsReleasedUnderMITContentVariables;
+    interpolations:   ComponentsReleasedUnderMITInterpolations;
+    links:            ComponentsReleasedUnderMITLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     ComponentsReleasedUnderMITStyleClasses;
+    styledContents:   ComponentsReleasedUnderMITStyledContents;
+    variables:        ComponentsReleasedUnderMITVariables;
+}
+
+export interface ComponentsReleasedUnderMITArgs {
+}
+
+export interface ComponentsReleasedUnderMITContentVariables {
 }
 
 export interface ComponentsReleasedUnderMITInterpolations {
@@ -585,15 +1016,31 @@ export interface ComponentsReleasedUnderMITInterpolations {
 export interface ComponentsReleasedUnderMITLinks {
 }
 
+export interface ComponentsReleasedUnderMITStyleClasses {
+}
+
+export interface ComponentsReleasedUnderMITStyledContents {
+}
+
 export interface ComponentsReleasedUnderMITVariables {
 }
 
 export interface ComponentsTermsOfService {
-    interpolations: ComponentsTermsOfServiceInterpolations;
-    links:          ComponentsTermsOfServiceLinks;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      ComponentsTermsOfServiceVariables;
+    args:             ComponentsTermsOfServiceArgs;
+    contentVariables: ComponentsTermsOfServiceContentVariables;
+    interpolations:   ComponentsTermsOfServiceInterpolations;
+    links:            ComponentsTermsOfServiceLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     ComponentsTermsOfServiceStyleClasses;
+    styledContents:   ComponentsTermsOfServiceStyledContents;
+    variables:        ComponentsTermsOfServiceVariables;
+}
+
+export interface ComponentsTermsOfServiceArgs {
+}
+
+export interface ComponentsTermsOfServiceContentVariables {
 }
 
 export interface ComponentsTermsOfServiceInterpolations {
@@ -602,15 +1049,151 @@ export interface ComponentsTermsOfServiceInterpolations {
 export interface ComponentsTermsOfServiceLinks {
 }
 
+export interface ComponentsTermsOfServiceStyleClasses {
+}
+
+export interface ComponentsTermsOfServiceStyledContents {
+}
+
 export interface ComponentsTermsOfServiceVariables {
 }
 
+export interface DevAnothaOne {
+    args:             DevAnothaOneArgs;
+    contentVariables: DevAnothaOneContentVariables;
+    interpolations:   DevAnothaOneInterpolations;
+    links:            DevAnothaOneLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     DevAnothaOneStyleClasses;
+    styledContents:   DevAnothaOneStyledContents;
+    variables:        DevAnothaOneVariables;
+}
+
+export interface DevAnothaOneArgs {
+    header:    string;
+    someFloat: number;
+}
+
+export interface DevAnothaOneContentVariables {
+}
+
+export interface DevAnothaOneInterpolations {
+}
+
+export interface DevAnothaOneLinks {
+}
+
+export interface DevAnothaOneStyleClasses {
+    header: string;
+}
+
+export interface DevAnothaOneStyledContents {
+    "top header": StyledContent;
+}
+
+export interface StyledContent {
+    displayValue: TextNode[];
+    name:         string;
+    styleClass:   string;
+}
+
+export interface DevAnothaOneVariables {
+    someFloat: number;
+}
+
+export interface DevMyDevPhrase {
+    args:             DevMyDevPhraseArgs;
+    contentVariables: DevMyDevPhraseContentVariables;
+    interpolations:   DevMyDevPhraseInterpolations;
+    links:            DevMyDevPhraseLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     DevMyDevPhraseStyleClasses;
+    styledContents:   DevMyDevPhraseStyledContents;
+    variables:        DevMyDevPhraseVariables;
+}
+
+export interface DevMyDevPhraseArgs {
+    header:    string;
+    myContent: string;
+    someFloat: number;
+}
+
+export interface DevMyDevPhraseContentVariables {
+    myContent: string;
+}
+
+export interface DevMyDevPhraseInterpolations {
+    interop: Interpolation;
+}
+
+export interface Interpolation {
+    cases:   Case[];
+    default: TextNode[];
+}
+
+export interface Case {
+    operator:  Operator;
+    resultant: TextNode[];
+    subcases:  SubCase[];
+    value?:    boolean | number | string;
+    variable:  string;
+}
+
+export enum Operator {
+    Eq = "eq",
+    Gt = "gt",
+    Gte = "gte",
+    IsFractional = "is_fractional",
+    LTE = "lte",
+    Lt = "lt",
+    Neq = "neq",
+}
+
+export interface SubCase {
+    conjunction: Conjunction;
+    operator:    Operator;
+    value?:      boolean | number | string;
+    variable:    string;
+}
+
+export enum Conjunction {
+    And = "AND",
+}
+
+export interface DevMyDevPhraseLinks {
+    "my link": Link;
+}
+
+export interface DevMyDevPhraseStyleClasses {
+    header: string;
+}
+
+export interface DevMyDevPhraseStyledContents {
+    "header one": StyledContent;
+}
+
+export interface DevMyDevPhraseVariables {
+    someFloat: number;
+}
+
 export interface FrontPageAppearance {
-    interpolations: FrontPageAppearanceInterpolations;
-    links:          FrontPageAppearanceLinks;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      FrontPageAppearanceVariables;
+    args:             FrontPageAppearanceArgs;
+    contentVariables: FrontPageAppearanceContentVariables;
+    interpolations:   FrontPageAppearanceInterpolations;
+    links:            FrontPageAppearanceLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     FrontPageAppearanceStyleClasses;
+    styledContents:   FrontPageAppearanceStyledContents;
+    variables:        FrontPageAppearanceVariables;
+}
+
+export interface FrontPageAppearanceArgs {
+}
+
+export interface FrontPageAppearanceContentVariables {
 }
 
 export interface FrontPageAppearanceInterpolations {
@@ -619,15 +1202,31 @@ export interface FrontPageAppearanceInterpolations {
 export interface FrontPageAppearanceLinks {
 }
 
+export interface FrontPageAppearanceStyleClasses {
+}
+
+export interface FrontPageAppearanceStyledContents {
+}
+
 export interface FrontPageAppearanceVariables {
 }
 
 export interface FrontPageDownloadDesktopClient {
-    interpolations: FrontPageDownloadDesktopClientInterpolations;
-    links:          FrontPageDownloadDesktopClientLinks;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      FrontPageDownloadDesktopClientVariables;
+    args:             FrontPageDownloadDesktopClientArgs;
+    contentVariables: FrontPageDownloadDesktopClientContentVariables;
+    interpolations:   FrontPageDownloadDesktopClientInterpolations;
+    links:            FrontPageDownloadDesktopClientLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     FrontPageDownloadDesktopClientStyleClasses;
+    styledContents:   FrontPageDownloadDesktopClientStyledContents;
+    variables:        FrontPageDownloadDesktopClientVariables;
+}
+
+export interface FrontPageDownloadDesktopClientArgs {
+}
+
+export interface FrontPageDownloadDesktopClientContentVariables {
 }
 
 export interface FrontPageDownloadDesktopClientInterpolations {
@@ -636,15 +1235,31 @@ export interface FrontPageDownloadDesktopClientInterpolations {
 export interface FrontPageDownloadDesktopClientLinks {
 }
 
+export interface FrontPageDownloadDesktopClientStyleClasses {
+}
+
+export interface FrontPageDownloadDesktopClientStyledContents {
+}
+
 export interface FrontPageDownloadDesktopClientVariables {
 }
 
 export interface FrontPageGetHelpAndContribute {
-    interpolations: FrontPageGetHelpAndContributeInterpolations;
-    links:          FrontPageGetHelpAndContributeLinks;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      FrontPageGetHelpAndContributeVariables;
+    args:             FrontPageGetHelpAndContributeArgs;
+    contentVariables: FrontPageGetHelpAndContributeContentVariables;
+    interpolations:   FrontPageGetHelpAndContributeInterpolations;
+    links:            FrontPageGetHelpAndContributeLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     FrontPageGetHelpAndContributeStyleClasses;
+    styledContents:   FrontPageGetHelpAndContributeStyledContents;
+    variables:        FrontPageGetHelpAndContributeVariables;
+}
+
+export interface FrontPageGetHelpAndContributeArgs {
+}
+
+export interface FrontPageGetHelpAndContributeContentVariables {
 }
 
 export interface FrontPageGetHelpAndContributeInterpolations {
@@ -653,15 +1268,31 @@ export interface FrontPageGetHelpAndContributeInterpolations {
 export interface FrontPageGetHelpAndContributeLinks {
 }
 
+export interface FrontPageGetHelpAndContributeStyleClasses {
+}
+
+export interface FrontPageGetHelpAndContributeStyledContents {
+}
+
 export interface FrontPageGetHelpAndContributeVariables {
 }
 
 export interface FrontPageInstallTheCLI {
-    interpolations: FrontPageInstallTheCLIInterpolations;
-    links:          FrontPageInstallTheCLILinks;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      FrontPageInstallTheCLIVariables;
+    args:             FrontPageInstallTheCLIArgs;
+    contentVariables: FrontPageInstallTheCLIContentVariables;
+    interpolations:   FrontPageInstallTheCLIInterpolations;
+    links:            FrontPageInstallTheCLILinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     FrontPageInstallTheCLIStyleClasses;
+    styledContents:   FrontPageInstallTheCLIStyledContents;
+    variables:        FrontPageInstallTheCLIVariables;
+}
+
+export interface FrontPageInstallTheCLIArgs {
+}
+
+export interface FrontPageInstallTheCLIContentVariables {
 }
 
 export interface FrontPageInstallTheCLIInterpolations {
@@ -670,15 +1301,31 @@ export interface FrontPageInstallTheCLIInterpolations {
 export interface FrontPageInstallTheCLILinks {
 }
 
+export interface FrontPageInstallTheCLIStyleClasses {
+}
+
+export interface FrontPageInstallTheCLIStyledContents {
+}
+
 export interface FrontPageInstallTheCLIVariables {
 }
 
 export interface FrontPageNavAbout {
-    interpolations: FrontPageNavAboutInterpolations;
-    links:          FrontPageNavAboutLinks;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      FrontPageNavAboutVariables;
+    args:             FrontPageNavAboutArgs;
+    contentVariables: FrontPageNavAboutContentVariables;
+    interpolations:   FrontPageNavAboutInterpolations;
+    links:            FrontPageNavAboutLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     FrontPageNavAboutStyleClasses;
+    styledContents:   FrontPageNavAboutStyledContents;
+    variables:        FrontPageNavAboutVariables;
+}
+
+export interface FrontPageNavAboutArgs {
+}
+
+export interface FrontPageNavAboutContentVariables {
 }
 
 export interface FrontPageNavAboutInterpolations {
@@ -687,15 +1334,31 @@ export interface FrontPageNavAboutInterpolations {
 export interface FrontPageNavAboutLinks {
 }
 
+export interface FrontPageNavAboutStyleClasses {
+}
+
+export interface FrontPageNavAboutStyledContents {
+}
+
 export interface FrontPageNavAboutVariables {
 }
 
 export interface FrontPageNavConsulting {
-    interpolations: FrontPageNavConsultingInterpolations;
-    links:          FrontPageNavConsultingLinks;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      FrontPageNavConsultingVariables;
+    args:             FrontPageNavConsultingArgs;
+    contentVariables: FrontPageNavConsultingContentVariables;
+    interpolations:   FrontPageNavConsultingInterpolations;
+    links:            FrontPageNavConsultingLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     FrontPageNavConsultingStyleClasses;
+    styledContents:   FrontPageNavConsultingStyledContents;
+    variables:        FrontPageNavConsultingVariables;
+}
+
+export interface FrontPageNavConsultingArgs {
+}
+
+export interface FrontPageNavConsultingContentVariables {
 }
 
 export interface FrontPageNavConsultingInterpolations {
@@ -704,15 +1367,31 @@ export interface FrontPageNavConsultingInterpolations {
 export interface FrontPageNavConsultingLinks {
 }
 
+export interface FrontPageNavConsultingStyleClasses {
+}
+
+export interface FrontPageNavConsultingStyledContents {
+}
+
 export interface FrontPageNavConsultingVariables {
 }
 
 export interface FrontPageNavDocs {
-    interpolations: FrontPageNavDocsInterpolations;
-    links:          FrontPageNavDocsLinks;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      FrontPageNavDocsVariables;
+    args:             FrontPageNavDocsArgs;
+    contentVariables: FrontPageNavDocsContentVariables;
+    interpolations:   FrontPageNavDocsInterpolations;
+    links:            FrontPageNavDocsLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     FrontPageNavDocsStyleClasses;
+    styledContents:   FrontPageNavDocsStyledContents;
+    variables:        FrontPageNavDocsVariables;
+}
+
+export interface FrontPageNavDocsArgs {
+}
+
+export interface FrontPageNavDocsContentVariables {
 }
 
 export interface FrontPageNavDocsInterpolations {
@@ -721,15 +1400,31 @@ export interface FrontPageNavDocsInterpolations {
 export interface FrontPageNavDocsLinks {
 }
 
+export interface FrontPageNavDocsStyleClasses {
+}
+
+export interface FrontPageNavDocsStyledContents {
+}
+
 export interface FrontPageNavDocsVariables {
 }
 
 export interface FrontPageNavDownload {
-    interpolations: FrontPageNavDownloadInterpolations;
-    links:          FrontPageNavDownloadLinks;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      FrontPageNavDownloadVariables;
+    args:             FrontPageNavDownloadArgs;
+    contentVariables: FrontPageNavDownloadContentVariables;
+    interpolations:   FrontPageNavDownloadInterpolations;
+    links:            FrontPageNavDownloadLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     FrontPageNavDownloadStyleClasses;
+    styledContents:   FrontPageNavDownloadStyledContents;
+    variables:        FrontPageNavDownloadVariables;
+}
+
+export interface FrontPageNavDownloadArgs {
+}
+
+export interface FrontPageNavDownloadContentVariables {
 }
 
 export interface FrontPageNavDownloadInterpolations {
@@ -738,15 +1433,31 @@ export interface FrontPageNavDownloadInterpolations {
 export interface FrontPageNavDownloadLinks {
 }
 
+export interface FrontPageNavDownloadStyleClasses {
+}
+
+export interface FrontPageNavDownloadStyledContents {
+}
+
 export interface FrontPageNavDownloadVariables {
 }
 
 export interface FrontPageNavFOSS {
-    interpolations: FrontPageNavFOSSInterpolations;
-    links:          FrontPageNavFOSSLinks;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      FrontPageNavFOSSVariables;
+    args:             FrontPageNavFOSSArgs;
+    contentVariables: FrontPageNavFOSSContentVariables;
+    interpolations:   FrontPageNavFOSSInterpolations;
+    links:            FrontPageNavFOSSLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     FrontPageNavFOSSStyleClasses;
+    styledContents:   FrontPageNavFOSSStyledContents;
+    variables:        FrontPageNavFOSSVariables;
+}
+
+export interface FrontPageNavFOSSArgs {
+}
+
+export interface FrontPageNavFOSSContentVariables {
 }
 
 export interface FrontPageNavFOSSInterpolations {
@@ -755,15 +1466,31 @@ export interface FrontPageNavFOSSInterpolations {
 export interface FrontPageNavFOSSLinks {
 }
 
+export interface FrontPageNavFOSSStyleClasses {
+}
+
+export interface FrontPageNavFOSSStyledContents {
+}
+
 export interface FrontPageNavFOSSVariables {
 }
 
 export interface FrontPageNavPricing {
-    interpolations: FrontPageNavPricingInterpolations;
-    links:          FrontPageNavPricingLinks;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      FrontPageNavPricingVariables;
+    args:             FrontPageNavPricingArgs;
+    contentVariables: FrontPageNavPricingContentVariables;
+    interpolations:   FrontPageNavPricingInterpolations;
+    links:            FrontPageNavPricingLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     FrontPageNavPricingStyleClasses;
+    styledContents:   FrontPageNavPricingStyledContents;
+    variables:        FrontPageNavPricingVariables;
+}
+
+export interface FrontPageNavPricingArgs {
+}
+
+export interface FrontPageNavPricingContentVariables {
 }
 
 export interface FrontPageNavPricingInterpolations {
@@ -772,15 +1499,31 @@ export interface FrontPageNavPricingInterpolations {
 export interface FrontPageNavPricingLinks {
 }
 
+export interface FrontPageNavPricingStyleClasses {
+}
+
+export interface FrontPageNavPricingStyledContents {
+}
+
 export interface FrontPageNavPricingVariables {
 }
 
 export interface FrontPageSubtextOfTagLine {
-    interpolations: FrontPageSubtextOfTagLineInterpolations;
-    links:          FrontPageSubtextOfTagLineLinks;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      FrontPageSubtextOfTagLineVariables;
+    args:             FrontPageSubtextOfTagLineArgs;
+    contentVariables: FrontPageSubtextOfTagLineContentVariables;
+    interpolations:   FrontPageSubtextOfTagLineInterpolations;
+    links:            FrontPageSubtextOfTagLineLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     FrontPageSubtextOfTagLineStyleClasses;
+    styledContents:   FrontPageSubtextOfTagLineStyledContents;
+    variables:        FrontPageSubtextOfTagLineVariables;
+}
+
+export interface FrontPageSubtextOfTagLineArgs {
+}
+
+export interface FrontPageSubtextOfTagLineContentVariables {
 }
 
 export interface FrontPageSubtextOfTagLineInterpolations {
@@ -789,15 +1532,31 @@ export interface FrontPageSubtextOfTagLineInterpolations {
 export interface FrontPageSubtextOfTagLineLinks {
 }
 
+export interface FrontPageSubtextOfTagLineStyleClasses {
+}
+
+export interface FrontPageSubtextOfTagLineStyledContents {
+}
+
 export interface FrontPageSubtextOfTagLineVariables {
 }
 
 export interface FrontPageTagLine {
-    interpolations: FrontPageTagLineInterpolations;
-    links:          FrontPageTagLineLinks;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      FrontPageTagLineVariables;
+    args:             FrontPageTagLineArgs;
+    contentVariables: FrontPageTagLineContentVariables;
+    interpolations:   FrontPageTagLineInterpolations;
+    links:            FrontPageTagLineLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     FrontPageTagLineStyleClasses;
+    styledContents:   FrontPageTagLineStyledContents;
+    variables:        FrontPageTagLineVariables;
+}
+
+export interface FrontPageTagLineArgs {
+}
+
+export interface FrontPageTagLineContentVariables {
 }
 
 export interface FrontPageTagLineInterpolations {
@@ -806,15 +1565,31 @@ export interface FrontPageTagLineInterpolations {
 export interface FrontPageTagLineLinks {
 }
 
+export interface FrontPageTagLineStyleClasses {
+}
+
+export interface FrontPageTagLineStyledContents {
+}
+
 export interface FrontPageTagLineVariables {
 }
 
 export interface MainHelloWorld {
-    interpolations: MainHelloWorldInterpolations;
-    links:          MainHelloWorldLinks;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      MainHelloWorldVariables;
+    args:             MainHelloWorldArgs;
+    contentVariables: MainHelloWorldContentVariables;
+    interpolations:   MainHelloWorldInterpolations;
+    links:            MainHelloWorldLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     MainHelloWorldStyleClasses;
+    styledContents:   MainHelloWorldStyledContents;
+    variables:        MainHelloWorldVariables;
+}
+
+export interface MainHelloWorldArgs {
+}
+
+export interface MainHelloWorldContentVariables {
 }
 
 export interface MainHelloWorldInterpolations {
@@ -823,21 +1598,43 @@ export interface MainHelloWorldInterpolations {
 export interface MainHelloWorldLinks {
 }
 
+export interface MainHelloWorldStyleClasses {
+}
+
+export interface MainHelloWorldStyledContents {
+}
+
 export interface MainHelloWorldVariables {
 }
 
 export interface MetaTagsAbout {
-    interpolations: MetaTagsAboutInterpolations;
-    links:          MetaTagsAboutLinks;
-    phrase:         TextNode[];
-    phraseKey:      string;
-    variables:      MetaTagsAboutVariables;
+    args:             MetaTagsAboutArgs;
+    contentVariables: MetaTagsAboutContentVariables;
+    interpolations:   MetaTagsAboutInterpolations;
+    links:            MetaTagsAboutLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     MetaTagsAboutStyleClasses;
+    styledContents:   MetaTagsAboutStyledContents;
+    variables:        MetaTagsAboutVariables;
+}
+
+export interface MetaTagsAboutArgs {
+}
+
+export interface MetaTagsAboutContentVariables {
 }
 
 export interface MetaTagsAboutInterpolations {
 }
 
 export interface MetaTagsAboutLinks {
+}
+
+export interface MetaTagsAboutStyleClasses {
+}
+
+export interface MetaTagsAboutStyledContents {
 }
 
 export interface MetaTagsAboutVariables {
@@ -872,6 +1669,8 @@ export interface PhraseKeyDebugInfo {
     "components.privacy_policy":             DebugInfo;
     "components.released_under_mit":         DebugInfo;
     "components.terms_of_service":           DebugInfo;
+    "dev.anotha_one":                        DebugInfo;
+    "dev.my_dev_phrase":                     DebugInfo;
     "front_page.appearance":                 DebugInfo;
     "front_page.download_desktop_client":    DebugInfo;
     "front_page.get_help_and_contribute":    DebugInfo;
@@ -904,6 +1703,8 @@ export class Convert {
     }
 }
 
+// START INLINE CODE
+
 const isStatementTrue = <T>(
   value: T,
   comparisonValue: T,
@@ -935,34 +1736,45 @@ const isStatementTrue = <T>(
   return false;
 };
 
-export const getPhraseValue = <
-T extends keyof Locales,
-K extends keyof PhraseKeys,
-A extends PhraseKeys[K]["variables"]
-> (
+export const getPhraseValue = <C, T extends keyof Locales, K extends keyof PhraseKeys>(
   localizedPhrases: LocalizedPhrases,
   localeKey: T,
   phraseKey: K,
-  args: A
-): StaticNode[] => {
+  args: {
+    [KV in keyof PhraseKeys[K]["variables"]]: PhraseKeys[K]["variables"][KV];
+  } &
+    {
+      [KCV in keyof PhraseKeys[K]["contentVariables"]]: C;
+    } &
+    {
+      [KCS in keyof PhraseKeys[K]["styleClasses"]]: (
+        content: C,
+        styledContentName: keyof PhraseKeys[K]["styledContents"] & string
+      ) => C;
+    }
+): StaticNode<C>[] => {
   const locale = localizedPhrases.locales[localeKey];
   const phrase =
-    localizedPhrases.localizedPhraseKeys[locale?.localeCode as string][phraseKey];
+    localizedPhrases.localizedPhraseKeys[locale?.localeCode as string][
+      phraseKey
+    ];
 
   const interpolationMap = {} as {
-    [k: string]: StaticNode[];
+    [k: string]: StaticNode<C>[];
   };
   for (const interpolationKey in phrase.interpolations) {
-    const interpolation: Interpolation = phrase.interpolations[interpolationKey];
+    const interpolation: Interpolation =
+      phrase.interpolations[interpolationKey];
     interpolationMap[interpolationKey] = getInterpolationValue(
       interpolation,
       args
-    ) as StaticNode[];
+    ) as StaticNode<C>[];
   }
   const hrefMap = {} as {
-    [k: string]: string;
+    [key in keyof PhraseKeys[K]["links"] & string]: string;
   };
-  for (const linkKey in phrase.links) {
+  for (const k in phrase.links) {
+    const linkKey = k as keyof PhraseKeys[K]["links"] & string;
     const link: {
       linkName: string;
       href: PlainTextNode[];
@@ -971,7 +1783,7 @@ A extends PhraseKeys[K]["variables"]
     hrefMap[linkKey] = getStaticText(link.href, args);
   }
   const linkMap = {} as {
-    [k: string]: StaticNode[];
+    [k: string]: StaticNode<C>[];
   };
   for (const linkKey in phrase.links) {
     const link: {
@@ -985,18 +1797,41 @@ A extends PhraseKeys[K]["variables"]
       hrefMap,
       {},
       interpolationMap
-    ) as StaticNode[];
+    ) as StaticNode<C>[];
+  }
+
+  const styledContentMap = {} as {
+    [k: string]: {
+      styleClass: keyof PhraseKeys[K]["styleClasses"];
+      nodes: StaticNode<C>[];
+    };
+  };
+  for (const styledContentKey in phrase.styledContents) {
+    const styledContent: StyledContent =
+      phrase.styledContents[styledContentKey];
+    styledContentMap[styledContentKey] = {
+      styleClass:
+        styledContent.styleClass as keyof PhraseKeys[K]["styleClasses"],
+      nodes: getStaticNodes(
+        styledContent.displayValue,
+        args,
+        hrefMap,
+        {},
+        interpolationMap
+      ) as StaticNode<C>[],
+    };
   }
   return getStaticNodes(
     phrase.phrase,
     args,
     hrefMap,
     linkMap,
-    interpolationMap
-  ) as StaticNode[];
-}
+    interpolationMap,
+    styledContentMap
+  ) as StaticNode<C>[];
+};
 
-export interface StaticTextNode {
+export interface StaticTextNode<C> {
   type: "text";
   content: string;
   styles: {
@@ -1007,10 +1842,27 @@ export interface StaticTextNode {
     isSuperscript: boolean;
     isSubscript: boolean;
   }
-  children: StaticNode[]
+  children: StaticNode<C>[]
 }
 
-export interface StaticLinkNode {
+export interface StaticStyledTextNode<C, N extends string> {
+  type: "styled-content";
+  styleClass: string;
+  styledContentName: N;
+  styleClassFunction: (content: C, styledContentName: N) => C;
+  content: string;
+  styles: {
+    isBold: boolean;
+    isItalic: boolean;
+    isUnderlined: boolean;
+    isStrikethrough: boolean;
+    isSuperscript: boolean;
+    isSubscript: boolean;
+  }
+  children: StaticNode<C>[]
+}
+
+export interface StaticLinkNode<C> {
   type: "link";
   linkName: string;
   href: string;
@@ -1022,134 +1874,214 @@ export interface StaticLinkNode {
     isSuperscript: boolean;
     isSubscript: boolean;
   }
-  children: StaticNode[]
+  children: StaticNode<C>[]
 }
 
-export interface StaticUnOrderedListNode {
+export interface StaticUnOrderedListNode<C> {
   type: "ul";
-  children: StaticListNode[]
+  children: StaticListNode<C>[]
 }
 
-export interface StaticOrderedListNode {
+export interface StaticOrderedListNode<C> {
   type: "ol";
-  children: StaticListNode[]
+  children: StaticListNode<C>[]
 }
 
-export interface StaticListNode {
+export interface StaticListNode<C> {
   type: "li";
-  children: StaticNode[]
+  children: StaticNode<C>[]
 }
 
-export type StaticNode = StaticTextNode | StaticLinkNode | StaticUnOrderedListNode | StaticOrderedListNode;
+export interface StaticContentVariable<C> {
+  type: "content";
+  data: C,
+}
 
-const getStaticNodes = <
-  K extends keyof PhraseKeys,
-  A extends PhraseKeys[K]["variables"]
->(
+export type StaticNode<C> = StaticTextNode<C> | StaticLinkNode<C> | StaticUnOrderedListNode<C> | StaticOrderedListNode<C> | StaticContentVariable<C>;
+
+const getStaticNodes = <C, K extends keyof PhraseKeys>(
   textNodes: TextNode[],
-  variableMap: A,
-  hrefMap: { [key in PhraseKeys[K]["links"] as string]: string } = {} as {
-    [key in PhraseKeys[K]["links"] as string]: string;
+  argMap: {
+    [KV in keyof PhraseKeys[K]["variables"]]: PhraseKeys[K]["variables"][KV];
+  } &
+    {
+      [KCV in keyof PhraseKeys[K]["contentVariables"]]: C;
+    } &
+    {
+      [KCS in keyof PhraseKeys[K]["styleClasses"]]: (
+        content: C,
+        styledContentName: keyof PhraseKeys[K]["styledContents"] & string
+      ) => C;
+    },
+  hrefMap: { [key in keyof PhraseKeys[K]["links"] as string]: string } = {} as {
+    [key in keyof PhraseKeys[K]["links"] as string]: string;
   },
-  linkMap: { [key in PhraseKeys[K]["links"] as string]: StaticNode[] } = {} as {
-    [key in PhraseKeys[K]["links"] as string]: StaticNode[];
+  linkMap: {
+    [key in keyof PhraseKeys[K]["links"] as string]: StaticNode<C>[];
+  } = {} as {
+    [key in keyof PhraseKeys[K]["links"] as string]: StaticNode<C>[];
   },
   interpolationsMap: {
-    [key in PhraseKeys[K]["interpolations"] as string]: StaticNode[];
-  } = {} as { [key in PhraseKeys[K]["interpolations"] as string]: StaticNode[] }
-): (StaticNode | StaticListNode)[] => {
+    [key in keyof PhraseKeys[K]["interpolations"] as string]: StaticNode<C>[];
+  } = {} as {
+    [key in keyof PhraseKeys[K]["interpolations"] as string]: StaticNode<C>[];
+  },
+  styledContentsMap: {
+    [key in keyof PhraseKeys[K]["styledContents"] as string]: {
+        nodes: StaticNode<C>[],
+        styleClass: keyof PhraseKeys[K]["styleClasses"]
+    };
+  } = {} as {
+    [key in keyof PhraseKeys[K]["styledContents"] as string]: {
+        nodes: StaticNode<C>[],
+        styleClass: keyof PhraseKeys[K]["styleClasses"]
+    };
+  }
+): (StaticNode<C> | StaticListNode<C>|StaticContentVariable<C>|StaticStyledTextNode<C, keyof PhraseKeys[K]["styledContents"]&string>)[] => {
   return textNodes.map((textNode) => {
     const children = getStaticNodes(
       textNode.children,
-      variableMap,
+      argMap,
       hrefMap,
       linkMap,
-      interpolationsMap
+      interpolationsMap,
+      styledContentsMap
     );
-    if (textNode.type == "variable") {
+    if (textNode.type == PhraseType.Variable) {
       const variableName = textNode.content.substring(
         1,
         textNode.content.length - 1
-      ) as keyof PhraseKeys[K]["variables"]&string;
-      const variableValue = variableMap?.[variableName]?.toString?.() ?? "" as string;
+      ) as keyof PhraseKeys[K]["variables"] & string;
+      const variableValue =
+        argMap?.[variableName]?.toString?.() ?? ("" as string);
       return {
         type: "text",
         content: variableValue,
         styles: textNode.styles,
         children: [],
-      } as StaticTextNode;
+      } as StaticTextNode<C>;
     }
-    if (textNode.type == "interpolation") {
+    if (textNode.type == PhraseType.ContentVariable) {
+      const contentVariableName = textNode.content.substring(
+        1,
+        textNode.content.length - 1
+      ) as keyof PhraseKeys[K]["contentVariables"] & string;
+      const contentVariableValue: C = argMap?.[contentVariableName];
+      return {
+        type: "content",
+        data: contentVariableValue,
+      } as StaticContentVariable<C>;
+    }
+    if (textNode.type == PhraseType.StyledContent) {
+      const styledContentName = textNode.content.substring(
+        1,
+        textNode.content.length - 1
+      ) as keyof PhraseKeys[K]["styledContents"] & string;
+      const styledContentChildren = styledContentsMap?.[styledContentName] as {
+        nodes: StaticNode<C>[],
+        styleClass: keyof PhraseKeys[K]["styleClasses"]&string
+      };
+      const styleClassFunction =
+        argMap?.[
+          styledContentChildren?.styleClass as keyof PhraseKeys[K]["styleClasses"] &
+            string
+        ];
+      return {
+        type: "styled-content",
+        styleClass: styledContentChildren?.styleClass,
+        styledContentName,
+        styleClassFunction,
+        content: "",
+        styles: textNode.styles,
+        children: styledContentChildren.nodes,
+      } as StaticStyledTextNode<C, keyof PhraseKeys[K]["styledContents"] & string>;
+    }
+
+    if (textNode.type == PhraseType.Interpolation) {
       const interpolationName = textNode.content.substring(
         1,
         textNode.content.length - 1
-      ) as keyof PhraseKeys[K]["interpolations"]&string;
-      const interpolationChildren = interpolationsMap[interpolationName] as StaticNode[];
+      ) as keyof PhraseKeys[K]["interpolations"] & string;
+      const interpolationChildren = interpolationsMap[
+        interpolationName
+      ] as StaticNode<C>[];
       return {
         type: "text",
-        content: '',
+        content: "",
         styles: textNode.styles,
         children: interpolationChildren,
-      } as StaticTextNode;
+      } as StaticTextNode<C>;
     }
-    if (textNode.type == "link") {
+    if (textNode.type == PhraseType.Link) {
       const linkName = textNode.content.substring(
         1,
         textNode.content.length - 1
-      ) as keyof PhraseKeys[K]["links"]&string;
-      const linkChildren = linkMap[linkName] as StaticNode[];
+      ) as keyof PhraseKeys[K]["links"] & string;
+      const linkChildren = linkMap[linkName] as StaticNode<C>[];
       return {
         type: "link",
         linkName,
         href: hrefMap[linkName],
         styles: textNode.styles,
         children: linkChildren,
-      } as StaticLinkNode;
+      } as StaticLinkNode<C>;
     }
-    if (textNode.type == "li") {
+    if (textNode.type == PhraseType.Li) {
       return {
         type: "li",
         children,
-      } as StaticListNode;
+      } as StaticListNode<C>;
     }
-    if (textNode.type == "ol") {
-      const listChildren = children as unknown as StaticListNode[];
+    if (textNode.type == PhraseType.Ol) {
+      const listChildren = children as unknown as StaticListNode<C>[];
       return {
         type: "ol",
         children: listChildren,
-      } as StaticOrderedListNode;
+      } as StaticOrderedListNode<C>;
     }
-    if (textNode.type == "ul") {
-      const listChildren = children as unknown as StaticListNode[];
+    if (textNode.type == PhraseType.UL) {
+      const listChildren = children as unknown as StaticListNode<C>[];
       return {
         type: "ul",
         children: listChildren,
-      } as StaticUnOrderedListNode;
+      } as StaticUnOrderedListNode<C>;
     }
     return {
       type: "text",
       content: textNode.content,
       styles: textNode.styles,
       children,
-    } as StaticTextNode;
+    } as StaticTextNode<C>;
   });
 };
 
 const getInterpolationValue = <
+C,
 K extends keyof PhraseKeys,
-A extends PhraseKeys[K]["variables"],
-V extends keyof A,
-> (interpolation: Interpolation, args: A) => {
+> (
+    interpolation: Interpolation,
+    args: {
+        [KV in keyof PhraseKeys[K]["variables"]]: PhraseKeys[K]["variables"][KV];
+    }&{
+        [KCV in keyof PhraseKeys[K]["contentVariables"]]: C;
+    }&{
+      [KCS in keyof PhraseKeys[K]["styleClasses"]]: (
+        content: C,
+        styledContentName: keyof PhraseKeys[K]["styledContents"] & string
+      ) => C;
+    }
+
+     ) => {
   for (const caseStatement of interpolation.cases) {
-    const argValue: A[V]|string|number|boolean = args[caseStatement.variable];
-    const comparatorValue = caseStatement.value as A[V];
+    const argValue: PhraseKeys[K]["variables"][keyof PhraseKeys[K]["variables"]]|string|number|boolean = args[caseStatement.variable];
+    const comparatorValue = caseStatement.value as PhraseKeys[K]["variables"][keyof PhraseKeys[K]["variables"]];
     const operator = caseStatement.operator as "eq" | "neq" | "gt" | "gte" | "lt" | "lte" | "is_fractional";
     if (!isStatementTrue(argValue, comparatorValue, operator)) {
       continue;
     }
     let allSubcasesAreTrue = true;
     for (const subcase of caseStatement.subcases) {
-      const comparatorValue = subcase.value as A[V];
+      const comparatorValue = subcase.value as PhraseKeys[K]["variables"][keyof PhraseKeys[K]["variables"]];
       if (!isStatementTrue(argValue, comparatorValue, operator)) {
         allSubcasesAreTrue = false;
         break;
@@ -1193,16 +2125,3 @@ export const getDebugInfo = <
 };
 
 export default textJSON as unknown as LocalizedPhrases;
-
-interface Interpolation {
-  cases: Array<{
-    resultant: TextNode[];
-    variable: string;
-    value: string | number | boolean;
-    operator: string;
-    subcases: Array<{
-      value: string | number | boolean;
-    }>;
-  }>;
-  default: [];
-}

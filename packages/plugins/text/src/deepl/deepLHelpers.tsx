@@ -26,15 +26,24 @@ export const sendTranslationRequest = async (
     xhr.responseType = "json";
     xhr.open("POST", "https://floro.io/proxy/deepL/translate/richText");
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    let didError = false;
     xhr.onerror = function (e) {
-      reject(e);
+        if (didError) {
+            return;
+        }
+        didError = true;
+        reject(e);
     };
     xhr.onreadystatechange = function (e) {
+        if (didError) {
+            return;
+        }
       if (xhr.readyState === XMLHttpRequest.DONE) {
         const status = xhr.status;
-        if (status === 0 || (status >= 200 && status < 400)) {
+        if ((status >= 200 && status < 400)) {
           resolve(xhr.response);
         } else {
+          didError = true;
           reject(e);
         }
       }

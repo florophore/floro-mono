@@ -38,7 +38,7 @@ const TermList = (props: Props) => {
   const [terms, setTerms] =
     useFloroState("$(text).terms") ?? [];
   const [isDragging, setIsDragging] = useState(false);
-  const { applicationState, changeset, conflictSet } = useFloroContext();
+  const { applicationState, commandMode } = useFloroContext();
 
   const onDragStart = useCallback(() => {
     setIsDragging(true);
@@ -154,6 +154,14 @@ const TermList = (props: Props) => {
   ]);
 
   const hasIndications = useHasIndication("$(text).terms");
+
+  if (commandMode == "compare" && !hasIndications) {
+    return null;
+  }
+
+  if (commandMode != "edit" && terms?.length == 0) {
+    return null;
+  }
 
   return (
     <Container>

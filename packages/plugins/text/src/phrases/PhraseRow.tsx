@@ -131,6 +131,7 @@ const PhraseRow = (props: Props) => {
   const [selectedLocaleCode, setSelectedLocaleCode] = useState(props.selectedTopLevelLocale);
   const localeSettings = useReferencedObject("$(text).localeSettings");
   const [phrase, setPhrase] = useFloroState(props.phraseRef);
+  const [showEnabledFeatures, setShowEnabledFeatures] = useState(false);
   const [description, setDescription] = useFloroState(`${props.phraseRef}.description`);
   const selectedLocale = useMemo(
     () =>
@@ -253,11 +254,27 @@ const PhraseRow = (props: Props) => {
       "$(text).localeSettings.locales.localeCode<?>",
       selectedLocale?.localeCode ?? props.selectedTopLevelLocale as string
     );
-    const phraseTranslation = phrase?.phraseTranslations.find(
-      (p) => p.id == localeRef
-    );
-    if ((phraseTranslation?.plainText ?? "") == "") {
-      return true;
+
+    if (phrase?.usePhraseSections) {
+      if (phrase?.phraseSections.length == 0) {
+        return true;
+      }
+      for (const phraseSection of phrase?.phraseSections ?? []) {
+        const phraseSectionTranslation = phraseSection.localeRules.find(
+          (t) => t.id == localeRef
+        );
+        if ((phraseSectionTranslation?.displayValue?.plainText ?? "") == "") {
+          return true;
+        }
+      }
+
+    } else {
+      const phraseTranslation = phrase?.phraseTranslations.find(
+        (p) => p.id == localeRef
+      );
+      if ((phraseTranslation?.plainText ?? "") == "") {
+        return true;
+      }
     }
     for (const linkVariable of phrase?.linkVariables ?? []) {
       const linkTranslation = linkVariable.translations.find(
@@ -491,14 +508,16 @@ const PhraseRow = (props: Props) => {
           />
         </div>
       )}
-      <div
-          style={{
-            marginBottom: commandMode != "edit" ? 24 : 48,
-          }}
-      >
-        <TagList phraseRef={props.phraseRef} />
-      </div>
-      <div>
+        <div
+            style={{
+              marginBottom: commandMode != "edit" ? 24 : 48,
+            }}
+        >
+          {(phrase?.tagsEnabled || (phrase?.tags?.length ?? 0) > 0) && (
+            <TagList phraseRef={props.phraseRef} />
+          )}
+        </div>
+      <div style={{borderTop: `1px solid ${theme.colors.contrastTextLight}`, paddingTop: 24}}>
         {selectedLocale && (
           <PhraseTranslation
             phrase={props.phrase}
@@ -511,6 +530,8 @@ const PhraseRow = (props: Props) => {
             setPinnedPhrases={props.setPinnedPhrases}
             globalFilterUntranslated={props.globalFilterUntranslated}
             isPinned={isPinned}
+            showEnabledFeatures={showEnabledFeatures}
+            setShowEnabledFeatures={setShowEnabledFeatures}
           />
         )}
       </div>

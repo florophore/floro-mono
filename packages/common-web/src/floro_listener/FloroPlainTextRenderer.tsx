@@ -5,42 +5,51 @@ import {
   StaticListNode,
   StaticLinkNode,
   StaticTextNode,
+  StaticStyledTextNode,
+  StaticContentVariable,
 } from "@floro/common-generators/floro_modules/text-generator";
 
-export interface PlainTextRenderers {
+export interface PlainTextRenderers<N extends string> {
   render: (
-    nodes: (StaticNode | StaticListNode)[],
-    renderers: PlainTextRenderers,
+    nodes: (StaticNode<string> | StaticListNode<string>)[],
+    renderers: PlainTextRenderers<N>,
   ) => string;
   renderStaticNodes: (
-    nodes: (StaticNode | StaticListNode)[],
-    renderers: PlainTextRenderers
+    nodes: (StaticNode<string> | StaticListNode<string>)[],
+    renderers: PlainTextRenderers<N>,
   ) => string;
   renderText: (
-    node: StaticTextNode,
-    renderers: PlainTextRenderers
+    node: StaticTextNode<string>,
+    renderers: PlainTextRenderers<N>,
   ) => string;
   renderLinkNode: (
-    node: StaticLinkNode,
-    renderers: PlainTextRenderers
+    node: StaticLinkNode<string>,
+    renderers: PlainTextRenderers<N>,
   ) => string;
   renderListNode: (
-    node: StaticListNode,
-    renderers: PlainTextRenderers
+    node: StaticListNode<string>,
+    renderers: PlainTextRenderers<N>,
   ) => string;
   renderUnOrderedListNode: (
-    node: StaticUnOrderedListNode,
-    renderers: PlainTextRenderers
+    node: StaticUnOrderedListNode<string>,
+    renderers: PlainTextRenderers<N>,
   ) => string;
   renderOrderedListNode: (
-    node: StaticOrderedListNode,
-    renderers: PlainTextRenderers
+    node: StaticOrderedListNode<string>,
+    renderers: PlainTextRenderers<N>,
+  ) => string;
+  renderStyledContentNode: (
+    node: StaticStyledTextNode<string, N>,
+    renderers: PlainTextRenderers<N>,
+  ) => string;
+  renderContentVariable: (
+    node: StaticContentVariable<string>
   ) => string;
 }
 
-const renderStaticNodes = (
-  nodes: (StaticNode | StaticListNode)[],
-  renderers: PlainTextRenderers
+const renderStaticNodes = <N extends string> (
+  nodes: (StaticNode<string> | StaticListNode<string>)[],
+  renderers: PlainTextRenderers<N>
 ): string => {
 return nodes?.map((staticNode) => {
   if (staticNode.type == "text") {
@@ -62,54 +71,72 @@ return nodes?.map((staticNode) => {
   }).join("");
 };
 
-const renderText = (node: StaticTextNode, renderers: PlainTextRenderers) => {
+const renderText = <N extends string>(node: StaticTextNode<string>, renderers: PlainTextRenderers<N>) => {
   let children = renderers.renderStaticNodes(node.children, renderers);
   return `${node.content}${children}`;
 }
 
-const renderLinkNode = (
-  node: StaticLinkNode,
-  renderers: PlainTextRenderers
+const renderLinkNode = <N extends string>(
+  node: StaticLinkNode<string>,
+  renderers: PlainTextRenderers<N>
 ): string => {
   let children = renderers.renderStaticNodes(node.children, renderers);
   return children;
 };
 
-const renderListNode = (
-  node: StaticListNode,
-  renderers: PlainTextRenderers
+const renderListNode = <N extends string>(
+  node: StaticListNode<string>,
+  renderers: PlainTextRenderers<N>
 ): string => {
   let children = renderers.renderStaticNodes(node.children, renderers);
   return children + '\n';
 };
 
-const renderUnOrderedListNode = (
-  node: StaticUnOrderedListNode,
-  renderers: PlainTextRenderers
+const renderUnOrderedListNode = <N extends string>(
+  node: StaticUnOrderedListNode<string>,
+  renderers: PlainTextRenderers<N>
 ): string => {
   return node.children?.map(content => {
     return `• ${renderers.renderListNode(content, renderers)}`
   }).join("");
 };
 
-const renderOrderedListNode = (
-  node: StaticOrderedListNode,
-  renderers: PlainTextRenderers
+const renderOrderedListNode = <N extends string>(
+  node: StaticOrderedListNode<string>,
+  renderers: PlainTextRenderers<N>
 ): string => {
   return node.children?.map((content, index) => {
     return `${index + 1}. ${renderers.renderListNode(content, renderers)}`
   }).join("");
 };
 
-const render = (
-  nodes: (StaticNode | StaticListNode)[],
-  renderers: PlainTextRenderers,
+const renderStyledContentNode = <N extends string,> (
+  node: StaticStyledTextNode<string, N>,
+  renderers: PlainTextRenderers<N>
+): string => {
+  let children = renderers.renderStaticNodes(node.children, renderers);
+  const content = node?.styleClassFunction?.(children, node.styledContentName) ?? null;
+  if (content) {
+    return content;
+  }
+  return "";
+};
+
+const renderContentVariable = (
+  node: StaticContentVariable<string>
+): string => {
+  return node.data ?? "";
+};
+
+const render = <N extends string>(
+  nodes: (StaticNode<string> | StaticListNode<string>)[],
+  renderers: PlainTextRenderers<N>,
 ): string => {
     const content = renderers.renderStaticNodes(nodes, renderers);
     return content
 };
 
-export const renderers: PlainTextRenderers = {
+export const plainTextRenderers = {
   render,
   renderStaticNodes,
   renderText,
@@ -117,5 +144,6 @@ export const renderers: PlainTextRenderers = {
   renderListNode,
   renderUnOrderedListNode,
   renderOrderedListNode,
+  renderStyledContentNode,
+  renderContentVariable
 };
-

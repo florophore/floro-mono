@@ -32,8 +32,10 @@ import deepLSourceLocales from "../../deep_l_source_locales.json";
 import deepLTargetLocales from "../../deep_l_target_locales.json";
 import MLModal from "../mlmodal/MLModal";
 import { useTranslationMemory } from "../../memory/TranslationMemoryContext";
-import TranslationMemoryList from "../tranlsationmemory/TranslationMemoryList";
+import TranslationMemoryList from "../translationmemory/TranslationMemoryList";
 import { useDiffColor } from "../../diff";
+import TermModal from "../termmodal/TermModal";
+import PromptModal from "../promptmodal/PromptModal";
 
 const Container = styled.div`
 `;
@@ -266,9 +268,22 @@ const LinkVariable = (props: Props) => {
 
   const editorObserver = useMemo(() => {
     const variables = props.phrase.variables.map((v) => v.name);
-    const interpolationVariants = props.phrase?.interpolationVariants?.map?.((v) => v.name) ?? [];
-    return new Observer(variables, [], interpolationVariants, enabledMentionedValues ?? []);
-  }, [props.phrase.variables, enabledMentionedValues]);
+    const interpolationVariants =
+      props.phrase?.interpolationVariants?.map?.((v) => v.name) ?? [];
+    const contentVariables = props.phrase.contentVariables.map((v) => v.name);
+    return new Observer(
+      variables,
+      [],
+      interpolationVariants,
+      enabledMentionedValues ?? [],
+      contentVariables
+    );
+  }, [
+    props.phrase.variables,
+    props.phrase.contentVariables,
+    enabledMentionedValues,
+    props.phrase?.interpolationVariants,
+  ]);
 
   const hrefEditorObserver = useMemo(() => {
     const variables = props.phrase.variables.map((v) => v.name);
@@ -288,7 +303,42 @@ const LinkVariable = (props: Props) => {
       editorObserver,
       props.selectedLocale.localeCode?.toLowerCase() ?? "en"
     );
-  }, [props.selectedLocale.localeCode, editorObserver]);
+  }, [props.selectedLocale.localeCode, linkDisplayValue?.richTextHtml, editorObserver]);
+
+  const targetEditorObserver = useMemo(() => {
+    const variables = props.phrase.variables.map((v) => v.name);
+    const interpolationVariants =
+      props.phrase?.interpolationVariants?.map?.((v) => v.name) ?? [];
+    const contentVariables =
+      props.phrase?.contentVariables?.map?.((v) => v.name) ?? [];
+    return new Observer(
+      variables,
+      [],
+      interpolationVariants,
+      enabledMentionedValues ?? [],
+      contentVariables
+    );
+  }, [
+    props.phrase.variables,
+    props.phrase.contentVariables,
+    enabledMentionedValues,
+    props.phrase?.interpolationVariants,
+  ]);
+
+  const targetLinkDisplayEditorDoc = useMemo(() => {
+    if (linkDisplayValue) {
+      const doc = new EditorDocument(
+        targetEditorObserver,
+        props.selectedLocale.localeCode?.toLowerCase() ?? "en"
+      );
+      doc.tree.updateRootFromHTML(linkDisplayValue?.richTextHtml ?? "");
+      return doc;
+    }
+    return new EditorDocument(
+      targetEditorObserver,
+      props.selectedLocale.localeCode?.toLowerCase() ?? "en"
+    );
+  }, [props.selectedLocale.localeCode, linkDisplayValue?.richTextHtml, targetEditorObserver]);
 
 
   const linkHrefEditorDoc = useMemo(() => {
@@ -535,10 +585,24 @@ const LinkVariable = (props: Props) => {
   }, [mentionedTerms, sourceLinkTranslation?.linkDisplayValue?.enabledTerms])
 
   const sourceEditorObserver = useMemo(() => {
-    const variables = props.phrase.variables?.map(v => v.name) ?? [];
-    const interpolationVariants = props.phrase?.interpolationVariants?.map?.(v => v.name) ?? [];
-    return new Observer(variables, [], interpolationVariants, sourceEnabledMentionedValues ?? []);
-  }, [props.phrase.variables, props.phrase.linkVariables, props.phrase.interpolationVariants, sourceEnabledMentionedValues]);
+    const variables = props.phrase.variables?.map((v) => v.name) ?? [];
+    const interpolationVariants =
+      props.phrase?.interpolationVariants?.map?.((v) => v.name) ?? [];
+    const contentVariables =
+      props.phrase?.contentVariables?.map?.((v) => v.name) ?? [];
+    return new Observer(
+      variables,
+      [],
+      interpolationVariants,
+      sourceEnabledMentionedValues ?? [],
+      contentVariables
+    );
+  }, [
+    props.phrase.variables,
+    props.phrase.contentVariables,
+    props.phrase.interpolationVariants,
+    sourceEnabledMentionedValues,
+  ]);
 
   const sourceEditorDoc = useMemo(() => {
     if (sourceLinkTranslation?.linkDisplayValue && props?.systemSourceLocale?.localeCode) {
@@ -553,6 +617,10 @@ const LinkVariable = (props: Props) => {
     return sourceEditorDoc.tree.getHtml();
   }, [sourceEditorDoc]);
 
+  const targetMockHtml = useMemo(() => {
+    return targetLinkDisplayEditorDoc.tree.getHtml();
+  }, [targetLinkDisplayEditorDoc]);
+
   const [showMLTranslate, setShowMLTranslate] = useState(false);
 
   const onShowMLTranslate = useCallback(() => {
@@ -563,6 +631,25 @@ const LinkVariable = (props: Props) => {
     setShowMLTranslate(false);
   }, []);
 
+  const [showPrompt, setShowPrompt] = useState(false);
+
+  const onShowPrompt = useCallback(() => {
+    setShowPrompt(true);
+  }, []);
+
+  const onHidePrompt = useCallback(() => {
+    setShowPrompt(false);
+  }, []);
+
+  const [showFindTerms, setShowFindTerms] = useState(false);
+
+  const onShowFindTerms = useCallback(() => {
+    setShowFindTerms(true);
+  }, []);
+
+  const onHideFindTerms = useCallback(() => {
+    setShowFindTerms(false);
+  }, []);
 
   const translationMemory = useTranslationMemory();
 
@@ -594,6 +681,26 @@ const LinkVariable = (props: Props) => {
 
   return (
     <div style={{ marginBottom: 24 }}>
+      <TermModal
+        show={showFindTerms && commandMode == "edit"}
+        onDismiss={onHideFindTerms}
+        targetPlainText={linkDisplayValue?.plainText ?? ""}
+        targetEditorDoc={targetLinkDisplayEditorDoc}
+      />
+      <PromptModal
+        show={showPrompt && commandMode == "edit"}
+        selectedLocale={props.selectedLocale}
+        systemSourceLocale={props.systemSourceLocale}
+        targetRichText={linkDisplayValue?.richTextHtml ?? ""}
+        sourceRichText={sourceLinkTranslation?.linkDisplayValue?.richTextHtml}
+        sourceMockText={sourceMockHtml}
+        targetMockText={targetMockHtml}
+        targetEditorDoc={targetLinkDisplayEditorDoc}
+        sourceEditorDoc={sourceEditorDoc}
+        onDismiss={onHidePrompt}
+        enabledTermIds={sourceLinkTranslation?.linkDisplayValue?.enabledTerms ?? []}
+        onApplyTranslation={onSetDisplayValueContent}
+      />
       {sourceLinkTranslation?.linkDisplayValue?.richTextHtml && commandMode == "edit" && (
         <MLModal
           show={showMLTranslate && commandMode == "edit"}
@@ -732,6 +839,14 @@ const LinkVariable = (props: Props) => {
               content={linkDisplayValue?.richTextHtml ?? ""}
               onSetContent={onSetDisplayValueContent}
               placeholder={`write the (${props.selectedLocale.localeCode}) value for ${linkName}...`}
+              onOpenGPT={onShowPrompt}
+              showGPTIcon={
+                (!!sourceLinkTranslation?.linkDisplayValue &&
+                  (sourceLinkTranslation.linkDisplayValue?.richTextHtml?.trim() ?? "") != "" &&
+                  (linkDisplayValue?.plainText?.trim() ?? "") != "") ||
+                (!sourceLinkTranslation?.linkDisplayValue &&
+                  (linkDisplayValue?.plainText?.trim() ?? "") != "")
+              }
             />
           )}
           {commandMode != "edit" && (
@@ -741,13 +856,16 @@ const LinkVariable = (props: Props) => {
               content={linkDisplayValue?.richTextHtml ?? ""}
             />
           )}
-          {mentionedTerms?.length > 0 && (
+          {linkDisplayValue && (
             <TermList
               terms={mentionedTerms ?? []}
               selectedLocale={props.selectedLocale}
               systemSourceLocale={props.systemSourceLocale}
               onChange={onChangeTerm}
               enabledTerms={linkDisplayValue?.enabledTerms ?? []}
+              showFindTerms={!props.systemSourceLocale}
+              onShowFindTerms={onShowFindTerms}
+              isEmpty={(linkDisplayValue?.plainText?.trim?.() ?? "") == ""}
               title={
                 <>
                   <span style={{ color: theme.colors.contrastText }}>

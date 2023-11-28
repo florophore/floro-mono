@@ -104,16 +104,33 @@ const VariableList = (props: Props) => {
   const [variables, setVariables] = useFloroState(`${props.phraseRef}.variables`);
   const interpolationVariants = useReferencedObject(`${props.phraseRef}.interpolationVariants`)
   const linkVariables = useReferencedObject(`${props.phraseRef}.linkVariables`)
+  const styleClasses = useReferencedObject(`${props.phraseRef}.styleClasses`)
+  const styledContents = useReferencedObject(`${props.phraseRef}.styledContents`)
+  const contentVariables = useReferencedObject(`${props.phraseRef}.contentVariables`)
 
   const diffColor = useDiffColor(`${props.phraseRef}.variables`, true, 'darker');
 
   const varSet = useMemo(() => {
     return new Set([
-      ...variables?.map((v) => v.name?.toLowerCase?.() as string) ?? [],
-      ...interpolationVariants?.map((iv) => iv.name?.toLowerCase() as string) ?? [],
-      ...linkVariables?.map((l) => l.linkName?.toLowerCase() as string) ?? [],
+      ...(variables?.map((v) => v.name?.toLowerCase?.() as string) ?? []),
+      ...(interpolationVariants?.map(
+        (iv) => iv.name?.toLowerCase() as string
+      ) ?? []),
+      ...(styledContents?.map((sc) => sc.name?.toLowerCase() as string) ?? []),
+      ...(linkVariables?.map((l) => l.linkName?.toLowerCase() as string) ?? []),
+      ...(contentVariables?.map((c) => c.name?.toLowerCase() as string) ?? []),
+      ...(styleClasses?.map(
+        (styleClass) => styleClass.name?.toLowerCase() as string
+      ) ?? []),
     ]);
-  }, [variables, linkVariables, interpolationVariants]);
+  }, [
+    variables,
+    linkVariables,
+    interpolationVariants,
+    contentVariables,
+    styledContents,
+    styleClasses,
+  ]);
 
   const isNameTaken = useMemo(() => {
     return varSet.has(name?.toLowerCase());

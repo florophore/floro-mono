@@ -22,6 +22,7 @@ import {createUploadLink} from 'apollo-upload-client';
 import {CurrentUserSubscriberMount} from '@floro/common-react/src/components/subscribers/UserSubscriber';
 import {DesktopSocketProvider} from './contexts/DesktopSocketContext';
 import * as linkify from 'linkifyjs';
+import DesktopThemeMount from './DesktopThemeMount';
 
 const authMiddleware = setContext((_, {headers}) => {
   // add the authorization to the headers
@@ -110,6 +111,8 @@ interface Props {
   env: string;
 }
 
+const themePreference = localStorage.get?.('theme-preference') ?? 'system';
+
 const App = (props: Props): React.ReactElement => {
   const queryClient = useMemo(() => new QueryClient(), []);
 
@@ -125,8 +128,8 @@ const App = (props: Props): React.ReactElement => {
           <OpenLinkProvider openUrl={openUrl}>
             <SystemAPIProvider systemAPI={props.systemAPI}>
               <QueryClientProvider client={queryClient}>
-                <ColorThemeProvider>
-                  <ThemeMount>
+                <ColorThemeProvider initThemePreference={themePreference}>
+                  <DesktopThemeMount>
                     <FloroSocketProvider client={'desktop'}>
                       <OfflineIconProvider>
                         <OfflinePhotoProvider>
@@ -142,7 +145,7 @@ const App = (props: Props): React.ReactElement => {
                         </OfflinePhotoProvider>
                       </OfflineIconProvider>
                     </FloroSocketProvider>
-                  </ThemeMount>
+                  </DesktopThemeMount>
                 </ColorThemeProvider>
               </QueryClientProvider>
             </SystemAPIProvider>

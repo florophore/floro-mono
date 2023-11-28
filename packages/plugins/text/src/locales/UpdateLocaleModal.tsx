@@ -1,9 +1,4 @@
-import React, {
-  useEffect,
-  useState,
-  useMemo,
-  useCallback,
-} from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import styled from "@emotion/styled";
 import RootLongModal from "@floro/common-react/src/components/RootLongModal";
 import {
@@ -19,7 +14,6 @@ import InputSelector, {
 
 import Button from "@floro/storybook/stories/design-system/Button";
 import Checkbox from "@floro/storybook/stories/design-system/Checkbox";
-
 
 const LocaleTitle = styled.h4`
   font-family: "MavenPro";
@@ -106,23 +100,33 @@ interface Props {
 
 const UpdateLocaleModal = (props: Props) => {
   const locales = useReferencedObject("$(text).localeSettings.locales");
-  const [localeSettings, setLocaleSettings] = useFloroState("$(text).localeSettings");
-  const localeRef = makeQueryRef("$(text).localeSettings.locales.localeCode<?>", props.locale.localeCode);
+  const [localeSettings, setLocaleSettings] = useFloroState(
+    "$(text).localeSettings"
+  );
+  const localeRef = makeQueryRef(
+    "$(text).localeSettings.locales.localeCode<?>",
+    props.locale.localeCode
+  );
 
-  const [fallbackCode] = useExtractQueryArgs(props?.locale?.defaultFallbackLocaleRef)
-  const [translateFromCode] = useExtractQueryArgs(props?.locale?.defaultTranslateFromLocaleRef)
+  const [fallbackCode] = useExtractQueryArgs(
+    props?.locale?.defaultFallbackLocaleRef
+  );
+  const [translateFromCode] = useExtractQueryArgs(
+    props?.locale?.defaultTranslateFromLocaleRef
+  );
 
-  const [makeGlobalDefault, setMakeGlobalDefault] = useState(localeSettings?.defaultLocaleRef == localeRef);
+  const [makeGlobalDefault, setMakeGlobalDefault] = useState(
+    localeSettings?.defaultLocaleRef == localeRef
+  );
   const [selectedFallback, setSelectedFallback] = useState<string | null>(null);
-  const [selectedTranslateFrom, setSelectedTranslateFrom] = useState<string | null>(null);
+  const [selectedTranslateFrom, setSelectedTranslateFrom] =
+    useState<string | null>(null);
 
   useEffect(() => {
     if (props.show) {
       setMakeGlobalDefault(localeSettings?.defaultLocaleRef == localeRef);
       setSelectedFallback(fallbackCode ?? null);
-      setSelectedTranslateFrom(
-        translateFromCode ?? null
-      );
+      setSelectedTranslateFrom(translateFromCode ?? null);
     }
   }, [
     props.show,
@@ -132,7 +136,7 @@ const UpdateLocaleModal = (props: Props) => {
     localeSettings?.defaultLocaleRef,
     localeRef,
     fallbackCode,
-    translateFromCode
+    translateFromCode,
   ]);
 
   const existingLocaleOptions = useMemo(() => {
@@ -202,7 +206,6 @@ const UpdateLocaleModal = (props: Props) => {
           return l;
         }),
       });
-
     }
     props.onDismiss();
   }, [
@@ -215,7 +218,7 @@ const UpdateLocaleModal = (props: Props) => {
     props.locale,
     selectedFallback,
     selectedTranslateFrom,
-    makeGlobalDefault
+    makeGlobalDefault,
   ]);
 
   return (
@@ -234,21 +237,22 @@ const UpdateLocaleModal = (props: Props) => {
       <OuterContainer>
         <div>
           <Row>
-              <div style={{
-                  width: '100%',
-                  display: 'flex',
-                  justifyContent: 'flex-start',
-                  alignItems: 'flex-end'
-              }}>
-                  <LocaleTitle>
-                      {`${props.locale.name } (${props?.locale?.localeCode})`}
-                  </LocaleTitle>
-                  {localeSettings?.defaultLocaleRef == props?.locale?.localeCode && (
-                      <DefaultTitle>
-                          {'(default locale)'}
-                      </DefaultTitle>
-                  )}
-              </div>
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "flex-start",
+                alignItems: "flex-end",
+              }}
+            >
+              <LocaleTitle>
+                {`${props.locale.name} (${props?.locale?.localeCode})`}
+              </LocaleTitle>
+              {localeSettings?.defaultLocaleRef ==
+                props?.locale?.localeCode && (
+                <DefaultTitle>{"(default locale)"}</DefaultTitle>
+              )}
+            </div>
           </Row>
           <Row
             style={{

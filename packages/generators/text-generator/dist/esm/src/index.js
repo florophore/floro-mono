@@ -10,6 +10,8 @@ export function getFloroGenerator() {
     return floroGeneratorFile;
 }
 const CODE = `
+// START INLINE CODE
+
 const isStatementTrue = <T>(
   value: T,
   comparisonValue: T,
@@ -41,34 +43,45 @@ const isStatementTrue = <T>(
   return false;
 };
 
-export const getPhraseValue = <
-T extends keyof Locales,
-K extends keyof PhraseKeys,
-A extends PhraseKeys[K]["variables"]
-> (
+export const getPhraseValue = <C, T extends keyof Locales, K extends keyof PhraseKeys>(
   localizedPhrases: LocalizedPhrases,
   localeKey: T,
   phraseKey: K,
-  args: A
-): StaticNode[] => {
+  args: {
+    [KV in keyof PhraseKeys[K]["variables"]]: PhraseKeys[K]["variables"][KV];
+  } &
+    {
+      [KCV in keyof PhraseKeys[K]["contentVariables"]]: C;
+    } &
+    {
+      [KSC in keyof PhraseKeys[K]["styleClasses"]]: (
+        content: C,
+        styledContentName: keyof PhraseKeys[K]["styledContents"] & string
+      ) => C;
+    }
+): StaticNode<C>[] => {
   const locale = localizedPhrases.locales[localeKey];
   const phrase =
-    localizedPhrases.localizedPhraseKeys[locale?.localeCode as string][phraseKey];
+    localizedPhrases.localizedPhraseKeys[locale?.localeCode as string][
+      phraseKey
+    ];
 
   const interpolationMap = {} as {
-    [k: string]: StaticNode[];
+    [k: string]: StaticNode<C>[];
   };
   for (const interpolationKey in phrase.interpolations) {
-    const interpolation: Interpolation = phrase.interpolations[interpolationKey];
+    const interpolation: Interpolation =
+      phrase.interpolations[interpolationKey];
     interpolationMap[interpolationKey] = getInterpolationValue(
       interpolation,
       args
-    ) as StaticNode[];
+    ) as StaticNode<C>[];
   }
   const hrefMap = {} as {
-    [k: string]: string;
+    [key in keyof PhraseKeys[K]["links"] & string]: string;
   };
-  for (const linkKey in phrase.links) {
+  for (const k in phrase.links) {
+    const linkKey = k as keyof PhraseKeys[K]["links"] & string;
     const link: {
       linkName: string;
       href: PlainTextNode[];
@@ -77,7 +90,7 @@ A extends PhraseKeys[K]["variables"]
     hrefMap[linkKey] = getStaticText(link.href, args);
   }
   const linkMap = {} as {
-    [k: string]: StaticNode[];
+    [k: string]: StaticNode<C>[];
   };
   for (const linkKey in phrase.links) {
     const link: {
@@ -91,18 +104,41 @@ A extends PhraseKeys[K]["variables"]
       hrefMap,
       {},
       interpolationMap
-    ) as StaticNode[];
+    ) as StaticNode<C>[];
+  }
+
+  const styledContentMap = {} as {
+    [k: string]: {
+      styleClass: keyof PhraseKeys[K]["styleClasses"];
+      nodes: StaticNode<C>[];
+    };
+  };
+  for (const styledContentKey in phrase.styledContents) {
+    const styledContent: StyledContent =
+      phrase.styledContents[styledContentKey];
+    styledContentMap[styledContentKey] = {
+      styleClass:
+        styledContent.styleClass as keyof PhraseKeys[K]["styleClasses"],
+      nodes: getStaticNodes(
+        styledContent.displayValue,
+        args,
+        hrefMap,
+        {},
+        interpolationMap
+      ) as StaticNode<C>[],
+    };
   }
   return getStaticNodes(
     phrase.phrase,
     args,
     hrefMap,
     linkMap,
-    interpolationMap
-  ) as StaticNode[];
-}
+    interpolationMap,
+    styledContentMap
+  ) as StaticNode<C>[];
+};
 
-export interface StaticTextNode {
+export interface StaticTextNode<C> {
   type: "text";
   content: string;
   styles: {
@@ -113,10 +149,27 @@ export interface StaticTextNode {
     isSuperscript: boolean;
     isSubscript: boolean;
   }
-  children: StaticNode[]
+  children: StaticNode<C>[]
 }
 
-export interface StaticLinkNode {
+export interface StaticStyledTextNode<C, N extends string> {
+  type: "styled-content";
+  styleClass: string;
+  styledContentName: N;
+  styleClassFunction: (content: C, styledContentName: N) => C;
+  content: string;
+  styles: {
+    isBold: boolean;
+    isItalic: boolean;
+    isUnderlined: boolean;
+    isStrikethrough: boolean;
+    isSuperscript: boolean;
+    isSubscript: boolean;
+  }
+  children: StaticNode<C>[]
+}
+
+export interface StaticLinkNode<C> {
   type: "link";
   linkName: string;
   href: string;
@@ -128,134 +181,214 @@ export interface StaticLinkNode {
     isSuperscript: boolean;
     isSubscript: boolean;
   }
-  children: StaticNode[]
+  children: StaticNode<C>[]
 }
 
-export interface StaticUnOrderedListNode {
+export interface StaticUnOrderedListNode<C> {
   type: "ul";
-  children: StaticListNode[]
+  children: StaticListNode<C>[]
 }
 
-export interface StaticOrderedListNode {
+export interface StaticOrderedListNode<C> {
   type: "ol";
-  children: StaticListNode[]
+  children: StaticListNode<C>[]
 }
 
-export interface StaticListNode {
+export interface StaticListNode<C> {
   type: "li";
-  children: StaticNode[]
+  children: StaticNode<C>[]
 }
 
-export type StaticNode = StaticTextNode | StaticLinkNode | StaticUnOrderedListNode | StaticOrderedListNode;
+export interface StaticContentVariable<C> {
+  type: "content";
+  data: C,
+}
 
-const getStaticNodes = <
-  K extends keyof PhraseKeys,
-  A extends PhraseKeys[K]["variables"]
->(
+export type StaticNode<C> = StaticTextNode<C> | StaticLinkNode<C> | StaticUnOrderedListNode<C> | StaticOrderedListNode<C> | StaticContentVariable<C>;
+
+const getStaticNodes = <C, K extends keyof PhraseKeys>(
   textNodes: TextNode[],
-  variableMap: A,
-  hrefMap: { [key in PhraseKeys[K]["links"] as string]: string } = {} as {
-    [key in PhraseKeys[K]["links"] as string]: string;
+  argMap: {
+    [KV in keyof PhraseKeys[K]["variables"]]: PhraseKeys[K]["variables"][KV];
+  } &
+    {
+      [KCV in keyof PhraseKeys[K]["contentVariables"]]: C;
+    } &
+    {
+      [KSC in keyof PhraseKeys[K]["styleClasses"]]: (
+        content: C,
+        styledContentName: keyof PhraseKeys[K]["styledContents"] & string
+      ) => C;
+    },
+  hrefMap: { [key in keyof PhraseKeys[K]["links"] as string]: string } = {} as {
+    [key in keyof PhraseKeys[K]["links"] as string]: string;
   },
-  linkMap: { [key in PhraseKeys[K]["links"] as string]: StaticNode[] } = {} as {
-    [key in PhraseKeys[K]["links"] as string]: StaticNode[];
+  linkMap: {
+    [key in keyof PhraseKeys[K]["links"] as string]: StaticNode<C>[];
+  } = {} as {
+    [key in keyof PhraseKeys[K]["links"] as string]: StaticNode<C>[];
   },
   interpolationsMap: {
-    [key in PhraseKeys[K]["interpolations"] as string]: StaticNode[];
-  } = {} as { [key in PhraseKeys[K]["interpolations"] as string]: StaticNode[] }
-): (StaticNode | StaticListNode)[] => {
+    [key in keyof PhraseKeys[K]["interpolations"] as string]: StaticNode<C>[];
+  } = {} as {
+    [key in keyof PhraseKeys[K]["interpolations"] as string]: StaticNode<C>[];
+  },
+  styledContentsMap: {
+    [key in keyof PhraseKeys[K]["styledContents"] as string]: {
+        nodes: StaticNode<C>[],
+        styleClass: keyof PhraseKeys[K]["styleClasses"]
+    };
+  } = {} as {
+    [key in keyof PhraseKeys[K]["styledContents"] as string]: {
+        nodes: StaticNode<C>[],
+        styleClass: keyof PhraseKeys[K]["styleClasses"]
+    };
+  }
+): (StaticNode<C> | StaticListNode<C>|StaticContentVariable<C>|StaticStyledTextNode<C, keyof PhraseKeys[K]["styledContents"]&string>)[] => {
   return textNodes.map((textNode) => {
     const children = getStaticNodes(
       textNode.children,
-      variableMap,
+      argMap,
       hrefMap,
       linkMap,
-      interpolationsMap
+      interpolationsMap,
+      styledContentsMap
     );
-    if (textNode.type == "variable") {
+    if (textNode.type == PhraseType.Variable) {
       const variableName = textNode.content.substring(
         1,
         textNode.content.length - 1
-      ) as keyof PhraseKeys[K]["variables"]&string;
-      const variableValue = variableMap?.[variableName]?.toString?.() ?? "" as string;
+      ) as keyof PhraseKeys[K]["variables"] & string;
+      const variableValue =
+        argMap?.[variableName]?.toString?.() ?? ("" as string);
       return {
         type: "text",
         content: variableValue,
         styles: textNode.styles,
         children: [],
-      } as StaticTextNode;
+      } as StaticTextNode<C>;
     }
-    if (textNode.type == "interpolation") {
+    if (textNode.type == PhraseType.ContentVariable) {
+      const contentVariableName = textNode.content.substring(
+        1,
+        textNode.content.length - 1
+      ) as keyof PhraseKeys[K]["contentVariables"] & string;
+      const contentVariableValue: C = argMap?.[contentVariableName];
+      return {
+        type: "content",
+        data: contentVariableValue,
+      } as StaticContentVariable<C>;
+    }
+    if (textNode.type == PhraseType.StyledContent) {
+      const styledContentName = textNode.content.substring(
+        1,
+        textNode.content.length - 1
+      ) as keyof PhraseKeys[K]["styledContents"] & string;
+      const styledContentChildren = styledContentsMap?.[styledContentName] as {
+        nodes: StaticNode<C>[],
+        styleClass: keyof PhraseKeys[K]["styleClasses"]&string
+      };
+      const styleClassFunction =
+        argMap?.[
+          styledContentChildren?.styleClass as keyof PhraseKeys[K]["styleClasses"] &
+            string
+        ];
+      return {
+        type: "styled-content",
+        styleClass: styledContentChildren?.styleClass,
+        styledContentName,
+        styleClassFunction,
+        content: "",
+        styles: textNode.styles,
+        children: styledContentChildren.nodes,
+      } as StaticStyledTextNode<C, keyof PhraseKeys[K]["styledContents"] & string>;
+    }
+
+    if (textNode.type == PhraseType.Interpolation) {
       const interpolationName = textNode.content.substring(
         1,
         textNode.content.length - 1
-      ) as keyof PhraseKeys[K]["interpolations"]&string;
-      const interpolationChildren = interpolationsMap[interpolationName] as StaticNode[];
+      ) as keyof PhraseKeys[K]["interpolations"] & string;
+      const interpolationChildren = interpolationsMap[
+        interpolationName
+      ] as StaticNode<C>[];
       return {
         type: "text",
-        content: '',
+        content: "",
         styles: textNode.styles,
         children: interpolationChildren,
-      } as StaticTextNode;
+      } as StaticTextNode<C>;
     }
-    if (textNode.type == "link") {
+    if (textNode.type == PhraseType.Link) {
       const linkName = textNode.content.substring(
         1,
         textNode.content.length - 1
-      ) as keyof PhraseKeys[K]["links"]&string;
-      const linkChildren = linkMap[linkName] as StaticNode[];
+      ) as keyof PhraseKeys[K]["links"] & string;
+      const linkChildren = linkMap[linkName] as StaticNode<C>[];
       return {
         type: "link",
         linkName,
         href: hrefMap[linkName],
         styles: textNode.styles,
         children: linkChildren,
-      } as StaticLinkNode;
+      } as StaticLinkNode<C>;
     }
-    if (textNode.type == "li") {
+    if (textNode.type == PhraseType.Li) {
       return {
         type: "li",
         children,
-      } as StaticListNode;
+      } as StaticListNode<C>;
     }
-    if (textNode.type == "ol") {
-      const listChildren = children as unknown as StaticListNode[];
+    if (textNode.type == PhraseType.Ol) {
+      const listChildren = children as unknown as StaticListNode<C>[];
       return {
         type: "ol",
         children: listChildren,
-      } as StaticOrderedListNode;
+      } as StaticOrderedListNode<C>;
     }
-    if (textNode.type == "ul") {
-      const listChildren = children as unknown as StaticListNode[];
+    if (textNode.type == PhraseType.UL) {
+      const listChildren = children as unknown as StaticListNode<C>[];
       return {
         type: "ul",
         children: listChildren,
-      } as StaticUnOrderedListNode;
+      } as StaticUnOrderedListNode<C>;
     }
     return {
       type: "text",
       content: textNode.content,
       styles: textNode.styles,
       children,
-    } as StaticTextNode;
+    } as StaticTextNode<C>;
   });
 };
 
 const getInterpolationValue = <
+C,
 K extends keyof PhraseKeys,
-A extends PhraseKeys[K]["variables"],
-V extends keyof A,
-> (interpolation: Interpolation, args: A) => {
+> (
+    interpolation: Interpolation,
+    args: {
+        [KV in keyof PhraseKeys[K]["variables"]]: PhraseKeys[K]["variables"][KV];
+    }&{
+        [KCV in keyof PhraseKeys[K]["contentVariables"]]: C;
+    }&{
+      [KSC in keyof PhraseKeys[K]["styleClasses"]]: (
+        content: C,
+        styledContentName: keyof PhraseKeys[K]["styledContents"] & string
+      ) => C;
+    }
+
+     ) => {
   for (const caseStatement of interpolation.cases) {
-    const argValue: A[V]|string|number|boolean = args[caseStatement.variable];
-    const comparatorValue = caseStatement.value as A[V];
+    const argValue: PhraseKeys[K]["variables"][keyof PhraseKeys[K]["variables"]]|string|number|boolean = args[caseStatement.variable];
+    const comparatorValue = caseStatement.value as PhraseKeys[K]["variables"][keyof PhraseKeys[K]["variables"]];
     const operator = caseStatement.operator as "eq" | "neq" | "gt" | "gte" | "lt" | "lte" | "is_fractional";
     if (!isStatementTrue(argValue, comparatorValue, operator)) {
       continue;
     }
     let allSubcasesAreTrue = true;
     for (const subcase of caseStatement.subcases) {
-      const comparatorValue = subcase.value as A[V];
+      const comparatorValue = subcase.value as PhraseKeys[K]["variables"][keyof PhraseKeys[K]["variables"]];
       if (!isStatementTrue(argValue, comparatorValue, operator)) {
         allSubcasesAreTrue = false;
         break;
@@ -299,32 +432,38 @@ export const getDebugInfo = <
 };
 `.trim();
 const getNodeType = (tagType) => {
-    if (tagType == 'link-variable-tag') {
-        return 'link';
+    if (tagType == "li-tag") {
+        return "li";
     }
-    if (tagType == 'li-tag') {
-        return 'li';
+    if (tagType == "ul-tag") {
+        return "ul";
     }
-    if (tagType == 'ul-tag') {
-        return 'ul';
+    if (tagType == "ol-tag") {
+        return "ol";
     }
-    if (tagType == 'ol-tag') {
-        return 'ol';
+    if (tagType == "variable-tag") {
+        return "variable";
     }
-    if (tagType == 'variable-tag') {
-        return 'variable';
+    if (tagType == "variant-tag") {
+        return "interpolation";
     }
-    if (tagType == 'variant-tag') {
-        return 'interpolation';
+    if (tagType == "link-variable-tag") {
+        return "link";
     }
-    if (tagType == 'link-variable-tag') {
-        return 'link';
+    if (tagType == "styled-content-tag") {
+        return "styled-content";
     }
-    return 'text';
+    if (tagType == "content-variable-tag") {
+        return "content-variable";
+    }
+    return "text";
 };
 const getPlainNodeType = (tagType) => {
     if (tagType == 'variable-tag') {
         return 'variable';
+    }
+    if (tagType == "content-variable-tag") {
+        return "content-variable";
     }
     return 'text';
 };
@@ -397,8 +536,12 @@ export async function getJSON(state) {
                 localizedPhrases.localizedPhraseKeys[locale.localeCode][phraseKey] = {
                     phraseKey,
                     variables: {},
+                    contentVariables: {},
+                    styleClasses: {},
+                    args: {},
                     links: {},
                     interpolations: {},
+                    styledContents: {},
                 };
                 // DO VARIABLES FIRST
                 for (const variable of phrase?.variables ?? []) {
@@ -408,6 +551,15 @@ export async function getJSON(state) {
                             ? false
                             : 0;
                     localizedPhrases.localizedPhraseKeys[locale.localeCode][phraseKey].variables[variable.name] = varValue;
+                    localizedPhrases.localizedPhraseKeys[locale.localeCode][phraseKey].args[variable.name] = varValue;
+                }
+                for (const contentVariable of phrase?.contentVariables ?? []) {
+                    localizedPhrases.localizedPhraseKeys[locale.localeCode][phraseKey].contentVariables[contentVariable.name] = "string";
+                    localizedPhrases.localizedPhraseKeys[locale.localeCode][phraseKey].args[contentVariable.name] = "string";
+                }
+                for (const styleClass of phrase?.styleClasses ?? []) {
+                    localizedPhrases.localizedPhraseKeys[locale.localeCode][phraseKey].styleClasses[styleClass.name] = "string";
+                    localizedPhrases.localizedPhraseKeys[locale.localeCode][phraseKey].args[styleClass.name] = "string";
                 }
                 // DO INTERPOLATIONS SECOND
                 for (const interpolation of phrase?.interpolationVariants ?? []) {
@@ -614,24 +766,106 @@ export async function getJSON(state) {
                         }
                     }
                 }
-                const phraseTranslationRef = makeQueryRef("$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>", phraseGroup.id, phrase.id, localeRef);
-                const phraseTranslation = getReferencedObject(state, phraseTranslationRef);
-                const fallbackPhraseTranslationRef = makeQueryRef("$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>", phraseGroup.id, phrase.id, fallbackRef);
-                const fallbackPhraseTranslation = getReferencedObject(state, fallbackPhraseTranslationRef);
-                const defaultPhraseTranslationRef = makeQueryRef("$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>", phraseGroup.id, phrase.id, localeSettings.defaultLocaleRef);
-                const defaultPhraseTranslation = getReferencedObject(state, defaultPhraseTranslationRef);
-                if ((phraseTranslation?.plainText ?? "").trim() != "") {
-                    const phraseJSON = phraseTranslation?.json ?? '{}';
-                    localizedPhrases.localizedPhraseKeys[locale.localeCode][phraseKey].phrase = getTextNodes(phraseJSON);
+                // do styled content here
+                for (const styledContent of phrase.styledContents) {
+                    const styleClass = getReferencedObject(state, styledContent.styleClassRef);
+                    localizedPhrases.localizedPhraseKeys[locale.localeCode][phraseKey].styledContents[styledContent.name] = {};
+                    const styledContentLocaleRuleRef = makeQueryRef("$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>", phraseGroup.id, phrase.id, styledContent.name, localeRef);
+                    const styledContentLocaleRule = getReferencedObject(state, styledContentLocaleRuleRef);
+                    const fallbackStyledContentLocaleRuleRef = makeQueryRef("$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>", phraseGroup.id, phrase.id, styledContent.name, fallbackRef);
+                    const fallbackStyledContentLocaleRule = getReferencedObject(state, fallbackStyledContentLocaleRuleRef);
+                    const defaultStyledContentLocaleRuleRef = makeQueryRef("$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>", phraseGroup.id, phrase.id, styledContent.name, localeSettings.defaultLocaleRef);
+                    const defaultStyledContentLocaleRule = getReferencedObject(state, defaultStyledContentLocaleRuleRef);
+                    if ((styledContentLocaleRule?.displayValue?.plainText ?? "")?.trim() != "") {
+                        const displayValueJSON = styledContentLocaleRule?.displayValue?.json ?? "{}";
+                        const displayValue = getTextNodes(displayValueJSON);
+                        localizedPhrases.localizedPhraseKeys[locale.localeCode][phraseKey].styledContents[styledContent.name] = {
+                            displayValue,
+                            styleClass: styleClass.name,
+                        };
+                    }
+                    else {
+                        if ((fallbackStyledContentLocaleRule?.displayValue?.plainText ?? "").trim() != "") {
+                            const displayValueJSON = fallbackStyledContentLocaleRule?.displayValue?.json ?? "{}";
+                            const displayValue = getTextNodes(displayValueJSON);
+                            localizedPhrases.localizedPhraseKeys[locale.localeCode][phraseKey].styledContents[styledContent.name] = {
+                                displayValue,
+                                styleClass: styleClass.name,
+                            };
+                        }
+                        else {
+                            const displayValueJSON = defaultStyledContentLocaleRule?.displayValue?.json ?? "{}";
+                            const displayValue = getTextNodes(displayValueJSON);
+                            localizedPhrases.localizedPhraseKeys[locale.localeCode][phraseKey].styledContents[styledContent.name] = {
+                                displayValue,
+                                styleClass: styleClass.name,
+                            };
+                        }
+                    }
+                }
+                if (phrase.usePhraseSections) {
+                    const newLine = {
+                        content: "\n",
+                        type: "text",
+                        children: [],
+                        styles: {
+                            isBold: false,
+                            isItalic: false,
+                            isUnderlined: false,
+                            isStrikethrough: false,
+                            isSuperscript: false,
+                            isSubscript: false,
+                        },
+                    };
+                    const nodeLists = [];
+                    for (const [index, phraseSection] of phrase.phraseSections.entries()) {
+                        const isLast = index == phrase.phraseSections.length - 1;
+                        const phraseSectionLocaleRuleRef = makeQueryRef("$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>", phraseGroup.id, phrase.id, phraseSection.name, localeRef);
+                        const phraseSectionLocaleRule = getReferencedObject(state, phraseSectionLocaleRuleRef);
+                        const fallbackPhraseSectionLocaleRuleRef = makeQueryRef("$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>", phraseGroup.id, phrase.id, phraseSection.name, fallbackRef);
+                        const fallbackPhraseSectionLocaleRule = getReferencedObject(state, fallbackPhraseSectionLocaleRuleRef);
+                        const defaultPhraseSectionLocaleRuleRef = makeQueryRef("$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>", phraseGroup.id, phrase.id, phraseSection.name, localeSettings.defaultLocaleRef);
+                        const defaultPhraseSectionLocaleRule = getReferencedObject(state, defaultPhraseSectionLocaleRuleRef);
+                        if ((phraseSectionLocaleRule?.displayValue?.plainText ?? "").trim() != "") {
+                            const phraseJSON = phraseSectionLocaleRule?.displayValue?.json ?? '{}';
+                            nodeLists.push(...getTextNodes(phraseJSON));
+                        }
+                        else {
+                            if ((fallbackPhraseSectionLocaleRule?.displayValue?.plainText ?? "").trim() != "") {
+                                const phraseJSON = fallbackPhraseSectionLocaleRule?.displayValue?.json ?? '{}';
+                                nodeLists.push(...getTextNodes(phraseJSON));
+                            }
+                            else {
+                                const phraseJSON = defaultPhraseSectionLocaleRule?.displayValue?.json ?? '{}';
+                                nodeLists.push(...getTextNodes(phraseJSON));
+                            }
+                        }
+                        if (!isLast) {
+                            nodeLists.push(newLine);
+                        }
+                    }
+                    localizedPhrases.localizedPhraseKeys[locale.localeCode][phraseKey].phrase = nodeLists;
                 }
                 else {
-                    if ((fallbackPhraseTranslation?.plainText ?? "").trim() != "") {
-                        const phraseJSON = fallbackPhraseTranslation?.json ?? '{}';
+                    const phraseTranslationRef = makeQueryRef("$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>", phraseGroup.id, phrase.id, localeRef);
+                    const phraseTranslation = getReferencedObject(state, phraseTranslationRef);
+                    const fallbackPhraseTranslationRef = makeQueryRef("$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>", phraseGroup.id, phrase.id, fallbackRef);
+                    const fallbackPhraseTranslation = getReferencedObject(state, fallbackPhraseTranslationRef);
+                    const defaultPhraseTranslationRef = makeQueryRef("$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>", phraseGroup.id, phrase.id, localeSettings.defaultLocaleRef);
+                    const defaultPhraseTranslation = getReferencedObject(state, defaultPhraseTranslationRef);
+                    if ((phraseTranslation?.plainText ?? "").trim() != "") {
+                        const phraseJSON = phraseTranslation?.json ?? '{}';
                         localizedPhrases.localizedPhraseKeys[locale.localeCode][phraseKey].phrase = getTextNodes(phraseJSON);
                     }
                     else {
-                        const phraseJSON = defaultPhraseTranslation?.json ?? '{}';
-                        localizedPhrases.localizedPhraseKeys[locale.localeCode][phraseKey].phrase = getTextNodes(phraseJSON);
+                        if ((fallbackPhraseTranslation?.plainText ?? "").trim() != "") {
+                            const phraseJSON = fallbackPhraseTranslation?.json ?? '{}';
+                            localizedPhrases.localizedPhraseKeys[locale.localeCode][phraseKey].phrase = getTextNodes(phraseJSON);
+                        }
+                        else {
+                            const phraseJSON = defaultPhraseTranslation?.json ?? '{}';
+                            localizedPhrases.localizedPhraseKeys[locale.localeCode][phraseKey].phrase = getTextNodes(phraseJSON);
+                        }
                     }
                 }
             }
@@ -642,6 +876,7 @@ export async function getJSON(state) {
 export async function generate(state, outDir, args = { lang: "typescript" }) {
     let noLinks = true;
     let noInterpolations = true;
+    let noStyledContents = true;
     const SCHEMA = {
         $schema: "http://json-schema.org/draft-06/schema#",
         $ref: "#/definitions/LocalizedPhrases",
@@ -694,6 +929,8 @@ export async function generate(state, outDir, args = { lang: "typescript" }) {
                             { const: "interpolation" },
                             { const: "link" },
                             { const: "variable" },
+                            { const: "content-variable" },
+                            { const: "styled-content" },
                         ],
                     },
                     styles: {
@@ -841,6 +1078,25 @@ export async function generate(state, outDir, args = { lang: "typescript" }) {
                 required: ["linkName", "displayValue"],
                 additionalProperties: false,
             },
+            StyledContent: {
+                type: "object",
+                properties: {
+                    name: {
+                        type: ["string"],
+                    },
+                    styleClass: {
+                        type: ["string"],
+                    },
+                    displayValue: {
+                        type: "array",
+                        items: {
+                            $ref: "#/definitions/TextNode",
+                        },
+                    },
+                },
+                required: ["name", "styleClass", "displayValue"],
+                additionalProperties: false,
+            },
             DebugInfo: {
                 type: "object",
                 properties: {
@@ -934,7 +1190,17 @@ export async function generate(state, outDir, args = { lang: "typescript" }) {
             SCHEMA.definitions.PhraseKeys.properties[phraseKey] = {
                 type: "object",
                 additionalProperties: false,
-                required: ["phraseKey", "variables", "links", "interpolations", "phrase"],
+                required: [
+                    "phraseKey",
+                    "variables",
+                    "links",
+                    "interpolations",
+                    "phrase",
+                    "contentVariables",
+                    "styleClasses",
+                    "styledContents",
+                    "args",
+                ],
                 properties: {
                     phraseKey: {
                         type: ["string"],
@@ -943,9 +1209,33 @@ export async function generate(state, outDir, args = { lang: "typescript" }) {
                         type: "array",
                         items: {
                             $ref: "#/definitions/TextNode",
-                        }
+                        },
+                    },
+                    args: {
+                        type: "object",
+                        properties: {},
+                        required: [],
+                        additionalProperties: false,
                     },
                     variables: {
+                        type: "object",
+                        properties: {},
+                        required: [],
+                        additionalProperties: false,
+                    },
+                    contentVariables: {
+                        type: "object",
+                        properties: {},
+                        required: [],
+                        additionalProperties: false,
+                    },
+                    styleClasses: {
+                        type: "object",
+                        properties: {},
+                        required: [],
+                        additionalProperties: false,
+                    },
+                    styledContents: {
                         type: "object",
                         properties: {},
                         required: [],
@@ -975,6 +1265,30 @@ export async function generate(state, outDir, args = { lang: "typescript" }) {
                     type: [varType],
                 };
                 SCHEMA.definitions.PhraseKeys.properties[phraseKey].properties.variables.required.push(variable.name);
+                SCHEMA.definitions.PhraseKeys.properties[phraseKey].properties.args.properties[variable.name] = {
+                    type: [varType],
+                };
+                SCHEMA.definitions.PhraseKeys.properties[phraseKey].properties.args.required.push(variable.name);
+            }
+            for (const contentVariable of phrase?.contentVariables ?? []) {
+                SCHEMA.definitions.PhraseKeys.properties[phraseKey].properties.contentVariables.properties[contentVariable.name] = {
+                    type: ["string"],
+                };
+                SCHEMA.definitions.PhraseKeys.properties[phraseKey].properties.contentVariables.required.push(contentVariable.name);
+                SCHEMA.definitions.PhraseKeys.properties[phraseKey].properties.args.properties[contentVariable.name] = {
+                    type: ["string"],
+                };
+                SCHEMA.definitions.PhraseKeys.properties[phraseKey].properties.args.required.push(contentVariable.name);
+            }
+            for (const styleClass of phrase?.styleClasses ?? []) {
+                SCHEMA.definitions.PhraseKeys.properties[phraseKey].properties.styleClasses.properties[styleClass.name] = {
+                    type: ["string"],
+                };
+                SCHEMA.definitions.PhraseKeys.properties[phraseKey].properties.styleClasses.required.push(styleClass.name);
+                SCHEMA.definitions.PhraseKeys.properties[phraseKey].properties.args.properties[styleClass.name] = {
+                    type: ["string"],
+                };
+                SCHEMA.definitions.PhraseKeys.properties[phraseKey].properties.args.required.push(styleClass.name);
             }
             for (const interpolation of phrase?.interpolationVariants ?? []) {
                 noInterpolations = false;
@@ -982,6 +1296,13 @@ export async function generate(state, outDir, args = { lang: "typescript" }) {
                     $ref: "#/definitions/Interpolation",
                 };
                 SCHEMA.definitions.PhraseKeys.properties[phraseKey].properties.interpolations.required.push(interpolation.name);
+            }
+            for (const styledContent of phrase?.styledContents ?? []) {
+                noStyledContents = false;
+                SCHEMA.definitions.PhraseKeys.properties[phraseKey].properties.styledContents.properties[styledContent.name] = {
+                    $ref: "#/definitions/StyledContent",
+                };
+                SCHEMA.definitions.PhraseKeys.properties[phraseKey].properties.styledContents.required.push(styledContent.name);
             }
             for (const linkVariables of phrase?.linkVariables ?? []) {
                 noLinks = false;
@@ -1013,6 +1334,15 @@ export async function generate(state, outDir, args = { lang: "typescript" }) {
 interface PlainTextNode {
   content: string;
   type: "text" | "variable";
+}
+`.trim();
+        }
+        if (noStyledContents) {
+            tsCode += '\n\n' + `
+interface StyledContent {
+  name: string;
+  styleClass: string;
+  displayValue: TextNode[];
 }
 `.trim();
         }

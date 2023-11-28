@@ -294,55 +294,55 @@ const TextAppHeader = (props: Props) => {
               </AddGroupContainer>
             )}
 
-              <div>
-                {props.isEditGroups && commandMode == "edit" && (
-                  <div style={{ marginLeft: 24, display: "flex", width: 120 }}>
-                    <Button
-                      onClick={props.onHideEditGroups}
-                      label={"done editting"}
-                      bg={"purple"}
-                      size={"small"}
-                      textSize={"small"}
-                    />
-                  </div>
-                )}
-                  <>
-                    <div style={{ display: "flex" }}>
-                      {!props.isEditGroups && !props.isEditLocales && (
-                        <div style={{ marginLeft: 24, width: 120 }}>
-                          <Button
-                            onClick={props.onShowEditGroups}
-                            label={"edit groups"}
-                            bg={"purple"}
-                            size={"small"}
-                            textSize={"small"}
-                            isDisabled={isSearching}
-                          />
-                        </div>
-                      )}
-                      <div style={{ marginLeft: 24, width: 120 }}>
-                        {!props.isEditLocales && !props.isEditGroups && (
-                          <Button
-                            onClick={props.onShowEditLocales}
-                            label={"show locales"}
-                            bg={"orange"}
-                            size={"small"}
-                            textSize={"small"}
-                          />
-                        )}
-                        {props.isEditLocales && (
-                          <Button
-                            onClick={props.onHideEditLocales}
-                            label={"hide locales"}
-                            bg={"orange"}
-                            size={"small"}
-                            textSize={"small"}
-                          />
-                        )}
-                      </div>
+            <div>
+              {props.isEditGroups && commandMode == "edit" && (
+                <div style={{ marginLeft: 24, display: "flex", width: 120 }}>
+                  <Button
+                    onClick={props.onHideEditGroups}
+                    label={"done editting"}
+                    bg={"purple"}
+                    size={"small"}
+                    textSize={"small"}
+                  />
+                </div>
+              )}
+              <>
+                <div style={{ display: "flex" }}>
+                  {!props.isEditGroups && !props.isEditLocales && (
+                    <div style={{ marginLeft: 24, width: 120 }}>
+                      <Button
+                        onClick={props.onShowEditGroups}
+                        label={"edit groups"}
+                        bg={"purple"}
+                        size={"small"}
+                        textSize={"small"}
+                        isDisabled={isSearching}
+                      />
                     </div>
-                  </>
-              </div>
+                  )}
+                  <div style={{ marginLeft: 24, width: 120 }}>
+                    {!props.isEditLocales && !props.isEditGroups && (
+                      <Button
+                        onClick={props.onShowEditLocales}
+                        label={"show locales"}
+                        bg={"orange"}
+                        size={"small"}
+                        textSize={"small"}
+                      />
+                    )}
+                    {props.isEditLocales && (
+                      <Button
+                        onClick={props.onHideEditLocales}
+                        label={"hide locales"}
+                        bg={"orange"}
+                        size={"small"}
+                        textSize={"small"}
+                      />
+                    )}
+                  </div>
+                </div>
+              </>
+            </div>
           </TitleRow>
           <div
             style={{
@@ -371,36 +371,48 @@ const TextAppHeader = (props: Props) => {
             alignItems: "center",
             minWidth: 1020,
             marginLeft: 0,
-            marginBottom: 12
+            marginBottom: 12,
           }}
         >
           <Row>
-            <FilterUntranslated style={{marginTop: -2, marginLeft: 0}}>{"Filter on tag"}</FilterUntranslated>
-            <div style={{
-              marginTop: -12,
-              marginLeft: 12,
-              display: 'flex',
-              flexDirection: 'row'
-            }}>
+            <FilterUntranslated style={{ marginTop: -2, marginLeft: 0 }}>
+              {"Filter on tag"}
+            </FilterUntranslated>
+            <div
+              style={{
+                marginTop: -12,
+                marginLeft: 12,
+                display: "flex",
+                flexDirection: "row",
+              }}
+            >
               <InputSelector
                 options={allTags}
                 value={props.filterTag}
                 label={"filter on tag"}
                 placeholder={"select tag to filter on"}
                 onChange={(option) => {
-                  props.setFilterTag(option?.value as string ?? null);
+                  props.setFilterTag((option?.value as string) ?? null);
                 }}
                 size="shortest"
               />
             </div>
             {props.filterTag && (
               <ClearIconContainer>
-                <Icon src={clearIcon} onClick={onClearFilterTag}/>
+                <Icon src={clearIcon} onClick={onClearFilterTag} />
               </ClearIconContainer>
             )}
           </Row>
           <Row>
-            <FilterUntranslated style={{marginLeft: 0, marginRight: 12}}>
+            <FilterUntranslated
+              style={{
+                marginLeft: 0,
+                marginRight: 12,
+                color: props.globalFilterUntranslated
+                  ? theme.colors.warningTextColor
+                  : theme.colors.contrastTextLight,
+              }}
+            >
               {`Filter un-translated (${props.selectedTopLevelLocale}) phrases for all groups`}
             </FilterUntranslated>
             <Checkbox
@@ -421,7 +433,16 @@ const TextAppHeader = (props: Props) => {
             <Row>
               {hasPinnedPhrases && (
                 <>
-                  <FilterUntranslated style={{marginLeft: 0, marginRight: 12, fontWeight: 600}}>
+                  <FilterUntranslated
+                    style={{
+                      marginLeft: 0,
+                      marginRight: 12,
+                      fontWeight: 600,
+                      color: props.showOnlyPinnedPhrases
+                        ? theme.colors.warningTextColor
+                        : theme.colors.contrastTextLight,
+                    }}
+                  >
                     {`Show Only pinned phrases`}
                   </FilterUntranslated>
                   <Checkbox
@@ -433,7 +454,15 @@ const TextAppHeader = (props: Props) => {
             </Row>
           </div>
           <Row>
-            <FilterUntranslated style={{marginLeft: 0, marginRight: 12}}>
+            <FilterUntranslated
+              style={{
+                marginLeft: 0,
+                marginRight: 12,
+                color: props.globalFilterRequiresUpdate
+                  ? theme.colors.warningTextColor
+                  : theme.colors.contrastTextLight,
+              }}
+            >
               {`Filter (${props.selectedTopLevelLocale}) phrases to update for all groups`}
             </FilterUntranslated>
             <Checkbox
@@ -442,7 +471,7 @@ const TextAppHeader = (props: Props) => {
             />
           </Row>
         </Row>
-        <Row style={{height: 72}}>
+        <Row style={{ height: 72 }}>
           {hasPinnedPhrases && (
             <div>
               <SubTitle onClick={onClearPinnedPhrases}>

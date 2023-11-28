@@ -97,6 +97,29 @@ const createPhraseCopyWithUpdatedVariableRefs = (
     }
   );
 
+  const styledContents = phrase.styledContents.map(
+    (styledContent) => {
+      const oldStyleClassRef = styledContent.styleClassRef;
+      const [, , variableId] = extractQueryArgs(oldStyleClassRef);
+      const styleClassRef = makeQueryRef(
+        "$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses.id<?>",
+        newGroupId,
+        newId,
+        variableId
+      );
+      const localeRules = styledContent.localeRules.map((localeRule) => {
+        return {
+          ...localeRule,
+        };
+      });
+      return {
+        ...styledContent,
+        localeRules,
+        styleClassRef,
+      };
+    }
+  );
+
   const testCases = phrase.testCases.map((testCase) => {
     const localeTests = testCase.localeTests.map((localeTest) => {
       const mockValues = localeTest.mockValues.map((mockValue) => {
@@ -126,6 +149,7 @@ const createPhraseCopyWithUpdatedVariableRefs = (
   return JSON.parse(JSON.stringify({
     ...phrase,
     interpolationVariants,
+    styledContents,
     testCases,
   }));
 };

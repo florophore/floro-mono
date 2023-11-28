@@ -98,14 +98,29 @@ const InterpolationVariantsList = (props: Props) => {
   const [interpolationVariants, setInterpolationVariants] = useFloroState(`${props.phraseRef}.interpolationVariants`);
   const variables = useReferencedObject(`${props.phraseRef}.variables`)
   const linkVariables = useReferencedObject(`${props.phraseRef}.linkVariables`)
+  const styledContents = useReferencedObject(`${props.phraseRef}.styledContents`)
+  const contentVariables = useReferencedObject(`${props.phraseRef}.contentVariables`)
 
   const varSet = useMemo(() => {
     return new Set([
-      ...variables?.map?.((v) => v.name?.toLowerCase?.() as string) ?? [],
-      ...interpolationVariants?.map?.((iv) => iv.name?.toLowerCase() as string) ?? [],
-      ...linkVariables?.map?.((l) => l.linkName?.toLowerCase() as string) ?? [],
+      ...(variables?.map?.((v) => v.name?.toLowerCase?.() as string) ?? []),
+      ...(interpolationVariants?.map?.(
+        (iv) => iv.name?.toLowerCase() as string
+      ) ?? []),
+      ...(linkVariables?.map?.((l) => l.linkName?.toLowerCase() as string) ??
+        []),
+      ...(styledContents?.map?.((sc) => sc.name?.toLowerCase() as string) ??
+        []),
+      ...(contentVariables?.map?.((cv) => cv.name?.toLowerCase() as string) ??
+        []),
     ]);
-  }, [variables, linkVariables, interpolationVariants]);
+  }, [
+    variables,
+    linkVariables,
+    interpolationVariants,
+    styledContents,
+    contentVariables,
+  ]);
 
 
   const options = useMemo(() => {
@@ -233,7 +248,7 @@ const InterpolationVariantsList = (props: Props) => {
           <span>
             {isMissingValues && (
                 <MissingTranslationsPill>
-                    <MissingTranslationsTitle>{`missing ${props.selectedLocale.localeCode} vairants`}</MissingTranslationsTitle>
+                    <MissingTranslationsTitle>{`missing ${props.selectedLocale.localeCode} variants`}</MissingTranslationsTitle>
                 </MissingTranslationsPill>
             )}
           </span>

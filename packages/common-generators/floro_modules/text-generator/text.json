@@ -15,9 +15,976 @@
   },
   "localizedPhraseKeys": {
     "EN": {
+      "dev.anotha_one": {
+        "phraseKey": "dev.anotha_one",
+        "variables": {
+          "someFloat": 0
+        },
+        "contentVariables": {},
+        "styleClasses": {
+          "header": "string"
+        },
+        "args": {
+          "someFloat": 0,
+          "header": "string"
+        },
+        "links": {},
+        "interpolations": {},
+        "styledContents": {
+          "top header": {
+            "displayValue": [
+              {
+                "children": [],
+                "content": "boom",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              }
+            ],
+            "styleClass": "header"
+          }
+        },
+        "phrase": [
+          {
+            "children": [],
+            "content": "{top header}",
+            "type": "styled-content",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Here is some content",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "test.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "something about ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " and ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "git",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " also ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "mit license",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " also ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "distributed version control system",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " and ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "foss",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " and also I should say something about ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "static assets",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{top header}",
+            "type": "styled-content",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " won't come up",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "content": "\n",
+            "type": "text",
+            "children": [],
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "my second section",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "dev.my_dev_phrase": {
+        "phraseKey": "dev.my_dev_phrase",
+        "variables": {
+          "someFloat": 0
+        },
+        "contentVariables": {
+          "myContent": "string"
+        },
+        "styleClasses": {
+          "header": "string"
+        },
+        "args": {
+          "someFloat": 0,
+          "myContent": "string",
+          "header": "string"
+        },
+        "links": {
+          "my link": {
+            "displayValue": [
+              {
+                "children": [],
+                "content": "the link",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              }
+            ],
+            "linkName": "my link",
+            "href": [
+              {
+                "type": "text",
+                "content": "/home"
+              }
+            ]
+          }
+        },
+        "interpolations": {
+          "interop": {
+            "cases": [
+              {
+                "variable": "someFloat",
+                "operator": "eq",
+                "value": 5,
+                "subcases": [],
+                "resultant": [
+                  {
+                    "children": [],
+                    "content": "the value is five",
+                    "type": "text",
+                    "styles": {
+                      "isBold": false,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  }
+                ]
+              }
+            ],
+            "default": [
+              {
+                "children": [],
+                "content": "Herein lies the value ",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              },
+              {
+                "children": [],
+                "content": "{someFloat}",
+                "type": "variable",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              }
+            ]
+          }
+        },
+        "styledContents": {
+          "header one": {
+            "displayValue": [
+              {
+                "children": [],
+                "content": "This is the header ",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              },
+              {
+                "children": [],
+                "content": "{someFloat}",
+                "type": "variable",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              }
+            ],
+            "styleClass": "header"
+          }
+        },
+        "phrase": [
+          {
+            "children": [],
+            "content": "another section!!!!!!!!!!!!!!!",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "here is the phrase and no sections",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "okay ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{myContent}",
+            "type": "content-variable",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " does work here! and so does ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{someFloat}",
+            "type": "variable",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ". I can also add ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{my link}",
+            "type": "link",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " and I can add an ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{interop}",
+            "type": "interpolation",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ".",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "content": "\n",
+            "type": "text",
+            "children": [],
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{header one}",
+            "type": "styled-content",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "here is the phrase and no sections",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "okay ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{myContent}",
+            "type": "content-variable",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " does ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "work",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " here! and so does ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{someFloat}",
+            "type": "variable",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ". I can also add ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{my link}",
+            "type": "link",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " and I can add an ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{interop}",
+            "type": "interpolation",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ".",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
       "about.bringing_it_all_together_part_1": {
         "phraseKey": "about.bringing_it_all_together_part_1",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {
           "CRDT Link": {
             "displayValue": [
@@ -66,9 +1033,34 @@
                 "content": "https://github.com/florophore/floro/blob/main/src/sequenceoperations.ts#L294"
               }
             ]
+          },
+          "Three Way Merge Link": {
+            "displayValue": [
+              {
+                "children": [],
+                "content": "three-way merging",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": true,
+                  "isUnderlined": true,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              }
+            ],
+            "linkName": "Three Way Merge Link",
+            "href": [
+              {
+                "type": "text",
+                "content": "https://en.wikipedia.org/wiki/Diff3"
+              }
+            ]
           }
         },
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -124,11 +1116,24 @@
           },
           {
             "children": [],
-            "content": ", however, they're divergent enough from our use-case that it's probably best for us to explain merging ourselves. With that said, this section is going to be quite a bit more technical than the previous sections. To add to the confusion, there are two distinct types of merges that occur in version control, that we need to delineate between.",
+            "content": ", however, they're divergent enough from our use-case that it's probably best for us to explain merging ourselves. ",
             "type": "text",
             "styles": {
               "isBold": false,
               "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "With that said, this section is going to be slightly more technical than the previous sections.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
               "isUnderlined": false,
               "isStrikethrough": false,
               "isSuperscript": false,
@@ -163,7 +1168,7 @@
           },
           {
             "children": [],
-            "content": "The first type of merging is ",
+            "content": "There are two distinct types of merges that occur in version control, that we need to delineate between. The first type of merging is ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -293,7 +1298,33 @@
           },
           {
             "children": [],
-            "content": ", like most version control systems, uses a variant of three-way merging, you can see the implementation of ",
+            "content": ", like most version control systems, uses a variant of ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{Three Way Merge Link}",
+            "type": "link",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ", you can see the implementation of ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -368,14 +1399,57 @@
               "isSuperscript": false,
               "isSubscript": false
             }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "There is unfortunately no such thing as a perfect merge algorithm. There are however, less correct merge algorithms, and more correct merge algorithms.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
           }
         ]
       },
       "about.bringing_it_all_together_title": {
         "phraseKey": "about.bringing_it_all_together_title",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -395,8 +1469,12 @@
       "about.whats_the_difference_part_7": {
         "phraseKey": "about.whats_the_difference_part_7",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -533,8 +1611,12 @@
       "about.whats_the_difference_part_6": {
         "phraseKey": "about.whats_the_difference_part_6",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -554,8 +1636,12 @@
       "about.whats_the_difference_part_5": {
         "phraseKey": "about.whats_the_difference_part_5",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -614,8 +1700,12 @@
       "about.whats_the_difference_part_4": {
         "phraseKey": "about.whats_the_difference_part_4",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -687,8 +1777,12 @@
       "about.whats_the_different_part_3": {
         "phraseKey": "about.whats_the_different_part_3",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -929,8 +2023,12 @@
       "about.whats_the_difference_blurb_2": {
         "phraseKey": "about.whats_the_difference_blurb_2",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -1291,6 +2389,9 @@
       "about.whats_the_difference_blurb_1": {
         "phraseKey": "about.whats_the_difference_blurb_1",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {
           "Longest Common Subsequence": {
             "displayValue": [
@@ -1342,6 +2443,7 @@
           }
         },
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -1556,8 +2658,12 @@
       "about.whats_the_difference_title": {
         "phraseKey": "about.whats_the_difference_title",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -1603,8 +2709,12 @@
       "about.how_its_all_related_part_3": {
         "phraseKey": "about.how_its_all_related_part_3",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -1676,8 +2786,12 @@
       "about.how_it_is_all_related_part_2": {
         "phraseKey": "about.how_it_is_all_related_part_2",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -2308,8 +3422,12 @@
       "about.how_it_is_all_related_blurb_1": {
         "phraseKey": "about.how_it_is_all_related_blurb_1",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -2433,8 +3551,12 @@
       "about.how_it's_all_related": {
         "phraseKey": "about.how_it's_all_related",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -2454,6 +3576,9 @@
       "about.things_change_blurb_3": {
         "phraseKey": "about.things_change_blurb_3",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {
           "unit test": {
             "displayValue": [
@@ -2481,6 +3606,7 @@
           }
         },
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -2721,8 +3847,12 @@
       "about.things_change_blurb_2": {
         "phraseKey": "about.things_change_blurb_2",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -3223,8 +4353,12 @@
       "about.things_change_blurb_1": {
         "phraseKey": "about.things_change_blurb_1",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -3573,8 +4707,12 @@
       "about.things_change_title": {
         "phraseKey": "about.things_change_title",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -3594,8 +4732,12 @@
       "about.how_floro_works_title": {
         "phraseKey": "about.how_floro_works_title",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -3615,6 +4757,9 @@
       "about.how_it_works_blurb": {
         "phraseKey": "about.how_it_works_blurb",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {
           "redux": {
             "displayValue": [
@@ -3642,6 +4787,7 @@
           }
         },
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -4350,8 +5496,12 @@
       "about.how_it_works_blurb_part_2": {
         "phraseKey": "about.how_it_works_blurb_part_2",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -4826,8 +5976,12 @@
       "about.how_it_works_blurb_part_3": {
         "phraseKey": "about.how_it_works_blurb_part_3",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -4886,8 +6040,12 @@
       "about.how_it_works_blurb_part_4": {
         "phraseKey": "about.how_it_works_blurb_part_4",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -5843,8 +7001,12 @@
       "meta_tags.about": {
         "phraseKey": "meta_tags.about",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -5864,8 +7026,12 @@
       "front_page.appearance": {
         "phraseKey": "front_page.appearance",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -5885,8 +7051,12 @@
       "front_page.get_help_and_contribute": {
         "phraseKey": "front_page.get_help_and_contribute",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -5906,8 +7076,12 @@
       "front_page.install_the_cli": {
         "phraseKey": "front_page.install_the_cli",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -5927,8 +7101,12 @@
       "front_page.download_desktop_client": {
         "phraseKey": "front_page.download_desktop_client",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -5948,8 +7126,12 @@
       "front_page.subtext_of_tag_line": {
         "phraseKey": "front_page.subtext_of_tag_line",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -5982,12 +7164,29 @@
       "front_page.tag_line": {
         "phraseKey": "front_page.tag_line",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
-            "content": "git for the rest of your product team",
+            "content": "git",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " for the rest of your product team",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -6003,8 +7202,12 @@
       "front_page.nav_consulting": {
         "phraseKey": "front_page.nav_consulting",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -6024,8 +7227,12 @@
       "front_page.nav_foss": {
         "phraseKey": "front_page.nav_foss",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -6045,8 +7252,12 @@
       "front_page.nav_pricing": {
         "phraseKey": "front_page.nav_pricing",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -6066,8 +7277,12 @@
       "front_page.nav_download": {
         "phraseKey": "front_page.nav_download",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -6087,8 +7302,12 @@
       "front_page.nav_docs": {
         "phraseKey": "front_page.nav_docs",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -6108,8 +7327,12 @@
       "front_page.nav_about": {
         "phraseKey": "front_page.nav_about",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -6129,8 +7352,12 @@
       "components.terms_of_service": {
         "phraseKey": "components.terms_of_service",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -6150,8 +7377,12 @@
       "components.privacy_policy": {
         "phraseKey": "components.privacy_policy",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -6171,8 +7402,12 @@
       "components.copyright": {
         "phraseKey": "components.copyright",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -6192,8 +7427,12 @@
       "components.released_under_mit": {
         "phraseKey": "components.released_under_mit",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -6213,8 +7452,12 @@
       "components.copied": {
         "phraseKey": "components.copied",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -6234,12 +7477,42 @@
       "main.hello_world": {
         "phraseKey": "main.hello_world",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
-            "content": "Hello World from Floro!",
+            "content": "Hello World from ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "!",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -6267,9 +7540,772 @@
       }
     },
     "ZH": {
+      "dev.anotha_one": {
+        "phraseKey": "dev.anotha_one",
+        "variables": {
+          "someFloat": 0
+        },
+        "contentVariables": {},
+        "styleClasses": {
+          "header": "string"
+        },
+        "args": {
+          "someFloat": 0,
+          "header": "string"
+        },
+        "links": {},
+        "interpolations": {},
+        "styledContents": {
+          "top header": {
+            "displayValue": [
+              {
+                "children": [],
+                "content": "boom",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              }
+            ],
+            "styleClass": "header"
+          }
+        },
+        "phrase": [
+          {
+            "children": [],
+            "content": "{top header}",
+            "type": "styled-content",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "下面是",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "测试的一些内容。",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "一些关于 Floro 和 git 以及 mit license 的内容，还有分布式版本控制系统和 foss，另外我还应该说一些关于 static assets 的内容 {header} 不会出现。",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "content": "\n",
+            "type": "text",
+            "children": [],
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "我的第二部分",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "dev.my_dev_phrase": {
+        "phraseKey": "dev.my_dev_phrase",
+        "variables": {
+          "someFloat": 0
+        },
+        "contentVariables": {
+          "myContent": "string"
+        },
+        "styleClasses": {
+          "header": "string"
+        },
+        "args": {
+          "someFloat": 0,
+          "myContent": "string",
+          "header": "string"
+        },
+        "links": {
+          "my link": {
+            "displayValue": [
+              {
+                "children": [],
+                "content": "the link",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              }
+            ],
+            "linkName": "my link",
+            "href": [
+              {
+                "type": "text",
+                "content": "/home"
+              }
+            ]
+          }
+        },
+        "interpolations": {
+          "interop": {
+            "cases": [],
+            "default": [
+              {
+                "children": [],
+                "content": "在这里",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              },
+              {
+                "children": [],
+                "content": "{someFloat}",
+                "type": "variable",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              }
+            ]
+          }
+        },
+        "styledContents": {
+          "header one": {
+            "displayValue": [
+              {
+                "children": [],
+                "content": "This is the header ",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              },
+              {
+                "children": [],
+                "content": "{someFloat}",
+                "type": "variable",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              }
+            ],
+            "styleClass": "header"
+          }
+        },
+        "phrase": [
+          {
+            "children": [],
+            "content": "another section!!!!!!!!!!!!!!!",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "here is the phrase and no sections",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "okay ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{myContent}",
+            "type": "content-variable",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " does work here! and so does ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{someFloat}",
+            "type": "variable",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ". I can also add ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{my link}",
+            "type": "link",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " and I can add an ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{interop}",
+            "type": "interpolation",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ".",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "content": "\n",
+            "type": "text",
+            "children": [],
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{header one}",
+            "type": "styled-content",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "here is the phrase and no sections",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "okay ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{myContent}",
+            "type": "content-variable",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " does ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "work",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " here! and so does ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{someFloat}",
+            "type": "variable",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ". I can also add ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{my link}",
+            "type": "link",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " and I can add an ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{interop}",
+            "type": "interpolation",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ".",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
       "about.bringing_it_all_together_part_1": {
         "phraseKey": "about.bringing_it_all_together_part_1",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {
           "CRDT Link": {
             "displayValue": [
@@ -6318,13 +8354,38 @@
                 "content": "https://github.com/florophore/floro/blob/main/src/sequenceoperations.ts#L294"
               }
             ]
+          },
+          "Three Way Merge Link": {
+            "displayValue": [
+              {
+                "children": [],
+                "content": "三向合并",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": true,
+                  "isUnderlined": true,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              }
+            ],
+            "linkName": "Three Way Merge Link",
+            "href": [
+              {
+                "type": "text",
+                "content": "https://en.wikipedia.org/wiki/Diff3"
+              }
+            ]
           }
         },
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
-            "content": "Unfortunately, there isn't a lot of great content that comprehensively covers the sequence merging cases ",
+            "content": "遗憾的是，目前尚未有大量全面覆盖",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -6337,7 +8398,7 @@
           },
           {
             "children": [],
-            "content": "floro",
+            "content": "Floro",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -6350,7 +8411,7 @@
           },
           {
             "children": [],
-            "content": " deals with. There are some similar problems that come up in ",
+            "content": "处理的序列合并案例的详细内容。在",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -6376,11 +8437,24 @@
           },
           {
             "children": [],
-            "content": ", however, they're divergent enough from our use-case that it's probably best for us to explain merging ourselves. With that said, this section is going to be quite a bit more technical than the previous sections. To add to the confusion, there are two distinct types of merges that occur in version control, that we need to delineate between.",
+            "content": "中也会遇到一些类似的问题，但是它们与我们的使用场景差距较大，因此，我们自己解释合并问题可能会更合适。因此",
             "type": "text",
             "styles": {
               "isBold": false,
               "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "，本章节的技术水平可能会稍稍高于前几章节。",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
               "isUnderlined": false,
               "isStrikethrough": false,
               "isSuperscript": false,
@@ -6415,7 +8489,7 @@
           },
           {
             "children": [],
-            "content": "The first type of merging is ",
+            "content": "在版本控制中，我们需要区分两种不同类型的合并：第一种合并被称为",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -6428,7 +8502,7 @@
           },
           {
             "children": [],
-            "content": "merging of sequences",
+            "content": "序列合并",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -6441,7 +8515,7 @@
           },
           {
             "children": [],
-            "content": ". We will be covering that in this section. The second type of merging is ",
+            "content": "，我们将在本篇中对其进行讲解。另一种类型的合并是",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -6454,7 +8528,7 @@
           },
           {
             "children": [],
-            "content": "merging of the commit trees",
+            "content": "提交树的合并",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -6467,7 +8541,7 @@
           },
           {
             "children": [],
-            "content": ", which focuses on how commit graphs are merged. We will cover how ",
+            "content": "，专注于如何合并提交图，我们会在下一篇中讨论",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -6480,7 +8554,7 @@
           },
           {
             "children": [],
-            "content": "floro",
+            "content": "Floro",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -6493,7 +8567,7 @@
           },
           {
             "children": [],
-            "content": " handles commit tree merging in the next section.",
+            "content": "是如何处理提交树的合并。",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -6545,7 +8619,7 @@
           },
           {
             "children": [],
-            "content": ", like most version control systems, uses a variant of three-way merging, you can see the implementation of ",
+            "content": "，像其他大部分版本控制系统一样，使用的是",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -6558,7 +8632,20 @@
           },
           {
             "children": [],
-            "content": "floro",
+            "content": "{Three Way Merge Link}",
+            "type": "link",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " 的变体，你可以参考",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -6571,7 +8658,20 @@
           },
           {
             "children": [],
-            "content": "'s ",
+            "content": "Floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "的实现",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -6597,7 +8697,46 @@
           },
           {
             "children": [],
-            "content": ".",
+            "content": "。",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "遗憾的是，没有完美的合并算法。但是，一些合并算法的准确率较低，同时也存在准确率较高的合并算法。",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -6626,8 +8765,12 @@
       "about.bringing_it_all_together_title": {
         "phraseKey": "about.bringing_it_all_together_title",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -6647,8 +8790,12 @@
       "about.whats_the_difference_part_7": {
         "phraseKey": "about.whats_the_difference_part_7",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -6785,8 +8932,12 @@
       "about.whats_the_difference_part_6": {
         "phraseKey": "about.whats_the_difference_part_6",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -6806,8 +8957,12 @@
       "about.whats_the_difference_part_5": {
         "phraseKey": "about.whats_the_difference_part_5",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -6866,8 +9021,12 @@
       "about.whats_the_difference_part_4": {
         "phraseKey": "about.whats_the_difference_part_4",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -6939,8 +9098,12 @@
       "about.whats_the_different_part_3": {
         "phraseKey": "about.whats_the_different_part_3",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -7181,8 +9344,12 @@
       "about.whats_the_difference_blurb_2": {
         "phraseKey": "about.whats_the_difference_blurb_2",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -7543,6 +9710,9 @@
       "about.whats_the_difference_blurb_1": {
         "phraseKey": "about.whats_the_difference_blurb_1",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {
           "Longest Common Subsequence": {
             "displayValue": [
@@ -7594,6 +9764,7 @@
           }
         },
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -7808,8 +9979,12 @@
       "about.whats_the_difference_title": {
         "phraseKey": "about.whats_the_difference_title",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -7855,8 +10030,12 @@
       "about.how_its_all_related_part_3": {
         "phraseKey": "about.how_its_all_related_part_3",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -7928,8 +10107,12 @@
       "about.how_it_is_all_related_part_2": {
         "phraseKey": "about.how_it_is_all_related_part_2",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -8560,8 +10743,12 @@
       "about.how_it_is_all_related_blurb_1": {
         "phraseKey": "about.how_it_is_all_related_blurb_1",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -8685,8 +10872,12 @@
       "about.how_it's_all_related": {
         "phraseKey": "about.how_it's_all_related",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -8706,6 +10897,9 @@
       "about.things_change_blurb_3": {
         "phraseKey": "about.things_change_blurb_3",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {
           "unit test": {
             "displayValue": [
@@ -8733,6 +10927,7 @@
           }
         },
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -8973,8 +11168,12 @@
       "about.things_change_blurb_2": {
         "phraseKey": "about.things_change_blurb_2",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -9475,8 +11674,12 @@
       "about.things_change_blurb_1": {
         "phraseKey": "about.things_change_blurb_1",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -9825,8 +12028,12 @@
       "about.things_change_title": {
         "phraseKey": "about.things_change_title",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -9846,8 +12053,12 @@
       "about.how_floro_works_title": {
         "phraseKey": "about.how_floro_works_title",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -9867,6 +12078,9 @@
       "about.how_it_works_blurb": {
         "phraseKey": "about.how_it_works_blurb",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {
           "redux": {
             "displayValue": [
@@ -9894,6 +12108,7 @@
           }
         },
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -10602,8 +12817,12 @@
       "about.how_it_works_blurb_part_2": {
         "phraseKey": "about.how_it_works_blurb_part_2",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -11078,8 +13297,12 @@
       "about.how_it_works_blurb_part_3": {
         "phraseKey": "about.how_it_works_blurb_part_3",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -11138,8 +13361,12 @@
       "about.how_it_works_blurb_part_4": {
         "phraseKey": "about.how_it_works_blurb_part_4",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -12095,8 +14322,12 @@
       "meta_tags.about": {
         "phraseKey": "meta_tags.about",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -12116,8 +14347,12 @@
       "front_page.appearance": {
         "phraseKey": "front_page.appearance",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -12137,8 +14372,12 @@
       "front_page.get_help_and_contribute": {
         "phraseKey": "front_page.get_help_and_contribute",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -12158,8 +14397,12 @@
       "front_page.install_the_cli": {
         "phraseKey": "front_page.install_the_cli",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -12179,8 +14422,12 @@
       "front_page.download_desktop_client": {
         "phraseKey": "front_page.download_desktop_client",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -12200,8 +14447,12 @@
       "front_page.subtext_of_tag_line": {
         "phraseKey": "front_page.subtext_of_tag_line",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -12221,8 +14472,12 @@
       "front_page.tag_line": {
         "phraseKey": "front_page.tag_line",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -12255,8 +14510,12 @@
       "front_page.nav_consulting": {
         "phraseKey": "front_page.nav_consulting",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -12276,8 +14535,12 @@
       "front_page.nav_foss": {
         "phraseKey": "front_page.nav_foss",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -12297,8 +14560,12 @@
       "front_page.nav_pricing": {
         "phraseKey": "front_page.nav_pricing",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -12318,8 +14585,12 @@
       "front_page.nav_download": {
         "phraseKey": "front_page.nav_download",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -12339,8 +14610,12 @@
       "front_page.nav_docs": {
         "phraseKey": "front_page.nav_docs",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -12360,8 +14635,12 @@
       "front_page.nav_about": {
         "phraseKey": "front_page.nav_about",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -12381,8 +14660,12 @@
       "components.terms_of_service": {
         "phraseKey": "components.terms_of_service",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -12402,8 +14685,12 @@
       "components.privacy_policy": {
         "phraseKey": "components.privacy_policy",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -12423,8 +14710,12 @@
       "components.copyright": {
         "phraseKey": "components.copyright",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -12444,8 +14735,12 @@
       "components.released_under_mit": {
         "phraseKey": "components.released_under_mit",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -12465,8 +14760,12 @@
       "components.copied": {
         "phraseKey": "components.copied",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
@@ -12486,12 +14785,16 @@
       "main.hello_world": {
         "phraseKey": "main.hello_world",
         "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
         "links": {},
         "interpolations": {},
+        "styledContents": {},
         "phrase": [
           {
             "children": [],
-            "content": "Hello World from Floro!",
+            "content": "来自 Floro 的 Hello World！",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -12520,6 +14823,14 @@
     }
   },
   "phraseKeyDebugInfo": {
+    "dev.anotha_one": {
+      "groupName": "Dev",
+      "phraseKey": "anotha one"
+    },
+    "dev.my_dev_phrase": {
+      "groupName": "Dev",
+      "phraseKey": "my dev phrase"
+    },
     "about.bringing_it_all_together_part_1": {
       "groupName": "About",
       "phraseKey": "bringing it all together part 1"

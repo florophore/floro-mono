@@ -17,6 +17,7 @@ import TermGlossaryHeader from "./header/TermGlossaryHeader";
 import TermList from "./terms/TermList";
 import DeepLProvider from "./deepl/DeepLContext";
 import TranslationMemoryProvider from "./memory/TranslationMemoryContext";
+import ChatGPTProvider from "./chatgpt/ChatGPTContext";
 
 const Container = styled.div`
   width: 100%;
@@ -129,79 +130,81 @@ const Layout = () => {
 
   return (
     <ThemeProvider theme={colorTheme}>
-      <DeepLProvider>
-        <TranslationMemoryProvider>
-          <Container ref={container}>
-            {showLocales && <LocalesSections />}
-            <TextAppHeader
-              isEditGroups={isEditGroups}
-              isEditLocales={showLocales}
-              onShowEditGroups={onShowEditGroups}
-              onHideEditGroups={onHideEditGroups}
-              onShowEditLocales={onShowLocales}
-              onHideEditLocales={onHideLocales}
-              searchText={searchText ?? ""}
-              onSetSearchText={setSearchText}
-              selectedTopLevelLocale={selectedTopLevelLocale as string}
-              setSelectedTopLevelLocale={onChangeTopLevelLocale}
-              globalFilterUntranslated={globalFilterUntranslated}
-              setGlobalFilterUnstranslated={setGlobalFilterUnstranslated}
-              globalFilterRequiresUpdate={globalFilterRequiresUpdate}
-              setGlobalFilterRequiresUpdate={setGlobalFilterRequiresUpdate}
-              filterTag={filterTag}
-              setFilterTag={setFilterTag}
-              showOnlyPinnedPhrases={showOnlyPinnedPhrases ?? false}
-              setShowOnlyPinnedPhrases={setShowOnlyPinnedPhrases}
-              pinnedPhrases={pinnedPhrases}
-              setPinnedPhrases={setPinnedPhrases}
-              removePinnedPhrases={removePinnedPhrases}
-            />
-            <PhraseGroups
-              selectedTopLevelLocale={selectedTopLevelLocale}
-              globalFilterUntranslated={globalFilterUntranslated}
-              globalFilterRequiresUpdate={globalFilterRequiresUpdate}
-              searchText={searchText}
-              isEditingGroups={isEditGroups}
-              filterTag={filterTag}
-              showOnlyPinnedPhrases={
-                (showOnlyPinnedPhrases ?? false) && clientStorageEnabled
-              }
-              pinnedPhrases={pinnedPhrases}
-              setPinnedPhrases={setPinnedPhrases}
-              removePinnedPhrases={removePinnedPhrases}
-            />
-            {((terms?.length ?? 0) > 0 || commandMode == "edit") && (
-              <TermGlossaryHeader
-                onSetSearchTermText={setSearchTermText}
+      <ChatGPTProvider>
+        <DeepLProvider>
+          <TranslationMemoryProvider>
+            <Container ref={container}>
+              {showLocales && <LocalesSections />}
+              <TextAppHeader
+                isEditGroups={isEditGroups}
+                isEditLocales={showLocales}
+                onShowEditGroups={onShowEditGroups}
+                onHideEditGroups={onHideEditGroups}
+                onShowEditLocales={onShowLocales}
+                onHideEditLocales={onHideLocales}
+                searchText={searchText ?? ""}
+                onSetSearchText={setSearchText}
+                selectedTopLevelLocale={selectedTopLevelLocale as string}
+                setSelectedTopLevelLocale={onChangeTopLevelLocale}
+                globalFilterUntranslated={globalFilterUntranslated}
+                setGlobalFilterUnstranslated={setGlobalFilterUnstranslated}
+                globalFilterRequiresUpdate={globalFilterRequiresUpdate}
+                setGlobalFilterRequiresUpdate={setGlobalFilterRequiresUpdate}
+                filterTag={filterTag}
+                setFilterTag={setFilterTag}
+                showOnlyPinnedPhrases={showOnlyPinnedPhrases ?? false}
+                setShowOnlyPinnedPhrases={setShowOnlyPinnedPhrases}
+                pinnedPhrases={pinnedPhrases}
+                setPinnedPhrases={setPinnedPhrases}
+                removePinnedPhrases={removePinnedPhrases}
+              />
+              <PhraseGroups
+                selectedTopLevelLocale={selectedTopLevelLocale}
+                globalFilterUntranslated={globalFilterUntranslated}
+                globalFilterRequiresUpdate={globalFilterRequiresUpdate}
+                searchText={searchText}
+                isEditingGroups={isEditGroups}
+                filterTag={filterTag}
+                showOnlyPinnedPhrases={
+                  (showOnlyPinnedPhrases ?? false) && clientStorageEnabled
+                }
+                pinnedPhrases={pinnedPhrases}
+                setPinnedPhrases={setPinnedPhrases}
+                removePinnedPhrases={removePinnedPhrases}
+              />
+              {((terms?.length ?? 0) > 0 || commandMode == "edit") && (
+                <TermGlossaryHeader
+                  onSetSearchTermText={setSearchTermText}
+                  searchTermText={searchTermText}
+                  isEditTerms={showEditTerms}
+                  onShowEditTerms={onShowEditTerms}
+                  onHideEditTerms={onHideEditTerms}
+                  globalFilterUntranslatedTerms={globalFilterUntranslatedTerms}
+                  setGlobalFilterUnstranslatedTerms={
+                    setGlobalFilterUnstranslatedTerms
+                  }
+                  showOnlyPinnedTerms={showOnlyPinnedTerms ?? false}
+                  setShowOnlyPinnedTerms={setShowOnlyPinnedTerms}
+                  pinnedTerms={pinnedTerms}
+                  setPinnedTerms={setPinnedPhrases}
+                  removePinnedTerms={removePinnedTerms}
+                  selectedTopLevelLocale={selectedTopLevelLocale}
+                />
+              )}
+              <TermList
                 searchTermText={searchTermText}
                 isEditTerms={showEditTerms}
-                onShowEditTerms={onShowEditTerms}
-                onHideEditTerms={onHideEditTerms}
-                globalFilterUntranslatedTerms={globalFilterUntranslatedTerms}
-                setGlobalFilterUnstranslatedTerms={
-                  setGlobalFilterUnstranslatedTerms
-                }
-                showOnlyPinnedTerms={showOnlyPinnedTerms ?? false}
-                setShowOnlyPinnedTerms={setShowOnlyPinnedTerms}
-                pinnedTerms={pinnedTerms}
-                setPinnedTerms={setPinnedPhrases}
-                removePinnedTerms={removePinnedTerms}
                 selectedTopLevelLocale={selectedTopLevelLocale}
+                globalFilterUntranslatedTerms={globalFilterUntranslatedTerms}
+                showOnlyPinnedTerms={showOnlyPinnedTerms ?? false}
+                pinnedTerms={pinnedTerms}
+                setPinnedTerms={setPinnedTerms}
+                removePinnedTerms={removePinnedTerms}
               />
-            )}
-            <TermList
-              searchTermText={searchTermText}
-              isEditTerms={showEditTerms}
-              selectedTopLevelLocale={selectedTopLevelLocale}
-              globalFilterUntranslatedTerms={globalFilterUntranslatedTerms}
-              showOnlyPinnedTerms={showOnlyPinnedTerms ?? false}
-              pinnedTerms={pinnedTerms}
-              setPinnedTerms={setPinnedTerms}
-              removePinnedTerms={removePinnedTerms}
-            />
-          </Container>
-        </TranslationMemoryProvider>
-      </DeepLProvider>
+            </Container>
+          </TranslationMemoryProvider>
+        </DeepLProvider>
+      </ChatGPTProvider>
     </ThemeProvider>
   );
 };

@@ -88,6 +88,8 @@ const LinkVariableList = (props: Props) => {
   const [linkVariables, setLinkVariables] = useFloroState(`${props.phraseRef}.linkVariables`);
   const variables = useReferencedObject(`${props.phraseRef}.variables`)
   const interpolationVariants = useReferencedObject(`${props.phraseRef}.interpolationVariants`)
+  const styledContents = useReferencedObject(`${props.phraseRef}.styledContents`)
+  const contentVariables = useReferencedObject(`${props.phraseRef}.contentVariables`)
 
   const isMissingValues = useMemo(() => {
     const localeRef = `$(text).localeSettings.locales.localeCode<${props.selectedLocale.localeCode}>`;
@@ -116,8 +118,10 @@ const LinkVariableList = (props: Props) => {
       ...variables?.map?.((v) => v.name?.toLowerCase?.() as string) ?? [],
       ...interpolationVariants?.map?.((iv) => iv.name?.toLowerCase() as string) ?? [],
       ...linkVariables?.map?.((l) => l.linkName?.toLowerCase() as string) ?? [],
+      ...styledContents?.map?.((sc) => sc.name?.toLowerCase() as string) ?? [],
+      ...contentVariables?.map?.((cv) => cv.name?.toLowerCase() as string) ?? [],
     ]);
-  }, [variables, linkVariables, interpolationVariants]);
+  }, [variables, linkVariables, interpolationVariants, styledContents, contentVariables]);
 
   const isNameTaken = useMemo(() => {
     return varSet.has(name?.toLowerCase());

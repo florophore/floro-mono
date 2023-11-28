@@ -30,8 +30,10 @@ import deepLSourceLocales from "../../deep_l_source_locales.json";
 import deepLTargetLocales from "../../deep_l_target_locales.json";
 import MLModal from "../mlmodal/MLModal";
 import { useTranslationMemory } from "../../memory/TranslationMemoryContext";
-import TranslationMemoryList from "../tranlsationmemory/TranslationMemoryList";
+import TranslationMemoryList from "../translationmemory/TranslationMemoryList";
 import { useDiffColor } from "../../diff";
+import TermModal from "../termmodal/TermModal";
+import PromptModal from "../promptmodal/PromptModal";
 
 const Container = styled.div`
 `;
@@ -238,8 +240,10 @@ const InterpolationVariant = (props: Props) => {
 
   const editorObserver = useMemo(() => {
     const variables = props.phrase.variables.map((v) => v.name);
-    return new Observer(variables, [], [], enabledMentionedValues ?? []);
-  }, [props.phrase.variables, props.interpolationVariant, enabledMentionedValues]);
+    const contentVariables =
+      props.phrase?.contentVariables?.map?.((v) => v.name) ?? [];
+    return new Observer(variables, [], [], enabledMentionedValues ?? [], contentVariables);
+  }, [props.phrase.variables, props.phrase?.contentVariables, props.interpolationVariant, enabledMentionedValues]);
 
   const localeRuleEditorDoc = useMemo(() => {
     if (defaultValue) {
@@ -255,6 +259,39 @@ const InterpolationVariant = (props: Props) => {
       props.selectedLocale.localeCode?.toLowerCase() ?? "en"
     );
   }, [props.selectedLocale.localeCode, editorObserver]);
+
+  const targetEditorObserver = useMemo(() => {
+    const variables = props.phrase.variables.map((v) => v.name);
+    const contentVariables =
+      props.phrase?.contentVariables?.map?.((v) => v.name) ?? [];
+    return new Observer(
+      variables,
+      [],
+      [],
+      enabledMentionedValues ?? [],
+      contentVariables
+    );
+  }, [
+    props.phrase.variables,
+    props.interpolationVariant,
+    props.phrase?.contentVariables,
+    enabledMentionedValues,
+  ]);
+
+  const targetEditorDoc = useMemo(() => {
+    if (defaultValue) {
+      const doc = new EditorDocument(
+        targetEditorObserver,
+        props.selectedLocale.localeCode?.toLowerCase() ?? "en"
+      );
+      doc.tree.updateRootFromHTML(defaultValue?.richTextHtml ?? "");
+      return doc;
+    }
+    return new EditorDocument(
+      targetEditorObserver,
+      props.selectedLocale.localeCode?.toLowerCase() ?? "en"
+    );
+  }, [props.selectedLocale.localeCode, targetEditorObserver]);
 
   const defaultValueIsEmpty = useMemo(() => {
     return (defaultValue?.plainText ?? "") == "";
@@ -409,11 +446,22 @@ const InterpolationVariant = (props: Props) => {
   }, [mentionedTerms, sourceDefaultValue?.enabledTerms])
 
   const sourceEditorObserver = useMemo(() => {
-    const variables = props.phrase.variables?.map(v => v.name) ?? [];
-    const linkVariables = props?.phrase.linkVariables?.map?.(v => v.linkName) ?? [];
-    const interpolationVariants = props.phrase?.interpolationVariants?.map?.(v => v.name) ?? [];
-    return new Observer(variables, linkVariables, interpolationVariants, sourceEnabledMentionedValues ?? []);
-  }, [props.phrase.variables, props.phrase.linkVariables, props.phrase.interpolationVariants, sourceEnabledMentionedValues]);
+    const variables = props.phrase.variables?.map((v) => v.name) ?? [];
+    const contentVariables =
+      props.phrase?.contentVariables?.map?.((v) => v.name) ?? [];
+    return new Observer(
+      variables,
+      [],
+      [],
+      sourceEnabledMentionedValues ?? [],
+      contentVariables
+    );
+  }, [
+    props.phrase.variables,
+    props.phrase.linkVariables,
+    props.phrase.contentVariables,
+    sourceEnabledMentionedValues,
+  ]);
 
   const sourceEditorDoc = useMemo(() => {
     if (sourceDefaultValue && props?.systemSourceLocale?.localeCode) {
@@ -428,6 +476,10 @@ const InterpolationVariant = (props: Props) => {
     return sourceEditorDoc.tree.getHtml();
   }, [sourceEditorDoc]);
 
+  const targetMockHtml = useMemo(() => {
+    return targetEditorDoc.tree.getHtml();
+  }, [targetEditorDoc]);
+
   const [showMLTranslate, setShowMLTranslate] = useState(false);
 
   const onShowMLTranslate = useCallback(() => {
@@ -436,6 +488,26 @@ const InterpolationVariant = (props: Props) => {
 
   const onHideMLTranslate = useCallback(() => {
     setShowMLTranslate(false);
+  }, []);
+
+  const [showPrompt, setShowPrompt] = useState(false);
+
+  const onShowPrompt = useCallback(() => {
+    setShowPrompt(true);
+  }, []);
+
+  const onHidePrompt = useCallback(() => {
+    setShowPrompt(false);
+  }, []);
+
+  const [showFindTerms, setShowFindTerms] = useState(false);
+
+  const onShowFindTerms = useCallback(() => {
+    setShowFindTerms(true);
+  }, []);
+
+  const onHideFindTerms = useCallback(() => {
+    setShowFindTerms(false);
   }, []);
 
   const translationMemory = useTranslationMemory();
@@ -468,6 +540,26 @@ const InterpolationVariant = (props: Props) => {
 
   return (
     <div style={{ marginBottom: 24 }}>
+      <TermModal
+        show={showFindTerms && commandMode == "edit"}
+        onDismiss={onHideFindTerms}
+        targetPlainText={defaultValue?.plainText ?? ""}
+        targetEditorDoc={targetEditorDoc}
+      />
+      <PromptModal
+        show={showPrompt && commandMode == "edit"}
+        selectedLocale={props.selectedLocale}
+        systemSourceLocale={props.systemSourceLocale}
+        targetRichText={defaultValue?.richTextHtml ?? ""}
+        sourceRichText={sourceDefaultValue?.richTextHtml}
+        sourceMockText={sourceMockHtml}
+        targetMockText={targetMockHtml}
+        targetEditorDoc={targetEditorDoc}
+        sourceEditorDoc={sourceEditorDoc}
+        onDismiss={onHidePrompt}
+        enabledTermIds={sourceDefaultValue?.enabledTerms ?? []}
+        onApplyTranslation={onSetDefaultValueContent}
+      />
       {sourceDefaultValue?.richTextHtml && commandMode == "edit" && (
         <MLModal
           show={showMLTranslate && commandMode == "edit"}
@@ -632,6 +724,14 @@ const InterpolationVariant = (props: Props) => {
               content={defaultValue?.richTextHtml ?? ""}
               onSetContent={onSetDefaultValueContent}
               placeholder={`write the (${props.selectedLocale.localeCode}) value for ${name}...`}
+              onOpenGPT={onShowPrompt}
+              showGPTIcon={
+                (!!sourceDefaultValue &&
+                  (sourceDefaultValue?.richTextHtml?.trim() ?? "") != "" &&
+                  (defaultValue?.plainText?.trim() ?? "") != "") ||
+                (!sourceDefaultValue &&
+                  (defaultValue?.plainText?.trim() ?? "") != "")
+              }
             />
           )}
           {commandMode != "edit" && (
@@ -641,13 +741,16 @@ const InterpolationVariant = (props: Props) => {
               content={defaultValue?.richTextHtml ?? ""}
             />
           )}
-          {mentionedTerms?.length > 0 && (
+          {defaultValue && (
             <TermList
               terms={mentionedTerms ?? []}
               selectedLocale={props.selectedLocale}
               systemSourceLocale={props.systemSourceLocale}
               onChange={onChangeTerm}
               enabledTerms={defaultValue?.enabledTerms ?? []}
+              showFindTerms={!props.systemSourceLocale}
+              onShowFindTerms={onShowFindTerms}
+              isEmpty={(defaultValue?.plainText?.trim?.() ?? "") == ""}
               title={
                 <>
                   <span style={{ color: theme.colors.contrastText }}>

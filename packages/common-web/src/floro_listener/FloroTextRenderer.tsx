@@ -6,47 +6,61 @@ import {
   StaticListNode,
   StaticLinkNode,
   StaticTextNode,
-  DebugInfo
+  DebugInfo,
+  StaticContentVariable,
+  StaticStyledTextNode,
 } from "@floro/common-generators/floro_modules/text-generator";
 
-export interface TextRenderers {
+export interface TextRenderers<N extends string> {
   render: (
-    nodes: (StaticNode | StaticListNode)[],
-    renderers: TextRenderers,
+    nodes: (StaticNode<React.ReactElement> | StaticListNode<React.ReactElement>)[],
+    renderers: TextRenderers<N>,
     isDebugMode: boolean,
     debugInfo: DebugInfo,
     debugHex?: `#${string}`,
     debugTextColorHex?: string,
   ) => React.ReactElement;
   renderStaticNodes: (
-    nodes: (StaticNode | StaticListNode)[],
-    renderers: TextRenderers
+    nodes: (StaticNode<React.ReactElement> | StaticListNode<React.ReactElement>)[],
+    renderers: TextRenderers<N>
   ) => React.ReactElement;
   renderText: (
-    node: StaticTextNode,
-    renderers: TextRenderers
+    node: StaticTextNode<React.ReactElement>,
+    renderers: TextRenderers<N>
   ) => React.ReactElement;
   renderLinkNode: (
-    node: StaticLinkNode,
-    renderers: TextRenderers
+    node: StaticLinkNode<React.ReactElement>,
+    renderers: TextRenderers<N>
   ) => React.ReactElement;
   renderListNode: (
-    node: StaticListNode,
-    renderers: TextRenderers
+    node: StaticListNode<React.ReactElement>,
+    renderers: TextRenderers<N>
   ) => React.ReactElement;
   renderUnOrderedListNode: (
-    node: StaticUnOrderedListNode,
-    renderers: TextRenderers
+    node: StaticUnOrderedListNode<React.ReactElement>,
+    renderers: TextRenderers<N>
   ) => React.ReactElement;
   renderOrderedListNode: (
-    node: StaticOrderedListNode,
-    renderers: TextRenderers
+    node: StaticOrderedListNode<React.ReactElement>,
+    renderers: TextRenderers<N>
+  ) => React.ReactElement;
+  renderStyledContentNode: (
+    node: StaticStyledTextNode<React.ReactElement, N>,
+    renderers: TextRenderers<N>
+  ) => React.ReactElement;
+  renderContentVariable: (
+    node: StaticContentVariable<React.ReactElement>
   ) => React.ReactElement;
 }
 
-const renderStaticNodes = (
-  nodes: (StaticNode | StaticListNode)[],
-  renderers: TextRenderers
+const renderStaticNodes = <N extends string,>(
+  nodes: (
+    | StaticNode<React.ReactElement>
+    | StaticListNode<React.ReactElement>
+    | StaticContentVariable<React.ReactElement>
+    | StaticStyledTextNode<React.ReactElement, N>
+  )[],
+  renderers: TextRenderers<N>
 ): React.ReactElement => {
   return (
     <>
@@ -63,6 +77,10 @@ const renderStaticNodes = (
               renderers.renderUnOrderedListNode(staticNode, renderers)}
             {staticNode.type == "ol" &&
               renderers.renderOrderedListNode(staticNode, renderers)}
+            {staticNode.type == "styled-content" &&
+              renderers.renderStyledContentNode(staticNode, renderers)}
+            {staticNode.type == "content" &&
+              renderers.renderContentVariable(staticNode)}
           </React.Fragment>
         );
       })}
@@ -70,7 +88,7 @@ const renderStaticNodes = (
   );
 };
 
-const renderText = (node: StaticTextNode, renderers: TextRenderers) => {
+const renderText = <N extends string,>(node: StaticTextNode<React.ReactElement>, renderers: TextRenderers<N>) => {
   let children = renderers.renderStaticNodes(node.children, renderers);
   const lineBreaks = node?.content?.split?.("\n") ?? [];
   const breakContent = lineBreaks.map((c, i) => (
@@ -108,41 +126,59 @@ const renderText = (node: StaticTextNode, renderers: TextRenderers) => {
   return content;
 };
 
-const renderLinkNode = (
-  node: StaticLinkNode,
-  renderers: TextRenderers
+const renderLinkNode = <N extends string,>(
+  node: StaticLinkNode<React.ReactElement>,
+  renderers: TextRenderers<N>
 ): React.ReactElement => {
   let children = renderers.renderStaticNodes(node.children, renderers);
   return <a href={node.href}>{children}</a>;
 };
 
-const renderListNode = (
-  node: StaticListNode,
-  renderers: TextRenderers
+const renderListNode = <N extends string,>(
+  node: StaticListNode<React.ReactElement>,
+  renderers: TextRenderers<N>
 ): React.ReactElement => {
   let children = renderers.renderStaticNodes(node.children, renderers);
   return <li>{children}</li>;
 };
 
-const renderUnOrderedListNode = (
-  node: StaticUnOrderedListNode,
-  renderers: TextRenderers
+const renderUnOrderedListNode = <N extends string,>(
+  node: StaticUnOrderedListNode<React.ReactElement>,
+  renderers: TextRenderers<N>
 ): React.ReactElement => {
   let children = renderers.renderStaticNodes(node.children, renderers);
   return <ul>{children}</ul>;
 };
 
-const renderOrderedListNode = (
-  node: StaticOrderedListNode,
-  renderers: TextRenderers
+const renderOrderedListNode = <N extends string,>(
+  node: StaticOrderedListNode<React.ReactElement>,
+  renderers: TextRenderers<N>
 ): React.ReactElement => {
   let children = renderers.renderStaticNodes(node.children, renderers);
   return <ol>{children}</ol>;
 };
 
-const render = (
-  nodes: (StaticNode | StaticListNode)[],
-  renderers: TextRenderers,
+const renderStyledContentNode = <N extends string,>(
+  node: StaticStyledTextNode<React.ReactElement, N>,
+  renderers: TextRenderers<N>
+): React.ReactElement => {
+  let children = renderers.renderStaticNodes(node.children, renderers);
+  const content = node?.styleClassFunction?.(children, node.styledContentName) ?? null;
+  if (content) {
+    return content;
+  }
+  return <>{children}</>
+};
+
+const renderContentVariable = (
+  node: StaticContentVariable<React.ReactElement>
+): React.ReactElement => {
+  return node.data ?? <></>;
+};
+
+const render = <N extends string,>(
+  nodes: (StaticNode<React.ReactElement> | StaticListNode<React.ReactElement>)[],
+  renderers: TextRenderers<N>,
   isDebugMode: boolean,
   debugInfo: DebugInfo,
   debugHex: `#${string}` = '#FF0000',
@@ -217,9 +253,7 @@ const render = (
     return content
 };
 
-
-
-export const renderers: TextRenderers = {
+export const richTextRenderers = {
   render,
   renderStaticNodes,
   renderText,
@@ -227,5 +261,6 @@ export const renderers: TextRenderers = {
   renderListNode,
   renderUnOrderedListNode,
   renderOrderedListNode,
+  renderStyledContentNode,
+  renderContentVariable
 };
-

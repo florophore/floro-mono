@@ -66,6 +66,9 @@ import NumberedListUnSelectedDark from "@floro/common-assets/assets/images/rich_
 import NumberedListSelectedLight from "@floro/common-assets/assets/images/rich_text_icons/numberedlist.selected.light.svg";
 import NumberedListSelectedDark from "@floro/common-assets/assets/images/rich_text_icons/numberedlist.selected.dark.svg";
 
+import GPTLight from "@floro/common-assets/assets/images/rich_text_icons/gpt.light.svg";
+import GPTDark from "@floro/common-assets/assets/images/rich_text_icons/gpt.dark.svg";
+
 import Cursor from "./editor/Cursor";
 
 const Container = styled.div`
@@ -156,6 +159,10 @@ const HeaderIcon = styled.img`
     width: 32px;
 `;
 
+const GPTHeaderIcon = styled.img`
+    height: 32px;
+`;
+
 
 function getSelectionRangeWithin(element) {
   var start = 0;
@@ -191,6 +198,8 @@ export interface Props {
   editorDoc: EditorDocument;
   content: string;
   onSetContent: (str: string) => void;
+  onOpenGPT?: () => void;
+  showGPTIcon?: boolean;
   lang?: string;
   placeholder?: string;
   isDebugMode?: boolean;
@@ -400,6 +409,10 @@ const ContentEditor = (props: Props) => {
     return theme.name == 'light' ? BulletedListUnSelectedLight : BulletedListUnSelectedDark;
   }, [isUnOrderedList, theme.name])
 
+  const gptIcon = useMemo(() => {
+    return theme.name == 'light' ? GPTLight : GPTDark;
+  }, [theme.name])
+
   const onToggleExtend = useCallback(() => {
     setShowExtend(!showExtend);
   }, [showExtend])
@@ -598,6 +611,13 @@ const ContentEditor = (props: Props) => {
             )}
           </div>
           <div style={{ position: "relative", display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+            {props.showGPTIcon && (
+              <GPTHeaderIcon
+                style={{ cursor: "pointer", marginRight: 12 }}
+                src={gptIcon}
+                onClick={props.onOpenGPT}
+              />
+            )}
             {showExtend && (
               <HeaderIcon
                 style={{ cursor: "pointer" }}

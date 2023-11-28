@@ -13,7 +13,8 @@ type ValueOf<T> = T[keyof T];
 export const useDiffColor = (
   query: ValueOf<PointerTypes>,
   fuzzy = true,
-  shade: "lighter" | "darker" = "darker"
+  shade: "lighter" | "darker" = "darker",
+  color?: string
 ) => {
   const { compareFrom } = useFloroContext();
   const theme = useTheme();
@@ -30,6 +31,9 @@ export const useDiffColor = (
     if (wasAdded) {
       return theme.colors.addedText;
     }
+    if (color) {
+      return color;
+    }
     return shade == "lighter"
       ? theme.colors.contrastTextLight
       : theme.colors.contrastText;
@@ -40,5 +44,6 @@ export const useDiffColor = (
     wasAdded,
     wasRemoved,
     hasConflict,
+    color
   ]);
 };
