@@ -1,23 +1,23 @@
 import { Icons, Theme } from "./types";
 
-import icon0 from './icons/merging.diamond-color.default.light.e3ff01cb.svg';
-import icon1 from './icons/merging.diamond-color.default.dark.7d163e53.svg';
-import icon2 from './icons/merging.rgb-list.default.light.7e8895dc.svg';
-import icon3 from './icons/merging.rgb-list.default.dark.2169bdcd.svg';
-import icon4 from './icons/merging.conflict-merge.default.light.b5f6505f.svg';
-import icon5 from './icons/merging.conflict-merge.default.dark.fe15cdb5.svg';
-import icon6 from './icons/merging.right-reconciled-conflict-merge.default.light.b0f9e47d.svg';
-import icon7 from './icons/merging.right-reconciled-conflict-merge.default.dark.cb828b76.svg';
-import icon8 from './icons/merging.left-reconciled-conflict-merge.default.light.9d1fac2a.svg';
-import icon9 from './icons/merging.left-reconciled-conflict-merge.default.dark.c7c93df.svg';
-import icon10 from './icons/merging.three-way-conflictmerge.default.light.c9fbb302.svg';
-import icon11 from './icons/merging.three-way-conflictmerge.default.dark.330d0f89.svg';
-import icon12 from './icons/merging.auto-merge.default.light.551b5f50.svg';
-import icon13 from './icons/merging.auto-merge.default.dark.33a595ca.svg';
-import icon14 from './icons/merging.right-reconciled-auto-merge.default.light.76e18c02.svg';
-import icon15 from './icons/merging.right-reconciled-auto-merge.default.dark.68985c27.svg';
-import icon16 from './icons/merging.left-reconciled-auto-merge.default.light.9d1fac2a.svg';
-import icon17 from './icons/merging.left-reconciled-auto-merge.default.dark.c7c93df.svg';
+import icon0 from './icons/merging.conflict-merge.default.light.391c00b6.svg';
+import icon1 from './icons/merging.conflict-merge.default.dark.16a7ac4d.svg';
+import icon2 from './icons/merging.left-reconciled-conflict-merge.default.light.aff0dbca.svg';
+import icon3 from './icons/merging.left-reconciled-conflict-merge.default.dark.c8b60f9e.svg';
+import icon4 from './icons/merging.right-reconciled-conflict-merge.default.light.d4d0cda7.svg';
+import icon5 from './icons/merging.right-reconciled-conflict-merge.default.dark.d048c0b9.svg';
+import icon6 from './icons/merging.left-reconciled-auto-merge.default.light.40252e50.svg';
+import icon7 from './icons/merging.left-reconciled-auto-merge.default.dark.c5211da.svg';
+import icon8 from './icons/merging.right-reconciled-auto-merge.default.light.d9ca7475.svg';
+import icon9 from './icons/merging.right-reconciled-auto-merge.default.dark.f38a2f11.svg';
+import icon10 from './icons/merging.auto-merge.default.light.8e89e3df.svg';
+import icon11 from './icons/merging.auto-merge.default.dark.c8f0235a.svg';
+import icon12 from './icons/merging.diamond-color.default.light.e3ff01cb.svg';
+import icon13 from './icons/merging.diamond-color.default.dark.7d163e53.svg';
+import icon14 from './icons/merging.rgb-list.default.light.7e8895dc.svg';
+import icon15 from './icons/merging.rgb-list.default.dark.2169bdcd.svg';
+import icon16 from './icons/merging.three-way-conflictmerge.default.light.c9fbb302.svg';
+import icon17 from './icons/merging.three-way-conflictmerge.default.dark.330d0f89.svg';
 import icon18 from './icons/merging.three-way-automerge.default.light.278facaa.svg';
 import icon19 from './icons/merging.three-way-automerge.default.dark.c3bfaa37.svg';
 import icon20 from './icons/about.red-x.default.light.39f1a350.svg';
@@ -114,7 +114,7 @@ import icon110 from './icons/front-page.floro-round.default.light.56c8e11e.svg';
 import icon111 from './icons/front-page.floro-round.default.dark.56c8e11e.svg';
 
 export default {
-  ["merging.diamond-color"]: {
+  ["merging.conflict-merge"]: {
     default: {
       ["light"]: icon0,
       ["dark"]: icon1,
@@ -122,7 +122,7 @@ export default {
     variants: {
     },
   },
-  ["merging.rgb-list"]: {
+  ["merging.left-reconciled-conflict-merge"]: {
     default: {
       ["light"]: icon2,
       ["dark"]: icon3,
@@ -130,7 +130,7 @@ export default {
     variants: {
     },
   },
-  ["merging.conflict-merge"]: {
+  ["merging.right-reconciled-conflict-merge"]: {
     default: {
       ["light"]: icon4,
       ["dark"]: icon5,
@@ -138,7 +138,7 @@ export default {
     variants: {
     },
   },
-  ["merging.right-reconciled-conflict-merge"]: {
+  ["merging.left-reconciled-auto-merge"]: {
     default: {
       ["light"]: icon6,
       ["dark"]: icon7,
@@ -146,7 +146,7 @@ export default {
     variants: {
     },
   },
-  ["merging.left-reconciled-conflict-merge"]: {
+  ["merging.right-reconciled-auto-merge"]: {
     default: {
       ["light"]: icon8,
       ["dark"]: icon9,
@@ -154,7 +154,7 @@ export default {
     variants: {
     },
   },
-  ["merging.three-way-conflictmerge"]: {
+  ["merging.auto-merge"]: {
     default: {
       ["light"]: icon10,
       ["dark"]: icon11,
@@ -162,7 +162,7 @@ export default {
     variants: {
     },
   },
-  ["merging.auto-merge"]: {
+  ["merging.diamond-color"]: {
     default: {
       ["light"]: icon12,
       ["dark"]: icon13,
@@ -170,7 +170,7 @@ export default {
     variants: {
     },
   },
-  ["merging.right-reconciled-auto-merge"]: {
+  ["merging.rgb-list"]: {
     default: {
       ["light"]: icon14,
       ["dark"]: icon15,
@@ -178,7 +178,7 @@ export default {
     variants: {
     },
   },
-  ["merging.left-reconciled-auto-merge"]: {
+  ["merging.three-way-conflictmerge"]: {
     default: {
       ["light"]: icon16,
       ["dark"]: icon17,
