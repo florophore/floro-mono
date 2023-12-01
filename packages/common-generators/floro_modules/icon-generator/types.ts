@@ -52,8 +52,8 @@ export interface Icons {
     "merging.rgb-list":                        MergingRGBList;
     "merging.right-reconciled-auto-merge":     MergingRightReconciledAutoMerge;
     "merging.right-reconciled-conflict-merge": MergingRightReconciledConflictMerge;
-    "merging.three-way-auto-merge":            MergingThreeWayAutoMerge;
-    "merging.three-way-conflict-merge":        MergingThreeWayConflictMerge;
+    "merging.three-way-automerge":             MergingThreeWayAutomerge;
+    "merging.three-way-conflictmerge":         MergingThreeWayConflictmerge;
 }
 
 export interface AboutBackward {
@@ -444,20 +444,20 @@ export interface MergingRightReconciledConflictMerge {
 export interface MergingRightReconciledConflictMergeVariants {
 }
 
-export interface MergingThreeWayAutoMerge {
+export interface MergingThreeWayAutomerge {
     default:  Theme;
-    variants: MergingThreeWayAutoMergeVariants;
+    variants: MergingThreeWayAutomergeVariants;
 }
 
-export interface MergingThreeWayAutoMergeVariants {
+export interface MergingThreeWayAutomergeVariants {
 }
 
-export interface MergingThreeWayConflictMerge {
+export interface MergingThreeWayConflictmerge {
     default:  Theme;
-    variants: MergingThreeWayConflictMergeVariants;
+    variants: MergingThreeWayConflictmergeVariants;
 }
 
-export interface MergingThreeWayConflictMergeVariants {
+export interface MergingThreeWayConflictmergeVariants {
 }
 
 // Converts JSON strings to/from your types

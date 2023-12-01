@@ -10,16 +10,16 @@ import icon6 from './icons/merging.right-reconciled-conflict-merge.default.light
 import icon7 from './icons/merging.right-reconciled-conflict-merge.default.dark.cb828b76.svg';
 import icon8 from './icons/merging.left-reconciled-conflict-merge.default.light.9d1fac2a.svg';
 import icon9 from './icons/merging.left-reconciled-conflict-merge.default.dark.c7c93df.svg';
-import icon10 from './icons/merging.three-way-conflict-merge.default.light.145a4e43.svg';
-import icon11 from './icons/merging.three-way-conflict-merge.default.dark.f6aa2315.svg';
+import icon10 from './icons/merging.three-way-conflictmerge.default.light.c9fbb302.svg';
+import icon11 from './icons/merging.three-way-conflictmerge.default.dark.330d0f89.svg';
 import icon12 from './icons/merging.auto-merge.default.light.551b5f50.svg';
 import icon13 from './icons/merging.auto-merge.default.dark.33a595ca.svg';
 import icon14 from './icons/merging.right-reconciled-auto-merge.default.light.76e18c02.svg';
 import icon15 from './icons/merging.right-reconciled-auto-merge.default.dark.68985c27.svg';
 import icon16 from './icons/merging.left-reconciled-auto-merge.default.light.9d1fac2a.svg';
 import icon17 from './icons/merging.left-reconciled-auto-merge.default.dark.c7c93df.svg';
-import icon18 from './icons/merging.three-way-auto-merge.default.light.582b5f68.svg';
-import icon19 from './icons/merging.three-way-auto-merge.default.dark.5df24e3a.svg';
+import icon18 from './icons/merging.three-way-automerge.default.light.278facaa.svg';
+import icon19 from './icons/merging.three-way-automerge.default.dark.c3bfaa37.svg';
 import icon20 from './icons/about.red-x.default.light.39f1a350.svg';
 import icon21 from './icons/about.red-x.default.dark.39f1a350.svg';
 import icon22 from './icons/about.check-mark.default.light.ee3b9d63.svg';
@@ -154,7 +154,7 @@ export default {
     variants: {
     },
   },
-  ["merging.three-way-conflict-merge"]: {
+  ["merging.three-way-conflictmerge"]: {
     default: {
       ["light"]: icon10,
       ["dark"]: icon11,
@@ -186,7 +186,7 @@ export default {
     variants: {
     },
   },
-  ["merging.three-way-auto-merge"]: {
+  ["merging.three-way-automerge"]: {
     default: {
       ["light"]: icon18,
       ["dark"]: icon19,

@@ -221,11 +221,11 @@ function AboutPage() {
   const visualDiff = useIcon("about.visual-diff");
   const checkMark = useIcon("about.check-mark");
   const redX = useIcon("about.red-x");
-  const threeWayAutoMergeImage = useIcon("merging.three-way-auto-merge");
+  const threeWayAutoMergeImage = useIcon("merging.three-way-automerge");
   const leftReconciledAutoMergeImage = useIcon("merging.left-reconciled-auto-merge");
   const rightReconciledAutoMergeImage = useIcon("merging.right-reconciled-auto-merge");
   const autoMergeImage = useIcon("merging.auto-merge");
-  const threeWayConflictMergeImage = useIcon("merging.three-way-conflict-merge");
+  const threeWayConflictMergeImage = useIcon("merging.three-way-conflictmerge");
   const leftReconciledConflictMergeImage = useIcon("merging.left-reconciled-conflict-merge");
   const rightReconciledConflictMergeImage = useIcon("merging.right-reconciled-conflict-merge");
   const conflictMergeImage = useIcon("merging.conflict-merge");
