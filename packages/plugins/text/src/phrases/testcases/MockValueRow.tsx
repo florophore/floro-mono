@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState } from "react";
+import React, { useMemo, useCallback, useState, useEffect } from "react";
 import {
   PointerTypes,
   SchemaTypes,
@@ -169,6 +169,9 @@ const MockValueRow = (props: Props) => {
   const [floatValue, setFloatValue] = useState<string>(
     mockValue?.floatMockValue?.toString?.() ?? ""
   );
+  const [stringValue, setStringValue] = useState<string>(
+    mockValue?.stringMockValue?.toString?.() ?? ""
+  );
 
   const onUpdateIntegerValue = useCallback((value: string) => {
     try {
@@ -235,6 +238,63 @@ const MockValueRow = (props: Props) => {
     }
     return null;
   }, [props.variable.varType, mockValue]);
+
+  useEffect(() => {
+    if (commandMode == "edit") {
+      if (props.variable?.varType != "integer") {
+        return;
+      }
+      const timeout = setTimeout(() => {
+        if (/^\d+$/.test(integerValue) && mockValue) {
+          setMockValue({
+            ...mockValue,
+            intMockValue: parseInt(integerValue),
+          });
+        }
+      }, 500);
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
+  }, [integerValue, commandMode]);
+
+  useEffect(() => {
+    if (commandMode == "edit") {
+      if (props.variable?.varType != "float") {
+        return;
+      }
+      const timeout = setTimeout(() => {
+        if (/^(\d+|\d+\.\d+)$/.test(floatValue) && mockValue) {
+          setMockValue({
+            ...mockValue,
+            floatMockValue: parseFloat(floatValue),
+          });
+        }
+      }, 500);
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
+  }, [floatValue, commandMode]);
+
+  useEffect(() => {
+    if (commandMode == "edit") {
+      const timeout = setTimeout(() => {
+        if (props.variable.varType != "string") {
+          return;
+        }
+        if (mockValue) {
+          setMockValue({
+            ...mockValue,
+            stringMockValue: stringValue,
+          });
+        }
+      }, 500);
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
+  }, [stringValue, commandMode]);
 
   return (
     <div>
@@ -327,17 +387,10 @@ const MockValueRow = (props: Props) => {
                     <Input
                       label={"value"}
                       placeholder={"value"}
-                      value={mockValue?.stringMockValue ?? ""}
+                      value={stringValue ?? ""}
                       widthSize="semi-short"
                       isValid={isValueValid}
-                      onTextChanged={(stringMockValue) => {
-                        if (mockValue) {
-                          setMockValue({
-                            ...mockValue,
-                            stringMockValue,
-                          });
-                        }
-                      }}
+                      onTextChanged={setStringValue}
                     />
                   )}
                   {props.variable.varType == "integer" && (
@@ -348,12 +401,6 @@ const MockValueRow = (props: Props) => {
                       value={integerValue}
                       widthSize="shortest"
                       onTextChanged={(text) => {
-                        if (/^\d+$/.test(text) && mockValue) {
-                          setMockValue({
-                            ...mockValue,
-                            intMockValue: parseInt(text),
-                          });
-                        }
                         onUpdateIntegerValue(text);
                       }}
                     />
@@ -366,12 +413,6 @@ const MockValueRow = (props: Props) => {
                       value={floatValue}
                       widthSize="shortest"
                       onTextChanged={(text) => {
-                        if (/^(\d+|\d+\.\d+)$/.test(text) && mockValue) {
-                          setMockValue({
-                            ...mockValue,
-                            floatMockValue: parseFloat(text),
-                          });
-                        }
                         onUpdateFloatValue(text);
                       }}
                     />

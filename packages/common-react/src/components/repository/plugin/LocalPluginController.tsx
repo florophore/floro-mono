@@ -384,6 +384,26 @@ const LocalPluginController = (props: Props) => {
     setCopyInstructions(nextCopyInstructions);
   }, [isCopyMode, copyInstructions, manifest?.name]);
 
+  const debounceTimeout = useRef<{
+    [pluginName: string]: NodeJS.Timeout
+  }>({});
+  // this avoids self DDOS-ing
+  const onUpdateState = useCallback(
+    (stateData, id, pluginName) => {
+      if (debounceTimeout.current?.[pluginName] !== null || debounceTimeout.current?.[pluginName] !== undefined) {
+        clearTimeout(debounceTimeout.current?.[pluginName]);
+      }
+      debounceTimeout.current[pluginName] = setTimeout(() => {
+        updatePluginState.mutate({
+          state: stateData,
+          id,
+          pluginName,
+        });
+      }, 300);
+    },
+    []
+  );
+
   useEffect(() => {
     const incoming = {};
     const onMessage = ({
@@ -459,11 +479,12 @@ const LocalPluginController = (props: Props) => {
           }
           clientUpdateCounter.current = id;
           if (props.apiResponse.repoState?.commandMode == "edit") {
-            updatePluginState.mutate({
-              state: state?.data,
-              id,
-              pluginName: data?.pluginName,
-            });
+            onUpdateState(state?.data, id, data?.pluginName);
+            //updatePluginState.mutate({
+            //  state: state?.data,
+            //  id,
+            //  pluginName: data?.pluginName,
+            //});
           }
         }
         if (id && state.command == "update-copy") {

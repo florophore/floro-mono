@@ -121,11 +121,11 @@ const PhraseSectionReOrderRow = (props: Props) => {
               style={{
                 fontWeight: 600,
                 color: theme.colors.titleText,
-                marginTop: 15,
+                marginTop: 10,
                 display: "flex",
                 flexDirection: "row",
                 alignItems: "center",
-                fontSize: "1.4rem",
+                fontSize: "2rem",
               }}
             >
               {props.phraseSection.name}

@@ -92,7 +92,7 @@ const StyledClassRow = (props: Props) => {
           <ColorControlsContainer>
             <RowTitle
               style={{
-                marginTop: 15,
+                marginTop: 10,
                 display: "flex",
                 flexDirection: "row",
                 alignItems: "center",

@@ -85,7 +85,7 @@ const LinkVariableList = (props: Props) => {
   const { commandMode, applicationState} = useFloroContext();
   const [_isDragging, setIsDragging] = useState(false);
 
-  const [linkVariables, setLinkVariables] = useFloroState(`${props.phraseRef}.linkVariables`);
+  const [linkVariables, setLinkVariables, saveLinkVariables] = useFloroState(`${props.phraseRef}.linkVariables`);
   const variables = useReferencedObject(`${props.phraseRef}.variables`)
   const interpolationVariants = useReferencedObject(`${props.phraseRef}.interpolationVariants`)
   const styledContents = useReferencedObject(`${props.phraseRef}.styledContents`)
@@ -166,13 +166,13 @@ const LinkVariableList = (props: Props) => {
 
   const onDragEnd = useCallback(() => {
     setIsDragging(false);
-  }, []);
-
+    saveLinkVariables();
+  }, [saveLinkVariables]);
 
   const onReOrderVariables = useCallback(
     (values: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables']) => {
         if (values) {
-            setLinkVariables(values);
+            setLinkVariables(values, false);
         }
     },
     [setLinkVariables, variables]

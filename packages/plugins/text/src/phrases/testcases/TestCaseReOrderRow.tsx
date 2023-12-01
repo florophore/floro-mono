@@ -6,6 +6,7 @@ import styled from "@emotion/styled";
 
 import DraggerLight from "@floro/common-assets/assets/images/icons/dragger.light.svg";
 import DraggerDark from "@floro/common-assets/assets/images/icons/dragger.dark.svg";
+import ColorPalette from "@floro/styles/ColorPalette";
 
 const Container = styled.div`
   padding: 0;
@@ -118,7 +119,7 @@ const TestCaseReOrderRow = (props: Props) => {
             <RowTitle
               style={{
                 fontWeight: 600,
-                color: theme.colors.titleText,
+                color: ColorPalette.linkBlue,
                 display: "flex",
                 flexDirection: "row",
                 alignItems: "center",

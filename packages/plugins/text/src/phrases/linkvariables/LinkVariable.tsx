@@ -183,10 +183,10 @@ const LinkVariable = (props: Props) => {
     localeRef
   );
 
-  const [linkDisplayValue, setLinkDisplayValue] = useFloroState(
+  const [linkDisplayValue, setLinkDisplayValue, saveLinkDisplayValue] = useFloroState(
     `${linkTranslationRef}.linkDisplayValue`
   );
-  const [linkHrefValue, setLinkHrefValue] = useFloroState(
+  const [linkHrefValue, setLinkHrefValue, saveLinkHrefValue] = useFloroState(
     `${linkTranslationRef}.linkHrefValue`
   );
 
@@ -368,6 +368,7 @@ const LinkVariable = (props: Props) => {
     return (sourceLinkTranslation?.linkDisplayValue?.plainText ?? "") == "";
   }, [sourceLinkTranslation?.linkDisplayValue?.plainText])
 
+  //const [richTextHtml, setRichText] = useState(linkDisplayValue?.richTextHtml ?? "");
   const onSetDisplayValueContent = useCallback(
     (richTextHtml: string) => {
       linkDisplayEditorDoc.tree.updateRootFromHTML(richTextHtml ?? "");
@@ -385,7 +386,7 @@ const LinkVariable = (props: Props) => {
           richTextHtml,
           plainText,
           json: JSON.stringify(json),
-        });
+        }, false);
       } else {
         setLinkDisplayValue({
           ...linkDisplayValue,
@@ -394,7 +395,7 @@ const LinkVariable = (props: Props) => {
           richTextHtml,
           plainText,
           json: JSON.stringify(json),
-        });
+        }, false);
       }
     },
     [
@@ -412,6 +413,23 @@ const LinkVariable = (props: Props) => {
     ]
   );
 
+
+  useEffect(() => {
+    if (commandMode == "edit") {
+      const timeout = setTimeout(() => {
+        if (!linkDisplayValue) {
+          return;
+        }
+        //onSetDisplayValueContent(richTextHtml);
+        saveLinkDisplayValue();
+      }, 500);
+      return () => {
+        clearTimeout(timeout);
+      }
+    }
+  }, [linkDisplayValue?.richTextHtml, commandMode])
+
+  //const [href, setHref] = useState(linkHrefValue?.richTextHtml ?? "");
   const onSetHrefValueContent = useCallback(
     (richTextHtml: string) => {
       linkHrefEditorDoc.tree.updateRootFromHTML(richTextHtml ?? "");
@@ -429,7 +447,7 @@ const LinkVariable = (props: Props) => {
           richTextHtml,
           plainText,
           json: JSON.stringify(json),
-        });
+        }, false);
       } else {
         setLinkHrefValue({
           ...linkHrefValue,
@@ -438,7 +456,7 @@ const LinkVariable = (props: Props) => {
           richTextHtml,
           plainText,
           json: JSON.stringify(json),
-        });
+        }, false);
       }
     },
     [
@@ -455,6 +473,21 @@ const LinkVariable = (props: Props) => {
       props.globalFilterUntranslated
     ]
   );
+
+  useEffect(() => {
+    if (commandMode == "edit") {
+      const timeout = setTimeout(() => {
+        if (!linkHrefValue) {
+          return;
+        }
+        //onSetHrefValueContent(href);
+        saveLinkHrefValue();
+      }, 500);
+      return () => {
+        clearTimeout(timeout);
+      }
+    }
+  }, [linkHrefValue?.richTextHtml, commandMode])
 
   const onMarkDisplayResolved = useCallback(() => {
     if (!linkDisplayValue) {

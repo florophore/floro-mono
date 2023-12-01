@@ -280,6 +280,15 @@ const PhraseGroup = (props: Props) => {
   const hasConflict = useHasConflict(phraseGroupRef, true);
 
   const [phraseGroup, setPhraseGroup, save] = useFloroState(phraseGroupRef);
+
+  const onDragStart = useCallback(() => {
+    setIsDragging(true);
+  }, []);
+
+  const onDragEnd = useCallback(() => {
+    setIsDragging(false);
+    save();
+  }, [save]);
   const phrases = useMemo(
     () =>
       phraseGroup?.phrases ??
@@ -1546,8 +1555,8 @@ const PhraseGroup = (props: Props) => {
                       key={phrase.id}
                       phrase={phrase}
                       index={index}
-                      onDragStart={props.onDragStart}
-                      onDragEnd={props.onDragEnd}
+                      onDragStart={onDragStart}
+                      onDragEnd={onDragEnd}
                     />
                   );
                 })}

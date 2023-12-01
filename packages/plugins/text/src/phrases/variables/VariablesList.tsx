@@ -101,7 +101,7 @@ const VariableList = (props: Props) => {
   const [type, setType] = useState<string>("float");
   const [_isDragging, setIsDragging] = useState(false);
 
-  const [variables, setVariables] = useFloroState(`${props.phraseRef}.variables`);
+  const [variables, setVariables, saveVariables] = useFloroState(`${props.phraseRef}.variables`, []);
   const interpolationVariants = useReferencedObject(`${props.phraseRef}.interpolationVariants`)
   const linkVariables = useReferencedObject(`${props.phraseRef}.linkVariables`)
   const styleClasses = useReferencedObject(`${props.phraseRef}.styleClasses`)
@@ -180,14 +180,13 @@ const VariableList = (props: Props) => {
 
   const onDragEnd = useCallback(() => {
     setIsDragging(false);
-    //save();
-  }, []);
-
+    saveVariables();
+  }, [saveVariables]);
 
   const onReOrderVariables = useCallback(
     (values: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables']) => {
         if (values) {
-            setVariables(values);
+            setVariables(values, false);
         }
     },
     [setVariables, variables]

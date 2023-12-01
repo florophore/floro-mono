@@ -133,8 +133,8 @@ const ContentVariableReOrderRow = (props: Props) => {
                   flexDirection: "row",
                   alignItems: "center",
                   fontSize: "1.4rem",
-                  background: ColorPalette.variableGreen,
-                  boxShadow: `inset 0px 0px 2px 2px ${ColorPalette.variableGreenInset}`,
+                  background: ColorPalette.variableMagenta,
+                  boxShadow: `inset 0px 0px 2px 2px ${ColorPalette.variableMagentaInset}`,
                   borderRadius: 8,
                   padding: 4,
                 }}

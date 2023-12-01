@@ -120,7 +120,7 @@ const StyledContentReOrderRow = (props: Props) => {
             <RowTitle
               style={{
                 fontWeight: 500,
-                color: ColorPalette.darkGray,
+                color: ColorPalette.white,
                 marginTop: 15,
                 display: "flex",
                 flexDirection: "row",

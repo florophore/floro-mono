@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState } from "react";
+import React, { useMemo, useCallback, useState, useEffect } from "react";
 import {
   PointerTypes,
   SchemaTypes,
@@ -189,7 +189,7 @@ const PhraseTranslation = (props: Props) => {
 
   const diffColor = useDiffColor(`${phraseTranslationRef}`, true, "darker");
 
-  const [phraseTranslation, setPhraseTranslation] =
+  const [phraseTranslation, setPhraseTranslation, savePhraseTranslation] =
     useFloroState(phraseTranslationRef);
 
   const terms = useReferencedObject("$(text).terms");
@@ -387,7 +387,7 @@ const PhraseTranslation = (props: Props) => {
           richTextHtml,
           plainText,
           json: JSON.stringify(json),
-        });
+        }, false);
       } else {
         setPhraseTranslation({
           ...phraseTranslation,
@@ -396,7 +396,7 @@ const PhraseTranslation = (props: Props) => {
           richTextHtml,
           plainText,
           json: JSON.stringify(json),
-        });
+        }, false);
       }
       if (contentIsEmpty && props.globalFilterUntranslated && !props.isPinned) {
         props.setPinnedPhrases([
@@ -419,6 +419,20 @@ const PhraseTranslation = (props: Props) => {
       props.globalFilterUntranslated,
     ]
   );
+
+  useEffect(() => {
+    if (commandMode == "edit") {
+      const timeout = setTimeout(() => {
+        if (!phraseTranslation) {
+          return;
+        }
+        savePhraseTranslation();
+      }, 500);
+      return () => {
+        clearTimeout(timeout);
+      }
+    }
+  }, [phraseTranslation?.richTextHtml, commandMode])
 
   const onMarkResolved = useCallback(() => {
     if (!phraseTranslation) {

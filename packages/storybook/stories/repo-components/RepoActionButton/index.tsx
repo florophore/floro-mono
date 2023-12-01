@@ -10,6 +10,10 @@ import SourceGraphWhite from '@floro/common-assets/assets/images/repo_icons/sour
 import SourceGraphGray from '@floro/common-assets/assets/images/repo_icons/source_graph.gray.svg';
 import SourceGraphMediumGray from '@floro/common-assets/assets/images/repo_icons/source_graph.medium_gray.svg';
 
+import HomeWhite from '@floro/common-assets/assets/images/repo_icons/home.white.svg';
+import HomeGray from '@floro/common-assets/assets/images/repo_icons/home.gray.svg';
+import HomeMediumGray from '@floro/common-assets/assets/images/repo_icons/home.medium_gray.svg';
+
 import CompareWhite from '@floro/common-assets/assets/images/repo_icons/compare.white.svg';
 import CompareGray from '@floro/common-assets/assets/images/repo_icons/compare.gray.svg';
 import CompareMediumGray from '@floro/common-assets/assets/images/repo_icons/compare.medium_gray.svg';
@@ -102,6 +106,7 @@ export interface ButtonProps {
   size?: "medium" | "large";
   titleTextSize?: "medium"|"small";
   icon:
+    | "home"
     | "source-graph"
     | "compare"
     | "settings"
@@ -348,6 +353,12 @@ const RepoActionButton = ({
           return theme.name == "light" ? CopyCancelGray : CopyCancelMediumGray;
         }
         return theme.name == "light" ? CopyCancelGray : CopyCancelWhite;
+      }
+      if (icon == "home") {
+        if (isDisabled && !isLoading) {
+          return theme.name == "light" ? HomeGray : HomeMediumGray;
+        }
+        return theme.name == "light" ? HomeGray : HomeWhite;
       }
 
     }, [[size, isDisabled, isLoading, theme.name, icon]]);

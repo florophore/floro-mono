@@ -12,10 +12,12 @@ import EditBranchNavPage from "./EditBranchNavPage";
 import LocalVCSCompareMergeMode from "./LocalVCSCompareMergeMode";
 import SourceGraphNav from "./SourceGraphNav";
 import LocalSettingsVCSPage from "./LocalSettingsVCSPage";
+import { RepoPage } from "../../types";
 
 interface Props {
   repository: Repository;
   plugin: string;
+  page: RepoPage;
 }
 
 const LocalVCSNavController = (props: Props) => {
@@ -59,7 +61,7 @@ const LocalVCSNavController = (props: Props) => {
   }
 
   if (data?.repoState.commandMode == "edit") {
-    return <LocalVCSEditMode apiResponse={data} repository={props.repository} plugin={props.plugin} />;
+    return <LocalVCSEditMode apiResponse={data} repository={props.repository} plugin={props.plugin} page={props.page} />;
   }
   return null;
 };

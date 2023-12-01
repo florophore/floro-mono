@@ -12,6 +12,10 @@ import {
   useUpdateCurrentCommand,
 } from "../hooks/local-hooks";
 import ConfirmDiscardChangesModal from "../modals/ConfirmDiscardChangesModal";
+import { useRepoLinkBase } from "../../remote/hooks/remote-hooks";
+import { useMainCommitState } from "../../remote/hooks/remote-state";
+import { RepoPage } from "../../types";
+import { useNavigate } from "react-router-dom";
 
 const InnerContent = styled.div`
   display: flex;
@@ -61,6 +65,7 @@ interface Props {
   repository: Repository;
   apiResponse: ApiResponse;
   plugin: string;
+  page: RepoPage;
 }
 
 const LocalVCSEditMode = (props: Props) => {
@@ -71,6 +76,20 @@ const LocalVCSEditMode = (props: Props) => {
   const onClearStorage = useCallback(() => {
     clearStorageMutation.mutate({});
   }, []);
+  const navigate = useNavigate();
+
+  const linkBase = useRepoLinkBase(props.repository, props.page);
+  const commitState = useMainCommitState(props.page, props.repository);
+  const mainLink = useMemo(() => {
+    if (commitState?.sha) {
+      return `${linkBase}?from=local&sha=${
+        commitState?.sha
+      }&branch=${props.repository?.branchState?.branchId}`;
+    }
+    return `${linkBase}?from=local&branch=${
+      props.repository?.branchState?.branchId
+    }`;
+  }, [linkBase, props.plugin, props.repository?.branchState?.branchId, commitState?.sha]);
 
   const onShowDiscard = useCallback(() => {
     setShowDiscard(true);
@@ -179,44 +198,60 @@ const LocalVCSEditMode = (props: Props) => {
         {showClearStorage && (
           <ButtonRow style={{ marginTop: 24, justifyContent: "flex-end" }}>
             <ClearStorageLink onClick={onClearStorage}>
-              {'clear plugin storage'}
+              {"clear plugin storage"}
             </ClearStorageLink>
           </ButtonRow>
         )}
       </TopContainer>
-      <BottomContainer>
-        <>
-          <ButtonRow>
-            <RepoActionButton
-              isDisabled={!props.apiResponse?.canPopStashedChanges}
-              label={"pop stash"}
-              icon={"stash-pop"}
-              isLoading={popStashedChangesMutation.isLoading}
-              onClick={onPopStashedChanges}
-            />
-            <RepoActionButton
-              isDisabled={!props.apiResponse?.isWIP}
-              label={
-                (props.apiResponse?.stashSize ?? 0) > 0
-                  ? `stash (${props.apiResponse?.stashSize})`
-                  : "stash"
-              }
-              icon={"stash"}
-              isLoading={stashChangesMutation.isLoading}
-              onClick={onStashChanges}
-            />
-          </ButtonRow>
+      {false && (
+        <BottomContainer>
           <ButtonRow style={{ marginTop: 24 }}>
             <RepoActionButton
-              isDisabled={!props.apiResponse?.isWIP}
               size={"large"}
-              label={"discard current changes"}
-              icon={"discard"}
-              onClick={onShowDiscard}
+              label={"go home to stash or discard"}
+              icon={"home"}
+              onClick={() => {
+                navigate(mainLink + "&plugin=home")
+              }}
             />
           </ButtonRow>
-        </>
-      </BottomContainer>
+        </BottomContainer>
+      )}
+      {true &&(
+        <BottomContainer>
+          <>
+            <ButtonRow>
+              <RepoActionButton
+                isDisabled={!props.apiResponse?.canPopStashedChanges}
+                label={"pop stash"}
+                icon={"stash-pop"}
+                isLoading={popStashedChangesMutation.isLoading}
+                onClick={onPopStashedChanges}
+              />
+              <RepoActionButton
+                isDisabled={!props.apiResponse?.isWIP}
+                label={
+                  (props.apiResponse?.stashSize ?? 0) > 0
+                    ? `stash (${props.apiResponse?.stashSize})`
+                    : "stash"
+                }
+                icon={"stash"}
+                isLoading={stashChangesMutation.isLoading}
+                onClick={onStashChanges}
+              />
+            </ButtonRow>
+            <ButtonRow style={{ marginTop: 24 }}>
+              <RepoActionButton
+                isDisabled={!props.apiResponse?.isWIP}
+                size={"large"}
+                label={"discard current changes"}
+                icon={"discard"}
+                onClick={onShowDiscard}
+              />
+            </ButtonRow>
+          </>
+        </BottomContainer>
+      )}
       <ConfirmDiscardChangesModal
         show={showDiscard}
         onDismiss={onCloseDiscard}

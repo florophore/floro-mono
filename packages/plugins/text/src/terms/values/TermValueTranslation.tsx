@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo, useCallback, useEffect } from "react";
 import {
   PointerTypes,
   SchemaTypes,
@@ -111,7 +111,7 @@ const TermValueTranslation = (props: Props) => {
     localeRef
   );
 
-  const [termTranslation, setTermTranslation] =
+  const [termTranslation, setTermTranslation, saveTermTranslation] =
     useFloroState(termTranslationRef);
 
   const contentIsEmpty = useMemo(() => {
@@ -126,7 +126,7 @@ const TermValueTranslation = (props: Props) => {
       setTermTranslation({
         ...termTranslation,
         termValue: text,
-      });
+      }, false);
       if (
         contentIsEmpty &&
         props.globalFilterUntranslatedTerms &&
@@ -148,6 +148,18 @@ const TermValueTranslation = (props: Props) => {
       props.globalFilterUntranslatedTerms,
     ]
   );
+
+  useEffect(() => {
+    if (commandMode == "edit") {
+      const timeout = setTimeout(() => {
+        saveTermTranslation();
+      }, 500);
+
+      return () => {
+        clearTimeout(timeout);
+      }
+    }
+  }, [termTranslation?.termValue, commandMode])
 
   return (
     <>

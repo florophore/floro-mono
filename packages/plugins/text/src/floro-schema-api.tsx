@@ -3481,7 +3481,8 @@ export function useFloroState(query: PointerTypes['$(text).localeSettings'], def
 export function useFloroState(query: PointerTypes['$(text).phraseGroups'], defaultData?: SchemaTypes['$(text).phraseGroups']): [SchemaTypes['$(text).phraseGroups']|null, (t: SchemaTypes['$(text).phraseGroups'], doSave?: boolean) => void, () => void];
 export function useFloroState(query: PointerTypes['$(text).terms'], defaultData?: SchemaTypes['$(text).terms']): [SchemaTypes['$(text).terms']|null, (t: SchemaTypes['$(text).terms'], doSave?: boolean) => void, () => void];
 
-export function useFloroState<T>(query: string, defaultData?: T): [T|null, (t: T, doSave?: boolean) => void, () => void] {
+export function useFloroState<T>(query: string, defaultData?: T): [T|null, (t: T, doSave?: true) => void, () => void];
+export function useFloroState<T>(query: string, defaultData?: T): [T|null, (t: T, doSave?: boolean) => void|(() => void), () => void] {
   const ctx = useFloroContext();
   const pluginName = useMemo(() => getPluginNameFromQuery(query), [query]);
 
@@ -3505,8 +3506,13 @@ export function useFloroState<T>(query: string, defaultData?: T): [T|null, (t: T
   const [getter, setter] = useState<T|null>(obj ?? defaultData ?? null);
 
   useEffect(() => {
-    setter(obj);
-  }, [obj])
+    if (ctx.commandMode == "edit" && query == ctx?.lastEditKey?.current) {
+      return;
+    }
+    if (obj != getter) {
+      setter(obj);
+    }
+  }, [obj, ctx.commandMode, query])
 
   const save = useCallback(() => {
     if (ctx.currentPluginAppState.current && pluginName && getter && ctx.commandMode == "edit") {
@@ -3533,6 +3539,17 @@ export function useFloroState<T>(query: string, defaultData?: T): [T|null, (t: T
         });
         ctx.currentPluginAppState.current = next;
         ctx.saveState(pluginName, next);
+      } else {
+        return () => {
+          ctx.lastEditKey.current = query;
+          const next = updateObjectInStateMap({...ctx.currentPluginAppState.current}, query, obj) as SchemaRoot
+          ctx.setPluginState({
+            ...ctx.pluginState,
+            applicationState: next
+          });
+          ctx.currentPluginAppState.current = next;
+          ctx.saveState(pluginName, next);
+        }
       }
     }
   }, [query, ctx.saveState, ctx.setPluginState, obj, pluginName, ctx.pluginState, ctx.commandMode]);

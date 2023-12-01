@@ -65,8 +65,6 @@ export interface PhraseKeys {
     "components.privacy_policy":             ComponentsPrivacyPolicy;
     "components.released_under_mit":         ComponentsReleasedUnderMIT;
     "components.terms_of_service":           ComponentsTermsOfService;
-    "dev.anotha_one":                        DevAnothaOne;
-    "dev.my_dev_phrase":                     DevMyDevPhrase;
     "front_page.appearance":                 FrontPageAppearance;
     "front_page.download_desktop_client":    FrontPageDownloadDesktopClient;
     "front_page.get_help_and_contribute":    FrontPageGetHelpAndContribute;
@@ -79,6 +77,8 @@ export interface PhraseKeys {
     "front_page.nav_pricing":                FrontPageNavPricing;
     "front_page.subtext_of_tag_line":        FrontPageSubtextOfTagLine;
     "front_page.tag_line":                   FrontPageTagLine;
+    "how_it_works.how_it_works_blog":        HowItWorksHowItWorksBlog;
+    "how_it_works.how_it_works_blog_part_2": HowItWorksHowItWorksBlogPart2;
     "main.hello_world":                      MainHelloWorld;
     "meta_tags.about":                       MetaTagsAbout;
 }
@@ -1058,126 +1058,6 @@ export interface ComponentsTermsOfServiceStyledContents {
 export interface ComponentsTermsOfServiceVariables {
 }
 
-export interface DevAnothaOne {
-    args:             DevAnothaOneArgs;
-    contentVariables: DevAnothaOneContentVariables;
-    interpolations:   DevAnothaOneInterpolations;
-    links:            DevAnothaOneLinks;
-    phrase:           TextNode[];
-    phraseKey:        string;
-    styleClasses:     DevAnothaOneStyleClasses;
-    styledContents:   DevAnothaOneStyledContents;
-    variables:        DevAnothaOneVariables;
-}
-
-export interface DevAnothaOneArgs {
-    header:    string;
-    someFloat: number;
-}
-
-export interface DevAnothaOneContentVariables {
-}
-
-export interface DevAnothaOneInterpolations {
-}
-
-export interface DevAnothaOneLinks {
-}
-
-export interface DevAnothaOneStyleClasses {
-    header: string;
-}
-
-export interface DevAnothaOneStyledContents {
-    "top header": StyledContent;
-}
-
-export interface StyledContent {
-    displayValue: TextNode[];
-    name:         string;
-    styleClass:   string;
-}
-
-export interface DevAnothaOneVariables {
-    someFloat: number;
-}
-
-export interface DevMyDevPhrase {
-    args:             DevMyDevPhraseArgs;
-    contentVariables: DevMyDevPhraseContentVariables;
-    interpolations:   DevMyDevPhraseInterpolations;
-    links:            DevMyDevPhraseLinks;
-    phrase:           TextNode[];
-    phraseKey:        string;
-    styleClasses:     DevMyDevPhraseStyleClasses;
-    styledContents:   DevMyDevPhraseStyledContents;
-    variables:        DevMyDevPhraseVariables;
-}
-
-export interface DevMyDevPhraseArgs {
-    header:    string;
-    myContent: string;
-    someFloat: number;
-}
-
-export interface DevMyDevPhraseContentVariables {
-    myContent: string;
-}
-
-export interface DevMyDevPhraseInterpolations {
-    interop: Interpolation;
-}
-
-export interface Interpolation {
-    cases:   Case[];
-    default: TextNode[];
-}
-
-export interface Case {
-    operator:  Operator;
-    resultant: TextNode[];
-    subcases:  SubCase[];
-    value?:    boolean | number | string;
-    variable:  string;
-}
-
-export enum Operator {
-    Eq = "eq",
-    Gt = "gt",
-    Gte = "gte",
-    IsFractional = "is_fractional",
-    LTE = "lte",
-    Lt = "lt",
-    Neq = "neq",
-}
-
-export interface SubCase {
-    conjunction: Conjunction;
-    operator:    Operator;
-    value?:      boolean | number | string;
-    variable:    string;
-}
-
-export enum Conjunction {
-    And = "AND",
-}
-
-export interface DevMyDevPhraseLinks {
-    "my link": Link;
-}
-
-export interface DevMyDevPhraseStyleClasses {
-    header: string;
-}
-
-export interface DevMyDevPhraseStyledContents {
-    "header one": StyledContent;
-}
-
-export interface DevMyDevPhraseVariables {
-    someFloat: number;
-}
-
 export interface FrontPageAppearance {
     args:             FrontPageAppearanceArgs;
     contentVariables: FrontPageAppearanceContentVariables;
@@ -1574,6 +1454,154 @@ export interface FrontPageTagLineStyledContents {
 export interface FrontPageTagLineVariables {
 }
 
+export interface HowItWorksHowItWorksBlog {
+    args:             HowItWorksHowItWorksBlogArgs;
+    contentVariables: HowItWorksHowItWorksBlogContentVariables;
+    interpolations:   HowItWorksHowItWorksBlogInterpolations;
+    links:            HowItWorksHowItWorksBlogLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     HowItWorksHowItWorksBlogStyleClasses;
+    styledContents:   HowItWorksHowItWorksBlogStyledContents;
+    variables:        HowItWorksHowItWorksBlogVariables;
+}
+
+export interface HowItWorksHowItWorksBlogArgs {
+    boundedCascading:            string;
+    dependentTypesSchematic:     string;
+    diffCalculator:              string;
+    diffImageBlackAndWhite:      string;
+    diffKeys:                    string;
+    keyPathImage:                string;
+    kvAnimation:                 string;
+    kvStateTreeStateStaticImage: string;
+    lcsCalculator:               string;
+    mainTitle:                   string;
+    relationsSchema:             string;
+    relationsSpreadsheet:        string;
+    sectionTitle:                string;
+    setUpdateImages:             string;
+    spreadsheetKeys:             string;
+    titleContentImage:           string;
+    versionUpdateImages:         string;
+    visualDiff:                  string;
+}
+
+export interface HowItWorksHowItWorksBlogContentVariables {
+    boundedCascading:            string;
+    dependentTypesSchematic:     string;
+    diffCalculator:              string;
+    diffImageBlackAndWhite:      string;
+    diffKeys:                    string;
+    keyPathImage:                string;
+    kvAnimation:                 string;
+    kvStateTreeStateStaticImage: string;
+    lcsCalculator:               string;
+    relationsSchema:             string;
+    relationsSpreadsheet:        string;
+    setUpdateImages:             string;
+    spreadsheetKeys:             string;
+    titleContentImage:           string;
+    versionUpdateImages:         string;
+    visualDiff:                  string;
+}
+
+export interface HowItWorksHowItWorksBlogInterpolations {
+}
+
+export interface HowItWorksHowItWorksBlogLinks {
+    "Longest Common Subsequence": Link;
+    redux:                        Link;
+    "unit test":                  Link;
+    "YouTube Link":               Link;
+}
+
+export interface HowItWorksHowItWorksBlogStyleClasses {
+    mainTitle:    string;
+    sectionTitle: string;
+}
+
+export interface HowItWorksHowItWorksBlogStyledContents {
+    "blog title":               StyledContent;
+    "its all related":          StyledContent;
+    "whats the difference":     StyledContent;
+    "when things change title": StyledContent;
+}
+
+export interface StyledContent {
+    displayValue: TextNode[];
+    name:         string;
+    styleClass:   string;
+}
+
+export interface HowItWorksHowItWorksBlogVariables {
+}
+
+export interface HowItWorksHowItWorksBlogPart2 {
+    args:             HowItWorksHowItWorksBlogPart2_Args;
+    contentVariables: HowItWorksHowItWorksBlogPart2_ContentVariables;
+    interpolations:   HowItWorksHowItWorksBlogPart2_Interpolations;
+    links:            HowItWorksHowItWorksBlogPart2_Links;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     HowItWorksHowItWorksBlogPart2_StyleClasses;
+    styledContents:   HowItWorksHowItWorksBlogPart2_StyledContents;
+    variables:        HowItWorksHowItWorksBlogPart2_Variables;
+}
+
+export interface HowItWorksHowItWorksBlogPart2_Args {
+    autoMerge:                    string;
+    conflictMerge:                string;
+    diamondColor:                 string;
+    leftReconciledAutoMerge:      string;
+    leftReconciledConflictMerge:  string;
+    mainTitle:                    string;
+    mergeCalculator:              string;
+    rgbList:                      string;
+    rightReconciledAutoMerge:     string;
+    rightReconciledConflictMerge: string;
+    sectionTitle:                 string;
+    threeWayAutoMerge:            string;
+    threeWayConflictMerge:        string;
+}
+
+export interface HowItWorksHowItWorksBlogPart2_ContentVariables {
+    autoMerge:                    string;
+    conflictMerge:                string;
+    diamondColor:                 string;
+    leftReconciledAutoMerge:      string;
+    leftReconciledConflictMerge:  string;
+    mergeCalculator:              string;
+    rgbList:                      string;
+    rightReconciledAutoMerge:     string;
+    rightReconciledConflictMerge: string;
+    threeWayAutoMerge:            string;
+    threeWayConflictMerge:        string;
+}
+
+export interface HowItWorksHowItWorksBlogPart2_Interpolations {
+}
+
+export interface HowItWorksHowItWorksBlogPart2_Links {
+    "CRDT Link":            Link;
+    "Git Merge Link":       Link;
+    "Three Way Merge Link": Link;
+    "YouTube Link":         Link;
+}
+
+export interface HowItWorksHowItWorksBlogPart2_StyleClasses {
+    mainTitle:    string;
+    sectionTitle: string;
+}
+
+export interface HowItWorksHowItWorksBlogPart2_StyledContents {
+    "bringing it all together title": StyledContent;
+    "merge granularity":              StyledContent;
+}
+
+export interface HowItWorksHowItWorksBlogPart2_Variables {
+}
+
 export interface MainHelloWorld {
     args:             MainHelloWorldArgs;
     contentVariables: MainHelloWorldContentVariables;
@@ -1669,8 +1697,6 @@ export interface PhraseKeyDebugInfo {
     "components.privacy_policy":             DebugInfo;
     "components.released_under_mit":         DebugInfo;
     "components.terms_of_service":           DebugInfo;
-    "dev.anotha_one":                        DebugInfo;
-    "dev.my_dev_phrase":                     DebugInfo;
     "front_page.appearance":                 DebugInfo;
     "front_page.download_desktop_client":    DebugInfo;
     "front_page.get_help_and_contribute":    DebugInfo;
@@ -1683,6 +1709,8 @@ export interface PhraseKeyDebugInfo {
     "front_page.nav_pricing":                DebugInfo;
     "front_page.subtext_of_tag_line":        DebugInfo;
     "front_page.tag_line":                   DebugInfo;
+    "how_it_works.how_it_works_blog":        DebugInfo;
+    "how_it_works.how_it_works_blog_part_2": DebugInfo;
     "main.hello_world":                      DebugInfo;
     "meta_tags.about":                       DebugInfo;
 }
@@ -1747,7 +1775,7 @@ export const getPhraseValue = <C, T extends keyof Locales, K extends keyof Phras
       [KCV in keyof PhraseKeys[K]["contentVariables"]]: C;
     } &
     {
-      [KCS in keyof PhraseKeys[K]["styleClasses"]]: (
+      [KSC in keyof PhraseKeys[K]["styleClasses"]]: (
         content: C,
         styledContentName: keyof PhraseKeys[K]["styledContents"] & string
       ) => C;
@@ -1908,7 +1936,7 @@ const getStaticNodes = <C, K extends keyof PhraseKeys>(
       [KCV in keyof PhraseKeys[K]["contentVariables"]]: C;
     } &
     {
-      [KCS in keyof PhraseKeys[K]["styleClasses"]]: (
+      [KSC in keyof PhraseKeys[K]["styleClasses"]]: (
         content: C,
         styledContentName: keyof PhraseKeys[K]["styledContents"] & string
       ) => C;
@@ -2065,7 +2093,7 @@ K extends keyof PhraseKeys,
     }&{
         [KCV in keyof PhraseKeys[K]["contentVariables"]]: C;
     }&{
-      [KCS in keyof PhraseKeys[K]["styleClasses"]]: (
+      [KSC in keyof PhraseKeys[K]["styleClasses"]]: (
         content: C,
         styledContentName: keyof PhraseKeys[K]["styledContents"] & string
       ) => C;
@@ -2125,3 +2153,16 @@ export const getDebugInfo = <
 };
 
 export default textJSON as unknown as LocalizedPhrases;
+
+interface Interpolation {
+  cases: Array<{
+    resultant: TextNode[];
+    variable: string;
+    value: string | number | boolean;
+    operator: string;
+    subcases: Array<{
+      value: string | number | boolean;
+    }>;
+  }>;
+  default: [];
+}

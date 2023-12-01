@@ -59,7 +59,7 @@ const TestCaseList = (props: Props) => {
     "$(text).localeSettings.locales.localeCode<?>",
     props.selectedLocale.localeCode
   );
-  const [localeTests, setLocaleTests] = useFloroState(
+  const [localeTests, setLocaleTests, saveLocaleTests] = useFloroState(
     `${props.phraseRef}.testCases.id<${localeRef}>.localeTests`
   );
   const [description, setDescription] = useState<string>("");
@@ -91,7 +91,7 @@ const TestCaseList = (props: Props) => {
   const onReOrderLocaleCases = useCallback(
     (values: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.testCases.id<?>.localeTests']) => {
         if (values) {
-            setLocaleTests(values);
+            setLocaleTests(values, false);
         }
     },
     [setLocaleTests, localeTests]
@@ -115,8 +115,8 @@ const TestCaseList = (props: Props) => {
 
   const onDragEnd = useCallback(() => {
     setIsDragging(false);
-    //save();
-  }, []);
+    saveLocaleTests();
+  }, [saveLocaleTests]);
 
   const [isReOrderMode, setIsReOrderMode] = useState(false);
 

@@ -1,6 +1,6 @@
 {
     "name": "text-generator",
     "dependencies": {
-        "text": "dev@0.0.13"
+        "text": "0.0.13"
     }
 }

@@ -124,7 +124,6 @@ const PhraseSection = (props: Props) => {
     props.selectedLocale.localeCode
   );
 
-
   const sourceLocaleRef = props?.systemSourceLocale?.localeCode
     ? makeQueryRef(
         "$(text).localeSettings.locales.localeCode<?>",
@@ -157,7 +156,7 @@ const PhraseSection = (props: Props) => {
     localRuleTranslationRef
   );
 
-  const [displayValue, setDisplayValue] = useFloroState(
+  const [displayValue, setDisplayValue, saveDisplayValue] = useFloroState(
     `${localRuleTranslationRef}.displayValue`
   );
 
@@ -263,7 +262,7 @@ const PhraseSection = (props: Props) => {
     props.phrase.styledContents,
     props.phraseSection,
     enabledMentionedValues,
-  ]);
+  ])
 
   const localeRuleEditorDoc = useMemo(() => {
     if (displayValue) {
@@ -349,7 +348,7 @@ const PhraseSection = (props: Props) => {
           richTextHtml,
           plainText,
           json: JSON.stringify(json),
-        });
+        }, false);
       } else {
         setDisplayValue({
           ...displayValue,
@@ -358,7 +357,7 @@ const PhraseSection = (props: Props) => {
           richTextHtml,
           plainText,
           json: JSON.stringify(json),
-        });
+        }, false);
       }
     },
     [
@@ -375,6 +374,17 @@ const PhraseSection = (props: Props) => {
       props.globalFilterUntranslated
     ]
   );
+
+  useEffect(() => {
+    if (commandMode == "edit") {
+      const timeout = setTimeout(() => {
+        saveDisplayValue();
+      }, 500);
+      return () => {
+        clearTimeout(timeout);
+      }
+    }
+  }, [displayValue?.richTextHtml, commandMode])
 
 
   const onMarkDisplayResolved = useCallback(() => {

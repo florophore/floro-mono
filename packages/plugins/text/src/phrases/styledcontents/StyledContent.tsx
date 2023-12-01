@@ -159,7 +159,7 @@ const StyledContent = (props: Props) => {
 
   const styleClass = useReferencedObject(props.styledContent.styleClassRef);
 
-  const [displayValue, setDisplayValue] = useFloroState(
+  const [displayValue, setDisplayValue, saveDisplayValue] = useFloroState(
     `${localRuleTranslationRef}.displayValue`
   );
 
@@ -326,6 +326,7 @@ const StyledContent = (props: Props) => {
     return (sourceDefaultValue?.plainText ?? "") == "";
   }, [sourceDefaultValue?.plainText])
 
+  //const [richTextHtml, setRichText] = useState(displayValue?.richTextHtml ?? "");
   const onSetDefaultValueContent = useCallback(
     (richTextHtml: string) => {
       localeRuleEditorDoc.tree.updateRootFromHTML(richTextHtml ?? "");
@@ -343,7 +344,7 @@ const StyledContent = (props: Props) => {
           richTextHtml,
           plainText,
           json: JSON.stringify(json),
-        });
+        }, false);
       } else {
         setDisplayValue({
           ...displayValue,
@@ -352,7 +353,7 @@ const StyledContent = (props: Props) => {
           richTextHtml,
           plainText,
           json: JSON.stringify(json),
-        });
+        }, false);
       }
     },
     [
@@ -369,6 +370,18 @@ const StyledContent = (props: Props) => {
       props.globalFilterUntranslated
     ]
   );
+
+  useEffect(() => {
+    if (commandMode == "edit") {
+      const timeout = setTimeout(() => {
+        //onSetDefaultValueContent(richTextHtml);
+        saveDisplayValue();
+      }, 500);
+      return () => {
+        clearTimeout(timeout);
+      }
+    }
+  }, [displayValue?.richTextHtml, commandMode])
 
 
   const onMarkDisplayResolved = useCallback(() => {

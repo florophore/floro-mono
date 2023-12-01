@@ -201,8 +201,11 @@ const ConditionalRow = (props: Props): React.ReactElement => {
   const { commandMode } = useFloroContext();
 
   const [conditional, setConditional] = useFloroState(props.conditionalRef);
-  const [resultant, setResultant] = useFloroState(
+  const [resultant, setResultant, saveResultant] = useFloroState(
     `${props.conditionalRef}.resultant`
+  );
+  const [stringValue, setStringValue] = useState<string>(
+    props?.conditional?.stringComparatorValue?.toString?.() ?? ""
   );
   const [integerValue, setIntegerValue] = useState<string>(
     props?.conditional?.intComparatorValue?.toString?.() ?? ""
@@ -349,6 +352,7 @@ const ConditionalRow = (props: Props): React.ReactElement => {
     return (conditional?.resultant?.plainText ?? "") == "";
   }, [conditional?.resultant?.plainText]);
 
+  const [richTextHtml, setRichText] = useState(resultant?.richTextHtml ?? "");
   const onSetResultantValueContent = useCallback(
     (richTextHtml: string) => {
       conditionalEditorDoc.tree.updateRootFromHTML(richTextHtml ?? "");
@@ -368,7 +372,7 @@ const ConditionalRow = (props: Props): React.ReactElement => {
         richTextHtml,
         plainText,
         json: JSON.stringify(json),
-      });
+      }, false);
     },
     [
       conditionalEditorDoc?.tree,
@@ -382,6 +386,74 @@ const ConditionalRow = (props: Props): React.ReactElement => {
       props.globalFilterUntranslated,
     ]
   );
+
+  useEffect(() => {
+    if (commandMode == "edit") {
+      const timeout = setTimeout(() => {
+        saveResultant();
+      }, 500);
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
+  }, [resultant?.richTextHtml, commandMode]);
+
+  useEffect(() => {
+    if (commandMode == "edit") {
+      const timeout = setTimeout(() => {
+        if (props.variable.varType != "string") {
+          return;
+        }
+        if (conditional) {
+          setConditional({
+            ...conditional,
+            stringComparatorValue: stringValue,
+          });
+        }
+      }, 500);
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
+  }, [stringValue, commandMode]);
+
+  useEffect(() => {
+    if (commandMode == "edit") {
+      if (props.variable.varType != "integer") {
+        return;
+      }
+      const timeout = setTimeout(() => {
+        if (/^\d+$/.test(integerValue) && conditional) {
+          setConditional({
+            ...conditional,
+            intComparatorValue: parseInt(integerValue),
+          });
+        }
+      }, 500);
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
+  }, [integerValue, commandMode]);
+
+  useEffect(() => {
+    if (commandMode == "edit") {
+      if (props.variable.varType != "float") {
+        return;
+      }
+      const timeout = setTimeout(() => {
+        if (/^(\d+|\d+\.\d+)$/.test(floatValue) && conditional) {
+          setConditional({
+            ...conditional,
+            floatComparatorValue: parseFloat(floatValue),
+          });
+        }
+      }, 500);
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
+  }, [floatValue, commandMode]);
 
   return (
     <Container>
@@ -557,17 +629,10 @@ const ConditionalRow = (props: Props): React.ReactElement => {
                       <Input
                         label={"value"}
                         placeholder={"value"}
-                        value={conditional?.stringComparatorValue ?? ""}
+                        value={stringValue ?? ""}
                         widthSize="semi-short"
                         isValid={isValueValid}
-                        onTextChanged={(stringComparatorValue) => {
-                          if (conditional) {
-                            setConditional({
-                              ...conditional,
-                              stringComparatorValue
-                            })
-                          }
-                        }}
+                        onTextChanged={setStringValue}
                       />
                     )}
                     {props.variable.varType == "integer" && (
@@ -578,12 +643,6 @@ const ConditionalRow = (props: Props): React.ReactElement => {
                         value={integerValue}
                         widthSize="shortest"
                         onTextChanged={(text) => {
-                          if (/^\d+$/.test(text) && conditional) {
-                            setConditional({
-                              ...conditional,
-                              intComparatorValue: parseInt(text)
-                            })
-                          }
                           onUpdateIntegerValue(text)
                         }}
                       />
@@ -596,12 +655,6 @@ const ConditionalRow = (props: Props): React.ReactElement => {
                         value={floatValue}
                         widthSize="shortest"
                         onTextChanged={(text) => {
-                          if (/^(\d+|\d+\.\d+)$/.test(text) && conditional) {
-                            setConditional({
-                              ...conditional,
-                              floatComparatorValue: parseFloat(text)
-                            })
-                          }
                           onUpdateFloatValue(text)
                         }}
                       />

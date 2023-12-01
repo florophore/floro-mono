@@ -185,6 +185,9 @@ const SubCondition = (props: Props) => {
   const [floatValue, setFloatValue] = useState<string>(
    subcondition?.floatComparatorValue?.toString?.() ?? ""
   );
+  const [stringValue, setStringValue] = useState<string>(
+   subcondition?.stringComparatorValue?.toString?.() ?? ""
+  );
 
   useEffect(() => {
     setIntegerValue(
@@ -298,6 +301,63 @@ const SubCondition = (props: Props) => {
     }
     return null;
   }, [subcondition?.operator]);
+
+  useEffect(() => {
+    if (commandMode == "edit") {
+      const timeout = setTimeout(() => {
+        if (variable.varType != "string") {
+          return;
+        }
+        if (subcondition) {
+          setSubcondition({
+            ...subcondition,
+            stringComparatorValue: stringValue,
+          });
+        }
+      }, 500);
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
+  }, [stringValue, commandMode]);
+
+  useEffect(() => {
+    if (commandMode == "edit") {
+      if (variable?.varType != "integer") {
+        return;
+      }
+      const timeout = setTimeout(() => {
+        if (/^\d+$/.test(integerValue) && subcondition) {
+          setSubcondition({
+            ...subcondition,
+            intComparatorValue: parseInt(integerValue),
+          });
+        }
+      }, 500);
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
+  }, [integerValue, commandMode]);
+
+  useEffect(() => {
+    if (commandMode == "edit") {
+      if (variable?.varType != "float") {
+        return;
+      }
+      const timeout = setTimeout(() => {
+        if (/^(\d+|\d+\.\d+)$/.test(floatValue) && subcondition) {
+          setSubcondition({
+            ...subcondition,
+            floatComparatorValue: parseFloat(floatValue),
+          });
+        }
+      }, 500);
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
+  }, [floatValue, commandMode]);
 
   if (!variable) {
     return null;
@@ -465,17 +525,10 @@ const SubCondition = (props: Props) => {
                   <Input
                     label={"value"}
                     placeholder={"value"}
-                    value={subcondition?.stringComparatorValue ?? ""}
+                    value={stringValue ?? ""}
                     isValid={isValueValid}
                     widthSize="semi-short"
-                    onTextChanged={(stringComparatorValue) => {
-                      if (subcondition) {
-                        setSubcondition({
-                          ...subcondition,
-                          stringComparatorValue,
-                        });
-                      }
-                    }}
+                    onTextChanged={setStringValue}
                   />
                 )}
                 {variable.varType == "integer" && (
@@ -486,12 +539,12 @@ const SubCondition = (props: Props) => {
                     widthSize="shortest"
                     isValid={isValueValid}
                     onTextChanged={(text) => {
-                      if (/^\d+$/.test(text) && subcondition) {
-                        setSubcondition({
-                          ...subcondition,
-                          intComparatorValue: parseInt(text),
-                        });
-                      }
+                      //if (/^\d+$/.test(text) && subcondition) {
+                      //  setSubcondition({
+                      //    ...subcondition,
+                      //    intComparatorValue: parseInt(text),
+                      //  });
+                      //}
                       onUpdateIntegerValue(text);
                     }}
                   />
@@ -505,12 +558,12 @@ const SubCondition = (props: Props) => {
                       value={floatValue}
                       widthSize="shortest"
                       onTextChanged={(text) => {
-                        if (/^(\d+|\d+\.\d+)$/.test(text) && subcondition) {
-                          setSubcondition({
-                            ...subcondition,
-                            floatComparatorValue: parseFloat(text),
-                          });
-                        }
+                        //if (/^(\d+|\d+\.\d+)$/.test(text) && subcondition) {
+                        //  setSubcondition({
+                        //    ...subcondition,
+                        //    floatComparatorValue: parseFloat(text),
+                        //  });
+                        //}
                         onUpdateFloatValue(text);
                       }}
                     />

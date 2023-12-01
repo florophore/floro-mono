@@ -1,5 +1,5 @@
 import React from "react";
-import { SchemaTypes } from "../../floro-schema-api";
+import { SchemaTypes, useFloroContext } from "../../floro-schema-api";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 
@@ -43,8 +43,12 @@ interface Props {
 }
 
 const TermList = (props: Props) => {
+  const { commandMode } = useFloroContext();
   const theme = useTheme();
   if ((!props.showFindTerms && props?.terms?.length == 0) || props?.isEmpty) {
+    return null;
+  }
+  if (props?.terms?.length == 0 && commandMode != "edit") {
     return null;
   }
   return (
@@ -71,7 +75,7 @@ const TermList = (props: Props) => {
             </span>
           )}
         </div>
-        {props.showFindTerms && (
+        {props.showFindTerms && commandMode == "edit" && (
           <Button
             label={`Find Terms`}
             bg={"teal"}

@@ -32,7 +32,7 @@ interface Props {
 }
 
 const PhraseGroups = (props: Props) => {
-  const [phraseGroups, setPhraseGroups] =
+  const [phraseGroups, setPhraseGroups, savePhraseGroups] =
     useFloroState("$(text).phraseGroups") ?? [];
   const [isDragging, setIsDragging] = useState(false);
   const { applicationState, commandMode } = useFloroContext();
@@ -43,18 +43,13 @@ const PhraseGroups = (props: Props) => {
 
   const onDragEnd = useCallback(() => {
     setIsDragging(false);
-  }, []);
+    savePhraseGroups();
+  }, [savePhraseGroups]);
 
   const onReOrderPhraseGroups = useCallback(
     (values: SchemaTypes["$(text).phraseGroups"]) => {
-      if (applicationState) {
-        const remap = values.map((v) => {
-          return getReferencedObject(
-            applicationState,
-            makeQueryRef("$(text).phraseGroups.id<?>", v.id)
-          );
-        });
-        setPhraseGroups(remap);
+      if (values) {
+        setPhraseGroups(values, false);
       }
     },
     [applicationState]

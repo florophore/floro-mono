@@ -2,6 +2,7 @@ import MainHome from './pages/main/Home';
 import MainUserHome from './pages/main/UserHome';
 import AdminHome from './pages/admin/Home';
 import About from './pages/common/About';
+import How from './pages/common/How';
 import OAuthCallback from './pages/common/authentication/OAuthCallback';
 import CredentialVerifyCallback from './pages/common/authentication/CredentialVerifyCallback';
 import CredentialAuthCallback from './pages/common/authentication/CredentialAuthCallback';
@@ -20,6 +21,10 @@ const CommonRouting: IsomorphicRoute[] = [
   {
     path: "/about",
     component: () => About,
+  },
+  {
+    path: "/how",
+    component: () => How,
   },
   {
     path: "/app-proxy/*",

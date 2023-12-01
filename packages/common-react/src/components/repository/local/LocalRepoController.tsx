@@ -151,7 +151,7 @@ const LocalRepoController = (props: Props) => {
     if (!data || !props.plugin) {
       return null;
     }
-    if (props.plugin == "home" || props.plugin == "settings") {
+    if (props.plugin == "home") {
       return null;
     }
     if (data?.repoState?.commandMode == "compare" && compareFrom == "before") {
@@ -196,7 +196,6 @@ const LocalRepoController = (props: Props) => {
     }
 
     if (data?.repoState?.commandMode == "compare" && compareFrom == "before") {
-
       return (
         <>
           {data?.beforeState?.plugins?.map((plugin) => {

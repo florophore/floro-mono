@@ -95,7 +95,7 @@ const StyledContentsList = (props: Props) => {
   const [_isDragging, setIsDragging] = useState(false);
   const diffColor = useDiffColor(`${props.phraseRef}.styledContents`);
 
-  const [styledContents, setStyledContents] = useFloroState(`${props.phraseRef}.styledContents`);
+  const [styledContents, setStyledContents, saveStyledContent] = useFloroState(`${props.phraseRef}.styledContents`);
   const variables = useReferencedObject(`${props.phraseRef}.variables`)
   const contentVariables = useReferencedObject(`${props.phraseRef}.contentVariables`)
   const linkVariables = useReferencedObject(`${props.phraseRef}.linkVariables`)
@@ -171,14 +171,14 @@ const StyledContentsList = (props: Props) => {
 
   const onDragEnd = useCallback(() => {
     setIsDragging(false);
-    //save();
-  }, []);
+    saveStyledContent();
+  }, [saveStyledContent]);
 
 
   const onReOrderStyledContents = useCallback(
     (values: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styledContents']) => {
         if (values) {
-            setStyledContents(values);
+            setStyledContents(values, false);
         }
     },
     [setStyledContents, styledContents]

@@ -158,7 +158,7 @@ const InterpolationVariant = (props: Props) => {
 
   const variable = useReferencedObject(props.interpolationVariant.variableRef);
 
-  const [defaultValue, setDefaultValue] = useFloroState(
+  const [defaultValue, setDefaultValue, saveDefaultValue] = useFloroState(
     `${localRuleTranslationRef}.defaultValue`
   );
 
@@ -318,7 +318,7 @@ const InterpolationVariant = (props: Props) => {
           richTextHtml,
           plainText,
           json: JSON.stringify(json),
-        });
+        }, false);
       } else {
         setDefaultValue({
           ...defaultValue,
@@ -327,7 +327,7 @@ const InterpolationVariant = (props: Props) => {
           richTextHtml,
           plainText,
           json: JSON.stringify(json),
-        });
+        }, false);
       }
     },
     [
@@ -344,6 +344,17 @@ const InterpolationVariant = (props: Props) => {
       props.globalFilterUntranslated
     ]
   );
+
+  useEffect(() => {
+    if (commandMode == "edit") {
+      const timeout = setTimeout(() => {
+        saveDefaultValue();
+      }, 500);
+      return () => {
+        clearTimeout(timeout);
+      }
+    }
+  }, [defaultValue?.richTextHtml, commandMode])
 
 
   const onMarkDisplayResolved = useCallback(() => {

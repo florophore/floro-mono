@@ -5,45 +5,55 @@
 //   const icons = Convert.toIcons(json);
 
 export interface Icons {
-    "about.backward":                  AboutBackward;
-    "about.cascading-relations":       AboutCascadingRelations;
-    "about.check-mark":                AboutCheckMark;
-    "about.diff-keys":                 AboutDiffKeys;
-    "about.floro-pipeline":            AboutFloroPipeline;
-    "about.forward":                   AboutForward;
-    "about.key-syntax":                AboutKeySyntax;
-    "about.list-transform":            AboutListTransform;
-    "about.overview":                  AboutOverview;
-    "about.pause":                     AboutPause;
-    "about.play":                      AboutPlay;
-    "about.red-x":                     AboutRedX;
-    "about.relations-refactor-part-1": AboutRelationsRefactorPart1;
-    "about.set-to-types":              AboutSetToTypes;
-    "about.set-updates":               AboutSetUpdates;
-    "about.spreadsheet":               AboutSpreadsheet;
-    "about.spreadsheet-keys":          AboutSpreadsheetKeys;
-    "about.state-change":              AboutStateChange;
-    "about.treelist-sequence-1":       AboutTreelistSequence1;
-    "about.treelist-sequence-2":       AboutTreelistSequence2;
-    "about.treelist-sequence-3":       AboutTreelistSequence3;
-    "about.treelist-sequence-4":       AboutTreelistSequence4;
-    "about.version-update-revised":    AboutVersionUpdateRevised;
-    "about.version-updates":           AboutVersionUpdates;
-    "about.visual-diff":               AboutVisualDiff;
-    "front-page.apple":                FrontPageApple;
-    "front-page.copy":                 FrontPageCopy;
-    "front-page.discord":              FrontPageDiscord;
-    "front-page.drop-down-arrow":      FrontPageDropDownArrow;
-    "front-page.floro-round":          FrontPageFloroRound;
-    "front-page.front-page-backdrop":  FrontPageFrontPageBackdrop;
-    "front-page.github":               FrontPageGithub;
-    "front-page.language":             FrontPageLanguage;
-    "front-page.linux":                FrontPageLinux;
-    "front-page.moon":                 FrontPageMoon;
-    "front-page.sun":                  FrontPageSun;
-    "front-page.windows":              FrontPageWindows;
-    "main.floro":                      MainFloro;
-    "main.floro-text":                 MainFloroText;
+    "about.backward":                          AboutBackward;
+    "about.cascading-relations":               AboutCascadingRelations;
+    "about.check-mark":                        AboutCheckMark;
+    "about.diff-keys":                         AboutDiffKeys;
+    "about.floro-pipeline":                    AboutFloroPipeline;
+    "about.forward":                           AboutForward;
+    "about.key-syntax":                        AboutKeySyntax;
+    "about.list-transform":                    AboutListTransform;
+    "about.overview":                          AboutOverview;
+    "about.pause":                             AboutPause;
+    "about.play":                              AboutPlay;
+    "about.red-x":                             AboutRedX;
+    "about.relations-refactor-part-1":         AboutRelationsRefactorPart1;
+    "about.set-to-types":                      AboutSetToTypes;
+    "about.set-updates":                       AboutSetUpdates;
+    "about.spreadsheet":                       AboutSpreadsheet;
+    "about.spreadsheet-keys":                  AboutSpreadsheetKeys;
+    "about.state-change":                      AboutStateChange;
+    "about.treelist-sequence-1":               AboutTreelistSequence1;
+    "about.treelist-sequence-2":               AboutTreelistSequence2;
+    "about.treelist-sequence-3":               AboutTreelistSequence3;
+    "about.treelist-sequence-4":               AboutTreelistSequence4;
+    "about.version-update-revised":            AboutVersionUpdateRevised;
+    "about.version-updates":                   AboutVersionUpdates;
+    "about.visual-diff":                       AboutVisualDiff;
+    "front-page.apple":                        FrontPageApple;
+    "front-page.copy":                         FrontPageCopy;
+    "front-page.discord":                      FrontPageDiscord;
+    "front-page.drop-down-arrow":              FrontPageDropDownArrow;
+    "front-page.floro-round":                  FrontPageFloroRound;
+    "front-page.front-page-backdrop":          FrontPageFrontPageBackdrop;
+    "front-page.github":                       FrontPageGithub;
+    "front-page.language":                     FrontPageLanguage;
+    "front-page.linux":                        FrontPageLinux;
+    "front-page.moon":                         FrontPageMoon;
+    "front-page.sun":                          FrontPageSun;
+    "front-page.windows":                      FrontPageWindows;
+    "main.floro":                              MainFloro;
+    "main.floro-text":                         MainFloroText;
+    "merging.auto-merge":                      MergingAutoMerge;
+    "merging.conflict-merge":                  MergingConflictMerge;
+    "merging.diamond-color":                   MergingDiamondColor;
+    "merging.left-reconciled-auto-merge":      MergingLeftReconciledAutoMerge;
+    "merging.left-reconciled-conflict-merge":  MergingLeftReconciledConflictMerge;
+    "merging.rgb-list":                        MergingRGBList;
+    "merging.right-reconciled-auto-merge":     MergingRightReconciledAutoMerge;
+    "merging.right-reconciled-conflict-merge": MergingRightReconciledConflictMerge;
+    "merging.three-way-auto-merge":            MergingThreeWayAutoMerge;
+    "merging.three-way-conflict-merge":        MergingThreeWayConflictMerge;
 }
 
 export interface AboutBackward {
@@ -368,6 +378,86 @@ export interface MainFloroText {
 }
 
 export interface MainFloroTextVariants {
+}
+
+export interface MergingAutoMerge {
+    default:  Theme;
+    variants: MergingAutoMergeVariants;
+}
+
+export interface MergingAutoMergeVariants {
+}
+
+export interface MergingConflictMerge {
+    default:  Theme;
+    variants: MergingConflictMergeVariants;
+}
+
+export interface MergingConflictMergeVariants {
+}
+
+export interface MergingDiamondColor {
+    default:  Theme;
+    variants: MergingDiamondColorVariants;
+}
+
+export interface MergingDiamondColorVariants {
+}
+
+export interface MergingLeftReconciledAutoMerge {
+    default:  Theme;
+    variants: MergingLeftReconciledAutoMergeVariants;
+}
+
+export interface MergingLeftReconciledAutoMergeVariants {
+}
+
+export interface MergingLeftReconciledConflictMerge {
+    default:  Theme;
+    variants: MergingLeftReconciledConflictMergeVariants;
+}
+
+export interface MergingLeftReconciledConflictMergeVariants {
+}
+
+export interface MergingRGBList {
+    default:  Theme;
+    variants: MergingRGBListVariants;
+}
+
+export interface MergingRGBListVariants {
+}
+
+export interface MergingRightReconciledAutoMerge {
+    default:  Theme;
+    variants: MergingRightReconciledAutoMergeVariants;
+}
+
+export interface MergingRightReconciledAutoMergeVariants {
+}
+
+export interface MergingRightReconciledConflictMerge {
+    default:  Theme;
+    variants: MergingRightReconciledConflictMergeVariants;
+}
+
+export interface MergingRightReconciledConflictMergeVariants {
+}
+
+export interface MergingThreeWayAutoMerge {
+    default:  Theme;
+    variants: MergingThreeWayAutoMergeVariants;
+}
+
+export interface MergingThreeWayAutoMergeVariants {
+}
+
+export interface MergingThreeWayConflictMerge {
+    default:  Theme;
+    variants: MergingThreeWayConflictMergeVariants;
+}
+
+export interface MergingThreeWayConflictMergeVariants {
 }
 
 // Converts JSON strings to/from your types

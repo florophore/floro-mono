@@ -35,7 +35,7 @@ interface Props {
 }
 
 const TermList = (props: Props) => {
-  const [terms, setTerms] =
+  const [terms, setTerms, saveTerms] =
     useFloroState("$(text).terms") ?? [];
   const [isDragging, setIsDragging] = useState(false);
   const { applicationState, commandMode } = useFloroContext();
@@ -46,18 +46,13 @@ const TermList = (props: Props) => {
 
   const onDragEnd = useCallback(() => {
     setIsDragging(false);
-  }, []);
+    saveTerms();
+  }, [saveTerms]);
 
   const onReOrderTerms = useCallback(
     (values: SchemaTypes["$(text).terms"]) => {
       if (applicationState) {
-        const remap = values.map((v) => {
-          return getReferencedObject(
-            applicationState,
-            makeQueryRef("$(text).terms.id<?>", v.id)
-          );
-        });
-        setTerms(remap);
+        setTerms(values, false);
       }
     },
     [applicationState]

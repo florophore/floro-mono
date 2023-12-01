@@ -95,7 +95,7 @@ const InterpolationVariantsList = (props: Props) => {
   const [_isDragging, setIsDragging] = useState(false);
   const diffColor = useDiffColor(`${props.phraseRef}.interpolationVariants`);
 
-  const [interpolationVariants, setInterpolationVariants] = useFloroState(`${props.phraseRef}.interpolationVariants`);
+  const [interpolationVariants, setInterpolationVariants, saveInterpolationVariants] = useFloroState(`${props.phraseRef}.interpolationVariants`);
   const variables = useReferencedObject(`${props.phraseRef}.variables`)
   const linkVariables = useReferencedObject(`${props.phraseRef}.linkVariables`)
   const styledContents = useReferencedObject(`${props.phraseRef}.styledContents`)
@@ -181,14 +181,14 @@ const InterpolationVariantsList = (props: Props) => {
 
   const onDragEnd = useCallback(() => {
     setIsDragging(false);
-    //save();
-  }, []);
+    saveInterpolationVariants();
+  }, [saveInterpolationVariants]);
 
 
   const onReOrderVariables = useCallback(
     (values: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants']) => {
         if (values) {
-            setInterpolationVariants(values);
+            setInterpolationVariants(values, false);
         }
     },
     [setInterpolationVariants, variables]

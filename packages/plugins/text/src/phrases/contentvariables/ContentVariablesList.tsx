@@ -100,7 +100,7 @@ const ContentVariableList = (props: Props) => {
   const [name, setName] = useState<string>("");
   const [_isDragging, setIsDragging] = useState(false);
 
-  const [contentVariables, setContentVariables] = useFloroState(`${props.phraseRef}.contentVariables`);
+  const [contentVariables, setContentVariables, saveContentVariables] = useFloroState(`${props.phraseRef}.contentVariables`);
   const interpolationVariants = useReferencedObject(`${props.phraseRef}.interpolationVariants`)
   const linkVariables = useReferencedObject(`${props.phraseRef}.linkVariables`);
   const variables = useReferencedObject(`${props.phraseRef}.variables`);
@@ -173,14 +173,14 @@ const ContentVariableList = (props: Props) => {
 
   const onDragEnd = useCallback(() => {
     setIsDragging(false);
-    //save();
-  }, []);
+    saveContentVariables();
+  }, [saveContentVariables]);
 
 
   const onReOrderVariables = useCallback(
     (values: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.contentVariables']) => {
         if (values) {
-            setContentVariables(values);
+            setContentVariables(values, false);
         }
     },
     [setContentVariables, variables]
@@ -191,8 +191,7 @@ const ContentVariableList = (props: Props) => {
         setContentVariables(contentVariables?.filter(v => v?.name != variable?.name) ?? []);
     },
     [setContentVariables, contentVariables]
-
-  )
+  );
 
   const [isReOrderMode, setIsReOrderMode] = useState(false);
 
@@ -243,7 +242,7 @@ const ContentVariableList = (props: Props) => {
       {isReOrderMode && commandMode == "edit" && (
         <Reorder.Group
           axis="y"
-          values={variables ?? []}
+          values={contentVariables ?? []}
           onReorder={onReOrderVariables}
           style={{listStyle: "none", margin: 0, padding: 0 }}
         >

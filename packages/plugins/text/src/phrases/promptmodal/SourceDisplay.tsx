@@ -59,7 +59,7 @@ const GrowCommentContainer = styled.div`
 `;
 
 const Wrapper = styled.div`
-  user-select: all;
+  user-select: text;
   ol {
     padding-top: 0;
     padding-bottom: 0;

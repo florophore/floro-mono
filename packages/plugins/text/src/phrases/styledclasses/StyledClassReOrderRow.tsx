@@ -119,7 +119,7 @@ const StyleClassReOrderRow = (props: Props) => {
             </DragShadeContainer>
             <RowTitle
               style={{
-                marginTop: 15,
+                marginTop: 10,
                 display: "flex",
                 flexDirection: "row",
                 alignItems: "center",
@@ -132,7 +132,7 @@ const StyleClassReOrderRow = (props: Props) => {
                   display: "flex",
                   flexDirection: "row",
                   alignItems: "center",
-                  fontSize: "1.4rem",
+                  fontSize: "2rem",
                   padding: 4,
                 }}
               >

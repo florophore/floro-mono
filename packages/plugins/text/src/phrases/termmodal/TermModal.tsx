@@ -124,8 +124,13 @@ const TermModal = (props: Props) => {
       return [];
     }
     const termSet = new Set<string>(terms?.map?.(t => t.id) ?? []);
+    const seenTerms = new Set<string>([]);
     return data.filter(foundTerm => {
       const foundTermId = foundTerm?.trim?.()?.replaceAll?.(/ +/g, "_")?.toLowerCase?.();
+      if (seenTerms.has(foundTermId)) {
+        return false;
+      }
+      seenTerms.add(foundTermId);
       return !termSet.has(foundTermId);
     });
   }, [terms, data]);

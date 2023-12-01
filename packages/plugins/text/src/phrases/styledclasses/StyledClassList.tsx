@@ -79,7 +79,7 @@ const StyleClassList = (props: Props) => {
   const [name, setName] = useState<string>("");
   const [_isDragging, setIsDragging] = useState(false);
 
-  const [styleClasses, setStyleClasses] = useFloroState(`${props.phraseRef}.styleClasses`);
+  const [styleClasses, setStyleClasses, saveStyleClasses] = useFloroState(`${props.phraseRef}.styleClasses`);
   const variables = useReferencedObject(`${props.phraseRef}.variables`);
   const contentVariables = useReferencedObject(`${props.phraseRef}.contentVariables`);
 
@@ -118,7 +118,7 @@ const StyleClassList = (props: Props) => {
     return isVarName(name);
   }, [name, isNameTaken]);
 
-  const onAppendContentVariable = useCallback(() => {
+  const onAppendStyleClass = useCallback(() => {
     if (!isEnabled) {
         return;
     }
@@ -136,14 +136,17 @@ const StyleClassList = (props: Props) => {
 
   const onDragEnd = useCallback(() => {
     setIsDragging(false);
-    //save();
-  }, []);
+    console.log("DONE")
+
+    saveStyleClasses();
+  }, [saveStyleClasses]);
 
 
-  const onReOrderVariables = useCallback(
+  const onReOrderStyleClasses = useCallback(
     (values: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses']) => {
+      console.log("V", values)
         if (values) {
-            setStyleClasses(values);
+            setStyleClasses(values, false);
         }
     },
     [setStyleClasses, styleClasses]
@@ -163,7 +166,7 @@ const StyleClassList = (props: Props) => {
     setIsReOrderMode(!isReOrderMode);
   }, [isReOrderMode])
 
-  if (commandMode != "edit" && (variables?.length ?? 0) == 0) {
+  if (commandMode != "edit" && (styleClasses?.length ?? 0) == 0) {
     return null;
   }
 
@@ -182,7 +185,7 @@ const StyleClassList = (props: Props) => {
             {`Style Classes`}
           </span>
         </RowTitle>
-        {(contentVariables?.length ?? 0) > 0 && commandMode == "edit" && (
+        {(styleClasses?.length ?? 0) > 0 && commandMode == "edit" && (
           <ToggleEditTitle onClick={onToggleReOrder}>{isReOrderMode ? 'done organizing' : 'organize style classes'}</ToggleEditTitle>
         )}
       </TitleRow>
@@ -206,8 +209,8 @@ const StyleClassList = (props: Props) => {
       {isReOrderMode && commandMode == "edit" && (
         <Reorder.Group
           axis="y"
-          values={variables ?? []}
-          onReorder={onReOrderVariables}
+          values={styleClasses ?? []}
+          onReorder={onReOrderStyleClasses}
           style={{listStyle: "none", margin: 0, padding: 0 }}
         >
           <AnimatePresence>
@@ -253,7 +256,7 @@ const StyleClassList = (props: Props) => {
               label={"add style class"}
               bg={"purple"}
               isDisabled={!isEnabled}
-              onClick={onAppendContentVariable}
+              onClick={onAppendStyleClass}
               style={{
                   width: 200
               }}

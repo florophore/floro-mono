@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
   PointerTypes,
   SchemaTypes,
@@ -83,7 +83,7 @@ const TermNotesTranslation = (props: Props) => {
     localeRef
   );
 
-  const [termTranslation, setTermTranslation] =
+  const [termTranslation, setTermTranslation, saveTermTranslation] =
     useFloroState(termTranslationRef);
 
   const onSetContent = useCallback(
@@ -94,7 +94,7 @@ const TermNotesTranslation = (props: Props) => {
       setTermTranslation({
         ...termTranslation,
         localNotes: text,
-      });
+      }, false);
     },
     [
       termTranslation?.termValue,
@@ -104,6 +104,18 @@ const TermNotesTranslation = (props: Props) => {
       props.termRef,
     ]
   );
+
+  useEffect(() => {
+    if (commandMode == "edit") {
+      const timeout = setTimeout(() => {
+        saveTermTranslation();
+      }, 500);
+
+      return () => {
+        clearTimeout(timeout);
+      }
+    }
+  }, [termTranslation?.localNotes, commandMode])
 
   return (
     <>
