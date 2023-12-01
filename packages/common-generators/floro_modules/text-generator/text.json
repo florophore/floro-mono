@@ -4098,7 +4098,7 @@
           },
           {
             "children": [],
-            "content": "While it's easy to see how single character sequences can merge, a lot of the fun comes from considering the ",
+            "content": "It's easy to see how single-character sequences can be merged. However, the real power of merging emerges when we consider the ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -4124,7 +4124,7 @@
           },
           {
             "children": [],
-            "content": " of a merge. It's an arbitrary choice that we decided to delimit our merge sequences by characters. We could have merged on a binary-level, a word level, or a sentence level. We only chose characters because BCE, ABC, and BCDE have neither spaces nor periods. Strictly speaking you can merge any information (on a binary level) but without structure or a sense of ",
+            "content": " of what's being merged. It was entirely our decision to delimit our merge sequences by characters. We could have chosen to merge on a binary level, a word level, or a sentence level. The choice of characters was made because 'BCE', 'ABC', and 'BCDE' did not contain spaces or periods. Strictly speaking, any information can be merged at a binary level, but without structure or a sense of ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -4150,7 +4150,7 @@
           },
           {
             "children": [],
-            "content": ", you're likely to end up with nonsense.",
+            "content": ", the result is likely to be nonsensical.",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -4189,7 +4189,7 @@
           },
           {
             "children": [],
-            "content": "Here's a merge calculator to illustrate.",
+            "content": "To illustrate, let's use a merge calculator.",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -4267,7 +4267,7 @@
           },
           {
             "children": [],
-            "content": "If you play around a bit, you'll realize the conflicts get really bad when we don't delimit by spaces. If you look at the default sentences, the words \"Hello\" and \"Hi\" get merged into a conflicted state ",
+            "content": "If you experiment a little, you'll find that issues start cropping up when we don't delimit by spaces. Looking at the default sentences, the words \"Hello\" and \"Hi\" merge into a conflicted state and become ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -4280,7 +4280,7 @@
           },
           {
             "children": [],
-            "content": "\"",
+            "content": "\"Hiello\"",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -4293,20 +4293,7 @@
           },
           {
             "children": [],
-            "content": "Hiello\" ",
-            "type": "text",
-            "styles": {
-              "isBold": false,
-              "isItalic": true,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": "and ",
+            "content": " and ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -4319,7 +4306,7 @@
           },
           {
             "children": [],
-            "content": "\"",
+            "content": "\"Helloi\"",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -4332,33 +4319,7 @@
           },
           {
             "children": [],
-            "content": "Helloi",
-            "type": "text",
-            "styles": {
-              "isBold": false,
-              "isItalic": true,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": "\" ",
-            "type": "text",
-            "styles": {
-              "isBold": false,
-              "isItalic": true,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": "when delimited on a character level.",
+            "content": ", when they're delimited on a character level.",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -4397,7 +4358,7 @@
           },
           {
             "children": [],
-            "content": "So what's the ",
+            "content": "So, what is the ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -4449,7 +4410,7 @@
           },
           {
             "children": [],
-            "content": "? Line Numbers!",
+            "content": "? Line numbers!",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -4488,7 +4449,7 @@
           },
           {
             "children": [],
-            "content": "Line Numbers makes a lot of sense for ",
+            "content": "Line numbers make a lot of sense for ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -4514,7 +4475,7 @@
           },
           {
             "children": [],
-            "content": ". Merging on line number makes no sense when you are merging structured data. Fortunately, ",
+            "content": ". Yet, merging on line numbers is not sensible when it comes to merging structured data. Fortunately, a ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -4527,7 +4488,7 @@
           },
           {
             "children": [],
-            "content": "floro",
+            "content": "Floro",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -4566,7 +4527,7 @@
           },
           {
             "children": [],
-            "content": ", is naturally ordered into ",
+            "content": " naturally orders into ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -4592,7 +4553,7 @@
           },
           {
             "children": [],
-            "content": " levels that make sense to merge. It is the choice of the plugin designer to select the appropriate ",
+            "content": " levels that are suitable for merging. The choice remains with the plugin designer to select the appropriate ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -4657,7 +4618,7 @@
           },
           {
             "children": [],
-            "content": "So now we finally can ask the question. ",
+            "content": "Now we finally get to ask the question, ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -4670,20 +4631,7 @@
           },
           {
             "children": [],
-            "content": "How do you merge colors?",
-            "type": "text",
-            "styles": {
-              "isBold": true,
-              "isItalic": false,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": "\n",
+            "content": "how do you merge colors?",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -4709,7 +4657,20 @@
           },
           {
             "children": [],
-            "content": "When we think about colors in programming, we usually think of them as a combination of red, green, and blue values. If we treated the red, green, and blue values as independent variables. We might end up with a ",
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Generally, in programming, we think of colors as combinations of red, green, and blue values. If we considered red, green, and blue as independent variables, we could end up with a ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -4813,7 +4774,7 @@
           },
           {
             "children": [],
-            "content": "Now, this could be a valid ",
+            "content": "This could be a valid ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -4839,7 +4800,7 @@
           },
           {
             "children": [],
-            "content": " and a good way of representing the data structure. It may lead to some undesired merge behaviors though.",
+            "content": " and an effective way to represent the data structure. However, it might lead to some unexpected merge behaviors.",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -4917,7 +4878,7 @@
           },
           {
             "children": [],
-            "content": "Should the changes from the color red,  to yellow and magenta result in an automatic resolution to the color white? Probably not, but perhaps that is the intended behavior of the application.",
+            "content": "Should changes from the color red to yellow and magenta result in an automatic resolution to the color white? Probably not, but maybe that's the expected behavior of the application.",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -4956,7 +4917,7 @@
           },
           {
             "children": [],
-            "content": "The solution to this problem, is rather than treating each variable as independent, we just define a ",
+            "content": "To resolve this issue, we could opt to not treat each variable as independent, and instead define a ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -4982,7 +4943,7 @@
           },
           {
             "children": [],
-            "content": ", where red, green, and blue are grouped together as part of the same category. Hexcodes, naturally do this already. What that means is that red, green, and blue cannot merge independently of each other. A user would have to pick either yellow or magenta, or manually resolve the color to something else.",
+            "content": " where red, green, and blue are grouped as part of the same category. Hex codes naturally do this. This means that red, green, and blue cannot merge independently of each other. A user would then have to choose either yellow or magenta, or manually resolve the color to something else.",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -5021,7 +4982,7 @@
           },
           {
             "children": [],
-            "content": "This is one area where ",
+            "content": "This is an area where ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -5034,7 +4995,7 @@
           },
           {
             "children": [],
-            "content": "floro",
+            "content": "Floro",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -5047,33 +5008,7 @@
           },
           {
             "children": [],
-            "content": " ",
-            "type": "text",
-            "styles": {
-              "isBold": false,
-              "isItalic": false,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": "diff",
-            "type": "text",
-            "styles": {
-              "isBold": false,
-              "isItalic": false,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": "ers significantly from traditional relational data stores. Whether the properties of a category are normalized or denormalized, directly affects how the category and is sub-categories are merged and ",
+            "content": " significantly ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -5099,7 +5034,33 @@
           },
           {
             "children": [],
-            "content": "ed.",
+            "content": "ers from traditional relational data stores. Whether the properties of a category are normalized or denormalized directly affects how the category and its sub-categories are merged and ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "diff",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "erentiated.",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -23069,7 +23030,7 @@
           },
           {
             "children": [],
-            "content": "虽然单个字符如何合并的理解相对简单，但合并过程中的大部分乐趣来自考虑合并的",
+            "content": "合并单字符序列的方法不难理解。不过，当我们考虑到合并内容的",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -23095,7 +23056,7 @@
           },
           {
             "children": [],
-            "content": "。我们决定以字符为单位划分的合并序列实际上是一种任意选择。事实上，我们可以在二元级别、单词级别或甚至句子级别进行合并。我们选择字符级别，是因为像 BCE、ABC 和 BCDE 这样的序列并没有空格或者句号。从严格意义上来说，你可以在二进制层面合并任何信息，但如果没有一定的结构或粒度，最终可能产生的只是混乱无意义的信息。",
+            "content": "时，合并的真正威力就显现出来了。按字符划分合并序列完全是我们自己的决定。我们本可以选择在二进制层面、单词层面或句子层面进行合并。之所以选择字符，是因为 \"BCE\"、\"ABC \"和 \"BCDE \"不包含空格或句点。严格来说，任何信息都可以在二进制层次上进行合并，但如果没有结构或粒度感，结果很可能是无意义的。",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -23134,7 +23095,7 @@
           },
           {
             "children": [],
-            "content": "这里有一个合并计算器可以帮助理解。",
+            "content": "为了说明这一点，让我们使用合并计算器。",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -23186,33 +23147,7 @@
           },
           {
             "children": [],
-            "content": "\n",
-            "type": "text",
-            "styles": {
-              "isBold": false,
-              "isItalic": false,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": "\n",
-            "type": "text",
-            "styles": {
-              "isBold": false,
-              "isItalic": false,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": "如果你试试的话，你会发现默认句子中，\"Hello\" 和 \"Hi\" 在字符级别划分下会合并为冲突状态的 \"Hiello\" 和 \"Helloi\"。",
+            "content": " ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -23251,7 +23186,7 @@
           },
           {
             "children": [],
-            "content": "那么 git 的粒度是什么呢？行号！",
+            "content": " 如果你稍加试验，就会发现当我们不以空格定界时，问题就开始出现了。",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -23290,7 +23225,33 @@
           },
           {
             "children": [],
-            "content": "对于纯文本来说，行号非常有用。但是在合并结构化数据时，依赖行号进行合并就没有什么意义了。幸好，Floro 插件状态是自然地按粒度排序的，所以它们合并起来非常有意义。插件设计者还可以根据自己的应用需求选择合适的粒度。",
+            "content": "那么，",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "git",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " 的 granularity 是什么呢？行号！",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -23329,7 +23290,7 @@
           },
           {
             "children": [],
-            "content": "现在我们可以尝试回答这个问题。",
+            "content": "行号对纯文本来说很有意义。然而，在合并结构化数据时，按行号合并并不合理。幸运的是，",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -23342,10 +23303,413 @@
           },
           {
             "children": [],
-            "content": "如何合并颜色？",
+            "content": "Floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " 插件状态自然会排序到适合合并的粒度级别。",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "现在我们终于可以问一个问题：",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "如何合并颜色",
             "type": "text",
             "styles": {
               "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "？",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "一般来说，在编程中，我们认为颜色是红、绿、蓝三色值的组合。如果我们将红、绿、蓝视为自变量，就可以得到如下图所示的 schema。",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{rgbList}",
+            "type": "content-variable",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " 这可能是一个有效的 schema，也是表示数据结构的有效方法。",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{diamondColor}",
+            "type": "content-variable",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " 从红色到黄色和品红色的变化是否应该自动解析为白色？可能不是，但也许这就是应用程序的预期行为。",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "要解决这个问题，我们可以选择不将每个变量视为独立变量，而是定义一个 schema，将红色、绿色和蓝色作为同一类别的一部分进行分组。十六进制代码自然就能做到这一点。这意味着红色、绿色和蓝色不能独立合并。这样，用户就必须选择黄色或洋红色，或者手动将颜色解析为其他颜色。",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "这是 ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " 与传统关系型数据存储显著不同的地方。一个类别的属性是归一化还是去归一化，直接影响到类别及其子类别的合并和区分方式。",
+            "type": "text",
+            "styles": {
+              "isBold": false,
               "isItalic": false,
               "isUnderlined": false,
               "isStrikethrough": false,
