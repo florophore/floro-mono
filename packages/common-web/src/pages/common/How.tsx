@@ -941,7 +941,7 @@ function AboutPage() {
             }}
           >
             <span style={{ width: 360, display: "inline-block", fontWeight: 600 }}>
-              {"Automerges? (char delimited): "}
+              {"Auto-Merges? (char delimited): "}
             </span>
             {rightMergeChar == leftMergeChar ? (
               <img style={{ height: 20 }} src={checkMark} />
@@ -976,7 +976,7 @@ function AboutPage() {
             }}
           >
             <span style={{ width: 360, display: "inline-block", fontWeight: 600 }}>
-              {"Automerges? (space delimited): "}
+              {"Auto-Merges? (space delimited): "}
             </span>
             {rightMergeSpace == leftMergeSpace ? (
               <img style={{ height: 20 }} src={checkMark} />
