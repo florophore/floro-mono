@@ -54,6 +54,7 @@ const SectionParagraph = styled.div`
   margin: 0;
   font-family: "MavenPro";
   color: ${(props) => props.theme.colors.contrastText};
+  word-wrap: break-word;
 `;
 
 const AnimationToggleIcon = styled.img`
@@ -179,7 +180,7 @@ function AboutPage() {
       let children = renderers.renderStaticNodes(node.children, renderers);
       return (
         <a
-          style={{ color: theme.colors.linkColor }}
+          style={{ color: theme.colors.linkColor, display: 'inline-block' }}
           href={node.href}
           target="_blank"
         >
@@ -1131,8 +1132,8 @@ function AboutPage() {
             padding: 16,
           }}
         >
-          <SectionParagraph>{blog}</SectionParagraph>
-          <SectionParagraph>{blogPart2}</SectionParagraph>
+          <SectionParagraph><section>{blog}</section></SectionParagraph>
+          <SectionParagraph><section>{blogPart2}</section></SectionParagraph>
         </div>
       </AboutWrapper>
     </PageWrapper>

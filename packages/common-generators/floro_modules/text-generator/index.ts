@@ -1597,6 +1597,7 @@ export interface HowItWorksHowItWorksBlogPart2_StyleClasses {
 export interface HowItWorksHowItWorksBlogPart2_StyledContents {
     "bringing it all together title": StyledContent;
     "merge granularity":              StyledContent;
+    "order matters":                  StyledContent;
 }
 
 export interface HowItWorksHowItWorksBlogPart2_Variables {

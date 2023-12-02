@@ -9,11 +9,8 @@ import RepositoriesContext from "@floro/database/src/contexts/repositories/Repos
 import CommitsContext from "@floro/database/src/contexts/repositories/CommitsContext";
 import BranchesContext from "@floro/database/src/contexts/repositories/BranchesContext";
 import BinariesContext from "@floro/database/src/contexts/repositories/BinariesContext";
-import { REPO_REGEX } from "@floro/common-web/src/utils/validators";
-import { Organization } from "@floro/database/src/entities/Organization";
 import { Repository } from "@floro/database/src/entities/Repository";
 import RepoAccessor from "@floro/storage/src/accessors/RepoAccessor";
-import BranchService from "./BranchService";
 import { Commit } from "@floro/database/src/entities/Commit";
 import { Binary } from "@floro/database/src/entities/Binary";
 import RepoRBACService, { RepoPermissions } from "./RepoRBACService";
@@ -22,19 +19,14 @@ import { ProtectedBranchRule } from "@floro/database/src/entities/ProtectedBranc
 import { SourceCommitNode, SourceGraph } from "floro/dist/src/sourcegraph";
 import {
   Branch as FloroBranch,
-  CloneFile,
   CommitExchange,
   RemoteSettings,
   BranchesMetaState,
-  getBranchIdFromName,
-  BRANCH_NAME_REGEX,
-  Branch,
   branchIdIsCyclic,
 } from "floro/dist/src/repo";
 import OrganizationsContext from "@floro/database/src/contexts/organizations/OrganizationsContext";
 import MainConfig from "@floro/config/src/MainConfig";
 import StorageAuthenticator from "@floro/storage/src/StorageAuthenticator";
-import UsersContext from "@floro/database/src/contexts/users/UsersContext";
 import RepositoryDatasourceFactoryService from "./RepoDatasourceFactoryService";
 import BinaryCommitUtilizationsContext from "@floro/database/src/contexts/repositories/BinaryCommitUtilizationsContext";
 import BinaryAccessor from "@floro/storage/src/accessors/BinaryAccessor";
@@ -42,10 +34,6 @@ import { QueryRunner } from "typeorm";
 import PluginsVersionsContext from "@floro/database/src/contexts/plugins/PluginVersionsContext";
 import OrganizationMemberRolesContext from "@floro/database/src/contexts/organizations/OrganizationMemberRolesContext";
 import OrganizationMembersContext from "@floro/database/src/contexts/organizations/OrganizationMembersContext";
-import OrganizationRolesContext from "@floro/database/src/contexts/organizations/OrganizationRolesContext";
-import { RepoEnabledRoleSetting } from "@floro/database/src/entities/RepoEnabledRoleSetting";
-import RepositoryEnabledRoleSettingsContext from "@floro/database/src/contexts/repositories/RepositoryEnabledRoleSettingsContext";
-import RepositoryEnabledUserSettingsContext from "@floro/database/src/contexts/repositories/RepositoryEnabledUserSettingsContext";
 import MergeRequestsContext from "@floro/database/src/contexts/merge_requests/MergeRequestsContext";
 
 interface BranchRuleUserPermission {

@@ -13,7 +13,6 @@ import BranchService from "./BranchService";
 import OrganizationRolesContext from "@floro/database/src/contexts/organizations/OrganizationRolesContext";
 import RepositoryEnabledRoleSettingsContext from "@floro/database/src/contexts/repositories/RepositoryEnabledRoleSettingsContext";
 import RepositoryEnabledUserSettingsContext from "@floro/database/src/contexts/repositories/RepositoryEnabledUserSettingsContext";
-import RepoDataService from "./RepoDataService";
 
 export const LICENSE_CODE_LIST = new Set([
   "apache_2",
@@ -286,7 +285,6 @@ export default class RepositoryService {
           name: name.trim(),
           repoType: "org_repo",
         });
-        // we should add setting access rules here
 
         const organizationRolesContext =
           await this.contextFactory.createContext(
@@ -302,7 +300,7 @@ export default class RepositoryService {
         const technicalAdminRole =
           await organizationRolesContext.getRoleForOrgByPresetName(
             repository.organizationId,
-            "admin"
+            "technical_admin"
           );
 
         const repositoryEnabledRoleSettingsContext =
