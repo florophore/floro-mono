@@ -116,7 +116,7 @@ export default class CommitService {
 
       let isValid = true;
       for (const plugin in apiStoreInvalidity) {
-        if (apiStoreInvalidity[plugin]?.length > 0) {
+        if ((apiStoreInvalidity[plugin]?.length ?? 0) > 0) {
           isValid = false;
           break;
         }
@@ -381,7 +381,7 @@ export default class CommitService {
 
       let isValid = true;
       for (const plugin in apiStoreInvalidity) {
-        if (apiStoreInvalidity[plugin]?.length > 0) {
+        if ((apiStoreInvalidity[plugin]?.length ?? 0) > 0) {
           isValid = false;
           break;
         }

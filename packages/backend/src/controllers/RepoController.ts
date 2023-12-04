@@ -1086,12 +1086,11 @@ export default class RepoController extends BaseController {
 
       let isValid = true;
       for (const plugin in apiStoreInvalidity) {
-        if (apiStoreInvalidity[plugin]?.length > 0) {
+        if ((apiStoreInvalidity[plugin]?.length ?? 0) > 0) {
           isValid = false;
           break;
         }
       }
-
       const state = await convertCommitStateToRenderedState(
         datasource,
         kvState
