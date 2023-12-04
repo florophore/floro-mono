@@ -21,7 +21,6 @@ import {
   getLCS,
   getMergeSequence,
 } from "floro/dist/src/sequenceoperations";
-import How from "./How";
 
 const AboutWrapper = styled.div`
   width: 100%;
@@ -95,8 +94,22 @@ const AnimationPlayWrapper = styled.div`
 `;
 
 function AboutPage() {
+  const aboutMetaTitle = usePlainText("meta_tags.about");
   return (
-    <How/>
+    <PageWrapper>
+      <Helmet>
+        <title>{aboutMetaTitle}</title>
+      </Helmet>
+      <AboutWrapper>
+        <div
+          style={{
+            padding: 16,
+          }}
+        >
+          <h1>{'will be about page'}</h1>
+        </div>
+      </AboutWrapper>
+    </PageWrapper>
   )
 }
 

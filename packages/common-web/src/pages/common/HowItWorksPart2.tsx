@@ -2,7 +2,6 @@ import {
   useMemo,
   useState,
   useCallback,
-  useEffect,
   JSXElementConstructor,
   ReactElement,
 } from "react";
@@ -21,6 +20,7 @@ import {
   getLCS,
   getMergeSequence,
 } from "floro/dist/src/sequenceoperations";
+import { Link } from "react-router-dom";
 
 const AboutWrapper = styled.div`
   width: 100%;
@@ -98,79 +98,6 @@ function AboutPage() {
   const theme = useTheme();
   const aboutMetaTitle = usePlainText("meta_tags.about");
 
-  const [sequenceCount, setSequenceCount] = useState(4);
-  const [direction, setDirection] = useState("descending");
-  const [isPlaying, setIsPlaying] = useState(true);
-
-  const togglePlaying = useCallback(() => {
-    setIsPlaying(!isPlaying);
-  }, [isPlaying]);
-
-  const isForwardDisabled = useMemo(() => {
-    if (isPlaying) {
-      return true;
-    }
-    if (sequenceCount == 1) {
-      return true;
-    }
-    return false;
-  }, [isPlaying, sequenceCount]);
-
-  const isBackwardDisabled = useMemo(() => {
-    if (isPlaying) {
-      return true;
-    }
-    if (sequenceCount == 4) {
-      return true;
-    }
-    return false;
-  }, [isPlaying, sequenceCount]);
-
-  const onBackward = useCallback(() => {
-    if (isBackwardDisabled) {
-      return;
-    }
-    setSequenceCount(sequenceCount + 1);
-  }, [isBackwardDisabled, sequenceCount]);
-
-  const onForward = useCallback(() => {
-    if (isForwardDisabled) {
-      return;
-    }
-    setSequenceCount(sequenceCount - 1);
-  }, [isForwardDisabled, sequenceCount]);
-
-  useEffect(() => {
-    if (!isPlaying) {
-      return;
-    }
-    const timeout = setTimeout(() => {
-      if (!isPlaying) {
-        return;
-      }
-      if (sequenceCount == 4) {
-        setDirection("descending");
-        setSequenceCount(3);
-        return;
-      }
-      if (sequenceCount == 1) {
-        setDirection("ascending");
-        setSequenceCount(2);
-        return;
-      }
-      if (direction == "ascending") {
-        setSequenceCount(sequenceCount + 1);
-        return;
-      }
-      if (direction == "descending") {
-        setSequenceCount(sequenceCount - 1);
-        return;
-      }
-    }, 1200);
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, [sequenceCount, direction, isPlaying]);
 
   const renderLinkNode = useCallback(
     (
@@ -178,6 +105,16 @@ function AboutPage() {
       renderers
     ): React.ReactElement => {
       let children = renderers.renderStaticNodes(node.children, renderers);
+      if (node.linkName == "back to part 1") {
+        return (
+          <Link
+            style={{ fontWeight: 600, color: theme.colors.linkColor, display: 'inline-block' }}
+            to={`/technical-overview-part-1`}
+          >
+            {children}
+          </Link>
+        );
+      }
       return (
         <a
           style={{ color: theme.colors.linkColor, display: 'inline-block' }}
@@ -198,24 +135,6 @@ function AboutPage() {
     };
   }, [renderLinkNode]);
 
-  const overviewIcon = useIcon("about.overview");
-  const dependentTypes = useIcon("about.floro-pipeline");
-  const listTransfrom = useIcon("about.list-transform");
-  const keySyntax = useIcon("about.key-syntax");
-
-  const treeListSequence1 = useIcon("about.treelist-sequence-1");
-  const treeListSequence2 = useIcon("about.treelist-sequence-2");
-  const treeListSequence3 = useIcon("about.treelist-sequence-3");
-  const treeListSequence4 = useIcon("about.treelist-sequence-4");
-  const versionUpdates = useIcon("about.version-updates");
-  const setsUpdates = useIcon("about.set-updates");
-  const relationsRefactorPart1 = useIcon("about.relations-refactor-part-1");
-  const cascadingRelations = useIcon("about.cascading-relations");
-  const spreadsheetIcon = useIcon("about.spreadsheet");
-  const playIcon = useIcon("about.play");
-  const pauseIcon = useIcon("about.pause");
-  const forwardIcon = useIcon("about.forward");
-  const backwardIcon = useIcon("about.backward");
   const stateChangeIcon = useIcon("about.state-change");
   const spreadsheetKeys = useIcon("about.spreadsheet-keys");
   const diffKeys = useIcon("about.diff-keys");
@@ -232,25 +151,8 @@ function AboutPage() {
   const conflictMergeImage = useIcon("merging.conflict-merge");
   const diamonColorImage = useIcon("merging.diamond-color");
   const rgbList = useIcon("merging.rgb-list");
-
-  const treeListSequenceIcon = useMemo(() => {
-    if (sequenceCount == 1) {
-      return treeListSequence1;
-    }
-    if (sequenceCount == 2) {
-      return treeListSequence2;
-    }
-    if (sequenceCount == 3) {
-      return treeListSequence3;
-    }
-    return treeListSequence4;
-  }, [
-    sequenceCount,
-    treeListSequence1,
-    treeListSequence2,
-    treeListSequence3,
-    treeListSequence4,
-  ]);
+  const orderMatters = useIcon("merging.order-matters");
+  const cascadedMerge = useIcon("merging.cascaded-merge");
 
   const [lcsString1, setLcsString1] = useState("ACBAACD");
   const [lcsString2, setLcsString2] = useState("ADBDADC");
@@ -388,149 +290,48 @@ function AboutPage() {
     );
   }, [diffAfterString, diffBeforeString]);
 
-  const blog = useRichText(
-    "how_it_works.how_it_works_blog",
-    {
-      titleContentImage: (
-        <div>
-          <img
-            src={overviewIcon}
-            style={{
-              width: "100%",
-            }}
-          />
-        </div>
-      ),
-      dependentTypesSchematic: (
-        <div>
-          <img
-            src={dependentTypes}
-            style={{
-              width: "100%",
-            }}
-          />
-        </div>
-      ),
-      kvStateTreeStateStaticImage: (
-        <div>
-          <img
-            src={listTransfrom}
-            style={{
-              width: "100%",
-            }}
-          />
-        </div>
-      ),
-      keyPathImage: (
-        <div>
-          <img
-            src={keySyntax}
-            style={{
-              width: "80%",
-              minWidth: 320,
-            }}
-          />
-        </div>
-      ),
-      kvAnimation: (
-        <div>
-          <section>
-            <div style={{ marginTop: 24 }}>
-              <img
-                src={treeListSequenceIcon}
-                style={{
-                  width: "100%",
-                }}
-              />
-            </div>
-          </section>
-          <div
-            style={{
-              marginTop: 24,
-              marginBottom: 24,
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-              width: "100%",
-            }}
-          >
-            {isPlaying && (
-              <AnimationToggleIcon src={pauseIcon} onClick={togglePlaying} />
-            )}
-            {!isPlaying && (
-              <AnimationToggleIcon src={playIcon} onClick={togglePlaying} />
-            )}
-            <AnimationPlayWrapper>
-              <div
-                style={{
-                  position: "relative",
-                }}
-              >
-                <AnimationToggleIcon src={backwardIcon} onClick={onBackward} />
-                {isBackwardDisabled && <AnimationDisabledOverlay />}
-              </div>
-              <div
-                style={{
-                  position: "relative",
-                }}
-              >
-                <AnimationToggleIcon src={forwardIcon} onClick={onForward} />
-                {isForwardDisabled && <AnimationDisabledOverlay />}
-              </div>
-            </AnimationPlayWrapper>
-          </div>
-        </div>
-      ),
-      versionUpdateImages: (
-        <div>
-          <img
-            src={versionUpdates}
-            style={{
-              width: "100%",
-            }}
-          />
-        </div>
-      ),
-      setUpdateImages: (
-        <div>
-          <img
-            src={setsUpdates}
-            style={{
-              width: "100%",
-            }}
-          />
-        </div>
-      ),
-      relationsSchema: (
-        <div>
-          <img
-            src={relationsRefactorPart1}
-            style={{
-              width: "100%",
-            }}
-          />
-        </div>
-      ),
-      boundedCascading: (
-        <div>
-          <img
-            src={cascadingRelations}
-            style={{
-              width: "100%",
-            }}
-          />
-        </div>
-      ),
-      relationsSpreadsheet: (
-        <div>
-          <img
-            src={spreadsheetIcon}
-            style={{
-              width: "100%",
-            }}
-          />
-        </div>
-      ),
+  const [origin, setOrigin] = useState("Hello world!");
+  const [left, setLeft] = useState("Left side first, Hi there world!");
+  const [right, setRight] = useState("Hello there world! End on the right.");
+
+  const leftMergeChar = useMemo(() => {
+    return getMergeSequence(
+      origin.split(""),
+      left.split(""),
+      right.split(""),
+      "yours"
+    ).join("");
+  }, [origin, left, right]);
+
+  const rightMergeChar = useMemo(() => {
+    return getMergeSequence(
+      origin.split(""),
+      left.split(""),
+      right.split(""),
+      "theirs"
+    ).join("");
+  }, [origin, left, right]);
+
+  const leftMergeSpace = useMemo(() => {
+    return getMergeSequence(
+      origin.split(" "),
+      left.split(" "),
+      right.split(" "),
+      "yours"
+    ).join(" ");
+  }, [origin, left, right]);
+
+  const rightMergeSpace = useMemo(() => {
+    return getMergeSequence(
+      origin.split(" "),
+      left.split(" "),
+      right.split(" "),
+      "theirs"
+    ).join(" ");
+  }, [origin, left, right]);
+
+
+  const blogPart2 = useRichText("how_it_works.how_it_works_blog_part_2", {
       lcsCalculator: (
         <div>
           <div style={{marginBottom: 24}}>
@@ -821,70 +622,6 @@ function AboutPage() {
           />
         </div>
       ),
-      mainTitle: function (
-        content: ReactElement<any, string | JSXElementConstructor<any>>
-      ): ReactElement<any, string | JSXElementConstructor<any>> {
-        return <SectionTitle>{content}</SectionTitle>;
-      },
-      sectionTitle: function (
-        content: ReactElement<any, string | JSXElementConstructor<any>>
-      ): ReactElement<any, string | JSXElementConstructor<any>> {
-        return (
-          <SubSectionTitle
-            style={{
-              marginTop: 24,
-            }}
-          >
-            {content}
-          </SubSectionTitle>
-        );
-      },
-    },
-    rtRenderers
-  );
-
-  const [origin, setOrigin] = useState("Hello world!");
-  const [left, setLeft] = useState("Left side first, Hi there world!");
-  const [right, setRight] = useState("Hello there world! End on the right.");
-
-  const leftMergeChar = useMemo(() => {
-    return getMergeSequence(
-      origin.split(""),
-      left.split(""),
-      right.split(""),
-      "yours"
-    ).join("");
-  }, [origin, left, right]);
-
-  const rightMergeChar = useMemo(() => {
-    return getMergeSequence(
-      origin.split(""),
-      left.split(""),
-      right.split(""),
-      "theirs"
-    ).join("");
-  }, [origin, left, right]);
-
-  const leftMergeSpace = useMemo(() => {
-    return getMergeSequence(
-      origin.split(" "),
-      left.split(" "),
-      right.split(" "),
-      "yours"
-    ).join(" ");
-  }, [origin, left, right]);
-
-  const rightMergeSpace = useMemo(() => {
-    return getMergeSequence(
-      origin.split(" "),
-      left.split(" "),
-      right.split(" "),
-      "theirs"
-    ).join(" ");
-  }, [origin, left, right]);
-
-
-  const blogPart2 = useRichText("how_it_works.how_it_works_blog_part_2", {
       mergeCalculator: (
         <section>
         <div style={{ marginTop: 36 }}>
@@ -1101,6 +838,34 @@ function AboutPage() {
           />
         </div>
       ),
+      orderMatters: (
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center'
+        }}>
+          <img
+            src={orderMatters}
+            style={{
+              width: "100%",
+            }}
+          />
+        </div>
+      ),
+      cascadedMerging: (
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center'
+        }}>
+          <img
+            src={cascadedMerge}
+            style={{
+              width: "100%",
+            }}
+          />
+        </div>
+      ),
       mainTitle: function (
         content: ReactElement<any, string | JSXElementConstructor<any>>
       ): ReactElement<any, string | JSXElementConstructor<any>> {
@@ -1132,7 +897,6 @@ function AboutPage() {
             padding: 16,
           }}
         >
-          <SectionParagraph><section>{blog}</section></SectionParagraph>
           <SectionParagraph><section>{blogPart2}</section></SectionParagraph>
         </div>
       </AboutWrapper>

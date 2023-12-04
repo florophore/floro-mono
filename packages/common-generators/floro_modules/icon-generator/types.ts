@@ -14,6 +14,7 @@ export interface Icons {
     "about.key-syntax":                        AboutKeySyntax;
     "about.list-transform":                    AboutListTransform;
     "about.overview":                          AboutOverview;
+    "about.overview-with-duck":                AboutOverviewWithDuck;
     "about.pause":                             AboutPause;
     "about.play":                              AboutPlay;
     "about.red-x":                             AboutRedX;
@@ -45,10 +46,12 @@ export interface Icons {
     "main.floro":                              MainFloro;
     "main.floro-text":                         MainFloroText;
     "merging.auto-merge":                      MergingAutoMerge;
+    "merging.cascaded-merge":                  MergingCascadedMerge;
     "merging.conflict-merge":                  MergingConflictMerge;
     "merging.diamond-color":                   MergingDiamondColor;
     "merging.left-reconciled-auto-merge":      MergingLeftReconciledAutoMerge;
     "merging.left-reconciled-conflict-merge":  MergingLeftReconciledConflictMerge;
+    "merging.order-matters":                   MergingOrderMatters;
     "merging.rgb-list":                        MergingRGBList;
     "merging.right-reconciled-auto-merge":     MergingRightReconciledAutoMerge;
     "merging.right-reconciled-conflict-merge": MergingRightReconciledConflictMerge;
@@ -131,6 +134,14 @@ export interface AboutOverview {
 }
 
 export interface AboutOverviewVariants {
+}
+
+export interface AboutOverviewWithDuck {
+    default:  Theme;
+    variants: AboutOverviewWithDuckVariants;
+}
+
+export interface AboutOverviewWithDuckVariants {
 }
 
 export interface AboutPause {
@@ -388,6 +399,14 @@ export interface MergingAutoMerge {
 export interface MergingAutoMergeVariants {
 }
 
+export interface MergingCascadedMerge {
+    default:  Theme;
+    variants: MergingCascadedMergeVariants;
+}
+
+export interface MergingCascadedMergeVariants {
+}
+
 export interface MergingConflictMerge {
     default:  Theme;
     variants: MergingConflictMergeVariants;
@@ -418,6 +437,14 @@ export interface MergingLeftReconciledConflictMerge {
 }
 
 export interface MergingLeftReconciledConflictMergeVariants {
+}
+
+export interface MergingOrderMatters {
+    default:  Theme;
+    variants: MergingOrderMattersVariants;
+}
+
+export interface MergingOrderMattersVariants {
 }
 
 export interface MergingRGBList {

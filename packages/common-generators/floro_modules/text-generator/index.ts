@@ -75,6 +75,8 @@ export interface PhraseKeys {
     "front_page.nav_download":               FrontPageNavDownload;
     "front_page.nav_foss":                   FrontPageNavFOSS;
     "front_page.nav_pricing":                FrontPageNavPricing;
+    "front_page.read_technical_overview":    FrontPageReadTechnicalOverview;
+    "front_page.see_a_demo":                 FrontPageSeeADemo;
     "front_page.subtext_of_tag_line":        FrontPageSubtextOfTagLine;
     "front_page.tag_line":                   FrontPageTagLine;
     "how_it_works.how_it_works_blog":        HowItWorksHowItWorksBlog;
@@ -1388,6 +1390,72 @@ export interface FrontPageNavPricingStyledContents {
 export interface FrontPageNavPricingVariables {
 }
 
+export interface FrontPageReadTechnicalOverview {
+    args:             FrontPageReadTechnicalOverviewArgs;
+    contentVariables: FrontPageReadTechnicalOverviewContentVariables;
+    interpolations:   FrontPageReadTechnicalOverviewInterpolations;
+    links:            FrontPageReadTechnicalOverviewLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     FrontPageReadTechnicalOverviewStyleClasses;
+    styledContents:   FrontPageReadTechnicalOverviewStyledContents;
+    variables:        FrontPageReadTechnicalOverviewVariables;
+}
+
+export interface FrontPageReadTechnicalOverviewArgs {
+}
+
+export interface FrontPageReadTechnicalOverviewContentVariables {
+}
+
+export interface FrontPageReadTechnicalOverviewInterpolations {
+}
+
+export interface FrontPageReadTechnicalOverviewLinks {
+}
+
+export interface FrontPageReadTechnicalOverviewStyleClasses {
+}
+
+export interface FrontPageReadTechnicalOverviewStyledContents {
+}
+
+export interface FrontPageReadTechnicalOverviewVariables {
+}
+
+export interface FrontPageSeeADemo {
+    args:             FrontPageSeeADemoArgs;
+    contentVariables: FrontPageSeeADemoContentVariables;
+    interpolations:   FrontPageSeeADemoInterpolations;
+    links:            FrontPageSeeADemoLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     FrontPageSeeADemoStyleClasses;
+    styledContents:   FrontPageSeeADemoStyledContents;
+    variables:        FrontPageSeeADemoVariables;
+}
+
+export interface FrontPageSeeADemoArgs {
+}
+
+export interface FrontPageSeeADemoContentVariables {
+}
+
+export interface FrontPageSeeADemoInterpolations {
+}
+
+export interface FrontPageSeeADemoLinks {
+}
+
+export interface FrontPageSeeADemoStyleClasses {
+}
+
+export interface FrontPageSeeADemoStyledContents {
+}
+
+export interface FrontPageSeeADemoVariables {
+}
+
 export interface FrontPageSubtextOfTagLine {
     args:             FrontPageSubtextOfTagLineArgs;
     contentVariables: FrontPageSubtextOfTagLineContentVariables;
@@ -1469,51 +1537,43 @@ export interface HowItWorksHowItWorksBlog {
 export interface HowItWorksHowItWorksBlogArgs {
     boundedCascading:            string;
     dependentTypesSchematic:     string;
-    diffCalculator:              string;
-    diffImageBlackAndWhite:      string;
-    diffKeys:                    string;
     keyPathImage:                string;
     kvAnimation:                 string;
     kvStateTreeStateStaticImage: string;
-    lcsCalculator:               string;
     mainTitle:                   string;
     relationsSchema:             string;
     relationsSpreadsheet:        string;
     sectionTitle:                string;
     setUpdateImages:             string;
-    spreadsheetKeys:             string;
     titleContentImage:           string;
     versionUpdateImages:         string;
-    visualDiff:                  string;
 }
 
 export interface HowItWorksHowItWorksBlogContentVariables {
     boundedCascading:            string;
     dependentTypesSchematic:     string;
-    diffCalculator:              string;
-    diffImageBlackAndWhite:      string;
-    diffKeys:                    string;
     keyPathImage:                string;
     kvAnimation:                 string;
     kvStateTreeStateStaticImage: string;
-    lcsCalculator:               string;
     relationsSchema:             string;
     relationsSpreadsheet:        string;
     setUpdateImages:             string;
-    spreadsheetKeys:             string;
     titleContentImage:           string;
     versionUpdateImages:         string;
-    visualDiff:                  string;
 }
 
 export interface HowItWorksHowItWorksBlogInterpolations {
 }
 
 export interface HowItWorksHowItWorksBlogLinks {
-    "Longest Common Subsequence": Link;
-    redux:                        Link;
-    "unit test":                  Link;
-    "YouTube Link":               Link;
+    "dependent types":              Link;
+    "how diffing & merging work":   Link;
+    "how diffing and merging work": Link;
+    "Longest Common Subsequence":   Link;
+    redux:                          Link;
+    "skip to part 2":               Link;
+    "unit test":                    Link;
+    "YouTube Link":                 Link;
 }
 
 export interface HowItWorksHowItWorksBlogStyleClasses {
@@ -1551,42 +1611,62 @@ export interface HowItWorksHowItWorksBlogPart2 {
 
 export interface HowItWorksHowItWorksBlogPart2_Args {
     autoMerge:                    string;
+    cascadedMerging:              string;
     conflictMerge:                string;
     diamondColor:                 string;
+    diffCalculator:               string;
+    diffImageBlackAndWhite:       string;
+    diffKeys:                     string;
+    lcsCalculator:                string;
     leftReconciledAutoMerge:      string;
     leftReconciledConflictMerge:  string;
     mainTitle:                    string;
     mergeCalculator:              string;
+    orderMatters:                 string;
     rgbList:                      string;
     rightReconciledAutoMerge:     string;
     rightReconciledConflictMerge: string;
     sectionTitle:                 string;
+    spreadsheetKeys:              string;
     threeWayAutoMerge:            string;
     threeWayConflictMerge:        string;
+    visualDiff:                   string;
 }
 
 export interface HowItWorksHowItWorksBlogPart2_ContentVariables {
     autoMerge:                    string;
+    cascadedMerging:              string;
     conflictMerge:                string;
     diamondColor:                 string;
+    diffCalculator:               string;
+    diffImageBlackAndWhite:       string;
+    diffKeys:                     string;
+    lcsCalculator:                string;
     leftReconciledAutoMerge:      string;
     leftReconciledConflictMerge:  string;
     mergeCalculator:              string;
+    orderMatters:                 string;
     rgbList:                      string;
     rightReconciledAutoMerge:     string;
     rightReconciledConflictMerge: string;
+    spreadsheetKeys:              string;
     threeWayAutoMerge:            string;
     threeWayConflictMerge:        string;
+    visualDiff:                   string;
 }
 
 export interface HowItWorksHowItWorksBlogPart2_Interpolations {
 }
 
 export interface HowItWorksHowItWorksBlogPart2_Links {
-    "CRDT Link":            Link;
-    "Git Merge Link":       Link;
-    "Three Way Merge Link": Link;
-    "YouTube Link":         Link;
+    "back to part 1":             Link;
+    "CQRS & Event Sourcing Link": Link;
+    "CRDT Link":                  Link;
+    "discord link":               Link;
+    "Git Merge Link":             Link;
+    "Longest Common Subsequence": Link;
+    "Three Way Merge Link":       Link;
+    "YouTube Link":               Link;
 }
 
 export interface HowItWorksHowItWorksBlogPart2_StyleClasses {
@@ -1596,8 +1676,11 @@ export interface HowItWorksHowItWorksBlogPart2_StyleClasses {
 
 export interface HowItWorksHowItWorksBlogPart2_StyledContents {
     "bringing it all together title": StyledContent;
+    "how it works part 2":            StyledContent;
+    "local first":                    StyledContent;
     "merge granularity":              StyledContent;
     "order matters":                  StyledContent;
+    "why not git":                    StyledContent;
 }
 
 export interface HowItWorksHowItWorksBlogPart2_Variables {
@@ -1708,6 +1791,8 @@ export interface PhraseKeyDebugInfo {
     "front_page.nav_download":               DebugInfo;
     "front_page.nav_foss":                   DebugInfo;
     "front_page.nav_pricing":                DebugInfo;
+    "front_page.read_technical_overview":    DebugInfo;
+    "front_page.see_a_demo":                 DebugInfo;
     "front_page.subtext_of_tag_line":        DebugInfo;
     "front_page.tag_line":                   DebugInfo;
     "how_it_works.how_it_works_blog":        DebugInfo;

@@ -98,11 +98,8 @@ interface Props {
   onSetSearchText: (str: string) => void;
   searchText: string;
   isEditGroups: boolean;
-  isEditLocales: boolean;
   onShowEditGroups: () => void;
   onHideEditGroups: () => void;
-  onShowEditLocales: () => void;
-  onHideEditLocales: () => void;
   selectedTopLevelLocale: string;
   setSelectedTopLevelLocale: (localeCode: string) => void;
   globalFilterUntranslated: boolean;
@@ -140,15 +137,6 @@ const TextAppHeader = (props: Props) => {
   }, [props.pinnedPhrases, clientStorageIsEnabled]);
 
 
-  const locales = useReferencedObject("$(text).localeSettings.locales");
-  const localesHasIndication = useHasIndication("$(text).localeSettings.locales");
-
-  useEffect(() => {
-    if (localesHasIndication) {
-      props.onShowEditLocales();
-    }
-
-  }, [localesHasIndication, props.onShowEditLocales])
   const allTags = useMemo(() => {
     const tagSet =  new Set(phraseGroups?.flatMap(phraseGroup => {
       return phraseGroup?.phrases?.flatMap(phrase => {
@@ -208,19 +196,6 @@ const TextAppHeader = (props: Props) => {
     ]);
     setNewGroupName("");
   }, [newGroupName, newId, canAddNewName, phraseGroups]);
-
-
-  const localeOptions = useMemo(() => {
-    return [
-      ...(locales ?? [])?.filter(v => !!v)
-        ?.map((locale) => {
-          return {
-            label: `${locale.localeCode}`,
-            value: locale.localeCode.toUpperCase(),
-          };
-        }) ?? []
-    ];
-  }, [locales]);
 
   const onToggleFilterUntranslated = useCallback(() => {
     props.setGlobalFilterUnstranslated(!props.globalFilterUntranslated);
@@ -306,63 +281,26 @@ const TextAppHeader = (props: Props) => {
                   />
                 </div>
               )}
-              <>
-                <div style={{ display: "flex" }}>
-                  {!props.isEditGroups && !props.isEditLocales && (
-                    <div style={{ marginLeft: 24, width: 120 }}>
-                      <Button
-                        onClick={props.onShowEditGroups}
-                        label={"edit groups"}
-                        bg={"purple"}
-                        size={"small"}
-                        textSize={"small"}
-                        isDisabled={isSearching}
-                      />
-                    </div>
-                  )}
-                  <div style={{ marginLeft: 24, width: 120 }}>
-                    {!props.isEditLocales && !props.isEditGroups && (
-                      <Button
-                        onClick={props.onShowEditLocales}
-                        label={"show locales"}
-                        bg={"orange"}
-                        size={"small"}
-                        textSize={"small"}
-                      />
-                    )}
-                    {props.isEditLocales && (
-                      <Button
-                        onClick={props.onHideEditLocales}
-                        label={"hide locales"}
-                        bg={"orange"}
-                        size={"small"}
-                        textSize={"small"}
-                      />
+              {commandMode == "edit" && (
+                <>
+                  <div style={{ display: "flex" }}>
+                    {!props.isEditGroups && (
+                      <div style={{ marginLeft: 24, width: 120 }}>
+                        <Button
+                          onClick={props.onShowEditGroups}
+                          label={"edit groups"}
+                          bg={"purple"}
+                          size={"small"}
+                          textSize={"small"}
+                          isDisabled={isSearching}
+                        />
+                      </div>
                     )}
                   </div>
-                </div>
-              </>
+                </>
+              )}
             </div>
           </TitleRow>
-          <div
-            style={{
-              marginTop: -14,
-              marginLeft: 24,
-            }}
-          >
-            <InputSelector
-              hideLabel
-              options={localeOptions}
-              value={props.selectedTopLevelLocale ?? null}
-              label={"locale"}
-              placeholder={"locale"}
-              size="shortest"
-              onChange={(option) => {
-                props.setSelectedTopLevelLocale(option?.value as string);
-              }}
-              maxHeight={800}
-            />
-          </div>
         </TopRow>
         <Row
           style={{

@@ -324,7 +324,7 @@ const VersionControlPanel = (props: Props) => {
       <AdjustIconWrapper onClick={onTogglePanel} style={iconOffset}>
         <AdjustIcon src={adjustIcon} />
       </AdjustIconWrapper>
-      {repoExistsLocally && isDaemonConnected && cloneState?.state == "none" && (
+      {isDaemonConnected && (cloneState?.state == "done") && (
         <>
           <RemoteToggleIconWrapper
             style={{

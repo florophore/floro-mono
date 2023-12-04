@@ -65,6 +65,45 @@ const PhraseGroups = (props: Props) => {
     [phraseGroups]
   );
 
+  if (props.isEditingGroups && commandMode == "edit") {
+    return (
+      <Container>
+        <AnimatePresence>
+          <Reorder.Group
+            axis="y"
+            values={phraseGroups ?? []}
+            onReorder={onReOrderPhraseGroups}
+            style={{listStyle: "none"}}
+          >
+            {phraseGroups?.map((phraseGroup, index: number) => {
+              return (
+                <PhraseGroup
+                  key={phraseGroup.id}
+                  phraseGroup={phraseGroup}
+                  searchText={props.searchText}
+                  isEditingGroups={props.isEditingGroups}
+                  onDragStart={onDragStart}
+                  onDragEnd={onDragEnd}
+                  index={index}
+                  onRemoveGroup={onRemoveGroup}
+                  selectedTopLevelLocale={props.selectedTopLevelLocale}
+                  globalFilterUntranslated={props.globalFilterUntranslated}
+                  globalFilterRequiresUpdate={props.globalFilterRequiresUpdate}
+                  filterTag={props.filterTag}
+                  showOnlyPinnedPhrases={props.showOnlyPinnedPhrases}
+                  pinnedPhrases={props.pinnedPhrases}
+                  setPinnedPhrases={props.setPinnedPhrases}
+                  removePinnedPhrases={props.removePinnedPhrases}
+                />
+              );
+            })}
+          </Reorder.Group>
+        </AnimatePresence>
+
+      </Container>
+    )
+  }
+
   return (
     <Container>
       {props.isEditingGroups && commandMode == "edit" && (
@@ -107,7 +146,7 @@ const PhraseGroups = (props: Props) => {
               key={phraseGroup.id}
               phraseGroup={phraseGroup}
               searchText={props.searchText}
-              isEditingGroups={props.isEditingGroups}
+              isEditingGroups={false}
               onDragStart={onDragStart}
               onDragEnd={onDragEnd}
               index={index}

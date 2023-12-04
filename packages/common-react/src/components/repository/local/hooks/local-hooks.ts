@@ -1290,6 +1290,7 @@ export const useCloneState = (repository: Repository) => {
       queryClient.refetchQueries("local-repos-info");
       queryClient.refetchQueries("local-repos");
       queryClient.refetchQueries("repo-exists:" + repository.id);
+      queryClient.refetchQueries("clone-state:" + repository.id);
     },
     [repository.id]
   );

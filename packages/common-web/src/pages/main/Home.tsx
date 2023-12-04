@@ -8,6 +8,7 @@ import ScreenShotLight from "@floro/main/public/pngs/light.no_edge.png";
 import ScreenShotDark from "@floro/main/public/pngs/dark.no_edge.png";
 import CLICopy from "../../components/home/CLICopy";
 import PageWrapper from "../../components/wrappers/PageWrapper";
+import { Link } from "react-router-dom";
 
 const LargeTopSection = styled.section`
   display: flex;
@@ -113,6 +114,46 @@ const SubTextTagLine = styled.h4`
   color: ${(props) => props.theme.colors.contrastText};
 `;
 
+
+const DemoLink = styled.h4`
+  padding: 0;
+  margin: 0;
+  font-family: "MavenPro";
+  font-weight: 600;
+  font-size: 1.2rem;
+  margin-top: 24px;
+  @media screen and (min-width: 768px) and (max-width: 1023px) {
+    font-size: 1.2rem;
+  }
+  @media screen and (max-width: 767px) {
+    text-align: center;
+    font-size: 1.2rem;
+  }
+  color: ${(props) => props.theme.colors.linkColor};
+  cursor: pointer;
+  text-decoration: underline;
+`;
+
+const TechnicalOverviewLink = styled.h4`
+  padding: 0;
+  margin: 0;
+  font-family: "MavenPro";
+  font-weight: 600;
+  font-size: 1.2rem;
+  margin-top: 24px;
+  @media screen and (min-width: 768px) and (max-width: 1023px) {
+    font-size: 1.2rem;
+  }
+  @media screen and (max-width: 767px) {
+    text-align: center;
+    font-size: 1.2rem;
+  }
+  color: ${(props) => props.theme.colors.linkColor};
+  cursor: pointer;
+  text-decoration: underline;
+`;
+
+
 const DownloadSection = styled.div`
   width: 100%;
 `;
@@ -186,6 +227,14 @@ function Home() {
     "front_page.get_help_and_contribute"
   );
 
+  const seeADemo = useRichText(
+    "front_page.see_a_demo"
+  );
+
+  const readTechnicalOverview = useRichText(
+    "front_page.read_technical_overview"
+  );
+
   const [isHoveringMac, setIsHoveringMac] = useState(false);
   const macOSIcon = useIcon(
     "front-page.apple",
@@ -234,6 +283,10 @@ function Home() {
         >
           <TagLine>{tagLine}</TagLine>
           <SubTextTagLine>{subTextTagLine}</SubTextTagLine>
+          <DemoLink>{seeADemo}</DemoLink>
+          <Link to={'/technical-overview-part-1'}>
+            <TechnicalOverviewLink>{readTechnicalOverview}</TechnicalOverviewLink>
+          </Link>
         </div>
         <MobileScreenShotBox
           style={{
@@ -409,6 +462,10 @@ function Home() {
               </a>
             </DownloadRow>
           </DownloadSection>
+          <DemoLink>{seeADemo}</DemoLink>
+          <Link to={'/technical-overview-part-1'}>
+            <TechnicalOverviewLink>{readTechnicalOverview}</TechnicalOverviewLink>
+          </Link>
         </LeftColumn>
         <RightColumn
           style={{

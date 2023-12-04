@@ -1117,6 +1117,16 @@ const PhraseGroup = (props: Props) => {
           if (!phrase?.phraseKey) {
             return false;
           }
+          if (
+            (phrase?.phraseKey ?? "")
+              ?.toLowerCase()
+              .indexOf(props.searchText.toLowerCase().trim()) != -1 ||
+            (phrase?.description?.value ?? "")
+              ?.toLowerCase()
+              .indexOf(props.searchText.toLowerCase().trim()) != -1
+          ) {
+            return true;
+          }
           if (phrase.usePhraseSections) {
             for (let phraseSection of phrase?.phraseSections ?? []) {
               if (
@@ -1140,27 +1150,17 @@ const PhraseGroup = (props: Props) => {
               }
             }
           } else {
-            if (
-              (phrase?.phraseKey ?? "")
-                ?.toLowerCase()
-                .indexOf(props.searchText.toLowerCase().trim()) != -1 ||
-              (phrase?.description?.value ?? "")
-                ?.toLowerCase()
-                .indexOf(props.searchText.toLowerCase().trim()) != -1
-            ) {
-              return true;
-            }
-          }
-          for (let localeGroup of phrase?.phraseTranslations ?? []) {
-            if (localeGroup.id != topLevelLocaleRef) {
-              continue;
-            }
-            if (
-              (localeGroup.plainText ?? "")
-                ?.toLowerCase()
-                .indexOf(props.searchText.toLowerCase().trim()) != -1
-            ) {
-              return true;
+            for (let localeGroup of phrase?.phraseTranslations ?? []) {
+              if (localeGroup.id != topLevelLocaleRef) {
+                continue;
+              }
+              if (
+                (localeGroup.plainText ?? "")
+                  ?.toLowerCase()
+                  .indexOf(props.searchText.toLowerCase().trim()) != -1
+              ) {
+                return true;
+              }
             }
           }
           for (let variable of phrase?.variables ?? []) {
@@ -1302,7 +1302,7 @@ const PhraseGroup = (props: Props) => {
     }
   }, [isDisplayingPhrases, phrasesToRender, renderLimit, isReOrderPhrasesMode]);
 
-  const renderLimitedIcons = useMemo(() => {
+  const renderLimitedPhrases = useMemo(() => {
     if (isReOrderPhrasesMode) {
       return phrasesToRender;
     }
@@ -1342,12 +1342,6 @@ const PhraseGroup = (props: Props) => {
     setFilterRequiresUpdate(!filterRequiresUpdate);
   }, [filterRequiresUpdate]);
 
-  //useEffect(() => {
-  //  if ((isSearching || !!props.filterTag) && hasSearchMatches) {
-  //    setIsExpanded((isSearching || !!props.filterTag) && !hasSearchMatches);
-  //  }
-  //}, [(isSearching || !!props.filterTag) && !hasSearchMatches])
-
   useEffect(() => {
     if (isSearching && hasSearchMatches) {
       setIsExpanded(true);
@@ -1360,6 +1354,12 @@ const PhraseGroup = (props: Props) => {
     }
 
   }, [isReOrderPhrasesMode, commandMode])
+
+  useEffect(() => {
+    if (props.searchText == "" && !props.showOnlyPinnedPhrases && isExpanded) {
+      setIsExpanded(false);
+    }
+  }, [props.searchText])
 
   if (
     !isSearching &&
@@ -1374,6 +1374,9 @@ const PhraseGroup = (props: Props) => {
     }
   }
   if (isSearching && phrasesToRender.length == 0) {
+    return null;
+  }
+  if (!!props.filterTag && phrasesToRender.length == 0) {
     return null;
   }
   if (props.showOnlyPinnedPhrases && phrasesToRender.length == 0) {
@@ -1520,7 +1523,7 @@ const PhraseGroup = (props: Props) => {
       {isExpanded && (
         <>
           {!isReOrderPhrasesMode &&
-            renderLimitedIcons?.map?.((phrase, index) => {
+            renderLimitedPhrases?.map?.((phrase, index) => {
               const phraseRef = makeQueryRef(
                 "$(text).phraseGroups.id<?>.phrases.id<?>",
                 phraseGroup?.id as string,
@@ -1545,7 +1548,7 @@ const PhraseGroup = (props: Props) => {
             <AnimatePresence>
               <Reorder.Group
                 axis="y"
-                values={renderLimitedIcons ?? []}
+                values={phrases ?? []}
                 onReorder={onReOrderPhrases}
                 style={{listStyle: "none", margin: 0, padding: 0 }}
               >
@@ -1567,19 +1570,6 @@ const PhraseGroup = (props: Props) => {
       )}
     </Container>
   );
-  //if (
-  //  (
-  //    commandMode == "edit" &&
-  //    isExpanded &&
-  //    !isSearching &&
-  //    !(props.showOnlyPinnedPhrases && props.pinnedPhrases) &&
-  //    !props.filterTag &&
-  //    (props?.phraseGroup?.phrases?.length ?? 0) > 0 &&
-  //    !props.isEditingGroups
-  //  )
-  //) {
-  //  return null;
-  //}
   if (!props.isEditingGroups) {
     return <>{container}</>;
   }
