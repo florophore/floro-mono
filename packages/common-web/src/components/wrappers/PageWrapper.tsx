@@ -46,7 +46,9 @@ const PageNav = styled.nav`
     height: 72px;
   }
   @media screen and (max-width: 767px) {
+    position: fixed;
     height: 56px;
+    width: 100%;
   }
 `;
 
@@ -164,6 +166,9 @@ const MainScrollWrapper = styled.div`
   flex-direction: column;
   align-self: center;
   overflow-y: scroll;
+  @media screen and (max-width: 767px) {
+    padding-top: 56px;
+  }
 `;
 
 const MainContent = styled.main`

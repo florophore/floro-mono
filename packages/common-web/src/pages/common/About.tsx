@@ -24,7 +24,7 @@ import {
 
 const AboutWrapper = styled.div`
   width: 100%;
-  min-height: 100vh;
+  min-height: 100dvh;
   background: ${(props) => props.theme.background};
   padding-top: 48px;
 `;
