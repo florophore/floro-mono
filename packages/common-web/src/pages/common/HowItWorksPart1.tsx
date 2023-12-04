@@ -179,7 +179,7 @@ function AboutPage() {
       renderers
     ): React.ReactElement => {
       let children = renderers.renderStaticNodes(node.children, renderers);
-      if (node.linkName == "skip to part 2" || node.linkName == "how diffing & merging work") {
+      if (node.linkName == "skip to part 2" || node.linkName == "how diffing and merging work") {
         return (
           <Link
             style={{ fontWeight: 600, color: theme.colors.linkColor, display: 'inline-block' }}
