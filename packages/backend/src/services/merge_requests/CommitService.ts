@@ -111,6 +111,10 @@ export default class CommitService {
         getPluginManifest: async (pluginName: string) => {
           return schemaMap[pluginName];
         },
+        checkBinary: async (fileName: string) => {
+          const exists = await binariesContext.getRepoBinaryByFilename(repository.id, fileName);
+          return !!exists;
+        }
       });
       const apiStoreInvalidity = await getInvalidStates(datasource, kvState);
 
@@ -376,6 +380,10 @@ export default class CommitService {
         getPluginManifest: async (pluginName: string) => {
           return schemaMap[pluginName];
         },
+        checkBinary: async (fileName: string) => {
+          const exists = await binariesContext.getRepoBinaryByFilename(repository.id, fileName);
+          return !!exists;
+        }
       });
       const apiStoreInvalidity = await getInvalidStates(datasource, kvState);
 

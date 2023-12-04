@@ -14,7 +14,7 @@ const defaultOptions: DataSourceOptions = {
   username: 'postgres',
   password: '',
   synchronize: false,
-  logging: true,
+  logging: false, // change to true later
   entities: [__dirname + "/entities/**/*.{ts,js}"],
   migrations: [__dirname + "/migrations/**/*.{ts,js}"],
   subscribers: [__dirname + "/subscribers/**/*.{ts,js}"],

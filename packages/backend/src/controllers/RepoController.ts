@@ -1077,6 +1077,10 @@ export default class RepoController extends BaseController {
         getPluginManifest: async (pluginName: string) => {
           return schemaMap[pluginName];
         },
+        checkBinary: async (fileName: string) => {
+          const exists = await binariesContext.getRepoBinaryByFilename(repo.id, fileName);
+          return !!exists;
+        }
       });
       const apiStoreInvalidity = await getInvalidStates(
         datasource,
@@ -1087,12 +1091,10 @@ export default class RepoController extends BaseController {
       let isValid = true;
       for (const plugin in apiStoreInvalidity) {
         if ((apiStoreInvalidity[plugin]?.length ?? 0) > 0) {
-          console.log("TEST", plugin, apiStoreInvalidity?.[plugin]);
           isValid = false;
           break;
         }
       }
-      console.log("IV", isValid)
       const state = await convertCommitStateToRenderedState(
         datasource,
         kvState
