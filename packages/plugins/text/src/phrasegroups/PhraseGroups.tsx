@@ -1,11 +1,13 @@
 
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
   SchemaTypes,
+  containsDiffable,
   getReferencedObject,
   makeQueryRef,
   useFloroContext,
   useFloroState,
+  useWasRemoved,
 } from "../floro-schema-api";
 import PhraseGroup from "./PhraseGroup";
 import styled from "@emotion/styled";
@@ -16,6 +18,14 @@ const Container = styled.div`
   padding-bottom: 40px;
   max-width: 1020px;
   width: 100%;
+`;
+
+const NothingChangedText = styled.h3`
+  margin-top: 24px;
+  font-family: "MavenPro";
+  font-size: 48px;
+  font-weight: 500;
+  color: ${props => props.theme.colors.contrastTextLight};
 `;
 
 interface Props {
@@ -35,7 +45,7 @@ const PhraseGroups = (props: Props) => {
   const [phraseGroups, setPhraseGroups, savePhraseGroups] =
     useFloroState("$(text).phraseGroups") ?? [];
   const [isDragging, setIsDragging] = useState(false);
-  const { applicationState, commandMode } = useFloroContext();
+  const { applicationState, commandMode, changeset, compareFrom } = useFloroContext();
 
   const onDragStart = useCallback(() => {
     setIsDragging(true);
@@ -64,6 +74,41 @@ const PhraseGroups = (props: Props) => {
     },
     [phraseGroups]
   );
+
+  const diffedPhrases = useMemo(() => {
+    if (commandMode != "compare") {
+      return 0;
+    }
+    let count = 0;
+    for (const phraseGroup of applicationState?.text?.phraseGroups ?? []) {
+      const phraseGroupRef = makeQueryRef(`$(text).phraseGroups.id<?>`, phraseGroup.id);
+      const hasDiff = containsDiffable(changeset, `${phraseGroupRef}.phrases`, true)
+      if (hasDiff) {
+        count++;
+      }
+    }
+    return count;
+  }, [commandMode, applicationState, changeset])
+
+  if (commandMode == "compare" && compareFrom == "before" && diffedPhrases == 0) {
+    return (
+      <Container>
+        <NothingChangedText>
+          {'No phrases were removed'}
+        </NothingChangedText>
+      </Container>
+    );
+
+  }
+  if (commandMode == "compare" && compareFrom == "after" && diffedPhrases == 0) {
+    return (
+      <Container>
+        <NothingChangedText>
+          {'No phrases were added'}
+        </NothingChangedText>
+      </Container>
+    );
+  }
 
   if (props.isEditingGroups && commandMode == "edit") {
     return (

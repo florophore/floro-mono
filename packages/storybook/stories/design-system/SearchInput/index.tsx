@@ -175,7 +175,7 @@ const SearchInput = React.forwardRef(
     return (
       <Container
         onClick={onClickContainer}
-        style={{ border: `2px solid ${borderColor}`, width: rest?.width ?? 400 }}
+        style={{ border: `2px solid ${borderColor}`, width: rest?.width ?? 400, cursor: rest.disabled ? 'not-allowed' : 'auto' }}
       >
         <IconContainer>
             <Icon src={icon}/>
@@ -190,6 +190,9 @@ const SearchInput = React.forwardRef(
           spellCheck={'false'}
           type={'search'}
           {...rest}
+          style={{
+              cursor: rest.disabled ? 'not-allowed' : 'auto'
+          }}
         />
         {isActive && showClear && (
           <ClearIconContainer onClick={onClear}>

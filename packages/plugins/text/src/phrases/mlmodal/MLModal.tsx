@@ -147,7 +147,12 @@ const MLModal = (props: Props) => {
   const escapedRichText = useMemo(() => {
     const tags = props.sourceEditorDoc.observer.getAllTags();
     return tags.reduce((s: string, tag) => {
-      const targetTag = `{${tag}}`;
+      const targetTag = `{${tag}}`
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#39;")
+      .replaceAll("&", "&amp;");
       const escapedTag = `<x>{${tag}}</x>`;
       return s.replaceAll(targetTag, escapedTag);
     }, props.sourceRichText);

@@ -434,6 +434,47 @@ const PhraseTranslation = (props: Props) => {
     }
   }, [phraseTranslation?.richTextHtml, commandMode])
 
+  const highlightableVariables = useMemo(() => {
+    const variables = props.phrase.variables?.map((v) => v.name) ?? [];
+    const linkVariables =
+      props?.phrase.linkVariables?.map?.((v) => v.linkName) ?? [];
+    const interpolationVariants =
+      props.phrase?.interpolationVariants?.map?.((v) => v.name) ?? [];
+    const contentVariables =
+      props.phrase?.contentVariables?.map?.((v) => v.name) ?? [];
+    const styledContents =
+      props.phrase?.styledContents?.map?.((v) => v.name) ?? [];
+    return [
+      ...variables,
+      ...linkVariables,
+      ...interpolationVariants,
+      ...enabledMentionedValues ?? [],
+      ...contentVariables ?? [],
+      ...styledContents ?? []
+    ].join(":");
+  }, [
+    props.phrase.variables,
+    props.phrase.linkVariables,
+    props.phrase.interpolationVariants,
+    props.phrase.contentVariables,
+    props.phrase.styledContents,
+    enabledMentionedValues,
+  ]);
+
+  useEffect(() => {
+    if (commandMode == "edit") {
+      const timeout = setTimeout(() => {
+        if (!phraseTranslation) {
+          return;
+        }
+        savePhraseTranslation();
+      }, 500);
+      return () => {
+        clearTimeout(timeout);
+      }
+    }
+  }, [highlightableVariables, commandMode])
+
   const onMarkResolved = useCallback(() => {
     if (!phraseTranslation) {
       return;
@@ -678,6 +719,21 @@ const PhraseTranslation = (props: Props) => {
     props.phrase.styledContents,
     props.phrase.testCases,
   ]);
+
+  const [showContent, setShowContent] = useState(false);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setShowContent(true);
+    }, 100);
+    return () => {
+      clearTimeout(timeout);
+    }
+  }, []);
+
+  if (!showContent) {
+    return null;
+  }
 
   return (
     <>

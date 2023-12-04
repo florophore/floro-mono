@@ -14120,7 +14120,7 @@
           },
           {
             "children": [],
-            "content": ", often, do not have conflicts when structured. ",
+            "content": ", (often) do not have conflicts when structured. ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -14640,7 +14640,7 @@
           },
           {
             "children": [],
-            "content": "In our experience we've seen many great offline-first applications for personal productivity. We think there's a lot of potential for offline first to be used in many business cases too. Regardless of if you are thinking of building on top of ",
+            "content": "In our experience we've seen many great offline-first applications for personal productivity. We think there's a lot of potential for offline-first to be used in many business cases too. Regardless of if you are thinking of building on top of ",
             "type": "text",
             "styles": {
               "isBold": false,

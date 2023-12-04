@@ -420,7 +420,6 @@ const LinkVariable = (props: Props) => {
         if (!linkDisplayValue) {
           return;
         }
-        //onSetDisplayValueContent(richTextHtml);
         saveLinkDisplayValue();
       }, 500);
       return () => {
@@ -429,7 +428,39 @@ const LinkVariable = (props: Props) => {
     }
   }, [linkDisplayValue?.richTextHtml, commandMode])
 
-  //const [href, setHref] = useState(linkHrefValue?.richTextHtml ?? "");
+  const highlightableVariables = useMemo(() => {
+    const variables = props.phrase.variables?.map((v) => v.name) ?? [];
+    const interpolationVariants =
+      props.phrase?.interpolationVariants?.map?.((v) => v.name) ?? [];
+    const contentVariables =
+      props.phrase?.contentVariables?.map?.((v) => v.name) ?? [];
+    return [
+      ...variables,
+      ...interpolationVariants,
+      ...enabledMentionedValues ?? [],
+      ...contentVariables ?? [],
+    ].join(":");
+  }, [
+    props.phrase.variables,
+    props.phrase.interpolationVariants,
+    props.phrase.contentVariables,
+    enabledMentionedValues,
+  ]);
+
+  useEffect(() => {
+    if (commandMode == "edit") {
+      const timeout = setTimeout(() => {
+        if (!linkDisplayValue) {
+          return;
+        }
+        saveLinkDisplayValue();
+      }, 500);
+      return () => {
+        clearTimeout(timeout);
+      }
+    }
+  }, [highlightableVariables, commandMode])
+
   const onSetHrefValueContent = useCallback(
     (richTextHtml: string) => {
       linkHrefEditorDoc.tree.updateRootFromHTML(richTextHtml ?? "");
@@ -561,6 +592,7 @@ const LinkVariable = (props: Props) => {
       });
     }
   }, [
+    linkHrefValue,
     linkHrefEditorDoc?.tree,
     sourceLinkTranslation?.linkHrefValue,
     sourceLinkTranslation?.linkHrefValue?.plainText,
@@ -711,6 +743,21 @@ const LinkVariable = (props: Props) => {
     }
     return Array.from(termSet);
   }, [translationMemory, sourceLinkTranslation?.linkDisplayValue, props.selectedLocale]);
+
+  const [showContent, setShowContent] = useState(false);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setShowContent(true);
+    }, 100);
+    return () => {
+      clearTimeout(timeout);
+    }
+  }, []);
+
+  if (!showContent) {
+    return null;
+  }
 
   return (
     <div style={{ marginBottom: 24 }}>

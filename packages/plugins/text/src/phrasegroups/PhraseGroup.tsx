@@ -1361,15 +1361,19 @@ const PhraseGroup = (props: Props) => {
     }
   }, [props.searchText])
 
+  useEffect(() => {
+    if (props.searchText == "" && props.showOnlyPinnedPhrases && !isExpanded && phrasesToRender.length > 0) {
+      setIsExpanded(true);
+    }
+  }, [props.searchText, phrasesToRender.length])
+
   if (
-    !isSearching &&
-    commandMode == "compare" &&
-    (hasAnyRemovals || hasAnyAdditions)
+    commandMode == "compare"
   ) {
-    if (!wasRemoved && compareFrom == "before") {
+    if (!hasAnyRemovals && compareFrom == "before") {
       return null;
     }
-    if (!wasAdded && compareFrom == "after") {
+    if (!hasAnyAdditions && compareFrom == "after") {
       return null;
     }
   }

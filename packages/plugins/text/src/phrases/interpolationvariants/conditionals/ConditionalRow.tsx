@@ -196,7 +196,7 @@ interface Props {
   index: number;
 }
 
-const ConditionalRow = (props: Props): React.ReactElement => {
+const ConditionalRow = (props: Props): React.ReactElement|null => {
   const theme = useTheme();
   const { commandMode } = useFloroContext();
 
@@ -398,6 +398,30 @@ const ConditionalRow = (props: Props): React.ReactElement => {
     }
   }, [resultant?.richTextHtml, commandMode]);
 
+  const highlightableVariables = useMemo(() => {
+    const variables = props.phrase.variables?.map((v) => v.name) ?? [];
+    const contentVariables =
+      props.phrase?.contentVariables?.map?.((v) => v.name) ?? [];
+    return [
+      ...variables,
+      ...contentVariables ?? [],
+    ].join(":");
+  }, [
+    props.phrase.variables,
+    props.phrase.contentVariables,
+  ]);
+
+  useEffect(() => {
+    if (commandMode == "edit") {
+      const timeout = setTimeout(() => {
+        saveResultant();
+      }, 500);
+      return () => {
+        clearTimeout(timeout);
+      }
+    }
+  }, [highlightableVariables, commandMode])
+
   useEffect(() => {
     if (commandMode == "edit") {
       const timeout = setTimeout(() => {
@@ -454,6 +478,22 @@ const ConditionalRow = (props: Props): React.ReactElement => {
       };
     }
   }, [floatValue, commandMode]);
+
+  const [showContent, setShowContent] = useState(false);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setShowContent(true);
+    }, 100);
+    return () => {
+      clearTimeout(timeout);
+    }
+  }, []);
+
+  if (!showContent) {
+    return null;
+  }
+
 
   return (
     <Container>

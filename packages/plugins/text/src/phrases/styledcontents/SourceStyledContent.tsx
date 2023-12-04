@@ -378,7 +378,7 @@ const SourceStyledContent = (props: Props) => {
                     borderRadius: 8,
                     padding: 4,
                     fontWeight: 500,
-                    color: ColorPalette.darkGray,
+                    color: ColorPalette.white,
                     marginLeft: 8,
                     marginRight: 8,
                   }}

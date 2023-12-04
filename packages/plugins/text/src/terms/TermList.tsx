@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState, useMemo } from "react";
 import {
   PointerTypes,
   SchemaTypes,
+  containsDiffable,
   getReferencedObject,
   makeQueryRef,
   useFloroContext,
@@ -15,6 +16,14 @@ import TermRow from "./TermRow";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { AnimatePresence, Reorder } from "framer-motion";
+
+const NothingChangedText = styled.h3`
+  margin-top: 24px;
+  font-family: "MavenPro";
+  font-size: 48px;
+  font-weight: 500;
+  color: ${props => props.theme.colors.contrastTextLight};
+`;
 
 const Container = styled.div`
   margin-top: 24px;
@@ -38,7 +47,7 @@ const TermList = (props: Props) => {
   const [terms, setTerms, saveTerms] =
     useFloroState("$(text).terms") ?? [];
   const [isDragging, setIsDragging] = useState(false);
-  const { applicationState, commandMode } = useFloroContext();
+  const { applicationState, commandMode, compareFrom, changeset } = useFloroContext();
 
   const onDragStart = useCallback(() => {
     setIsDragging(true);
@@ -148,14 +157,39 @@ const TermList = (props: Props) => {
     props.pinnedTerms,
   ]);
 
-  const hasIndications = useHasIndication("$(text).terms");
+  const diffedTerms = useMemo(() => {
+    if (commandMode != "compare") {
+      return 0;
+    }
+    let count = 0;
+    for (const term of applicationState?.text?.terms ?? []) {
+      const termRef = makeQueryRef(`$(text).terms.id<?>`, term.id);
+      const hasDiff = containsDiffable(changeset, termRef, true)
+      if (hasDiff) {
+        count++;
+      }
+    }
+    return count;
+  }, [commandMode, applicationState, changeset])
 
-  if (commandMode == "compare" && !hasIndications) {
-    return null;
+  if (commandMode == "compare" && compareFrom == "before" && diffedTerms == 0) {
+    return (
+      <Container>
+        <NothingChangedText>
+          {'No terms were removed'}
+        </NothingChangedText>
+      </Container>
+    );
+
   }
-
-  if (commandMode != "edit" && terms?.length == 0) {
-    return null;
+  if (commandMode == "compare" && compareFrom == "after" && diffedTerms == 0) {
+    return (
+      <Container>
+        <NothingChangedText>
+          {'No terms were added'}
+        </NothingChangedText>
+      </Container>
+    );
   }
 
   return (

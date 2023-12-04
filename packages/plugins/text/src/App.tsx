@@ -43,8 +43,8 @@ const ScrollTopButton = styled.div`
   height: 60px;
   width: 60px;
   position: fixed;
-  bottom: 80px;
-  left: 32px;
+  bottom: 96px;
+  right: 64px;
   background: ${props => props.theme.colors.titleText};
   border-radius: 50%;
   cursor: pointer;

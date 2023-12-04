@@ -374,7 +374,6 @@ const StyledContent = (props: Props) => {
   useEffect(() => {
     if (commandMode == "edit") {
       const timeout = setTimeout(() => {
-        //onSetDefaultValueContent(richTextHtml);
         saveDisplayValue();
       }, 500);
       return () => {
@@ -382,6 +381,43 @@ const StyledContent = (props: Props) => {
       }
     }
   }, [displayValue?.richTextHtml, commandMode])
+
+  const highlightableVariables = useMemo(() => {
+    const variables = props.phrase.variables?.map((v) => v.name) ?? [];
+    const linkVariables =
+      props?.phrase.linkVariables?.map?.((v) => v.linkName) ?? [];
+    const interpolationVariants =
+      props.phrase?.interpolationVariants?.map?.((v) => v.name) ?? [];
+    const contentVariables =
+      props.phrase?.contentVariables?.map?.((v) => v.name) ?? [];
+    return [
+      ...variables,
+      ...linkVariables,
+      ...interpolationVariants,
+      ...enabledMentionedValues ?? [],
+      ...contentVariables ?? [],
+    ].join(":");
+  }, [
+    props.phrase.variables,
+    props.phrase.linkVariables,
+    props.phrase.interpolationVariants,
+    props.phrase.contentVariables,
+    enabledMentionedValues,
+  ]);
+
+  useEffect(() => {
+    if (commandMode == "edit") {
+      const timeout = setTimeout(() => {
+        if (!displayValue) {
+          return;
+        }
+        saveDisplayValue();
+      }, 500);
+      return () => {
+        clearTimeout(timeout);
+      }
+    }
+  }, [highlightableVariables, commandMode])
 
 
   const onMarkDisplayResolved = useCallback(() => {
@@ -581,6 +617,21 @@ const StyledContent = (props: Props) => {
     }
     return Array.from(termSet);
   }, [translationMemory, sourceDefaultValue, props.selectedLocale]);
+
+  const [showContent, setShowContent] = useState(false);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setShowContent(true);
+    }, 100);
+    return () => {
+      clearTimeout(timeout);
+    }
+  }, []);
+
+  if (!showContent) {
+    return null;
+  }
 
   return (
     <div style={{ marginBottom: 24 }}>

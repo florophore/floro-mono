@@ -356,6 +356,31 @@ const InterpolationVariant = (props: Props) => {
     }
   }, [defaultValue?.richTextHtml, commandMode])
 
+  const highlightableVariables = useMemo(() => {
+    const variables = props.phrase.variables?.map((v) => v.name) ?? [];
+    const contentVariables =
+      props.phrase?.contentVariables?.map?.((v) => v.name) ?? [];
+    return [
+      ...variables,
+      ...enabledMentionedValues ?? [],
+      ...contentVariables ?? [],
+    ].join(":");
+  }, [
+    props.phrase.variables,
+    props.phrase.contentVariables,
+    enabledMentionedValues,
+  ]);
+
+  useEffect(() => {
+    if (commandMode == "edit") {
+      const timeout = setTimeout(() => {
+        saveDefaultValue();
+      }, 500);
+      return () => {
+        clearTimeout(timeout);
+      }
+    }
+  }, [highlightableVariables, commandMode])
 
   const onMarkDisplayResolved = useCallback(() => {
     if (!defaultValue) {
@@ -548,6 +573,21 @@ const InterpolationVariant = (props: Props) => {
     }
     return Array.from(termSet);
   }, [translationMemory, sourceDefaultValue, props.selectedLocale]);
+
+  const [showContent, setShowContent] = useState(false);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setShowContent(true);
+    }, 100);
+    return () => {
+      clearTimeout(timeout);
+    }
+  }, []);
+
+  if (!showContent) {
+    return null;
+  }
 
   return (
     <div style={{ marginBottom: 24 }}>
