@@ -31,6 +31,10 @@ export interface Icons {
     "about.version-update-revised":            AboutVersionUpdateRevised;
     "about.version-updates":                   AboutVersionUpdates;
     "about.visual-diff":                       AboutVisualDiff;
+    "docs.icons-plugin":                       DocsIconsPlugin;
+    "docs.palette-plugin":                     DocsPalettePlugin;
+    "docs.text-plugin":                        DocsTextPlugin;
+    "docs.theme-plugin":                       DocsThemePlugin;
     "front-page.apple":                        FrontPageApple;
     "front-page.copy":                         FrontPageCopy;
     "front-page.discord":                      FrontPageDiscord;
@@ -270,6 +274,38 @@ export interface AboutVisualDiff {
 }
 
 export interface AboutVisualDiffVariants {
+}
+
+export interface DocsIconsPlugin {
+    default:  Theme;
+    variants: DocsIconsPluginVariants;
+}
+
+export interface DocsIconsPluginVariants {
+}
+
+export interface DocsPalettePlugin {
+    default:  Theme;
+    variants: DocsPalettePluginVariants;
+}
+
+export interface DocsPalettePluginVariants {
+}
+
+export interface DocsTextPlugin {
+    default:  Theme;
+    variants: DocsTextPluginVariants;
+}
+
+export interface DocsTextPluginVariants {
+}
+
+export interface DocsThemePlugin {
+    default:  Theme;
+    variants: DocsThemePluginVariants;
+}
+
+export interface DocsThemePluginVariants {
 }
 
 export interface FrontPageApple {

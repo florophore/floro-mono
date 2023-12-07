@@ -96,7 +96,7 @@ const AnimationPlayWrapper = styled.div`
 function AboutPage() {
   const aboutMetaTitle = usePlainText("meta_tags.about");
   return (
-    <PageWrapper>
+    <PageWrapper isCentered>
       <Helmet>
         <title>{aboutMetaTitle}</title>
       </Helmet>

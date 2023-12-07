@@ -12,13 +12,15 @@ export interface Themes {
 }
 
 export interface ThemeColors {
-    "contrast-text":        ContrastText;
-    "contrast-text-light":  ContrastTextLight;
-    "icon-bg":              IconBg;
-    "icon-contrast-fg":     IconContrastFg;
-    "icon-purple":          IconPurple;
-    "icon-single-contrast": IconSingleContrast;
-    "reverse-contrast-bg":  ReverseContrastBg;
+    "contrast-text":              ContrastText;
+    "contrast-text-light":        ContrastTextLight;
+    "icon-bg":                    IconBg;
+    "icon-contrast-fg":           IconContrastFg;
+    "icon-purple":                IconPurple;
+    "icon-single-contrast":       IconSingleContrast;
+    "icons-purple-inverse":       IconsPurpleInverse;
+    "reverse-contrast-bg":        ReverseContrastBg;
+    "reverse-contrast-bg-darker": ReverseContrastBgDarker;
 }
 
 export interface ContrastText {
@@ -83,12 +85,28 @@ export interface IconSingleContrastVariants {
     selected: ThemeSet;
 }
 
+export interface IconsPurpleInverse {
+    default:  ThemeSet;
+    variants: IconsPurpleInverseVariants;
+}
+
+export interface IconsPurpleInverseVariants {
+}
+
 export interface ReverseContrastBg {
     default:  ThemeSet;
     variants: ReverseContrastBgVariants;
 }
 
 export interface ReverseContrastBgVariants {
+}
+
+export interface ReverseContrastBgDarker {
+    default:  ThemeSet;
+    variants: ReverseContrastBgDarkerVariants;
+}
+
+export interface ReverseContrastBgDarkerVariants {
 }
 
 export interface ThemeDefinitions {

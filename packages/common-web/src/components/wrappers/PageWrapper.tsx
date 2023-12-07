@@ -171,7 +171,7 @@ const MainScrollWrapper = styled.div`
   }
 `;
 
-const MainContent = styled.main`
+const MainContentLeftOffset = styled.main`
   position: relative;
   width: 100%;
   z-index: 0;
@@ -185,6 +185,24 @@ const MainContent = styled.main`
   @media screen and (min-width: 768px) and (max-width: 1023px) {
     max-width: 100%;
     padding-left: 72px;
+  }
+  @media screen and (max-width: 767px) {
+    max-width: 100%;
+  }
+`;
+
+const MainContent = styled.main`
+  position: relative;
+  width: 100%;
+  z-index: 0;
+  display: flex;
+  align-self: center;
+  flex-direction: column;
+  @media screen and (min-width: 1024px) {
+    max-width: 1440px;
+  }
+  @media screen and (min-width: 768px) and (max-width: 1023px) {
+    max-width: 100%;
   }
   @media screen and (max-width: 767px) {
     max-width: 100%;
@@ -288,6 +306,7 @@ const Row =styled.div`
 
 interface Props {
   children: React.ReactElement | React.ReactElement[];
+  isCentered?: boolean;
 }
 
 const PageWrapperComponent = (props: Props) => {
@@ -333,7 +352,9 @@ const PageWrapperComponent = (props: Props) => {
                   <Link to={"/about"}>
                     <HeaderLinkText>{aboutText}</HeaderLinkText>
                   </Link>
-                  <HeaderLinkText>{docsText}</HeaderLinkText>
+                  <Link to={"/docs"}>
+                    <HeaderLinkText>{docsText}</HeaderLinkText>
+                  </Link>
                   <HeaderLinkText>{pricingText}</HeaderLinkText>
                   <HeaderLinkText>{fossText}</HeaderLinkText>
                   <HeaderLinkText>{consultingText}</HeaderLinkText>
@@ -417,7 +438,12 @@ const PageWrapperComponent = (props: Props) => {
         </BottomContainer>
       </MobileDropDown>
       <MainScrollWrapper>
-        <MainContent>{props.children}</MainContent>
+        {props.isCentered && (
+          <MainContent>{props.children}</MainContent>
+        )}
+        {!props.isCentered && (
+          <MainContentLeftOffset>{props.children}</MainContentLeftOffset>
+        )}
         <Footer>
           <div style={{ textAlign: "center" }}>
             <FooterText style={{ marginTop: 0 }}>

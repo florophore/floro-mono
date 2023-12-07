@@ -11,16 +11,9 @@ import { useIcon } from "../../floro_listener/FloroIconsProvider";
 import { useTheme } from "@emotion/react";
 import { usePlainText, useRichText } from "../../floro_listener/hooks/locales";
 import { Helmet } from "react-helmet";
-import ColorPalette from "@floro/styles/ColorPalette";
 import PageWrapper from "../../components/wrappers/PageWrapper";
 import { richTextRenderers } from "@floro/common-web/src/floro_listener/FloroTextRenderer";
 import { StaticLinkNode } from "@floro/common-generators/floro_modules/text-generator";
-import Input from "@floro/storybook/stories/design-system/Input";
-import {
-  getArrayStringDiff,
-  getLCS,
-  getMergeSequence,
-} from "floro/dist/src/sequenceoperations";
 import { Link } from "react-router-dom";
 
 const AboutWrapper = styled.div`
@@ -37,6 +30,9 @@ const SectionTitle = styled.h2`
   margin: 0;
   font-family: "MavenPro";
   color: ${(props) => props.theme.colors.titleText};
+  @media screen and (max-width: 767px) {
+    font-size: 2rem;
+  }
 `;
 
 const SubSectionTitle = styled.h2`
@@ -46,6 +42,9 @@ const SubSectionTitle = styled.h2`
   margin: 0;
   font-family: "MavenPro";
   color: ${(props) => props.theme.colors.contrastText};
+  @media screen and (max-width: 767px) {
+    font-size: 1.7rem;
+  }
 `;
 
 const SectionParagraph = styled.div`
@@ -56,6 +55,9 @@ const SectionParagraph = styled.div`
   font-family: "MavenPro";
   color: ${(props) => props.theme.colors.contrastText};
   word-wrap: break-word;
+  @media screen and (max-width: 767px) {
+    font-size: 1.2rem;
+  }
 `;
 
 const AnimationToggleIcon = styled.img`
@@ -95,9 +97,9 @@ const AnimationPlayWrapper = styled.div`
   }
 `;
 
-function AboutPage() {
+function HowItWorksPart1() {
   const theme = useTheme();
-  const aboutMetaTitle = usePlainText("meta_tags.about");
+  const howItWorksMetaTitle = usePlainText("meta_tags.how_it_works");
 
   const [sequenceCount, setSequenceCount] = useState(4);
   const [direction, setDirection] = useState("descending");
@@ -415,7 +417,7 @@ function AboutPage() {
   return (
     <PageWrapper>
       <Helmet>
-        <title>{aboutMetaTitle}</title>
+        <title>{howItWorksMetaTitle}</title>
       </Helmet>
       <AboutWrapper>
         <div
@@ -430,4 +432,4 @@ function AboutPage() {
   );
 }
 
-export default AboutPage;
+export default HowItWorksPart1;

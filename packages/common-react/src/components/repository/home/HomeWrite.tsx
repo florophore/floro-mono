@@ -248,6 +248,9 @@ const HomeWrite = (props: Props) => {
   const repoManifestList = useRepoManifestList(props.repository);
   const devPluginsRequest = useRepoDevPlugins(props.repository);
 
+  const receiveDescriptionCount = useRef<number>(0);
+  const sendDescriptionCount = useRef<number>(0);
+
   const suggestedPluginsFetch = useFetchSuggestedPluginsQuery({
     variables: {
       repositoryId: props.repository.id as string
@@ -330,6 +333,7 @@ const HomeWrite = (props: Props) => {
     queryClient.invalidateQueries(["manifest-list:" + props.repository.id])
   }, [props.apiResponse.applicationState.plugins, queryClient, props.repository]);
 
+
   const readDescription = useMemo((): string => {
     return props?.apiResponse?.applicationState?.description?.join?.("") ?? "";
   }, [props?.apiResponse?.applicationState?.description]);
@@ -337,6 +341,30 @@ const HomeWrite = (props: Props) => {
   const [description, setDescription] = useState(readDescription);
   const textareaContainer = useRef<HTMLDivElement>(null);
   const textarea = useRef<HTMLTextAreaElement>(null);
+
+  const debounceTimeout = useRef<NodeJS.Timeout>();
+
+  useEffect(() => {
+    receiveDescriptionCount.current++;
+  }, [props?.apiResponse?.applicationState?.description])
+
+  useEffect(() => {
+    if (debounceTimeout.current !== undefined) {
+      clearTimeout(debounceTimeout.current);
+    }
+    if (receiveDescriptionCount.current < sendDescriptionCount.current) {
+      return
+    }
+    debounceTimeout.current = setTimeout(() => {
+      setDescription(readDescription);
+      sendDescriptionCount.current = receiveDescriptionCount.current;
+    }, 300);
+    return () => {
+      if (debounceTimeout.current !== undefined) {
+        clearTimeout(debounceTimeout.current);
+      }
+    }
+  }, [readDescription])
 
   const [showAddLicenseModal, setShowAddLicenseModal] = useState(false);
   const [showSearchPlugin, setShowSearchPlugin] = useState(false);
@@ -354,11 +382,19 @@ const HomeWrite = (props: Props) => {
   const onTextBoxChanged = useCallback(
     (event: React.ChangeEvent<HTMLTextAreaElement>): void => {
       setDescription(event.target.value);
-
-      updateDescriptionMutation.mutate(event.target.value);
     },
     []
   );
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      sendDescriptionCount.current++;
+      updateDescriptionMutation.mutate(description);
+    }, 300)
+    return () => {
+      clearTimeout(timeout);
+    }
+  }, [description]);
 
   const onShowAddLicense = useCallback(() => {
     setShowAddLicenseModal(true);
@@ -401,22 +437,6 @@ const HomeWrite = (props: Props) => {
   const hasNoLicense = useMemo(() => {
     return (props?.apiResponse?.applicationState?.licenses?.length ?? 0) == 0;
   }, [props.apiResponse]);
-
-  const debounceTimeout = useRef<NodeJS.Timeout>();
-
-  useEffect(() => {
-    if (debounceTimeout.current !== undefined) {
-      clearTimeout(debounceTimeout.current);
-    }
-    debounceTimeout.current = setTimeout(() => {
-      setDescription(readDescription);
-    }, 100);
-    return () => {
-      if (debounceTimeout.current !== undefined) {
-        clearTimeout(debounceTimeout.current);
-      }
-    }
-  }, [readDescription])
 
   useEffect(() => {
     if (debounceTimeout.current !== undefined) {

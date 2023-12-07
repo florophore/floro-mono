@@ -36,6 +36,9 @@ const SectionTitle = styled.h2`
   margin: 0;
   font-family: "MavenPro";
   color: ${(props) => props.theme.colors.titleText};
+  @media screen and (max-width: 767px) {
+    font-size: 2rem;
+  }
 `;
 
 const SubSectionTitle = styled.h2`
@@ -45,6 +48,9 @@ const SubSectionTitle = styled.h2`
   margin: 0;
   font-family: "MavenPro";
   color: ${(props) => props.theme.colors.contrastText};
+  @media screen and (max-width: 767px) {
+    font-size: 1.7rem;
+  }
 `;
 
 const SectionParagraph = styled.div`
@@ -55,49 +61,14 @@ const SectionParagraph = styled.div`
   font-family: "MavenPro";
   color: ${(props) => props.theme.colors.contrastText};
   word-wrap: break-word;
-`;
-
-const AnimationToggleIcon = styled.img`
-  height: 64px;
-  width: 64px;
-  cursor: pointer;
   @media screen and (max-width: 767px) {
-    height: 48px;
-    width: 48px;
+    font-size: 1.2rem;
   }
 `;
 
-const AnimationDisabledOverlay = styled.div`
-  background: ${(props) => props.theme.colors.disableOverlay};
-  top: 0;
-  left: 0;
-  height: 64px;
-  width: 64px;
-  position: absolute;
-  border-radius: 50%;
-  opacity: 0.5;
-  cursor: not-allowed;
-  @media screen and (max-width: 767px) {
-    height: 48px;
-    width: 48px;
-  }
-`;
-
-const AnimationPlayWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  max-width: 160px;
-  width: 100%;
-  @media screen and (max-width: 767px) {
-    max-width: 120px;
-  }
-`;
-
-function AboutPage() {
+function HowItWorksPart2() {
   const theme = useTheme();
-  const aboutMetaTitle = usePlainText("meta_tags.about");
-
+  const howItWorksMetaTitle = usePlainText("meta_tags.how_it_works");
 
   const renderLinkNode = useCallback(
     (
@@ -889,7 +860,7 @@ function AboutPage() {
   return (
     <PageWrapper>
       <Helmet>
-        <title>{aboutMetaTitle}</title>
+        <title>{howItWorksMetaTitle}</title>
       </Helmet>
       <AboutWrapper>
         <div
@@ -904,4 +875,4 @@ function AboutPage() {
   );
 }
 
-export default AboutPage;
+export default HowItWorksPart2;

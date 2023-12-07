@@ -10,6 +10,13 @@
     }
   },
   "themeColors": {
+    "reverse-contrast-bg-darker": {
+      "default": {
+        "light": "#FFFFFFFF",
+        "dark": "#222222FF"
+      },
+      "variants": {}
+    },
     "reverse-contrast-bg": {
       "default": {
         "light": "#FFFFFFFF",
@@ -81,6 +88,13 @@
       "default": {
         "light": "#5445C4FF",
         "dark": "#9B8EF6FF"
+      },
+      "variants": {}
+    },
+    "icons-purple-inverse": {
+      "default": {
+        "light": "#9B8EF6FF",
+        "dark": "#5445C4FF"
       },
       "variants": {}
     },

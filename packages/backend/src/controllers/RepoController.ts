@@ -1087,7 +1087,6 @@ export default class RepoController extends BaseController {
         kvState
       );
 
-
       let isValid = true;
       for (const plugin in apiStoreInvalidity) {
         if ((apiStoreInvalidity[plugin]?.length ?? 0) > 0) {

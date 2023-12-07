@@ -308,6 +308,9 @@ const HomeRead = (props: Props) => {
           </>
         );
       }
+      if ((props?.apiResponse?.applicationState?.description?.length ?? 0) == 0) {
+        return "No description";
+      }
       return (
         <>
           {props.apiResponse.applicationState.description.map(

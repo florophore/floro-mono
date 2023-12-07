@@ -8,6 +8,10 @@ import OAuthCallback from './pages/common/authentication/OAuthCallback';
 import CredentialVerifyCallback from './pages/common/authentication/CredentialVerifyCallback';
 import CredentialAuthCallback from './pages/common/authentication/CredentialAuthCallback';
 
+import DocsLanding from './pages/common/docs/DocsLanding';
+import ProductDocsLanding from './pages/common/docs/product/ProductDocsLanding';
+import ProductAndTerminologyDocs from './pages/common/docs/product/pages/ProductAndTerminologyDocs';
+
 import { IsomorphicRoute, sortRoutes } from './ssr/routing-helpers';
 import AppProxyPage from './pages/common/app_proxy/AppProxyPage';
 
@@ -30,6 +34,18 @@ const CommonRouting: IsomorphicRoute[] = [
   {
     path: "/technical-overview-part-2",
     component: () => HowItWorksPart2,
+  },
+  {
+    path: "/docs",
+    component: () => DocsLanding,
+  },
+  {
+    path: "/docs/product",
+    component: () => ProductDocsLanding,
+  },
+  {
+    path: "/docs/product/product-and-terms",
+    component: () => ProductAndTerminologyDocs,
   },
   {
     path: "/app-proxy/*",
