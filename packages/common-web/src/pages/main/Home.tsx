@@ -208,7 +208,7 @@ const InstallCLISectionHeader = styled.h3`
   color: ${(props) => props.theme.colors.titleText};
 `;
 
-const Flatcon = styled.img`
+const FlatIcon = styled.img`
   height: 56px;
   cursor: pointer;
   transition: background-image 300ms;
@@ -389,7 +389,7 @@ function Home() {
               <DownloadRow style={{ justifyContent: "center" }}>
 
               <a href="https://github.com/florophore/floro" target="_blank">
-                <Flatcon
+                <FlatIcon
                   onMouseEnter={() => setIsHoveringGithub(true)}
                   onMouseLeave={() => setIsHoveringGithub(false)}
                   src={githubIcon}
@@ -397,7 +397,7 @@ function Home() {
                 />
               </a>
               <a href={"https://discord.gg/SD2DqEKQ"} target="_blank">
-                <Flatcon
+                <FlatIcon
                   onMouseEnter={() => setIsHoveringDiscord(true)}
                   onMouseLeave={() => setIsHoveringDiscord(false)}
                   src={discordIcon}
@@ -446,7 +446,7 @@ function Home() {
             </InstallCLISectionHeader>
             <DownloadRow>
               <a href="https://github.com/florophore/floro" target="_blank">
-                <Flatcon
+                <FlatIcon
                   onMouseEnter={() => setIsHoveringGithub(true)}
                   onMouseLeave={() => setIsHoveringGithub(false)}
                   src={githubIcon}
@@ -454,7 +454,7 @@ function Home() {
                 />
               </a>
               <a href={"https://discord.gg/SD2DqEKQ"} target="_blank">
-                <Flatcon
+                <FlatIcon
                   onMouseEnter={() => setIsHoveringDiscord(true)}
                   onMouseLeave={() => setIsHoveringDiscord(false)}
                   src={discordIcon}

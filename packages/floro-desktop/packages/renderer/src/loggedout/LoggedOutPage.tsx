@@ -13,7 +13,7 @@ import { useTheme } from '@emotion/react';
 import { useSystemAPI } from '../contexts/SystemAPIContext';
 import mixpanel from 'mixpanel-browser';
 import SignupLoginModal from '@floro/common-react/src/components/signup/SignupLoginModal';
-import { useSocketEvent } from '@floro/common-react/src/pubsub/socket';
+import { useFloroSocket, useSocketEvent } from '@floro/common-react/src/pubsub/socket';
 import type { CompleteSignupAction, PassedLoginAction } from '@floro/graphql-schemas/src/generated/main-client-graphql';
 import { setClientSession } from '@floro/common-react/src/session/client-session';
 import { useSession } from '@floro/common-react/src/session/session-context';
@@ -131,6 +131,7 @@ const LoggedOutPage = ({isOpen}: Props) => {
     const systemAPI = useSystemAPI();
     const navigate = useNavigate();
     const [showEmailModal, setShowEmailModal] = useState(false);
+    const { socket } = useFloroSocket();
 
     useSocketEvent<CompleteSignupAction>('complete_signup', (payload) => {
       navigate('/complete_signup', { state: payload});
@@ -142,6 +143,10 @@ const LoggedOutPage = ({isOpen}: Props) => {
         navigate('/home');
       }
     }, [navigate]);
+
+    useEffect(() => {
+      socket.emit("logout-did-load")
+    }, [socket])
 
     const BackButtonIcon = useMemo(() => {
         if (themeName == 'light') {

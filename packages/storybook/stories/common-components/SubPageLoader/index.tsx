@@ -8,7 +8,7 @@ const BackgroundWrapper = styled.div`
   background-color: ${props => props.theme.background};
   display: flex;
   flex: 1;
-  height: 100vh;
+  height: 100dvh;
   justify-content: center;
   align-items: center;
   flex-direction: column;
@@ -23,6 +23,7 @@ const  FloroImage = styled.img`
 export interface Props {
   children?: React.ReactElement;
   hideLoad?: boolean;
+  isNested?: boolean;
 }
 
 
@@ -33,6 +34,9 @@ const SubPageLoader = (props?: Props): React.ReactElement => {
       <BackgroundWrapper>
         <FloroImage
           src={FloroIcon}
+          style={{
+            marginTop: props?.isNested ? -200 : 0
+          }}
         />
         {!props?.hideLoad && <DotsLoader size={"large"} color={"purple"}/>}
         {!!props?.children &&

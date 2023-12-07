@@ -1,4 +1,4 @@
-import React, { useMemo, useContext, useEffect, useCallback, useState } from 'react';
+import React, { useMemo, useContext, useEffect, useCallback, useState, useRef } from 'react';
 import { Manager, Socket } from "socket.io-client";
 import { useEnv } from '../env/EnvContext';
 
@@ -60,10 +60,15 @@ export const useDaemonIsConnected = () => {
 
 export const useSocketEvent = <T,> (eventName: string, callback: (args: T) => void, deps: unknown[], isOnce = true) => {
   const { socket } = useFloroSocket();
+  const didSend = useRef<boolean>(false);
   const cb = useCallback((args: T) => {
+    if (isOnce && didSend.current) {
+      return;
+    }
     if (socket) {
       callback(args);
       if (isOnce) {
+        didSend.current = true;
         socket.off(eventName, cb);
       }
     }

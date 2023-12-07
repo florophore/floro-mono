@@ -237,7 +237,7 @@ export const SessionProvider = (props: Props) => {
       setSession(data.exchangeSession);
       return;
     }
-    const IGNORE_PATHS = new Set(["/credential/verifiy", "/credential/auth"]);
+    const IGNORE_PATHS = new Set(["/credential/verify", "/credential/auth"]);
     if (IGNORE_PATHS.has(location.pathname) || location.pathname.startsWith('/oauth/')) {
       return;
     }

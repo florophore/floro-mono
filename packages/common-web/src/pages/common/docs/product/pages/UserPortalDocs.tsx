@@ -103,8 +103,16 @@ const ScreenshotImg = styled.img`
   max-width: 600px;
 `;
 
+const TitleSpan = styled.span`
+  font-size: 1.4rem;
+  font-family: "MavenPro";
+  font-weight: 600;
+  color: ${(props) => props.theme.colors.linkColor};
+  white-space: nowrap;
+`;
 
-function ProductAndTerminologyDocs() {
+
+function UserPortalDocs() {
   const theme = useTheme();
   // change this
   const docsMetaTitle = usePlainText("meta_tags.product_docs");
@@ -127,86 +135,9 @@ function ProductAndTerminologyDocs() {
     [theme]
   );
 
-  const whatIsRepoImg = useMemo(() => {
-    if (theme.name == "light") {
-      return WhatIsRepoLight;
-    }
-    return WhatIsRepoDark;
-  }, [theme.name]);
-
-  const whatArePluginsTextImg = useMemo(() => {
-    if (theme.name == "light") {
-      return WhatArePluginsTextLight;
-    }
-    return WhatArePluginsTextDark;
-  }, [theme.name]);
-
-  const whatIsACommitImg = useMemo(() => {
-    if (theme.name == "light") {
-      return WhatIsACommitLight;
-    }
-    return WhatIsACommitDark;
-  }, [theme.name]);
-
-  const whatIsABranchImg = useMemo(() => {
-    if (theme.name == "light") {
-      return WhatIsABranchLight;
-    }
-    return WhatIsABranchDark;
-  }, [theme.name]);
-
-  const diffCommitImg = useMemo(() => {
-    if (theme.name == "light") {
-      return DiffCommitLight;
-    }
-    return DiffCommitDark;
-  }, [theme.name]);
-
-  const whatIsPushingImg = useMemo(() => {
-    if (theme.name == "light") {
-      return WhatIsPushingLight;
-    }
-    return WhatIsPushingDark;
-  }, [theme.name]);
-
-  const createMRPromptImg = useMemo(() => {
-    if (theme.name == "light") {
-      return CreateMRPromptLight;
-    }
-    return CreateMRPromptDark;
-  }, [theme.name]);
-
-  const mergeRequestImg = useMemo(() => {
-    if (theme.name == "light") {
-      return MergeRequestLight;
-    }
-    return MergeRequestDark;
-  }, [theme.name]);
-
-  const reviewCommentImg = useMemo(() => {
-    if (theme.name == "light") {
-      return ReviewCommentLight;
-    }
-    return ReviewCommentDark;
-  }, [theme.name]);
-
-  const pullingImg = useMemo(() => {
-    if (theme.name == "light") {
-      return PullingLight;
-    }
-    return PullingDark;
-  }, [theme.name]);
-
-  const defaultBranch = useMemo(() => {
-    if (theme.name == "light") {
-      return DefaultBranchLight;
-    }
-    return DefaultBranchDark;
-  }, [theme.name]);
-
   const docsTitle = usePlainText("doc_titles.docs_page_title");
   const pageDocsTitle = usePlainText("doc_titles.product_docs_page_title");
-  const pageProductAndTermsDocsTitle = usePlainText("doc_titles.product_and_terminology_docs_page_title");
+  const userPortalDocsTitle = usePlainText("doc_titles.user_portal_docs_page_title");
 
   const titleChain = useMemo((): LinkChain => {
     return {
@@ -217,9 +148,9 @@ function ProductAndTerminologyDocs() {
         label: pageDocsTitle,
         value: '/docs/product',
         next: {
-          label: pageProductAndTermsDocsTitle,
+          label: userPortalDocsTitle,
           prefix: '/',
-          value: '/docs/product/product-and-terms',
+          value: '/docs/product/user-portal',
         }
       }
     }
@@ -233,69 +164,14 @@ function ProductAndTerminologyDocs() {
   }, [renderLinkNode]);
 
   const article = useRichText(
-    "product_docs.product_and_terminology_overview",
+    "product_docs.user_portal_docs",
     {
       docSearch: <DocSearch docs="product" linkChain={titleChain} />,
-      whatIsFloroImg: (
-        <div>
-          <ScreenshotImg src={whatIsRepoImg}/>
-        </div>
-      ),
-      whatArePluginsTextImg: (
-        <div>
-          <ScreenshotImg src={whatArePluginsTextImg}/>
-        </div>
-      ),
-      whatIsACommitImg: (
-        <div>
-          <ScreenshotImg src={whatIsACommitImg}/>
-        </div>
-      ),
-      whatIsABranchImg: (
-        <div>
-          <ScreenshotImg src={whatIsABranchImg}/>
-        </div>
-      ),
-      diffCommitImg: (
-        <div>
-          <ScreenshotImg src={diffCommitImg}/>
-        </div>
-      ),
-      whatIsPushing: (
-        <div>
-          <ScreenshotImg src={whatIsPushingImg}/>
-        </div>
-      ),
-      createMRPromptImg: (
-        <div>
-          <ScreenshotImg src={createMRPromptImg}/>
-        </div>
-      ),
-      mergeRequestImg: (
-        <div>
-          <ScreenshotImg src={mergeRequestImg}/>
-        </div>
-      ),
-      reviewCommentImg: (
-        <div>
-          <ScreenshotImg src={reviewCommentImg}/>
-        </div>
-      ),
-      pullingImg: (
-        <div>
-          <ScreenshotImg src={pullingImg}/>
-        </div>
-      ),
-      defaultBranchImg: (
-        <div>
-          <ScreenshotImg src={defaultBranch}/>
-        </div>
-      ),
       mainTitle: function (
         content: ReactElement<any, string | JSXElementConstructor<any>>
       ): ReactElement<any, string | JSXElementConstructor<any>> {
         return <SectionTitle>{content}</SectionTitle>;
-      },
+      }
     },
     rtRenderers
   );
@@ -320,4 +196,4 @@ function ProductAndTerminologyDocs() {
   );
 }
 
-export default ProductAndTerminologyDocs;
+export default UserPortalDocs;

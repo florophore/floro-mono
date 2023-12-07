@@ -69,7 +69,7 @@ export default class EmailVerificationStore {
 
     public link(emailVerification: EmailVerification, loginClient: 'cli'|'web'|'desktop') {
         return encodeURI(
-          `${this.mainConfig.url()}/credential/verifiy?verification_code=${
+          `${this.mainConfig.url()}/credential/verify?verification_code=${
             emailVerification.id
           }&login_client=${loginClient}`
         );

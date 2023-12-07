@@ -68,6 +68,7 @@ export interface PhraseKeys {
     "doc_titles.docs_page_title":                         DocTitlesDocsPageTitle;
     "doc_titles.product_and_terminology_docs_page_title": DocTitlesProductAndTerminologyDocsPageTitle;
     "doc_titles.product_docs_page_title":                 DocTitlesProductDocsPageTitle;
+    "doc_titles.user_portal_docs_page_title":             DocTitlesUserPortalDocsPageTitle;
     "docs.docs_general":                                  DocsDocsGeneral;
     "docs.icons_plugin_description":                      DocsIconsPluginDescription;
     "docs.palette_plugin_description":                    DocsPalettePluginDescription;
@@ -101,6 +102,7 @@ export interface PhraseKeys {
     "product_docs.product_and_terminology_overview":      ProductDocsProductAndTerminologyOverview;
     "product_docs.product_docs_general":                  ProductDocsProductDocsGeneral;
     "product_docs.product_docs_index":                    ProductDocsProductDocsIndex;
+    "product_docs.user_portal_docs":                      ProductDocsUserPortalDocs;
 }
 
 export interface AboutBringingItAllTogetherPart1 {
@@ -1175,6 +1177,39 @@ export interface DocTitlesProductDocsPageTitleStyledContents {
 }
 
 export interface DocTitlesProductDocsPageTitleVariables {
+}
+
+export interface DocTitlesUserPortalDocsPageTitle {
+    args:             DocTitlesUserPortalDocsPageTitleArgs;
+    contentVariables: DocTitlesUserPortalDocsPageTitleContentVariables;
+    interpolations:   DocTitlesUserPortalDocsPageTitleInterpolations;
+    links:            DocTitlesUserPortalDocsPageTitleLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     DocTitlesUserPortalDocsPageTitleStyleClasses;
+    styledContents:   DocTitlesUserPortalDocsPageTitleStyledContents;
+    variables:        DocTitlesUserPortalDocsPageTitleVariables;
+}
+
+export interface DocTitlesUserPortalDocsPageTitleArgs {
+}
+
+export interface DocTitlesUserPortalDocsPageTitleContentVariables {
+}
+
+export interface DocTitlesUserPortalDocsPageTitleInterpolations {
+}
+
+export interface DocTitlesUserPortalDocsPageTitleLinks {
+}
+
+export interface DocTitlesUserPortalDocsPageTitleStyleClasses {
+}
+
+export interface DocTitlesUserPortalDocsPageTitleStyledContents {
+}
+
+export interface DocTitlesUserPortalDocsPageTitleVariables {
 }
 
 export interface DocsDocsGeneral {
@@ -2415,6 +2450,44 @@ export interface ProductDocsProductDocsIndexStyledContents {
 export interface ProductDocsProductDocsIndexVariables {
 }
 
+export interface ProductDocsUserPortalDocs {
+    args:             ProductDocsUserPortalDocsArgs;
+    contentVariables: ProductDocsUserPortalDocsContentVariables;
+    interpolations:   ProductDocsUserPortalDocsInterpolations;
+    links:            ProductDocsUserPortalDocsLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     ProductDocsUserPortalDocsStyleClasses;
+    styledContents:   ProductDocsUserPortalDocsStyledContents;
+    variables:        ProductDocsUserPortalDocsVariables;
+}
+
+export interface ProductDocsUserPortalDocsArgs {
+    docSearch: string;
+    mainTitle: string;
+}
+
+export interface ProductDocsUserPortalDocsContentVariables {
+    docSearch: string;
+}
+
+export interface ProductDocsUserPortalDocsInterpolations {
+}
+
+export interface ProductDocsUserPortalDocsLinks {
+}
+
+export interface ProductDocsUserPortalDocsStyleClasses {
+    mainTitle: string;
+}
+
+export interface ProductDocsUserPortalDocsStyledContents {
+    "main title": StyledContent;
+}
+
+export interface ProductDocsUserPortalDocsVariables {
+}
+
 export interface PhraseKeyDebugInfo {
     "about.bringing_it_all_together_part_1":              DebugInfo;
     "about.bringing_it_all_together_title":               DebugInfo;
@@ -2447,6 +2520,7 @@ export interface PhraseKeyDebugInfo {
     "doc_titles.docs_page_title":                         DebugInfo;
     "doc_titles.product_and_terminology_docs_page_title": DebugInfo;
     "doc_titles.product_docs_page_title":                 DebugInfo;
+    "doc_titles.user_portal_docs_page_title":             DebugInfo;
     "docs.docs_general":                                  DebugInfo;
     "docs.icons_plugin_description":                      DebugInfo;
     "docs.palette_plugin_description":                    DebugInfo;
@@ -2480,6 +2554,7 @@ export interface PhraseKeyDebugInfo {
     "product_docs.product_and_terminology_overview":      DebugInfo;
     "product_docs.product_docs_general":                  DebugInfo;
     "product_docs.product_docs_index":                    DebugInfo;
+    "product_docs.user_portal_docs":                      DebugInfo;
 }
 
 export interface DebugInfo {

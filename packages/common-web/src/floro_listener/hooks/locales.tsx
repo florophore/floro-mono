@@ -134,8 +134,7 @@ export const useRichText = <
   const debugOptions = opts?.[2] ?? {
     debugHex: "#FF0000" as `#${string}`,
     debugTextColorHex: "white",
-
-  }
+  };
 
   const floroText = useFloroText();
   const isDebugMode = useIsDebugMode();

@@ -1,5 +1,4 @@
 import MainHome from './pages/main/Home';
-import MainUserHome from './pages/main/UserHome';
 import AdminHome from './pages/admin/Home';
 import About from './pages/common/About';
 import HowItWorksPart1 from './pages/common/HowItWorksPart1';
@@ -11,6 +10,7 @@ import CredentialAuthCallback from './pages/common/authentication/CredentialAuth
 import DocsLanding from './pages/common/docs/DocsLanding';
 import ProductDocsLanding from './pages/common/docs/product/ProductDocsLanding';
 import ProductAndTerminologyDocs from './pages/common/docs/product/pages/ProductAndTerminologyDocs';
+import UserPortalDocs from './pages/common/docs/product/pages/UserPortalDocs';
 
 import { IsomorphicRoute, sortRoutes } from './ssr/routing-helpers';
 import AppProxyPage from './pages/common/app_proxy/AppProxyPage';
@@ -48,6 +48,10 @@ const CommonRouting: IsomorphicRoute[] = [
     component: () => ProductAndTerminologyDocs,
   },
   {
+    path: "/docs/product/user-portal",
+    component: () => UserPortalDocs,
+  },
+  {
     path: "/app-proxy/*",
     component: () => AppProxyPage
   }
@@ -63,11 +67,7 @@ export const MainRoutes: IsomorphicRoute[] = sortRoutes([
     component: () => MainHome,
   },
   {
-    path: "/home",
-    component: () => MainUserHome
-  },
-  {
-    path: "/credential/verifiy",
+    path: "/credential/verify",
     component: () => CredentialVerifyCallback,
   },
   {

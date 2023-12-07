@@ -15,6 +15,96 @@
   },
   "localizedPhraseKeys": {
     "EN": {
+      "product_docs.user_portal_docs": {
+        "phraseKey": "product_docs.user_portal_docs",
+        "variables": {},
+        "contentVariables": {
+          "docSearch": "string"
+        },
+        "styleClasses": {
+          "mainTitle": "string"
+        },
+        "args": {
+          "docSearch": "string",
+          "mainTitle": "string"
+        },
+        "links": {},
+        "interpolations": {},
+        "styledContents": {
+          "main title": {
+            "displayValue": [
+              {
+                "children": [],
+                "content": "User portal walkthrough",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              }
+            ],
+            "styleClass": "mainTitle"
+          }
+        },
+        "phrase": [
+          {
+            "children": [],
+            "content": "{main title}",
+            "type": "styled-content",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{docSearch}",
+            "type": "content-variable",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
       "product_docs.product_and_terminology_overview": {
         "phraseKey": "product_docs.product_and_terminology_overview",
         "variables": {},
@@ -3571,7 +3661,7 @@
           },
           {
             "children": [],
-            "content": " as being nearly synonymous with uploading. Remember, all the changes I make reside on my computer alone. They won't automatically sync to a cloud or anything like that. When I'm ready for the change on my branch to be reviewed by someone else, I can push my branch to the ",
+            "content": " as being nearly synonymous with uploading. Remember, all the changes I make reside on my computer alone. They won't automatically sync to a cloud or anything like that. When I'm ready for the changes in my branch to be reviewed by someone else, I can push my branch to the ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -6171,7 +6261,7 @@
           },
           {
             "children": [],
-            "content": " to merge locally or in the case of a merge request, pressing ",
+            "content": " to merge locally or in the case of a merge request, press ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -6327,7 +6417,20 @@
           },
           {
             "children": [],
-            "content": "merge conflicts",
+            "content": "merge conflict",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": true,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "s",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -6379,7 +6482,33 @@
           },
           {
             "children": [],
-            "content": "Sometimes we won't be able to merge our changes without resolving a conflict. Floro will warn us when there is a conflict. A conflict occurs when two ",
+            "content": "Sometimes we won't be able to merge our changes without resolving a conflict. ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " will warn us when there is a conflict. A conflict occurs when two ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -6444,11 +6573,50 @@
           },
           {
             "children": [],
-            "content": " branch second, would have to reconcile the conflict between the two paragraphs. We wouldn't be able to merge a merge request without addressing the merge conflicts locally first. Remote ",
+            "content": " branch second, would have to reconcile the conflict between the two paragraphs. We wouldn't be able to merge a merge request without addressing the ",
             "type": "text",
             "styles": {
               "isBold": false,
               "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "merge conflict",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "s locally first. ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Remote ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
               "isUnderlined": false,
               "isStrikethrough": false,
               "isSuperscript": false,
@@ -6461,7 +6629,7 @@
             "type": "text",
             "styles": {
               "isBold": false,
-              "isItalic": false,
+              "isItalic": true,
               "isUnderlined": false,
               "isStrikethrough": false,
               "isSuperscript": false,
@@ -6474,7 +6642,7 @@
             "type": "text",
             "styles": {
               "isBold": false,
-              "isItalic": false,
+              "isItalic": true,
               "isUnderlined": false,
               "isStrikethrough": false,
               "isSuperscript": false,
@@ -6509,7 +6677,33 @@
           },
           {
             "children": [],
-            "content": "When we need to address a merge conflict we have to pull down the ",
+            "content": "When we need to address a ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "merge conflict",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " we have to pull down the ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -7770,6 +7964,31 @@
             ],
             "content": "",
             "type": "ul",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "doc_titles.user_portal_docs_page_title": {
+        "phraseKey": "doc_titles.user_portal_docs_page_title",
+        "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
+        "links": {},
+        "interpolations": {},
+        "styledContents": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "user portal",
+            "type": "text",
             "styles": {
               "isBold": false,
               "isItalic": false,
@@ -30663,6 +30882,96 @@
       }
     },
     "ZH": {
+      "product_docs.user_portal_docs": {
+        "phraseKey": "product_docs.user_portal_docs",
+        "variables": {},
+        "contentVariables": {
+          "docSearch": "string"
+        },
+        "styleClasses": {
+          "mainTitle": "string"
+        },
+        "args": {
+          "docSearch": "string",
+          "mainTitle": "string"
+        },
+        "links": {},
+        "interpolations": {},
+        "styledContents": {
+          "main title": {
+            "displayValue": [
+              {
+                "children": [],
+                "content": "User portal walkthrough",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              }
+            ],
+            "styleClass": "mainTitle"
+          }
+        },
+        "phrase": [
+          {
+            "children": [],
+            "content": "{main title}",
+            "type": "styled-content",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{docSearch}",
+            "type": "content-variable",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
       "product_docs.product_and_terminology_overview": {
         "phraseKey": "product_docs.product_and_terminology_overview",
         "variables": {},
@@ -34219,7 +34528,7 @@
           },
           {
             "children": [],
-            "content": " as being nearly synonymous with uploading. Remember, all the changes I make reside on my computer alone. They won't automatically sync to a cloud or anything like that. When I'm ready for the change on my branch to be reviewed by someone else, I can push my branch to the ",
+            "content": " as being nearly synonymous with uploading. Remember, all the changes I make reside on my computer alone. They won't automatically sync to a cloud or anything like that. When I'm ready for the changes in my branch to be reviewed by someone else, I can push my branch to the ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -36819,7 +37128,7 @@
           },
           {
             "children": [],
-            "content": " to merge locally or in the case of a merge request, pressing ",
+            "content": " to merge locally or in the case of a merge request, press ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -36975,7 +37284,20 @@
           },
           {
             "children": [],
-            "content": "merge conflicts",
+            "content": "merge conflict",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": true,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "s",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -37027,7 +37349,33 @@
           },
           {
             "children": [],
-            "content": "Sometimes we won't be able to merge our changes without resolving a conflict. Floro will warn us when there is a conflict. A conflict occurs when two ",
+            "content": "Sometimes we won't be able to merge our changes without resolving a conflict. ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " will warn us when there is a conflict. A conflict occurs when two ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -37092,11 +37440,50 @@
           },
           {
             "children": [],
-            "content": " branch second, would have to reconcile the conflict between the two paragraphs. We wouldn't be able to merge a merge request without addressing the merge conflicts locally first. Remote ",
+            "content": " branch second, would have to reconcile the conflict between the two paragraphs. We wouldn't be able to merge a merge request without addressing the ",
             "type": "text",
             "styles": {
               "isBold": false,
               "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "merge conflict",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "s locally first. ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Remote ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
               "isUnderlined": false,
               "isStrikethrough": false,
               "isSuperscript": false,
@@ -37109,7 +37496,7 @@
             "type": "text",
             "styles": {
               "isBold": false,
-              "isItalic": false,
+              "isItalic": true,
               "isUnderlined": false,
               "isStrikethrough": false,
               "isSuperscript": false,
@@ -37122,7 +37509,7 @@
             "type": "text",
             "styles": {
               "isBold": false,
-              "isItalic": false,
+              "isItalic": true,
               "isUnderlined": false,
               "isStrikethrough": false,
               "isSuperscript": false,
@@ -37157,7 +37544,33 @@
           },
           {
             "children": [],
-            "content": "When we need to address a merge conflict we have to pull down the ",
+            "content": "When we need to address a ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "merge conflict",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " we have to pull down the ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -38418,6 +38831,31 @@
             ],
             "content": "",
             "type": "ul",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "doc_titles.user_portal_docs_page_title": {
+        "phraseKey": "doc_titles.user_portal_docs_page_title",
+        "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
+        "links": {},
+        "interpolations": {},
+        "styledContents": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "user portal",
+            "type": "text",
             "styles": {
               "isBold": false,
               "isItalic": false,
@@ -59531,6 +59969,10 @@
     }
   },
   "phraseKeyDebugInfo": {
+    "product_docs.user_portal_docs": {
+      "groupName": "Product Docs",
+      "phraseKey": "user portal docs"
+    },
     "product_docs.product_and_terminology_overview": {
       "groupName": "Product Docs",
       "phraseKey": "product and terminology overview"
@@ -59542,6 +59984,10 @@
     "product_docs.product_docs_index": {
       "groupName": "Product Docs",
       "phraseKey": "product docs index"
+    },
+    "doc_titles.user_portal_docs_page_title": {
+      "groupName": "Doc Titles",
+      "phraseKey": "user portal docs page title"
     },
     "doc_titles.product_and_terminology_docs_page_title": {
       "groupName": "Doc Titles",
