@@ -5703,7 +5703,7 @@
           },
           {
             "children": [],
-            "content": "The only interaction you should have with ",
+            "content": "The only interaction you should have with the ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -5729,7 +5729,7 @@
           },
           {
             "children": [],
-            "content": " ",
+            "content": " branch ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -5785,7 +5785,7 @@
             "type": "text",
             "styles": {
               "isBold": false,
-              "isItalic": false,
+              "isItalic": true,
               "isUnderlined": false,
               "isStrikethrough": false,
               "isSuperscript": false,
@@ -5833,7 +5833,33 @@
           },
           {
             "children": [],
-            "content": "As rule of thumb, you pull the ",
+            "content": "As rule of thumb, you ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "pull",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " the ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -5872,7 +5898,59 @@
           },
           {
             "children": [],
-            "content": "(default) branch and push your feature branch. There are some exceptions and a few other common interactions we will discuss further in the documentation.",
+            "content": "(default) branch and ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "push",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " your feature ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "branches",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ". There are some exceptions and a few other common interactions we will discuss later in the documentation.",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -6158,6 +6236,149 @@
           },
           {
             "children": [],
+            "content": "Merging can occur both locally and remotely. Usually, when we merge locally, we are merging the ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "main",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "branch (or the base branch) into our feature-branch.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "What are ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "merge conflicts",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": true,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "?",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
             "content": "Sometimes we won't be able to merge our changes without resolving a conflict. Floro will warn us when there is a conflict. A conflict occurs when two ",
             "type": "text",
             "styles": {
@@ -6250,84 +6471,6 @@
           {
             "children": [],
             "content": " must be conflict-free in order to be merged.",
-            "type": "text",
-            "styles": {
-              "isBold": false,
-              "isItalic": false,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": "\n",
-            "type": "text",
-            "styles": {
-              "isBold": false,
-              "isItalic": false,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": "\n",
-            "type": "text",
-            "styles": {
-              "isBold": false,
-              "isItalic": false,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": "Merging can occur both locally and remotely. Usually, when we merge locally, we are merging the ",
-            "type": "text",
-            "styles": {
-              "isBold": false,
-              "isItalic": false,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": "main",
-            "type": "text",
-            "styles": {
-              "isBold": false,
-              "isItalic": true,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": " ",
-            "type": "text",
-            "styles": {
-              "isBold": false,
-              "isItalic": true,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": "branch (or the base branch) into our feature-branch.",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -6548,7 +6691,7 @@
           },
           {
             "children": [],
-            "content": " into our feature branch.",
+            "content": " into our feature branch. From there we will be able to resolve the conflict and push up our resolved changes.",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -36208,7 +36351,7 @@
           },
           {
             "children": [],
-            "content": "The only interaction you should have with ",
+            "content": "The only interaction you should have with the ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -36234,7 +36377,7 @@
           },
           {
             "children": [],
-            "content": " ",
+            "content": " branch ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -36290,7 +36433,7 @@
             "type": "text",
             "styles": {
               "isBold": false,
-              "isItalic": false,
+              "isItalic": true,
               "isUnderlined": false,
               "isStrikethrough": false,
               "isSuperscript": false,
@@ -36338,7 +36481,33 @@
           },
           {
             "children": [],
-            "content": "As rule of thumb, you pull the ",
+            "content": "As rule of thumb, you ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "pull",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " the ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -36377,7 +36546,59 @@
           },
           {
             "children": [],
-            "content": "(default) branch and push your feature branch. There are some exceptions and a few other common interactions we will discuss further in the documentation.",
+            "content": "(default) branch and ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "push",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " your feature ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "branches",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ". There are some exceptions and a few other common interactions we will discuss later in the documentation.",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -36663,6 +36884,149 @@
           },
           {
             "children": [],
+            "content": "Merging can occur both locally and remotely. Usually, when we merge locally, we are merging the ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "main",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "branch (or the base branch) into our feature-branch.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "What are ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "merge conflicts",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": true,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "?",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
             "content": "Sometimes we won't be able to merge our changes without resolving a conflict. Floro will warn us when there is a conflict. A conflict occurs when two ",
             "type": "text",
             "styles": {
@@ -36755,84 +37119,6 @@
           {
             "children": [],
             "content": " must be conflict-free in order to be merged.",
-            "type": "text",
-            "styles": {
-              "isBold": false,
-              "isItalic": false,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": "\n",
-            "type": "text",
-            "styles": {
-              "isBold": false,
-              "isItalic": false,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": "\n",
-            "type": "text",
-            "styles": {
-              "isBold": false,
-              "isItalic": false,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": "Merging can occur both locally and remotely. Usually, when we merge locally, we are merging the ",
-            "type": "text",
-            "styles": {
-              "isBold": false,
-              "isItalic": false,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": "main",
-            "type": "text",
-            "styles": {
-              "isBold": false,
-              "isItalic": true,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": " ",
-            "type": "text",
-            "styles": {
-              "isBold": false,
-              "isItalic": true,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": "branch (or the base branch) into our feature-branch.",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -37053,7 +37339,7 @@
           },
           {
             "children": [],
-            "content": " into our feature branch.",
+            "content": " into our feature branch. From there we will be able to resolve the conflict and push up our resolved changes.",
             "type": "text",
             "styles": {
               "isBold": false,
