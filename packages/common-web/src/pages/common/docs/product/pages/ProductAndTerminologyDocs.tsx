@@ -107,7 +107,7 @@ const ScreenshotImg = styled.img`
 function ProductAndTerminologyDocs() {
   const theme = useTheme();
   // change this
-  const docsMetaTitle = usePlainText("meta_tags.product_docs");
+  const docsMetaTitle = usePlainText("meta_tags.product_docs_and_terminology");
 
   const renderLinkNode = useCallback(
     (

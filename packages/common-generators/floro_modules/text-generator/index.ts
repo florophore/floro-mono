@@ -98,8 +98,10 @@ export interface PhraseKeys {
     "meta_tags.about":                                    MetaTagsAbout;
     "meta_tags.docs":                                     MetaTagsDocs;
     "meta_tags.how_it_works":                             MetaTagsHowItWorks;
+    "meta_tags.org_portal_docs":                          MetaTagsOrgPortalDocs;
     "meta_tags.product_docs":                             MetaTagsProductDocs;
     "meta_tags.product_docs_and_terminology":             MetaTagsProductDocsAndTerminology;
+    "meta_tags.user_portal_docs":                         MetaTagsUserPortalDocs;
     "product_docs.org_portal_docs":                       ProductDocsOrgPortalDocs;
     "product_docs.product_and_terminology_overview":      ProductDocsProductAndTerminologyOverview;
     "product_docs.product_docs_general":                  ProductDocsProductDocsGeneral;
@@ -2282,6 +2284,39 @@ export interface MetaTagsHowItWorksStyledContents {
 export interface MetaTagsHowItWorksVariables {
 }
 
+export interface MetaTagsOrgPortalDocs {
+    args:             MetaTagsOrgPortalDocsArgs;
+    contentVariables: MetaTagsOrgPortalDocsContentVariables;
+    interpolations:   MetaTagsOrgPortalDocsInterpolations;
+    links:            MetaTagsOrgPortalDocsLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     MetaTagsOrgPortalDocsStyleClasses;
+    styledContents:   MetaTagsOrgPortalDocsStyledContents;
+    variables:        MetaTagsOrgPortalDocsVariables;
+}
+
+export interface MetaTagsOrgPortalDocsArgs {
+}
+
+export interface MetaTagsOrgPortalDocsContentVariables {
+}
+
+export interface MetaTagsOrgPortalDocsInterpolations {
+}
+
+export interface MetaTagsOrgPortalDocsLinks {
+}
+
+export interface MetaTagsOrgPortalDocsStyleClasses {
+}
+
+export interface MetaTagsOrgPortalDocsStyledContents {
+}
+
+export interface MetaTagsOrgPortalDocsVariables {
+}
+
 export interface MetaTagsProductDocs {
     args:             MetaTagsProductDocsArgs;
     contentVariables: MetaTagsProductDocsContentVariables;
@@ -2348,6 +2383,39 @@ export interface MetaTagsProductDocsAndTerminologyStyledContents {
 export interface MetaTagsProductDocsAndTerminologyVariables {
 }
 
+export interface MetaTagsUserPortalDocs {
+    args:             MetaTagsUserPortalDocsArgs;
+    contentVariables: MetaTagsUserPortalDocsContentVariables;
+    interpolations:   MetaTagsUserPortalDocsInterpolations;
+    links:            MetaTagsUserPortalDocsLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     MetaTagsUserPortalDocsStyleClasses;
+    styledContents:   MetaTagsUserPortalDocsStyledContents;
+    variables:        MetaTagsUserPortalDocsVariables;
+}
+
+export interface MetaTagsUserPortalDocsArgs {
+}
+
+export interface MetaTagsUserPortalDocsContentVariables {
+}
+
+export interface MetaTagsUserPortalDocsInterpolations {
+}
+
+export interface MetaTagsUserPortalDocsLinks {
+}
+
+export interface MetaTagsUserPortalDocsStyleClasses {
+}
+
+export interface MetaTagsUserPortalDocsStyledContents {
+}
+
+export interface MetaTagsUserPortalDocsVariables {
+}
+
 export interface ProductDocsOrgPortalDocs {
     args:             ProductDocsOrgPortalDocsArgs;
     contentVariables: ProductDocsOrgPortalDocsContentVariables;
@@ -2361,19 +2429,27 @@ export interface ProductDocsOrgPortalDocs {
 }
 
 export interface ProductDocsOrgPortalDocsArgs {
-    docSearch: string;
-    mainTitle: string;
+    createOrgRepo: string;
+    docSearch:     string;
+    mainTitle:     string;
+    orgMembersImg: string;
+    orgPortalImg:  string;
+    rolesImg:      string;
 }
 
 export interface ProductDocsOrgPortalDocsContentVariables {
-    docSearch: string;
+    createOrgRepo: string;
+    docSearch:     string;
+    orgMembersImg: string;
+    orgPortalImg:  string;
+    rolesImg:      string;
 }
 
 export interface ProductDocsOrgPortalDocsInterpolations {
 }
 
 export interface ProductDocsOrgPortalDocsLinks {
-    "navigating the organization portal": Link;
+    "navigating local repositories": Link;
 }
 
 export interface ProductDocsOrgPortalDocsStyleClasses {
@@ -2511,9 +2587,10 @@ export interface ProductDocsProductDocsIndexInterpolations {
 }
 
 export interface ProductDocsProductDocsIndexLinks {
-    "navigating the org portal":        Link;
-    "navigating the user portal":       Link;
-    "product and terminology overview": Link;
+    "learn how local repositories work": Link;
+    "navigating the org portal":         Link;
+    "navigating the user portal":        Link;
+    "product and terminology overview":  Link;
 }
 
 export interface ProductDocsProductDocsIndexStyleClasses {
@@ -2640,8 +2717,10 @@ export interface PhraseKeyDebugInfo {
     "meta_tags.about":                                    DebugInfo;
     "meta_tags.docs":                                     DebugInfo;
     "meta_tags.how_it_works":                             DebugInfo;
+    "meta_tags.org_portal_docs":                          DebugInfo;
     "meta_tags.product_docs":                             DebugInfo;
     "meta_tags.product_docs_and_terminology":             DebugInfo;
+    "meta_tags.user_portal_docs":                         DebugInfo;
     "product_docs.org_portal_docs":                       DebugInfo;
     "product_docs.product_and_terminology_overview":      DebugInfo;
     "product_docs.product_docs_general":                  DebugInfo;

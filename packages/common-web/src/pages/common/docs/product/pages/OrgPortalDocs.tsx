@@ -93,7 +93,7 @@ const TitleSpan = styled.span`
 function OrgPortalDocs() {
   const theme = useTheme();
   // change this
-  const docsMetaTitle = usePlainText("meta_tags.product_docs");
+  const docsMetaTitle = usePlainText("meta_tags.org_portal_docs");
 
   const renderLinkNode = useCallback(
     (

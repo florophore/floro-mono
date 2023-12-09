@@ -102,7 +102,7 @@ const TitleSpan = styled.span`
 function UserPortalDocs() {
   const theme = useTheme();
   // change this
-  const docsMetaTitle = usePlainText("meta_tags.product_docs");
+  const docsMetaTitle = usePlainText("meta_tags.user_portal_docs");
 
   const renderLinkNode = useCallback(
     (
