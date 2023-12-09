@@ -186,13 +186,13 @@ const TextAppHeader = (props: Props) => {
     return true;
   }, [newId, phraseGroups]);
 
-  const onAppendNewGroup = useCallback(() => {
+  const onPrependNewGroup = useCallback(() => {
     if (!newId || !newGroupName || !canAddNewName || !phraseGroups) {
       return;
     }
     setPhraseGroups([
-      ...phraseGroups,
       { id: newId, name: newGroupName, phrases: [] },
+      ...phraseGroups,
     ]);
     setNewGroupName("");
   }, [newGroupName, newId, canAddNewName, phraseGroups]);
@@ -259,7 +259,7 @@ const TextAppHeader = (props: Props) => {
                   widthSize="wide"
                 />
                 <Button
-                  onClick={onAppendNewGroup}
+                  onClick={onPrependNewGroup}
                   style={{ marginTop: 14, marginLeft: 24 }}
                   label={"add group"}
                   bg={"orange"}

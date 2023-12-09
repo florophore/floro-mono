@@ -3533,47 +3533,92 @@ export function useFloroState<T>(query: string, defaultData?: T): [T|null, (t: T
   }, [obj, ctx.commandMode, query, stateId])
 
   const save = useCallback(() => {
-    if (ctx.currentPluginAppState.current && pluginName && getter && ctx.commandMode == "edit") {
+    if (
+      ctx.currentPluginAppState.current &&
+      pluginName &&
+      getter &&
+      ctx.commandMode == "edit"
+    ) {
       ctx.lastEditKey.current = query;
       ctx.lastEditStateId.current = stateId;
-      const next = updateObjectInStateMap({...ctx.currentPluginAppState.current}, query, getter) as SchemaRoot
+      const next = updateObjectInStateMap(
+        { ...ctx.currentPluginAppState.current },
+        query,
+        getter
+      ) as SchemaRoot;
       ctx.setPluginState({
         ...ctx.pluginState,
-        applicationState: next
+        applicationState: next,
       });
       ctx.currentPluginAppState.current = next;
       ctx.saveState(pluginName, ctx.applicationState);
     }
-  }, [query, pluginName, obj, ctx.pluginState, ctx.commandMode, getter, stateId]);
+  }, [
+    query,
+    pluginName,
+    obj,
+    ctx.saveState,
+    ctx.setPluginState,
+    ctx.pluginState,
+    ctx.applicationState,
+    ctx.commandMode,
+    getter,
+    stateId,
+  ]);
 
-  const set = useCallback((obj: T, doSave = true) => {
-    if (ctx.currentPluginAppState.current && pluginName && obj && ctx.commandMode == "edit") {
-      setter(obj);
-      ctx.lastEditKey.current = query;
-      ctx.lastEditStateId.current = stateId;
-      if (doSave) {
-        const next = updateObjectInStateMap({...ctx.currentPluginAppState.current}, query, obj) as SchemaRoot
-        ctx.setPluginState({
-          ...ctx.pluginState,
-          applicationState: next
-        });
-        ctx.currentPluginAppState.current = next;
-        ctx.saveState(pluginName, next);
-      } else {
-        return () => {
-          ctx.lastEditKey.current = query;
-          ctx.lastEditStateId.current = stateId;
-          const next = updateObjectInStateMap({...ctx.currentPluginAppState.current}, query, obj) as SchemaRoot
+  const set = useCallback(
+    (obj: T, doSave = true) => {
+      if (
+        ctx.currentPluginAppState.current &&
+        pluginName &&
+        obj &&
+        ctx.commandMode == "edit"
+      ) {
+        setter(obj);
+        ctx.lastEditKey.current = query;
+        ctx.lastEditStateId.current = stateId;
+        if (doSave) {
+          const next = updateObjectInStateMap(
+            { ...ctx.currentPluginAppState.current },
+            query,
+            obj
+          ) as SchemaRoot;
           ctx.setPluginState({
             ...ctx.pluginState,
-            applicationState: next
+            applicationState: next,
           });
           ctx.currentPluginAppState.current = next;
           ctx.saveState(pluginName, next);
+        } else {
+          return () => {
+            ctx.lastEditKey.current = query;
+            ctx.lastEditStateId.current = stateId;
+            const next = updateObjectInStateMap(
+              { ...ctx.currentPluginAppState.current },
+              query,
+              obj
+            ) as SchemaRoot;
+            ctx.setPluginState({
+              ...ctx.pluginState,
+              applicationState: next,
+            });
+            ctx.currentPluginAppState.current = next;
+            ctx.saveState(pluginName, next);
+          };
         }
       }
-    }
-  }, [query, ctx.saveState, ctx.setPluginState, obj, pluginName, ctx.pluginState, ctx.commandMode]);
+    },
+    [
+      query,
+      ctx.saveState,
+      ctx.setPluginState,
+      obj,
+      pluginName,
+      ctx.pluginState,
+      ctx.applicationState,
+      ctx.commandMode,
+    ]
+  );
   return [getter, set, save];
 };
 

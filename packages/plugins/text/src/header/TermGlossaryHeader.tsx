@@ -153,7 +153,7 @@ const TermGlossaryHeader = (props: Props) => {
     return true;
   }, [newId, terms]);
 
-  const onAppendNewGroup = useCallback(() => {
+  const onPrependNewTerm = useCallback(() => {
     if (!newId || !newTermName || !canAddNewName || !terms || !applicationState?.text.localeSettings.defaultLocaleRef) {
       return;
     }
@@ -161,7 +161,7 @@ const TermGlossaryHeader = (props: Props) => {
       id: applicationState?.text.localeSettings.defaultLocaleRef,
       termValue: newTermName
     }
-    setTerms([{ id: newId, name: newTermName, localizedTerms: [localizedTerm] }, ...terms]);
+    setTerms([...terms, { id: newId, name: newTermName, localizedTerms: [localizedTerm] }]);
     setNewTermName("");
   }, [newTermName, newId, canAddNewName, terms, applicationState?.text.localeSettings.defaultLocaleRef]);
 
@@ -223,7 +223,7 @@ const TermGlossaryHeader = (props: Props) => {
                   widthSize={"wide"}
                 />
                 <Button
-                  onClick={onAppendNewGroup}
+                  onClick={onPrependNewTerm}
                   style={{ marginTop: 14, marginLeft: 24 }}
                   label={"add term"}
                   bg={"orange"}

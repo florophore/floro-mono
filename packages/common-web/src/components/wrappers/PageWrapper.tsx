@@ -383,14 +383,16 @@ const PageWrapperComponent = (props: Props) => {
           opacity: isExpanded ? 1 : 0,
         }}
       >
-        <div style={{ marginTop: 24}}>
+        <div style={{ marginTop: 24 }}>
           <div>
             <Link to={"/about"}>
               <HeaderLinkText>{aboutText}</HeaderLinkText>
             </Link>
           </div>
           <div>
-            <HeaderLinkText>{docsText}</HeaderLinkText>
+            <Link to={"/docs"}>
+              <HeaderLinkText>{docsText}</HeaderLinkText>
+            </Link>
           </div>
           <div>
             <HeaderLinkText>{pricingText}</HeaderLinkText>
@@ -402,14 +404,21 @@ const PageWrapperComponent = (props: Props) => {
             <HeaderLinkText>{consultingText}</HeaderLinkText>
           </div>
         </div>
-        <Row style={{marginTop: 36}}>
-          <AppearanceText style={{ marginTop: -4, marginRight: 12}}>{appearanceText}</AppearanceText>
+        <Row style={{ marginTop: 36 }}>
+          <AppearanceText style={{ marginTop: -4, marginRight: 12 }}>
+            {appearanceText}
+          </AppearanceText>
           <ThemeSwitcher />
         </Row>
         <BottomContainer>
-            <Button style={{alignSelf: 'center'}} size="big" label={downloadText} bg={"orange"} />
+          <Button
+            style={{ alignSelf: "center" }}
+            size="big"
+            label={downloadText}
+            bg={"orange"}
+          />
         </BottomContainer>
-        <BottomContainer style={{ justifyContent: 'flex-end'}}>
+        <BottomContainer style={{ justifyContent: "flex-end" }}>
           <Footer>
             <div style={{ textAlign: "center" }}>
               <FooterText style={{ marginTop: 0 }}>
@@ -438,9 +447,7 @@ const PageWrapperComponent = (props: Props) => {
         </BottomContainer>
       </MobileDropDown>
       <MainScrollWrapper>
-        {props.isCentered && (
-          <MainContent>{props.children}</MainContent>
-        )}
+        {props.isCentered && <MainContent>{props.children}</MainContent>}
         {!props.isCentered && (
           <MainContentLeftOffset>{props.children}</MainContentLeftOffset>
         )}

@@ -189,6 +189,7 @@ function DocsSearch(props: Props) {
               : productPlaceholder
           }
           onTextChanged={setSearchValue}
+          showClear
         />
       </Row>
     </Container>

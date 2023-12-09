@@ -138,7 +138,7 @@ const LinkVariableList = (props: Props) => {
   }, [name, isNameTaken]);
 
   const onChangeName = useCallback((name) => {
-    setName(name);
+    setName(name.toLowerCase());
   },[]);
 
   const isEnabled = useMemo(() => {
@@ -226,7 +226,7 @@ const LinkVariableList = (props: Props) => {
       {isReOrderMode && commandMode == "edit" && (
         <Reorder.Group
           axis="y"
-          values={variables ?? []}
+          values={linkVariables ?? []}
           onReorder={onReOrderVariables}
           style={{listStyle: "none", margin: 0, padding: 0 }}
         >

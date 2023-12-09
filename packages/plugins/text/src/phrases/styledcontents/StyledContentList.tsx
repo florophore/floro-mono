@@ -138,7 +138,7 @@ const StyledContentsList = (props: Props) => {
   }, [name, isNameTaken]);
 
   const onChangeName = useCallback((name) => {
-    setName(name);
+    setName(name.toLowerCase());
   },[]);
 
   const isEnabled = useMemo(() => {

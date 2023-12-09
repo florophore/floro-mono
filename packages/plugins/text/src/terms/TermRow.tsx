@@ -253,6 +253,21 @@ const TermRow = (props: Props) => {
     setShowUpdate(false);
   }, []);
 
+  const [showContent, setShowContent] = useState(false);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setShowContent(true);
+    }, 100);
+    return () => {
+      clearTimeout(timeout);
+    }
+  }, []);
+
+  if (!showContent) {
+    return null;
+  }
+
   if (commandMode == "compare" && !hasIndications) {
     return null;
   }

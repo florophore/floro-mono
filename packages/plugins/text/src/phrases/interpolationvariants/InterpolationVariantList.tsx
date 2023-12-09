@@ -148,7 +148,7 @@ const InterpolationVariantsList = (props: Props) => {
   }, [name, isNameTaken]);
 
   const onChangeName = useCallback((name) => {
-    setName(name);
+    setName(name.toLowerCase());
   },[]);
 
   const isEnabled = useMemo(() => {
@@ -173,7 +173,7 @@ const InterpolationVariantsList = (props: Props) => {
     );
     setName("");
     setVariableRef(null);
-  }, [props.phrase.interpolationVariants, setInterpolationVariants, name, variableRef, isEnabled]);
+  }, [props.phrase.interpolationVariants, interpolationVariants, setInterpolationVariants, name, variableRef, isEnabled]);
 
   const onDragStart = useCallback(() => {
     setIsDragging(true);
@@ -191,14 +191,14 @@ const InterpolationVariantsList = (props: Props) => {
             setInterpolationVariants(values, false);
         }
     },
-    [setInterpolationVariants, variables]
+    [setInterpolationVariants, interpolationVariants]
   );
 
   const onRemoveInterpolationVariant = useCallback(
     (interpolationVariant: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>']) => {
         setInterpolationVariants(interpolationVariants?.filter(v => v?.name != interpolationVariant?.name) ?? []);
     },
-    [setInterpolationVariants, linkVariables]
+    [setInterpolationVariants, interpolationVariants]
   )
 
   const [isReOrderMode, setIsReOrderMode] = useState(false);
@@ -260,7 +260,7 @@ const InterpolationVariantsList = (props: Props) => {
       {isReOrderMode && commandMode == "edit" && (
         <Reorder.Group
           axis="y"
-          values={variables ?? []}
+          values={interpolationVariants ?? []}
           onReorder={onReOrderVariables}
           style={{listStyle: "none", margin: 0, padding: 0 }}
         >

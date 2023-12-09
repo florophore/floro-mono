@@ -17,26 +17,17 @@ import { usePlainText, useRichText } from "../../../../../floro_listener/hooks/l
 import DocSearch from "../../DocSearch";
 import { LinkChain } from "../../DocsLink";
 
-import UserPortalLight from "@floro/main/public/doc_images/product/user_portal/user_portal.light.png"
-import UserPortalDark from "@floro/main/public/doc_images/product/user_portal/user_portal.dark.png"
+import OrgPortalLight from "@floro/main/public/doc_images/product/org_portal/org_portal.light.png"
+import OrgPortalDark from "@floro/main/public/doc_images/product/org_portal/org_portal.dark.png"
 
-import LeftPanelLight from "@floro/main/public/doc_images/product/user_portal/left_panel.light.png"
-import LeftPanelDark from "@floro/main/public/doc_images/product/user_portal/left_panel.dark.png"
+import OrgMembersLight from "@floro/main/public/doc_images/product/org_portal/org_members.light.png"
+import OrgMembersDark from "@floro/main/public/doc_images/product/org_portal/org_members.dark.png"
 
-import PrivacySettingsLight from "@floro/main/public/doc_images/product/user_portal/privacy_settings.light.png"
-import PrivacySettingsDark from "@floro/main/public/doc_images/product/user_portal/privacy_settings.dark.png"
+import RolesLight from "@floro/main/public/doc_images/product/org_portal/roles.light.png"
+import RolesDark from "@floro/main/public/doc_images/product/org_portal/roles.dark.png"
 
-import NotificationsSettingsLight from "@floro/main/public/doc_images/product/user_portal/notifications_settings.light.png"
-import NotificationsSettingsDark from "@floro/main/public/doc_images/product/user_portal/notifications_setting.dark.png"
-
-import DeveloperSettingsLight from "@floro/main/public/doc_images/product/user_portal/developer_settings.light.png"
-import DeveloperSettingsDark from "@floro/main/public/doc_images/product/user_portal/developer_settings.dark.png"
-
-import CreateRepoLight from "@floro/main/public/doc_images/product/user_portal/create_repo.light.png"
-import CreateRepoDark from "@floro/main/public/doc_images/product/user_portal/create_repo.dark.png"
-
-import CreateOrgLight from "@floro/main/public/doc_images/product/user_portal/create_org.light.png"
-import CreateOrgDark from "@floro/main/public/doc_images/product/user_portal/create_org.dark.png"
+import CreateOrgRepoLight from "@floro/main/public/doc_images/product/org_portal/org_create_repo.light.png"
+import CreateOrgRepoDark from "@floro/main/public/doc_images/product/org_portal/org_create_repo.dark.png"
 
 const AboutWrapper = styled.div`
   width: 100%;
@@ -99,7 +90,7 @@ const TitleSpan = styled.span`
 `;
 
 
-function UserPortalDocs() {
+function OrgPortalDocs() {
   const theme = useTheme();
   // change this
   const docsMetaTitle = usePlainText("meta_tags.product_docs");
@@ -124,7 +115,35 @@ function UserPortalDocs() {
 
   const docsTitle = usePlainText("doc_titles.docs_page_title");
   const pageDocsTitle = usePlainText("doc_titles.product_docs_page_title");
-  const userPortalDocsTitle = usePlainText("doc_titles.user_portal_docs_page_title");
+  const orgPortalDocsTitle = usePlainText("doc_titles.org_portal_docs_page_title");
+
+  const orgPortalImg = useMemo(() => {
+    if (theme.name == "light") {
+      return OrgPortalLight;
+    }
+    return OrgPortalDark;
+  }, [theme.name]);
+
+  const orgMembersImg = useMemo(() => {
+    if (theme.name == "light") {
+      return OrgMembersLight;
+    }
+    return OrgMembersDark;
+  }, [theme.name]);
+
+  const rolesImg = useMemo(() => {
+    if (theme.name == "light") {
+      return RolesLight;
+    }
+    return RolesDark;
+  }, [theme.name]);
+
+  const createOrgRepoImg = useMemo(() => {
+    if (theme.name == "light") {
+      return CreateOrgRepoLight;
+    }
+    return CreateOrgRepoDark;
+  }, [theme.name]);
 
   const titleChain = useMemo((): LinkChain => {
     return {
@@ -135,9 +154,9 @@ function UserPortalDocs() {
         label: pageDocsTitle,
         value: '/docs/product',
         next: {
-          label: userPortalDocsTitle,
+          label: orgPortalDocsTitle,
           prefix: '/',
-          value: '/docs/product/user-portal',
+          value: '/docs/product/org-portal',
         }
       }
     }
@@ -151,92 +170,29 @@ function UserPortalDocs() {
   }, [renderLinkNode]);
 
 
-  const userPortalImg = useMemo(() => {
-    if (theme.name == "light") {
-      return UserPortalLight;
-    }
-    return UserPortalDark;
-  }, [theme.name])
-
-  const leftPanelImg = useMemo(() => {
-    if (theme.name == "light") {
-      return LeftPanelLight;
-    }
-    return LeftPanelDark;
-  }, [theme.name]);
-
-  const privacySettingsImg = useMemo(() => {
-    if (theme.name == "light") {
-      return PrivacySettingsLight;
-    }
-    return PrivacySettingsDark;
-  }, [theme.name]);
-
-  const notificationsSettingsImg = useMemo(() => {
-    if (theme.name == "light") {
-      return NotificationsSettingsLight;
-    }
-    return NotificationsSettingsDark;
-  }, [theme.name]);
-
-  const developerSettingsImg = useMemo(() => {
-    if (theme.name == "light") {
-      return DeveloperSettingsLight;
-    }
-    return DeveloperSettingsDark;
-  }, [theme.name]);
-
-  const createRepoImg = useMemo(() => {
-    if (theme.name == "light") {
-      return CreateRepoLight;
-    }
-    return CreateRepoDark;
-  }, [theme.name]);
-
-  const createOrgImg = useMemo(() => {
-    if (theme.name == "light") {
-      return CreateOrgLight;
-    }
-    return CreateOrgDark;
-  }, [theme.name]);
 
   const article = useRichText(
-    "product_docs.user_portal_docs",
+    "product_docs.org_portal_docs",
     {
       docSearch: <DocSearch docs="product" linkChain={titleChain} />,
-      userPortalImg: (
+      orgPortalImg: (
         <div>
-          <ScreenshotImg src={userPortalImg}/>
+          <ScreenshotImg src={orgPortalImg}/>
         </div>
       ),
-      leftPanelImg: (
-        <div style={{ display: 'flex', justifyContent: 'center', width: '100%'}}>
-          <ScreenshotImg style={{maxWidth: 200}} src={leftPanelImg}/>
+      orgMembersImg: (
+        <div>
+          <ScreenshotImg src={orgMembersImg}/>
         </div>
       ),
-      privacySettingsImg: (
+      rolesImg: (
         <div>
-          <ScreenshotImg src={privacySettingsImg}/>
+          <ScreenshotImg src={rolesImg}/>
         </div>
       ),
-      notificationSettingsImg: (
+      createOrgRepo: (
         <div>
-          <ScreenshotImg src={notificationsSettingsImg}/>
-        </div>
-      ),
-      developerSettingsImg: (
-        <div>
-          <ScreenshotImg src={developerSettingsImg}/>
-        </div>
-      ),
-      createRepo: (
-        <div>
-          <ScreenshotImg src={createRepoImg}/>
-        </div>
-      ),
-      createOrg: (
-        <div>
-          <ScreenshotImg src={createOrgImg}/>
+          <ScreenshotImg src={createOrgRepoImg}/>
         </div>
       ),
       mainTitle: function (
@@ -268,4 +224,4 @@ function UserPortalDocs() {
   );
 }
 
-export default UserPortalDocs;
+export default OrgPortalDocs;

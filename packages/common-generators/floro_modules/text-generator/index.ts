@@ -66,6 +66,7 @@ export interface PhraseKeys {
     "components.released_under_mit":                      ComponentsReleasedUnderMIT;
     "components.terms_of_service":                        ComponentsTermsOfService;
     "doc_titles.docs_page_title":                         DocTitlesDocsPageTitle;
+    "doc_titles.org_portal_docs_page_title":              DocTitlesOrgPortalDocsPageTitle;
     "doc_titles.product_and_terminology_docs_page_title": DocTitlesProductAndTerminologyDocsPageTitle;
     "doc_titles.product_docs_page_title":                 DocTitlesProductDocsPageTitle;
     "doc_titles.user_portal_docs_page_title":             DocTitlesUserPortalDocsPageTitle;
@@ -99,6 +100,7 @@ export interface PhraseKeys {
     "meta_tags.how_it_works":                             MetaTagsHowItWorks;
     "meta_tags.product_docs":                             MetaTagsProductDocs;
     "meta_tags.product_docs_and_terminology":             MetaTagsProductDocsAndTerminology;
+    "product_docs.org_portal_docs":                       ProductDocsOrgPortalDocs;
     "product_docs.product_and_terminology_overview":      ProductDocsProductAndTerminologyOverview;
     "product_docs.product_docs_general":                  ProductDocsProductDocsGeneral;
     "product_docs.product_docs_index":                    ProductDocsProductDocsIndex;
@@ -1111,6 +1113,39 @@ export interface DocTitlesDocsPageTitleStyledContents {
 }
 
 export interface DocTitlesDocsPageTitleVariables {
+}
+
+export interface DocTitlesOrgPortalDocsPageTitle {
+    args:             DocTitlesOrgPortalDocsPageTitleArgs;
+    contentVariables: DocTitlesOrgPortalDocsPageTitleContentVariables;
+    interpolations:   DocTitlesOrgPortalDocsPageTitleInterpolations;
+    links:            DocTitlesOrgPortalDocsPageTitleLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     DocTitlesOrgPortalDocsPageTitleStyleClasses;
+    styledContents:   DocTitlesOrgPortalDocsPageTitleStyledContents;
+    variables:        DocTitlesOrgPortalDocsPageTitleVariables;
+}
+
+export interface DocTitlesOrgPortalDocsPageTitleArgs {
+}
+
+export interface DocTitlesOrgPortalDocsPageTitleContentVariables {
+}
+
+export interface DocTitlesOrgPortalDocsPageTitleInterpolations {
+}
+
+export interface DocTitlesOrgPortalDocsPageTitleLinks {
+}
+
+export interface DocTitlesOrgPortalDocsPageTitleStyleClasses {
+}
+
+export interface DocTitlesOrgPortalDocsPageTitleStyledContents {
+}
+
+export interface DocTitlesOrgPortalDocsPageTitleVariables {
 }
 
 export interface DocTitlesProductAndTerminologyDocsPageTitle {
@@ -2313,6 +2348,45 @@ export interface MetaTagsProductDocsAndTerminologyStyledContents {
 export interface MetaTagsProductDocsAndTerminologyVariables {
 }
 
+export interface ProductDocsOrgPortalDocs {
+    args:             ProductDocsOrgPortalDocsArgs;
+    contentVariables: ProductDocsOrgPortalDocsContentVariables;
+    interpolations:   ProductDocsOrgPortalDocsInterpolations;
+    links:            ProductDocsOrgPortalDocsLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     ProductDocsOrgPortalDocsStyleClasses;
+    styledContents:   ProductDocsOrgPortalDocsStyledContents;
+    variables:        ProductDocsOrgPortalDocsVariables;
+}
+
+export interface ProductDocsOrgPortalDocsArgs {
+    docSearch: string;
+    mainTitle: string;
+}
+
+export interface ProductDocsOrgPortalDocsContentVariables {
+    docSearch: string;
+}
+
+export interface ProductDocsOrgPortalDocsInterpolations {
+}
+
+export interface ProductDocsOrgPortalDocsLinks {
+    "navigating the organization portal": Link;
+}
+
+export interface ProductDocsOrgPortalDocsStyleClasses {
+    mainTitle: string;
+}
+
+export interface ProductDocsOrgPortalDocsStyledContents {
+    "main title": StyledContent;
+}
+
+export interface ProductDocsOrgPortalDocsVariables {
+}
+
 export interface ProductDocsProductAndTerminologyOverview {
     args:             ProductDocsProductAndTerminologyOverviewArgs;
     contentVariables: ProductDocsProductAndTerminologyOverviewContentVariables;
@@ -2437,6 +2511,7 @@ export interface ProductDocsProductDocsIndexInterpolations {
 }
 
 export interface ProductDocsProductDocsIndexLinks {
+    "navigating the org portal":        Link;
     "navigating the user portal":       Link;
     "product and terminology overview": Link;
 }
@@ -2463,18 +2538,33 @@ export interface ProductDocsUserPortalDocs {
 }
 
 export interface ProductDocsUserPortalDocsArgs {
-    docSearch: string;
-    mainTitle: string;
+    createOrg:               string;
+    createRepo:              string;
+    developerSettingsImg:    string;
+    docSearch:               string;
+    leftPanelImg:            string;
+    mainTitle:               string;
+    notificationSettingsImg: string;
+    privacySettingsImg:      string;
+    userPortalImg:           string;
 }
 
 export interface ProductDocsUserPortalDocsContentVariables {
-    docSearch: string;
+    createOrg:               string;
+    createRepo:              string;
+    developerSettingsImg:    string;
+    docSearch:               string;
+    leftPanelImg:            string;
+    notificationSettingsImg: string;
+    privacySettingsImg:      string;
+    userPortalImg:           string;
 }
 
 export interface ProductDocsUserPortalDocsInterpolations {
 }
 
 export interface ProductDocsUserPortalDocsLinks {
+    "navigating the organization portal": Link;
 }
 
 export interface ProductDocsUserPortalDocsStyleClasses {
@@ -2518,6 +2608,7 @@ export interface PhraseKeyDebugInfo {
     "components.released_under_mit":                      DebugInfo;
     "components.terms_of_service":                        DebugInfo;
     "doc_titles.docs_page_title":                         DebugInfo;
+    "doc_titles.org_portal_docs_page_title":              DebugInfo;
     "doc_titles.product_and_terminology_docs_page_title": DebugInfo;
     "doc_titles.product_docs_page_title":                 DebugInfo;
     "doc_titles.user_portal_docs_page_title":             DebugInfo;
@@ -2551,6 +2642,7 @@ export interface PhraseKeyDebugInfo {
     "meta_tags.how_it_works":                             DebugInfo;
     "meta_tags.product_docs":                             DebugInfo;
     "meta_tags.product_docs_and_terminology":             DebugInfo;
+    "product_docs.org_portal_docs":                       DebugInfo;
     "product_docs.product_and_terminology_overview":      DebugInfo;
     "product_docs.product_docs_general":                  DebugInfo;
     "product_docs.product_docs_index":                    DebugInfo;
