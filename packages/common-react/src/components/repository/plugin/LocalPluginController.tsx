@@ -32,6 +32,7 @@ interface Packet {
   index: number;
   totalPackets: number;
   pluginName: string;
+  command?: string;
 }
 
 const MAX_DATA_SIZE = 10_000;
@@ -460,10 +461,17 @@ const LocalPluginController = (props: Props) => {
       if (typeof data == "string") {
         return;
       }
+      if (data.command == "abort") {
+        if (data.id != undefined && incoming[data.id]) {
+          delete incoming[data.id];
+        }
+        return;
+      }
       if (!incoming[data.id]) {
         incoming[data.id] = {
           counter: 0,
           data: new Array(data.totalPackets + 1),
+          command: data.command
         };
       }
       incoming[data.id].data[data.index] = data.chunk;
@@ -480,11 +488,6 @@ const LocalPluginController = (props: Props) => {
           clientUpdateCounter.current = id;
           if (props.apiResponse.repoState?.commandMode == "edit") {
             onUpdateState(state?.data, id, data?.pluginName);
-            //updatePluginState.mutate({
-            //  state: state?.data,
-            //  id,
-            //  pluginName: data?.pluginName,
-            //});
           }
         }
         if (id && state.command == "update-copy") {

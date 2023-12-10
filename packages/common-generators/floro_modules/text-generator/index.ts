@@ -66,6 +66,7 @@ export interface PhraseKeys {
     "components.released_under_mit":                      ComponentsReleasedUnderMIT;
     "components.terms_of_service":                        ComponentsTermsOfService;
     "doc_titles.docs_page_title":                         DocTitlesDocsPageTitle;
+    "doc_titles.local_repositories_docs_page_title":      DocTitlesLocalRepositoriesDocsPageTitle;
     "doc_titles.org_portal_docs_page_title":              DocTitlesOrgPortalDocsPageTitle;
     "doc_titles.product_and_terminology_docs_page_title": DocTitlesProductAndTerminologyDocsPageTitle;
     "doc_titles.product_docs_page_title":                 DocTitlesProductDocsPageTitle;
@@ -75,12 +76,14 @@ export interface PhraseKeys {
     "docs.palette_plugin_description":                    DocsPalettePluginDescription;
     "docs.search_developer_docs":                         DocsSearchDeveloperDocs;
     "docs.search_product_docs":                           DocsSearchProductDocs;
+    "docs.search_product_docs_last_section":              DocsSearchProductDocsLastSection;
     "docs.search_product_docs_page":                      DocsSearchProductDocsPage;
     "docs.text_plugin_description":                       DocsTextPluginDescription;
     "docs.theme_plugin_description":                      DocsThemePluginDescription;
     "front_page.appearance":                              FrontPageAppearance;
     "front_page.download_desktop_client":                 FrontPageDownloadDesktopClient;
     "front_page.get_help_and_contribute":                 FrontPageGetHelpAndContribute;
+    "front_page.install_the_chrome_extension":            FrontPageInstallTheChromeExtension;
     "front_page.install_the_cli":                         FrontPageInstallTheCLI;
     "front_page.nav_about":                               FrontPageNavAbout;
     "front_page.nav_consulting":                          FrontPageNavConsulting;
@@ -98,10 +101,12 @@ export interface PhraseKeys {
     "meta_tags.about":                                    MetaTagsAbout;
     "meta_tags.docs":                                     MetaTagsDocs;
     "meta_tags.how_it_works":                             MetaTagsHowItWorks;
+    "meta_tags.local_repository_docs":                    MetaTagsLocalRepositoryDocs;
     "meta_tags.org_portal_docs":                          MetaTagsOrgPortalDocs;
     "meta_tags.product_docs":                             MetaTagsProductDocs;
     "meta_tags.product_docs_and_terminology":             MetaTagsProductDocsAndTerminology;
     "meta_tags.user_portal_docs":                         MetaTagsUserPortalDocs;
+    "product_docs.local_repository_docs":                 ProductDocsLocalRepositoryDocs;
     "product_docs.org_portal_docs":                       ProductDocsOrgPortalDocs;
     "product_docs.product_and_terminology_overview":      ProductDocsProductAndTerminologyOverview;
     "product_docs.product_docs_general":                  ProductDocsProductDocsGeneral;
@@ -1117,6 +1122,39 @@ export interface DocTitlesDocsPageTitleStyledContents {
 export interface DocTitlesDocsPageTitleVariables {
 }
 
+export interface DocTitlesLocalRepositoriesDocsPageTitle {
+    args:             DocTitlesLocalRepositoriesDocsPageTitleArgs;
+    contentVariables: DocTitlesLocalRepositoriesDocsPageTitleContentVariables;
+    interpolations:   DocTitlesLocalRepositoriesDocsPageTitleInterpolations;
+    links:            DocTitlesLocalRepositoriesDocsPageTitleLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     DocTitlesLocalRepositoriesDocsPageTitleStyleClasses;
+    styledContents:   DocTitlesLocalRepositoriesDocsPageTitleStyledContents;
+    variables:        DocTitlesLocalRepositoriesDocsPageTitleVariables;
+}
+
+export interface DocTitlesLocalRepositoriesDocsPageTitleArgs {
+}
+
+export interface DocTitlesLocalRepositoriesDocsPageTitleContentVariables {
+}
+
+export interface DocTitlesLocalRepositoriesDocsPageTitleInterpolations {
+}
+
+export interface DocTitlesLocalRepositoriesDocsPageTitleLinks {
+}
+
+export interface DocTitlesLocalRepositoriesDocsPageTitleStyleClasses {
+}
+
+export interface DocTitlesLocalRepositoriesDocsPageTitleStyledContents {
+}
+
+export interface DocTitlesLocalRepositoriesDocsPageTitleVariables {
+}
+
 export interface DocTitlesOrgPortalDocsPageTitle {
     args:             DocTitlesOrgPortalDocsPageTitleArgs;
     contentVariables: DocTitlesOrgPortalDocsPageTitleContentVariables;
@@ -1263,11 +1301,13 @@ export interface DocsDocsGeneral {
 
 export interface DocsDocsGeneralArgs {
     mainTitle:        string;
+    pluginsList:      string;
     productDocsIndex: string;
     sectionTitle:     string;
 }
 
 export interface DocsDocsGeneralContentVariables {
+    pluginsList:      string;
     productDocsIndex: string;
 }
 
@@ -1431,6 +1471,39 @@ export interface DocsSearchProductDocsStyledContents {
 }
 
 export interface DocsSearchProductDocsVariables {
+}
+
+export interface DocsSearchProductDocsLastSection {
+    args:             DocsSearchProductDocsLastSectionArgs;
+    contentVariables: DocsSearchProductDocsLastSectionContentVariables;
+    interpolations:   DocsSearchProductDocsLastSectionInterpolations;
+    links:            DocsSearchProductDocsLastSectionLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     DocsSearchProductDocsLastSectionStyleClasses;
+    styledContents:   DocsSearchProductDocsLastSectionStyledContents;
+    variables:        DocsSearchProductDocsLastSectionVariables;
+}
+
+export interface DocsSearchProductDocsLastSectionArgs {
+}
+
+export interface DocsSearchProductDocsLastSectionContentVariables {
+}
+
+export interface DocsSearchProductDocsLastSectionInterpolations {
+}
+
+export interface DocsSearchProductDocsLastSectionLinks {
+}
+
+export interface DocsSearchProductDocsLastSectionStyleClasses {
+}
+
+export interface DocsSearchProductDocsLastSectionStyledContents {
+}
+
+export interface DocsSearchProductDocsLastSectionVariables {
 }
 
 export interface DocsSearchProductDocsPage {
@@ -1629,6 +1702,39 @@ export interface FrontPageGetHelpAndContributeStyledContents {
 }
 
 export interface FrontPageGetHelpAndContributeVariables {
+}
+
+export interface FrontPageInstallTheChromeExtension {
+    args:             FrontPageInstallTheChromeExtensionArgs;
+    contentVariables: FrontPageInstallTheChromeExtensionContentVariables;
+    interpolations:   FrontPageInstallTheChromeExtensionInterpolations;
+    links:            FrontPageInstallTheChromeExtensionLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     FrontPageInstallTheChromeExtensionStyleClasses;
+    styledContents:   FrontPageInstallTheChromeExtensionStyledContents;
+    variables:        FrontPageInstallTheChromeExtensionVariables;
+}
+
+export interface FrontPageInstallTheChromeExtensionArgs {
+}
+
+export interface FrontPageInstallTheChromeExtensionContentVariables {
+}
+
+export interface FrontPageInstallTheChromeExtensionInterpolations {
+}
+
+export interface FrontPageInstallTheChromeExtensionLinks {
+}
+
+export interface FrontPageInstallTheChromeExtensionStyleClasses {
+}
+
+export interface FrontPageInstallTheChromeExtensionStyledContents {
+}
+
+export interface FrontPageInstallTheChromeExtensionVariables {
 }
 
 export interface FrontPageInstallTheCLI {
@@ -2284,6 +2390,39 @@ export interface MetaTagsHowItWorksStyledContents {
 export interface MetaTagsHowItWorksVariables {
 }
 
+export interface MetaTagsLocalRepositoryDocs {
+    args:             MetaTagsLocalRepositoryDocsArgs;
+    contentVariables: MetaTagsLocalRepositoryDocsContentVariables;
+    interpolations:   MetaTagsLocalRepositoryDocsInterpolations;
+    links:            MetaTagsLocalRepositoryDocsLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     MetaTagsLocalRepositoryDocsStyleClasses;
+    styledContents:   MetaTagsLocalRepositoryDocsStyledContents;
+    variables:        MetaTagsLocalRepositoryDocsVariables;
+}
+
+export interface MetaTagsLocalRepositoryDocsArgs {
+}
+
+export interface MetaTagsLocalRepositoryDocsContentVariables {
+}
+
+export interface MetaTagsLocalRepositoryDocsInterpolations {
+}
+
+export interface MetaTagsLocalRepositoryDocsLinks {
+}
+
+export interface MetaTagsLocalRepositoryDocsStyleClasses {
+}
+
+export interface MetaTagsLocalRepositoryDocsStyledContents {
+}
+
+export interface MetaTagsLocalRepositoryDocsVariables {
+}
+
 export interface MetaTagsOrgPortalDocs {
     args:             MetaTagsOrgPortalDocsArgs;
     contentVariables: MetaTagsOrgPortalDocsContentVariables;
@@ -2414,6 +2553,74 @@ export interface MetaTagsUserPortalDocsStyledContents {
 }
 
 export interface MetaTagsUserPortalDocsVariables {
+}
+
+export interface ProductDocsLocalRepositoryDocs {
+    args:             ProductDocsLocalRepositoryDocsArgs;
+    contentVariables: ProductDocsLocalRepositoryDocsContentVariables;
+    interpolations:   ProductDocsLocalRepositoryDocsInterpolations;
+    links:            ProductDocsLocalRepositoryDocsLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     ProductDocsLocalRepositoryDocsStyleClasses;
+    styledContents:   ProductDocsLocalRepositoryDocsStyledContents;
+    variables:        ProductDocsLocalRepositoryDocsVariables;
+}
+
+export interface ProductDocsLocalRepositoryDocsArgs {
+    branchDropdownImg:       string;
+    cloneLocalRepositoryImg: string;
+    compareModeImg:          string;
+    docSearch:               string;
+    editModeImg:             string;
+    emptyBranchesImg:        string;
+    emptyRepoImg:            string;
+    firstBranchImg:          string;
+    firstChangeImg:          string;
+    firstCommitImg:          string;
+    firstDiffImg:            string;
+    firstPushImg:            string;
+    installPluginImg:        string;
+    mainTitle:               string;
+    newRepositoryImg:        string;
+    remoteBranchImg:         string;
+}
+
+export interface ProductDocsLocalRepositoryDocsContentVariables {
+    branchDropdownImg:       string;
+    cloneLocalRepositoryImg: string;
+    compareModeImg:          string;
+    docSearch:               string;
+    editModeImg:             string;
+    emptyBranchesImg:        string;
+    emptyRepoImg:            string;
+    firstBranchImg:          string;
+    firstChangeImg:          string;
+    firstCommitImg:          string;
+    firstDiffImg:            string;
+    firstPushImg:            string;
+    installPluginImg:        string;
+    newRepositoryImg:        string;
+    remoteBranchImg:         string;
+}
+
+export interface ProductDocsLocalRepositoryDocsInterpolations {
+}
+
+export interface ProductDocsLocalRepositoryDocsLinks {
+    "link to text plugin":            Link;
+    "navigating remote repositories": Link;
+}
+
+export interface ProductDocsLocalRepositoryDocsStyleClasses {
+    mainTitle: string;
+}
+
+export interface ProductDocsLocalRepositoryDocsStyledContents {
+    "main title": StyledContent;
+}
+
+export interface ProductDocsLocalRepositoryDocsVariables {
 }
 
 export interface ProductDocsOrgPortalDocs {
@@ -2685,6 +2892,7 @@ export interface PhraseKeyDebugInfo {
     "components.released_under_mit":                      DebugInfo;
     "components.terms_of_service":                        DebugInfo;
     "doc_titles.docs_page_title":                         DebugInfo;
+    "doc_titles.local_repositories_docs_page_title":      DebugInfo;
     "doc_titles.org_portal_docs_page_title":              DebugInfo;
     "doc_titles.product_and_terminology_docs_page_title": DebugInfo;
     "doc_titles.product_docs_page_title":                 DebugInfo;
@@ -2694,12 +2902,14 @@ export interface PhraseKeyDebugInfo {
     "docs.palette_plugin_description":                    DebugInfo;
     "docs.search_developer_docs":                         DebugInfo;
     "docs.search_product_docs":                           DebugInfo;
+    "docs.search_product_docs_last_section":              DebugInfo;
     "docs.search_product_docs_page":                      DebugInfo;
     "docs.text_plugin_description":                       DebugInfo;
     "docs.theme_plugin_description":                      DebugInfo;
     "front_page.appearance":                              DebugInfo;
     "front_page.download_desktop_client":                 DebugInfo;
     "front_page.get_help_and_contribute":                 DebugInfo;
+    "front_page.install_the_chrome_extension":            DebugInfo;
     "front_page.install_the_cli":                         DebugInfo;
     "front_page.nav_about":                               DebugInfo;
     "front_page.nav_consulting":                          DebugInfo;
@@ -2717,10 +2927,12 @@ export interface PhraseKeyDebugInfo {
     "meta_tags.about":                                    DebugInfo;
     "meta_tags.docs":                                     DebugInfo;
     "meta_tags.how_it_works":                             DebugInfo;
+    "meta_tags.local_repository_docs":                    DebugInfo;
     "meta_tags.org_portal_docs":                          DebugInfo;
     "meta_tags.product_docs":                             DebugInfo;
     "meta_tags.product_docs_and_terminology":             DebugInfo;
     "meta_tags.user_portal_docs":                         DebugInfo;
+    "product_docs.local_repository_docs":                 DebugInfo;
     "product_docs.org_portal_docs":                       DebugInfo;
     "product_docs.product_and_terminology_overview":      DebugInfo;
     "product_docs.product_docs_general":                  DebugInfo;

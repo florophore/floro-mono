@@ -145,6 +145,15 @@ function OrgPortalDocs() {
     return CreateOrgRepoDark;
   }, [theme.name]);
 
+  const userPortalDocsTitle = usePlainText("doc_titles.user_portal_docs_page_title");
+
+  const lastSectionTitleChain = useMemo((): LinkChain => {
+    return {
+      label: userPortalDocsTitle,
+      value: '/docs/product/user-portal',
+    }
+  }, []);
+
   const titleChain = useMemo((): LinkChain => {
     return {
       label: docsTitle,
@@ -174,32 +183,38 @@ function OrgPortalDocs() {
   const article = useRichText(
     "product_docs.org_portal_docs",
     {
-      docSearch: <DocSearch docs="product" linkChain={titleChain} />,
+      docSearch: (
+        <DocSearch
+          docs="product"
+          linkChain={titleChain}
+          lastSectionTitleChain={lastSectionTitleChain}
+        />
+      ),
       orgPortalImg: (
         <div>
-          <ScreenshotImg src={orgPortalImg}/>
+          <ScreenshotImg src={orgPortalImg} />
         </div>
       ),
       orgMembersImg: (
         <div>
-          <ScreenshotImg src={orgMembersImg}/>
+          <ScreenshotImg src={orgMembersImg} />
         </div>
       ),
       rolesImg: (
         <div>
-          <ScreenshotImg src={rolesImg}/>
+          <ScreenshotImg src={rolesImg} />
         </div>
       ),
       createOrgRepo: (
         <div>
-          <ScreenshotImg src={createOrgRepoImg}/>
+          <ScreenshotImg src={createOrgRepoImg} />
         </div>
       ),
       mainTitle: function (
         content: ReactElement<any, string | JSXElementConstructor<any>>
       ): ReactElement<any, string | JSXElementConstructor<any>> {
         return <SectionTitle>{content}</SectionTitle>;
-      }
+      },
     },
     rtRenderers
   );

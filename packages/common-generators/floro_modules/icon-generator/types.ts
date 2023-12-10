@@ -36,6 +36,7 @@ export interface Icons {
     "docs.text-plugin":                        DocsTextPlugin;
     "docs.theme-plugin":                       DocsThemePlugin;
     "front-page.apple":                        FrontPageApple;
+    "front-page.chrome":                       FrontPageChrome;
     "front-page.copy":                         FrontPageCopy;
     "front-page.discord":                      FrontPageDiscord;
     "front-page.drop-down-arrow":              FrontPageDropDownArrow;
@@ -314,6 +315,15 @@ export interface FrontPageApple {
 }
 
 export interface FrontPageAppleVariants {
+    hovered: Theme;
+}
+
+export interface FrontPageChrome {
+    default:  Theme;
+    variants: FrontPageChromeVariants;
+}
+
+export interface FrontPageChromeVariants {
     hovered: Theme;
 }
 

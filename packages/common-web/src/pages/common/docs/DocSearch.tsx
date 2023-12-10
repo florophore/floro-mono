@@ -142,6 +142,7 @@ const RightRow = styled.div`
 
 interface Props {
     linkChain: LinkChain;
+    lastSectionTitleChain?: LinkChain;
     docs: "product"|"development"
 }
 
@@ -150,7 +151,9 @@ function DocsSearch(props: Props) {
 
   const [searchValue, setSearchValue] = useState("");
   const linkTitle = useLinkTitle(props.linkChain, [])
+  const lastSectionTitleChain = useLinkTitle(props.lastSectionTitleChain ?? {label: '', value: ''}, [])
   const page = usePlainText("docs.search_product_docs_page");
+  const lastSection = usePlainText("docs.search_product_docs_last_section");
   const productPlaceholder = usePlainText("docs.search_product_docs");
   const developerPlaceholder = usePlainText("docs.search_developer_docs");
 
@@ -179,6 +182,31 @@ function DocsSearch(props: Props) {
           </TitleSpan>
         </span>
       </Row>
+      {props.lastSectionTitleChain && (
+        <Row style={{ marginTop: 12}}>
+          <span
+            style={{
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <TitleSpan style={{ color: theme.colors.contrastTextLight }}>
+              {lastSection + " "}
+            </TitleSpan>
+            <TitleSpan
+              style={{
+                fontWeight: 500,
+                wordWrap: "break-word",
+                display: "block",
+                whiteSpace: "normal",
+                marginLeft: 8,
+              }}
+            >
+              {lastSectionTitleChain}
+            </TitleSpan>
+          </span>
+        </Row>
+      )}
       <Row style={{ marginTop: 24 }}>
         <SearchInput
           borderColor={theme.colors.inputBorderColor}

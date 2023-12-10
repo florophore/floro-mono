@@ -125,6 +125,14 @@ function UserPortalDocs() {
   const docsTitle = usePlainText("doc_titles.docs_page_title");
   const pageDocsTitle = usePlainText("doc_titles.product_docs_page_title");
   const userPortalDocsTitle = usePlainText("doc_titles.user_portal_docs_page_title");
+  const pageProductAndTermsDocsTitle = usePlainText("doc_titles.product_and_terminology_docs_page_title");
+
+  const lastSectionTitleChain = useMemo((): LinkChain => {
+    return {
+      label: pageProductAndTermsDocsTitle,
+      value: '/docs/product/product-and-terms',
+    }
+  }, []);
 
   const titleChain = useMemo((): LinkChain => {
     return {
@@ -203,47 +211,55 @@ function UserPortalDocs() {
   const article = useRichText(
     "product_docs.user_portal_docs",
     {
-      docSearch: <DocSearch docs="product" linkChain={titleChain} />,
+      docSearch: (
+        <DocSearch
+          docs="product"
+          linkChain={titleChain}
+          lastSectionTitleChain={lastSectionTitleChain}
+        />
+      ),
       userPortalImg: (
         <div>
-          <ScreenshotImg src={userPortalImg}/>
+          <ScreenshotImg src={userPortalImg} />
         </div>
       ),
       leftPanelImg: (
-        <div style={{ display: 'flex', justifyContent: 'center', width: '100%'}}>
-          <ScreenshotImg style={{maxWidth: 200}} src={leftPanelImg}/>
+        <div
+          style={{ display: "flex", justifyContent: "center", width: "100%" }}
+        >
+          <ScreenshotImg style={{ maxWidth: 200 }} src={leftPanelImg} />
         </div>
       ),
       privacySettingsImg: (
         <div>
-          <ScreenshotImg src={privacySettingsImg}/>
+          <ScreenshotImg src={privacySettingsImg} />
         </div>
       ),
       notificationSettingsImg: (
         <div>
-          <ScreenshotImg src={notificationsSettingsImg}/>
+          <ScreenshotImg src={notificationsSettingsImg} />
         </div>
       ),
       developerSettingsImg: (
         <div>
-          <ScreenshotImg src={developerSettingsImg}/>
+          <ScreenshotImg src={developerSettingsImg} />
         </div>
       ),
       createRepo: (
         <div>
-          <ScreenshotImg src={createRepoImg}/>
+          <ScreenshotImg src={createRepoImg} />
         </div>
       ),
       createOrg: (
         <div>
-          <ScreenshotImg src={createOrgImg}/>
+          <ScreenshotImg src={createOrgImg} />
         </div>
       ),
       mainTitle: function (
         content: ReactElement<any, string | JSXElementConstructor<any>>
       ): ReactElement<any, string | JSXElementConstructor<any>> {
         return <SectionTitle>{content}</SectionTitle>;
-      }
+      },
     },
     rtRenderers
   );

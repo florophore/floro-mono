@@ -199,7 +199,7 @@ const ContentVariableList = (props: Props) => {
     setIsReOrderMode(!isReOrderMode);
   }, [isReOrderMode])
 
-  if (commandMode != "edit" && (variables?.length ?? 0) == 0) {
+  if (commandMode != "edit" && (contentVariables?.length ?? 0) == 0) {
     return null;
   }
 

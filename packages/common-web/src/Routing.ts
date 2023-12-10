@@ -15,6 +15,7 @@ import UserPortalDocs from './pages/common/docs/product/pages/UserPortalDocs';
 import { IsomorphicRoute, sortRoutes } from './ssr/routing-helpers';
 import AppProxyPage from './pages/common/app_proxy/AppProxyPage';
 import OrgPortalDocs from './pages/common/docs/product/pages/OrgPortalDocs';
+import LocalRepositoryDocs from './pages/common/docs/product/pages/LocalRepositoryDocs';
 
 /**
  *  put common shared page routes here
@@ -55,6 +56,10 @@ const CommonRouting: IsomorphicRoute[] = [
   {
     path: "/docs/product/org-portal",
     component: () => OrgPortalDocs,
+  },
+  {
+    path: "/docs/product/local-repositories",
+    component: () => LocalRepositoryDocs,
   },
   {
     path: "/app-proxy/*",

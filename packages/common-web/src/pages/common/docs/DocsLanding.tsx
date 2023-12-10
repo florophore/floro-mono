@@ -148,6 +148,122 @@ function DocsLanding() {
     "docs.docs_general",
     {
       productDocsIndex,
+      pluginsList: (
+        <section style={{ marginTop: 0, marginBottom: 0 }}>
+          <div>
+            <PluginRow>
+              <PluginIcon src={textIcon} />
+              <div
+                style={{
+                  marginLeft: 24,
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <PluginTitle>
+                  <Link
+                    style={{
+                      fontWeight: 600,
+                      color: theme.colors.linkColor,
+                      display: "inline-block",
+                    }}
+                    to={"/docs/plugins/text"}
+                  >
+                    {"Text"}
+                  </Link>
+                </PluginTitle>
+                <PluginDescription>
+                  {textPluginDescription}
+                </PluginDescription>
+              </div>
+            </PluginRow>
+          </div>
+          <div style={{ marginTop: 24 }}>
+            <PluginRow>
+              <PluginIcon src={iconsIcon} />
+              <div
+                style={{
+                  marginLeft: 24,
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <PluginTitle>
+                  <Link
+                    style={{
+                      fontWeight: 600,
+                      color: theme.colors.linkColor,
+                      display: "inline-block",
+                    }}
+                    to={"/docs/plugins/icons"}
+                  >
+                    {"Icons"}
+                  </Link>
+                </PluginTitle>
+                <PluginDescription>
+                  {iconsPluginDescription}
+                </PluginDescription>
+              </div>
+            </PluginRow>
+          </div>
+          <div style={{ marginTop: 24 }}>
+            <PluginRow>
+              <PluginIcon src={themeIcon} />
+              <div
+                style={{
+                  marginLeft: 24,
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <PluginTitle>
+                  <Link
+                    style={{
+                      fontWeight: 600,
+                      color: theme.colors.linkColor,
+                      display: "inline-block",
+                    }}
+                    to={"/docs/plugins/theme"}
+                  >
+                    {"Theme"}
+                  </Link>
+                </PluginTitle>
+                <PluginDescription>
+                  {themePluginDescription}
+                </PluginDescription>
+              </div>
+            </PluginRow>
+          </div>
+          <div style={{ marginTop: 24 }}>
+            <PluginRow>
+              <PluginIcon src={paletteIcon} />
+              <div
+                style={{
+                  marginLeft: 24,
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <PluginTitle>
+                  <Link
+                    style={{
+                      fontWeight: 600,
+                      color: theme.colors.linkColor,
+                      display: "inline-block",
+                    }}
+                    to={"/docs/plugins/palette"}
+                  >
+                    {"Palette"}
+                  </Link>
+                </PluginTitle>
+                <PluginDescription>
+                  {palettePluginDescription}
+                </PluginDescription>
+              </div>
+            </PluginRow>
+          </div>
+        </section>
+      ),
       mainTitle: function (
         content: ReactElement<any, string | JSXElementConstructor<any>>
       ): ReactElement<any, string | JSXElementConstructor<any>> {
@@ -223,120 +339,6 @@ function DocsLanding() {
         >
           <SectionParagraph>
             <section>{article}</section>
-            <section style={{ marginTop: 40, marginBottom: 40 }}>
-              <div>
-                <PluginRow>
-                  <PluginIcon src={textIcon} />
-                  <div
-                    style={{
-                      marginLeft: 24,
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <PluginTitle>
-                      <Link
-                        style={{
-                          fontWeight: 600,
-                          color: theme.colors.linkColor,
-                          display: "inline-block",
-                        }}
-                        to={"/docs/plugins/text"}
-                      >
-                        {"Text"}
-                      </Link>
-                    </PluginTitle>
-                    <PluginDescription>
-                      {textPluginDescription}
-                    </PluginDescription>
-                  </div>
-                </PluginRow>
-              </div>
-              <div style={{ marginTop: 24 }}>
-                <PluginRow>
-                  <PluginIcon src={iconsIcon} />
-                  <div
-                    style={{
-                      marginLeft: 24,
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <PluginTitle>
-                      <Link
-                        style={{
-                          fontWeight: 600,
-                          color: theme.colors.linkColor,
-                          display: "inline-block",
-                        }}
-                        to={"/docs/plugins/icons"}
-                      >
-                        {"Icons"}
-                      </Link>
-                    </PluginTitle>
-                    <PluginDescription>
-                      {iconsPluginDescription}
-                    </PluginDescription>
-                  </div>
-                </PluginRow>
-              </div>
-              <div style={{ marginTop: 24 }}>
-                <PluginRow>
-                  <PluginIcon src={themeIcon} />
-                  <div
-                    style={{
-                      marginLeft: 24,
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <PluginTitle>
-                      <Link
-                        style={{
-                          fontWeight: 600,
-                          color: theme.colors.linkColor,
-                          display: "inline-block",
-                        }}
-                        to={"/docs/plugins/theme"}
-                      >
-                        {"Theme"}
-                      </Link>
-                    </PluginTitle>
-                    <PluginDescription>
-                      {themePluginDescription}
-                    </PluginDescription>
-                  </div>
-                </PluginRow>
-              </div>
-              <div style={{ marginTop: 24 }}>
-                <PluginRow>
-                  <PluginIcon src={paletteIcon} />
-                  <div
-                    style={{
-                      marginLeft: 24,
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <PluginTitle>
-                      <Link
-                        style={{
-                          fontWeight: 600,
-                          color: theme.colors.linkColor,
-                          display: "inline-block",
-                        }}
-                        to={"/docs/plugins/palette"}
-                      >
-                        {"Palette"}
-                      </Link>
-                    </PluginTitle>
-                    <PluginDescription>
-                      {palettePluginDescription}
-                    </PluginDescription>
-                  </div>
-                </PluginRow>
-              </div>
-            </section>
           </SectionParagraph>
         </div>
       </AboutWrapper>

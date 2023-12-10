@@ -9,6 +9,7 @@ import ScreenShotDark from "@floro/main/public/pngs/dark.no_edge.png";
 import CLICopy from "../../components/home/CLICopy";
 import PageWrapper from "../../components/wrappers/PageWrapper";
 import { Link } from "react-router-dom";
+import ColorPalette from "@floro/styles/ColorPalette";
 
 const LargeTopSection = styled.section`
   display: flex;
@@ -38,8 +39,35 @@ const LeftColumn = styled.div`
 `;
 
 const RightColumn = styled.div`
-  height: 552px;
   width: 60%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  @media screen and (min-width: 768px) and (max-width: 1439px) {
+    width: 50%;
+  }
+`;
+//const RightColumn = styled.div`
+//  height: 552px;
+//  width: 60%;
+//  position: relative;
+//  display: flex;
+//  flex-direction: column;
+//  justify-content: center;
+//  align-items: center;
+//  @media screen and (min-width: 1440px) {
+//    height: 540px;
+//  }
+//  @media screen and (min-width: 768px) and (max-width: 1439px) {
+//    width: 50%;
+//    height: 32vw;
+//    min-height: 300px;
+//  }
+//`;
+
+const RightColumnContent = styled.div`
+  height: 552px;
+  width: 100%;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -49,7 +77,6 @@ const RightColumn = styled.div`
     height: 540px;
   }
   @media screen and (min-width: 768px) and (max-width: 1439px) {
-    width: 50%;
     height: 32vw;
     min-height: 300px;
   }
@@ -120,7 +147,7 @@ const DemoLink = styled.h4`
   margin: 0;
   font-family: "MavenPro";
   font-weight: 600;
-  font-size: 1.2rem;
+  font-size: 1.44rem;
   margin-top: 24px;
   @media screen and (min-width: 768px) and (max-width: 1023px) {
     font-size: 1.2rem;
@@ -139,7 +166,7 @@ const TechnicalOverviewLink = styled.h4`
   margin: 0;
   font-family: "MavenPro";
   font-weight: 600;
-  font-size: 1.2rem;
+  font-size: 1.44rem;
   margin-top: 24px;
   @media screen and (min-width: 768px) and (max-width: 1023px) {
     font-size: 1.2rem;
@@ -222,6 +249,7 @@ function Home() {
   const tagLine = useRichText("front_page.tag_line");
   const subTextTagLine = useRichText("front_page.subtext_of_tag_line");
   const downloadDesktopText = useRichText("front_page.download_desktop_client");
+  const installTheChromeExtension = useRichText("front_page.install_the_chrome_extension");
   const installCliText = useRichText("front_page.install_the_cli");
   const getHelpAndContributeText = useRichText(
     "front_page.get_help_and_contribute"
@@ -261,6 +289,12 @@ function Home() {
   const githubIcon = useIcon(
     "front-page.github",
     isHoveringGithub ? "hovered" : undefined
+  );
+
+  const [isHoveringChrome, setIsHoveringChrome] = useState(false);
+  const chromeIcon = useIcon(
+    "front-page.chrome",
+    isHoveringChrome ? "hovered" : undefined
   );
 
   const screenShot = useMemo(() => {
@@ -384,6 +418,30 @@ function Home() {
           >
             <DownloadSection style={{ textAlign: "center" }}>
               <InstallCLISectionHeader>
+                {installTheChromeExtension}
+              </InstallCLISectionHeader>
+              <DownloadRow style={{ justifyContent: "center" }}>
+              <a href="chrome://extensions" target="_blank">
+                <FlatIcon
+                  onMouseEnter={() => setIsHoveringChrome(true)}
+                  onMouseLeave={() => setIsHoveringChrome(false)}
+                  src={chromeIcon}
+                />
+              </a>
+              </DownloadRow>
+            </DownloadSection>
+          </div>
+          <div
+            style={{
+              padding: 8,
+              display: "flex",
+              alignItems: "center",
+              flexDirection: "column",
+              width: "100%",
+            }}
+          >
+            <DownloadSection style={{ textAlign: "center", marginTop: 0 }}>
+              <InstallCLISectionHeader style={{marginTop: 0}}>
                 {getHelpAndContributeText}
               </InstallCLISectionHeader>
               <DownloadRow style={{ justifyContent: "center" }}>
@@ -441,7 +499,22 @@ function Home() {
             </div>
           </InstallCLISection>
           <DownloadSection>
-            <InstallCLISectionHeader>
+            <DownloadSectionHeader>{installTheChromeExtension}</DownloadSectionHeader>
+            <DownloadRow>
+              <a href="chrome://extensions" target="_blank">
+                <FlatIcon
+                  onMouseEnter={() => setIsHoveringChrome(true)}
+                  onMouseLeave={() => setIsHoveringChrome(false)}
+                  src={chromeIcon}
+                  style={{
+                    marginRight: 24,
+                  }}
+                />
+              </a>
+            </DownloadRow>
+          </DownloadSection>
+          <DownloadSection>
+            <InstallCLISectionHeader style={{marginTop: 24}}>
               {getHelpAndContributeText}
             </InstallCLISectionHeader>
             <DownloadRow>
@@ -462,30 +535,34 @@ function Home() {
               </a>
             </DownloadRow>
           </DownloadSection>
-          <DemoLink>{seeADemo}</DemoLink>
-          <Link to={'/technical-overview-part-1'}>
-            <TechnicalOverviewLink>{readTechnicalOverview}</TechnicalOverviewLink>
-          </Link>
         </LeftColumn>
-        <RightColumn
-          style={{
-            backgroundImage: `url( '${frontPageBackdrop}' )`,
-            backgroundSize: "cover",
-          }}
-        >
-          <ScreenShotWrapper>
-            <ScreenShot src={screenShot} />
-          </ScreenShotWrapper>
-          <div
+        <RightColumn>
+          <RightColumnContent
             style={{
-              alignSelf: "center",
-              width: "40%",
-              position: "absolute",
-              marginLeft: "10%",
-              bottom: "-10%",
+              backgroundImage: `url( '${frontPageBackdrop}' )`,
+              backgroundSize: "cover",
             }}
           >
-            <FloroText src={floroText} />
+            <ScreenShotWrapper>
+              <ScreenShot src={screenShot} />
+            </ScreenShotWrapper>
+            <div
+              style={{
+                alignSelf: "center",
+                width: "40%",
+                position: "absolute",
+                marginLeft: "10%",
+                bottom: "-10%",
+              }}
+            >
+              <FloroText src={floroText} />
+            </div>
+          </RightColumnContent>
+          <div style={{marginTop: 48, marginLeft: '5%', display: 'flex', alignItems: 'center', flexDirection: 'column'}}>
+            <DemoLink>{seeADemo}</DemoLink>
+            <Link to={'/technical-overview-part-1'}>
+              <TechnicalOverviewLink>{readTechnicalOverview}</TechnicalOverviewLink>
+            </Link>
           </div>
         </RightColumn>
       </LargeTopSection>

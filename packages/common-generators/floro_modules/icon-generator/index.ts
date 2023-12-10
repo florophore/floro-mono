@@ -100,32 +100,36 @@ import icon96 from './icons/front-page.language.default.light.be1ae1bb.svg';
 import icon97 from './icons/front-page.language.default.dark.fa5c6dc4.svg';
 import icon98 from './icons/front-page.language.hovered.light.369b3cde.svg';
 import icon99 from './icons/front-page.language.hovered.dark.369b3cde.svg';
-import icon100 from './icons/front-page.github.default.light.c5d4b597.svg';
-import icon101 from './icons/front-page.github.default.dark.8f3e602e.svg';
-import icon102 from './icons/front-page.github.hovered.light.76daab54.svg';
-import icon103 from './icons/front-page.github.hovered.dark.76daab54.svg';
-import icon104 from './icons/front-page.discord.default.light.4ba1b005.svg';
-import icon105 from './icons/front-page.discord.default.dark.9b68ee9c.svg';
-import icon106 from './icons/front-page.discord.hovered.light.9d1c01c2.svg';
-import icon107 from './icons/front-page.discord.hovered.dark.9d1c01c2.svg';
-import icon108 from './icons/front-page.copy.default.light.49b0e44d.svg';
-import icon109 from './icons/front-page.copy.default.dark.c8c865e4.svg';
-import icon110 from './icons/front-page.linux.default.light.16fb231a.svg';
-import icon111 from './icons/front-page.linux.default.dark.4a5cff74.svg';
-import icon112 from './icons/front-page.linux.hovered.light.3e113f71.svg';
-import icon113 from './icons/front-page.linux.hovered.dark.3e113f71.svg';
-import icon114 from './icons/front-page.apple.default.light.618d7c43.svg';
-import icon115 from './icons/front-page.apple.default.dark.b6e5f0a9.svg';
-import icon116 from './icons/front-page.apple.hovered.light.ba0d7f0c.svg';
-import icon117 from './icons/front-page.apple.hovered.dark.ba0d7f0c.svg';
-import icon118 from './icons/front-page.windows.default.light.f51d3a6d.svg';
-import icon119 from './icons/front-page.windows.default.dark.ddb1f4c5.svg';
-import icon120 from './icons/front-page.windows.hovered.light.22e899a8.svg';
-import icon121 from './icons/front-page.windows.hovered.dark.22e899a8.svg';
-import icon122 from './icons/front-page.front-page-backdrop.default.light.766e1625.svg';
-import icon123 from './icons/front-page.front-page-backdrop.default.dark.766e1625.svg';
-import icon124 from './icons/front-page.floro-round.default.light.56c8e11e.svg';
-import icon125 from './icons/front-page.floro-round.default.dark.56c8e11e.svg';
+import icon100 from './icons/front-page.chrome.default.light.561e8b42.svg';
+import icon101 from './icons/front-page.chrome.default.dark.556e5d1d.svg';
+import icon102 from './icons/front-page.chrome.hovered.light.9168e3eb.svg';
+import icon103 from './icons/front-page.chrome.hovered.dark.9168e3eb.svg';
+import icon104 from './icons/front-page.github.default.light.c5d4b597.svg';
+import icon105 from './icons/front-page.github.default.dark.8f3e602e.svg';
+import icon106 from './icons/front-page.github.hovered.light.76daab54.svg';
+import icon107 from './icons/front-page.github.hovered.dark.76daab54.svg';
+import icon108 from './icons/front-page.discord.default.light.4ba1b005.svg';
+import icon109 from './icons/front-page.discord.default.dark.9b68ee9c.svg';
+import icon110 from './icons/front-page.discord.hovered.light.9d1c01c2.svg';
+import icon111 from './icons/front-page.discord.hovered.dark.9d1c01c2.svg';
+import icon112 from './icons/front-page.copy.default.light.49b0e44d.svg';
+import icon113 from './icons/front-page.copy.default.dark.c8c865e4.svg';
+import icon114 from './icons/front-page.linux.default.light.16fb231a.svg';
+import icon115 from './icons/front-page.linux.default.dark.4a5cff74.svg';
+import icon116 from './icons/front-page.linux.hovered.light.3e113f71.svg';
+import icon117 from './icons/front-page.linux.hovered.dark.3e113f71.svg';
+import icon118 from './icons/front-page.apple.default.light.618d7c43.svg';
+import icon119 from './icons/front-page.apple.default.dark.b6e5f0a9.svg';
+import icon120 from './icons/front-page.apple.hovered.light.ba0d7f0c.svg';
+import icon121 from './icons/front-page.apple.hovered.dark.ba0d7f0c.svg';
+import icon122 from './icons/front-page.windows.default.light.f51d3a6d.svg';
+import icon123 from './icons/front-page.windows.default.dark.ddb1f4c5.svg';
+import icon124 from './icons/front-page.windows.hovered.light.22e899a8.svg';
+import icon125 from './icons/front-page.windows.hovered.dark.22e899a8.svg';
+import icon126 from './icons/front-page.front-page-backdrop.default.light.766e1625.svg';
+import icon127 from './icons/front-page.front-page-backdrop.default.dark.766e1625.svg';
+import icon128 from './icons/front-page.floro-round.default.light.56c8e11e.svg';
+import icon129 from './icons/front-page.floro-round.default.dark.56c8e11e.svg';
 
 export default {
   ["docs.palette-plugin"]: {
@@ -520,7 +524,7 @@ export default {
       },
     },
   },
-  ["front-page.github"]: {
+  ["front-page.chrome"]: {
     default: {
       ["light"]: icon100,
       ["dark"]: icon101,
@@ -532,7 +536,7 @@ export default {
       },
     },
   },
-  ["front-page.discord"]: {
+  ["front-page.github"]: {
     default: {
       ["light"]: icon104,
       ["dark"]: icon105,
@@ -544,27 +548,27 @@ export default {
       },
     },
   },
-  ["front-page.copy"]: {
+  ["front-page.discord"]: {
     default: {
       ["light"]: icon108,
       ["dark"]: icon109,
     },
     variants: {
-    },
-  },
-  ["front-page.linux"]: {
-    default: {
-      ["light"]: icon110,
-      ["dark"]: icon111,
-    },
-    variants: {
       ["hovered"]: {
-        ["light"]: icon112,
-        ["dark"]: icon113,
+        ["light"]: icon110,
+        ["dark"]: icon111,
       },
     },
   },
-  ["front-page.apple"]: {
+  ["front-page.copy"]: {
+    default: {
+      ["light"]: icon112,
+      ["dark"]: icon113,
+    },
+    variants: {
+    },
+  },
+  ["front-page.linux"]: {
     default: {
       ["light"]: icon114,
       ["dark"]: icon115,
@@ -576,7 +580,7 @@ export default {
       },
     },
   },
-  ["front-page.windows"]: {
+  ["front-page.apple"]: {
     default: {
       ["light"]: icon118,
       ["dark"]: icon119,
@@ -588,18 +592,30 @@ export default {
       },
     },
   },
-  ["front-page.front-page-backdrop"]: {
+  ["front-page.windows"]: {
     default: {
       ["light"]: icon122,
       ["dark"]: icon123,
+    },
+    variants: {
+      ["hovered"]: {
+        ["light"]: icon124,
+        ["dark"]: icon125,
+      },
+    },
+  },
+  ["front-page.front-page-backdrop"]: {
+    default: {
+      ["light"]: icon126,
+      ["dark"]: icon127,
     },
     variants: {
     },
   },
   ["front-page.floro-round"]: {
     default: {
-      ["light"]: icon124,
-      ["dark"]: icon125,
+      ["light"]: icon128,
+      ["dark"]: icon129,
     },
     variants: {
     },

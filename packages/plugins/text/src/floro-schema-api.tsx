@@ -1848,12 +1848,13 @@ export interface Props {
   children: React.ReactElement;
 }
 
-const MAX_DATA_SIZE = 10_000;
+const MAX_DATA_SIZE = 5_000;
 const sendMessagetoParent = (
   id: number,
   pluginName: string | null,
   command: string,
-  data: object
+  data: object,
+  saveCounter?: React.MutableRefObject<number>
 ) => {
   const dataString = JSON.stringify({ command, data });
   const totalPackets = Math.floor(dataString.length / MAX_DATA_SIZE);
@@ -1863,17 +1864,29 @@ const sendMessagetoParent = (
         ? dataString.substring(i)
         : dataString.substring(i, i + MAX_DATA_SIZE);
     setTimeout(() => {
+      if (command == "save" && id < ( saveCounter?.current ?? 0)) {
+        window.parent?.postMessage(
+          {
+            id,
+            command: "abort",
+            pluginName,
+          },
+          "*"
+        );
+        return;
+      }
       window.parent?.postMessage(
         {
           id,
           chunk,
           index: i / MAX_DATA_SIZE,
           totalPackets,
+          command,
           pluginName,
         },
         "*"
       );
-    }, 0);
+    }, 16);
   }
 };
 
@@ -1925,6 +1938,7 @@ export const FloroProvider = (props: Props) => {
     };
   }>({});
   const updateCounter = useRef(1);
+  const saveCounter = useRef(1);
 
   const commandMode = useMemo(() => {
     return pluginState.commandMode;
@@ -1992,7 +2006,7 @@ export const FloroProvider = (props: Props) => {
         const id = updateCounter.current;
         ids.current = new Set([...Array.from(ids.current), id]);
         setTimeout(() => {
-          sendMessagetoParent(id, pluginName, "save", state[pluginName]);
+          sendMessagetoParent(id, pluginName, "save", state[pluginName], saveCounter);
         }, 0);
         return id;
       }
@@ -2013,7 +2027,7 @@ export const FloroProvider = (props: Props) => {
         const id = updateCounter.current;
         ids.current = new Set([...Array.from(ids.current), id]);
         setTimeout(() => {
-          sendMessagetoParent(id, null, "update-copy", copyList);
+          sendMessagetoParent(id, null, "update-copy", copyList, saveCounter);
         }, 0);
         return id;
       }
@@ -2031,7 +2045,7 @@ export const FloroProvider = (props: Props) => {
         ids.current = new Set([...Array.from(ids.current), id]);
         currentClientStorage.current = { ...clientStorage };
         setTimeout(() => {
-          sendMessagetoParent(id, null, "update-client-storage", clientStorage);
+          sendMessagetoParent(id, null, "update-client-storage", clientStorage, saveCounter);
         }, 0);
         return id;
       }
@@ -3546,10 +3560,6 @@ export function useFloroState<T>(query: string, defaultData?: T): [T|null, (t: T
         query,
         getter
       ) as SchemaRoot;
-      ctx.setPluginState({
-        ...ctx.pluginState,
-        applicationState: next,
-      });
       ctx.currentPluginAppState.current = next;
       ctx.saveState(pluginName, ctx.applicationState);
     }
@@ -3558,7 +3568,6 @@ export function useFloroState<T>(query: string, defaultData?: T): [T|null, (t: T
     pluginName,
     obj,
     ctx.saveState,
-    ctx.setPluginState,
     ctx.pluginState,
     ctx.applicationState,
     ctx.commandMode,
@@ -3583,10 +3592,6 @@ export function useFloroState<T>(query: string, defaultData?: T): [T|null, (t: T
             query,
             obj
           ) as SchemaRoot;
-          ctx.setPluginState({
-            ...ctx.pluginState,
-            applicationState: next,
-          });
           ctx.currentPluginAppState.current = next;
           ctx.saveState(pluginName, next);
         } else {
@@ -3598,10 +3603,6 @@ export function useFloroState<T>(query: string, defaultData?: T): [T|null, (t: T
               query,
               obj
             ) as SchemaRoot;
-            ctx.setPluginState({
-              ...ctx.pluginState,
-              applicationState: next,
-            });
             ctx.currentPluginAppState.current = next;
             ctx.saveState(pluginName, next);
           };
@@ -3611,7 +3612,6 @@ export function useFloroState<T>(query: string, defaultData?: T): [T|null, (t: T
     [
       query,
       ctx.saveState,
-      ctx.setPluginState,
       obj,
       pluginName,
       ctx.pluginState,
