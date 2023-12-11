@@ -105,7 +105,7 @@ export interface Props {
   mergeRequest: MergeRequest;
 }
 
-const CloseMergeRequestModal = (props: Props) => {
+const MergeMergeRequestModal = (props: Props) => {
   const theme = useTheme();
   const icon = useMemo(() => {
     return theme.name == "light"
@@ -180,4 +180,4 @@ const CloseMergeRequestModal = (props: Props) => {
   );
 };
 
-export default React.memo(CloseMergeRequestModal);
+export default React.memo(MergeMergeRequestModal);

@@ -596,7 +596,7 @@ const RemoteVCSMergeRequest = (props: Props) => {
       return false;
     }
     return true;
-  }, [])
+  }, [props?.repository?.mergeRequest?.approvalStatus])
 
   const onMerge = useCallback(() => {
     if (requireMergeWarning) {

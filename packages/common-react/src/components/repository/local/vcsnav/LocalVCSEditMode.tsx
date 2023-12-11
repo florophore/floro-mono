@@ -69,7 +69,7 @@ interface Props {
 }
 
 const LocalVCSEditMode = (props: Props) => {
-  const { setSubAction } = useLocalVCSNavContext();
+  const { setSubAction, isStashing, setIsStashing } = useLocalVCSNavContext();
   const [showDiscard, setShowDiscard] = useState(false);
 
   const clearStorageMutation =  useClearPluginStorage(props.plugin, props.repository);
@@ -91,6 +91,12 @@ const LocalVCSEditMode = (props: Props) => {
     }`;
   }, [linkBase, props.plugin, props.repository?.branchState?.branchId, commitState?.sha]);
 
+  useEffect(() => {
+    return () => {
+      setIsStashing(false);
+    }
+  }, [])
+
   const onShowDiscard = useCallback(() => {
     setShowDiscard(true);
   }, []);
@@ -107,17 +113,57 @@ const LocalVCSEditMode = (props: Props) => {
     setSubAction("edit_branch");
   }, []);
 
+  const [disabledEditOps, setDisabledEditOps] = useState(false);
+
+  useEffect(() => {
+    if (disabledEditOps) {
+      const timeout = setTimeout(() => {
+        setDisabledEditOps(false);
+      }, 1000);
+      return () => {
+        clearTimeout(timeout);
+
+      }
+    }
+  }, [disabledEditOps])
+
   const updateCommand = useUpdateCurrentCommand(props.repository);
   const stashChangesMutation = useStashChanges(props.repository);
   const popStashedChangesMutation = usePopStashedChanges(props.repository);
 
   const onStashChanges = useCallback(() => {
     stashChangesMutation.mutate();
+    //setDisabledEditOps(true);
+    setIsStashing(true);
   }, [stashChangesMutation]);
 
   const onPopStashedChanges = useCallback(() => {
     popStashedChangesMutation.mutate();
+    //setDisabledEditOps(true);
+    setIsStashing(true);
   }, [popStashedChangesMutation]);
+
+  useEffect(() => {
+    if (stashChangesMutation?.isSuccess || stashChangesMutation?.isError) {
+      const timeout = setTimeout(() => {
+        setIsStashing(false);
+      }, 1000);
+      return () => {
+        clearTimeout(timeout);
+      }
+    }
+  }, [stashChangesMutation?.isSuccess, stashChangesMutation?.isError])
+
+  useEffect(() => {
+    if (popStashedChangesMutation?.isSuccess || popStashedChangesMutation?.isError) {
+      const timeout = setTimeout(() => {
+        setIsStashing(false);
+      }, 1000);
+      return () => {
+        clearTimeout(timeout);
+      }
+    }
+  }, [popStashedChangesMutation?.isSuccess, popStashedChangesMutation?.isError])
 
   const updateToViewMode = useCallback(() => {
     updateCommand.mutate("view");
@@ -222,14 +268,14 @@ const LocalVCSEditMode = (props: Props) => {
           <>
             <ButtonRow>
               <RepoActionButton
-                isDisabled={!props.apiResponse?.canPopStashedChanges}
+                isDisabled={!props.apiResponse?.canPopStashedChanges || popStashedChangesMutation.isLoading || stashChangesMutation.isLoading || isStashing}
                 label={"pop stash"}
                 icon={"stash-pop"}
                 isLoading={popStashedChangesMutation.isLoading}
                 onClick={onPopStashedChanges}
               />
               <RepoActionButton
-                isDisabled={!props.apiResponse?.isWIP}
+                isDisabled={!props.apiResponse?.isWIP  || popStashedChangesMutation.isLoading || stashChangesMutation.isLoading || isStashing}
                 label={
                   (props.apiResponse?.stashSize ?? 0) > 0
                     ? `stash (${props.apiResponse?.stashSize})`

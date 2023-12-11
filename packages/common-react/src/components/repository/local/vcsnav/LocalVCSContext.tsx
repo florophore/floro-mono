@@ -8,6 +8,8 @@ interface ILocalVCSNavContext {
     setCompareFrom: React.Dispatch<React.SetStateAction<ILocalVCSNavContext["compareFrom"]>>;
     showLocalSettings: boolean;
     setShowLocalSettings: React.Dispatch<React.SetStateAction<ILocalVCSNavContext["showLocalSettings"]>>;
+    isStashing: boolean;
+    setIsStashing: React.Dispatch<React.SetStateAction<ILocalVCSNavContext["isStashing"]>>;
 }
 
 const LocalVCSNavContext = createContext({
@@ -22,6 +24,10 @@ const LocalVCSNavContext = createContext({
     setShowLocalSettings: (_: ILocalVCSNavContext["showLocalSettings"]) => {
         //void
     },
+    isStashing: false,
+    setIsStashing: (_: ILocalVCSNavContext["isStashing"]) => {
+        //void
+    },
 } as ILocalVCSNavContext);
 
 interface Props {
@@ -32,6 +38,7 @@ export const LocalVCSNavProvider = (props: Props) => {
     const [subAction, setSubAction] = useState<ILocalVCSNavContext["subAction"]>(null);
     const [compareFrom, setCompareFrom] = useState<ILocalVCSNavContext["compareFrom"]>("before");
     const [showLocalSettings, setShowLocalSettings] = useState<ILocalVCSNavContext["showLocalSettings"]>(false);
+    const [isStashing, setIsStashing] = useState<ILocalVCSNavContext["isStashing"]>(false);
 
     const value: ILocalVCSNavContext = {
       subAction,
@@ -39,7 +46,9 @@ export const LocalVCSNavProvider = (props: Props) => {
       compareFrom,
       setCompareFrom,
       showLocalSettings,
-      setShowLocalSettings
+      setShowLocalSettings,
+      isStashing,
+      setIsStashing
     };
     return (
         <LocalVCSNavContext.Provider value={value}>

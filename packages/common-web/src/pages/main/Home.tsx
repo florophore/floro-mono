@@ -454,7 +454,7 @@ function Home() {
                   style={{ marginRight: 24 }}
                 />
               </a>
-              <a href={"https://discord.gg/SD2DqEKQ"} target="_blank">
+              <a href={"https://discord.gg/VJ8Mhjd9Gw"} target="_blank">
                 <FlatIcon
                   onMouseEnter={() => setIsHoveringDiscord(true)}
                   onMouseLeave={() => setIsHoveringDiscord(false)}
@@ -526,7 +526,7 @@ function Home() {
                   style={{ marginRight: 24 }}
                 />
               </a>
-              <a href={"https://discord.gg/SD2DqEKQ"} target="_blank">
+              <a href={"https://discord.gg/VJ8Mhjd9Gw"} target="_blank">
                 <FlatIcon
                   onMouseEnter={() => setIsHoveringDiscord(true)}
                   onMouseLeave={() => setIsHoveringDiscord(false)}

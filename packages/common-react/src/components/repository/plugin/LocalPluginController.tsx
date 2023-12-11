@@ -72,7 +72,7 @@ const LocalPluginController = (props: Props) => {
   const [hasLoaded, setHasLoaded] = useState(false);
   const [hasSentFirstData, setHasSetFirstData] = useState(false);
   const [ackId, setAckId] = useState<number | null>(null);
-  const { compareFrom } = useLocalVCSNavContext();
+  const { compareFrom, isStashing } = useLocalVCSNavContext();
   const { isSelectMode, copyInstructions, setCopyInstructions } = useCopyPasteContext("local");
   const updateCounter = useRef(0);
   const clientUpdateCounter = useRef(1);
@@ -339,18 +339,42 @@ const LocalPluginController = (props: Props) => {
     props?.apiResponse?.repoState?.comparison,
   ]);
 
+  const isStashingRef = useRef(isStashing);
+
   useEffect(() => {
     if (ackId) {
       if (iframeRef.current) {
-        updateCounter.current += 2;
-        sendMessage(iframeRef.current, "ack", pluginState, updateCounter.current);
+        if (ackId == clientUpdateCounter.current) {
+          updateCounter.current += 2;
+          sendMessage(
+            iframeRef.current,
+            "ack",
+            pluginState,
+            updateCounter.current
+          );
+          setAckId(null);
+        }
       }
-      setAckId(null);
+    } else {
+      if (iframeRef.current) {
+        if (isStashing && isStashing != isStashingRef.current) {
+          updateCounter.current += 2;
+          sendMessage(
+            iframeRef.current,
+            "ack",
+            pluginState,
+            updateCounter.current
+          );
+        }
+        isStashingRef.current = isStashing;
+      }
     }
-  }, [ackId, pluginState,
-
+  }, [
+    ackId,
+    pluginState,
+    updatePluginState.data?.id,
     props?.apiResponse?.repoState?.comparison,
-
+    isStashing,
   ]);
 
   useEffect(() => {
@@ -358,7 +382,8 @@ const LocalPluginController = (props: Props) => {
         updateCounter.current += 2;
         sendMessage(iframeRef.current, "update", pluginState, updateCounter.current);
     }
-  }, [pluginState,
+  }, [
+    pluginState,
     props?.apiResponse?.repoState?.comparison,
     hasLoaded && hasSentFirstData,
     isCopyMode

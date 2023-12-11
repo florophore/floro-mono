@@ -24,7 +24,6 @@ export default class NotificationsContext extends BaseContext {
       where: {
         id,
         isDeleted: false,
-        hasBeenChecked: false,
       },
       relations: {
         user: {

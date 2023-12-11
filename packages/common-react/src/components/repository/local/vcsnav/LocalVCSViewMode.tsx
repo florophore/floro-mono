@@ -273,6 +273,7 @@ const LocalVCSViewMode = (props: Props) => {
   useEffect(() => {
     if (pullMutation.isSuccess) {
       setShowConfirmForcePull(false);
+      setShowConfirmMergePullModal(false);
     }
   }, [pullMutation.isSuccess])
 
@@ -452,7 +453,13 @@ const LocalVCSViewMode = (props: Props) => {
           manifestList
         );
       })
-      ?.filter((v) => v?.versions?.[0] != null)?.map(p => p?.versions?.[0] as PluginVersion) as Array<PluginVersion>;
+      ?.filter((v) => v?.versions?.[0] != null)?.map(p => {
+          const version = plugins.find(pv => pv.key == p?.name);
+          return (
+            p?.versions?.find?.((v) => v?.version == version?.value) ??
+            (p?.versions?.[0] as PluginVersion)
+          );
+      }) as Array<PluginVersion>;
   }, [manifestList, plugins]);
 
   const onFinishCopyPaste = useCallback(() => {
