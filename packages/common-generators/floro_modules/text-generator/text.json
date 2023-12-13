@@ -804,7 +804,7 @@
           },
           {
             "children": [],
-            "content": "Our first user now has a conflict with the main branch. They therefore need to merge the main branch into their branch (F1). We could describe this operation as the following",
+            "content": "Our first user's branch is out of date, since C was appended to the main branch. To fix this, they need to merge the main branch into their branch (F1). We could describe this operation as the following",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -47215,7 +47215,7 @@
           },
           {
             "children": [],
-            "content": "Our first user now has a conflict with the main branch. They therefore need to merge the main branch into their branch (F1). We could describe this operation as the following",
+            "content": "Our first user's branch is out of date, since C was appended to the main branch. To fix this, they need to merge the main branch into their branch (F1). We could describe this operation as the following",
             "type": "text",
             "styles": {
               "isBold": false,
