@@ -2780,15 +2780,14 @@ export interface ProductDocsMergingAndConflictsDocsArgs {
     manualResolution:    string;
     mcTheirs:            string;
     mcYours:             string;
+    merge2:              string;
+    merge3:              string;
+    merge4:              string;
+    merge5:              string;
+    merge6:              string;
+    merge7:              string;
     readyToMerge:        string;
     slide1:              string;
-    slide2:              string;
-    slide2_5:            string;
-    slide3:              string;
-    slide4v2:            string;
-    slide5:              string;
-    slide5v2:            string;
-    slide6:              string;
 }
 
 export interface ProductDocsMergingAndConflictsDocsContentVariables {
@@ -2797,15 +2796,14 @@ export interface ProductDocsMergingAndConflictsDocsContentVariables {
     manualResolution:    string;
     mcTheirs:            string;
     mcYours:             string;
+    merge2:              string;
+    merge3:              string;
+    merge4:              string;
+    merge5:              string;
+    merge6:              string;
+    merge7:              string;
     readyToMerge:        string;
     slide1:              string;
-    slide2:              string;
-    slide2_5:            string;
-    slide3:              string;
-    slide4v2:            string;
-    slide5:              string;
-    slide5v2:            string;
-    slide6:              string;
 }
 
 export interface ProductDocsMergingAndConflictsDocsInterpolations {

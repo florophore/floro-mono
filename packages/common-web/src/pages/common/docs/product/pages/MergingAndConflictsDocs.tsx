@@ -130,14 +130,12 @@ function MergingAndConflictsDocs() {
   const remoteRepositoriesDocsTitle = usePlainText("doc_titles.remote_repositories_docs_page_title");
 
   const slide1 = useIcon("merge-tree-docs.slide-1");
-  const slide2 = useIcon("merge-tree-docs.slide-2");
-  const slide2_5 = useIcon("merge-tree-docs.slide-2_5");
-  const slide3 = useIcon("merge-tree-docs.slide-3");
-  const slide4 = useIcon("merge-tree-docs.slide-4");
-  const slide4v2 = useIcon("merge-tree-docs.slide-4-v2");
-  const slide5 = useIcon("merge-tree-docs.slide-5");
-  const slide5v2 = useIcon("merge-tree-docs.slide-5-v2");
-  const slide6 = useIcon("merge-tree-docs.slide-6");
+  const merge2 = useIcon("merge-tree-docs.merge-2");
+  const merge3 = useIcon("merge-tree-docs.merge-3");
+  const merge4 = useIcon("merge-tree-docs.merge-4");
+  const merge5 = useIcon("merge-tree-docs.merge-5");
+  const merge6 = useIcon("merge-tree-docs.merge-6");
+  const merge7 = useIcon("merge-tree-docs.merge-7");
 
   const conflictingBranchesImg = useMemo(() => {
     if (theme.name == 'light') {
@@ -222,39 +220,34 @@ function MergingAndConflictsDocs() {
           <SlideImg src={slide1}/>
         </div>
       ),
-      slide2: (
+      merge2: (
         <div>
-          <SlideImg src={slide2}/>
+          <SlideImg src={merge2}/>
         </div>
       ),
-      slide2_5: (
+      merge3: (
         <div>
-          <SlideImg src={slide2_5}/>
+          <SlideImg src={merge3}/>
         </div>
       ),
-      slide3: (
+      merge4: (
         <div>
-          <SlideImg src={slide3}/>
+          <SlideImg src={merge4}/>
         </div>
       ),
-      slide4v2: (
+      merge5: (
         <div>
-          <SlideImg src={slide4v2}/>
+          <SlideImg src={merge5}/>
         </div>
       ),
-      slide5: (
+      merge6: (
         <div>
-          <SlideImg src={slide5}/>
+          <SlideImg src={merge6}/>
         </div>
       ),
-      slide5v2: (
+      merge7: (
         <div>
-          <SlideImg src={slide5v2}/>
-        </div>
-      ),
-      slide6: (
-        <div>
-          <SlideImg src={slide6}/>
+          <SlideImg src={merge7}/>
         </div>
       ),
       conflictingBranches: (

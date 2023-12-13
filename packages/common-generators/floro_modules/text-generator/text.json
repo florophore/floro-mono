@@ -21,18 +21,17 @@
         "contentVariables": {
           "docSearch": "string",
           "slide1": "string",
-          "slide2": "string",
-          "slide2_5": "string",
-          "slide3": "string",
-          "slide6": "string",
-          "slide4v2": "string",
-          "slide5": "string",
-          "slide5v2": "string",
           "conflictingBranches": "string",
           "readyToMerge": "string",
           "mcYours": "string",
           "mcTheirs": "string",
-          "manualResolution": "string"
+          "manualResolution": "string",
+          "merge2": "string",
+          "merge3": "string",
+          "merge4": "string",
+          "merge5": "string",
+          "merge6": "string",
+          "merge7": "string"
         },
         "styleClasses": {
           "mainTitle": "string"
@@ -40,18 +39,17 @@
         "args": {
           "docSearch": "string",
           "slide1": "string",
-          "slide2": "string",
-          "slide2_5": "string",
-          "slide3": "string",
-          "slide6": "string",
-          "slide4v2": "string",
-          "slide5": "string",
-          "slide5v2": "string",
           "conflictingBranches": "string",
           "readyToMerge": "string",
           "mcYours": "string",
           "mcTheirs": "string",
           "manualResolution": "string",
+          "merge2": "string",
+          "merge3": "string",
+          "merge4": "string",
+          "merge5": "string",
+          "merge6": "string",
+          "merge7": "string",
           "mainTitle": "string"
         },
         "links": {
@@ -611,7 +609,7 @@
           },
           {
             "children": [],
-            "content": "To explain this, we are going to do our best to explain a fairly common scenario and illustrate how ",
+            "content": "To explain this, we are going to do our best to show a fairly common scenario and illustrate how ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -767,7 +765,7 @@
           },
           {
             "children": [],
-            "content": " off of the main branch at commit B. Since F2 was orginally created, an additional commit C has been appended to the main branch.",
+            "content": " off of the main branch at commit B. Since F2 was originally created, an additional commit C has been appended to the main branch.",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -884,7 +882,7 @@
           },
           {
             "children": [],
-            "content": "{slide2}",
+            "content": "{merge2}",
             "type": "content-variable",
             "styles": {
               "isBold": false,
@@ -1118,7 +1116,7 @@
           },
           {
             "children": [],
-            "content": "{slide2_5}",
+            "content": "{merge3}",
             "type": "content-variable",
             "styles": {
               "isBold": false,
@@ -1274,7 +1272,7 @@
           },
           {
             "children": [],
-            "content": "{slide3}",
+            "content": "{merge4}",
             "type": "content-variable",
             "styles": {
               "isBold": false,
@@ -1430,7 +1428,7 @@
           },
           {
             "children": [],
-            "content": "{slide4v2}",
+            "content": "{merge5}",
             "type": "content-variable",
             "styles": {
               "isBold": false,
@@ -1586,7 +1584,7 @@
           },
           {
             "children": [],
-            "content": "{slide5v2}",
+            "content": "{merge6}",
             "type": "content-variable",
             "styles": {
               "isBold": false,
@@ -1703,7 +1701,7 @@
           },
           {
             "children": [],
-            "content": "{slide6}",
+            "content": "{merge7}",
             "type": "content-variable",
             "styles": {
               "isBold": false,
@@ -2678,7 +2676,7 @@
           },
           {
             "children": [],
-            "content": ", our changes will be prioritized of the conflicting changes. To review the conflicting changes, you can alter the merge direction.",
+            "content": ", our changes will be prioritized over the conflicting changes. To review the conflicting changes, you can alter the merge direction.",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -2769,7 +2767,7 @@
           },
           {
             "children": [],
-            "content": "If there's a clear correction by simply toggling between ",
+            "content": "If there's a clear resolution by simply toggling between ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -46434,18 +46432,17 @@
         "contentVariables": {
           "docSearch": "string",
           "slide1": "string",
-          "slide2": "string",
-          "slide2_5": "string",
-          "slide3": "string",
-          "slide6": "string",
-          "slide4v2": "string",
-          "slide5": "string",
-          "slide5v2": "string",
           "conflictingBranches": "string",
           "readyToMerge": "string",
           "mcYours": "string",
           "mcTheirs": "string",
-          "manualResolution": "string"
+          "manualResolution": "string",
+          "merge2": "string",
+          "merge3": "string",
+          "merge4": "string",
+          "merge5": "string",
+          "merge6": "string",
+          "merge7": "string"
         },
         "styleClasses": {
           "mainTitle": "string"
@@ -46453,18 +46450,17 @@
         "args": {
           "docSearch": "string",
           "slide1": "string",
-          "slide2": "string",
-          "slide2_5": "string",
-          "slide3": "string",
-          "slide6": "string",
-          "slide4v2": "string",
-          "slide5": "string",
-          "slide5v2": "string",
           "conflictingBranches": "string",
           "readyToMerge": "string",
           "mcYours": "string",
           "mcTheirs": "string",
           "manualResolution": "string",
+          "merge2": "string",
+          "merge3": "string",
+          "merge4": "string",
+          "merge5": "string",
+          "merge6": "string",
+          "merge7": "string",
           "mainTitle": "string"
         },
         "links": {
@@ -47024,7 +47020,7 @@
           },
           {
             "children": [],
-            "content": "To explain this, we are going to do our best to explain a fairly common scenario and illustrate how ",
+            "content": "To explain this, we are going to do our best to show a fairly common scenario and illustrate how ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -47180,7 +47176,7 @@
           },
           {
             "children": [],
-            "content": " off of the main branch at commit B. Since F2 was orginally created, an additional commit C has been appended to the main branch.",
+            "content": " off of the main branch at commit B. Since F2 was originally created, an additional commit C has been appended to the main branch.",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -47297,7 +47293,7 @@
           },
           {
             "children": [],
-            "content": "{slide2}",
+            "content": "{merge2}",
             "type": "content-variable",
             "styles": {
               "isBold": false,
@@ -47531,7 +47527,7 @@
           },
           {
             "children": [],
-            "content": "{slide2_5}",
+            "content": "{merge3}",
             "type": "content-variable",
             "styles": {
               "isBold": false,
@@ -47687,7 +47683,7 @@
           },
           {
             "children": [],
-            "content": "{slide3}",
+            "content": "{merge4}",
             "type": "content-variable",
             "styles": {
               "isBold": false,
@@ -47843,7 +47839,7 @@
           },
           {
             "children": [],
-            "content": "{slide4v2}",
+            "content": "{merge5}",
             "type": "content-variable",
             "styles": {
               "isBold": false,
@@ -47999,7 +47995,7 @@
           },
           {
             "children": [],
-            "content": "{slide5v2}",
+            "content": "{merge6}",
             "type": "content-variable",
             "styles": {
               "isBold": false,
@@ -48116,7 +48112,7 @@
           },
           {
             "children": [],
-            "content": "{slide6}",
+            "content": "{merge7}",
             "type": "content-variable",
             "styles": {
               "isBold": false,
@@ -49091,7 +49087,7 @@
           },
           {
             "children": [],
-            "content": ", our changes will be prioritized of the conflicting changes. To review the conflicting changes, you can alter the merge direction.",
+            "content": ", our changes will be prioritized over the conflicting changes. To review the conflicting changes, you can alter the merge direction.",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -49182,7 +49178,7 @@
           },
           {
             "children": [],
-            "content": "If there's a clear correction by simply toggling between ",
+            "content": "If there's a clear resolution by simply toggling between ",
             "type": "text",
             "styles": {
               "isBold": false,
