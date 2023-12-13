@@ -1369,6 +1369,7 @@ const PhraseGroup = (props: Props) => {
 
   if (
     commandMode == "compare"
+    && !hasConflict
   ) {
     if (!hasAnyRemovals && compareFrom == "before") {
       return null;

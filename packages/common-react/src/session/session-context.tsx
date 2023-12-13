@@ -17,7 +17,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { useSaveOfflinePhoto } from "../offline/OfflinePhotoContext";
 import { useSaveOfflineIcon } from "../offline/OfflineIconsContext";
-import { useFloroServerSessionQuery } from "./session-hooks";
+import { useFloroServerSesionMutation, useFloroServerSessionQuery } from "./session-hooks";
 
 const SessionContext = React.createContext<{
   session: Session | null;
@@ -57,6 +57,7 @@ export const SessionProvider = (props: Props) => {
     }
   });
   const floroSessionQuery = useFloroServerSessionQuery();
+  const floroSessionMutation = useFloroServerSesionMutation();
   const isDaemonConnected = useDaemonIsConnected();
   useEffect(() => {
     if (isDaemonConnected) {
@@ -93,6 +94,7 @@ export const SessionProvider = (props: Props) => {
     removeClientSession();
     apolloClient.clearStore();
     queryClient.resetQueries();
+    queryClient.removeQueries(["user-session"])
     reset();
     try {
       // fire and forget
@@ -253,11 +255,10 @@ export const SessionProvider = (props: Props) => {
       return;
     }
     if (session?.clientKey && data?.exchangeSession?.user?.id) {
-      axios.post(`http://localhost:63403/session`, {
-        session: session,
-        user: session?.user,
+      floroSessionMutation.mutate({
+        session,
         env: props.env
-      });
+      })
     }
   }, [props?.env, session?.clientKey, data?.exchangeSession?.user?.id, props.clientType])
 

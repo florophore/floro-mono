@@ -594,26 +594,28 @@ const LocalVCSViewMode = (props: Props) => {
         <BottomContainer>
           {!isSelectMode && (
             <>
-              <>{pushDisclaimer}</>
               {!props.apiResponse?.repoState?.isInMergeConflict && (
-                <ButtonRow>
-                  <RepoActionButton
-                    label={"pull remote"}
-                    icon={"pull"}
-                    subTitle={pullSubTitle ?? ""}
-                    isDisabled={!isPullEnabled}
-                    isLoading={pushInfoLoading || pullMutation.isLoading}
-                    onClick={onPull}
-                  />
-                  <RepoActionButton
-                    label={"push local"}
-                    icon={"push"}
-                    subTitle={pushSubTitle ?? ""}
-                    isDisabled={!isPushEnabled}
-                    isLoading={pushInfoLoading || pushMutation.isLoading}
-                    onClick={onPush}
-                  />
-                </ButtonRow>
+                <>
+                  <>{pushDisclaimer}</>
+                  <ButtonRow>
+                    <RepoActionButton
+                      label={"pull remote"}
+                      icon={"pull"}
+                      subTitle={pullSubTitle ?? ""}
+                      isDisabled={!isPullEnabled}
+                      isLoading={pushInfoLoading || pullMutation.isLoading}
+                      onClick={onPull}
+                    />
+                    <RepoActionButton
+                      label={"push local"}
+                      icon={"push"}
+                      subTitle={pushSubTitle ?? ""}
+                      isDisabled={!isPushEnabled}
+                      isLoading={pushInfoLoading || pushMutation.isLoading}
+                      onClick={onPush}
+                    />
+                  </ButtonRow>
+                </>
               )}
             </>
           )}

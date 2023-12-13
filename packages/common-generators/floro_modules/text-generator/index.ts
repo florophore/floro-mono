@@ -67,9 +67,11 @@ export interface PhraseKeys {
     "components.terms_of_service":                        ComponentsTermsOfService;
     "doc_titles.docs_page_title":                         DocTitlesDocsPageTitle;
     "doc_titles.local_repositories_docs_page_title":      DocTitlesLocalRepositoriesDocsPageTitle;
+    "doc_titles.merge_and_conflicts_docs_page_title":     DocTitlesMergeAndConflictsDocsPageTitle;
     "doc_titles.org_portal_docs_page_title":              DocTitlesOrgPortalDocsPageTitle;
     "doc_titles.product_and_terminology_docs_page_title": DocTitlesProductAndTerminologyDocsPageTitle;
     "doc_titles.product_docs_page_title":                 DocTitlesProductDocsPageTitle;
+    "doc_titles.remote_repositories_docs_page_title":     DocTitlesRemoteRepositoriesDocsPageTitle;
     "doc_titles.user_portal_docs_page_title":             DocTitlesUserPortalDocsPageTitle;
     "docs.docs_general":                                  DocsDocsGeneral;
     "docs.icons_plugin_description":                      DocsIconsPluginDescription;
@@ -102,15 +104,19 @@ export interface PhraseKeys {
     "meta_tags.docs":                                     MetaTagsDocs;
     "meta_tags.how_it_works":                             MetaTagsHowItWorks;
     "meta_tags.local_repository_docs":                    MetaTagsLocalRepositoryDocs;
+    "meta_tags.merging_and_conflicts_docs":               MetaTagsMergingAndConflictsDocs;
     "meta_tags.org_portal_docs":                          MetaTagsOrgPortalDocs;
     "meta_tags.product_docs":                             MetaTagsProductDocs;
     "meta_tags.product_docs_and_terminology":             MetaTagsProductDocsAndTerminology;
+    "meta_tags.remote_repository_docs":                   MetaTagsRemoteRepositoryDocs;
     "meta_tags.user_portal_docs":                         MetaTagsUserPortalDocs;
     "product_docs.local_repository_docs":                 ProductDocsLocalRepositoryDocs;
+    "product_docs.merging_and_conflicts_docs":            ProductDocsMergingAndConflictsDocs;
     "product_docs.org_portal_docs":                       ProductDocsOrgPortalDocs;
     "product_docs.product_and_terminology_overview":      ProductDocsProductAndTerminologyOverview;
     "product_docs.product_docs_general":                  ProductDocsProductDocsGeneral;
     "product_docs.product_docs_index":                    ProductDocsProductDocsIndex;
+    "product_docs.remote_repository_docs":                ProductDocsRemoteRepositoryDocs;
     "product_docs.user_portal_docs":                      ProductDocsUserPortalDocs;
 }
 
@@ -1155,6 +1161,39 @@ export interface DocTitlesLocalRepositoriesDocsPageTitleStyledContents {
 export interface DocTitlesLocalRepositoriesDocsPageTitleVariables {
 }
 
+export interface DocTitlesMergeAndConflictsDocsPageTitle {
+    args:             DocTitlesMergeAndConflictsDocsPageTitleArgs;
+    contentVariables: DocTitlesMergeAndConflictsDocsPageTitleContentVariables;
+    interpolations:   DocTitlesMergeAndConflictsDocsPageTitleInterpolations;
+    links:            DocTitlesMergeAndConflictsDocsPageTitleLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     DocTitlesMergeAndConflictsDocsPageTitleStyleClasses;
+    styledContents:   DocTitlesMergeAndConflictsDocsPageTitleStyledContents;
+    variables:        DocTitlesMergeAndConflictsDocsPageTitleVariables;
+}
+
+export interface DocTitlesMergeAndConflictsDocsPageTitleArgs {
+}
+
+export interface DocTitlesMergeAndConflictsDocsPageTitleContentVariables {
+}
+
+export interface DocTitlesMergeAndConflictsDocsPageTitleInterpolations {
+}
+
+export interface DocTitlesMergeAndConflictsDocsPageTitleLinks {
+}
+
+export interface DocTitlesMergeAndConflictsDocsPageTitleStyleClasses {
+}
+
+export interface DocTitlesMergeAndConflictsDocsPageTitleStyledContents {
+}
+
+export interface DocTitlesMergeAndConflictsDocsPageTitleVariables {
+}
+
 export interface DocTitlesOrgPortalDocsPageTitle {
     args:             DocTitlesOrgPortalDocsPageTitleArgs;
     contentVariables: DocTitlesOrgPortalDocsPageTitleContentVariables;
@@ -1252,6 +1291,39 @@ export interface DocTitlesProductDocsPageTitleStyledContents {
 }
 
 export interface DocTitlesProductDocsPageTitleVariables {
+}
+
+export interface DocTitlesRemoteRepositoriesDocsPageTitle {
+    args:             DocTitlesRemoteRepositoriesDocsPageTitleArgs;
+    contentVariables: DocTitlesRemoteRepositoriesDocsPageTitleContentVariables;
+    interpolations:   DocTitlesRemoteRepositoriesDocsPageTitleInterpolations;
+    links:            DocTitlesRemoteRepositoriesDocsPageTitleLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     DocTitlesRemoteRepositoriesDocsPageTitleStyleClasses;
+    styledContents:   DocTitlesRemoteRepositoriesDocsPageTitleStyledContents;
+    variables:        DocTitlesRemoteRepositoriesDocsPageTitleVariables;
+}
+
+export interface DocTitlesRemoteRepositoriesDocsPageTitleArgs {
+}
+
+export interface DocTitlesRemoteRepositoriesDocsPageTitleContentVariables {
+}
+
+export interface DocTitlesRemoteRepositoriesDocsPageTitleInterpolations {
+}
+
+export interface DocTitlesRemoteRepositoriesDocsPageTitleLinks {
+}
+
+export interface DocTitlesRemoteRepositoriesDocsPageTitleStyleClasses {
+}
+
+export interface DocTitlesRemoteRepositoriesDocsPageTitleStyledContents {
+}
+
+export interface DocTitlesRemoteRepositoriesDocsPageTitleVariables {
 }
 
 export interface DocTitlesUserPortalDocsPageTitle {
@@ -2423,6 +2495,39 @@ export interface MetaTagsLocalRepositoryDocsStyledContents {
 export interface MetaTagsLocalRepositoryDocsVariables {
 }
 
+export interface MetaTagsMergingAndConflictsDocs {
+    args:             MetaTagsMergingAndConflictsDocsArgs;
+    contentVariables: MetaTagsMergingAndConflictsDocsContentVariables;
+    interpolations:   MetaTagsMergingAndConflictsDocsInterpolations;
+    links:            MetaTagsMergingAndConflictsDocsLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     MetaTagsMergingAndConflictsDocsStyleClasses;
+    styledContents:   MetaTagsMergingAndConflictsDocsStyledContents;
+    variables:        MetaTagsMergingAndConflictsDocsVariables;
+}
+
+export interface MetaTagsMergingAndConflictsDocsArgs {
+}
+
+export interface MetaTagsMergingAndConflictsDocsContentVariables {
+}
+
+export interface MetaTagsMergingAndConflictsDocsInterpolations {
+}
+
+export interface MetaTagsMergingAndConflictsDocsLinks {
+}
+
+export interface MetaTagsMergingAndConflictsDocsStyleClasses {
+}
+
+export interface MetaTagsMergingAndConflictsDocsStyledContents {
+}
+
+export interface MetaTagsMergingAndConflictsDocsVariables {
+}
+
 export interface MetaTagsOrgPortalDocs {
     args:             MetaTagsOrgPortalDocsArgs;
     contentVariables: MetaTagsOrgPortalDocsContentVariables;
@@ -2520,6 +2625,39 @@ export interface MetaTagsProductDocsAndTerminologyStyledContents {
 }
 
 export interface MetaTagsProductDocsAndTerminologyVariables {
+}
+
+export interface MetaTagsRemoteRepositoryDocs {
+    args:             MetaTagsRemoteRepositoryDocsArgs;
+    contentVariables: MetaTagsRemoteRepositoryDocsContentVariables;
+    interpolations:   MetaTagsRemoteRepositoryDocsInterpolations;
+    links:            MetaTagsRemoteRepositoryDocsLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     MetaTagsRemoteRepositoryDocsStyleClasses;
+    styledContents:   MetaTagsRemoteRepositoryDocsStyledContents;
+    variables:        MetaTagsRemoteRepositoryDocsVariables;
+}
+
+export interface MetaTagsRemoteRepositoryDocsArgs {
+}
+
+export interface MetaTagsRemoteRepositoryDocsContentVariables {
+}
+
+export interface MetaTagsRemoteRepositoryDocsInterpolations {
+}
+
+export interface MetaTagsRemoteRepositoryDocsLinks {
+}
+
+export interface MetaTagsRemoteRepositoryDocsStyleClasses {
+}
+
+export interface MetaTagsRemoteRepositoryDocsStyledContents {
+}
+
+export interface MetaTagsRemoteRepositoryDocsVariables {
 }
 
 export interface MetaTagsUserPortalDocs {
@@ -2621,6 +2759,71 @@ export interface ProductDocsLocalRepositoryDocsStyledContents {
 }
 
 export interface ProductDocsLocalRepositoryDocsVariables {
+}
+
+export interface ProductDocsMergingAndConflictsDocs {
+    args:             ProductDocsMergingAndConflictsDocsArgs;
+    contentVariables: ProductDocsMergingAndConflictsDocsContentVariables;
+    interpolations:   ProductDocsMergingAndConflictsDocsInterpolations;
+    links:            ProductDocsMergingAndConflictsDocsLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     ProductDocsMergingAndConflictsDocsStyleClasses;
+    styledContents:   ProductDocsMergingAndConflictsDocsStyledContents;
+    variables:        ProductDocsMergingAndConflictsDocsVariables;
+}
+
+export interface ProductDocsMergingAndConflictsDocsArgs {
+    conflictingBranches: string;
+    docSearch:           string;
+    mainTitle:           string;
+    manualResolution:    string;
+    mcTheirs:            string;
+    mcYours:             string;
+    readyToMerge:        string;
+    slide1:              string;
+    slide2:              string;
+    slide2_5:            string;
+    slide3:              string;
+    slide4v2:            string;
+    slide5:              string;
+    slide5v2:            string;
+    slide6:              string;
+}
+
+export interface ProductDocsMergingAndConflictsDocsContentVariables {
+    conflictingBranches: string;
+    docSearch:           string;
+    manualResolution:    string;
+    mcTheirs:            string;
+    mcYours:             string;
+    readyToMerge:        string;
+    slide1:              string;
+    slide2:              string;
+    slide2_5:            string;
+    slide3:              string;
+    slide4v2:            string;
+    slide5:              string;
+    slide5v2:            string;
+    slide6:              string;
+}
+
+export interface ProductDocsMergingAndConflictsDocsInterpolations {
+}
+
+export interface ProductDocsMergingAndConflictsDocsLinks {
+    "advanced floro commands": Link;
+}
+
+export interface ProductDocsMergingAndConflictsDocsStyleClasses {
+    mainTitle: string;
+}
+
+export interface ProductDocsMergingAndConflictsDocsStyledContents {
+    "main title": StyledContent;
+}
+
+export interface ProductDocsMergingAndConflictsDocsVariables {
 }
 
 export interface ProductDocsOrgPortalDocs {
@@ -2794,10 +2997,12 @@ export interface ProductDocsProductDocsIndexInterpolations {
 }
 
 export interface ProductDocsProductDocsIndexLinks {
-    "learn how local repositories work": Link;
-    "navigating the org portal":         Link;
-    "navigating the user portal":        Link;
-    "product and terminology overview":  Link;
+    "learn how local repositories work":  Link;
+    "learn how remote repositories work": Link;
+    "merging-and-conflicts":              Link;
+    "navigating the org portal":          Link;
+    "navigating the user portal":         Link;
+    "product and terminology overview":   Link;
 }
 
 export interface ProductDocsProductDocsIndexStyleClasses {
@@ -2807,6 +3012,67 @@ export interface ProductDocsProductDocsIndexStyledContents {
 }
 
 export interface ProductDocsProductDocsIndexVariables {
+}
+
+export interface ProductDocsRemoteRepositoryDocs {
+    args:             ProductDocsRemoteRepositoryDocsArgs;
+    contentVariables: ProductDocsRemoteRepositoryDocsContentVariables;
+    interpolations:   ProductDocsRemoteRepositoryDocsInterpolations;
+    links:            ProductDocsRemoteRepositoryDocsLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     ProductDocsRemoteRepositoryDocsStyleClasses;
+    styledContents:   ProductDocsRemoteRepositoryDocsStyledContents;
+    variables:        ProductDocsRemoteRepositoryDocsVariables;
+}
+
+export interface ProductDocsRemoteRepositoryDocsArgs {
+    approveImg:             string;
+    branchSettingsImg:      string;
+    createMRImg:            string;
+    docSearch:              string;
+    doneMRImg:              string;
+    finalLocalMergeHomeImg: string;
+    historyImg:             string;
+    mainTitle:              string;
+    pullBranchImg:          string;
+    repoSettingsImg:        string;
+    requestReviewerImg:     string;
+    switchBranchesImg:      string;
+}
+
+export interface ProductDocsRemoteRepositoryDocsContentVariables {
+    approveImg:             string;
+    branchSettingsImg:      string;
+    createMRImg:            string;
+    docSearch:              string;
+    doneMRImg:              string;
+    finalLocalMergeHomeImg: string;
+    historyImg:             string;
+    pullBranchImg:          string;
+    repoSettingsImg:        string;
+    requestReviewerImg:     string;
+    switchBranchesImg:      string;
+}
+
+export interface ProductDocsRemoteRepositoryDocsInterpolations {
+}
+
+export interface ProductDocsRemoteRepositoryDocsLinks {
+    "link to text plugin":              Link;
+    "navigating merging and conflicts": Link;
+    "previous section":                 Link;
+}
+
+export interface ProductDocsRemoteRepositoryDocsStyleClasses {
+    mainTitle: string;
+}
+
+export interface ProductDocsRemoteRepositoryDocsStyledContents {
+    "main title": StyledContent;
+}
+
+export interface ProductDocsRemoteRepositoryDocsVariables {
 }
 
 export interface ProductDocsUserPortalDocs {
@@ -2893,9 +3159,11 @@ export interface PhraseKeyDebugInfo {
     "components.terms_of_service":                        DebugInfo;
     "doc_titles.docs_page_title":                         DebugInfo;
     "doc_titles.local_repositories_docs_page_title":      DebugInfo;
+    "doc_titles.merge_and_conflicts_docs_page_title":     DebugInfo;
     "doc_titles.org_portal_docs_page_title":              DebugInfo;
     "doc_titles.product_and_terminology_docs_page_title": DebugInfo;
     "doc_titles.product_docs_page_title":                 DebugInfo;
+    "doc_titles.remote_repositories_docs_page_title":     DebugInfo;
     "doc_titles.user_portal_docs_page_title":             DebugInfo;
     "docs.docs_general":                                  DebugInfo;
     "docs.icons_plugin_description":                      DebugInfo;
@@ -2928,15 +3196,19 @@ export interface PhraseKeyDebugInfo {
     "meta_tags.docs":                                     DebugInfo;
     "meta_tags.how_it_works":                             DebugInfo;
     "meta_tags.local_repository_docs":                    DebugInfo;
+    "meta_tags.merging_and_conflicts_docs":               DebugInfo;
     "meta_tags.org_portal_docs":                          DebugInfo;
     "meta_tags.product_docs":                             DebugInfo;
     "meta_tags.product_docs_and_terminology":             DebugInfo;
+    "meta_tags.remote_repository_docs":                   DebugInfo;
     "meta_tags.user_portal_docs":                         DebugInfo;
     "product_docs.local_repository_docs":                 DebugInfo;
+    "product_docs.merging_and_conflicts_docs":            DebugInfo;
     "product_docs.org_portal_docs":                       DebugInfo;
     "product_docs.product_and_terminology_overview":      DebugInfo;
     "product_docs.product_docs_general":                  DebugInfo;
     "product_docs.product_docs_index":                    DebugInfo;
+    "product_docs.remote_repository_docs":                DebugInfo;
     "product_docs.user_portal_docs":                      DebugInfo;
 }
 

@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import axios from "axios";
-import { Repository, SessionFragment } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import { Repository, Session, SessionFragment } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { ApiResponse, Branch, BranchesMetaState, CloneFile, FetchInfo, SourceGraphResponse } from "floro/dist/src/repo";
 import { SourceCommitNode } from "floro/dist/src/sourcegraph";
 import { Manifest } from "floro/dist/src/plugins";
@@ -33,3 +33,19 @@ export const useFloroServerSessionQuery = () => {
   );
 };
 
+
+export const useFloroServerSesionMutation = () => {
+  return useMutation({
+    mutationFn: async ({session, env}:{session: Session, env: string}) => {
+      const result = await axios.post<{status: string}>("http://localhost:63403/session", {
+        session,
+        user: session?.user,
+        env
+      });
+      return {
+        result,
+        session
+      }
+    }
+  });
+}

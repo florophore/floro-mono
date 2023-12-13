@@ -50,6 +50,15 @@ export interface Icons {
     "front-page.windows":                      FrontPageWindows;
     "main.floro":                              MainFloro;
     "main.floro-text":                         MainFloroText;
+    "merge-tree-docs.slide-1":                 MergeTreeDocsSlide1;
+    "merge-tree-docs.slide-2":                 MergeTreeDocsSlide2;
+    "merge-tree-docs.slide-2_5":               MergeTreeDocsSlide2_5;
+    "merge-tree-docs.slide-3":                 MergeTreeDocsSlide3;
+    "merge-tree-docs.slide-4":                 MergeTreeDocsSlide4;
+    "merge-tree-docs.slide-4-v2":              MergeTreeDocsSlide4V2;
+    "merge-tree-docs.slide-5":                 MergeTreeDocsSlide5;
+    "merge-tree-docs.slide-5-v2":              MergeTreeDocsSlide5V2;
+    "merge-tree-docs.slide-6":                 MergeTreeDocsSlide6;
     "merging.auto-merge":                      MergingAutoMerge;
     "merging.cascaded-merge":                  MergingCascadedMerge;
     "merging.conflict-merge":                  MergingConflictMerge;
@@ -435,6 +444,78 @@ export interface MainFloroText {
 }
 
 export interface MainFloroTextVariants {
+}
+
+export interface MergeTreeDocsSlide1 {
+    default:  Theme;
+    variants: MergeTreeDocsSlide1_Variants;
+}
+
+export interface MergeTreeDocsSlide1_Variants {
+}
+
+export interface MergeTreeDocsSlide2 {
+    default:  Theme;
+    variants: MergeTreeDocsSlide2_Variants;
+}
+
+export interface MergeTreeDocsSlide2_Variants {
+}
+
+export interface MergeTreeDocsSlide2_5 {
+    default:  Theme;
+    variants: MergeTreeDocsSlide2_5_Variants;
+}
+
+export interface MergeTreeDocsSlide2_5_Variants {
+}
+
+export interface MergeTreeDocsSlide3 {
+    default:  Theme;
+    variants: MergeTreeDocsSlide3_Variants;
+}
+
+export interface MergeTreeDocsSlide3_Variants {
+}
+
+export interface MergeTreeDocsSlide4 {
+    default:  Theme;
+    variants: MergeTreeDocsSlide4_Variants;
+}
+
+export interface MergeTreeDocsSlide4_Variants {
+}
+
+export interface MergeTreeDocsSlide4V2 {
+    default:  Theme;
+    variants: MergeTreeDocsSlide4V2Variants;
+}
+
+export interface MergeTreeDocsSlide4V2Variants {
+}
+
+export interface MergeTreeDocsSlide5 {
+    default:  Theme;
+    variants: MergeTreeDocsSlide5_Variants;
+}
+
+export interface MergeTreeDocsSlide5_Variants {
+}
+
+export interface MergeTreeDocsSlide5V2 {
+    default:  Theme;
+    variants: MergeTreeDocsSlide5V2Variants;
+}
+
+export interface MergeTreeDocsSlide5V2Variants {
+}
+
+export interface MergeTreeDocsSlide6 {
+    default:  Theme;
+    variants: MergeTreeDocsSlide6_Variants;
+}
+
+export interface MergeTreeDocsSlide6_Variants {
 }
 
 export interface MergingAutoMerge {

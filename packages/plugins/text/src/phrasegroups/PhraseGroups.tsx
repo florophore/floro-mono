@@ -7,6 +7,7 @@ import {
   makeQueryRef,
   useFloroContext,
   useFloroState,
+  useHasConflict,
   useWasRemoved,
 } from "../floro-schema-api";
 import PhraseGroup from "./PhraseGroup";
@@ -45,7 +46,7 @@ const PhraseGroups = (props: Props) => {
   const [phraseGroups, setPhraseGroups, savePhraseGroups] =
     useFloroState("$(text).phraseGroups") ?? [];
   const [isDragging, setIsDragging] = useState(false);
-  const { applicationState, commandMode, changeset, compareFrom } = useFloroContext();
+  const { applicationState, commandMode, changeset, conflictSet, compareFrom } = useFloroContext();
 
   const onDragStart = useCallback(() => {
     setIsDragging(true);
@@ -83,12 +84,13 @@ const PhraseGroups = (props: Props) => {
     for (const phraseGroup of applicationState?.text?.phraseGroups ?? []) {
       const phraseGroupRef = makeQueryRef(`$(text).phraseGroups.id<?>`, phraseGroup.id);
       const hasDiff = containsDiffable(changeset, `${phraseGroupRef}.phrases`, true)
-      if (hasDiff) {
+      const containConflict = containsDiffable(conflictSet, `${phraseGroupRef}.phrases`, true)
+      if (hasDiff || containConflict) {
         count++;
       }
     }
     return count;
-  }, [commandMode, applicationState, changeset])
+  }, [commandMode, applicationState, changeset, conflictSet])
 
   if (commandMode == "compare" && compareFrom == "before" && diffedPhrases == 0) {
     return (
@@ -148,7 +150,6 @@ const PhraseGroups = (props: Props) => {
       </Container>
     )
   }
-
   return (
     <Container>
       {props.isEditingGroups && commandMode == "edit" && (

@@ -16,6 +16,7 @@ import RedHexagonWarningLight from "@floro/common-assets/assets/images/icons/red
 import RedHexagonWarningDark from "@floro/common-assets/assets/images/icons/red_hexagon_warning.dark.svg";
 import { useDiscardChanges } from "../hooks/local-hooks";
 import { Repository } from "@floro/graphql-schemas/build/generated/main-client-graphql";
+import { useLocalVCSNavContext } from "../vcsnav/LocalVCSContext";
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -113,9 +114,17 @@ const ConfirmDiscardChangesModal = (props: Props) => {
   }, []);
 
   const discardChangesMutation = useDiscardChanges(props.repository);
+  const { setIsStashing} = useLocalVCSNavContext();
+
+  useEffect(() => {
+    if (!props.show) {
+      discardChangesMutation.reset();
+    }
+  }, [props.show])
 
   const onDiscard = useCallback(() => {
     discardChangesMutation.mutate();
+    setIsStashing(true);
   }, []);
 
   useEffect(() => {
@@ -124,6 +133,12 @@ const ConfirmDiscardChangesModal = (props: Props) => {
     }
 
   }, [discardChangesMutation.isSuccess, props.onDismiss]);
+
+  useEffect(() => {
+    if (discardChangesMutation.isSuccess || discardChangesMutation.isError) {
+      setIsStashing(false);
+    }
+  }, [discardChangesMutation.isSuccess, discardChangesMutation.isError])
 
   return (
     <RootModal
