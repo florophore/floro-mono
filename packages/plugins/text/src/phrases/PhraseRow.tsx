@@ -1,5 +1,5 @@
-import React, { useMemo, useCallback, useState, useEffect } from "react";
-import { PointerTypes, SchemaTypes, makeQueryRef, useClientStorageApi, useCopyApi, useExtractQueryArgs, useFloroContext, useFloroState, useHasIndication, useReferencedObject } from "../floro-schema-api";
+import React, { useMemo, useCallback, useState, useEffect, useRef } from "react";
+import { PointerTypes, SchemaTypes, extractQueryArgs, makeQueryRef, useClientStorageApi, useCopyApi, useExtractQueryArgs, useFloroContext, useFloroState, useHasIndication, useReferencedObject } from "../floro-schema-api";
 import { Reorder, useDragControls } from "framer-motion";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
@@ -26,6 +26,8 @@ import UpdatePhraseModal from "./UpdatePhraseModal";
 import TagList from "./tags/TagList";
 import DuplicatePhraseModal from "./DuplicatePhraseModal";
 import { useDiffColor } from "../diff";
+import throttle from "lodash/throttle";
+import SearchInput from "@floro/storybook/stories/design-system/SearchInput";
 
 const Container = styled.div`
   padding: 0;
@@ -109,21 +111,130 @@ const PinPhrase = styled.p`
   margin: 0;
 `;
 
+const NoResultsContainer = styled.div`
+  margin-top: 24px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid ${(props) => props.theme.colors.inputBorderColor};
+  background: ${props => props.theme.name == 'light' ? ColorPalette.extraLightGray : ColorPalette.darkerGray};
+`;
+
+const AllContentFiltered = styled.p`
+  font-family: "MavenPro";
+  font-weight: 600;
+  font-size: 1.7rem;
+  color: ${props => props.theme.colors.contrastText};
+`;
+
+const ClearLocalSearch = styled.p`
+  margin-top: 8px;
+  font-family: "MavenPro";
+  font-weight: 600;
+  font-size: 2rem;
+  color: ${props => props.theme.colors.linkColor};
+  text-decoration: underline;
+  cursor: pointer;
+`;
+
 
 
 interface Props {
   phrase: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>"];
   phraseGroup: SchemaTypes["$(text).phraseGroups.id<?>"];
   phraseRef: PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>"];
+  selectedPhraseRef: PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>"]|null;
   index: number;
   selectedTopLevelLocale: string;
   pinnedPhrases: Array<string>|null;
   setPinnedPhrases: (phraseRegs: Array<string>) => void;
   globalFilterUntranslated: boolean;
   onRemove: (phrase: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>"]) => void;
+  scrollContainer: HTMLDivElement;
+  searchText: string;
+  showOnlyPinnedPhrases: boolean;
 }
 
 const PhraseRow = (props: Props) => {
+  const container = useRef<HTMLDivElement>(null);
+  const subContainer = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(true);
+  const [manualSearchText, setManualSearchText] = useState<string>(props.searchText ?? "");
+
+  const [realManualSearchText, setRealManualSearchText] = useState(props.searchText ?? "");
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setManualSearchText(realManualSearchText ?? "");
+    }, 300);
+    return () => {
+      clearTimeout(timeout);
+    }
+  }, [realManualSearchText])
+
+  const isSearching = useMemo(
+    () => manualSearchText.trim() != "",
+    [manualSearchText]
+  );
+
+  useEffect(() => {
+    if (props.selectedPhraseRef == props.phraseRef) {
+      if (container.current) {
+        const rect = container.current.getBoundingClientRect();
+        props.scrollContainer.scroll(0, rect.y);
+      }
+    }
+  }, [props.selectedPhraseRef, props.phraseRef])
+
+  useEffect(() => {
+    if (props.showOnlyPinnedPhrases) {
+      return;
+    }
+    setRealManualSearchText(props.searchText ?? "");
+  }, [props.searchText, props.showOnlyPinnedPhrases])
+
+  const onClearSearch = useCallback(() => {
+    setRealManualSearchText("");
+    setManualSearchText("");
+  }, [])
+
+
+  useEffect(() => {
+    const onScroll = () => {
+      if (!container.current) {
+        return;
+      }
+      const rect = container.current.getBoundingClientRect();
+      const scrollRect = props.scrollContainer.getBoundingClientRect();
+      const windowHeight = scrollRect.height - 72;
+      let isVisible = false;
+      if (rect.top > 0) {
+        isVisible = rect.top <= windowHeight * 3;
+      } else {
+        if ((rect.top + rect.height) >= 0) {
+          isVisible = true;
+        } else {
+            isVisible = Math.abs(rect.top + rect.height) < windowHeight * 3;
+        }
+      }
+      setIsVisible(isVisible);
+    }
+    const onScrollThrottle = throttle(onScroll, 30, { trailing: true, leading: true})
+    props.scrollContainer.addEventListener("scroll", onScrollThrottle);
+    props.scrollContainer.addEventListener("keydown", onScroll);
+    props.scrollContainer.addEventListener("click", onScroll);
+    props.scrollContainer.addEventListener("resize", onScroll);
+    onScroll();
+    return () => {
+      props.scrollContainer.removeEventListener("scroll", onScrollThrottle);
+      props.scrollContainer.removeEventListener("keydown", onScroll);
+      props.scrollContainer.removeEventListener("click", onScroll);
+      props.scrollContainer.removeEventListener("resize", onScroll);
+    }
+
+  }, [props.scrollContainer])
   const theme = useTheme();
   const locales = useReferencedObject("$(text).localeSettings.locales");
   const { applicationState, commandMode, clientStorage, isCopyMode, conflictSet, changeset } = useFloroContext();
@@ -374,12 +485,134 @@ const PhraseRow = (props: Props) => {
     setShowDuplicate(false);
   }, []);
 
+  const searchBorderColor = useMemo(() => {
+    if (theme.name == "light") {
+      return ColorPalette.gray;
+    }
+    return ColorPalette.gray;
+  }, [theme.name]);
+
+  const memoizedTranslation = useMemo(() => {
+    if (!selectedLocale) {
+      return null;
+    }
+    if (!isVisible) {
+      return null;
+    }
+    return (
+      <PhraseTranslation
+        phraseRef={props.phraseRef}
+        selectedLocale={selectedLocale}
+        systemSourceLocale={systemSourceLocale}
+        fallbackLocale={fallbackLocale}
+        globalFallbackLocale={globalFallbackLocale}
+        pinnedPhrases={props.pinnedPhrases}
+        setPinnedPhrases={props.setPinnedPhrases}
+        globalFilterUntranslated={props.globalFilterUntranslated}
+        isPinned={isPinned}
+        showEnabledFeatures={showEnabledFeatures}
+        setShowEnabledFeatures={setShowEnabledFeatures}
+        isVisible={isVisible}
+        ref={subContainer}
+        isSearching={isSearching}
+        searchText={manualSearchText}
+      />
+    );
+  }, [
+    isSearching,
+    manualSearchText,
+    applicationState,
+    isVisible,
+    selectedLocale,
+    props.phrase,
+    props.phrase,
+    props.phraseRef,
+    systemSourceLocale,
+    fallbackLocale,
+    globalFallbackLocale,
+    props.pinnedPhrases,
+    props.setPinnedPhrases,
+    props.globalFilterUntranslated,
+    isPinned,
+    showEnabledFeatures,
+    setShowEnabledFeatures,
+  ]);
+
+  const showNoResults = useMemo(() => {
+    if (!isSearching) {
+      return false;
+    }
+    const lowerCaseSearch = manualSearchText.toLowerCase();
+    if (phrase?.usePhraseSections) {
+      for (const section of phrase?.phraseSections ?? []) {
+        const translation = section?.localeRules.find(t => {
+          const [localeCode] = extractQueryArgs(t.id);
+          return localeCode == selectedLocale?.localeCode;
+        });
+        if (translation?.displayValue?.plainText?.toLowerCase().indexOf(lowerCaseSearch) != -1) {
+          return false;
+        }
+      }
+    } else {
+      const translation = phrase?.phraseTranslations.find(t => {
+        const [localeCode] = extractQueryArgs(t.id);
+        return localeCode == selectedLocale?.localeCode;
+      });
+      if (translation?.plainText?.toLowerCase().indexOf(lowerCaseSearch) != -1) {
+        return false;
+      }
+    }
+
+    for (const section of phrase?.linkVariables ?? []) {
+      const translation = section?.translations.find(t => {
+        const [localeCode] = extractQueryArgs(t.id);
+        return localeCode == selectedLocale?.localeCode;
+      });
+      if (translation?.linkDisplayValue?.plainText?.toLowerCase().indexOf(lowerCaseSearch) != -1) {
+        return false;
+      }
+      if (translation?.linkHrefValue?.plainText?.toLowerCase().indexOf(lowerCaseSearch) != -1) {
+        return false;
+      }
+    }
+
+    for (const styledContent of phrase?.styledContents ?? []) {
+      const translation = styledContent?.localeRules.find(t => {
+        const [localeCode] = extractQueryArgs(t.id);
+        return localeCode == selectedLocale?.localeCode;
+      });
+      if (translation?.displayValue?.plainText?.toLowerCase().indexOf(lowerCaseSearch) != -1) {
+        return false;
+      }
+    }
+    for (const interpolationVariant of phrase?.interpolationVariants ?? []) {
+      const translation = interpolationVariant?.localeRules.find(t => {
+        const [localeCode] = extractQueryArgs(t.id);
+        return localeCode == selectedLocale?.localeCode;
+      });
+      if (translation?.defaultValue?.plainText?.toLowerCase().indexOf(lowerCaseSearch) != -1) {
+        return false;
+      }
+      for (const conditional of translation?.conditionals ?? []) {
+        if (
+          conditional?.resultant?.plainText
+            ?.toLowerCase()
+            .indexOf(lowerCaseSearch) != -1
+        ) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }, [manualSearchText, selectedLocale, isSearching]);
+  console.log(props.phraseRef, showNoResults);
+
   if (commandMode == "compare" && !hasIndications) {
     return null;
   }
 
   return (
-    <Container style={{borderColor: diffColor}}>
+    <Container style={{ borderColor: diffColor }} ref={container}>
       <UpdatePhraseModal
         show={showUpdate}
         onDismiss={onHideUpdate}
@@ -465,28 +698,50 @@ const PhraseRow = (props: Props) => {
             alignItems: "center",
           }}
         >
-            <span style={{ marginLeft: 0 }}>
-              <PinPhrase style={{fontWeight: 700, fontSize: '1.4rem', color: diffColor}}>{"Changed Locales: " + indicatedLocaleCodes}</PinPhrase>
-            </span>
+          <span style={{ marginLeft: 0 }}>
+            <PinPhrase
+              style={{ fontWeight: 700, fontSize: "1.4rem", color: diffColor }}
+            >
+              {"Changed Locales: " + indicatedLocaleCodes}
+            </PinPhrase>
+          </span>
         </div>
       )}
       <div
         style={{
-          height: 56,
+          marginTop: 12,
+          marginBottom: 12,
           width: "100%",
           display: "flex",
           flexDirection: "row",
           alignItems: "center",
+          justifyContent: "space-between",
         }}
       >
-        {clientStorageIsEnabled && (
-          <>
-            <Checkbox isChecked={isPinned} onChange={onTogglePin} />
-            <span style={{ marginLeft: 12 }}>
-              <PinPhrase>{"Keep Phrase Pinned"}</PinPhrase>
-            </span>
-          </>
-        )}
+        <div>
+          {clientStorageIsEnabled && (
+            <div
+              style={{
+                height: 56,
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <Checkbox isChecked={isPinned} onChange={onTogglePin} />
+              <span style={{ marginLeft: 12 }}>
+                <PinPhrase>{"Keep Phrase Pinned"}</PinPhrase>
+              </span>
+            </div>
+          )}
+        </div>
+        <SearchInput
+          borderColor={searchBorderColor}
+          value={realManualSearchText}
+          placeholder={`search ${phrase?.phraseKey}`}
+          onTextChanged={setRealManualSearchText}
+          showClear
+        />
       </div>
       {isCopyMode && (
         <div
@@ -519,33 +774,44 @@ const PhraseRow = (props: Props) => {
           />
         </div>
       )}
-        <div
-            style={{
-              marginBottom: commandMode != "edit" ? 24 : 48,
-            }}
-        >
-          {(phrase?.tagsEnabled || (phrase?.tags?.length ?? 0) > 0) && (
-            <TagList phraseRef={props.phraseRef} />
-          )}
-        </div>
-      <div style={{borderTop: `1px solid ${theme.colors.contrastTextLight}`, paddingTop: 24}}>
-        {selectedLocale && (
-          <PhraseTranslation
-            phrase={props.phrase}
-            phraseRef={props.phraseRef}
-            selectedLocale={selectedLocale}
-            systemSourceLocale={systemSourceLocale}
-            fallbackLocale={fallbackLocale}
-            globalFallbackLocale={globalFallbackLocale}
-            pinnedPhrases={props.pinnedPhrases}
-            setPinnedPhrases={props.setPinnedPhrases}
-            globalFilterUntranslated={props.globalFilterUntranslated}
-            isPinned={isPinned}
-            showEnabledFeatures={showEnabledFeatures}
-            setShowEnabledFeatures={setShowEnabledFeatures}
-          />
+      <div
+        style={{
+          marginBottom: commandMode != "edit" ? 24 : 48,
+        }}
+      >
+        {(phrase?.tagsEnabled || (phrase?.tags?.length ?? 0) > 0) && (
+          <TagList phraseRef={props.phraseRef} />
         )}
       </div>
+      {!showNoResults && (
+        <div
+          style={{
+            borderTop: `1px solid ${theme.colors.contrastTextLight}`,
+            paddingTop: 24,
+            visibility: isVisible ? "visible" : "hidden",
+          }}
+        >
+          {memoizedTranslation}
+        </div>
+      )}
+      {showNoResults && (
+        <div
+          style={{
+            borderTop: `1px solid ${theme.colors.contrastTextLight}`,
+            paddingTop: 24,
+            visibility: isVisible ? "visible" : "hidden",
+          }}
+        >
+          <NoResultsContainer>
+            <AllContentFiltered>
+              {'all content has been filtered by local search'}
+            </AllContentFiltered>
+            <ClearLocalSearch onClick={onClearSearch}>
+              {'clear local search & show content'}
+            </ClearLocalSearch>
+          </NoResultsContainer>
+        </div>
+      )}
     </Container>
   );
 };

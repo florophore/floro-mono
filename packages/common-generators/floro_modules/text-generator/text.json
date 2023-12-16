@@ -15,6 +15,135 @@
   },
   "localizedPhraseKeys": {
     "EN": {
+      "product_docs.advanced_commands_docs": {
+        "phraseKey": "product_docs.advanced_commands_docs",
+        "variables": {},
+        "contentVariables": {
+          "docSearch": "string"
+        },
+        "styleClasses": {
+          "mainTitle": "string"
+        },
+        "args": {
+          "docSearch": "string",
+          "mainTitle": "string"
+        },
+        "links": {},
+        "interpolations": {},
+        "styledContents": {
+          "main title": {
+            "displayValue": [
+              {
+                "children": [],
+                "content": "Advanced Commands",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              }
+            ],
+            "styleClass": "mainTitle"
+          }
+        },
+        "phrase": [
+          {
+            "children": [],
+            "content": "{main title}",
+            "type": "styled-content",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{docSearch}",
+            "type": "content-variable",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Overview",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
       "product_docs.merging_and_conflicts_docs": {
         "phraseKey": "product_docs.merging_and_conflicts_docs",
         "variables": {},
@@ -843,7 +972,33 @@
           },
           {
             "children": [],
-            "content": "main (merge into) -> F1",
+            "content": "main (merging into) -> F1 (F1 is ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "altered",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ")",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -999,7 +1154,7 @@
           },
           {
             "children": [],
-            "content": " as B' and C'. We then made a merge commit called M0 that is the reconciliation of the merge between commit C and commit Y.",
+            "content": " as B' and C'. We then made a merge commit called M0 that is the commit of the merge between commit C and commit Y.",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -1077,7 +1232,7 @@
           },
           {
             "children": [],
-            "content": "main (merge into) -> F2",
+            "content": "main (merging into) -> F2 (F2 is altered)",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -1233,7 +1388,7 @@
           },
           {
             "children": [],
-            "content": "F1 (merge into) -> main",
+            "content": "F1 (merging into) -> main (main is altered)",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -1389,7 +1544,7 @@
           },
           {
             "children": [],
-            "content": "main (merge into) -> F2",
+            "content": "main (merging into) -> F2 (F2 is altered)",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -1545,7 +1700,7 @@
           },
           {
             "children": [],
-            "content": "F2 (merge into) -> main",
+            "content": "F2 (merging into) -> main (main is altered)",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -1662,7 +1817,7 @@
           },
           {
             "children": [],
-            "content": "main (merge into) -> F1",
+            "content": "main (merging into) -> F1 (F1 is altered)",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -3261,7 +3416,7 @@
           },
           {
             "children": [],
-            "content": ", we can now learn about reverting, sha graphs, and copying and pasting across repositories",
+            "content": ", we can now learn about reverting, sha graphs, cherry-picking, stashing and copying and pasting across repositories",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -22499,6 +22654,56 @@
                 "content": "/docs/product/merging-and-conflicts"
               }
             ]
+          },
+          "learn advanced commands": {
+            "displayValue": [
+              {
+                "children": [],
+                "content": "Learn about advanced ",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": true,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              },
+              {
+                "children": [],
+                "content": "floro",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": true,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              },
+              {
+                "children": [],
+                "content": " commands",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": true,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              }
+            ],
+            "linkName": "learn advanced commands",
+            "href": [
+              {
+                "type": "text",
+                "content": "/docs/product/advanced-commands"
+              }
+            ]
           }
         },
         "interpolations": {},
@@ -22685,6 +22890,33 @@
                 "children": [
                   {
                     "children": [],
+                    "content": "{learn advanced commands}",
+                    "type": "link",
+                    "styles": {
+                      "isBold": false,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  }
+                ],
+                "content": "",
+                "type": "li",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
                     "content": "Learn how to use the ",
                     "type": "text",
                     "styles": {
@@ -22737,6 +22969,31 @@
             ],
             "content": "",
             "type": "ul",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "doc_titles.advanced_commands_docs_page_title": {
+        "phraseKey": "doc_titles.advanced_commands_docs_page_title",
+        "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
+        "links": {},
+        "interpolations": {},
+        "styledContents": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "advanced commands",
+            "type": "text",
             "styles": {
               "isBold": false,
               "isItalic": false,
@@ -45311,6 +45568,57 @@
           }
         ]
       },
+      "meta_tags.advanced_commands_docs": {
+        "phraseKey": "meta_tags.advanced_commands_docs",
+        "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
+        "links": {},
+        "interpolations": {},
+        "styledContents": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "Floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " | Advanced Commands Documentation",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
       "meta_tags.merging_and_conflicts_docs": {
         "phraseKey": "meta_tags.merging_and_conflicts_docs",
         "variables": {},
@@ -46426,6 +46734,135 @@
       }
     },
     "ZH": {
+      "product_docs.advanced_commands_docs": {
+        "phraseKey": "product_docs.advanced_commands_docs",
+        "variables": {},
+        "contentVariables": {
+          "docSearch": "string"
+        },
+        "styleClasses": {
+          "mainTitle": "string"
+        },
+        "args": {
+          "docSearch": "string",
+          "mainTitle": "string"
+        },
+        "links": {},
+        "interpolations": {},
+        "styledContents": {
+          "main title": {
+            "displayValue": [
+              {
+                "children": [],
+                "content": "Advanced Commands",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              }
+            ],
+            "styleClass": "mainTitle"
+          }
+        },
+        "phrase": [
+          {
+            "children": [],
+            "content": "{main title}",
+            "type": "styled-content",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{docSearch}",
+            "type": "content-variable",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Overview",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
       "product_docs.merging_and_conflicts_docs": {
         "phraseKey": "product_docs.merging_and_conflicts_docs",
         "variables": {},
@@ -47254,7 +47691,33 @@
           },
           {
             "children": [],
-            "content": "main (merge into) -> F1",
+            "content": "main (merging into) -> F1 (F1 is ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "altered",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ")",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -47410,7 +47873,7 @@
           },
           {
             "children": [],
-            "content": " as B' and C'. We then made a merge commit called M0 that is the reconciliation of the merge between commit C and commit Y.",
+            "content": " as B' and C'. We then made a merge commit called M0 that is the commit of the merge between commit C and commit Y.",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -47488,7 +47951,7 @@
           },
           {
             "children": [],
-            "content": "main (merge into) -> F2",
+            "content": "main (merging into) -> F2 (F2 is altered)",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -47644,7 +48107,7 @@
           },
           {
             "children": [],
-            "content": "F1 (merge into) -> main",
+            "content": "F1 (merging into) -> main (main is altered)",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -47800,7 +48263,7 @@
           },
           {
             "children": [],
-            "content": "main (merge into) -> F2",
+            "content": "main (merging into) -> F2 (F2 is altered)",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -47956,7 +48419,7 @@
           },
           {
             "children": [],
-            "content": "F2 (merge into) -> main",
+            "content": "F2 (merging into) -> main (main is altered)",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -48073,7 +48536,7 @@
           },
           {
             "children": [],
-            "content": "main (merge into) -> F1",
+            "content": "main (merging into) -> F1 (F1 is altered)",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -49672,7 +50135,7 @@
           },
           {
             "children": [],
-            "content": ", we can now learn about reverting, sha graphs, and copying and pasting across repositories",
+            "content": ", we can now learn about reverting, sha graphs, cherry-picking, stashing and copying and pasting across repositories",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -68910,6 +69373,56 @@
                 "content": "/docs/product/merging-and-conflicts"
               }
             ]
+          },
+          "learn advanced commands": {
+            "displayValue": [
+              {
+                "children": [],
+                "content": "Learn about advanced ",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": true,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              },
+              {
+                "children": [],
+                "content": "floro",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": true,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              },
+              {
+                "children": [],
+                "content": " commands",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": true,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              }
+            ],
+            "linkName": "learn advanced commands",
+            "href": [
+              {
+                "type": "text",
+                "content": "/docs/product/advanced-commands"
+              }
+            ]
           }
         },
         "interpolations": {},
@@ -69096,6 +69609,33 @@
                 "children": [
                   {
                     "children": [],
+                    "content": "{learn advanced commands}",
+                    "type": "link",
+                    "styles": {
+                      "isBold": false,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  }
+                ],
+                "content": "",
+                "type": "li",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
                     "content": "Learn how to use the ",
                     "type": "text",
                     "styles": {
@@ -69148,6 +69688,31 @@
             ],
             "content": "",
             "type": "ul",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
+      "doc_titles.advanced_commands_docs_page_title": {
+        "phraseKey": "doc_titles.advanced_commands_docs_page_title",
+        "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
+        "links": {},
+        "interpolations": {},
+        "styledContents": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "advanced commands",
+            "type": "text",
             "styles": {
               "isBold": false,
               "isItalic": false,
@@ -90071,6 +90636,31 @@
           }
         ]
       },
+      "meta_tags.advanced_commands_docs": {
+        "phraseKey": "meta_tags.advanced_commands_docs",
+        "variables": {},
+        "contentVariables": {},
+        "styleClasses": {},
+        "args": {},
+        "links": {},
+        "interpolations": {},
+        "styledContents": {},
+        "phrase": [
+          {
+            "children": [],
+            "content": "Floro | 关于",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          }
+        ]
+      },
       "meta_tags.merging_and_conflicts_docs": {
         "phraseKey": "meta_tags.merging_and_conflicts_docs",
         "variables": {},
@@ -90901,6 +91491,10 @@
     }
   },
   "phraseKeyDebugInfo": {
+    "product_docs.advanced_commands_docs": {
+      "groupName": "Product Docs",
+      "phraseKey": "advanced commands docs"
+    },
     "product_docs.merging_and_conflicts_docs": {
       "groupName": "Product Docs",
       "phraseKey": "merging and conflicts docs"
@@ -90932,6 +91526,10 @@
     "product_docs.product_docs_index": {
       "groupName": "Product Docs",
       "phraseKey": "product docs index"
+    },
+    "doc_titles.advanced_commands_docs_page_title": {
+      "groupName": "Doc Titles",
+      "phraseKey": "advanced commands docs page title"
     },
     "doc_titles.merge_and_conflicts_docs_page_title": {
       "groupName": "Doc Titles",
@@ -91100,6 +91698,10 @@
     "about.how_it_works_blurb_part_4": {
       "groupName": "About",
       "phraseKey": "how it works blurb part 4"
+    },
+    "meta_tags.advanced_commands_docs": {
+      "groupName": "Meta Tags",
+      "phraseKey": "advanced commands docs"
     },
     "meta_tags.merging_and_conflicts_docs": {
       "groupName": "Meta Tags",

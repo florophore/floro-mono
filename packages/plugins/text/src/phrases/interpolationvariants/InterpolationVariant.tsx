@@ -109,6 +109,8 @@ interface Props {
   isPinned: boolean;
   pinnedPhrases: Array<string>|null;
   onRemove: (variable: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>"]) => void;
+  searchText: string;
+  isSearching: boolean;
 }
 
 const InterpolationVariant = (props: Props) => {
@@ -122,7 +124,6 @@ const InterpolationVariant = (props: Props) => {
     "$(text).localeSettings.locales.localeCode<?>",
     props.selectedLocale.localeCode
   );
-
 
   const sourceLocaleRef = props?.systemSourceLocale?.localeCode
     ? makeQueryRef(
@@ -152,9 +153,7 @@ const InterpolationVariant = (props: Props) => {
   );
   const diffColor = useDiffColor(localRuleTranslationRef);
 
-  const localeRule = useReferencedObject(
-    localRuleTranslationRef
-  );
+  const localeRule = useReferencedObject(localRuleTranslationRef);
 
   const variable = useReferencedObject(props.interpolationVariant.variableRef);
 
@@ -164,47 +163,56 @@ const InterpolationVariant = (props: Props) => {
 
   const terms = useReferencedObject("$(text).terms");
   const localeTerms = useMemo(() => {
-    return terms?.flatMap(term => {
-      const value = term.localizedTerms.find(localizedTerm => {
-        return localizedTerm.id == localeRef;
-      })?.termValue ?? term?.name;
-      return {
-        id: term.id,
-        value: value == '' ? term.name : value,
-        name: term.name
-      }
-    }) ?? [];
+    return (
+      terms?.flatMap((term) => {
+        const value =
+          term.localizedTerms.find((localizedTerm) => {
+            return localizedTerm.id == localeRef;
+          })?.termValue ?? term?.name;
+        return {
+          id: term.id,
+          value: value == "" ? term.name : value,
+          name: term.name,
+        };
+      }) ?? []
+    );
   }, [terms, localeRef, applicationState]);
 
   const mentionedTerms = useMemo(() => {
-    const json = JSON.parse(defaultValue?.json ?? '{}');
-    const children: Array<TextNode> = (json?.children ?? [])?.flatMap?.((child: TextNode) => {
-      if (child?.type == "ol-tag" || child?.type == "ul-tag") {
-        return child?.children?.flatMap(li => {
-          return li?.children ?? []
-        }) ?? [];
-      }
-      return [child];
-    }) ?? [];
+    const json = JSON.parse(defaultValue?.json ?? "{}");
+    const children: Array<TextNode> =
+      (json?.children ?? [])?.flatMap?.((child: TextNode) => {
+        if (child?.type == "ol-tag" || child?.type == "ul-tag") {
+          return (
+            child?.children?.flatMap((li) => {
+              return li?.children ?? [];
+            }) ?? []
+          );
+        }
+        return [child];
+      }) ?? [];
     const foundTerms: Array<{
-      value: string,
-      id: string,
-      name: string,
+      value: string;
+      id: string;
+      name: string;
     }> = [];
 
     const flattenedChildren: Array<TextNode> = [];
     for (let i = 0; i < children.length; ++i) {
       if (children[i]?.type == "text" || children[i]?.type == "mentioned-tag") {
         const combined = children[i];
-        combined.type = 'text';
+        combined.type = "text";
         for (let j = i; j < children.length; ++j) {
-          if (children[j]?.type != "text" && children[j]?.type != "mentioned-tag") {
+          if (
+            children[j]?.type != "text" &&
+            children[j]?.type != "mentioned-tag"
+          ) {
             flattenedChildren.push(combined);
             break;
           }
           combined.content += children[j].content;
           i = j;
-          flattenedChildren.push(combined)
+          flattenedChildren.push(combined);
         }
       } else {
         flattenedChildren.push(children[i]);
@@ -213,13 +221,17 @@ const InterpolationVariant = (props: Props) => {
 
     for (const localeTerm of localeTerms) {
       for (const child of flattenedChildren) {
-        if (child?.type == 'text') {
-          if ((child.content?? '')?.toLowerCase()?.indexOf(localeTerm.value?.toLowerCase()) != -1) {
+        if (child?.type == "text") {
+          if (
+            (child.content ?? "")
+              ?.toLowerCase()
+              ?.indexOf(localeTerm.value?.toLowerCase()) != -1
+          ) {
             foundTerms.push(localeTerm);
             break;
           }
         }
-        if (child?.type == 'mentioned-tag') {
+        if (child?.type == "mentioned-tag") {
           if (child.content == localeTerm.value) {
             foundTerms.push(localeTerm);
             break;
@@ -228,7 +240,7 @@ const InterpolationVariant = (props: Props) => {
       }
     }
     return foundTerms;
-  }, [defaultValue?.plainText, defaultValue?.json, localeTerms])
+  }, [defaultValue?.plainText, defaultValue?.json, localeTerms]);
 
   const enabledMentionedValues = useMemo(() => {
     return mentionedTerms
@@ -236,14 +248,28 @@ const InterpolationVariant = (props: Props) => {
         return defaultValue?.enabledTerms?.includes(mentionedTerm?.id);
       })
       ?.map((mentionedTerm) => mentionedTerm.value);
-  }, [mentionedTerms, defaultValue?.enabledTerms])
+  }, [mentionedTerms, defaultValue?.enabledTerms]);
 
   const editorObserver = useMemo(() => {
     const variables = props.phrase.variables.map((v) => v.name);
     const contentVariables =
       props.phrase?.contentVariables?.map?.((v) => v.name) ?? [];
-    return new Observer(variables, [], [], enabledMentionedValues ?? [], contentVariables);
-  }, [props.phrase.variables, props.phrase?.contentVariables, props.interpolationVariant, enabledMentionedValues]);
+    const observer = new Observer(
+      variables,
+      [],
+      [],
+      enabledMentionedValues ?? [],
+      contentVariables
+    );
+    observer.setSearchString(props.searchText);
+    return observer
+  }, [
+    props.searchText,
+    props.phrase.variables,
+    props.phrase?.contentVariables,
+    props.interpolationVariant,
+    enabledMentionedValues,
+  ]);
 
   const localeRuleEditorDoc = useMemo(() => {
     if (defaultValue) {
@@ -295,39 +321,53 @@ const InterpolationVariant = (props: Props) => {
 
   const defaultValueIsEmpty = useMemo(() => {
     return (defaultValue?.plainText ?? "") == "";
-  }, [defaultValue?.plainText])
+  }, [defaultValue?.plainText]);
 
   const sourceDefaultValueIsEmpty = useMemo(() => {
     return (sourceDefaultValue?.plainText ?? "") == "";
-  }, [sourceDefaultValue?.plainText])
+  }, [sourceDefaultValue?.plainText]);
 
   const onSetDefaultValueContent = useCallback(
     (richTextHtml: string) => {
       localeRuleEditorDoc.tree.updateRootFromHTML(richTextHtml ?? "");
+      localeRuleEditorDoc.observer.searchString = "";
       const plainText = localeRuleEditorDoc.tree.rootNode.toUnescapedString();
       const json = localeRuleEditorDoc.tree.rootNode.toJSON();
       if (!defaultValue) {
         return;
       }
-      if (defaultValueIsEmpty && props.globalFilterUntranslated && !props.isPinned) {
-        props.setPinnedPhrases([...(props?.pinnedPhrases ?? []), props.phraseRef]);
+      if (
+        defaultValueIsEmpty &&
+        props.globalFilterUntranslated &&
+        !props.isPinned
+      ) {
+        props.setPinnedPhrases([
+          ...(props?.pinnedPhrases ?? []),
+          props.phraseRef,
+        ]);
       }
       if (sourceDefaultValue) {
-        setDefaultValue({
-          ...defaultValue,
-          richTextHtml,
-          plainText,
-          json: JSON.stringify(json),
-        }, false);
+        setDefaultValue(
+          {
+            ...defaultValue,
+            richTextHtml,
+            plainText,
+            json: JSON.stringify(json),
+          },
+          false
+        );
       } else {
-        setDefaultValue({
-          ...defaultValue,
-          revisionCount: defaultValue.revisionCount + 1,
-          revisionTimestamp: new Date().toISOString(),
-          richTextHtml,
-          plainText,
-          json: JSON.stringify(json),
-        }, false);
+        setDefaultValue(
+          {
+            ...defaultValue,
+            revisionCount: defaultValue.revisionCount + 1,
+            revisionTimestamp: new Date().toISOString(),
+            richTextHtml,
+            plainText,
+            json: JSON.stringify(json),
+          },
+          false
+        );
       }
     },
     [
@@ -341,7 +381,7 @@ const InterpolationVariant = (props: Props) => {
       props.setPinnedPhrases,
       props.pinnedPhrases,
       props.phraseRef,
-      props.globalFilterUntranslated
+      props.globalFilterUntranslated,
     ]
   );
 
@@ -352,9 +392,9 @@ const InterpolationVariant = (props: Props) => {
       }, 500);
       return () => {
         clearTimeout(timeout);
-      }
+      };
     }
-  }, [defaultValue?.richTextHtml, commandMode])
+  }, [defaultValue?.richTextHtml, commandMode]);
 
   const highlightableVariables = useMemo(() => {
     const variables = props.phrase.variables?.map((v) => v.name) ?? [];
@@ -362,8 +402,8 @@ const InterpolationVariant = (props: Props) => {
       props.phrase?.contentVariables?.map?.((v) => v.name) ?? [];
     return [
       ...variables,
-      ...enabledMentionedValues ?? [],
-      ...contentVariables ?? [],
+      ...(enabledMentionedValues ?? []),
+      ...(contentVariables ?? []),
     ].join(":");
   }, [
     props.phrase.variables,
@@ -371,16 +411,33 @@ const InterpolationVariant = (props: Props) => {
     enabledMentionedValues,
   ]);
 
+  const onSaveContent = useCallback(() => {
+    localeRuleEditorDoc.observer.searchString = "";
+    const json = JSON.stringify(localeRuleEditorDoc.tree.rootNode.toJSON());
+    if (!defaultValue) {
+      return;
+    }
+    if (json != defaultValue.json) {
+      setDefaultValue({
+        ...defaultValue,
+        json
+      }, true);
+    }
+  }, [highlightableVariables, defaultValue?.json])
+
   useEffect(() => {
-    if (commandMode == "edit") {
-      const timeout = setTimeout(() => {
-        saveDefaultValue();
-      }, 500);
+    if (commandMode != "edit" || props.isSearching) {
+      return;
+    }
+    const json = JSON.stringify(localeRuleEditorDoc.tree.rootNode.toJSON());
+    if (json != defaultValue?.json) {
+      const timeout = setTimeout(onSaveContent, 500)
       return () => {
-        clearTimeout(timeout);
+        clearTimeout(timeout)
       }
     }
-  }, [highlightableVariables, commandMode])
+  }, [onSaveContent, defaultValue?.json, commandMode, props.isSearching])
+
 
   const onMarkDisplayResolved = useCallback(() => {
     if (!defaultValue) {
@@ -417,10 +474,7 @@ const InterpolationVariant = (props: Props) => {
       (sourceDefaultValue?.revisionCount ?? 0) >
       (defaultValue?.revisionCount ?? 0)
     );
-  }, [
-    defaultValue?.revisionCount,
-    sourceDefaultValue?.revisionCount,
-  ]);
+  }, [defaultValue?.revisionCount, sourceDefaultValue?.revisionCount]);
 
   const xIcon = useMemo(() => {
     if (theme.name == "light") {
@@ -441,9 +495,9 @@ const InterpolationVariant = (props: Props) => {
     const timeout = setTimeout(() => {
       setHasMounted(true);
     }, 0);
-    return () =>{
+    return () => {
       clearTimeout(timeout);
-    }
+    };
   }, [props.selectedLocale]);
 
   const onChangeTerm = useCallback(
@@ -479,7 +533,7 @@ const InterpolationVariant = (props: Props) => {
         return sourceDefaultValue?.enabledTerms?.includes(mentionedTerm?.id);
       })
       ?.map((mentionedTerm) => mentionedTerm.value);
-  }, [mentionedTerms, sourceDefaultValue?.enabledTerms])
+  }, [mentionedTerms, sourceDefaultValue?.enabledTerms]);
 
   const sourceEditorObserver = useMemo(() => {
     const variables = props.phrase.variables?.map((v) => v.name) ?? [];
@@ -501,12 +555,22 @@ const InterpolationVariant = (props: Props) => {
 
   const sourceEditorDoc = useMemo(() => {
     if (sourceDefaultValue && props?.systemSourceLocale?.localeCode) {
-        const doc = new EditorDocument(sourceEditorObserver, props.systemSourceLocale.localeCode?.toLowerCase() ?? "en");
-        doc.tree.updateRootFromHTML(sourceDefaultValue?.richTextHtml ?? "")
-        return doc;
+      const doc = new EditorDocument(
+        sourceEditorObserver,
+        props.systemSourceLocale.localeCode?.toLowerCase() ?? "en"
+      );
+      doc.tree.updateRootFromHTML(sourceDefaultValue?.richTextHtml ?? "");
+      return doc;
     }
-    return new EditorDocument(sourceEditorObserver, props?.systemSourceLocale?.localeCode?.toLowerCase() ?? "en");
-  }, [props?.systemSourceLocale?.localeCode, sourceEditorObserver, sourceDefaultValue]);
+    return new EditorDocument(
+      sourceEditorObserver,
+      props?.systemSourceLocale?.localeCode?.toLowerCase() ?? "en"
+    );
+  }, [
+    props?.systemSourceLocale?.localeCode,
+    sourceEditorObserver,
+    sourceDefaultValue,
+  ]);
 
   const sourceMockHtml = useMemo(() => {
     return sourceEditorDoc.tree.getHtml();
@@ -564,10 +628,13 @@ const InterpolationVariant = (props: Props) => {
     if (!memory) {
       return [];
     }
-    if (!memory?.[sourceDefaultValue?.plainText?.trim().toLowerCase() as string]) {
+    if (
+      !memory?.[sourceDefaultValue?.plainText?.trim().toLowerCase() as string]
+    ) {
       return [];
     }
-    const termSet = memory?.[sourceDefaultValue?.plainText?.trim().toLowerCase() as string];
+    const termSet =
+      memory?.[sourceDefaultValue?.plainText?.trim().toLowerCase() as string];
     if (!termSet) {
       return [];
     }
@@ -582,10 +649,48 @@ const InterpolationVariant = (props: Props) => {
     }, 100);
     return () => {
       clearTimeout(timeout);
-    }
+    };
   }, []);
 
+  const showDefaultResult = useMemo(() => {
+    if (!props.isSearching) {
+      return true;
+    }
+    return (
+      defaultValue?.plainText
+        ?.toLowerCase()
+        .indexOf(props.searchText.toLowerCase()) != -1
+    );
+  }, [props.isSearching, props.searchText]);
+
+  const showAnyResult = useMemo(() => {
+    if (!props.isSearching) {
+      return true;
+    }
+    const defaultHasValue =
+      defaultValue?.plainText
+        ?.toLowerCase()
+        .indexOf(props.searchText.toLowerCase()) != -1;
+    if (defaultHasValue) {
+      return true;
+    }
+    for (const conditional of localeRule.conditionals) {
+      const conditionalHasValue =
+        conditional.resultant?.plainText
+          ?.toLowerCase()
+          .indexOf(props.searchText.toLowerCase()) != -1;
+      if (conditionalHasValue) {
+        return true;
+      }
+    }
+    return false;
+  }, [props.isSearching, props.searchText]);
+
   if (!showContent) {
+    return null;
+  }
+
+  if (!showAnyResult) {
     return null;
   }
 
@@ -656,13 +761,13 @@ const InterpolationVariant = (props: Props) => {
             {` (${props.selectedLocale.localeCode}):`}
           </span>
         </RowTitle>
-        {commandMode == "edit" && (
+        {commandMode == "edit" && !props.isSearching && (
           <DeleteVarContainer onClick={onRemove}>
             <DeleteVar src={xIcon} />
           </DeleteVarContainer>
         )}
       </TitleRow>
-      <SubContainer style={{borderColor: diffColor}}>
+      <SubContainer style={{ borderColor: diffColor }}>
         {localeRule && hasMounted && (
           <ConditionalList
             phrase={props.phrase}
@@ -677,182 +782,188 @@ const InterpolationVariant = (props: Props) => {
             localeRuleRef={localRuleTranslationRef}
             variable={variable}
             interpolationVariant={props.interpolationVariant}
+            searchText={props.searchText}
+            isSearching={props.isSearching}
           />
         )}
-        <Container>
-          <TitleRow style={{ marginBottom: 24 }}>
-            <RowTitle
-              style={{
-                fontWeight: 600,
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                maxWidth: displayRequireRevision ? "65%" : "100%",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  flexWrap: "wrap",
-                  alignItems: "center",
-                }}
-              >
-                <span style={{ color: theme.colors.contrastText }}>
-                  {`Default Conditional Value of `}
-                </span>
-                <span
-                  style={{
-                    fontSize: "1.4rem",
-                    background: ColorPalette.variableYellow,
-                    boxShadow: `inset 0px 0px 2px 2px ${ColorPalette.variableYellowInset}`,
-                    borderRadius: 8,
-                    padding: 4,
-                    fontWeight: 500,
-                    color: ColorPalette.darkGray,
-                    marginLeft: 8,
-                    marginRight: 8,
-                  }}
-                >
-                  {name}
-                </span>
-                <span style={{ color: theme.colors.contrastText }}>
-                  {`(${props.selectedLocale.localeCode}):`}
-                </span>
-              </div>
-              {props.systemSourceLocale && commandMode == "edit" && (
-                <div style={{ width: 120, marginLeft: 12 }}>
-                  <Button
-                    label={"ML translate"}
-                    bg={"teal"}
-                    size={"small"}
-                    textSize="small"
-                    onClick={onShowMLTranslate}
-                    isDisabled={
-                      sourceDefaultValueIsEmpty ||
-                      !deepLSourceLocales[
-                        props.systemSourceLocale?.localeCode?.toUpperCase()
-                      ] ||
-                      !deepLTargetLocales?.[
-                        props?.selectedLocale?.localeCode?.toUpperCase()
-                      ]
-                    }
-                  />
-                </div>
-              )}
-            </RowTitle>
-            <div style={{ maxWidth: "50%" }}>
-              {displayRequireRevision && (
-                <div
+        {showDefaultResult && (
+          <>
+            <Container>
+              <TitleRow style={{ marginBottom: 24 }}>
+                <RowTitle
                   style={{
                     fontWeight: 600,
                     display: "flex",
                     flexDirection: "row",
                     alignItems: "center",
+                    maxWidth: displayRequireRevision ? "65%" : "100%",
                   }}
                 >
-                  <RequiresRevision style={{ marginRight: 12 }}>
-                    {"requires revision"}
-                  </RequiresRevision>
-                  {commandMode == "edit" && (
-                    <Button
-                      onClick={onMarkDisplayResolved}
-                      style={{ width: 120 }}
-                      label={"mark resolved"}
-                      bg={"orange"}
-                      size={"small"}
-                      textSize="small"
-                    />
-                  )}
-                </div>
-              )}
-            </div>
-          </TitleRow>
-          {commandMode == "edit" && (
-            <ContentEditor
-              lang={props.selectedLocale.localeCode?.toLowerCase() ?? "en"}
-              editorDoc={localeRuleEditorDoc}
-              content={defaultValue?.richTextHtml ?? ""}
-              onSetContent={onSetDefaultValueContent}
-              placeholder={`write the (${props.selectedLocale.localeCode}) value for ${name}...`}
-              onOpenGPT={onShowPrompt}
-              showGPTIcon={
-                (!!sourceDefaultValue &&
-                  (sourceDefaultValue?.richTextHtml?.trim() ?? "") != "" &&
-                  (defaultValue?.plainText?.trim() ?? "") != "") ||
-                (!sourceDefaultValue &&
-                  (defaultValue?.plainText?.trim() ?? "") != "")
-              }
-            />
-          )}
-          {commandMode != "edit" && (
-            <PlainTextDocument
-              lang={props.selectedLocale.localeCode?.toLowerCase() ?? "en"}
-              editorDoc={localeRuleEditorDoc}
-              content={defaultValue?.richTextHtml ?? ""}
-            />
-          )}
-          {defaultValue && (
-            <TermList
-              terms={mentionedTerms ?? []}
-              selectedLocale={props.selectedLocale}
-              systemSourceLocale={props.systemSourceLocale}
-              onChange={onChangeTerm}
-              enabledTerms={defaultValue?.enabledTerms ?? []}
-              showFindTerms={!props.systemSourceLocale}
-              onShowFindTerms={onShowFindTerms}
-              isEmpty={(defaultValue?.plainText?.trim?.() ?? "") == ""}
-              title={
-                <>
-                  <span style={{ color: theme.colors.contrastText }}>
-                    {`Recognized Terms in Default Conditional Value of `}
-                  </span>
-                  <span
+                  <div
                     style={{
-                      fontSize: "1.4rem",
-                      background: ColorPalette.variableYellow,
-                      boxShadow: `inset 0px 0px 2px 2px ${ColorPalette.variableYellowInset}`,
-                      borderRadius: 8,
-                      padding: 4,
-                      fontWeight: 500,
-                      color: ColorPalette.darkGray,
-                      marginLeft: 8,
-                      marginRight: 8,
+                      display: "flex",
+                      flexDirection: "row",
+                      flexWrap: "wrap",
+                      alignItems: "center",
                     }}
                   >
-                    {name}
-                  </span>
-                  <span style={{ color: theme.colors.contrastText }}>
-                    {`(${props.selectedLocale.localeCode}):`}
-                  </span>
-                </>
-              }
-            />
-          )}
-        {translationMemories.length > 0 &&
-          (defaultValue?.plainText ?? "").trim() == "" &&
-          commandMode == "edit" && (
-            <TranslationMemoryList
-              memories={translationMemories}
-              observer={editorObserver}
-              onApply={onSetDefaultValueContent}
-              lang={props.selectedLocale?.localeCode}
-            />
-          )}
-        </Container>
-        {props.systemSourceLocale &&
-          props.interpolationVariant &&
-          localeRule && (
-            <SourceDefaultValueInterpolationVariant
-              phrase={props.phrase}
-              phraseRef={props.phraseRef}
-              selectedLocale={props.selectedLocale}
-              systemSourceLocale={props.systemSourceLocale}
-              interpolationVariant={props.interpolationVariant}
-              interpolationVariantRef={props.interpolationVariantRef}
-              targetInterpolationVariantLocaleRule={localeRule}
-            />
-          )}
+                    <span style={{ color: theme.colors.contrastText }}>
+                      {`Default Conditional Value of `}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: "1.4rem",
+                        background: ColorPalette.variableYellow,
+                        boxShadow: `inset 0px 0px 2px 2px ${ColorPalette.variableYellowInset}`,
+                        borderRadius: 8,
+                        padding: 4,
+                        fontWeight: 500,
+                        color: ColorPalette.darkGray,
+                        marginLeft: 8,
+                        marginRight: 8,
+                      }}
+                    >
+                      {name}
+                    </span>
+                    <span style={{ color: theme.colors.contrastText }}>
+                      {`(${props.selectedLocale.localeCode}):`}
+                    </span>
+                  </div>
+                  {props.systemSourceLocale && commandMode == "edit" && !props.isSearching && (
+                    <div style={{ width: 120, marginLeft: 12 }}>
+                      <Button
+                        label={"ML translate"}
+                        bg={"teal"}
+                        size={"small"}
+                        textSize="small"
+                        onClick={onShowMLTranslate}
+                        isDisabled={
+                          sourceDefaultValueIsEmpty ||
+                          !deepLSourceLocales[
+                            props.systemSourceLocale?.localeCode?.toUpperCase()
+                          ] ||
+                          !deepLTargetLocales?.[
+                            props?.selectedLocale?.localeCode?.toUpperCase()
+                          ]
+                        }
+                      />
+                    </div>
+                  )}
+                </RowTitle>
+                <div style={{ maxWidth: "50%" }}>
+                  {displayRequireRevision && (
+                    <div
+                      style={{
+                        fontWeight: 600,
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                      }}
+                    >
+                      <RequiresRevision style={{ marginRight: 12 }}>
+                        {"requires revision"}
+                      </RequiresRevision>
+                      {commandMode == "edit" && (
+                        <Button
+                          onClick={onMarkDisplayResolved}
+                          style={{ width: 120 }}
+                          label={"mark resolved"}
+                          bg={"orange"}
+                          size={"small"}
+                          textSize="small"
+                        />
+                      )}
+                    </div>
+                  )}
+                </div>
+              </TitleRow>
+              {commandMode == "edit" && (
+                <ContentEditor
+                  lang={props.selectedLocale.localeCode?.toLowerCase() ?? "en"}
+                  editorDoc={localeRuleEditorDoc}
+                  content={defaultValue?.richTextHtml ?? ""}
+                  onSetContent={onSetDefaultValueContent}
+                  placeholder={`write the (${props.selectedLocale.localeCode}) value for ${name}...`}
+                  onOpenGPT={onShowPrompt}
+                  showGPTIcon={
+                    (!!sourceDefaultValue &&
+                      (sourceDefaultValue?.richTextHtml?.trim() ?? "") != "" &&
+                      (defaultValue?.plainText?.trim() ?? "") != "") ||
+                    (!sourceDefaultValue &&
+                      (defaultValue?.plainText?.trim() ?? "") != "")
+                  }
+                />
+              )}
+              {commandMode != "edit" && (
+                <PlainTextDocument
+                  lang={props.selectedLocale.localeCode?.toLowerCase() ?? "en"}
+                  editorDoc={localeRuleEditorDoc}
+                  content={defaultValue?.richTextHtml ?? ""}
+                />
+              )}
+              {defaultValue && (
+                <TermList
+                  terms={mentionedTerms ?? []}
+                  selectedLocale={props.selectedLocale}
+                  systemSourceLocale={props.systemSourceLocale}
+                  onChange={onChangeTerm}
+                  enabledTerms={defaultValue?.enabledTerms ?? []}
+                  showFindTerms={!props.systemSourceLocale && !props.isSearching}
+                  onShowFindTerms={onShowFindTerms}
+                  isEmpty={(defaultValue?.plainText?.trim?.() ?? "") == ""}
+                  title={
+                    <>
+                      <span style={{ color: theme.colors.contrastText }}>
+                        {`Recognized Terms in Default Conditional Value of `}
+                      </span>
+                      <span
+                        style={{
+                          fontSize: "1.4rem",
+                          background: ColorPalette.variableYellow,
+                          boxShadow: `inset 0px 0px 2px 2px ${ColorPalette.variableYellowInset}`,
+                          borderRadius: 8,
+                          padding: 4,
+                          fontWeight: 500,
+                          color: ColorPalette.darkGray,
+                          marginLeft: 8,
+                          marginRight: 8,
+                        }}
+                      >
+                        {name}
+                      </span>
+                      <span style={{ color: theme.colors.contrastText }}>
+                        {`(${props.selectedLocale.localeCode}):`}
+                      </span>
+                    </>
+                  }
+                />
+              )}
+              {translationMemories.length > 0 &&
+                (defaultValue?.plainText ?? "").trim() == "" &&
+                commandMode == "edit" && !props.isSearching && (
+                  <TranslationMemoryList
+                    memories={translationMemories}
+                    observer={editorObserver}
+                    onApply={onSetDefaultValueContent}
+                    lang={props.selectedLocale?.localeCode}
+                  />
+                )}
+            </Container>
+            {props.systemSourceLocale &&
+              props.interpolationVariant &&
+              localeRule && (
+                <SourceDefaultValueInterpolationVariant
+                  phrase={props.phrase}
+                  phraseRef={props.phraseRef}
+                  selectedLocale={props.selectedLocale}
+                  systemSourceLocale={props.systemSourceLocale}
+                  interpolationVariant={props.interpolationVariant}
+                  interpolationVariantRef={props.interpolationVariantRef}
+                  targetInterpolationVariantLocaleRule={localeRule}
+                />
+              )}
+          </>
+        )}
       </SubContainer>
     </div>
   );

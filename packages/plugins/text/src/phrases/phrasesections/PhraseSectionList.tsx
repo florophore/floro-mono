@@ -84,6 +84,8 @@ interface Props {
   setPinnedPhrases: (phraseRegs: Array<string>) => void;
   globalFilterUntranslated: boolean;
   isPinned: boolean;
+  searchText: string;
+  isSearching: boolean;
 }
 
 const PhraseSectionsList = (props: Props) => {
@@ -213,7 +215,7 @@ const PhraseSectionsList = (props: Props) => {
             )}
           </span>
         </RowTitle>
-        {(phraseSections?.length ?? 0) > 0 && commandMode == "edit" && (
+        {(phraseSections?.length ?? 0) > 0 && commandMode == "edit" && !props.isSearching &&  (
           <ToggleEditTitle onClick={onToggleReOrder}>
             {isReOrderMode
               ? "done organizing"
@@ -221,7 +223,7 @@ const PhraseSectionsList = (props: Props) => {
           </ToggleEditTitle>
         )}
       </TitleRow>
-      {isReOrderMode && commandMode == "edit" && (
+      {isReOrderMode && commandMode == "edit" && !props.isSearching && (
         <Reorder.Group
           axis="y"
           values={phraseSections ?? []}
@@ -243,7 +245,7 @@ const PhraseSectionsList = (props: Props) => {
           </AnimatePresence>
         </Reorder.Group>
       )}
-      {(!isReOrderMode || commandMode != "edit") && (
+      {(!isReOrderMode || commandMode != "edit" || props.isSearching) && (
         <div>
           {phraseSections?.map((phraseSection) => {
             return (
@@ -260,12 +262,14 @@ const PhraseSectionsList = (props: Props) => {
                 isPinned={props.isPinned}
                 phraseRef={props.phraseRef}
                 onRemove={onRemovePhraseSection}
+                isSearching={props.isSearching}
+                searchText={props.searchText}
               />
             );
           })}
         </div>
       )}
-      {commandMode == "edit" && (
+      {commandMode == "edit" && !props.isSearching && (
         <AddVariableContainer
           style={{
             justifyContent: "space-between",

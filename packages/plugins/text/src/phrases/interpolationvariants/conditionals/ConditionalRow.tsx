@@ -194,6 +194,8 @@ interface Props {
   globalFilterUntranslated: boolean;
   isPinned: boolean;
   index: number;
+  searchText: string;
+  isSearching: boolean;
 }
 
 const ConditionalRow = (props: Props): React.ReactElement|null => {
@@ -216,8 +218,10 @@ const ConditionalRow = (props: Props): React.ReactElement|null => {
 
   const editorObserver = useMemo(() => {
     const variables = props.phrase.variables.map((v) => v.name);
-    return new Observer(variables, [], []);
-  }, [props.phrase.variables]);
+    const observer = new Observer(variables, [], []);
+    observer.setSearchString(props.searchText);
+    return observer;
+  }, [props.phrase.variables, props.searchText]);
 
   const conditionalEditorDoc = useMemo(() => {
     if (conditional) {
@@ -352,10 +356,10 @@ const ConditionalRow = (props: Props): React.ReactElement|null => {
     return (conditional?.resultant?.plainText ?? "") == "";
   }, [conditional?.resultant?.plainText]);
 
-  const [richTextHtml, setRichText] = useState(resultant?.richTextHtml ?? "");
   const onSetResultantValueContent = useCallback(
     (richTextHtml: string) => {
       conditionalEditorDoc.tree.updateRootFromHTML(richTextHtml ?? "");
+      conditionalEditorDoc.observer.searchString = "";
       const plainText = conditionalEditorDoc.tree.rootNode.toUnescapedString();
       const json = conditionalEditorDoc.tree.rootNode.toJSON();
       if (
@@ -411,16 +415,34 @@ const ConditionalRow = (props: Props): React.ReactElement|null => {
     props.phrase.contentVariables,
   ]);
 
+  const onSaveContent = useCallback(() => {
+      conditionalEditorDoc.observer.searchString = "";
+      const json = JSON.stringify(conditionalEditorDoc.tree.rootNode.toJSON());
+      if (!resultant) {
+        return;
+      }
+      if (json != resultant?.json) {
+        setResultant({
+          ...resultant,
+          json
+        }, true);
+      }
+
+  }, [highlightableVariables, resultant?.json])
+
   useEffect(() => {
-    if (commandMode == "edit") {
-      const timeout = setTimeout(() => {
-        saveResultant();
-      }, 500);
+    if (commandMode != "edit" || props.isSearching) {
+      return;
+    }
+    conditionalEditorDoc.observer.searchString = "";
+    const json = JSON.stringify(conditionalEditorDoc.tree.rootNode.toJSON());
+    if (json != resultant?.json) {
+      const timeout = setTimeout(onSaveContent, 500)
       return () => {
-        clearTimeout(timeout);
+        clearTimeout(timeout)
       }
     }
-  }, [highlightableVariables, commandMode])
+  }, [onSaveContent, resultant?.json, commandMode, props.isSearching])
 
   useEffect(() => {
     if (commandMode == "edit") {
@@ -490,10 +512,24 @@ const ConditionalRow = (props: Props): React.ReactElement|null => {
     }
   }, []);
 
+  const showResult = useMemo(() => {
+    if (!props.isSearching) {
+      return true;
+    }
+    return (
+      resultant?.plainText
+        ?.toLowerCase()
+        .indexOf(props.searchText.toLowerCase()) != -1
+    );
+  }, [props.isSearching, props.searchText])
+
   if (!showContent) {
     return null;
   }
 
+  if (!showResult) {
+    return null;
+  }
 
   return (
     <Container>
@@ -557,7 +593,7 @@ const ConditionalRow = (props: Props): React.ReactElement|null => {
               )}
             </RowTitle>
           )}
-          {commandMode == "edit" && (
+          {commandMode == "edit" && !props.isSearching && (
             <EditRow
               style={{
                 display: "flex",
@@ -705,7 +741,7 @@ const ConditionalRow = (props: Props): React.ReactElement|null => {
               <div></div>
             </EditRow>
           )}
-          {commandMode == "edit" && (
+          {commandMode == "edit" && !props.isSearching && (
             <DeleteVarContainer onClick={onRemove}>
               <DeleteVar src={xIcon} />
             </DeleteVarContainer>
@@ -726,7 +762,7 @@ const ConditionalRow = (props: Props): React.ReactElement|null => {
           />
         )
       })}
-      {showAddSubcondition && commandMode == "edit" && (
+      {showAddSubcondition && commandMode == "edit" && !props.isSearching && (
         <NewSubCondition
           variableRef={props.interpolationVariant.variableRef}
           phraseRef={props.phraseRef}
@@ -749,7 +785,7 @@ const ConditionalRow = (props: Props): React.ReactElement|null => {
           <span style={{ color: theme.colors.contrastText }}>
             {`Then (${props.lang}):`}
           </span>
-          {commandMode == "edit" && !showAddSubcondition && (
+          {commandMode == "edit" && !showAddSubcondition && !props.isSearching && (
             <>
               <AddSubCondition onClick={onShowAddSubcondition}>
                 {"+ add subcondition"}

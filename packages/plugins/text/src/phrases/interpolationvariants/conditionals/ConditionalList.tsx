@@ -168,6 +168,8 @@ interface Props {
   setPinnedPhrases: (phraseRegs: Array<string>) => void;
   globalFilterUntranslated: boolean;
   isPinned: boolean;
+  searchText: string;
+  isSearching: boolean;
 }
 
 const ConditionalList = (props: Props) => {
@@ -425,12 +427,14 @@ const ConditionalList = (props: Props) => {
                 setPinnedPhrases={props.setPinnedPhrases}
                 isPinned={props.isPinned}
                 index={index}
+                isSearching={props.isSearching}
+                searchText={props.searchText}
               />
             );
           })}
         </div>
 
-        {commandMode == "edit" && (
+        {commandMode == "edit" && !props.isSearching && (
           <TitleRow style={{
             marginTop: 12,
             marginBottom: 12
@@ -451,7 +455,7 @@ const ConditionalList = (props: Props) => {
               </RowTitle>
           </TitleRow>
         )}
-        {commandMode == "edit" && (
+        {commandMode == "edit" && !props.isSearching && (
           <div>
             <AddVariableContainer
               style={{

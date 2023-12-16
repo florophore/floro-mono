@@ -170,7 +170,11 @@ const TermList = (props: Props) => {
       }
     }
     return count;
-  }, [commandMode, applicationState, changeset])
+  }, [commandMode, applicationState, changeset]);
+
+  const memoryLeakedTerms = useMemo(() => {
+    return termsToRender
+  }, [props.searchTermText])
 
   if (commandMode == "compare" && compareFrom == "before" && diffedTerms == 0) {
     return (
@@ -217,7 +221,7 @@ const TermList = (props: Props) => {
         </AnimatePresence>
       )}
       {!props.isEditTerms &&
-        termsToRender?.map((term, index: number) => {
+        memoryLeakedTerms?.map((term, index: number) => {
           const termRef = makeQueryRef("$(text).terms.id<?>", term.id);
           return (
             <TermRow

@@ -24,7 +24,7 @@ export default class UnOrderedListNode extends TextNode {
   public lang: string;
   public children: TextNode[];
 
-  constructor(observer: Observer, content: string, lang: string, children: TextNode[], initMarks?: {
+  constructor(parent: TextNode|RootNode, observer: Observer, content: string, lang: string, children: TextNode[], initMarks?: {
     isBold: boolean,
     isItalic: boolean,
     isUnderlined: boolean,
@@ -32,7 +32,7 @@ export default class UnOrderedListNode extends TextNode {
     isSuperscript: boolean,
     isSubscript: boolean
   }) {
-    super(observer, content, lang, children);
+    super(parent, observer, content, lang, children);
     this.type = 'ul-tag';
     this.lang = lang;
     this.children = children;
@@ -47,13 +47,19 @@ export default class UnOrderedListNode extends TextNode {
     }
   }
 
-  public static fromJSON(json: TextNodeJSON, observer: Observer, lang: string): UnOrderedListNode {
-    const children: Array<TextNode> = RootNode.fromTextChildren(
+  public static fromJSON(parent: Node, json: TextNodeJSON, observer: Observer, lang: string): UnOrderedListNode {
+    const children: Array<TextNode> = [];
+    const ulNode = new UnOrderedListNode(parent as TextNode, observer, json.content, lang, children, json.marks);
+    const childs: Array<TextNode> = RootNode.fromTextChildren(
+      ulNode as TextNode,
       json.children as Array<TextNodeJSON> ?? ([] as Array<TextNodeJSON>),
       observer,
       lang
     ) as Array<TextNode>;
-    return new UnOrderedListNode(observer, json.content, lang, children, json.marks);
+    for (const child of childs) {
+      children.push(child);
+    }
+    return ulNode;
   }
 
   public toUnescapedString(): string {

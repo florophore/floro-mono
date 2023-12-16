@@ -35,6 +35,8 @@ import SourceStyledContent from "./SourcePhraseSection";
 import TermModal from "../termmodal/TermModal";
 import PromptModal from "../promptmodal/PromptModal";
 import SourcePhraseSection from "./SourcePhraseSection";
+import Checkbox from "@floro/storybook/stories/design-system/Checkbox";
+
 
 const Container = styled.div`
 `;
@@ -110,6 +112,8 @@ interface Props {
   isPinned: boolean;
   pinnedPhrases: Array<string>|null;
   onRemove: (variable: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>"]) => void;
+  searchText: string;
+  isSearching: boolean;
 }
 
 const PhraseSection = (props: Props) => {
@@ -246,7 +250,7 @@ const PhraseSection = (props: Props) => {
       props.phrase?.contentVariables?.map?.((v) => v.name) ?? [];
     const styledContents =
       props.phrase?.styledContents?.map?.((v) => v.name) ?? [];
-    return new Observer(
+    const observer = new Observer(
       variables,
       linkVariables,
       interpolationVariants,
@@ -254,7 +258,10 @@ const PhraseSection = (props: Props) => {
       contentVariables,
       styledContents
     );
+    observer.setSearchString(props.searchText);
+    return observer;
   }, [
+    props.searchText,
     props.phrase.variables,
     props.phrase.linkVariables,
     props.phrase.interpolationVariants,
@@ -289,7 +296,7 @@ const PhraseSection = (props: Props) => {
       props.phrase?.contentVariables?.map?.((v) => v.name) ?? [];
     const styledContents =
       props.phrase?.styledContents?.map?.((v) => v.name) ?? [];
-    return new Observer(
+    const observer = new Observer(
       variables,
       linkVariables,
       interpolationVariants,
@@ -297,6 +304,7 @@ const PhraseSection = (props: Props) => {
       contentVariables,
       styledContents
     );
+    return observer;
   }, [
     props.phrase.variables,
     props.phrase.linkVariables,
@@ -333,6 +341,7 @@ const PhraseSection = (props: Props) => {
 
   const onSetDefaultValueContent = useCallback(
     (richTextHtml: string) => {
+      localeRuleEditorDoc.observer.searchString = "";
       localeRuleEditorDoc.tree.updateRootFromHTML(richTextHtml ?? "");
       const plainText = localeRuleEditorDoc.tree.rootNode.toUnescapedString();
       const json = localeRuleEditorDoc.tree.rootNode.toJSON();
@@ -413,19 +422,42 @@ const PhraseSection = (props: Props) => {
     enabledMentionedValues,
   ]);
 
+  const onSaveContent = useCallback(() => {
+      localeRuleEditorDoc.observer.searchString = "";
+      const json = JSON.stringify(localeRuleEditorDoc.tree.rootNode.toJSON());
+      if (!displayValue) {
+        return;
+      }
+      if (json != displayValue?.json) {
+        setDisplayValue({
+          ...displayValue,
+          json
+        }, true);
+
+      }
+
+  }, [highlightableVariables, displayValue?.json])
+
   useEffect(() => {
     if (commandMode == "edit") {
       const timeout = setTimeout(() => {
-        if (!displayValue) {
-          return;
-        }
         saveDisplayValue();
       }, 500);
       return () => {
         clearTimeout(timeout);
       }
     }
-  }, [highlightableVariables, commandMode])
+  }, [displayValue?.richTextHtml, commandMode])
+
+  useEffect(() => {
+    if (commandMode == "edit" && !props.isSearching) {
+      const timeout = setTimeout(onSaveContent, 500);
+      return () => {
+        clearTimeout(timeout);
+      }
+    }
+  }, [highlightableVariables, onSaveContent, commandMode, props.isSearching])
+
 
 
   const onMarkDisplayResolved = useCallback(() => {
@@ -641,7 +673,19 @@ const PhraseSection = (props: Props) => {
     }
   }, []);
 
+  const showResult = useMemo(() => {
+    if (!props.isSearching) {
+      return true;
+    }
+    return displayValue?.plainText
+      ?.toLowerCase()
+      .indexOf(props.searchText.toLowerCase()) != -1;
+  }, [props.isSearching, props.searchText])
+
   if (!showContent) {
+    return null;
+  }
+  if (!showResult) {
     return null;
   }
 
@@ -708,13 +752,13 @@ const PhraseSection = (props: Props) => {
             {` (${props.selectedLocale.localeCode}):`}
           </span>
         </RowTitle>
-        {commandMode == "edit" && (
+        {commandMode == "edit" && !props.isSearching && (
           <DeleteVarContainer onClick={onRemove}>
             <DeleteVar src={xIcon} />
           </DeleteVarContainer>
         )}
       </TitleRow>
-      <SubContainer style={{borderColor: diffColor}}>
+      <SubContainer style={{ borderColor: diffColor }}>
         <Container>
           <TitleRow style={{ marginBottom: 24 }}>
             <RowTitle
@@ -752,7 +796,7 @@ const PhraseSection = (props: Props) => {
                   {`(${props.selectedLocale.localeCode}):`}
                 </span>
               </div>
-              {props.systemSourceLocale && commandMode == "edit" && (
+              {props.systemSourceLocale && commandMode == "edit" && !props.isSearching && (
                 <div style={{ width: 120, marginLeft: 12 }}>
                   <Button
                     label={"ML translate"}
@@ -831,7 +875,7 @@ const PhraseSection = (props: Props) => {
               systemSourceLocale={props.systemSourceLocale}
               onChange={onChangeTerm}
               enabledTerms={displayValue?.enabledTerms ?? []}
-              showFindTerms={!props.systemSourceLocale}
+              showFindTerms={!props.systemSourceLocale && !props.isSearching}
               onShowFindTerms={onShowFindTerms}
               isEmpty={(displayValue?.plainText?.trim?.() ?? "") == ""}
               title={
@@ -857,30 +901,28 @@ const PhraseSection = (props: Props) => {
               }
             />
           )}
-        {translationMemories.length > 0 &&
-          (displayValue?.plainText ?? "").trim() == "" &&
-          commandMode == "edit" && (
-            <TranslationMemoryList
-              memories={translationMemories}
-              observer={editorObserver}
-              onApply={onSetDefaultValueContent}
-              lang={props.selectedLocale?.localeCode}
-            />
-          )}
+          {translationMemories.length > 0 &&
+            (displayValue?.plainText ?? "").trim() == "" &&
+            commandMode == "edit" && !props.isSearching && (
+              <TranslationMemoryList
+                memories={translationMemories}
+                observer={editorObserver}
+                onApply={onSetDefaultValueContent}
+                lang={props.selectedLocale?.localeCode}
+              />
+            )}
         </Container>
-        {props.systemSourceLocale &&
-          props.phraseSection &&
-          localeRule && (
-            <SourcePhraseSection
-              phrase={props.phrase}
-              phraseRef={props.phraseRef}
-              selectedLocale={props.selectedLocale}
-              systemSourceLocale={props.systemSourceLocale}
-              phraseSection={props.phraseSection}
-              phraseSectionRef={props.phraseSectionRef}
-              targetPhraseSectionLocaleRule={localeRule}
-            />
-          )}
+        {props.systemSourceLocale && props.phraseSection && localeRule && (
+          <SourcePhraseSection
+            phrase={props.phrase}
+            phraseRef={props.phraseRef}
+            selectedLocale={props.selectedLocale}
+            systemSourceLocale={props.systemSourceLocale}
+            phraseSection={props.phraseSection}
+            phraseSectionRef={props.phraseSectionRef}
+            targetPhraseSectionLocaleRule={localeRule}
+          />
+        )}
       </SubContainer>
     </div>
   );

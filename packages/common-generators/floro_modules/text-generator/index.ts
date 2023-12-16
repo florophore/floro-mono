@@ -65,6 +65,7 @@ export interface PhraseKeys {
     "components.privacy_policy":                          ComponentsPrivacyPolicy;
     "components.released_under_mit":                      ComponentsReleasedUnderMIT;
     "components.terms_of_service":                        ComponentsTermsOfService;
+    "doc_titles.advanced_commands_docs_page_title":       DocTitlesAdvancedCommandsDocsPageTitle;
     "doc_titles.docs_page_title":                         DocTitlesDocsPageTitle;
     "doc_titles.local_repositories_docs_page_title":      DocTitlesLocalRepositoriesDocsPageTitle;
     "doc_titles.merge_and_conflicts_docs_page_title":     DocTitlesMergeAndConflictsDocsPageTitle;
@@ -101,6 +102,7 @@ export interface PhraseKeys {
     "how_it_works.how_it_works_blog_part_2":              HowItWorksHowItWorksBlogPart2;
     "main.hello_world":                                   MainHelloWorld;
     "meta_tags.about":                                    MetaTagsAbout;
+    "meta_tags.advanced_commands_docs":                   MetaTagsAdvancedCommandsDocs;
     "meta_tags.docs":                                     MetaTagsDocs;
     "meta_tags.how_it_works":                             MetaTagsHowItWorks;
     "meta_tags.local_repository_docs":                    MetaTagsLocalRepositoryDocs;
@@ -110,6 +112,7 @@ export interface PhraseKeys {
     "meta_tags.product_docs_and_terminology":             MetaTagsProductDocsAndTerminology;
     "meta_tags.remote_repository_docs":                   MetaTagsRemoteRepositoryDocs;
     "meta_tags.user_portal_docs":                         MetaTagsUserPortalDocs;
+    "product_docs.advanced_commands_docs":                ProductDocsAdvancedCommandsDocs;
     "product_docs.local_repository_docs":                 ProductDocsLocalRepositoryDocs;
     "product_docs.merging_and_conflicts_docs":            ProductDocsMergingAndConflictsDocs;
     "product_docs.org_portal_docs":                       ProductDocsOrgPortalDocs;
@@ -1093,6 +1096,39 @@ export interface ComponentsTermsOfServiceStyledContents {
 }
 
 export interface ComponentsTermsOfServiceVariables {
+}
+
+export interface DocTitlesAdvancedCommandsDocsPageTitle {
+    args:             DocTitlesAdvancedCommandsDocsPageTitleArgs;
+    contentVariables: DocTitlesAdvancedCommandsDocsPageTitleContentVariables;
+    interpolations:   DocTitlesAdvancedCommandsDocsPageTitleInterpolations;
+    links:            DocTitlesAdvancedCommandsDocsPageTitleLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     DocTitlesAdvancedCommandsDocsPageTitleStyleClasses;
+    styledContents:   DocTitlesAdvancedCommandsDocsPageTitleStyledContents;
+    variables:        DocTitlesAdvancedCommandsDocsPageTitleVariables;
+}
+
+export interface DocTitlesAdvancedCommandsDocsPageTitleArgs {
+}
+
+export interface DocTitlesAdvancedCommandsDocsPageTitleContentVariables {
+}
+
+export interface DocTitlesAdvancedCommandsDocsPageTitleInterpolations {
+}
+
+export interface DocTitlesAdvancedCommandsDocsPageTitleLinks {
+}
+
+export interface DocTitlesAdvancedCommandsDocsPageTitleStyleClasses {
+}
+
+export interface DocTitlesAdvancedCommandsDocsPageTitleStyledContents {
+}
+
+export interface DocTitlesAdvancedCommandsDocsPageTitleVariables {
 }
 
 export interface DocTitlesDocsPageTitle {
@@ -2396,6 +2432,39 @@ export interface MetaTagsAboutStyledContents {
 export interface MetaTagsAboutVariables {
 }
 
+export interface MetaTagsAdvancedCommandsDocs {
+    args:             MetaTagsAdvancedCommandsDocsArgs;
+    contentVariables: MetaTagsAdvancedCommandsDocsContentVariables;
+    interpolations:   MetaTagsAdvancedCommandsDocsInterpolations;
+    links:            MetaTagsAdvancedCommandsDocsLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     MetaTagsAdvancedCommandsDocsStyleClasses;
+    styledContents:   MetaTagsAdvancedCommandsDocsStyledContents;
+    variables:        MetaTagsAdvancedCommandsDocsVariables;
+}
+
+export interface MetaTagsAdvancedCommandsDocsArgs {
+}
+
+export interface MetaTagsAdvancedCommandsDocsContentVariables {
+}
+
+export interface MetaTagsAdvancedCommandsDocsInterpolations {
+}
+
+export interface MetaTagsAdvancedCommandsDocsLinks {
+}
+
+export interface MetaTagsAdvancedCommandsDocsStyleClasses {
+}
+
+export interface MetaTagsAdvancedCommandsDocsStyledContents {
+}
+
+export interface MetaTagsAdvancedCommandsDocsVariables {
+}
+
 export interface MetaTagsDocs {
     args:             MetaTagsDocsArgs;
     contentVariables: MetaTagsDocsContentVariables;
@@ -2691,6 +2760,44 @@ export interface MetaTagsUserPortalDocsStyledContents {
 }
 
 export interface MetaTagsUserPortalDocsVariables {
+}
+
+export interface ProductDocsAdvancedCommandsDocs {
+    args:             ProductDocsAdvancedCommandsDocsArgs;
+    contentVariables: ProductDocsAdvancedCommandsDocsContentVariables;
+    interpolations:   ProductDocsAdvancedCommandsDocsInterpolations;
+    links:            ProductDocsAdvancedCommandsDocsLinks;
+    phrase:           TextNode[];
+    phraseKey:        string;
+    styleClasses:     ProductDocsAdvancedCommandsDocsStyleClasses;
+    styledContents:   ProductDocsAdvancedCommandsDocsStyledContents;
+    variables:        ProductDocsAdvancedCommandsDocsVariables;
+}
+
+export interface ProductDocsAdvancedCommandsDocsArgs {
+    docSearch: string;
+    mainTitle: string;
+}
+
+export interface ProductDocsAdvancedCommandsDocsContentVariables {
+    docSearch: string;
+}
+
+export interface ProductDocsAdvancedCommandsDocsInterpolations {
+}
+
+export interface ProductDocsAdvancedCommandsDocsLinks {
+}
+
+export interface ProductDocsAdvancedCommandsDocsStyleClasses {
+    mainTitle: string;
+}
+
+export interface ProductDocsAdvancedCommandsDocsStyledContents {
+    "main title": StyledContent;
+}
+
+export interface ProductDocsAdvancedCommandsDocsVariables {
 }
 
 export interface ProductDocsLocalRepositoryDocs {
@@ -2995,6 +3102,7 @@ export interface ProductDocsProductDocsIndexInterpolations {
 }
 
 export interface ProductDocsProductDocsIndexLinks {
+    "learn advanced commands":            Link;
     "learn how local repositories work":  Link;
     "learn how remote repositories work": Link;
     "merging-and-conflicts":              Link;
@@ -3155,6 +3263,7 @@ export interface PhraseKeyDebugInfo {
     "components.privacy_policy":                          DebugInfo;
     "components.released_under_mit":                      DebugInfo;
     "components.terms_of_service":                        DebugInfo;
+    "doc_titles.advanced_commands_docs_page_title":       DebugInfo;
     "doc_titles.docs_page_title":                         DebugInfo;
     "doc_titles.local_repositories_docs_page_title":      DebugInfo;
     "doc_titles.merge_and_conflicts_docs_page_title":     DebugInfo;
@@ -3191,6 +3300,7 @@ export interface PhraseKeyDebugInfo {
     "how_it_works.how_it_works_blog_part_2":              DebugInfo;
     "main.hello_world":                                   DebugInfo;
     "meta_tags.about":                                    DebugInfo;
+    "meta_tags.advanced_commands_docs":                   DebugInfo;
     "meta_tags.docs":                                     DebugInfo;
     "meta_tags.how_it_works":                             DebugInfo;
     "meta_tags.local_repository_docs":                    DebugInfo;
@@ -3200,6 +3310,7 @@ export interface PhraseKeyDebugInfo {
     "meta_tags.product_docs_and_terminology":             DebugInfo;
     "meta_tags.remote_repository_docs":                   DebugInfo;
     "meta_tags.user_portal_docs":                         DebugInfo;
+    "product_docs.advanced_commands_docs":                DebugInfo;
     "product_docs.local_repository_docs":                 DebugInfo;
     "product_docs.merging_and_conflicts_docs":            DebugInfo;
     "product_docs.org_portal_docs":                       DebugInfo;

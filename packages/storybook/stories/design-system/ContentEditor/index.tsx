@@ -66,8 +66,8 @@ import NumberedListUnSelectedDark from "@floro/common-assets/assets/images/rich_
 import NumberedListSelectedLight from "@floro/common-assets/assets/images/rich_text_icons/numberedlist.selected.light.svg";
 import NumberedListSelectedDark from "@floro/common-assets/assets/images/rich_text_icons/numberedlist.selected.dark.svg";
 
-import GPTLight from "@floro/common-assets/assets/images/rich_text_icons/gpt.light.svg";
-import GPTDark from "@floro/common-assets/assets/images/rich_text_icons/gpt.dark.svg";
+import GPTLight from "@floro/common-assets/assets/images/rich_text_icons/GPT.light.svg";
+import GPTDark from "@floro/common-assets/assets/images/rich_text_icons/GPT.dark.svg";
 
 import Cursor from "./editor/Cursor";
 

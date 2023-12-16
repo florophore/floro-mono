@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState, useEffect } from "react";
+import React, { useMemo, useCallback, useState, useEffect, useRef } from "react";
 import {
   PointerTypes,
   SchemaTypes,
@@ -132,7 +132,6 @@ const AddPhraseFeatures = styled.h3`
 `;
 
 interface Props {
-  phrase: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>"];
   selectedLocale: SchemaTypes["$(text).localeSettings.locales.localeCode<?>"];
   fallbackLocale:
     | SchemaTypes["$(text).localeSettings.locales.localeCode<?>"]
@@ -150,12 +149,16 @@ interface Props {
   isPinned: boolean;
   setShowEnabledFeatures: (showEnabledFeatures: boolean) => void;
   showEnabledFeatures: boolean;
+  isVisible: boolean;
+  isSearching: boolean;
+  searchText: string;
 }
 
-const PhraseTranslation = (props: Props) => {
+const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRef<HTMLDivElement>) => {
+  const phrase = useReferencedObject(props.phraseRef);
   const theme = useTheme();
   const [phraseGroupId, phraseId] = useExtractQueryArgs(props.phraseRef);
-  const { commandMode, applicationState, conflictSet, changeset } =
+  const { commandMode, applicationState } =
     useFloroContext();
 
   const localeRef = makeQueryRef(
@@ -282,16 +285,17 @@ const PhraseTranslation = (props: Props) => {
   }, [mentionedTerms, phraseTranslation?.enabledTerms]);
 
   const editorObserver = useMemo(() => {
-    const variables = props.phrase.variables?.map((v) => v.name) ?? [];
+    const variables = phrase?.variables?.map((v) => v.name) ?? [];
     const linkVariables =
-      props?.phrase.linkVariables?.map?.((v) => v.linkName) ?? [];
+      phrase?.linkVariables?.map?.((v) => v.linkName) ?? [];
     const interpolationVariants =
-      props.phrase?.interpolationVariants?.map?.((v) => v.name) ?? [];
+      phrase?.interpolationVariants?.map?.((v) => v.name) ?? [];
     const contentVariables =
-      props.phrase?.contentVariables?.map?.((v) => v.name) ?? [];
+      phrase?.contentVariables?.map?.((v) => v.name) ?? [];
     const styledContents =
-      props.phrase?.styledContents?.map?.((v) => v.name) ?? [];
-    return new Observer(
+      phrase?.styledContents?.map?.((v) => v.name) ?? [];
+
+    const observer = new Observer(
       variables,
       linkVariables,
       interpolationVariants,
@@ -299,12 +303,15 @@ const PhraseTranslation = (props: Props) => {
       contentVariables ?? [],
       styledContents ?? []
     );
+    observer.setSearchString(props.searchText);
+    return observer;
   }, [
-    props.phrase.variables,
-    props.phrase.linkVariables,
-    props.phrase.interpolationVariants,
-    props.phrase.contentVariables,
-    props.phrase.styledContents,
+    props.searchText,
+    phrase.variables,
+    phrase.linkVariables,
+    phrase.interpolationVariants,
+    phrase.contentVariables,
+    phrase.styledContents,
     enabledMentionedValues,
   ]);
 
@@ -324,15 +331,15 @@ const PhraseTranslation = (props: Props) => {
   }, [props.selectedLocale.localeCode, editorObserver]);
 
   const targetEditorObserver = useMemo(() => {
-    const variables = props.phrase.variables?.map((v) => v.name) ?? [];
+    const variables = phrase.variables?.map((v) => v.name) ?? [];
     const linkVariables =
-      props?.phrase.linkVariables?.map?.((v) => v.linkName) ?? [];
+      phrase.linkVariables?.map?.((v) => v.linkName) ?? [];
     const interpolationVariants =
-      props.phrase?.interpolationVariants?.map?.((v) => v.name) ?? [];
+      phrase?.interpolationVariants?.map?.((v) => v.name) ?? [];
     const contentVariables =
-      props.phrase?.contentVariables?.map?.((v) => v.name) ?? [];
+      phrase?.contentVariables?.map?.((v) => v.name) ?? [];
     const styledContents =
-      props.phrase?.styledContents?.map?.((v) => v.name) ?? [];
+      phrase?.styledContents?.map?.((v) => v.name) ?? [];
     return new Observer(
       variables,
       linkVariables,
@@ -342,11 +349,11 @@ const PhraseTranslation = (props: Props) => {
       styledContents ?? []
     );
   }, [
-    props.phrase.variables,
-    props.phrase.linkVariables,
-    props.phrase.interpolationVariants,
-    props.phrase.contentVariables,
-    props.phrase.styledContents,
+    phrase.variables,
+    phrase.linkVariables,
+    phrase.interpolationVariants,
+    phrase.contentVariables,
+    phrase.styledContents,
     enabledMentionedValues,
   ]);
 
@@ -373,8 +380,10 @@ const PhraseTranslation = (props: Props) => {
     return (sourcePhraseTranslation?.plainText ?? "") == "";
   }, [sourcePhraseTranslation?.plainText]);
 
+
   const onSetContent = useCallback(
     (richTextHtml: string) => {
+      editorDoc.observer.searchString = "";
       editorDoc.tree.updateRootFromHTML(richTextHtml ?? "");
       const plainText = editorDoc.tree.rootNode.toUnescapedString();
       const json = editorDoc.tree.rootNode.toJSON();
@@ -435,15 +444,15 @@ const PhraseTranslation = (props: Props) => {
   }, [phraseTranslation?.richTextHtml, commandMode])
 
   const highlightableVariables = useMemo(() => {
-    const variables = props.phrase.variables?.map((v) => v.name) ?? [];
+    const variables = phrase.variables?.map((v) => v.name) ?? [];
     const linkVariables =
-      props?.phrase.linkVariables?.map?.((v) => v.linkName) ?? [];
+      phrase.linkVariables?.map?.((v) => v.linkName) ?? [];
     const interpolationVariants =
-      props.phrase?.interpolationVariants?.map?.((v) => v.name) ?? [];
+      phrase?.interpolationVariants?.map?.((v) => v.name) ?? [];
     const contentVariables =
-      props.phrase?.contentVariables?.map?.((v) => v.name) ?? [];
+      phrase?.contentVariables?.map?.((v) => v.name) ?? [];
     const styledContents =
-      props.phrase?.styledContents?.map?.((v) => v.name) ?? [];
+      phrase?.styledContents?.map?.((v) => v.name) ?? [];
     return [
       ...variables,
       ...linkVariables,
@@ -453,27 +462,37 @@ const PhraseTranslation = (props: Props) => {
       ...styledContents ?? []
     ].join(":");
   }, [
-    props.phrase.variables,
-    props.phrase.linkVariables,
-    props.phrase.interpolationVariants,
-    props.phrase.contentVariables,
-    props.phrase.styledContents,
+    phrase.variables,
+    phrase.linkVariables,
+    phrase.interpolationVariants,
+    phrase.contentVariables,
+    phrase.styledContents,
     enabledMentionedValues,
   ]);
 
-  useEffect(() => {
-    if (commandMode == "edit") {
-      const timeout = setTimeout(() => {
-        if (!phraseTranslation) {
-          return;
-        }
-        savePhraseTranslation();
-      }, 500);
-      return () => {
-        clearTimeout(timeout);
+  const onSaveContent = useCallback(() => {
+      editorDoc.observer.searchString = "";
+      const json = editorDoc.tree.rootNode.toJSON();
+      if (!phraseTranslation) {
+        return;
       }
-    }
-  }, [highlightableVariables, commandMode])
+      setPhraseTranslation({
+        ...phraseTranslation,
+        json: JSON.stringify(json),
+      }, true);
+
+  }, [highlightableVariables, phraseTranslation?.json])
+
+  useEffect(() => {
+      editorDoc.observer.searchString = "";
+      const json = JSON.stringify(editorDoc.tree.rootNode.toJSON());
+      if (json != phraseTranslation?.json) {
+        const timeout = setTimeout(onSaveContent, 500)
+        return () => {
+          clearTimeout(timeout)
+        }
+      }
+  }, [onSaveContent, phraseTranslation?.json])
 
   const onMarkResolved = useCallback(() => {
     if (!phraseTranslation) {
@@ -554,15 +573,15 @@ const PhraseTranslation = (props: Props) => {
   }, [mentionedTerms, sourcePhraseTranslation?.enabledTerms]);
 
   const sourceEditorObserver = useMemo(() => {
-    const variables = props.phrase.variables?.map((v) => v.name) ?? [];
+    const variables = phrase.variables?.map((v) => v.name) ?? [];
     const linkVariables =
-      props?.phrase.linkVariables?.map?.((v) => v.linkName) ?? [];
+      phrase?.linkVariables?.map?.((v) => v.linkName) ?? [];
     const interpolationVariants =
-      props.phrase?.interpolationVariants?.map?.((v) => v.name) ?? [];
+      phrase?.interpolationVariants?.map?.((v) => v.name) ?? [];
     const contentVariables =
-      props.phrase?.contentVariables?.map?.((v) => v.name) ?? [];
+      phrase?.contentVariables?.map?.((v) => v.name) ?? [];
     const styledContents =
-      props.phrase?.styledContents?.map?.((v) => v.name) ?? [];
+      phrase?.styledContents?.map?.((v) => v.name) ?? [];
     return new Observer(
       variables,
       linkVariables,
@@ -572,11 +591,11 @@ const PhraseTranslation = (props: Props) => {
       styledContents ?? []
     );
   }, [
-    props.phrase.variables,
-    props.phrase.linkVariables,
-    props.phrase.interpolationVariants,
-    props.phrase.contentVariables,
-    props.phrase.styledContents,
+    phrase?.variables,
+    phrase?.linkVariables,
+    phrase?.interpolationVariants,
+    phrase?.contentVariables,
+    phrase?.styledContents,
     sourceEnabledMentionedValues,
   ]);
 
@@ -674,50 +693,50 @@ const PhraseTranslation = (props: Props) => {
 
   const showMiddleBox = useMemo(() => {
     if (
-      props.phrase.phraseVariablesEnabled ||
-      (props.phrase.variables?.length ?? 0) > 0
+      phrase?.phraseVariablesEnabled ||
+      (phrase?.variables?.length ?? 0) > 0
     ) {
       return true;
     }
     if (
-      props.phrase.contentVariablesEnabled ||
-      (props.phrase.contentVariables?.length ?? 0) > 0
+      phrase?.contentVariablesEnabled ||
+      (phrase?.contentVariables?.length ?? 0) > 0
     ) {
       return true;
     }
     if (
-      props.phrase.interpolationsEnabled ||
-      (props.phrase.interpolationVariants?.length ?? 0) > 0
+      phrase?.interpolationsEnabled ||
+      (phrase?.interpolationVariants?.length ?? 0) > 0
     ) {
       return true;
     }
     if (
-      props.phrase.linkVariablesEnabled ||
-      (props.phrase.linkVariables?.length ?? 0) > 0
+      phrase?.linkVariablesEnabled ||
+      (phrase?.linkVariables?.length ?? 0) > 0
     ) {
       return true;
     }
     if (
-      props.phrase.styledContentEnabled ||
-      (props.phrase.styleClasses?.length ?? 0) > 0 ||
-      (props.phrase.styledContents?.length ?? 0)
+      phrase?.styledContentEnabled ||
+      (phrase?.styleClasses?.length ?? 0) > 0 ||
+      (phrase?.styledContents?.length ?? 0)
     ) {
       return true;
     }
     return false;
   }, [
-    props.phrase.phraseVariablesEnabled,
-    props.phrase.variables,
-    props.phrase.contentVariablesEnabled,
-    props.phrase.contentVariables,
-    props.phrase.interpolationsEnabled,
-    props.phrase.interpolationVariants,
-    props.phrase.linkVariablesEnabled,
-    props.phrase.linkVariables,
-    props.phrase.styledContentEnabled,
-    props.phrase.styleClasses,
-    props.phrase.styledContents,
-    props.phrase.testCases,
+    phrase?.phraseVariablesEnabled,
+    phrase?.variables,
+    phrase?.contentVariablesEnabled,
+    phrase?.contentVariables,
+    phrase?.interpolationsEnabled,
+    phrase?.interpolationVariants,
+    phrase?.linkVariablesEnabled,
+    phrase?.linkVariables,
+    phrase?.styledContentEnabled,
+    phrase?.styleClasses,
+    phrase?.styledContents,
+    phrase?.testCases,
   ]);
 
   const [showContent, setShowContent] = useState(false);
@@ -731,12 +750,21 @@ const PhraseTranslation = (props: Props) => {
     }
   }, []);
 
+  const showResult = useMemo(() => {
+    if (!props.isSearching) {
+      return true;
+    }
+    return phraseTranslation?.plainText
+      ?.toLowerCase()
+      .indexOf(props.searchText.toLowerCase()) != -1;
+  }, [props.isSearching, props.searchText])
+
   if (!showContent) {
     return null;
   }
 
   return (
-    <>
+    <div ref={ref}>
       <TermModal
         show={showFindTerms && commandMode == "edit"}
         onDismiss={onHideFindTerms}
@@ -770,9 +798,9 @@ const PhraseTranslation = (props: Props) => {
           onApplyTranslation={onSetContent}
         />
       )}
-      {props.phrase.usePhraseSections && (
+      {phrase?.usePhraseSections && (
         <PhraseSectionList
-          phrase={props.phrase}
+          phrase={phrase}
           phraseRef={props.phraseRef}
           selectedLocale={props.selectedLocale}
           systemSourceLocale={props.systemSourceLocale}
@@ -780,9 +808,11 @@ const PhraseTranslation = (props: Props) => {
           pinnedPhrases={props.pinnedPhrases}
           setPinnedPhrases={props.setPinnedPhrases}
           isPinned={props.isPinned}
+          isSearching={props.isSearching}
+          searchText={props.searchText}
         />
       )}
-      {!props.phrase.usePhraseSections && (
+      {!phrase?.usePhraseSections && (
         <>
           <Container>
             <TitleRow style={{ marginBottom: 12, height: 40 }}>
@@ -797,7 +827,7 @@ const PhraseTranslation = (props: Props) => {
                 <span style={{ color: diffColor }}>
                   {`Phrase Value (${props.selectedLocale.localeCode}):`}
                 </span>
-                {props.systemSourceLocale && commandMode == "edit" && (
+                {props.systemSourceLocale && commandMode == "edit" && !props.isSearching && (
                   <div style={{ width: 120, marginLeft: 12 }}>
                     <Button
                       isDisabled={
@@ -852,13 +882,13 @@ const PhraseTranslation = (props: Props) => {
                 )}
               </div>
             </TitleRow>
-            {commandMode == "edit" && (
+            {commandMode == "edit" && showResult && (
               <ContentEditor
                 lang={props.selectedLocale.localeCode?.toLowerCase() ?? "en"}
                 editorDoc={editorDoc}
                 content={phraseTranslation?.richTextHtml ?? ""}
                 onSetContent={onSetContent}
-                placeholder={`write the (${props.selectedLocale.localeCode}) value for ${props.phrase.phraseKey}...`}
+                placeholder={`write the (${props.selectedLocale.localeCode}) value for ${phrase?.phraseKey}...`}
                 onOpenGPT={onShowPrompt}
                 showGPTIcon={
                   (!!sourcePhraseTranslation &&
@@ -870,7 +900,7 @@ const PhraseTranslation = (props: Props) => {
                 }
               />
             )}
-            {commandMode != "edit" && (
+            {commandMode != "edit" && showResult && (
               <PlainTextDocument
                 lang={props.selectedLocale.localeCode?.toLowerCase() ?? "en"}
                 editorDoc={editorDoc}
@@ -884,7 +914,7 @@ const PhraseTranslation = (props: Props) => {
                 systemSourceLocale={props.systemSourceLocale}
                 onChange={onChangeTerm}
                 enabledTerms={phraseTranslation?.enabledTerms ?? []}
-                showFindTerms={!props.systemSourceLocale}
+                showFindTerms={!props.systemSourceLocale && !props.isSearching}
                 onShowFindTerms={onShowFindTerms}
                 isEmpty={(phraseTranslation?.plainText?.trim?.() ?? "") == ""}
                 title={
@@ -896,7 +926,7 @@ const PhraseTranslation = (props: Props) => {
             )}
             {translationMemories.length > 0 &&
               (phraseTranslation?.plainText ?? "").trim() == "" &&
-              commandMode == "edit" && (
+              commandMode == "edit" && !props.isSearching && (
                 <TranslationMemoryList
                   memories={translationMemories}
                   observer={editorObserver}
@@ -907,7 +937,7 @@ const PhraseTranslation = (props: Props) => {
           </Container>
           {props.systemSourceLocale && phraseTranslation && (
             <SourcePhraseTranslation
-              phrase={props.phrase}
+              phrase={phrase}
               systemSourceLocale={props.systemSourceLocale}
               phraseRef={props.phraseRef}
               targetPhraseTranslation={phraseTranslation}
@@ -916,7 +946,7 @@ const PhraseTranslation = (props: Props) => {
           )}
         </>
       )}
-      {commandMode == "edit" && (
+      {commandMode == "edit" && !props.isSearching && (
         <>
           {!props.showEnabledFeatures && (
             <div
@@ -935,7 +965,7 @@ const PhraseTranslation = (props: Props) => {
               </AddPhraseFeatures>
             </div>
           )}
-          {props.showEnabledFeatures && (
+          {props.showEnabledFeatures && !props.isSearching && (
             <div
               style={{
                 borderTop: `1px solid ${theme.colors.contrastTextLight}`,
@@ -970,21 +1000,21 @@ const PhraseTranslation = (props: Props) => {
             marginTop: 24,
           }}
         >
-          {(props.phrase.phraseVariablesEnabled ||
-            (props.phrase.variables?.length ?? 0) > 0) && (
+          {(phrase?.phraseVariablesEnabled ||
+            (phrase?.variables?.length ?? 0) > 0) &&  !props.isSearching && (
             <VariablesList phraseRef={props.phraseRef} />
           )}
-          {(props.phrase.contentVariablesEnabled ||
-            (props.phrase.contentVariables?.length ?? 0) > 0) && (
+          {(phrase?.contentVariablesEnabled ||
+            (phrase?.contentVariables?.length ?? 0) > 0) && !props.isSearching && (
             <ContentVariablesList phraseRef={props.phraseRef} />
           )}
-          {(props.phrase.styledContentEnabled ||
-            (props.phrase.styleClasses?.length ?? 0) > 0) && (
+          {(phrase?.styledContentEnabled ||
+            (phrase?.styleClasses?.length ?? 0) > 0) && !props.isSearching && (
             <StyledClassList phraseRef={props.phraseRef} />
           )}
-          {(props.phrase?.styleClasses?.length ?? 0) > 0 && (
+          {(phrase?.styleClasses?.length ?? 0) > 0 && (
             <StyledContentList
-              phrase={props.phrase}
+              phrase={phrase}
               phraseRef={props.phraseRef}
               selectedLocale={props.selectedLocale}
               systemSourceLocale={props.systemSourceLocale}
@@ -992,12 +1022,14 @@ const PhraseTranslation = (props: Props) => {
               pinnedPhrases={props.pinnedPhrases}
               setPinnedPhrases={props.setPinnedPhrases}
               isPinned={props.isPinned}
+              isSearching={props.isSearching}
+              searchText={props.searchText}
             />
           )}
-          {(props.phrase?.linkVariablesEnabled ||
-            (props.phrase.linkVariables?.length ?? 0) > 0) && (
+          {(phrase?.linkVariablesEnabled ||
+            (phrase.linkVariables?.length ?? 0) > 0) && (
             <LinkVariablesList
-              phrase={props.phrase}
+              phrase={phrase}
               phraseRef={props.phraseRef}
               selectedLocale={props.selectedLocale}
               systemSourceLocale={props.systemSourceLocale}
@@ -1006,13 +1038,15 @@ const PhraseTranslation = (props: Props) => {
               pinnedPhrases={props.pinnedPhrases}
               setPinnedPhrases={props.setPinnedPhrases}
               isPinned={props.isPinned}
+              isSearching={props.isSearching}
+              searchText={props.searchText}
             />
           )}
-          {(props.phrase.interpolationsEnabled ||
-            (props.phrase.interpolationVariants?.length ?? 0) > 0) &&
-            (props.phrase?.variables?.length ?? 0) > 0 && (
+          {(phrase?.interpolationsEnabled ||
+            (phrase?.interpolationVariants?.length ?? 0) > 0) &&
+            (phrase?.variables?.length ?? 0) > 0 && (
               <InterpolationVariantList
-                phrase={props.phrase}
+                phrase={phrase}
                 phraseRef={props.phraseRef}
                 selectedLocale={props.selectedLocale}
                 systemSourceLocale={props.systemSourceLocale}
@@ -1020,11 +1054,13 @@ const PhraseTranslation = (props: Props) => {
                 pinnedPhrases={props.pinnedPhrases}
                 setPinnedPhrases={props.setPinnedPhrases}
                 isPinned={props.isPinned}
+                isSearching={props.isSearching}
+                searchText={props.searchText}
               />
             )}
-          {(props.phrase?.variables?.length ?? 0) > 0 && (
+          {(phrase?.variables?.length ?? 0) > 0 && !props.isSearching && (
             <TestCaseList
-              phrase={props.phrase}
+              phrase={phrase}
               phraseRef={props.phraseRef}
               selectedLocale={props.selectedLocale}
               fallbackLocale={props.fallbackLocale}
@@ -1033,8 +1069,8 @@ const PhraseTranslation = (props: Props) => {
           )}
         </div>
       )}
-    </>
+    </div>
   );
-};
+});
 
 export default React.memo(PhraseTranslation);

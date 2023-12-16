@@ -2,7 +2,7 @@ import ColorPalette from "@floro/styles/ColorPalette";
 import Node from "../Node"
 import Observer from "../Observer";
 import escape from 'escape-html';
-import { TextNodeJSON } from "./TextNode";
+import TextNode, { TextNodeJSON } from "./TextNode";
 
 export interface ContentVariableTagJSON extends TextNodeJSON {
   type: string;
@@ -37,7 +37,7 @@ export default class ContentVariableTagNode extends Node implements TextNodeJSON
 
   public lang: string;
 
-  constructor(observer: Observer, content: string, lang: string, initMarks?: {
+  constructor(parent: TextNode, observer: Observer, content: string, lang: string, initMarks?: {
     isBold: boolean,
     isItalic: boolean,
     isUnderlined: boolean,
@@ -45,7 +45,7 @@ export default class ContentVariableTagNode extends Node implements TextNodeJSON
     isSuperscript: boolean,
     isSubscript: boolean
   }) {
-    super(observer, content, lang, []);
+    super(parent, observer, content, lang, []);
     this.type = 'content-variable-tag';
     this.lang = lang;
 
@@ -68,8 +68,8 @@ export default class ContentVariableTagNode extends Node implements TextNodeJSON
     };
   }
 
-  public static fromJSON(json: ContentVariableTagJSON, observer: Observer, lang: string): ContentVariableTagNode {
-    return new ContentVariableTagNode(observer, json.content, lang, json.marks);
+  public static fromJSON(parent: TextNode, json: ContentVariableTagJSON, observer: Observer, lang: string): ContentVariableTagNode {
+    return new ContentVariableTagNode(parent, observer, json.content, lang, json.marks);
   }
 
   public toHTMLString(): string {

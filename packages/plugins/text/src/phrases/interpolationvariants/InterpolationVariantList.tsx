@@ -83,6 +83,8 @@ interface Props {
   setPinnedPhrases: (phraseRegs: Array<string>) => void;
   globalFilterUntranslated: boolean;
   isPinned: boolean;
+  searchText: string;
+  isSearching: boolean;
 }
 
 const InterpolationVariantsList = (props: Props) => {
@@ -253,11 +255,11 @@ const InterpolationVariantsList = (props: Props) => {
             )}
           </span>
         </RowTitle>
-        {(interpolationVariants?.length ?? 0) > 0 && commandMode == "edit" && (
+        {(interpolationVariants?.length ?? 0) > 0 && commandMode == "edit" && !props.isSearching && (
           <ToggleEditTitle onClick={onToggleReOrder}>{isReOrderMode ? 'done organizing' : 'organize conditional variants'}</ToggleEditTitle>
         )}
       </TitleRow>
-      {isReOrderMode && commandMode == "edit" && (
+      {isReOrderMode && commandMode == "edit" && !props.isSearching && (
         <Reorder.Group
           axis="y"
           values={interpolationVariants ?? []}
@@ -279,9 +281,9 @@ const InterpolationVariantsList = (props: Props) => {
           </AnimatePresence>
         </Reorder.Group>
       )}
-      {(!isReOrderMode || commandMode != "edit") && (
+      {(!isReOrderMode || commandMode != "edit" || props.isSearching) && (
         <div>
-          {commandMode == "edit" && (
+          {commandMode == "edit" && !props?.isSearching && (
             <div>
               <BusinessLogicDisclaimer>
                 <b>{'Disclaimer:'}</b>
@@ -304,6 +306,8 @@ const InterpolationVariantsList = (props: Props) => {
                 isPinned={props.isPinned}
                 phraseRef={props.phraseRef}
                 onRemove={onRemoveInterpolationVariant}
+                searchText={props.searchText}
+                isSearching={props.isSearching}
               />
             );
           })}

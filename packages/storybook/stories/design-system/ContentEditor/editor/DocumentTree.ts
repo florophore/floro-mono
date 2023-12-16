@@ -38,6 +38,7 @@ export default class DocumentTree {
 
     public updateRootFromNode(rootNodeJson: NodeJSON) {
         const nextRootNode: RootNode = RootNode.fromJSON(
+          null,
           rootNodeJson,
           this.observer,
           this.lang

@@ -46,6 +46,8 @@ import Checkbox from "@floro/storybook/stories/design-system/Checkbox";
 import AddPhraseModal from "../phrases/AddPhraseModal";
 import PhraseReOrderRow from "../phrases/PhraseReOrderRow";
 import PhraseRow from "../phrases/PhraseRow";
+import SearchInput from "@floro/storybook/stories/design-system/SearchInput";
+import InputSelector from "@floro/storybook/stories/design-system/InputSelector";
 
 const Container = styled.div`
   margin-bottom: 24px;
@@ -212,11 +214,32 @@ interface Props {
   pinnedPhrases: Array<string> | null;
   setPinnedPhrases: (phraseRegs: Array<string>) => void;
   removePinnedPhrases: () => void;
+  scrollContainer: HTMLDivElement;
 }
 
 const PhraseGroup = (props: Props) => {
   const theme = useTheme();
   const controls = useDragControls();
+
+  const [manualSearchText, setManualSearchText] = useState("");
+  const [realManualSearchText, setRealManualSearchText] = useState("");
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setManualSearchText(realManualSearchText ?? "");
+    }, 300);
+    return () => {
+      clearTimeout(timeout);
+    }
+  }, [realManualSearchText])
+
+  useEffect(() => {
+    setRealManualSearchText(props.searchText ?? "");
+  }, [props.searchText])
+
+  const searchText = useMemo(() => {
+    return props.searchText;
+  }, [props.searchText])
 
   const { applicationState, commandMode, compareFrom, saveState } =
     useFloroContext();
@@ -410,8 +433,12 @@ const PhraseGroup = (props: Props) => {
   }, [theme.name]);
 
   const isSearching = useMemo(
-    () => props.searchText.trim() != "",
-    [props.searchText]
+    () => searchText.trim() != "",
+    [searchText]
+  );
+  const isManualSearching = useMemo(
+    () => manualSearchText.trim() != "",
+    [manualSearchText]
   );
 
   const topLevelLocaleRef = useQueryRef(
@@ -681,10 +708,10 @@ const PhraseGroup = (props: Props) => {
       if (
         (phrase?.phraseKey ?? "")
           ?.toLowerCase()
-          .indexOf(props.searchText.toLowerCase().trim()) != -1 ||
+          .indexOf(searchText.toLowerCase().trim()) != -1 ||
         (phrase?.description?.value ?? "")
           ?.toLowerCase()
-          .indexOf(props.searchText.toLowerCase().trim()) != -1
+          .indexOf(searchText.toLowerCase().trim()) != -1
       ) {
         return true;
       }
@@ -693,7 +720,7 @@ const PhraseGroup = (props: Props) => {
           if (
             (phraseSection.name ?? "")
               ?.toLowerCase()
-              .indexOf(props.searchText.toLowerCase().trim()) != -1
+              .indexOf(searchText.toLowerCase().trim()) != -1
           ) {
             return true;
           }
@@ -704,7 +731,7 @@ const PhraseGroup = (props: Props) => {
             if (
               (translation.displayValue.plainText ?? "")
                 ?.toLowerCase()
-                .indexOf(props.searchText.toLowerCase().trim()) != -1
+                .indexOf(searchText.toLowerCase().trim()) != -1
             ) {
               return true;
             }
@@ -718,7 +745,7 @@ const PhraseGroup = (props: Props) => {
           if (
             (localeGroup.plainText ?? "")
               ?.toLowerCase()
-              .indexOf(props.searchText.toLowerCase().trim()) != -1
+              .indexOf(searchText.toLowerCase().trim()) != -1
           ) {
             return true;
           }
@@ -728,7 +755,7 @@ const PhraseGroup = (props: Props) => {
         if (
           (variable.name ?? "")
             ?.toLowerCase()
-            .indexOf(props.searchText.toLowerCase().trim()) != -1
+            .indexOf(searchText.toLowerCase().trim()) != -1
         ) {
           return true;
         }
@@ -737,7 +764,7 @@ const PhraseGroup = (props: Props) => {
         if (
           (contentVariable.name ?? "")
             ?.toLowerCase()
-            .indexOf(props.searchText.toLowerCase().trim()) != -1
+            .indexOf(searchText.toLowerCase().trim()) != -1
         ) {
           return true;
         }
@@ -746,7 +773,7 @@ const PhraseGroup = (props: Props) => {
         if (
           (styleClass.name ?? "")
             ?.toLowerCase()
-            .indexOf(props.searchText.toLowerCase().trim()) != -1
+            .indexOf(searchText.toLowerCase().trim()) != -1
         ) {
           return true;
         }
@@ -756,7 +783,7 @@ const PhraseGroup = (props: Props) => {
         if (
           (styledContent.name ?? "")
             ?.toLowerCase()
-            .indexOf(props.searchText.toLowerCase().trim()) != -1
+            .indexOf(searchText.toLowerCase().trim()) != -1
         ) {
           return true;
         }
@@ -767,7 +794,7 @@ const PhraseGroup = (props: Props) => {
           if (
             (translation.displayValue.plainText ?? "")
               ?.toLowerCase()
-              .indexOf(props.searchText.toLowerCase().trim()) != -1
+              .indexOf(searchText.toLowerCase().trim()) != -1
           ) {
             return true;
           }
@@ -777,7 +804,7 @@ const PhraseGroup = (props: Props) => {
         if (
           (linkVariable.linkName ?? "")
             ?.toLowerCase()
-            .indexOf(props.searchText.toLowerCase().trim()) != -1
+            .indexOf(searchText.toLowerCase().trim()) != -1
         ) {
           return true;
         }
@@ -788,14 +815,14 @@ const PhraseGroup = (props: Props) => {
           if (
             (translation.linkDisplayValue.plainText ?? "")
               ?.toLowerCase()
-              .indexOf(props.searchText.toLowerCase().trim()) != -1
+              .indexOf(searchText.toLowerCase().trim()) != -1
           ) {
             return true;
           }
           if (
             (translation.linkHrefValue.plainText ?? "")
               ?.toLowerCase()
-              .indexOf(props.searchText.toLowerCase().trim()) != -1
+              .indexOf(searchText.toLowerCase().trim()) != -1
           ) {
             return true;
           }
@@ -809,7 +836,7 @@ const PhraseGroup = (props: Props) => {
           if (
             (translation.defaultValue?.plainText ?? "")
               ?.toLowerCase()
-              .indexOf(props.searchText.toLowerCase().trim()) != -1
+              .indexOf(searchText.toLowerCase().trim()) != -1
           ) {
             return true;
           }
@@ -818,7 +845,7 @@ const PhraseGroup = (props: Props) => {
             if (
               (conditional?.resultant?.plainText ?? "")
                 ?.toLowerCase()
-                .indexOf(props.searchText.toLowerCase().trim()) != -1
+                .indexOf(searchText.toLowerCase().trim()) != -1
             ) {
               return true;
             }
@@ -829,7 +856,7 @@ const PhraseGroup = (props: Props) => {
     return false;
   }, [
     applicationState,
-    props.searchText,
+    searchText,
     topLevelLocaleRef,
     props?.phraseGroup?.phrases,
     isSearching,
@@ -1120,10 +1147,10 @@ const PhraseGroup = (props: Props) => {
           if (
             (phrase?.phraseKey ?? "")
               ?.toLowerCase()
-              .indexOf(props.searchText.toLowerCase().trim()) != -1 ||
+              .indexOf(searchText.toLowerCase().trim()) != -1 ||
             (phrase?.description?.value ?? "")
               ?.toLowerCase()
-              .indexOf(props.searchText.toLowerCase().trim()) != -1
+              .indexOf(searchText.toLowerCase().trim()) != -1
           ) {
             return true;
           }
@@ -1132,7 +1159,7 @@ const PhraseGroup = (props: Props) => {
               if (
                 (phraseSection.name ?? "")
                   ?.toLowerCase()
-                  .indexOf(props.searchText.toLowerCase().trim()) != -1
+                  .indexOf(searchText.toLowerCase().trim()) != -1
               ) {
                 return true;
               }
@@ -1143,7 +1170,7 @@ const PhraseGroup = (props: Props) => {
                 if (
                   (localeRule?.displayValue?.plainText ?? "")
                     ?.toLowerCase()
-                    .indexOf(props.searchText.toLowerCase().trim()) != -1
+                    .indexOf(searchText.toLowerCase().trim()) != -1
                 ) {
                   return true;
                 }
@@ -1157,7 +1184,7 @@ const PhraseGroup = (props: Props) => {
               if (
                 (localeGroup.plainText ?? "")
                   ?.toLowerCase()
-                  .indexOf(props.searchText.toLowerCase().trim()) != -1
+                  .indexOf(searchText.toLowerCase().trim()) != -1
               ) {
                 return true;
               }
@@ -1167,7 +1194,7 @@ const PhraseGroup = (props: Props) => {
             if (
               (variable.name ?? "")
                 ?.toLowerCase()
-                .indexOf(props.searchText.toLowerCase().trim()) != -1
+                .indexOf(searchText.toLowerCase().trim()) != -1
             ) {
               return true;
             }
@@ -1176,7 +1203,7 @@ const PhraseGroup = (props: Props) => {
             if (
               (contentVariable.name ?? "")
                 ?.toLowerCase()
-                .indexOf(props.searchText.toLowerCase().trim()) != -1
+                .indexOf(searchText.toLowerCase().trim()) != -1
             ) {
               return true;
             }
@@ -1185,7 +1212,7 @@ const PhraseGroup = (props: Props) => {
             if (
               (styleClass.name ?? "")
                 ?.toLowerCase()
-                .indexOf(props.searchText.toLowerCase().trim()) != -1
+                .indexOf(searchText.toLowerCase().trim()) != -1
             ) {
               return true;
             }
@@ -1194,7 +1221,7 @@ const PhraseGroup = (props: Props) => {
             if (
               (linkVariable.linkName ?? "")
                 ?.toLowerCase()
-                .indexOf(props.searchText.toLowerCase().trim()) != -1
+                .indexOf(searchText.toLowerCase().trim()) != -1
             ) {
               return true;
             }
@@ -1205,14 +1232,14 @@ const PhraseGroup = (props: Props) => {
               if (
                 (translation?.linkDisplayValue?.plainText ?? "")
                   ?.toLowerCase()
-                  .indexOf(props.searchText.toLowerCase().trim()) != -1
+                  .indexOf(searchText.toLowerCase().trim()) != -1
               ) {
                 return true;
               }
               if (
                 (translation?.linkHrefValue?.plainText ?? "")
                   ?.toLowerCase()
-                  .indexOf(props.searchText.toLowerCase().trim()) != -1
+                  .indexOf(searchText.toLowerCase().trim()) != -1
               ) {
                 return true;
               }
@@ -1227,7 +1254,7 @@ const PhraseGroup = (props: Props) => {
               if (
                 (localeRule.displayValue?.plainText ?? "")
                   ?.toLowerCase()
-                  .indexOf(props.searchText.toLowerCase().trim()) != -1
+                  .indexOf(searchText.toLowerCase().trim()) != -1
               ) {
                 return true;
               }
@@ -1242,7 +1269,7 @@ const PhraseGroup = (props: Props) => {
               if (
                 (translation.defaultValue?.plainText ?? "")
                   ?.toLowerCase()
-                  .indexOf(props.searchText.toLowerCase().trim()) != -1
+                  .indexOf(searchText.toLowerCase().trim()) != -1
               ) {
                 return true;
               }
@@ -1251,7 +1278,7 @@ const PhraseGroup = (props: Props) => {
                 if (
                   (conditional?.resultant?.plainText ?? "")
                     ?.toLowerCase()
-                    .indexOf(props.searchText.toLowerCase().trim()) != -1
+                    .indexOf(searchText.toLowerCase().trim()) != -1
                 ) {
                   return true;
                 }
@@ -1267,7 +1294,7 @@ const PhraseGroup = (props: Props) => {
     isDisplayingPhrases,
     topLevelLocaleRef,
     phrases,
-    props.searchText,
+    searchText,
     props.filterTag,
     filterUntranslatedForGroup,
     filterRequiresUpdate,
@@ -1275,11 +1302,190 @@ const PhraseGroup = (props: Props) => {
     props.pinnedPhrases,
   ]);
 
+  const manualPhrasesToRender = useMemo(() => {
+    if (!isManualSearching || !applicationState) {
+      return phrasesToRender;
+    }
+
+    const locale = getReferencedObject(applicationState, topLevelLocaleRef);
+    const localeSettings = getReferencedObject(
+      applicationState,
+      "$(text).localeSettings"
+    );
+    const defaultLocale = localeSettings.locales.find(
+      (l) =>
+        makeQueryRef(
+          "$(text).localeSettings.locales.localeCode<?>",
+          l.localeCode
+        ) == localeSettings.defaultLocaleRef
+    );
+    const translateFromLocale = locale.defaultTranslateFromLocaleRef
+      ? getReferencedObject(
+          applicationState,
+          locale.defaultTranslateFromLocaleRef
+        )
+      : defaultLocale;
+    const translateFromLocaleRef = makeQueryRef(
+      "$(text).localeSettings.locales.localeCode<?>",
+      translateFromLocale?.localeCode as string
+    );
+    return phrasesToRender.filter((phrase) => {
+          if (
+            (phrase?.phraseKey ?? "")
+              ?.toLowerCase()
+              .indexOf(manualSearchText.toLowerCase().trim()) != -1 ||
+            (phrase?.description?.value ?? "")
+              ?.toLowerCase()
+              .indexOf(manualSearchText.toLowerCase().trim()) != -1
+          ) {
+            return true;
+          }
+          if (phrase.usePhraseSections) {
+            for (let phraseSection of phrase?.phraseSections ?? []) {
+              if (
+                (phraseSection.name ?? "")
+                  ?.toLowerCase()
+                  .indexOf(manualSearchText.toLowerCase().trim()) != -1
+              ) {
+                return true;
+              }
+              for (let localeRule of phraseSection.localeRules ?? []) {
+                if (localeRule.id != topLevelLocaleRef) {
+                  continue;
+                }
+                if (
+                  (localeRule?.displayValue?.plainText ?? "")
+                    ?.toLowerCase()
+                    .indexOf(manualSearchText.toLowerCase().trim()) != -1
+                ) {
+                  return true;
+                }
+              }
+            }
+          } else {
+            for (let localeGroup of phrase?.phraseTranslations ?? []) {
+              if (localeGroup.id != topLevelLocaleRef) {
+                continue;
+              }
+              if (
+                (localeGroup.plainText ?? "")
+                  ?.toLowerCase()
+                  .indexOf(manualSearchText.toLowerCase().trim()) != -1
+              ) {
+                return true;
+              }
+            }
+          }
+          for (let variable of phrase?.variables ?? []) {
+            if (
+              (variable.name ?? "")
+                ?.toLowerCase()
+                .indexOf(manualSearchText.toLowerCase().trim()) != -1
+            ) {
+              return true;
+            }
+          }
+          for (let contentVariable of phrase?.contentVariables ?? []) {
+            if (
+              (contentVariable.name ?? "")
+                ?.toLowerCase()
+                .indexOf(manualSearchText.toLowerCase().trim()) != -1
+            ) {
+              return true;
+            }
+          }
+          for (let styleClass of phrase?.styleClasses ?? []) {
+            if (
+              (styleClass.name ?? "")
+                ?.toLowerCase()
+                .indexOf(manualSearchText.toLowerCase().trim()) != -1
+            ) {
+              return true;
+            }
+          }
+          for (let linkVariable of phrase?.linkVariables ?? []) {
+            if (
+              (linkVariable.linkName ?? "")
+                ?.toLowerCase()
+                .indexOf(manualSearchText.toLowerCase().trim()) != -1
+            ) {
+              return true;
+            }
+            for (let translation of linkVariable.translations ?? []) {
+              if (translation.id != topLevelLocaleRef) {
+                continue;
+              }
+              if (
+                (translation?.linkDisplayValue?.plainText ?? "")
+                  ?.toLowerCase()
+                  .indexOf(manualSearchText.toLowerCase().trim()) != -1
+              ) {
+                return true;
+              }
+              if (
+                (translation?.linkHrefValue?.plainText ?? "")
+                  ?.toLowerCase()
+                  .indexOf(manualSearchText.toLowerCase().trim()) != -1
+              ) {
+                return true;
+              }
+            }
+          }
+
+          for (let phraseSection of phrase?.phraseSections ?? []) {
+            for (let localeRule of phraseSection?.localeRules ?? []) {
+              if (localeRule.id != topLevelLocaleRef) {
+                continue;
+              }
+              if (
+                (localeRule.displayValue?.plainText ?? "")
+                  ?.toLowerCase()
+                  .indexOf(manualSearchText.toLowerCase().trim()) != -1
+              ) {
+                return true;
+              }
+            }
+          }
+
+          for (let variant of phrase?.interpolationVariants ?? []) {
+            for (let translation of variant?.localeRules ?? []) {
+              if (translation.id != topLevelLocaleRef) {
+                continue;
+              }
+              if (
+                (translation.defaultValue?.plainText ?? "")
+                  ?.toLowerCase()
+                  .indexOf(manualSearchText.toLowerCase().trim()) != -1
+              ) {
+                return true;
+              }
+
+              for (let conditional of translation.conditionals ?? []) {
+                if (
+                  (conditional?.resultant?.plainText ?? "")
+                    ?.toLowerCase()
+                    .indexOf(manualSearchText.toLowerCase().trim()) != -1
+                ) {
+                  return true;
+                }
+              }
+            }
+          }
+          return false;
+    });
+  }, [
+    applicationState,
+    topLevelLocaleRef,
+    phrasesToRender,
+    isManualSearching,
+    manualSearchText,
+  ]);
+
   const [renderLimit, setRenderLimit] = useState(RENDER_CONSTANT);
 
   useEffect(() => {
     setRenderLimit(RENDER_CONSTANT);
-  }, [props.searchText]);
+  }, [searchText]);
 
   useEffect(() => {
     if (isDisplayingPhrases) {
@@ -1287,7 +1493,7 @@ const PhraseGroup = (props: Props) => {
         setRenderLimit(RENDER_CONSTANT);
         return;
       }
-      if (renderLimit < phrasesToRender.length) {
+      if (renderLimit < manualPhrasesToRender.length) {
         const timeout = setTimeout(() => {
           setRenderLimit(renderLimit + RENDER_CONSTANT);
         }, 20);
@@ -1300,14 +1506,22 @@ const PhraseGroup = (props: Props) => {
         setRenderLimit(RENDER_CONSTANT);
       }
     }
-  }, [isDisplayingPhrases, phrasesToRender, renderLimit, isReOrderPhrasesMode]);
+  }, [isDisplayingPhrases, manualPhrasesToRender, renderLimit, isReOrderPhrasesMode]);
+
+  // this allows us to edit searched results
+  const memoryLeakedPhrasesToRender = useMemo(() => {
+    return manualPhrasesToRender;
+  }, [props.searchText, manualSearchText, props.filterTag, phrases.length])
 
   const renderLimitedPhrases = useMemo(() => {
     if (isReOrderPhrasesMode) {
       return phrasesToRender;
     }
-    return phrasesToRender.slice(0, renderLimit);
-  }, [phrasesToRender, renderLimit, isReOrderPhrasesMode]);
+    if (!isSearching && !isManualSearching) {
+      return phrasesToRender.slice(0, renderLimit);
+    }
+    return memoryLeakedPhrasesToRender.slice(0, renderLimit);
+  }, [phrasesToRender, memoryLeakedPhrasesToRender, isSearching, isManualSearching, renderLimit, isReOrderPhrasesMode]);
 
   useEffect(() => {
     if (isSearching && isReOrderPhrasesMode) {
@@ -1356,16 +1570,59 @@ const PhraseGroup = (props: Props) => {
   }, [isReOrderPhrasesMode, commandMode])
 
   useEffect(() => {
-    if (props.searchText == "" && !props.showOnlyPinnedPhrases && isExpanded) {
+    if (searchText == "" && !props.showOnlyPinnedPhrases && isExpanded) {
       setIsExpanded(false);
     }
-  }, [props.searchText])
+  }, [searchText])
 
   useEffect(() => {
-    if (props.searchText == "" && props.showOnlyPinnedPhrases && !isExpanded && phrasesToRender.length > 0) {
+    if (searchText == "" && props.showOnlyPinnedPhrases && !isExpanded && phrasesToRender.length > 0) {
       setIsExpanded(true);
     }
-  }, [props.searchText, phrasesToRender.length])
+  }, [searchText, phrasesToRender.length])
+
+  const [selectedPhraseRef, setSelectedPhraseRef] =
+    useState<PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>"] | null>(
+      null
+    );
+  useEffect(() => {
+    if (selectedPhraseRef) {
+      setSelectedPhraseRef(null);
+    }
+    //if (!isExpanded) {
+    //  setSelectedPhraseRef(null);
+    //}
+  }, [selectedPhraseRef])
+
+  const onSelectPhraseKey = useCallback((option) => {
+    setSelectedPhraseRef(
+      (option?.value as PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>"]) ??
+        null
+    );
+  }, []);
+
+  const phraseKeyOptions = useMemo(() => {
+    return renderLimitedPhrases.map(phrase => {
+
+      const phraseRef = makeQueryRef(
+        "$(text).phraseGroups.id<?>.phrases.id<?>",
+        phraseGroup?.id as string,
+        phrase.id as string
+      );
+      return {
+        label: phrase.phraseKey,
+        value: phraseRef,
+      }
+    })
+
+  }, [renderLimitedPhrases])
+
+  const searchBorderColor = useMemo(() => {
+    if (theme.name == "light") {
+      return ColorPalette.gray;
+    }
+    return ColorPalette.gray;
+  }, [theme.name]);
 
   if (
     commandMode == "compare"
@@ -1378,21 +1635,22 @@ const PhraseGroup = (props: Props) => {
       return null;
     }
   }
-  if (isSearching && phrasesToRender.length == 0) {
+
+  if (isSearching && phrasesToRender.length == 0 && memoryLeakedPhrasesToRender.length == 0) {
     return null;
   }
-  if (!!props.filterTag && phrasesToRender.length == 0) {
+  if (!!props.filterTag && phrasesToRender.length == 0 && memoryLeakedPhrasesToRender.length == 0) {
     return null;
   }
-  if (props.showOnlyPinnedPhrases && phrasesToRender.length == 0) {
+  if (props.showOnlyPinnedPhrases && phrasesToRender.length == 0 && memoryLeakedPhrasesToRender.length == 0) {
     return null;
   }
 
-  if ((props.globalFilterRequiresUpdate) && phrasesToRender.length == 0) {
+  if ((props.globalFilterRequiresUpdate) && phrasesToRender.length == 0 && memoryLeakedPhrasesToRender.length == 0) {
     return null;
   }
 
-  if ((props.globalFilterUntranslated) && phrasesToRender.length == 0) {
+  if ((props.globalFilterUntranslated) && phrasesToRender.length == 0 && memoryLeakedPhrasesToRender.length == 0) {
     return null;
   }
 
@@ -1422,24 +1680,38 @@ const PhraseGroup = (props: Props) => {
               </DeleteShadeContainer>
             </>
           )}
-          {!isSearching &&
-            !(props.showOnlyPinnedPhrases && props.pinnedPhrases) &&
-            !props.isEditingGroups &&
-            (phrases?.length ?? 0) > 0 && <>
-            <ChevronWrapper onClick={onToggle}>
-              <ChevronIcon
-                src={chevronIcon}
-                style={{
-                  transform: isExpanded ? "rotate(90deg)" : "rotate(0deg)",
-                }}
-              />
-            </ChevronWrapper>
-            </>}
+          {(phrases?.length ?? 0) > 0 && (
+              <>
+                <ChevronWrapper onClick={onToggle}>
+                  <ChevronIcon
+                    src={chevronIcon}
+                    style={{
+                      transform: isExpanded ? "rotate(90deg)" : "rotate(0deg)",
+                    }}
+                  />
+                </ChevronWrapper>
+              </>
+            )}
         </FolderRow>
-        {!props.isEditingGroups && (
-            <AddRow>
-              {commandMode == "edit" && !isReOrderPhrasesMode && (
-                <div style={{ width: 180 }}>
+        <AddRow>
+          {(
+            <>
+              {isExpanded && !isReOrderPhrasesMode && (
+                <div style={{ marginTop: -24}}>
+                  <div style={{ display: "flex" }}>
+                    <InputSelector
+                      value={selectedPhraseRef}
+                      size={"semi-short"}
+                      options={phraseKeyOptions}
+                      label={"phrase key"}
+                      placeholder={"select phrase key"}
+                      onChange={onSelectPhraseKey}
+                    />
+                  </div>
+                </div>
+              )}
+              {commandMode == "edit" && !props.isEditingGroups && (
+                <div style={{ width: 180, marginLeft: 24 }}>
                   <Button
                     onClick={onShowAddPhraseKey}
                     label={"+ add phrase"}
@@ -1448,8 +1720,9 @@ const PhraseGroup = (props: Props) => {
                   />
                 </div>
               )}
-            </AddRow>
+            </>
           )}
+        </AddRow>
       </TopRow>
       <Row
         style={{
@@ -1495,9 +1768,13 @@ const PhraseGroup = (props: Props) => {
                   alignItems: "center",
                 }}
               >
-                <FilterUntranslated style={{
-                  color: !filterUntranslatedForGroup ? theme.colors.contrastTextLight : theme.colors.warningTextColor
-                }}>
+                <FilterUntranslated
+                  style={{
+                    color: !filterUntranslatedForGroup
+                      ? theme.colors.contrastTextLight
+                      : theme.colors.warningTextColor,
+                  }}
+                >
                   {`Filter un-translated (${props.selectedTopLevelLocale}) phrases`}
                 </FilterUntranslated>
                 <Checkbox
@@ -1505,16 +1782,40 @@ const PhraseGroup = (props: Props) => {
                   onChange={onToggleFilterUntranslated}
                 />
               </Row>
+            </div>
+          )}
+      </Row>
+      {(phrases?.length ?? 0) > 0 &&
+        !isReOrderPhrasesMode &&
+        isExpanded &&
+        !props.isEditingGroups && (
+          <div
+            style={{
+              marginTop: 0,
+              width: "100%",
+            }}
+          >
+            <Row style={{ marginTop: 24 }}>
+              <SearchInput
+                value={realManualSearchText}
+                placeholder={`search ${phraseGroup?.name ?? ""}`}
+                borderColor={searchBorderColor}
+                onTextChanged={setRealManualSearchText}
+                showClear
+              />
               <Row
                 style={{
-                  marginTop: 24,
                   justifyContent: "flex-end",
                   alignItems: "center",
                 }}
               >
-                <FilterUntranslated style={{
-                  color: !filterRequiresUpdate ? theme.colors.contrastTextLight : theme.colors.warningTextColor
-                }}>
+                <FilterUntranslated
+                  style={{
+                    color: !filterRequiresUpdate
+                      ? theme.colors.contrastTextLight
+                      : theme.colors.warningTextColor,
+                  }}
+                >
                   {`Filter (${props.selectedTopLevelLocale}) phrases to update`}
                 </FilterUntranslated>
                 <Checkbox
@@ -1522,9 +1823,9 @@ const PhraseGroup = (props: Props) => {
                   onChange={onToggleFilterRequiresUpdate}
                 />
               </Row>
-            </div>
-          )}
-      </Row>
+            </Row>
+          </div>
+        )}
       {isExpanded && (
         <>
           {!isReOrderPhrasesMode &&
@@ -1546,6 +1847,10 @@ const PhraseGroup = (props: Props) => {
                   phrase={phrase}
                   onRemove={onRemovePhrase}
                   phraseGroup={props.phraseGroup}
+                  scrollContainer={props.scrollContainer}
+                  searchText={manualSearchText}
+                  selectedPhraseRef={selectedPhraseRef}
+                  showOnlyPinnedPhrases={props.showOnlyPinnedPhrases}
                 />
               );
             })}
@@ -1555,7 +1860,7 @@ const PhraseGroup = (props: Props) => {
                 axis="y"
                 values={phrases ?? []}
                 onReorder={onReOrderPhrases}
-                style={{listStyle: "none", margin: 0, padding: 0 }}
+                style={{ listStyle: "none", margin: 0, padding: 0 }}
               >
                 {phrases?.map?.((phrase, index) => {
                   return (

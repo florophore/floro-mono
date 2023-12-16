@@ -24,7 +24,7 @@ export default class OrderedListNode extends TextNode {
   public lang: string;
   public children: TextNode[];
 
-  constructor(observer: Observer, content: string, lang: string, children: TextNode[], initMarks?: {
+  constructor(parent: TextNode, observer: Observer, content: string, lang: string, children: TextNode[], initMarks?: {
     isBold: boolean,
     isItalic: boolean,
     isUnderlined: boolean,
@@ -32,7 +32,7 @@ export default class OrderedListNode extends TextNode {
     isSuperscript: boolean,
     isSubscript: boolean
   }) {
-    super(observer, content, lang, children);
+    super(parent, observer, content, lang, children);
     this.type = 'ol-tag';
     this.lang = lang;
     this.children = children;
@@ -53,13 +53,28 @@ export default class OrderedListNode extends TextNode {
     return children.substring(0, children.length -1);
  }
 
-  public static fromJSON(json: TextNodeJSON, observer: Observer, lang: string): OrderedListNode {
-    const children: Array<TextNode> = RootNode.fromTextChildren(
+  //public static fromJSON(json: TextNodeJSON, observer: Observer, lang: string): OrderedListNode {
+  //  const children: Array<TextNode> = RootNode.fromTextChildren(
+  //    json.children as Array<TextNodeJSON> ?? ([] as Array<TextNodeJSON>),
+  //    observer,
+  //    lang
+  //  ) as Array<TextNode>;
+  //  return new OrderedListNode(observer, json.content, lang, children, json.marks);
+  //}
+
+  public static fromJSON(parent: Node, json: TextNodeJSON, observer: Observer, lang: string): OrderedListNode {
+    const children: Array<TextNode> = [];
+    const olNode = new OrderedListNode(parent as TextNode, observer, json.content, lang, children, json.marks);
+    const childs: Array<TextNode> = RootNode.fromTextChildren(
+      olNode as TextNode,
       json.children as Array<TextNodeJSON> ?? ([] as Array<TextNodeJSON>),
       observer,
       lang
     ) as Array<TextNode>;
-    return new OrderedListNode(observer, json.content, lang, children, json.marks);
+    for (const child of childs) {
+      children.push(child);
+    }
+    return olNode;
   }
 
   public shouldFlatten() {

@@ -2,7 +2,7 @@ import ColorPalette from "@floro/styles/ColorPalette";
 import Node from "../Node"
 import Observer from "../Observer";
 import escape from 'escape-html';
-import { TextNodeJSON } from "./TextNode";
+import TextNode, { TextNodeJSON } from "./TextNode";
 
 export interface VariantTagJSON extends TextNodeJSON {
   type: string;
@@ -37,7 +37,7 @@ export default class VariantTagNode extends Node implements TextNodeJSON {
 
   public lang: string;
 
-  constructor(observer: Observer, content: string, lang: string, initMarks?: {
+  constructor(parent: Node&TextNodeJSON, observer: Observer, content: string, lang: string, initMarks?: {
     isBold: boolean,
     isItalic: boolean,
     isUnderlined: boolean,
@@ -45,7 +45,7 @@ export default class VariantTagNode extends Node implements TextNodeJSON {
     isSuperscript: boolean,
     isSubscript: boolean
   }) {
-    super(observer, content, lang, []);
+    super(parent, observer, content, lang, []);
     this.type = 'variant-tag';
     this.lang = lang;
 
@@ -68,13 +68,11 @@ export default class VariantTagNode extends Node implements TextNodeJSON {
     };
   }
 
-  public static fromJSON(json: VariantTagJSON, observer: Observer, lang: string): VariantTagNode {
-    return new VariantTagNode(observer, json.content, lang, json.marks);
+  public static fromJSON(parent: Node|null, json: VariantTagJSON, observer: Observer, lang: string): VariantTagNode {
+    return new VariantTagNode(parent as TextNode, observer, json.content, lang, json.marks);
   }
 
   public toHTMLString(): string {
-    const unescaped = this.content.substring(1, this.content.length -1);
-
     let textDecoration = "none";
     if (this.marks.isUnderlined == true) {
       textDecoration = "underline";
@@ -94,7 +92,6 @@ export default class VariantTagNode extends Node implements TextNodeJSON {
     if (this.marks.isItalic == true) {
       fontStyle = "italic";
     }
-    let bottomLineHeight = 1.2;
 
     return `<span
      spellcheck="false"

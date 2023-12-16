@@ -83,6 +83,8 @@ interface Props {
   setPinnedPhrases: (phraseRegs: Array<string>) => void;
   globalFilterUntranslated: boolean;
   isPinned: boolean;
+  searchText: string;
+  isSearching: boolean;
 }
 
 const StyledContentsList = (props: Props) => {
@@ -236,7 +238,7 @@ const StyledContentsList = (props: Props) => {
             )}
           </span>
         </RowTitle>
-        {(styledContents?.length ?? 0) > 0 && commandMode == "edit" && (
+        {(styledContents?.length ?? 0) > 0 && commandMode == "edit" && !props.isSearching && (
           <ToggleEditTitle onClick={onToggleReOrder}>
             {isReOrderMode
               ? "done organizing"
@@ -244,7 +246,7 @@ const StyledContentsList = (props: Props) => {
           </ToggleEditTitle>
         )}
       </TitleRow>
-      {isReOrderMode && commandMode == "edit" && (
+      {isReOrderMode && commandMode == "edit" && !props.isSearching && (
         <Reorder.Group
           axis="y"
           values={styledContents ?? []}
@@ -266,9 +268,9 @@ const StyledContentsList = (props: Props) => {
           </AnimatePresence>
         </Reorder.Group>
       )}
-      {(!isReOrderMode || commandMode != "edit") && (
+      {(!isReOrderMode || commandMode != "edit" || props.isSearching) && (
         <div>
-          {commandMode == "edit" && (
+          {commandMode == "edit" && !props.isSearching && (
             <div>
               <BusinessLogicDisclaimer>
                 <b>{`Why aren't there styles?`}</b>
@@ -295,12 +297,14 @@ const StyledContentsList = (props: Props) => {
                 isPinned={props.isPinned}
                 phraseRef={props.phraseRef}
                 onRemove={onRemoveStyledContent}
+                searchText={props.searchText}
+                isSearching={props.isSearching}
               />
             );
           })}
         </div>
       )}
-      {commandMode == "edit" && (
+      {commandMode == "edit" && !props.isSearching && (
         <AddVariableContainer
           style={{
             justifyContent: "space-between",

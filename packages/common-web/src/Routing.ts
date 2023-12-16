@@ -18,6 +18,7 @@ import OrgPortalDocs from './pages/common/docs/product/pages/OrgPortalDocs';
 import LocalRepositoryDocs from './pages/common/docs/product/pages/LocalRepositoryDocs';
 import RemoteRepositoryDocs from './pages/common/docs/product/pages/RemoteRepositoryDocs';
 import MergingAndConflictsDocs from './pages/common/docs/product/pages/MergingAndConflictsDocs';
+import AdvancedCommandsDocs from './pages/common/docs/product/pages/AdvancedCommandsDocs';
 
 /**
  *  put common shared page routes here
@@ -70,6 +71,10 @@ const CommonRouting: IsomorphicRoute[] = [
   {
     path: "/docs/product/merging-and-conflicts",
     component: () => MergingAndConflictsDocs,
+  },
+  {
+    path: "/docs/product/advanced-commands",
+    component: () => AdvancedCommandsDocs,
   },
   {
     path: "/app-proxy/*",

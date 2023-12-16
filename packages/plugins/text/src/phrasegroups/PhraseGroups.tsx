@@ -1,5 +1,5 @@
 
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   SchemaTypes,
   containsDiffable,
@@ -13,6 +13,7 @@ import {
 import PhraseGroup from "./PhraseGroup";
 import styled from "@emotion/styled";
 import { AnimatePresence, Reorder } from "framer-motion";
+import throttle from "lodash/throttle";
 
 const Container = styled.div`
   margin-top: 24px;
@@ -40,6 +41,7 @@ interface Props {
   pinnedPhrases: Array<string>|null;
   setPinnedPhrases: (phraseRegs: Array<string>) => void;
   removePinnedPhrases: () => void;
+  scrollContainer: HTMLDivElement;
 }
 
 const PhraseGroups = (props: Props) => {
@@ -141,6 +143,7 @@ const PhraseGroups = (props: Props) => {
                   pinnedPhrases={props.pinnedPhrases}
                   setPinnedPhrases={props.setPinnedPhrases}
                   removePinnedPhrases={props.removePinnedPhrases}
+                  scrollContainer={props.scrollContainer}
                 />
               );
             })}
@@ -179,6 +182,7 @@ const PhraseGroups = (props: Props) => {
                   pinnedPhrases={props.pinnedPhrases}
                   setPinnedPhrases={props.setPinnedPhrases}
                   removePinnedPhrases={props.removePinnedPhrases}
+                  scrollContainer={props.scrollContainer}
                 />
               );
             })}
@@ -205,6 +209,7 @@ const PhraseGroups = (props: Props) => {
               pinnedPhrases={props.pinnedPhrases}
               setPinnedPhrases={props.setPinnedPhrases}
               removePinnedPhrases={props.removePinnedPhrases}
+              scrollContainer={props.scrollContainer}
             />
           );
         })}

@@ -249,7 +249,7 @@ const LocalVCSEditMode = (props: Props) => {
           </ButtonRow>
         )}
       </TopContainer>
-      {false && (
+      {props.plugin != "home" && (
         <BottomContainer>
           <ButtonRow style={{ marginTop: 24 }}>
             <RepoActionButton
@@ -263,7 +263,7 @@ const LocalVCSEditMode = (props: Props) => {
           </ButtonRow>
         </BottomContainer>
       )}
-      {true &&(
+      {props.plugin == "home" &&(
         <BottomContainer>
           <>
             <ButtonRow>

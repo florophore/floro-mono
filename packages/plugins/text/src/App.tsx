@@ -214,20 +214,23 @@ const Layout = () => {
                     setPinnedPhrases={setPinnedPhrases}
                     removePinnedPhrases={removePinnedPhrases}
                   />
-                  <PhraseGroups
-                    selectedTopLevelLocale={selectedTopLevelLocale}
-                    globalFilterUntranslated={globalFilterUntranslated}
-                    globalFilterRequiresUpdate={globalFilterRequiresUpdate}
-                    searchText={searchText}
-                    isEditingGroups={isEditGroups}
-                    filterTag={filterTag}
-                    showOnlyPinnedPhrases={
-                      (showOnlyPinnedPhrases ?? false) && clientStorageEnabled
-                    }
-                    pinnedPhrases={pinnedPhrases}
-                    setPinnedPhrases={setPinnedPhrases}
-                    removePinnedPhrases={removePinnedPhrases}
-                  />
+                  {container.current && (
+                    <PhraseGroups
+                      selectedTopLevelLocale={selectedTopLevelLocale}
+                      globalFilterUntranslated={globalFilterUntranslated}
+                      globalFilterRequiresUpdate={globalFilterRequiresUpdate}
+                      searchText={searchText}
+                      isEditingGroups={isEditGroups}
+                      filterTag={filterTag}
+                      showOnlyPinnedPhrases={
+                        (showOnlyPinnedPhrases ?? false) && clientStorageEnabled
+                      }
+                      pinnedPhrases={pinnedPhrases}
+                      setPinnedPhrases={setPinnedPhrases}
+                      removePinnedPhrases={removePinnedPhrases}
+                      scrollContainer={container.current}
+                    />
+                  )}
                 </>
               )}
               {!hideTerms && ((terms?.length ?? 0) > 0 || commandMode == "edit") && (

@@ -228,6 +228,17 @@ const TextAppHeader = (props: Props) => {
     }
   }, [props.showOnlyPinnedPhrases])
 
+  const [searchText, setSearchText] = useState(props.searchText ?? "");
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      props.onSetSearchText(searchText);
+    }, 200);
+    return () => {
+      clearTimeout(timeout);
+    }
+  }, [searchText, props.onSetSearchText])
+
   return (
     <div>
       <Container>
@@ -239,9 +250,9 @@ const TextAppHeader = (props: Props) => {
                 <div style={{ marginLeft: 24 }}>
                   <SearchInput
                     showClear
-                    value={props.searchText}
+                    value={searchText}
                     placeholder={"search phrases"}
-                    onTextChanged={props.onSetSearchText}
+                    onTextChanged={setSearchText}
                     borderColor={searchBorderColor}
                     disabled={props.isEditGroups || props.showOnlyPinnedPhrases}
                   />
@@ -326,13 +337,14 @@ const TextAppHeader = (props: Props) => {
             >
               <InputSelector
                 options={allTags}
-                value={props.filterTag}
+                value={props.showOnlyPinnedPhrases ? null : props.filterTag}
                 label={"filter on tag"}
                 placeholder={"select tag to filter on"}
                 onChange={(option) => {
                   props.setFilterTag((option?.value as string) ?? null);
                 }}
-                size="shortest"
+                isDisabled={props.showOnlyPinnedPhrases}
+                size="short"
               />
             </div>
             {props.filterTag && (

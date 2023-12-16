@@ -110,6 +110,8 @@ interface Props {
   isPinned: boolean;
   pinnedPhrases: Array<string>|null;
   onRemove: (variable: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>"]) => void;
+  searchText: string;
+  isSearching: boolean;
 }
 
 const StyledContent = (props: Props) => {
@@ -247,14 +249,17 @@ const StyledContent = (props: Props) => {
       props.phrase?.interpolationVariants?.map?.((v) => v.name) ?? [];
     const contentVariables =
       props.phrase?.contentVariables?.map?.((v) => v.name) ?? [];
-    return new Observer(
+    const observer = new Observer(
       variables,
       linkVariables,
       interpolationVariants,
       enabledMentionedValues ?? [],
       contentVariables
     );
+    observer.setSearchString(props.searchText);
+    return observer;
   }, [
+    props.searchText,
     props.phrase.variables,
     props.phrase.linkVariables,
     props.phrase.interpolationVariants,
@@ -326,10 +331,10 @@ const StyledContent = (props: Props) => {
     return (sourceDefaultValue?.plainText ?? "") == "";
   }, [sourceDefaultValue?.plainText])
 
-  //const [richTextHtml, setRichText] = useState(displayValue?.richTextHtml ?? "");
   const onSetDefaultValueContent = useCallback(
     (richTextHtml: string) => {
       localeRuleEditorDoc.tree.updateRootFromHTML(richTextHtml ?? "");
+      localeRuleEditorDoc.observer.searchString = "";
       const plainText = localeRuleEditorDoc.tree.rootNode.toUnescapedString();
       const json = localeRuleEditorDoc.tree.rootNode.toJSON();
       if (!displayValue) {
@@ -405,19 +410,32 @@ const StyledContent = (props: Props) => {
     enabledMentionedValues,
   ]);
 
+  const onSaveContent = useCallback(() => {
+      localeRuleEditorDoc.observer.searchString = "";
+      const json = localeRuleEditorDoc.tree.rootNode.toJSON();
+      if (!displayValue) {
+        return;
+      }
+      setDisplayValue({
+        ...displayValue,
+        json: JSON.stringify(json),
+      }, true);
+
+  }, [highlightableVariables, displayValue?.richTextHtml])
+
   useEffect(() => {
-    if (commandMode == "edit") {
-      const timeout = setTimeout(() => {
-        if (!displayValue) {
-          return;
-        }
-        saveDisplayValue();
-      }, 500);
+    if (commandMode != "edit" || props.isSearching) {
+      return;
+    }
+    localeRuleEditorDoc.observer.searchString = "";
+    const json = JSON.stringify(localeRuleEditorDoc.tree.rootNode.toJSON());
+    if (json != displayValue?.json) {
+      const timeout = setTimeout(onSaveContent, 500)
       return () => {
-        clearTimeout(timeout);
+        clearTimeout(timeout)
       }
     }
-  }, [highlightableVariables, commandMode])
+  }, [onSaveContent, displayValue?.json, commandMode, props.isSearching])
 
 
   const onMarkDisplayResolved = useCallback(() => {
@@ -629,7 +647,20 @@ const StyledContent = (props: Props) => {
     }
   }, []);
 
+  const showResult = useMemo(() => {
+    if (!props.isSearching) {
+      return true;
+    }
+    return displayValue?.plainText
+      ?.toLowerCase()
+      .indexOf(props.searchText.toLowerCase()) != -1;
+  }, [props.isSearching, props.searchText])
+
   if (!showContent) {
+    return null;
+  }
+
+  if (!showResult) {
     return null;
   }
 
@@ -655,7 +686,7 @@ const StyledContent = (props: Props) => {
         enabledTermIds={sourceDefaultValue?.enabledTerms ?? []}
         onApplyTranslation={onSetDefaultValueContent}
       />
-      {sourceDefaultValue?.richTextHtml && commandMode == "edit" && (
+      {sourceDefaultValue?.richTextHtml && commandMode == "edit" && !props.isSearching && (
         <MLModal
           show={showMLTranslate && commandMode == "edit"}
           selectedLocale={props.selectedLocale}
@@ -700,7 +731,7 @@ const StyledContent = (props: Props) => {
             {` (${props.selectedLocale.localeCode}):`}
           </span>
         </RowTitle>
-        {commandMode == "edit" && (
+        {commandMode == "edit" && !props.isSearching && (
           <DeleteVarContainer onClick={onRemove}>
             <DeleteVar src={xIcon} />
           </DeleteVarContainer>
@@ -762,7 +793,7 @@ const StyledContent = (props: Props) => {
                   {`(${props.selectedLocale.localeCode}):`}
                 </span>
               </div>
-              {props.systemSourceLocale && commandMode == "edit" && (
+              {props.systemSourceLocale && commandMode == "edit" && !props.isSearching && (
                 <div style={{ width: 120, marginLeft: 12 }}>
                   <Button
                     label={"ML translate"}
@@ -873,7 +904,7 @@ const StyledContent = (props: Props) => {
           )}
         {translationMemories.length > 0 &&
           (displayValue?.plainText ?? "").trim() == "" &&
-          commandMode == "edit" && (
+          commandMode == "edit" && !props.isSearching && (
             <TranslationMemoryList
               memories={translationMemories}
               observer={editorObserver}

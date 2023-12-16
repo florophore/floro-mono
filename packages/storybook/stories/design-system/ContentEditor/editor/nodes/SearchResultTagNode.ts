@@ -4,7 +4,7 @@ import Observer from "../Observer";
 import escape from 'escape-html';
 import TextNode, { TextNodeJSON } from "./TextNode";
 
-export interface MentionedTagJSON extends TextNodeJSON {
+export interface SearchResultTagJSON extends TextNodeJSON {
   type: string;
   content: string;
   marks: {
@@ -17,7 +17,7 @@ export interface MentionedTagJSON extends TextNodeJSON {
   }
 }
 
-export default class MentionedTagNode extends Node implements TextNodeJSON {
+export default class SearchResultTagNode extends Node implements TextNodeJSON {
 
   public marks: {
     isBold: boolean;
@@ -37,7 +37,7 @@ export default class MentionedTagNode extends Node implements TextNodeJSON {
 
   public lang: string;
 
-  constructor(parent: TextNode, observer: Observer, content: string, lang: string, initMarks?: {
+  constructor(parentNode: TextNode, observer: Observer, content: string, lang: string, initMarks?: {
     isBold: boolean,
     isItalic: boolean,
     isUnderlined: boolean,
@@ -45,8 +45,8 @@ export default class MentionedTagNode extends Node implements TextNodeJSON {
     isSuperscript: boolean,
     isSubscript: boolean
   }) {
-    super(parent, observer, content, lang, []);
-    this.type = 'mentioned-tag';
+    super(parentNode, observer, content, lang, []);
+    this.type = 'search-result-tag';
     this.lang = lang;
 
     if (initMarks) {
@@ -59,17 +59,17 @@ export default class MentionedTagNode extends Node implements TextNodeJSON {
     }
   }
 
-  public toJSON(): MentionedTagJSON {
+  public toJSON(): SearchResultTagJSON {
     return {
       content: this.content,
-      type: 'mentioned-tag',
+      type: 'text', // we don't want this to get serialized
       marks: this.marks,
       children: []
     };
   }
 
-  public static fromJSON(parent: TextNode, json: MentionedTagJSON, observer: Observer, lang: string): MentionedTagNode {
-    return new MentionedTagNode(parent, observer, json.content, lang, json.marks);
+  public static fromJSON(parent: TextNode, json: SearchResultTagJSON, observer: Observer, lang: string): SearchResultTagNode {
+    return new SearchResultTagNode(parent, observer, json.content, lang, json.marks);
   }
 
   public toHTMLString(): string {
@@ -97,7 +97,8 @@ export default class MentionedTagNode extends Node implements TextNodeJSON {
      class="${this.marks.isSuperscript ? "sup" : this.marks.isSubscript ? "sub" : ""}"
      spellcheck="false"
      style="
-        color: ${ColorPalette.linkBlue};
+        color: ${ColorPalette.black};
+        background-color: ${ColorPalette.orange};
         text-decoration: ${textDecoration};
         font-weight: ${fontWeight};
         font-style: ${fontStyle};

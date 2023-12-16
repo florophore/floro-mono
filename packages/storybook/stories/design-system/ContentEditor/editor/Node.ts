@@ -1,3 +1,4 @@
+import { ChildProcess } from "child_process";
 import Observer from "./Observer";
 
 export interface NodeJSON {
@@ -7,6 +8,7 @@ export interface NodeJSON {
 }
 
 export default class Node {
+  public parent!: null|Node;
   public content!: string;
   public type!: string;
   public children!: Node[];
@@ -14,7 +16,8 @@ export default class Node {
   public lang: string;
   public observer: Observer;
 
-  constructor(observer: Observer, content: string, lang: string, children?: Node[]) {
+  constructor(parent: Node|null, observer: Observer, content: string, lang: string, children?: Node[]) {
+    this.parent = parent;
     this.observer = observer;
     this.content = content;
     this.children = children ?? [];
@@ -46,9 +49,14 @@ export default class Node {
     };
   }
 
-  public static fromJSON(json: NodeJSON, observer: Observer, lang: string): Node {
-    const children = json.children?.map(c => Node.fromJSON(c, observer, lang));
-    return new Node(observer, json.content, lang, children);
+  public static fromJSON(parent: Node|null, json: NodeJSON, observer: Observer, lang: string): Node {
+    const children: Array<Node> = [];
+    const node = new Node(parent, observer, json.content, lang, children);
+    const childs = json.children?.map(c => Node.fromJSON(node, c, observer, lang));
+    for (const child of childs ?? []) {
+      children.push(child);
+    }
+    return node;
   }
 
   public toHTMLString(): string {
@@ -66,6 +74,7 @@ export default class Node {
       .join("");
     const unescaped = this.content
       .replaceAll("&nbsp;", " ")
+      .replaceAll(String.fromCharCode(160), ' ') //non-breaking space!
       .replaceAll("&lt;", "<")
       .replaceAll("&gt;", ">")
       .replaceAll("&quot;", '"')
@@ -188,6 +197,7 @@ export default class Node {
           const hoistedChildren = this.getHoistedChildren();
           parent.children.splice(i, 1);
           for (let j = 0; j < hoistedChildren.length; ++j) {
+            hoistedChildren[j].parent = parent;
             parent.children.splice(j + i, 0, hoistedChildren[j]);
           }
         }
@@ -202,7 +212,7 @@ export default class Node {
 
     for (let i = 0; i < this.children.length; ++i) {
       const child = this.children[i];
-      if (child.shouldExpand()) {
+      if (this.children.includes(child) && child.shouldExpand()) {
         const expandedNodes = child.getExpansion();
         this.children.splice(i, expandedNodes.length, ...expandedNodes);
       }
@@ -215,6 +225,7 @@ export default class Node {
           const expandedChildren = this.getExpansion();
           parent.children.splice(i, 1);
           for (let j = 0; j < expandedChildren.length; ++j) {
+            expandedChildren[j].parent = parent;
             parent.children.splice(j + i, 0, expandedChildren[j]);
           }
         }

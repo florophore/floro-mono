@@ -122,6 +122,8 @@ interface Props {
   isPinned: boolean;
   pinnedPhrases: Array<string>|null;
   onRemove: (variable: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>"]) => void;
+  searchText: string;
+  isSearching: boolean;
 }
 
 const LinkVariable = (props: Props) => {
@@ -271,14 +273,17 @@ const LinkVariable = (props: Props) => {
     const interpolationVariants =
       props.phrase?.interpolationVariants?.map?.((v) => v.name) ?? [];
     const contentVariables = props.phrase.contentVariables.map((v) => v.name);
-    return new Observer(
+    const observer = new Observer(
       variables,
       [],
       interpolationVariants,
       enabledMentionedValues ?? [],
       contentVariables
     );
+    observer.setSearchString(props.searchText)
+    return observer;
   }, [
+    props.searchText,
     props.phrase.variables,
     props.phrase.contentVariables,
     enabledMentionedValues,
@@ -287,8 +292,10 @@ const LinkVariable = (props: Props) => {
 
   const hrefEditorObserver = useMemo(() => {
     const variables = props.phrase.variables.map((v) => v.name);
-    return new Observer(variables);
-  }, [props.phrase.variables]);
+    const observer = new Observer(variables);
+    observer.setSearchString(props.searchText);
+    return observer;
+  }, [props.searchText, props.phrase.variables]);
 
   const linkDisplayEditorDoc = useMemo(() => {
     if (linkDisplayValue) {
@@ -368,10 +375,10 @@ const LinkVariable = (props: Props) => {
     return (sourceLinkTranslation?.linkDisplayValue?.plainText ?? "") == "";
   }, [sourceLinkTranslation?.linkDisplayValue?.plainText])
 
-  //const [richTextHtml, setRichText] = useState(linkDisplayValue?.richTextHtml ?? "");
   const onSetDisplayValueContent = useCallback(
     (richTextHtml: string) => {
       linkDisplayEditorDoc.tree.updateRootFromHTML(richTextHtml ?? "");
+      linkDisplayEditorDoc.observer.searchString = "";
       const plainText = linkDisplayEditorDoc.tree.rootNode.toUnescapedString();
       const json = linkDisplayEditorDoc.tree.rootNode.toJSON();
       if (!linkDisplayValue) {
@@ -413,21 +420,6 @@ const LinkVariable = (props: Props) => {
     ]
   );
 
-
-  useEffect(() => {
-    if (commandMode == "edit") {
-      const timeout = setTimeout(() => {
-        if (!linkDisplayValue) {
-          return;
-        }
-        saveLinkDisplayValue();
-      }, 500);
-      return () => {
-        clearTimeout(timeout);
-      }
-    }
-  }, [linkDisplayValue?.richTextHtml, commandMode])
-
   const highlightableVariables = useMemo(() => {
     const variables = props.phrase.variables?.map((v) => v.name) ?? [];
     const interpolationVariants =
@@ -447,23 +439,10 @@ const LinkVariable = (props: Props) => {
     enabledMentionedValues,
   ]);
 
-  useEffect(() => {
-    if (commandMode == "edit") {
-      const timeout = setTimeout(() => {
-        if (!linkDisplayValue) {
-          return;
-        }
-        saveLinkDisplayValue();
-      }, 500);
-      return () => {
-        clearTimeout(timeout);
-      }
-    }
-  }, [highlightableVariables, commandMode])
-
   const onSetHrefValueContent = useCallback(
     (richTextHtml: string) => {
       linkHrefEditorDoc.tree.updateRootFromHTML(richTextHtml ?? "");
+      linkHrefEditorDoc.observer.searchString = "";
       const plainText = linkHrefEditorDoc.tree.rootNode.toUnescapedString();
       const json = linkHrefEditorDoc.tree.rootNode.toJSON();
       if (!linkHrefValue) {
@@ -508,17 +487,78 @@ const LinkVariable = (props: Props) => {
   useEffect(() => {
     if (commandMode == "edit") {
       const timeout = setTimeout(() => {
-        if (!linkHrefValue) {
-          return;
-        }
-        //onSetHrefValueContent(href);
+        saveLinkDisplayValue();
+      }, 500);
+      return () => {
+        clearTimeout(timeout);
+      }
+    }
+  }, [linkDisplayValue?.richTextHtml, commandMode])
+
+  useEffect(() => {
+    if (commandMode == "edit") {
+      const timeout = setTimeout(() => {
         saveLinkHrefValue();
       }, 500);
       return () => {
         clearTimeout(timeout);
       }
     }
-  }, [linkHrefValue?.richTextHtml, commandMode])
+  }, [linkHrefValue?.plainText, commandMode])
+
+  const onSaveContent = useCallback(() => {
+    linkDisplayEditorDoc.observer.searchString = "";
+    const displayJSON = JSON.stringify(linkDisplayEditorDoc.tree.rootNode.toJSON());
+    if (!linkDisplayValue) {
+      return;
+    }
+    if (displayJSON != linkDisplayValue?.json) {
+      setLinkDisplayValue(
+        {
+          ...linkDisplayValue,
+          json: displayJSON,
+        },
+        true
+      );
+    }
+    if (!linkHrefValue) {
+      return;
+    }
+    linkHrefEditorDoc.observer.searchString = "";
+    const hrefJSON = JSON.stringify(linkHrefEditorDoc.tree.rootNode.toJSON());
+    if (hrefJSON != linkHrefValue?.json) {
+      setLinkHrefValue(
+        {
+          ...linkHrefValue,
+          json: hrefJSON,
+        },
+        true
+      );
+    }
+  }, [
+    highlightableVariables,
+    linkDisplayValue?.json,
+    linkHrefValue?.json,
+  ]);
+
+  useEffect(() => {
+    if (commandMode != "edit" || props.isSearching) {
+      return;
+    }
+    linkDisplayEditorDoc.observer.searchString = "";
+    linkHrefEditorDoc.observer.searchString = "";
+    const displayJSON = JSON.stringify(linkDisplayEditorDoc.tree.rootNode.toJSON());
+    const hrefJSON = JSON.stringify(linkHrefEditorDoc.tree.rootNode.toJSON());
+    if (
+      displayJSON != linkDisplayValue?.json ||
+      hrefJSON != linkHrefValue?.json
+    ) {
+      const timeout = setTimeout(onSaveContent, 500);
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
+  }, [onSaveContent, linkDisplayValue?.json, linkHrefValue?.json, commandMode, props.isSearching])
 
   const onMarkDisplayResolved = useCallback(() => {
     if (!linkDisplayValue) {
@@ -755,7 +795,25 @@ const LinkVariable = (props: Props) => {
     }
   }, []);
 
+  const showResult = useMemo(() => {
+    if (!props.isSearching) {
+      return true;
+    }
+    return (
+      linkDisplayValue?.plainText
+        ?.toLowerCase()
+        .indexOf(props.searchText.toLowerCase()) != -1 ||
+      linkHrefValue?.plainText
+        ?.toLowerCase()
+        .indexOf(props.searchText.toLowerCase()) != -1
+    );
+  }, [props.isSearching, props.searchText])
+
   if (!showContent) {
+    return null;
+  }
+
+  if (!showResult) {
     return null;
   }
 
@@ -826,7 +884,7 @@ const LinkVariable = (props: Props) => {
             {` (${props.selectedLocale.localeCode}):`}
           </span>
         </RowTitle>
-        {commandMode == "edit" && (
+        {commandMode == "edit" && !props.isSearching && (
           <DeleteVarContainer onClick={onRemove}>
             <DeleteVar src={xIcon} />
           </DeleteVarContainer>
@@ -864,7 +922,7 @@ const LinkVariable = (props: Props) => {
               <span style={{ color: theme.colors.contrastText }}>
                 {`(${props.selectedLocale.localeCode}):`}
               </span>
-              {props.systemSourceLocale && commandMode == "edit" && (
+              {props.systemSourceLocale && commandMode == "edit" && !props.isSearching && (
                 <div style={{ width: 120, marginLeft: 12 }}>
                   <Button
                     isDisabled={
@@ -943,7 +1001,7 @@ const LinkVariable = (props: Props) => {
               systemSourceLocale={props.systemSourceLocale}
               onChange={onChangeTerm}
               enabledTerms={linkDisplayValue?.enabledTerms ?? []}
-              showFindTerms={!props.systemSourceLocale}
+              showFindTerms={!props.systemSourceLocale && !props.isSearching}
               onShowFindTerms={onShowFindTerms}
               isEmpty={(linkDisplayValue?.plainText?.trim?.() ?? "") == ""}
               title={
@@ -975,7 +1033,7 @@ const LinkVariable = (props: Props) => {
           )}
           {translationMemories.length > 0 &&
             (linkDisplayValue?.plainText ?? "").trim() == "" &&
-            commandMode == "edit" && (
+            commandMode == "edit" && !props.isSearching && (
               <TranslationMemoryList
                 memories={translationMemories}
                 observer={editorObserver}
@@ -1039,7 +1097,7 @@ const LinkVariable = (props: Props) => {
                   <RequiresRevision style={{ marginRight: 12 }}>
                     {"requires revision"}
                   </RequiresRevision>
-                  {commandMode == "edit" && (
+                  {commandMode == "edit" && !props.isSearching && (
                     <Button
                       onClick={onMarkHrefResolved}
                       style={{ width: 120 }}

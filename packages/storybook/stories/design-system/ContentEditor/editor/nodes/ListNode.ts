@@ -24,7 +24,7 @@ export default class ListNode extends TextNode {
   public lang: string;
   public children: TextNode[];
 
-  constructor(observer: Observer, content: string, lang: string, children: TextNode[], initMarks?: {
+  constructor(parent: TextNode, observer: Observer, content: string, lang: string, children: TextNode[], initMarks?: {
     isBold: boolean,
     isItalic: boolean,
     isUnderlined: boolean,
@@ -32,7 +32,7 @@ export default class ListNode extends TextNode {
     isSuperscript: boolean,
     isSubscript: boolean
   }) {
-    super(observer, content, lang, children);
+    super(parent, observer, content, lang, children);
     this.type = 'li-tag';
     this.lang = lang;
     this.children = children;
@@ -55,14 +55,29 @@ export default class ListNode extends TextNode {
     return children + "\n";
  }
 
-  public static fromJSON(json: TextNodeJSON, observer: Observer, lang: string): ListNode {
-    const children: Array<TextNode> = RootNode.fromTextChildren(
+  public static fromJSON(parent: Node, json: TextNodeJSON, observer: Observer, lang: string): ListNode {
+    const children: Array<TextNode> = [];
+    const liNode = new ListNode(parent as TextNode, observer, json.content, lang, children, json.marks);
+    const childs: Array<TextNode> = RootNode.fromTextChildren(
+      liNode as TextNode,
       json.children as Array<TextNodeJSON> ?? ([] as Array<TextNodeJSON>),
       observer,
       lang
     ) as Array<TextNode>;
-    return new ListNode(observer, json.content, lang, children, json.marks);
+    for (const child of childs) {
+      children.push(child);
+    }
+    return liNode;
   }
+
+  //public static fromJSON(parent: TextNode, json: TextNodeJSON, observer: Observer, lang: string): ListNode {
+  //  const children: Array<TextNode> = RootNode.fromTextChildren(
+  //    json.children as Array<TextNodeJSON> ?? ([] as Array<TextNodeJSON>),
+  //    observer,
+  //    lang
+  //  ) as Array<TextNode>;
+  //  return new ListNode(observer, json.content, lang, children, json.marks);
+  //}
 
   public shouldFlatten() {
     return false;

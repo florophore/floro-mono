@@ -3562,6 +3562,10 @@ export function useFloroState<T>(query: string, defaultData?: T): [T|null, (t: T
       ) as SchemaRoot;
       ctx.currentPluginAppState.current = next;
       ctx.saveState(pluginName, ctx.applicationState);
+      ctx.setPluginState({
+        ...ctx.pluginState,
+        applicationState: next
+      });
     }
   }, [
     query,
@@ -3594,6 +3598,10 @@ export function useFloroState<T>(query: string, defaultData?: T): [T|null, (t: T
           ) as SchemaRoot;
           ctx.currentPluginAppState.current = next;
           ctx.saveState(pluginName, next);
+          ctx.setPluginState({
+            ...ctx.pluginState,
+            applicationState: next
+          });
         } else {
           return () => {
             ctx.lastEditKey.current = query;
@@ -3605,6 +3613,10 @@ export function useFloroState<T>(query: string, defaultData?: T): [T|null, (t: T
             ) as SchemaRoot;
             ctx.currentPluginAppState.current = next;
             ctx.saveState(pluginName, next);
+            ctx.setPluginState({
+              ...ctx.pluginState,
+              applicationState: next
+            });
           };
         }
       }

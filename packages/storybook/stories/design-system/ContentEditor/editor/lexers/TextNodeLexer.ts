@@ -2,6 +2,7 @@ import EditorLexer from "../EditorLexer";
 import Observer from "../Observer";
 import ListNode from "../nodes/ListNode";
 import OrderedListNode from "../nodes/OrderedListNode";
+import RootNode from "../nodes/RootNode";
 import TextNode from "../nodes/TextNode";
 import UnOrderedListNode from "../nodes/UnOrderedListNode";
 
@@ -16,25 +17,25 @@ export default class TextNodeLexer extends EditorLexer<ChildNode, TextNode> {
         this.lang = lang;
     }
 
-    public lex(node: ChildNode): TextNode {
+    public lex(node: ChildNode, parentNode: RootNode|TextNode): TextNode {
         if (node['tagName'] == "BR") {
-            return new TextNode(this.observer, '\n', this.lang, []);
+            return new TextNode(parentNode, this.observer, '\n', this.lang, []);
         }
         if (node.nodeType == 3) {
-            return new TextNode(this.observer, node?.textContent ?? '', this.lang, []);
+            return new TextNode(parentNode, this.observer, node?.textContent ?? '', this.lang, []);
         }
         if (node.childNodes.length == 0) {
 
             if (node.nodeType == 1 && node['tagName'] == "OL") {
-                return new OrderedListNode(this.observer, '', this.lang, [])
+                return new OrderedListNode(parentNode as TextNode, this.observer, '', this.lang, [])
             }
             if (node.nodeType == 1 && node['tagName'] == "UL") {
-                return new UnOrderedListNode(this.observer, '', this.lang, [])
+                return new UnOrderedListNode(parentNode, this.observer, '', this.lang, [])
             }
             if (node.nodeType == 1 && node['tagName'] == "LI") {
-                return new ListNode(this.observer, '', this.lang, [])
+                return new ListNode(parentNode as TextNode, this.observer, '', this.lang, [])
             }
-            return new TextNode(this.observer, '', this.lang, []);
+            return new TextNode(parentNode, this.observer, '', this.lang, []);
         }
         const marks: {
           isBold: boolean;
@@ -83,18 +84,31 @@ export default class TextNodeLexer extends EditorLexer<ChildNode, TextNode> {
         }
         const children: Array<TextNode> = [];
 
-        for (const child of node.childNodes) {
-            children.push(this.lex(child));
-        }
         if (node.nodeType == 1 && node['tagName'] == "OL") {
-            return new OrderedListNode(this.observer, '', this.lang, children, marks)
+            const olNode = new OrderedListNode(parentNode as TextNode, this.observer, '', this.lang, children, marks);
+            for (const child of node.childNodes) {
+                children.push(this.lex(child, olNode));
+            }
+            return olNode;
         }
         if (node.nodeType == 1 && node['tagName'] == "UL") {
-            return new UnOrderedListNode(this.observer, '', this.lang, children, marks)
+            const ulNode = new UnOrderedListNode(parentNode, this.observer, '', this.lang, children, marks)
+            for (const child of node.childNodes) {
+                children.push(this.lex(child, ulNode));
+            }
+            return ulNode;
         }
         if (node.nodeType == 1 && node['tagName'] == "LI") {
-            return new ListNode(this.observer, '', this.lang, children, marks)
+            const liNode = new ListNode(parentNode as TextNode, this.observer, '', this.lang, children, marks)
+            for (const child of node.childNodes) {
+                children.push(this.lex(child, liNode));
+            }
+            return liNode;
         }
-        return new TextNode(this.observer, '', this.lang, children, marks)
+        const textNode = new TextNode(parentNode, this.observer, '', this.lang, children, marks)
+        for (const child of node.childNodes) {
+            children.push(this.lex(child, textNode));
+        }
+        return textNode
     }
 }

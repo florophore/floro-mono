@@ -20,11 +20,11 @@ export default class RootNodeLexer extends EditorLexer<string, RootNode> {
         const div = document.createElement('div');
         div.innerHTML = rawHtml;
         const children: Array<TextNode> = [];
+        const rootNode = new RootNode(this.observer, '', this.lang, children);
         for (const child of div.childNodes) {
-            const nodeChild = this.textNodeLexer.lex(child);
+            const nodeChild = this.textNodeLexer.lex(child, rootNode);
             children.push(nodeChild);
         }
-        const rootNode = new RootNode(this.observer, '', this.lang, children);
         return rootNode;
     }
 }
