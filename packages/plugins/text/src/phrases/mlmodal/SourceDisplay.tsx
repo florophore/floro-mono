@@ -134,7 +134,7 @@ const SourceDisplay = (props: Props) => {
         />
       </LabelContainer>
       <GrowCommentContainer style={{ maxHeight: props.maxHeight ?? 120 }}>
-        <Wrapper dangerouslySetInnerHTML={{__html: props.value}} style={{padding: 16, color: theme.colors.contrastText}}/>
+        <Wrapper dangerouslySetInnerHTML={{__html: props.value}} style={{padding: 16, color: theme.colors.contrastText, fontWeight: 'lighter'}}/>
       </GrowCommentContainer>
     </TextAreaBlurbBox>
   );

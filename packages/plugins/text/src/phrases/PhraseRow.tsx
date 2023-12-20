@@ -237,6 +237,12 @@ const PhraseRow = (props: Props) => {
   }, [props.scrollContainer])
   const theme = useTheme();
   const locales = useReferencedObject("$(text).localeSettings.locales");
+  const searchRef = useRef<HTMLInputElement>(null);
+  const onFocusSearch = useCallback(() => {
+    if (searchRef.current) {
+      searchRef.current.focus();
+    }
+  }, [])
   const { applicationState, commandMode, clientStorage, isCopyMode, conflictSet, changeset } = useFloroContext();
   const clientStorageIsEnabled = clientStorage != null;
   const [selectedLocaleCode, setSelectedLocaleCode] = useState(props.selectedTopLevelLocale);
@@ -516,6 +522,7 @@ const PhraseRow = (props: Props) => {
         ref={subContainer}
         isSearching={isSearching}
         searchText={manualSearchText}
+        onFocusSearch={onFocusSearch}
       />
     );
   }, [
@@ -536,6 +543,7 @@ const PhraseRow = (props: Props) => {
     isPinned,
     showEnabledFeatures,
     setShowEnabledFeatures,
+    onFocusSearch
   ]);
 
   const showNoResults = useMemo(() => {
@@ -605,7 +613,6 @@ const PhraseRow = (props: Props) => {
     }
     return true;
   }, [manualSearchText, selectedLocale, isSearching]);
-  console.log(props.phraseRef, showNoResults);
 
   if (commandMode == "compare" && !hasIndications) {
     return null;
@@ -736,6 +743,7 @@ const PhraseRow = (props: Props) => {
           )}
         </div>
         <SearchInput
+          ref={searchRef}
           borderColor={searchBorderColor}
           value={realManualSearchText}
           placeholder={`search ${phrase?.phraseKey}`}

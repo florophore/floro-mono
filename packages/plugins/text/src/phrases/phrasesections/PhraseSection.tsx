@@ -114,6 +114,7 @@ interface Props {
   onRemove: (variable: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>"]) => void;
   searchText: string;
   isSearching: boolean;
+  onFocusSearch: () => void;
 }
 
 const PhraseSection = (props: Props) => {
@@ -859,6 +860,7 @@ const PhraseSection = (props: Props) => {
                 (!sourceDefaultValue &&
                   (displayValue?.plainText?.trim() ?? "") != "")
               }
+              onSearch={props.onFocusSearch}
             />
           )}
           {commandMode != "edit" && (

@@ -170,6 +170,7 @@ interface Props {
   isPinned: boolean;
   searchText: string;
   isSearching: boolean;
+  onFocusSearch: () => void;
 }
 
 const ConditionalList = (props: Props) => {
@@ -429,6 +430,7 @@ const ConditionalList = (props: Props) => {
                 index={index}
                 isSearching={props.isSearching}
                 searchText={props.searchText}
+                onFocusSearch={props.onFocusSearch}
               />
             );
           })}

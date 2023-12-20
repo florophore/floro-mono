@@ -112,6 +112,7 @@ interface Props {
   onRemove: (variable: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>"]) => void;
   searchText: string;
   isSearching: boolean;
+  onFocusSearch: () => void;
 }
 
 const StyledContent = (props: Props) => {
@@ -856,6 +857,7 @@ const StyledContent = (props: Props) => {
                 (!sourceDefaultValue &&
                   (displayValue?.plainText?.trim() ?? "") != "")
               }
+              onSearch={props.onFocusSearch}
             />
           )}
           {commandMode != "edit" && (

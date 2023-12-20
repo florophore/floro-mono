@@ -222,6 +222,7 @@ const LocalVCSEditMode = (props: Props) => {
               label={"compare"}
               icon={"compare"}
               onClick={updateToCompareMode}
+              isLoading={updateCommand.isLoading}
             />
             <RepoActionButton
               label={"sha graph"}
@@ -249,7 +250,7 @@ const LocalVCSEditMode = (props: Props) => {
           </ButtonRow>
         )}
       </TopContainer>
-      {props.plugin != "home" && (
+      {false && (
         <BottomContainer>
           <ButtonRow style={{ marginTop: 24 }}>
             <RepoActionButton
@@ -263,7 +264,7 @@ const LocalVCSEditMode = (props: Props) => {
           </ButtonRow>
         </BottomContainer>
       )}
-      {props.plugin == "home" &&(
+      {true &&(
         <BottomContainer>
           <>
             <ButtonRow>

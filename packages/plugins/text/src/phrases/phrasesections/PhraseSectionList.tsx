@@ -86,6 +86,7 @@ interface Props {
   isPinned: boolean;
   searchText: string;
   isSearching: boolean;
+  onFocusSearch: () => void;
 }
 
 const PhraseSectionsList = (props: Props) => {
@@ -264,6 +265,7 @@ const PhraseSectionsList = (props: Props) => {
                 onRemove={onRemovePhraseSection}
                 isSearching={props.isSearching}
                 searchText={props.searchText}
+                onFocusSearch={props.onFocusSearch}
               />
             );
           })}

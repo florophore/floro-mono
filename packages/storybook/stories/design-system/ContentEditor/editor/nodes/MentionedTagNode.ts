@@ -93,14 +93,28 @@ export default class MentionedTagNode extends Node implements TextNodeJSON {
       fontStyle = "italic";
     }
     let subcontent = escape(this.content).replaceAll("\n", "<br>");
+    if (this.marks.isBold) {
+      subcontent = `<b>${subcontent}</b>`;
+    }
+    if (this.marks.isItalic) {
+        subcontent = `<i>${subcontent}</i>`;
+    }
+    if (this.marks.isUnderlined) {
+        subcontent = `<u>${subcontent}</u>`;
+    }
+    if (this.marks.isStrikethrough) {
+        subcontent = `<s>${subcontent}</s>`;
+    }
+    if (this.marks.isSuperscript) {
+        subcontent = `<sup>${subcontent}</sup>`;
+    }
+    if (this.marks.isSubscript) {
+        subcontent = `<sub>${subcontent}</sub>`;
+    }
     return `<span
-     class="${this.marks.isSuperscript ? "sup" : this.marks.isSubscript ? "sub" : ""}"
      spellcheck="false"
      style="
         color: ${ColorPalette.linkBlue};
-        text-decoration: ${textDecoration};
-        font-weight: ${fontWeight};
-        font-style: ${fontStyle};
         border-radius:4px;
         position: relative;
      "

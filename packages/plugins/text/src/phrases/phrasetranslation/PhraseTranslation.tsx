@@ -152,6 +152,7 @@ interface Props {
   isVisible: boolean;
   isSearching: boolean;
   searchText: string;
+  onFocusSearch: () => void;
 }
 
 const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRef<HTMLDivElement>) => {
@@ -810,6 +811,7 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
           isPinned={props.isPinned}
           isSearching={props.isSearching}
           searchText={props.searchText}
+          onFocusSearch={props.onFocusSearch}
         />
       )}
       {!phrase?.usePhraseSections && (
@@ -898,6 +900,7 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
                   (!sourcePhraseTranslation &&
                     (phraseTranslation?.richTextHtml?.trim() ?? "") != "")
                 }
+                onSearch={props.onFocusSearch}
               />
             )}
             {commandMode != "edit" && showResult && (
@@ -1024,6 +1027,7 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
               isPinned={props.isPinned}
               isSearching={props.isSearching}
               searchText={props.searchText}
+              onFocusSearch={props.onFocusSearch}
             />
           )}
           {(phrase?.linkVariablesEnabled ||
@@ -1040,6 +1044,7 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
               isPinned={props.isPinned}
               isSearching={props.isSearching}
               searchText={props.searchText}
+              onFocusSearch={props.onFocusSearch}
             />
           )}
           {(phrase?.interpolationsEnabled ||
@@ -1056,6 +1061,7 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
                 isPinned={props.isPinned}
                 isSearching={props.isSearching}
                 searchText={props.searchText}
+                onFocusSearch={props.onFocusSearch}
               />
             )}
           {(phrase?.variables?.length ?? 0) > 0 && !props.isSearching && (

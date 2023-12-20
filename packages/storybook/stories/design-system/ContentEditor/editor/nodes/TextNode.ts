@@ -152,11 +152,27 @@ export default class TextNode extends Node {
     if (this.marks.isItalic == true) {
       fontStyle = "italic";
     }
+
     let subcontent = escape(this.content).replaceAll("\n", "<br>") + children;
+    if (this.marks.isBold) {
+      subcontent = `<b>${subcontent}</b>`;
+    }
+    if (this.marks.isItalic) {
+        subcontent = `<i>${subcontent}</i>`;
+    }
+    if (this.marks.isUnderlined) {
+        subcontent = `<u>${subcontent}</u>`;
+    }
+    if (this.marks.isStrikethrough) {
+        subcontent = `<s>${subcontent}</s>`;
+    }
+    if (this.marks.isSuperscript) {
+        subcontent = `<sup>${subcontent}</sup>`;
+    }
+    if (this.marks.isSubscript) {
+        subcontent = `<sub>${subcontent}</sub>`;
+    }
     return `<span
-      class="${
-        this.marks.isSuperscript ? "sup" : this.marks.isSubscript ? "sub" : ""
-      }"
       data-is-bold=${this.marks.isBold ? "true" : "false"}
       data-is-italic=${this.marks.isItalic ? "true" : "false"}
       data-is-underlined=${this.marks.isUnderlined ? "true" : "false"}
@@ -166,10 +182,6 @@ export default class TextNode extends Node {
       lang="${this.lang}"
       spellcheck="true"
       style="
-        text-decoration: ${textDecoration};
-        font-weight: ${fontWeight};
-        font-style: ${fontStyle};
-        display: inline;
       "
      >${subcontent}</span>`;
   }

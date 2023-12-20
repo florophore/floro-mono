@@ -203,6 +203,7 @@ export interface Props {
   lang?: string;
   placeholder?: string;
   isDebugMode?: boolean;
+  onSearch?: () => void;
 }
 
 const ContentEditor = (props: Props) => {
@@ -232,6 +233,7 @@ const ContentEditor = (props: Props) => {
     [props.editorDoc?.tree, props.onSetContent]
   );
 
+
   const onDelayedKeyDown = useCallback(() => {
     const timeout = setTimeout(() => {
       if (isFocused.current) {
@@ -257,6 +259,15 @@ const ContentEditor = (props: Props) => {
       clearTimeout(timeout);
     }
   }, [])
+
+  const onKeyDown = useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event?.metaKey && event?.key == "f") {
+      event.preventDefault();
+      props?.onSearch?.();
+    } else {
+      onDelayedKeyDown();
+    }
+  }, [onDelayedKeyDown, props.onSearch])
 
   useEffect(() => {
     const onChanged = (cursor: Cursor) => {
@@ -655,7 +666,12 @@ const ContentEditor = (props: Props) => {
                 fontFamily: "MavenPro",
                 top: 0,
                 position: "absolute",
+                display: "inline-block",
+                whiteSpace: "break-spaces",
+                borderInline: `1px solid transparent`,
                 zIndex: 0,
+                wordWrap: "break-word",
+                width: '100%'
               }}
             >
               <div
@@ -693,10 +709,15 @@ const ContentEditor = (props: Props) => {
                   width: "100%",
                   display: "inline-block",
                   outline: "none",
-                  color: props.isDebugMode ? "red" : "transparent",
+                  //color: props.isDebugMode ? "red" : "transparent",
+                  color: "transparent",
                   caretColor: theme.colors.contrastText,
+                  borderInline: `1px solid transparent`,
+                  whiteSpace: "pre-line",
+                  position: "relative",
+                  zIndex: 0
                 }}
-                onKeyDown={onDelayedKeyDown}
+                onKeyDown={onKeyDown}
                 onClick={onDelayedKeyDown}
                 onFocus={onFocus}
                 onBlur={onBlur}

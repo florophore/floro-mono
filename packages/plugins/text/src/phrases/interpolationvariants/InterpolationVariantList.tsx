@@ -85,6 +85,7 @@ interface Props {
   isPinned: boolean;
   searchText: string;
   isSearching: boolean;
+  onFocusSearch: () => void;
 }
 
 const InterpolationVariantsList = (props: Props) => {
@@ -308,6 +309,7 @@ const InterpolationVariantsList = (props: Props) => {
                 onRemove={onRemoveInterpolationVariant}
                 searchText={props.searchText}
                 isSearching={props.isSearching}
+                onFocusSearch={props.onFocusSearch}
               />
             );
           })}

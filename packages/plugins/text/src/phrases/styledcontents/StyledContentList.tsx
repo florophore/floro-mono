@@ -85,6 +85,7 @@ interface Props {
   isPinned: boolean;
   searchText: string;
   isSearching: boolean;
+  onFocusSearch: () => void;
 }
 
 const StyledContentsList = (props: Props) => {
@@ -299,6 +300,7 @@ const StyledContentsList = (props: Props) => {
                 onRemove={onRemoveStyledContent}
                 searchText={props.searchText}
                 isSearching={props.isSearching}
+                onFocusSearch={props.onFocusSearch}
               />
             );
           })}

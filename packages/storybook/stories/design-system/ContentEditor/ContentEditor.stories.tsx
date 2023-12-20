@@ -1,9 +1,10 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import ContentEditor from './index';
 import EditorDocument from './editor/EditorDocument';
 import { useMergeBranchMutation } from '@floro/graphql-schemas/build/generated/main-client-graphql';
 import Observer from './editor/Observer';
 import SearchInput from '../SearchInput';
+import PlainTextDocument from './PlainTextDocument';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -16,14 +17,16 @@ export default {
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template = (args) => {
-    const [text, setText] = useState("Testing. Just as you have men {hello} the <i>option</i> of creating a ")
-    const [search, setSearch] = useState("Just as you have men {hello} the option of creating")
+    const [text, setText] = useState(`<ol><li><b>Addition</b> - We will {hello} add <b>{test}</b> and <i><u>{test2}</u> </i> a new Translation phrase floro and work in progress to our Localized Keys <i>"Logout"</i>, and provide English and Chinese Translations for the new phrase and floro that is a work in progress, nice floro</li></ol><b><u><strike><i><br /></i></strike></u></b>`)
+    const [search, setSearch] = useState("ition - We will {hello} add {test} and {test2}  a new translation phrase floro and w")
     const observer = useMemo(() => {
-      const observer = new Observer(['hello', 'world'], ['link'], ['cond'], ['men']);
+      const observer = new Observer(['hello'], ['test'], ['test2'], ['work in progress', 'Floro'], ['stashing', 'popStash']);
       observer.setSearchString(search)
       return observer;
     }, [text, search]);
+    console.log(text)
     const editor = useMemo(() => new EditorDocument(observer), [observer])
+    const searchRef = useRef<HTMLInputElement>(null);
     return (
       <div
         style={{
@@ -32,7 +35,7 @@ const Template = (args) => {
           width: 600
         }}
       >
-        <SearchInput value={search} onTextChanged={setSearch} placeholder={'search'}/>
+        <SearchInput ref={searchRef} value={search} onTextChanged={setSearch} placeholder={'search'}/>
         <div style={{height: 24}}>
 
         </div>
@@ -42,6 +45,11 @@ const Template = (args) => {
           onSetContent={function (str: string): void {
             editor.tree.updateRootFromHTML(str);
             setText(str);
+          }}
+          onSearch={() => {
+            if (searchRef?.current) {
+              searchRef?.current?.focus();
+            }
           }}
           isDebugMode
         />

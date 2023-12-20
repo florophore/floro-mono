@@ -80,6 +80,7 @@ interface Props {
   isPinned: boolean;
   searchText: string;
   isSearching: boolean;
+  onFocusSearch: () => void;
 }
 
 const LinkVariableList = (props: Props) => {
@@ -267,6 +268,7 @@ const LinkVariableList = (props: Props) => {
                 onRemove={onRemoveLinkVar}
                 searchText={props.searchText}
                 isSearching={props.isSearching}
+                onFocusSearch={props.onFocusSearch}
               />
             );
           })}

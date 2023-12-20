@@ -19,13 +19,25 @@
         "phraseKey": "product_docs.advanced_commands_docs",
         "variables": {},
         "contentVariables": {
-          "docSearch": "string"
+          "docSearch": "string",
+          "shaGraph": "string",
+          "stashing": "string",
+          "popStash": "string",
+          "clearPluginStorage": "string",
+          "changeHead": "string",
+          "reverting": "string"
         },
         "styleClasses": {
           "mainTitle": "string"
         },
         "args": {
           "docSearch": "string",
+          "shaGraph": "string",
+          "stashing": "string",
+          "popStash": "string",
+          "clearPluginStorage": "string",
+          "changeHead": "string",
+          "reverting": "string",
           "mainTitle": "string"
         },
         "links": {},
@@ -134,6 +146,1215 @@
             "content": "\n",
             "type": "text",
             "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "You don't need to know the ins and outs of ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " to make good use of it. However, there are times when you may get into a pickle and some advanced ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " commands may come in handy. Problems like, how do we undo a commit are pretty core to ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " and version control in general.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "content": "\n",
+            "type": "text",
+            "children": [],
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Stashing & Discarding",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "When you are in edit mode you will notice there is an option to ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "stash",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " or ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "discard",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " your changes.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{stashing}",
+            "type": "content-variable",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Discarding",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " means you are  deleting your ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "work in progress",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " (",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "WIP",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ") ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "permanently",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ".",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " Discarding restores your state to the state of the last commit. If you are positive you do not want to commit your changes or you've made a huge mistake, this is a useful option.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Stashing",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " is like a temporary discard. Instead of deleting your ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "work in progress",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ", you store it in a stash (each commit has its own stash). If you want to restore your stash, you may be able to restore if your new changes do not conflict with your stashed changes. If your new changes do conflict with your stashed changes, you may have to discard your new ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "work in progress",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ".",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{popStash}",
+            "type": "content-variable",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "When you have stashed changes that are able to be applied to your current changes, you will see the ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "pop stash ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "button is available to you. After, clicking, you should see your restored changes.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "content": "\n",
+            "type": "text",
+            "children": [],
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Clearing Plugin Client Storage",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Plugins",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ", like websites, have the ability to store information in something similar to website cookies. A plugin's client storage might be used to save an API key or some preferred setting of the user that should not be persisted in the ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "plugin state",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " store. You may notice there is a \"",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "clear plugin storage\"",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": true,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " option available when a plugin is storing some information using client storage. ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Plugins",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " cannot access each other's client storage.\n\n\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{clearPluginStorage}",
+            "type": "content-variable",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "content": "\n",
+            "type": "text",
+            "children": [],
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Undoing Changes\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\nThere are two ways to undo a change in ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ". Generally speaking, you will ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "revert",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " a change if you are undoing a change remotely or on a shared branch. However, if you are the only person working on a branch it may be easier to change the head of your branch to a past commit.\n\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Changing the Branch Head",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "  \nTo change a branch's head, you need to click the ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "edit branch ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "button locally. From there you will see a button called ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "perform surgery.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " Manually editing branches can get a little bit messy. At times. Make sure your base branch is correct after editing a branch head.\n\n \n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{changeHead}",
+            "type": "content-variable",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n\nNow all you have to do is hover over the commit you wish to update your branch to and select that commit by pressing ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "change head",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ". Your previous commit will not be deleted, so if you need, you can always reset your branch head back to the original commit. After clicking ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "edit branch,",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " your branch will be updated.\n\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Reverting a Change\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\nSometimes we want to undo a commit, but other people may be working on the same branch as us. This can lead to conflicts and a lot of toe-stepping. In this case we ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "revert ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "our changes. Reverting has the same end effect as rolling back a branch, however, reverting creates a new commit that undoes the changes between the last commit and the commit being reverted. This is useful when a branch is shared by multiple contributors since the reversion does not alter the version history (it just adds to it).\n\n\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{reverting}",
+            "type": "content-variable",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
               "isBold": false,
               "isItalic": false,
               "isUnderlined": false,
@@ -186,7 +1407,33 @@
             "displayValue": [
               {
                 "children": [],
-                "content": "advanced floro commands",
+                "content": "advanced ",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": true,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              },
+              {
+                "children": [],
+                "content": "floro",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": true,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              },
+              {
+                "children": [],
+                "content": " commands",
                 "type": "text",
                 "styles": {
                   "isBold": false,
@@ -361,6 +1608,19 @@
           },
           {
             "children": [],
+            "content": "👉 ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
             "content": "You can skip the top section of this page if you are not an engineer or you are not familiar with ",
             "type": "text",
             "styles": {
@@ -387,7 +1647,7 @@
           },
           {
             "children": [],
-            "content": "! It's okay.",
+            "content": "!",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -933,7 +2193,7 @@
           },
           {
             "children": [],
-            "content": "Our first user's branch is out of date, since C was appended to the main branch. To fix this, they need to merge the main branch into their branch (F1). We could describe this operation as the following",
+            "content": "Since commit C has been appended to the main branch, our first user's branch is out of date. To fix this, they need to merge the main branch into their branch (F1). We could describe this operation as the following:",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -1310,7 +2570,7 @@
           },
           {
             "children": [],
-            "content": "This time the most recent common commit ancestor between main and F2 was commit B. Therefore the only change we had to rebase was commit C. As we've already rewritten the rebase of commit C as C' when it is connected to commit Y, we rewrote the second rebased version of commit C as C\", whose parent is commit J. Finally, commit M1 is the merge commit between J and C.",
+            "content": "This time the most recent common commit ancestor between main and F2 was commit B. Therefore the only change we had to rebase was commit C. As we've already rewritten the rebase of commit C as C' when its parent is commit Y, we rewrote the second rebased version of commit C as C\", whose parent is commit J. Finally, commit M1 is the merge commit between J and C.",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -2545,10 +3805,49 @@
           },
           {
             "children": [],
-            "content": " from the version control panel, we need to select what we are comparing from ",
+            "content": " from the version control panel, ",
             "type": "text",
             "styles": {
               "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "we need to change the ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "comparing selector",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " from ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
               "isItalic": false,
               "isUnderlined": false,
               "isStrikethrough": false,
@@ -2561,7 +3860,7 @@
             "content": "uncommitted changes ",
             "type": "text",
             "styles": {
-              "isBold": false,
+              "isBold": true,
               "isItalic": true,
               "isUnderlined": false,
               "isStrikethrough": false,
@@ -2574,7 +3873,7 @@
             "content": "to ",
             "type": "text",
             "styles": {
-              "isBold": false,
+              "isBold": true,
               "isItalic": false,
               "isUnderlined": false,
               "isStrikethrough": false,
@@ -2584,7 +3883,20 @@
           },
           {
             "children": [],
-            "content": "branch. ",
+            "content": "branch",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ". ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -2623,7 +3935,7 @@
           },
           {
             "children": [],
-            "content": ". We can now see above the merge button that there is a warning informing us that we cannot automatically merge. We will have to reconcile a ",
+            "content": ". We can now see above the merge button that there is a warning informing us that we cannot automatically merge. We will have to reconcile the ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -2649,7 +3961,7 @@
           },
           {
             "children": [],
-            "content": ".",
+            "content": " manually.",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -3208,7 +4520,33 @@
           },
           {
             "children": [],
-            "content": "Once you've resolved your merge, you're done. ",
+            "content": "Once you've resolved your merge, you're done. Just click the ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "resolve merge ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "button. ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -3234,7 +4572,59 @@
           },
           {
             "children": [],
-            "content": "s do occur in floro, but due to the nature of structural content, they are far less common than in plain text systems. However, it's always a good idea to have small merge requests and to commit and merge frequently in order to avoid painful conflicts.",
+            "content": "s do occur in ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ", but due to the nature of structural content, they are far less common than in ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "plain text",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " systems. However, it's always a good idea to have small merge requests and to commit and merge frequently in order to avoid painful conflicts.",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -3312,7 +4702,72 @@
           },
           {
             "children": [],
-            "content": "The majority of the time your merges will automatically merge. All remote merges must be conflict-free and automatically mergeable in order to be merged.",
+            "content": "The majority of the time your merges will automatically merge. All remote merges must be conflict-free and automatically mergeable in order to be merged. If you have a merge request that cannot be merged due to a conflict. It's easy to fix.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "In your local repository, pull the base branch of the merge request. Next switch back to the branch of the merge request (still locally). Finally, merge the base branch into your branch. After resolving the conflict, push your new merge commit up to the remote repository. This will allow your merge request to be merged.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -3690,7 +5145,33 @@
           },
           {
             "children": [],
-            "content": "Remote repositories are fairly similar to local repositories. The biggest difference is that remote repositories are ",
+            "content": "Remote repositories are fairly similar to local repositories. The biggest ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "diff",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "erence is that remote repositories are ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -3716,7 +5197,59 @@
           },
           {
             "children": [],
-            "content": ". You cannot create branches or commits remotely. We will continue using our example from the ",
+            "content": ". You cannot create ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "branches",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " or ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "commits",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " remotely. We will continue using our example from the ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -6342,7 +7875,33 @@
           },
           {
             "children": [],
-            "content": "We will return to our local repository in the section following the next. First we will cover merge requests and remote merging.",
+            "content": "We will return to our ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "local repository",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " in the section following the next. First we will cover merge requests and remote merging.",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -12783,8 +14342,22 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "announcements",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "announcements",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": true,
@@ -12902,34 +14475,48 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "new ",
-                    "type": "text",
-                    "styles": {
-                      "isBold": true,
-                      "isItalic": false,
-                      "isUnderlined": false,
-                      "isStrikethrough": false,
-                      "isSuperscript": false,
-                      "isSubscript": false
-                    }
-                  },
-                  {
-                    "children": [],
-                    "content": "plugins",
-                    "type": "text",
-                    "styles": {
-                      "isBold": true,
-                      "isItalic": false,
-                      "isUnderlined": false,
-                      "isStrikethrough": false,
-                      "isSuperscript": false,
-                      "isSubscript": false
-                    }
-                  },
-                  {
-                    "children": [],
-                    "content": " ",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "new ",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      },
+                      {
+                        "children": [],
+                        "content": "plugins",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      },
+                      {
+                        "children": [],
+                        "content": " ",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": true,
@@ -13073,8 +14660,22 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "new repositories ",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "new repositories ",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": true,
@@ -20151,7 +21752,33 @@
           },
           {
             "children": [],
-            "content": "branch locally. Our commits will still always be there but we no longer need the branch.",
+            "content": "branch locally. Our ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "commits",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " will still always be there but we no longer need the branch.",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -25398,7 +27025,33 @@
           },
           {
             "children": [],
-            "content": " Plugins are small UI applications directly managed by ",
+            "content": " ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Plugins",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " are small UI applications directly managed by ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -25580,7 +27233,7 @@
           },
           {
             "children": [],
-            "content": " which outlines the type of content persisted by that plugin. Plugins can read and write to an external upstream plugin's store when the plugin declares the upstream plugin as a dependency. In this sense, ",
+            "content": " which outlines the type of content persisted by that plugin. ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -25593,7 +27246,33 @@
           },
           {
             "children": [],
-            "content": "plugins function both like applications and programming dependencies.",
+            "content": "Plugins",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " can read and write to an external upstream plugin's store when the plugin declares the upstream plugin as a dependency. In this sense, ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "plugins",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -25606,7 +27285,72 @@
           },
           {
             "children": [],
-            "content": " Plugins can also establish relationships between their internal store structures and the external structures of upstream plugins. Plugin developers can specify cascading behaviors in a plugin's ",
+            "content": " function both like applications and programming dependencies.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Plugins",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " can also establish relationships between their internal store structures and the external structures of upstream ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "plugins",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ". Plugin developers can specify cascading behaviors in a plugin's ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -25632,7 +27376,33 @@
           },
           {
             "children": [],
-            "content": ", making plugins especially valuable for centralizing related content.",
+            "content": ", making ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "plugins",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " especially valuable for centralizing related content.",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -28206,20 +29976,7 @@
           },
           {
             "children": [],
-            "content": "identity path",
-            "type": "text",
-            "styles": {
-              "isBold": false,
-              "isItalic": true,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": ",",
+            "content": "identity path,",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -28638,8 +30395,22 @@
               {
                 "children": [
                   {
-                    "children": [],
-                    "content": "Addition",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "Addition",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": true,
@@ -28652,7 +30423,7 @@
                   },
                   {
                     "children": [],
-                    "content": " - We will add a new translation phrase to our LocalizedKeys ",
+                    "content": " - We will add a new translation phrase to our ",
                     "type": "text",
                     "styles": {
                       "isBold": false,
@@ -28665,7 +30436,47 @@
                   },
                   {
                     "children": [],
-                    "content": "\"Logout\"",
+                    "content": "LocalizedKeys",
+                    "type": "text",
+                    "styles": {
+                      "isBold": false,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  },
+                  {
+                    "children": [],
+                    "content": " ",
+                    "type": "text",
+                    "styles": {
+                      "isBold": false,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "\"Logout\"",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": false,
@@ -28704,8 +30515,22 @@
               {
                 "children": [
                   {
-                    "children": [],
-                    "content": "Update Value",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "Update Value",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": true,
@@ -28730,8 +30555,22 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "\"Welcome Hero\" ",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "\"Welcome Hero\" ",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": false,
@@ -28756,8 +30595,22 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "\"Welcome to our website\"",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "\"Welcome to our website\"",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": false,
@@ -28782,8 +30635,22 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "\"Welcome to our app\"",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "\"Welcome to our app\"",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": false,
@@ -28822,8 +30689,22 @@
               {
                 "children": [
                   {
-                    "children": [],
-                    "content": "Removal",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "Removal",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": true,
@@ -28848,8 +30729,22 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "\"Welcome Hero\"",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "\"Welcome Hero\"",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": false,
@@ -31523,7 +33418,33 @@
             "displayValue": [
               {
                 "children": [],
-                "content": "Why not git (for structured data)?😺",
+                "content": "Why not ",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              },
+              {
+                "children": [],
+                "content": "git",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": false,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              },
+              {
+                "children": [],
+                "content": " (for structured data)?😺",
                 "type": "text",
                 "styles": {
                   "isBold": false,
@@ -33395,21 +35316,35 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "left ",
-                    "type": "text",
-                    "styles": {
-                      "isBold": false,
-                      "isItalic": true,
-                      "isUnderlined": false,
-                      "isStrikethrough": false,
-                      "isSuperscript": false,
-                      "isSubscript": false
-                    }
-                  },
-                  {
-                    "children": [],
-                    "content": "LCS",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "left ",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      },
+                      {
+                        "children": [],
+                        "content": "LCS",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": false,
@@ -33434,8 +35369,22 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "BCE",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "BCE",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": true,
@@ -33513,34 +35462,48 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "right ",
-                    "type": "text",
-                    "styles": {
-                      "isBold": false,
-                      "isItalic": true,
-                      "isUnderlined": false,
-                      "isStrikethrough": false,
-                      "isSuperscript": false,
-                      "isSubscript": false
-                    }
-                  },
-                  {
-                    "children": [],
-                    "content": "LCS",
-                    "type": "text",
-                    "styles": {
-                      "isBold": false,
-                      "isItalic": true,
-                      "isUnderlined": false,
-                      "isStrikethrough": false,
-                      "isSuperscript": false,
-                      "isSubscript": false
-                    }
-                  },
-                  {
-                    "children": [],
-                    "content": " ",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "right ",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      },
+                      {
+                        "children": [],
+                        "content": "LCS",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      },
+                      {
+                        "children": [],
+                        "content": " ",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": false,
@@ -33565,8 +35528,22 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "BC.",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "BC.",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": true,
@@ -33631,8 +35608,22 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "BCE ",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "BCE ",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": true,
@@ -33683,8 +35674,22 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "BC",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "BC",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": true,
@@ -33709,34 +35714,48 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "Greatest Common ",
-                    "type": "text",
-                    "styles": {
-                      "isBold": false,
-                      "isItalic": true,
-                      "isUnderlined": false,
-                      "isStrikethrough": false,
-                      "isSuperscript": false,
-                      "isSubscript": false
-                    }
-                  },
-                  {
-                    "children": [],
-                    "content": "LCS",
-                    "type": "text",
-                    "styles": {
-                      "isBold": false,
-                      "isItalic": true,
-                      "isUnderlined": false,
-                      "isStrikethrough": false,
-                      "isSuperscript": false,
-                      "isSubscript": false
-                    }
-                  },
-                  {
-                    "children": [],
-                    "content": " ",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "Greatest Common ",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      },
+                      {
+                        "children": [],
+                        "content": "LCS",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      },
+                      {
+                        "children": [],
+                        "content": " ",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": false,
@@ -33813,8 +35832,22 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "BC.",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "BC.",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": true,
@@ -34790,21 +36823,35 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "left ",
-                    "type": "text",
-                    "styles": {
-                      "isBold": false,
-                      "isItalic": true,
-                      "isUnderlined": false,
-                      "isStrikethrough": false,
-                      "isSuperscript": false,
-                      "isSubscript": false
-                    }
-                  },
-                  {
-                    "children": [],
-                    "content": "LCS",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "left ",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      },
+                      {
+                        "children": [],
+                        "content": "LCS",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": false,
@@ -34829,8 +36876,22 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "BCE",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "BCE",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": true,
@@ -34908,34 +36969,48 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "right ",
-                    "type": "text",
-                    "styles": {
-                      "isBold": false,
-                      "isItalic": true,
-                      "isUnderlined": false,
-                      "isStrikethrough": false,
-                      "isSuperscript": false,
-                      "isSubscript": false
-                    }
-                  },
-                  {
-                    "children": [],
-                    "content": "LCS",
-                    "type": "text",
-                    "styles": {
-                      "isBold": false,
-                      "isItalic": true,
-                      "isUnderlined": false,
-                      "isStrikethrough": false,
-                      "isSuperscript": false,
-                      "isSubscript": false
-                    }
-                  },
-                  {
-                    "children": [],
-                    "content": " ",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "right ",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      },
+                      {
+                        "children": [],
+                        "content": "LCS",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      },
+                      {
+                        "children": [],
+                        "content": " ",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": false,
@@ -34960,8 +37035,22 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "BC.",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "BC.",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": true,
@@ -35026,8 +37115,22 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "BCE ",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "BCE ",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": true,
@@ -35078,8 +37181,22 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "BC",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "BC",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": true,
@@ -35104,34 +37221,48 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "Greatest Common ",
-                    "type": "text",
-                    "styles": {
-                      "isBold": false,
-                      "isItalic": true,
-                      "isUnderlined": false,
-                      "isStrikethrough": false,
-                      "isSuperscript": false,
-                      "isSubscript": false
-                    }
-                  },
-                  {
-                    "children": [],
-                    "content": "LCS",
-                    "type": "text",
-                    "styles": {
-                      "isBold": false,
-                      "isItalic": true,
-                      "isUnderlined": false,
-                      "isStrikethrough": false,
-                      "isSuperscript": false,
-                      "isSubscript": false
-                    }
-                  },
-                  {
-                    "children": [],
-                    "content": " ",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "Greatest Common ",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      },
+                      {
+                        "children": [],
+                        "content": "LCS",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      },
+                      {
+                        "children": [],
+                        "content": " ",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": false,
@@ -35208,8 +37339,22 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "BC.",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "BC.",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": true,
@@ -43000,8 +45145,22 @@
               {
                 "children": [
                   {
-                    "children": [],
-                    "content": "Addition",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "Addition",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": true,
@@ -43026,8 +45185,22 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "\"Logout\"",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "\"Logout\"",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": false,
@@ -43066,8 +45239,22 @@
               {
                 "children": [
                   {
-                    "children": [],
-                    "content": "Update Value",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "Update Value",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": true,
@@ -43092,8 +45279,22 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "\"Welcome Hero\" ",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "\"Welcome Hero\" ",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": false,
@@ -43118,8 +45319,22 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "\"Welcome to our website\"",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "\"Welcome to our website\"",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": false,
@@ -43144,8 +45359,22 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "\"Welcome to our app\"",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "\"Welcome to our app\"",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": false,
@@ -43184,8 +45413,22 @@
               {
                 "children": [
                   {
-                    "children": [],
-                    "content": "Removal",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "Removal",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": true,
@@ -43210,8 +45453,22 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "\"Welcome Hero\"",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "\"Welcome Hero\"",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": false,
@@ -46667,70 +48924,6 @@
             }
           }
         ]
-      },
-      "main.hello_world": {
-        "phraseKey": "main.hello_world",
-        "variables": {},
-        "contentVariables": {},
-        "styleClasses": {},
-        "args": {},
-        "links": {},
-        "interpolations": {},
-        "styledContents": {},
-        "phrase": [
-          {
-            "children": [],
-            "content": "Hello World from ",
-            "type": "text",
-            "styles": {
-              "isBold": true,
-              "isItalic": false,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": "Floro",
-            "type": "text",
-            "styles": {
-              "isBold": true,
-              "isItalic": false,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": "!",
-            "type": "text",
-            "styles": {
-              "isBold": true,
-              "isItalic": false,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": "\n",
-            "type": "text",
-            "styles": {
-              "isBold": false,
-              "isItalic": false,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          }
-        ]
       }
     },
     "ZH": {
@@ -46738,13 +48931,25 @@
         "phraseKey": "product_docs.advanced_commands_docs",
         "variables": {},
         "contentVariables": {
-          "docSearch": "string"
+          "docSearch": "string",
+          "shaGraph": "string",
+          "stashing": "string",
+          "popStash": "string",
+          "clearPluginStorage": "string",
+          "changeHead": "string",
+          "reverting": "string"
         },
         "styleClasses": {
           "mainTitle": "string"
         },
         "args": {
           "docSearch": "string",
+          "shaGraph": "string",
+          "stashing": "string",
+          "popStash": "string",
+          "clearPluginStorage": "string",
+          "changeHead": "string",
+          "reverting": "string",
           "mainTitle": "string"
         },
         "links": {},
@@ -46853,6 +49058,1215 @@
             "content": "\n",
             "type": "text",
             "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "You don't need to know the ins and outs of ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " to make good use of it. However, there are times when you may get into a pickle and some advanced ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " commands may come in handy. Problems like, how do we undo a commit are pretty core to ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " and version control in general.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "content": "\n",
+            "type": "text",
+            "children": [],
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Stashing & Discarding",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "When you are in edit mode you will notice there is an option to ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "stash",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " or ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "discard",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " your changes.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{stashing}",
+            "type": "content-variable",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Discarding",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " means you are  deleting your ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "work in progress",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " (",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "WIP",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ") ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "permanently",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ".",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " Discarding restores your state to the state of the last commit. If you are positive you do not want to commit your changes or you've made a huge mistake, this is a useful option.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Stashing",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " is like a temporary discard. Instead of deleting your ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "work in progress",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ", you store it in a stash (each commit has its own stash). If you want to restore your stash, you may be able to restore if your new changes do not conflict with your stashed changes. If your new changes do conflict with your stashed changes, you may have to discard your new ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "work in progress",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ".",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{popStash}",
+            "type": "content-variable",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "When you have stashed changes that are able to be applied to your current changes, you will see the ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "pop stash ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "button is available to you. After, clicking, you should see your restored changes.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "content": "\n",
+            "type": "text",
+            "children": [],
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Clearing Plugin Client Storage",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Plugins",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ", like websites, have the ability to store information in something similar to website cookies. A plugin's client storage might be used to save an API key or some preferred setting of the user that should not be persisted in the ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "plugin state",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " store. You may notice there is a \"",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "clear plugin storage\"",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": true,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " option available when a plugin is storing some information using client storage. ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Plugins",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " cannot access each other's client storage.\n\n\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{clearPluginStorage}",
+            "type": "content-variable",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "content": "\n",
+            "type": "text",
+            "children": [],
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Undoing Changes\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\nThere are two ways to undo a change in ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ". Generally speaking, you will ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "revert",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " a change if you are undoing a change remotely or on a shared branch. However, if you are the only person working on a branch it may be easier to change the head of your branch to a past commit.\n\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Changing the Branch Head",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "  \nTo change a branch's head, you need to click the ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "edit branch ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "button locally. From there you will see a button called ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "perform surgery.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " Manually editing branches can get a little bit messy. At times. Make sure your base branch is correct after editing a branch head.\n\n \n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{changeHead}",
+            "type": "content-variable",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n\nNow all you have to do is hover over the commit you wish to update your branch to and select that commit by pressing ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "change head",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ". Your previous commit will not be deleted, so if you need, you can always reset your branch head back to the original commit. After clicking ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "edit branch,",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " your branch will be updated.\n\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Reverting a Change\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\nSometimes we want to undo a commit, but other people may be working on the same branch as us. This can lead to conflicts and a lot of toe-stepping. In this case we ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "revert ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "our changes. Reverting has the same end effect as rolling back a branch, however, reverting creates a new commit that undoes the changes between the last commit and the commit being reverted. This is useful when a branch is shared by multiple contributors since the reversion does not alter the version history (it just adds to it).\n\n\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{reverting}",
+            "type": "content-variable",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
               "isBold": false,
               "isItalic": false,
               "isUnderlined": false,
@@ -46905,7 +50319,33 @@
             "displayValue": [
               {
                 "children": [],
-                "content": "advanced floro commands",
+                "content": "advanced ",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": true,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              },
+              {
+                "children": [],
+                "content": "floro",
+                "type": "text",
+                "styles": {
+                  "isBold": false,
+                  "isItalic": false,
+                  "isUnderlined": true,
+                  "isStrikethrough": false,
+                  "isSuperscript": false,
+                  "isSubscript": false
+                }
+              },
+              {
+                "children": [],
+                "content": " commands",
                 "type": "text",
                 "styles": {
                   "isBold": false,
@@ -47080,6 +50520,19 @@
           },
           {
             "children": [],
+            "content": "👉 ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
             "content": "You can skip the top section of this page if you are not an engineer or you are not familiar with ",
             "type": "text",
             "styles": {
@@ -47106,7 +50559,7 @@
           },
           {
             "children": [],
-            "content": "! It's okay.",
+            "content": "!",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -47652,7 +51105,7 @@
           },
           {
             "children": [],
-            "content": "Our first user's branch is out of date, since C was appended to the main branch. To fix this, they need to merge the main branch into their branch (F1). We could describe this operation as the following",
+            "content": "Since commit C has been appended to the main branch, our first user's branch is out of date. To fix this, they need to merge the main branch into their branch (F1). We could describe this operation as the following:",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -48029,7 +51482,7 @@
           },
           {
             "children": [],
-            "content": "This time the most recent common commit ancestor between main and F2 was commit B. Therefore the only change we had to rebase was commit C. As we've already rewritten the rebase of commit C as C' when it is connected to commit Y, we rewrote the second rebased version of commit C as C\", whose parent is commit J. Finally, commit M1 is the merge commit between J and C.",
+            "content": "This time the most recent common commit ancestor between main and F2 was commit B. Therefore the only change we had to rebase was commit C. As we've already rewritten the rebase of commit C as C' when its parent is commit Y, we rewrote the second rebased version of commit C as C\", whose parent is commit J. Finally, commit M1 is the merge commit between J and C.",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -49264,10 +52717,49 @@
           },
           {
             "children": [],
-            "content": " from the version control panel, we need to select what we are comparing from ",
+            "content": " from the version control panel, ",
             "type": "text",
             "styles": {
               "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "we need to change the ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "comparing selector",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " from ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
               "isItalic": false,
               "isUnderlined": false,
               "isStrikethrough": false,
@@ -49280,7 +52772,7 @@
             "content": "uncommitted changes ",
             "type": "text",
             "styles": {
-              "isBold": false,
+              "isBold": true,
               "isItalic": true,
               "isUnderlined": false,
               "isStrikethrough": false,
@@ -49293,7 +52785,7 @@
             "content": "to ",
             "type": "text",
             "styles": {
-              "isBold": false,
+              "isBold": true,
               "isItalic": false,
               "isUnderlined": false,
               "isStrikethrough": false,
@@ -49303,7 +52795,20 @@
           },
           {
             "children": [],
-            "content": "branch. ",
+            "content": "branch",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ". ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -49342,7 +52847,7 @@
           },
           {
             "children": [],
-            "content": ". We can now see above the merge button that there is a warning informing us that we cannot automatically merge. We will have to reconcile a ",
+            "content": ". We can now see above the merge button that there is a warning informing us that we cannot automatically merge. We will have to reconcile the ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -49368,7 +52873,7 @@
           },
           {
             "children": [],
-            "content": ".",
+            "content": " manually.",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -49927,7 +53432,33 @@
           },
           {
             "children": [],
-            "content": "Once you've resolved your merge, you're done. ",
+            "content": "Once you've resolved your merge, you're done. Just click the ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "resolve merge ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "button. ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -49953,7 +53484,59 @@
           },
           {
             "children": [],
-            "content": "s do occur in floro, but due to the nature of structural content, they are far less common than in plain text systems. However, it's always a good idea to have small merge requests and to commit and merge frequently in order to avoid painful conflicts.",
+            "content": "s do occur in ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ", but due to the nature of structural content, they are far less common than in ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "plain text",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " systems. However, it's always a good idea to have small merge requests and to commit and merge frequently in order to avoid painful conflicts.",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -50031,7 +53614,72 @@
           },
           {
             "children": [],
-            "content": "The majority of the time your merges will automatically merge. All remote merges must be conflict-free and automatically mergeable in order to be merged.",
+            "content": "The majority of the time your merges will automatically merge. All remote merges must be conflict-free and automatically mergeable in order to be merged. If you have a merge request that cannot be merged due to a conflict. It's easy to fix.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "In your local repository, pull the base branch of the merge request. Next switch back to the branch of the merge request (still locally). Finally, merge the base branch into your branch. After resolving the conflict, push your new merge commit up to the remote repository. This will allow your merge request to be merged.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -50409,7 +54057,33 @@
           },
           {
             "children": [],
-            "content": "Remote repositories are fairly similar to local repositories. The biggest difference is that remote repositories are ",
+            "content": "Remote repositories are fairly similar to local repositories. The biggest ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "diff",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "erence is that remote repositories are ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -50435,7 +54109,59 @@
           },
           {
             "children": [],
-            "content": ". You cannot create branches or commits remotely. We will continue using our example from the ",
+            "content": ". You cannot create ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "branches",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " or ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "commits",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " remotely. We will continue using our example from the ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -53061,7 +56787,33 @@
           },
           {
             "children": [],
-            "content": "We will return to our local repository in the section following the next. First we will cover merge requests and remote merging.",
+            "content": "We will return to our ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "local repository",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " in the section following the next. First we will cover merge requests and remote merging.",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -59502,8 +63254,22 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "announcements",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "announcements",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": true,
@@ -59621,34 +63387,48 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "new ",
-                    "type": "text",
-                    "styles": {
-                      "isBold": true,
-                      "isItalic": false,
-                      "isUnderlined": false,
-                      "isStrikethrough": false,
-                      "isSuperscript": false,
-                      "isSubscript": false
-                    }
-                  },
-                  {
-                    "children": [],
-                    "content": "plugins",
-                    "type": "text",
-                    "styles": {
-                      "isBold": true,
-                      "isItalic": false,
-                      "isUnderlined": false,
-                      "isStrikethrough": false,
-                      "isSuperscript": false,
-                      "isSubscript": false
-                    }
-                  },
-                  {
-                    "children": [],
-                    "content": " ",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "new ",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      },
+                      {
+                        "children": [],
+                        "content": "plugins",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      },
+                      {
+                        "children": [],
+                        "content": " ",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": true,
@@ -59792,8 +63572,22 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "new repositories ",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "new repositories ",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": true,
@@ -66870,7 +70664,33 @@
           },
           {
             "children": [],
-            "content": "branch locally. Our commits will still always be there but we no longer need the branch.",
+            "content": "branch locally. Our ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "commits",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " will still always be there but we no longer need the branch.",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -88068,8 +91888,22 @@
               {
                 "children": [
                   {
-                    "children": [],
-                    "content": "Addition",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "Addition",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": true,
@@ -88094,8 +91928,22 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "\"Logout\"",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "\"Logout\"",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": false,
@@ -88134,8 +91982,22 @@
               {
                 "children": [
                   {
-                    "children": [],
-                    "content": "Update Value",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "Update Value",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": true,
@@ -88160,8 +92022,22 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "\"Welcome Hero\" ",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "\"Welcome Hero\" ",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": false,
@@ -88186,8 +92062,22 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "\"Welcome to our website\"",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "\"Welcome to our website\"",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": false,
@@ -88212,8 +92102,22 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "\"Welcome to our app\"",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "\"Welcome to our app\"",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": false,
@@ -88252,8 +92156,22 @@
               {
                 "children": [
                   {
-                    "children": [],
-                    "content": "Removal",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "Removal",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": true,
@@ -88278,8 +92196,22 @@
                     }
                   },
                   {
-                    "children": [],
-                    "content": "\"Welcome Hero\"",
+                    "children": [
+                      {
+                        "children": [],
+                        "content": "\"Welcome Hero\"",
+                        "type": "text",
+                        "styles": {
+                          "isBold": false,
+                          "isItalic": false,
+                          "isUnderlined": false,
+                          "isStrikethrough": false,
+                          "isSuperscript": false,
+                          "isSubscript": false
+                        }
+                      }
+                    ],
+                    "content": "",
                     "type": "text",
                     "styles": {
                       "isBold": false,
@@ -91423,70 +95355,6 @@
             }
           }
         ]
-      },
-      "main.hello_world": {
-        "phraseKey": "main.hello_world",
-        "variables": {},
-        "contentVariables": {},
-        "styleClasses": {},
-        "args": {},
-        "links": {},
-        "interpolations": {},
-        "styledContents": {},
-        "phrase": [
-          {
-            "children": [],
-            "content": "Hello World from ",
-            "type": "text",
-            "styles": {
-              "isBold": true,
-              "isItalic": false,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": "Floro",
-            "type": "text",
-            "styles": {
-              "isBold": true,
-              "isItalic": false,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": "!",
-            "type": "text",
-            "styles": {
-              "isBold": true,
-              "isItalic": false,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": "\n",
-            "type": "text",
-            "styles": {
-              "isBold": false,
-              "isItalic": false,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          }
-        ]
       }
     }
   },
@@ -91822,10 +95690,6 @@
     "components.copied": {
       "groupName": "Components",
       "phraseKey": "copied"
-    },
-    "main.hello_world": {
-      "groupName": "Main",
-      "phraseKey": "hello world"
     }
   }
 }

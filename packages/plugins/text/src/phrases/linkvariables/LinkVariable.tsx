@@ -124,6 +124,7 @@ interface Props {
   onRemove: (variable: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>"]) => void;
   searchText: string;
   isSearching: boolean;
+  onFocusSearch: () => void;
 }
 
 const LinkVariable = (props: Props) => {
@@ -985,6 +986,7 @@ const LinkVariable = (props: Props) => {
                 (!sourceLinkTranslation?.linkDisplayValue &&
                   (linkDisplayValue?.plainText?.trim() ?? "") != "")
               }
+              onSearch={props.onFocusSearch}
             />
           )}
           {commandMode != "edit" && (

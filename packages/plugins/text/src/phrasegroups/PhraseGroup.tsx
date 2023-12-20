@@ -1246,8 +1246,15 @@ const PhraseGroup = (props: Props) => {
             }
           }
 
-          for (let phraseSection of phrase?.phraseSections ?? []) {
-            for (let localeRule of phraseSection?.localeRules ?? []) {
+          for (let styledContent of phrase?.styledContents ?? []) {
+            if (
+              (styledContent.name ?? "")
+                ?.toLowerCase()
+                .indexOf(searchText.toLowerCase().trim()) != -1
+            ) {
+              return true;
+            }
+            for (let localeRule of styledContent?.localeRules ?? []) {
               if (localeRule.id != topLevelLocaleRef) {
                 continue;
               }
@@ -1260,6 +1267,7 @@ const PhraseGroup = (props: Props) => {
               }
             }
           }
+
 
           for (let variant of phrase?.interpolationVariants ?? []) {
             for (let translation of variant?.localeRules ?? []) {
@@ -1306,29 +1314,6 @@ const PhraseGroup = (props: Props) => {
     if (!isManualSearching || !applicationState) {
       return phrasesToRender;
     }
-
-    const locale = getReferencedObject(applicationState, topLevelLocaleRef);
-    const localeSettings = getReferencedObject(
-      applicationState,
-      "$(text).localeSettings"
-    );
-    const defaultLocale = localeSettings.locales.find(
-      (l) =>
-        makeQueryRef(
-          "$(text).localeSettings.locales.localeCode<?>",
-          l.localeCode
-        ) == localeSettings.defaultLocaleRef
-    );
-    const translateFromLocale = locale.defaultTranslateFromLocaleRef
-      ? getReferencedObject(
-          applicationState,
-          locale.defaultTranslateFromLocaleRef
-        )
-      : defaultLocale;
-    const translateFromLocaleRef = makeQueryRef(
-      "$(text).localeSettings.locales.localeCode<?>",
-      translateFromLocale?.localeCode as string
-    );
     return phrasesToRender.filter((phrase) => {
           if (
             (phrase?.phraseKey ?? "")
@@ -1432,8 +1417,15 @@ const PhraseGroup = (props: Props) => {
             }
           }
 
-          for (let phraseSection of phrase?.phraseSections ?? []) {
-            for (let localeRule of phraseSection?.localeRules ?? []) {
+          for (let styledContent of phrase?.styledContents ?? []) {
+            if (
+              (styledContent.name ?? "")
+                ?.toLowerCase()
+                .indexOf(manualSearchText.toLowerCase().trim()) != -1
+            ) {
+              return true;
+            }
+            for (let localeRule of styledContent?.localeRules ?? []) {
               if (localeRule.id != topLevelLocaleRef) {
                 continue;
               }

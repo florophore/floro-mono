@@ -674,7 +674,12 @@ const RichTextEditor = (props: Props) => {
                 fontFamily: "MavenPro",
                 top: 0,
                 position: "absolute",
+                display: "inline-block",
+                whiteSpace: "break-spaces",
+                borderInline: `1px solid transparent`,
                 zIndex: 0,
+                wordWrap: "break-word",
+                width: '100%'
               }}
             >
               <div
@@ -713,7 +718,12 @@ const RichTextEditor = (props: Props) => {
                   display: "inline-block",
                   outline: "none",
                   color: props.isDebugMode ? "red" : "transparent",
+                  //color: "transparent",
                   caretColor: theme.colors.contrastText,
+                  borderInline: `1px solid transparent`,
+                  whiteSpace: "pre-line",
+                  position: "relative",
+                  zIndex: 0
                 }}
                 onKeyDown={onDelayedKeyDown}
                 onClick={onDelayedKeyDown}

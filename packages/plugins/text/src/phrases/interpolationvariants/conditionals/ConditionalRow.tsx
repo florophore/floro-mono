@@ -196,6 +196,7 @@ interface Props {
   index: number;
   searchText: string;
   isSearching: boolean;
+  onFocusSearch: () => void;
 }
 
 const ConditionalRow = (props: Props): React.ReactElement|null => {
@@ -802,6 +803,7 @@ const ConditionalRow = (props: Props): React.ReactElement|null => {
             content={resultant?.richTextHtml ?? ""}
             onSetContent={onSetResultantValueContent}
             placeholder={`write the resultant value...`}
+            onSearch={props.onFocusSearch}
           />
         )}
         {commandMode != "edit" && (

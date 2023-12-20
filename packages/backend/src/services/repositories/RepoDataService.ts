@@ -679,6 +679,7 @@ export default class RepoDataService {
       ?.map((c) => {
         return {
           sha: c.sha as string,
+          originalSha: c.originalSha as string,
           idx: c.idx as number,
           parent: c.parent,
         } as CommitExchange;

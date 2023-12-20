@@ -271,6 +271,7 @@ const LocalRepoSubHeader = (props: Props) => {
             size={"medium"}
             textSize={"small"}
             onClick={updateToViewMode}
+            isLoading={updateCommand.isLoading}
           />
         </Container>
       )}
@@ -290,6 +291,7 @@ const LocalRepoSubHeader = (props: Props) => {
               bg={"orange"}
               size={"small"}
               onClick={updateToEditMode}
+              isLoading={updateCommand.isLoading}
             />
           )}
           {isSelectMode && (
@@ -318,6 +320,7 @@ const LocalRepoSubHeader = (props: Props) => {
             bg={"purple"}
             size={"small"}
             onClick={updateToViewMode}
+            isLoading={updateCommand.isLoading}
           />
         </Container>
       )}

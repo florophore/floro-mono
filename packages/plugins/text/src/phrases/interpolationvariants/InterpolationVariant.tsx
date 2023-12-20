@@ -111,6 +111,7 @@ interface Props {
   onRemove: (variable: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>"]) => void;
   searchText: string;
   isSearching: boolean;
+  onFocusSearch: () => void;
 }
 
 const InterpolationVariant = (props: Props) => {
@@ -784,6 +785,7 @@ const InterpolationVariant = (props: Props) => {
             interpolationVariant={props.interpolationVariant}
             searchText={props.searchText}
             isSearching={props.isSearching}
+            onFocusSearch={props.onFocusSearch}
           />
         )}
         {showDefaultResult && (
@@ -892,6 +894,7 @@ const InterpolationVariant = (props: Props) => {
                     (!sourceDefaultValue &&
                       (defaultValue?.plainText?.trim() ?? "") != "")
                   }
+                  onSearch={props.onFocusSearch}
                 />
               )}
               {commandMode != "edit" && (

@@ -226,7 +226,9 @@ const LinkEditor = (props: Props) => {
                   color: "transparent",
                   whiteSpace: 'nowrap',
                   caretColor: theme.colors.contrastText,
-                  fontWeight: 400
+                  fontWeight: 400,
+                  position: "relative",
+                  zIndex: 0
                 }}
                 onFocus={onFocus}
                 onBlur={onBlur}

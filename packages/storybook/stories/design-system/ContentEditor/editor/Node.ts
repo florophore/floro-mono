@@ -170,9 +170,7 @@ export default class Node {
   public flatten(parent: Node|null) {
 
     for (const child of this.children) {
-      if (child.shouldFlatten()) {
-        child.flatten(this);
-      }
+      child.flatten(this);
     }
 
     for (let i = 0; i < this.children.length; ++i) {

@@ -17,22 +17,23 @@ import { usePlainText, useRichText } from "../../../../../floro_listener/hooks/l
 import DocSearch from "../../DocSearch";
 import { LinkChain } from "../../DocsLink";
 
-import ConflictingBranchesLight from "@floro/main/public/doc_images/product/mergingandconflicts/conflicting_branches.light.png"
-import ConflictingBranchesDark from "@floro/main/public/doc_images/product/mergingandconflicts/conflicting_branches.dark.png"
+import ShaGraphLight from "@floro/main/public/doc_images/product/advancedcommands/sha_graph.light.png"
+import ShaGraphDark from "@floro/main/public/doc_images/product/advancedcommands/sha_graph.dark.png"
 
-import ReadyToMergeLight from "@floro/main/public/doc_images/product/mergingandconflicts/ready_to_merge.light.png"
-import ReadyToMergeDark from "@floro/main/public/doc_images/product/mergingandconflicts/ready_to_merge.dark.png"
+import StashingLight from "@floro/main/public/doc_images/product/advancedcommands/stashing.light.png"
+import StashingDark from "@floro/main/public/doc_images/product/advancedcommands/stashing.dark.png"
 
-import MCYoursLight from "@floro/main/public/doc_images/product/mergingandconflicts/mc_yours.light.png"
-import MCYoursDark from "@floro/main/public/doc_images/product/mergingandconflicts/mc_yours.dark.png"
+import PopStashLight from "@floro/main/public/doc_images/product/advancedcommands/pop_stash.light.png"
+import PopStashDark from "@floro/main/public/doc_images/product/advancedcommands/pop_stash.dark.png"
 
-import MCTheirsLight from "@floro/main/public/doc_images/product/mergingandconflicts/mc_theirs.light.png"
-import MCTheirsDark from "@floro/main/public/doc_images/product/mergingandconflicts/mc_theirs.dark.png"
+import ChangeHeadLight from "@floro/main/public/doc_images/product/advancedcommands/change_head.light.png"
+import ChangeHeadDark from "@floro/main/public/doc_images/product/advancedcommands/change_head.dark.png"
 
-import ManualResolutionLight from "@floro/main/public/doc_images/product/mergingandconflicts/manual_resolution.light.png"
-import ManualResolutionDark from "@floro/main/public/doc_images/product/mergingandconflicts/manual_resolution.dark.png"
+import RevertingLight from "@floro/main/public/doc_images/product/advancedcommands/reverting.light.png"
+import RevertingDark from "@floro/main/public/doc_images/product/advancedcommands/reverting.dark.png"
 
-import { useIcon } from "../../../../../floro_listener/FloroIconsProvider";
+import ClearPluginStorageLight from "@floro/main/public/doc_images/product/advancedcommands/clear_plugin_storage.light.png"
+import ClearPluginStorageDark from "@floro/main/public/doc_images/product/advancedcommands/clear_plugin_storage.dark.png"
 
 
 const AboutWrapper = styled.div`
@@ -129,6 +130,48 @@ function AdvancedCommandsDocs() {
   const mergeAndConflictsDocsTitle = usePlainText("doc_titles.merge_and_conflicts_docs_page_title");
   const advancedCommandsDocsTitle = usePlainText("doc_titles.advanced_commands_docs_page_title");
 
+  const shaGraph = useMemo(() => {
+    if (theme.name == 'light') {
+      return ShaGraphLight;
+    }
+    return ShaGraphDark;
+  }, [theme.name])
+
+  const stashing = useMemo(() => {
+    if (theme.name == 'light') {
+      return StashingLight;
+    }
+    return StashingDark;
+  }, [theme.name])
+
+  const popStash = useMemo(() => {
+    if (theme.name == 'light') {
+      return PopStashLight;
+    }
+    return PopStashDark;
+  }, [theme.name]);
+
+  const changeHead = useMemo(() => {
+    if (theme.name == 'light') {
+      return ChangeHeadLight;
+    }
+    return ChangeHeadDark;
+  }, [theme.name]);
+
+  const reverting = useMemo(() => {
+    if (theme.name == 'light') {
+      return RevertingLight;
+    }
+    return RevertingDark;
+  }, [theme.name]);
+
+  const clearPluginStorage = useMemo(() => {
+    if (theme.name == 'light') {
+      return ClearPluginStorageLight;
+    }
+    return ClearPluginStorageDark;
+  }, [theme.name]);
+
   const lastSectionTitleChain = useMemo((): LinkChain => {
     return {
       label: mergeAndConflictsDocsTitle,
@@ -171,6 +214,36 @@ function AdvancedCommandsDocs() {
           linkChain={titleChain}
           lastSectionTitleChain={lastSectionTitleChain}
         />
+      ),
+      shaGraph: (
+        <div>
+          <ScreenshotImg src={shaGraph}/>
+        </div>
+      ),
+      stashing: (
+        <div>
+          <ScreenshotImg src={stashing}/>
+        </div>
+      ),
+      popStash: (
+        <div>
+          <ScreenshotImg src={popStash}/>
+        </div>
+      ),
+      clearPluginStorage: (
+        <div>
+          <ScreenshotImg src={clearPluginStorage}/>
+        </div>
+      ),
+      changeHead: (
+        <div>
+          <ScreenshotImg src={changeHead}/>
+        </div>
+      ),
+      reverting: (
+        <div>
+          <ScreenshotImg src={reverting}/>
+        </div>
       ),
       mainTitle: function (
         content: ReactElement<any, string | JSXElementConstructor<any>>

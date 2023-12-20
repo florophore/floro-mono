@@ -100,7 +100,6 @@ export interface PhraseKeys {
     "front_page.tag_line":                                FrontPageTagLine;
     "how_it_works.how_it_works_blog":                     HowItWorksHowItWorksBlog;
     "how_it_works.how_it_works_blog_part_2":              HowItWorksHowItWorksBlogPart2;
-    "main.hello_world":                                   MainHelloWorld;
     "meta_tags.about":                                    MetaTagsAbout;
     "meta_tags.advanced_commands_docs":                   MetaTagsAdvancedCommandsDocs;
     "meta_tags.docs":                                     MetaTagsDocs;
@@ -2366,39 +2365,6 @@ export interface HowItWorksHowItWorksBlogPart2_StyledContents {
 export interface HowItWorksHowItWorksBlogPart2_Variables {
 }
 
-export interface MainHelloWorld {
-    args:             MainHelloWorldArgs;
-    contentVariables: MainHelloWorldContentVariables;
-    interpolations:   MainHelloWorldInterpolations;
-    links:            MainHelloWorldLinks;
-    phrase:           TextNode[];
-    phraseKey:        string;
-    styleClasses:     MainHelloWorldStyleClasses;
-    styledContents:   MainHelloWorldStyledContents;
-    variables:        MainHelloWorldVariables;
-}
-
-export interface MainHelloWorldArgs {
-}
-
-export interface MainHelloWorldContentVariables {
-}
-
-export interface MainHelloWorldInterpolations {
-}
-
-export interface MainHelloWorldLinks {
-}
-
-export interface MainHelloWorldStyleClasses {
-}
-
-export interface MainHelloWorldStyledContents {
-}
-
-export interface MainHelloWorldVariables {
-}
-
 export interface MetaTagsAbout {
     args:             MetaTagsAboutArgs;
     contentVariables: MetaTagsAboutContentVariables;
@@ -2775,12 +2741,24 @@ export interface ProductDocsAdvancedCommandsDocs {
 }
 
 export interface ProductDocsAdvancedCommandsDocsArgs {
-    docSearch: string;
-    mainTitle: string;
+    changeHead:         string;
+    clearPluginStorage: string;
+    docSearch:          string;
+    mainTitle:          string;
+    popStash:           string;
+    reverting:          string;
+    shaGraph:           string;
+    stashing:           string;
 }
 
 export interface ProductDocsAdvancedCommandsDocsContentVariables {
-    docSearch: string;
+    changeHead:         string;
+    clearPluginStorage: string;
+    docSearch:          string;
+    popStash:           string;
+    reverting:          string;
+    shaGraph:           string;
+    stashing:           string;
 }
 
 export interface ProductDocsAdvancedCommandsDocsInterpolations {
@@ -3298,7 +3276,6 @@ export interface PhraseKeyDebugInfo {
     "front_page.tag_line":                                DebugInfo;
     "how_it_works.how_it_works_blog":                     DebugInfo;
     "how_it_works.how_it_works_blog_part_2":              DebugInfo;
-    "main.hello_world":                                   DebugInfo;
     "meta_tags.about":                                    DebugInfo;
     "meta_tags.advanced_commands_docs":                   DebugInfo;
     "meta_tags.docs":                                     DebugInfo;

@@ -225,6 +225,7 @@ const TextAppHeader = (props: Props) => {
       props.setGlobalFilterRequiresUpdate(false);
       props.setGlobalFilterUnstranslated(false);
       props.onSetSearchText("");
+      setSearchText("");
     }
   }, [props.showOnlyPinnedPhrases])
 
