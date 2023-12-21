@@ -109,7 +109,12 @@ const ConfirmForcePushModal = (props: Props) => {
         <TopContentContainer>
           <WarningIcon src={icon} />
           <PromptText>
-            {`Pushing will overwrite the latest remote branch head. This will likely result in conflicts and require manual resolution if others are working on the same branch.`}
+            <>
+              {`Pushing will overwrite the latest remote branch head. This will likely result in conflicts and require manual resolution if others are working on the same branch.`}
+              <br/>
+              <br/>
+              <b>{`You should try pulling the remote changes and resolving any conflicts locally before pushing your branch.`}</b>
+            </>
           </PromptText>
         </TopContentContainer>
         <BottomContentContainer>

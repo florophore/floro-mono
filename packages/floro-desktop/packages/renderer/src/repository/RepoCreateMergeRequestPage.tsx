@@ -7,6 +7,7 @@ import {FetchRepositoryByNameDocument, Repository, useFetchRepositoryByNameQuery
 import {useSession} from '@floro/common-react/src/session/session-context';
 import {useUserOrganizations} from '@floro/common-react/src/hooks/offline';
 import RepoController from '@floro/common-react/src/components/repository/RepoController';
+import { useQueryClient } from "react-query";
 
 
 const RepoCreateMergeRequestPage = () => {
@@ -82,9 +83,15 @@ const RepoCreateMergeRequestPage = () => {
       branchId
     },
   });
+
+  const queryClient = useQueryClient();
   useEffect(() => {
     if (subscriptionData?.repositoryUpdated?.id) {
       refetch();
+      queryClient.invalidateQueries([
+        "repo-fetch-info:" + repository.id,
+        "repo-remote-settings:" + repository.id,
+      ])
     }
   }, [subscriptionData])
 

@@ -109,7 +109,16 @@ const ConfirmForcePullModal = (props: Props) => {
         <TopContentContainer>
           <WarningIcon src={icon} />
           <PromptText>
-            {`Pulling will overwrite the latest branch head. Your changes will not be deleted but you may have to cherry-pick or merge your current commits into the new branch head.`}
+            <>
+              {`Pulling will result in a merge conflict.`}{" "}
+              <b>{`If this is anticipated, please ignore this message.`}</b>
+              <br />
+              <br />
+              {` Your changes will not be deleted but you may want to save your changes to a different branch or make note of your current sha.`}
+              <br />
+              <br />
+              {`You can always abort the merge if you are unsure after pulling.`}
+            </>
           </PromptText>
         </TopContentContainer>
         <BottomContentContainer>

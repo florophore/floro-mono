@@ -117,7 +117,7 @@ export default class BranchService {
     const branchRule = await protectedBranchRulesContext.create({
       branchId: mainBranch.branchId,
       branchName: mainBranch.name,
-      disableDirectPushing: !(repository.isPrivate && repository.repoType == "user_repo"),
+      disableDirectPushing: false,//!(repository.isPrivate && repository.repoType == "user_repo"),
       requireApprovalToMerge: !(repository.isPrivate && repository.repoType == "user_repo"),
       automaticallyDeleteMergedFeatureBranches: true,
       anyoneCanCreateMergeRequests: true,
@@ -188,6 +188,11 @@ export default class BranchService {
               roleId: technicalAdminRole.id,
             });
           }
+          await protectedBranchRulesEnabledRoleSettingsContext.create({
+            settingName: "canPushDirectly",
+            protectedBranchRuleId: branchRule.id,
+            roleId: technicalAdminRole.id,
+          });
         }
       }
     }
@@ -440,7 +445,7 @@ export default class BranchService {
       // check commit exists
       if (remoteBranch) {
         const updatedBranch = await branchesContext.updateBranch(remoteBranch, {
-          baseBranchId: floroBranch?.baseBranchId ?? undefined,
+          baseBranchId: floroBranch?.baseBranchId ?? null,
           lastCommit: floroBranch?.lastCommit ?? undefined,
           isMerged,
           isConflictFree

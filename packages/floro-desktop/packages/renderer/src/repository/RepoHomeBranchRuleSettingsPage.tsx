@@ -3,10 +3,11 @@ import OuterNavigator from '@floro/common-react/src/components/outer-navigator/O
 import {useNavigationAnimator} from '@floro/common-react/src/navigation/navigation-animator';
 import {useLinkTitle} from '@floro/common-react/src/components/header_links/HeaderLink';
 import {useParams, useSearchParams} from 'react-router-dom';
-import {FetchRepositoryByNameDocument, Repository, useFetchRepoBranchRuleQuery, useFetchRepositoryByNameQuery, useFetchRepositoryWithSettingsQuery} from '@floro/graphql-schemas/src/generated/main-client-graphql';
+import {FetchRepositoryByNameDocument, Repository, useFetchRepoBranchRuleQuery, useFetchRepositoryByNameQuery, useFetchRepositoryWithSettingsQuery, useRepositoryUpdatesSubscription} from '@floro/graphql-schemas/src/generated/main-client-graphql';
 import {useSession} from '@floro/common-react/src/session/session-context';
 import {useUserOrganizations} from '@floro/common-react/src/hooks/offline';
 import RepoController from '@floro/common-react/src/components/repository/RepoController';
+import { useQueryClient } from "react-query";
 
 const RepoHomeBranchRuleSettingsPage = () => {
   const params = useParams();
@@ -66,6 +67,26 @@ const RepoHomeBranchRuleSettingsPage = () => {
   }, [
     repository
   ]);
+
+  const branchId = searchParams.get('branch');
+  const sha = searchParams.get('sha');
+  const repoSubscription = useRepositoryUpdatesSubscription({
+    variables: {
+      repositoryId: repository?.id,
+      branchId,
+      sha
+    }
+  });
+
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    if (repoSubscription?.data) {
+      queryClient.invalidateQueries([
+        "repo-fetch-info:" + repository.id,
+        "repo-remote-settings:" + repository.id,
+      ])
+    }
+  }, [repoSubscription?.data])
 
   const handleValue = useMemo(() => {
     if (!repository) {

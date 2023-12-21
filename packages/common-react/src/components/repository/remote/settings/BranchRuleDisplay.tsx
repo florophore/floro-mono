@@ -95,11 +95,6 @@ interface Props {
 }
 
 const BranchRuleDisplay = (props: Props) => {
-    const theme = useTheme();
-
-  const linkBase = useRepoLinkBase(props.repository);
-  const { currentUser } = useSession();
-
   const isUserPrivateRepo = useMemo(() => {
     if (props?.repository?.repoType == "user_repo") {
         return props?.repository?.isPrivate;

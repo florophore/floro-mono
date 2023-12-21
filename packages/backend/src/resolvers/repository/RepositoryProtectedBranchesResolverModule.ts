@@ -82,6 +82,74 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
   }
 
   public ProtectedBranchRule: main.ProtectedBranchRuleResolvers = {
+    canPushDirectlyUsers: runWithHooks(
+      () => [this.writeAccessIdsLoader],
+      async (
+        protectedBranchRule: main.ProtectedBranchRule,
+        _,
+        { cacheKey }
+      ) => {
+        if (!protectedBranchRule?.id) {
+          return null;
+        }
+        const protectedBranchRulesEnabledUserSettingsContext =
+          await this.contextFactory.createContext(
+            ProtectedBranchRulesEnabledUserSettingsContext
+          );
+        const enabledUsersForSetting =
+          await protectedBranchRulesEnabledUserSettingsContext.getAllForBranchRuleSetting(
+            protectedBranchRule.id,
+            "canPushDirectly"
+          );
+
+        const cachedWriteAccessIds =
+          this.requestCache.getRepoWriteAccessIds(
+            cacheKey,
+            protectedBranchRule?.repositoryId as string
+          ) ?? new Set<string>();
+        const users = enabledUsersForSetting
+          ?.filter((s) => cachedWriteAccessIds.has(s.userId))
+          ?.map((s) => s.user as User);
+        users.sort?.((a, b) => {
+          if (!a || !b) {
+            return 0;
+          }
+          return `${a?.firstName} ${a?.lastName}`.toLowerCase() >=
+            `${b?.firstName} ${b?.lastName}`.toLowerCase()
+            ? 1
+            : -1;
+        });
+        return users;
+      }
+    ),
+    canPushDirectlyRoles: runWithHooks(
+      () => [],
+      async (protectedBranchRule: main.ProtectedBranchRule) => {
+        if (!protectedBranchRule?.id) {
+          return null;
+        }
+        const protectedBranchRulesEnabledRoleSettingsContext =
+          await this.contextFactory.createContext(
+            ProtectedBranchRuleEnabledRoleSettingsContext
+          );
+        const enabledRolesForSetting =
+          await protectedBranchRulesEnabledRoleSettingsContext.getAllForBranchRuleSetting(
+            protectedBranchRule.id,
+            "canPushDirectly"
+          );
+        const roles = enabledRolesForSetting?.map(
+          (s) => s.role as OrganizationRole
+        );
+        roles.sort((a, b) => {
+          return (a?.name?.toLowerCase?.() ?? "") >=
+            (b?.name?.toLowerCase?.() ?? "")
+            ? 1
+            : -1;
+        });
+        return roles;
+      }
+    ),
+
     canCreateMergeRequestsUsers: runWithHooks(
       () => [this.writeAccessIdsLoader],
       async (
@@ -452,6 +520,10 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
             type: "UNKNOWN_ERROR",
           };
         }
+
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${cachedRepository.id}`, {
+          repositoryUpdated: cachedRepository,
+        });
         return {
           __typename: "CreateBranchRuleSuccess",
           repository: cachedRepository,
@@ -502,6 +574,9 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
             type: "UNKNOWN_ERROR",
           };
         }
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${cachedRepository.id}`, {
+          repositoryUpdated: cachedRepository,
+        });
         return {
           __typename: "DeleteBranchRuleSuccess",
           repository: cachedRepository,
@@ -543,7 +618,9 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
             type: "UNKNOWN_ERROR",
           };
         }
-        //this.repoSettingsService
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${cachedRepository.id}`, {
+          repositoryUpdated: cachedRepository,
+        });
         return {
           __typename: "ProtectedBranchSettingChangeSuccess",
           repository: cachedRepository,
@@ -585,7 +662,9 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
             type: "UNKNOWN_ERROR",
           };
         }
-        //this.repoSettingsService
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${cachedRepository.id}`, {
+          repositoryUpdated: cachedRepository,
+        });
         return {
           __typename: "ProtectedBranchSettingChangeSuccess",
           repository: cachedRepository,
@@ -627,6 +706,9 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
             type: "UNKNOWN_ERROR",
           };
         }
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${cachedRepository.id}`, {
+          repositoryUpdated: cachedRepository,
+        });
         return {
           __typename: "ProtectedBranchSettingChangeSuccess",
           repository: cachedRepository,
@@ -669,7 +751,9 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
             type: "UNKNOWN_ERROR",
           };
         }
-        //this.repoSettingsService
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${cachedRepository.id}`, {
+          repositoryUpdated: cachedRepository,
+        });
         return {
           __typename: "ProtectedBranchSettingChangeSuccess",
           repository: cachedRepository,
@@ -712,6 +796,129 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
             type: "UNKNOWN_ERROR",
           };
         }
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${cachedRepository.id}`, {
+          repositoryUpdated: cachedRepository,
+        });
+        return {
+          __typename: "ProtectedBranchSettingChangeSuccess",
+          repository: cachedRepository,
+          protectedBranchRule,
+        };
+      }
+    ),
+
+    updateCanPushDirectlyUsers: runWithHooks(
+      () => [
+        this.repositoryRemoteSettingsArgsLoader,
+        this.rootRepositoryLoader,
+        this.repoSettingAccessGuard,
+      ],
+      async (
+        _,
+        args: main.MutationUpdateCanPushDirectlyUsersArgs,
+        { cacheKey }
+      ) => {
+        if (!args.protectedBranchRuleId || !args.repositoryId) {
+          return {
+            __typename: "ProtectedBranchSettingChangeError",
+            message: "Misisng Args",
+            type: "MISSING_ARGS_ERROR",
+          };
+        }
+        const cachedRepository =
+          this.requestCache.getRepo(cacheKey, args.repositoryId) ??
+          new Set<string>();
+
+        const protectedBranchRuleEnabledRoleSettingsContext =
+          await this.contextFactory.createContext(
+            ProtectedBranchRuleEnabledRoleSettingsContext
+          );
+
+        const enabledRoles =
+          await protectedBranchRuleEnabledRoleSettingsContext.getAllForBranchRuleSetting(
+            args.protectedBranchRuleId,
+            "canPushDirectly"
+          );
+        const enabledRoleIds = enabledRoles.map((er) => er.roleId);
+
+        const protectedBranchRule =
+          await this.repoSettingsService.updateBranchRuleSettingAccess(
+            cachedRepository,
+            args.protectedBranchRuleId,
+            "canPushDirectly",
+            enabledRoleIds,
+            (args.userIds ?? []) as Array<string>
+          );
+        if (!protectedBranchRule) {
+          return {
+            __typename: "ProtectedBranchSettingChangeError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${cachedRepository.id}`, {
+          repositoryUpdated: cachedRepository,
+        });
+        return {
+          __typename: "ProtectedBranchSettingChangeSuccess",
+          repository: cachedRepository,
+          protectedBranchRule,
+        };
+      }
+    ),
+
+    updateCanPushDirectlyRoles: runWithHooks(
+      () => [
+        this.repositoryRemoteSettingsArgsLoader,
+        this.rootRepositoryLoader,
+        this.repoSettingAccessGuard,
+      ],
+      async (
+        _,
+        args: main.MutationUpdateCanPushDirectlyRolesArgs,
+        { cacheKey }
+      ) => {
+        if (!args.protectedBranchRuleId || !args.repositoryId) {
+          return {
+            __typename: "ProtectedBranchSettingChangeError",
+            message: "Misisng Args",
+            type: "MISSING_ARGS_ERROR",
+          };
+        }
+        const cachedRepository =
+          this.requestCache.getRepo(cacheKey, args.repositoryId) ??
+          new Set<string>();
+
+        const protectedBranchRulesEnabledUserSettingsContext =
+          await this.contextFactory.createContext(
+            ProtectedBranchRulesEnabledUserSettingsContext
+          );
+
+        const enabledUsers =
+          await protectedBranchRulesEnabledUserSettingsContext.getAllForBranchRuleSetting(
+            args.protectedBranchRuleId,
+            "canPushDirectly"
+          );
+        const enabledUserIds = enabledUsers.map((er) => er.userId);
+
+        const protectedBranchRule =
+          await this.repoSettingsService.updateBranchRuleSettingAccess(
+            cachedRepository,
+            args.protectedBranchRuleId,
+            "canPushDirectly",
+            (args.roleIds ?? []) as Array<string>,
+            enabledUserIds
+          );
+        if (!protectedBranchRule) {
+          return {
+            __typename: "ProtectedBranchSettingChangeError",
+            message: "Unknown Error",
+            type: "UNKNOWN_ERROR",
+          };
+        }
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${cachedRepository.id}`, {
+          repositoryUpdated: cachedRepository,
+        });
         return {
           __typename: "ProtectedBranchSettingChangeSuccess",
           repository: cachedRepository,
@@ -769,6 +976,9 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
             type: "UNKNOWN_ERROR",
           };
         }
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${cachedRepository.id}`, {
+          repositoryUpdated: cachedRepository,
+        });
         return {
           __typename: "ProtectedBranchSettingChangeSuccess",
           repository: cachedRepository,
@@ -826,6 +1036,9 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
             type: "UNKNOWN_ERROR",
           };
         }
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${cachedRepository.id}`, {
+          repositoryUpdated: cachedRepository,
+        });
         return {
           __typename: "ProtectedBranchSettingChangeSuccess",
           repository: cachedRepository,
@@ -869,6 +1082,9 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
             type: "UNKNOWN_ERROR",
           };
         }
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${cachedRepository.id}`, {
+          repositoryUpdated: cachedRepository,
+        });
         return {
           __typename: "ProtectedBranchSettingChangeSuccess",
           repository: cachedRepository,
@@ -926,6 +1142,9 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
             type: "UNKNOWN_ERROR",
           };
         }
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${cachedRepository.id}`, {
+          repositoryUpdated: cachedRepository,
+        });
         return {
           __typename: "ProtectedBranchSettingChangeSuccess",
           repository: cachedRepository,
@@ -983,6 +1202,9 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
             type: "UNKNOWN_ERROR",
           };
         }
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${cachedRepository.id}`, {
+          repositoryUpdated: cachedRepository,
+        });
         return {
           __typename: "ProtectedBranchSettingChangeSuccess",
           repository: cachedRepository,
@@ -1026,6 +1248,9 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
             type: "UNKNOWN_ERROR",
           };
         }
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${cachedRepository.id}`, {
+          repositoryUpdated: cachedRepository,
+        });
         return {
           __typename: "ProtectedBranchSettingChangeSuccess",
           repository: cachedRepository,
@@ -1083,6 +1308,9 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
             type: "UNKNOWN_ERROR",
           };
         }
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${cachedRepository.id}`, {
+          repositoryUpdated: cachedRepository,
+        });
         return {
           __typename: "ProtectedBranchSettingChangeSuccess",
           repository: cachedRepository,
@@ -1140,6 +1368,9 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
             type: "UNKNOWN_ERROR",
           };
         }
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${cachedRepository.id}`, {
+          repositoryUpdated: cachedRepository,
+        });
         return {
           __typename: "ProtectedBranchSettingChangeSuccess",
           repository: cachedRepository,
@@ -1179,6 +1410,9 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
             type: "UNKNOWN_ERROR",
           };
         }
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${cachedRepository.id}`, {
+          repositoryUpdated: cachedRepository,
+        });
         return {
           __typename: "ProtectedBranchSettingChangeSuccess",
           repository: cachedRepository,
@@ -1236,6 +1470,9 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
             type: "UNKNOWN_ERROR",
           };
         }
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${cachedRepository.id}`, {
+          repositoryUpdated: cachedRepository,
+        });
         return {
           __typename: "ProtectedBranchSettingChangeSuccess",
           repository: cachedRepository,
@@ -1292,6 +1529,9 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
             type: "UNKNOWN_ERROR",
           };
         }
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${cachedRepository.id}`, {
+          repositoryUpdated: cachedRepository,
+        });
         return {
           __typename: "ProtectedBranchSettingChangeSuccess",
           repository: cachedRepository,
@@ -1335,6 +1575,9 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
             type: "UNKNOWN_ERROR",
           };
         }
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${cachedRepository.id}`, {
+          repositoryUpdated: cachedRepository,
+        });
         return {
           __typename: "ProtectedBranchSettingChangeSuccess",
           repository: cachedRepository,
@@ -1392,6 +1635,9 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
             type: "UNKNOWN_ERROR",
           };
         }
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${cachedRepository.id}`, {
+          repositoryUpdated: cachedRepository,
+        });
         return {
           __typename: "ProtectedBranchSettingChangeSuccess",
           repository: cachedRepository,
@@ -1448,6 +1694,9 @@ export default class RepositoryProtectedBranchesResolverModule extends BaseResol
             type: "UNKNOWN_ERROR",
           };
         }
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${cachedRepository.id}`, {
+          repositoryUpdated: cachedRepository,
+        });
         return {
           __typename: "ProtectedBranchSettingChangeSuccess",
           repository: cachedRepository,

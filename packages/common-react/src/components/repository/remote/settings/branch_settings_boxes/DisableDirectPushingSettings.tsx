@@ -34,6 +34,8 @@ import EnabledUserDisplay from "../components/EnabledUserDisplay";
 import AddSettingsUsersModal from "../setting_modals/AddSettingsUsersModal";
 import EnabledRoleDisplay from "../components/EnabledRoleDisplay";
 import AddSettingsRolesModal from "../setting_modals/AddSettingsRolesModal";
+import CanPushDirectlyUsersModal from "../branch_settings_modals/CanPushDirectlyUsersModal";
+import CanPushDirectlyRolesModal from "../branch_settings_modals/CanPushDirectlyRolesModal";
 
 const Container = styled.div`
   margin-top: 24px;
@@ -111,6 +113,9 @@ const DisableDirectPushingSetting = (props: Props) => {
     disableDirectPushingMutation,
     updateDisableDirectRequest,
   ] = useUpdateDisableDirectPushingMutation();
+
+  const [showAddUsers, setShowAddUsers] = useState<boolean>(false);
+  const [showAddRoles, setShowAddRoles] = useState<boolean>(false);
   const loaderColor = useMemo((): keyof ColorPalette => {
     if (theme.name == "light") {
       return "mediumGray";
@@ -137,14 +142,44 @@ const DisableDirectPushingSetting = (props: Props) => {
     }
   }, [disableDirectPushing, props.repository]);
 
+  const onShowAddUsers = useCallback(() => {
+    setShowAddUsers(true);
+  }, []);
+
+  const onHideAddUsers = useCallback(() => {
+    setShowAddUsers(false);
+  }, []);
+
+  const onShowAddRoles = useCallback(() => {
+    setShowAddRoles(true);
+  }, []);
+
+  const onHideAddRoles = useCallback(() => {
+    setShowAddRoles(false);
+  }, []);
+
+  const isUserPrivateRepo = useMemo(() => {
+    if (props?.repository?.repoType == "user_repo") {
+        return props?.repository?.isPrivate;
+    }
+    return false;
+  }, [props?.repository])
+
   return (
     <Container>
+      <CanPushDirectlyUsersModal
+        show={showAddUsers}
+        onDismissModal={onHideAddUsers}
+        repository={props.repository}
+      />
+      <CanPushDirectlyRolesModal
+        show={showAddRoles}
+        onDismissModal={onHideAddRoles}
+        repository={props.repository}
+      />
       <MainContainer>
         <LeftContainer>
-          <Checkbox
-            isChecked={disableDirectPushing}
-            onChange={onChange}
-          />
+          <Checkbox isChecked={disableDirectPushing} onChange={onChange} />
         </LeftContainer>
         <RightContainer>
           <TitleSpan>
@@ -156,10 +191,46 @@ const DisableDirectPushingSetting = (props: Props) => {
             )}
           </TitleSpan>
           <SubTitle>
-            {
-              "Do not allow members to push local changes to this branch directly."
-            }
+            {props?.repository?.repoType == "user_repo"
+              ? isUserPrivateRepo
+                ? "Disable pushing local changes to this branch."
+                : "Disable pushing local changes to this branch. Except for the users specified below."
+              : "Do not allow members to push local changes to this branch directly. Except for the following roles and users."}
           </SubTitle>
+          {!isUserPrivateRepo &&
+            props?.repository?.protectedBranchRule?.disableDirectPushing && (
+              <>
+                {}
+                <BottomContainer>
+                  {props?.repository?.repoType == "org_repo" && (
+                    <div style={{ marginTop: 24 }}>
+                      <EnabledRoleDisplay
+                        repository={props.repository}
+                        enabledRoles={
+                          (props?.repository?.protectedBranchRule
+                            ?.canPushDirectlyRoles ?? []) as OrganizationRole[]
+                        }
+                        onClickShow={onShowAddRoles}
+                        label="roles who can push directly"
+                      />
+                    </div>
+                  )}
+                  {!isUserPrivateRepo && (
+                    <div style={{ marginTop: 24 }}>
+                      <EnabledUserDisplay
+                        repository={props.repository}
+                        enabledUsers={
+                          (props?.repository?.protectedBranchRule
+                            ?.canPushDirectlyUsers ?? []) as User[]
+                        }
+                        onClickShow={onShowAddUsers}
+                        label="users who can push directly"
+                      />
+                    </div>
+                  )}
+                </BottomContainer>
+              </>
+            )}
         </RightContainer>
       </MainContainer>
     </Container>

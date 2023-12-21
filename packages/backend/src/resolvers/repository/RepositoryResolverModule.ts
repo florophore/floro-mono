@@ -3123,6 +3123,9 @@ export default class RepositoryResolverModule extends BaseResolverModule {
             type: "REPO_UPDATE_ERROR",
           };
         }
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${repository.id}`, {
+          repositoryUpdated: updatedRepo,
+        });
         return {
           __typename: "RepoSettingChangeSuccess",
           repository: updatedRepo,
@@ -3176,6 +3179,9 @@ export default class RepositoryResolverModule extends BaseResolverModule {
             type: "REPO_UPDATE_ERROR",
           };
         }
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${repository.id}`, {
+          repositoryUpdated: updatedRepo,
+        });
         return {
           __typename: "RepoSettingChangeSuccess",
           repository: updatedRepo,
@@ -3229,6 +3235,9 @@ export default class RepositoryResolverModule extends BaseResolverModule {
             type: "REPO_UPDATE_ERROR",
           };
         }
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${repository.id}`, {
+          repositoryUpdated: updatedRepo,
+        });
         return {
           __typename: "RepoSettingChangeSuccess",
           repository: updatedRepo,
@@ -3270,6 +3279,9 @@ export default class RepositoryResolverModule extends BaseResolverModule {
             type: "REPO_UPDATE_ERROR",
           };
         }
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${repository.id}`, {
+          repositoryUpdated: updatedRepo,
+        });
         return {
           __typename: "RepoSettingChangeSuccess",
           repository: updatedRepo,
@@ -3321,6 +3333,9 @@ export default class RepositoryResolverModule extends BaseResolverModule {
             type: "REPO_UPDATE_ERROR",
           };
         }
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${repository.id}`, {
+          repositoryUpdated: updatedRepo,
+        });
         return {
           __typename: "RepoSettingChangeSuccess",
           repository: updatedRepo,
@@ -3371,6 +3386,9 @@ export default class RepositoryResolverModule extends BaseResolverModule {
             type: "REPO_UPDATE_ERROR",
           };
         }
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${repository.id}`, {
+          repositoryUpdated: updatedRepo,
+        });
         return {
           __typename: "RepoSettingChangeSuccess",
           repository: updatedRepo,
@@ -3411,6 +3429,9 @@ export default class RepositoryResolverModule extends BaseResolverModule {
             type: "REPO_UPDATE_ERROR",
           };
         }
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${repository.id}`, {
+          repositoryUpdated: updatedRepo,
+        });
         return {
           __typename: "RepoSettingChangeSuccess",
           repository: updatedRepo,
@@ -3463,6 +3484,9 @@ export default class RepositoryResolverModule extends BaseResolverModule {
             type: "REPO_UPDATE_ERROR",
           };
         }
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${repository.id}`, {
+          repositoryUpdated: updatedRepo,
+        });
         return {
           __typename: "RepoSettingChangeSuccess",
           repository: updatedRepo,
@@ -3514,6 +3538,9 @@ export default class RepositoryResolverModule extends BaseResolverModule {
             type: "REPO_UPDATE_ERROR",
           };
         }
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${repository.id}`, {
+          repositoryUpdated: updatedRepo,
+        });
         return {
           __typename: "RepoSettingChangeSuccess",
           repository: updatedRepo,
@@ -3551,6 +3578,9 @@ export default class RepositoryResolverModule extends BaseResolverModule {
             type: "REPO_UPDATE_ERROR",
           };
         }
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${repository.id}`, {
+          repositoryUpdated: updatedRepo,
+        });
         return {
           __typename: "RepoSettingChangeSuccess",
           repository: updatedRepo,
@@ -3604,6 +3634,9 @@ export default class RepositoryResolverModule extends BaseResolverModule {
             type: "REPO_UPDATE_ERROR",
           };
         }
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${repository.id}`, {
+          repositoryUpdated: updatedRepo,
+        });
         return {
           __typename: "RepoSettingChangeSuccess",
           repository: updatedRepo,
@@ -3656,6 +3689,9 @@ export default class RepositoryResolverModule extends BaseResolverModule {
             type: "REPO_UPDATE_ERROR",
           };
         }
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${repository.id}`, {
+          repositoryUpdated: updatedRepo,
+        });
         return {
           __typename: "RepoSettingChangeSuccess",
           repository: updatedRepo,
@@ -3692,6 +3728,9 @@ export default class RepositoryResolverModule extends BaseResolverModule {
             type: "REPO_UPDATE_ERROR",
           };
         }
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${repository.id}`, {
+          repositoryUpdated: updatedRepo,
+        });
         return {
           __typename: "RepoSettingChangeSuccess",
           repository: updatedRepo,
@@ -4306,6 +4345,9 @@ export default class RepositoryResolverModule extends BaseResolverModule {
             type: "UNKNOWN_ERROR",
           };
         }
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${repository?.id}`, {
+          repositoryUpdated: repository,
+        });
         return {
           __typename: "RepositoryWebhookKeySuccess",
           repository,
@@ -4392,6 +4434,9 @@ export default class RepositoryResolverModule extends BaseResolverModule {
             type: "UNKNOWN_ERROR",
           };
         }
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${repository?.id}`, {
+          repositoryUpdated: repository,
+        });
         return {
           __typename: "RepositoryWebhookKeySuccess",
           repository,
@@ -4425,6 +4470,9 @@ export default class RepositoryResolverModule extends BaseResolverModule {
         await this.repoEnabledWebhookKeyService.removeEnabledApiKey(
           repositoryEnabledWebhookKey
         );
+        this.pubsub?.publish?.(`REPOSITORY_UPDATED:${repository?.id}`, {
+          repositoryUpdated: repository,
+        });
         return {
           __typename: "RepositoryWebhookKeySuccess",
           repository,

@@ -15,6 +15,7 @@ import { Organization, OrganizationInvitation, OrganizationMember, useCancelOrga
 import RootLongModal from "../../RootLongModal";
 import UserProfilePhoto from "@floro/storybook/stories/common-components/UserProfilePhoto";
 import Checkbox from "@floro/storybook/stories/design-system/Checkbox";
+import { useSession } from "../../../session/session-context";
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -130,6 +131,8 @@ export interface Props {
 }
 
 const EditMemberRolesModal = (props: Props) => {
+  const { session } = useSession();
+  const theme = useTheme();
   const title = useMemo(() => {
     return (
       <HeaderContainer>
@@ -200,6 +203,24 @@ const EditMemberRolesModal = (props: Props) => {
     props.onDismiss,
   ]);
 
+  const isFinalAdmin = useMemo(() => {
+    if (!props?.member?.roles) {
+      return true;
+    }
+    const adminRole = props?.organization?.roles?.find((r) => !r?.isMutable);
+    if (!adminRole) {
+      return true;
+    }
+    if (props?.organization?.activeAdminCount == 1) {
+      return props?.member?.roles?.map((r) => r?.id).includes(adminRole.id);
+    }
+    return false;
+  }, [
+    props?.organization?.roles,
+    props?.organization?.activeAdminCount,
+    props?.member?.roles,
+  ]);
+
   return (
     <RootLongModal
       headerSize="small"
@@ -233,6 +254,20 @@ const EditMemberRolesModal = (props: Props) => {
             <LabelText>{"Assign Roles"}</LabelText>
             <div style={{ marginTop: 20 }}>
               {props?.organization?.roles?.map((role, index) => {
+
+                if ((isFinalAdmin || props.member?.user?.id == session?.user?.id) && !role?.isMutable && role?.name == "Admin") {
+                  return (
+                    <RoleRow key={index}>
+                      <Checkbox
+                        disabled
+                        isChecked={assignedRoles.has(role?.id as string)}
+                        onChange={() => {
+                        }}
+                      />
+                      <RoleText style={{color: theme.name == 'light' ? ColorPalette.lightGray : ColorPalette.gray}}>{role?.name}</RoleText>
+                    </RoleRow>
+                  );
+                }
                 return (
                   <RoleRow key={index}>
                     <Checkbox

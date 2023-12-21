@@ -8,6 +8,7 @@ import {useSession} from '@floro/common-react/src/session/session-context';
 import {useUserOrganizations} from '@floro/common-react/src/hooks/offline';
 import RepoController from '@floro/common-react/src/components/repository/RepoController';
 import { useMergeRequestsFilter } from '@floro/common-react/src/components/repository/remote/hooks/remote-state';
+import { useQueryClient } from "react-query";
 
 
 const RepoMergeRequestHistoryPage = () => {
@@ -74,17 +75,6 @@ const RepoMergeRequestHistoryPage = () => {
     return offlineRepo ?? null;
   }, [data, currentUser, ownerHandle, repoName, userOrganizations, offlineRepo?.id]);
 
-  const {data: subscriptionData } = useRepositoryUpdatesSubscription({
-    variables: {
-      repositoryId: repository?.id,
-    },
-  });
-  useEffect(() => {
-    if (subscriptionData?.repositoryUpdated?.id) {
-      refetch();
-    }
-  }, [subscriptionData])
-
 
   useEffect(() => {
     if (repository) {
@@ -93,6 +83,23 @@ const RepoMergeRequestHistoryPage = () => {
   }, [
     repository
   ]);
+
+  const repoSubscription = useRepositoryUpdatesSubscription({
+    variables: {
+      repositoryId: repository?.id,
+    }
+  });
+
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    if (repoSubscription?.data) {
+      queryClient.invalidateQueries([
+        "repo-fetch-info:" + repository.id,
+        "repo-remote-settings:" + repository.id,
+      ])
+      refetch();
+    }
+  }, [repoSubscription?.data])
 
   const handleValue = useMemo(() => {
     if (!repository) {

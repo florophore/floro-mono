@@ -24,7 +24,6 @@ import {
 } from "floro/dist/src/repo";
 import { commitDataContainsDevPlugins } from "floro/dist/src/repoapi";
 import RepoRBACService from "../services/repositories/RepoRBACService";
-import RepositoryService from "../services/repositories/RepositoryService";
 import StorageAuthenticator from "@floro/storage/src/StorageAuthenticator";
 import BinaryAccessor from "@floro/storage/src/accessors/BinaryAccessor";
 import mime from "mime-types";

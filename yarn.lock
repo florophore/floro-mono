@@ -8252,6 +8252,11 @@
     "@typescript-eslint/types" "6.7.0"
     eslint-visitor-keys "^3.4.1"
 
+"@ungap/structured-clone@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@ungap/structured-clone/-/structured-clone-1.2.0.tgz#756641adb587851b5ccb3e095daf27ae581c8406"
+  integrity sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==
+
 "@usulpro/react-json-view@^2.0.1":
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/@usulpro/react-json-view/-/react-json-view-2.0.1.tgz#2240e9319a9c6258df3b69961572a995ddca35d1"
@@ -15543,13 +15548,14 @@ flatted@^3.2.9:
   resolved "https://registry.yarnpkg.com/flatted/-/flatted-3.2.9.tgz#7eb4c67ca1ba34232ca9d2d93e9886e611ad7daf"
   integrity sha512-36yxDn5H7OFZQla0/jFJmbIKTdZAQHngCedGxiMmpNfEZM0sdEeT+WczLQrjK6D7o2aiyLYDnkw0R3JK0Qv1RQ==
 
-floro@0.0.34:
-  version "0.0.34"
-  resolved "https://registry.yarnpkg.com/floro/-/floro-0.0.34.tgz#d909ed7fdb05be74204a1abbf197ca10a8f334d2"
-  integrity sha512-KrcIng08qjALD4misEM/8ry9TiXaTRXCxrEMBA5FLcvMsJ8Z3659Isc2BpWF8nbeEIi6c291RQj6qFsCcTCFSg==
+floro@0.0.37:
+  version "0.0.37"
+  resolved "https://registry.yarnpkg.com/floro/-/floro-0.0.37.tgz#0f36e72ac6ec6f9ea551e4683053f0ea8253b9ef"
+  integrity sha512-5VqKGx9CUBKAeNVC0HCswRXQeoLkGv91CUlQEuZx7E4Tt8gH1Ye7oK59+PRiYrgMDJK6vWDXfmBaoGOlPAITBg==
   dependencies:
     "@types/busboy" "^1.5.0"
     "@types/express" "^4.17.15"
+    "@ungap/structured-clone" "^1.2.0"
     arraybuffer-isbinary "^1.0.2"
     axios "^1.0.0"
     busboy "^1.6.0"

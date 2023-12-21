@@ -664,7 +664,8 @@ export default class RepoSettingsService {
       | "anyoneCanMergeMergeRequests"
       | "anyoneCanApproveMergeRequests"
       | "anyoneCanRevert"
-      | "anyoneCanAutofix",
+      | "anyoneCanAutofix"
+      | "canPushDirectly",
     userIds: string[],
     roleIds: string[],
   ) {
@@ -1179,7 +1180,8 @@ export default class RepoSettingsService {
       | "anyoneCanMergeMergeRequests"
       | "anyoneCanApproveMergeRequests"
       | "anyoneCanRevert"
-      | "anyoneCanAutofix",
+      | "anyoneCanAutofix"
+      | "canPushDirectly",
     roleIds: string[],
     userIds: string[],
   ) {

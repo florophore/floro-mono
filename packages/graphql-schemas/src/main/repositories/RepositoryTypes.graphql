@@ -68,6 +68,9 @@ type ProtectedBranchRule {
   branchName: String
 
   disableDirectPushing: Boolean
+  canPushDirectlyUsers: [User]
+  canPushDirectlyRoles: [OrganizationRole]
+
   requireApprovalToMerge: Boolean
   requireReapprovalOnPushToMerge: Boolean
 

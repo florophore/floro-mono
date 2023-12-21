@@ -89,7 +89,14 @@ const Checkbox = (props: Props) => {
 
   const isDisabled = useMemo(() => props?.disabled ?? false, [props.disabled]);
 
+  const disabledColor = useMemo(() => {
+    return theme.name == 'light' ? ColorPalette.lightGray : ColorPalette.gray;
+  }, [theme.name])
+
   const border = useMemo(() => {
+    if (isDisabled) {
+      return `2px solid ${disabledColor}`;
+    }
     if (isFocused || isHovering) {
       if (theme.name == "light") {
           return `2px solid ${ColorPalette.purple}`;
@@ -97,7 +104,7 @@ const Checkbox = (props: Props) => {
       return `2px solid ${ColorPalette.lightPurple}`;
     }
     return `2px solid ${theme.colors.checkboxBorder}`
-  }, [theme, isFocused, isHovering]);
+  }, [theme, isFocused, isHovering, isDisabled, disabledColor]);
 
   return (
     <CheckBoxContainer style={{border}}>

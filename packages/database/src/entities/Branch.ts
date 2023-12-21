@@ -53,10 +53,13 @@ export class Branch extends BaseEntity {
   @IsString()
   branchId!: string;
 
-  @Column("varchar")
+  @Column({
+    type: "varchar",
+    nullable: true
+  })
   @IsOptional()
   @IsString()
-  baseBranchId?: string;
+  baseBranchId?: string|null;
 
   @Column("varchar")
   @IsHash("sha256")

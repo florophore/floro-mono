@@ -286,8 +286,6 @@ const MemberRow = (props: Props): React.ReactElement => {
           onClick={onEdit}
           isDisabled={
             props.member.membershipState != "active" ||
-            props?.organization?.membership?.id == props.member?.id ||
-            (isAdmin && isFinalAdmin) ||
             !props.organization?.membership?.permissions?.canAssignRoles ||
             !props?.organization?.membership?.permissions
               ?.canModifyOrganizationMembers

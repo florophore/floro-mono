@@ -255,14 +255,17 @@ const EditBranchNavPage = (props: Props) => {
     props?.apiResponse?.baseBranch ?? null
   );
 
-  const [hasLoaded, setHasLoaded] = useState(false);
   useEffect(() => {
-    if (!hasLoaded) {
-      setHasLoaded(true);
-      return;
+    if (baseBranch && !baseBranches?.find(b => b.id == baseBranch.id)) {
+      const existingBaseBranch = baseBranches?.find(
+        (b) => b.id == props?.apiResponse?.baseBranch?.id
+      );
+      const defaultBranch = baseBranches?.find(
+        (b) => b.id == remoteSettings?.defaultBranchId
+      );
+      setBaseBranch(existingBaseBranch ?? defaultBranch ?? null);
     }
-    setBaseBranch(baseBranches?.[0] ?? null);
-  }, [baseBranches]);
+  }, [baseBranches, baseBranch, remoteSettings?.defaultBranchId]);
 
   const isSameAsOriginal = useMemo(() => {
     if (props.apiResponse?.branch?.name != branchName) {

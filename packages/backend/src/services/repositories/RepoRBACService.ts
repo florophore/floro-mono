@@ -11,10 +11,9 @@ import RepositoryEnabledRoleSettingsContext from "@floro/database/src/contexts/r
 import RepositoryEnabledUserSettingsContext from "@floro/database/src/contexts/repositories/RepositoryEnabledUserSettingsContext";
 import OrganizationMemberRolesContext from "@floro/database/src/contexts/organizations/OrganizationMemberRolesContext";
 import { ProtectedBranchRule } from "@floro/database/src/entities/ProtectedBranchRule";
-import ProtectedBranchRuleEnabledUserSettingsContext from "@floro/database/src/contexts/repositories/RepositoryEnabledUserSettingsContext";
-import ProtectedBranchRuleEnabledRoleSettingsContext from "@floro/database/src/contexts/repositories/RepositoryEnabledRoleSettingsContext";
+import ProtectedBranchRulesEnabledUserSettingsContext from "@floro/database/src/contexts/repositories/ProtectedBranchRulesEnabledUserSettingsContext";
+import ProtectedBranchRulesEnabledRoleSettingsContext from "@floro/database/src/contexts/repositories/ProtectedBranchRulesEnabledRoleSettingsContext";
 import { OrganizationMember } from "@floro/database/src/entities/OrganizationMember";
-import MergeRequestsContext from "@floro/database/src/contexts/merge_requests/MergeRequestsContext";
 
 
 export interface RepoPermissions {
@@ -52,16 +51,6 @@ export default class RepoRBACService {
           ProtectedBranchRulesContext,
           queryRunner
         );
-      if (branchId) {
-        const protectedBranch =
-          await protectedBranchRulesContext.getByRepoAndBranchId(
-            repository.id,
-            branchId
-          );
-        if (protectedBranch?.disableDirectPushing) {
-          return false;
-        }
-      }
       if (!repository.isPrivate && repository.repoType == "user_repo") {
         if (currentUser.id != repository.userId) {
           return false;
@@ -96,6 +85,18 @@ export default class RepoRBACService {
           membership?.membershipState == "active"
             ? await organizationMemberRolesContext.getRolesByMember(membership)
             : [];
+
+      if (branchId) {
+        const protectedBranch =
+          await protectedBranchRulesContext.getByRepoAndBranchId(
+            repository.id,
+            branchId
+          );
+        if (protectedBranch?.disableDirectPushing) {
+          // test if they can push here, need to test they are an org member if org private
+          return false;
+        }
+      }
         const isAdmin = !!memberRoles?.find((r) => r.presetCode == "admin");
         if (isAdmin) {
           return true;
@@ -276,7 +277,8 @@ export default class RepoRBACService {
       | "anyoneCanMergeMergeRequests"
       | "anyoneCanApproveMergeRequests"
       | "anyoneCanRevert"
-      | "anyoneCanAutofix",
+      | "anyoneCanAutofix"
+      | "canPushDirectly",
       queryRunner?: QueryRunner
   ) {
     if (!user) {
@@ -284,24 +286,27 @@ export default class RepoRBACService {
     }
     if (repository.repoType == "user_repo") {
       if (repository.isPrivate) {
-        return user.id == repository.createdByUserId;
+        return user.id == repository.createdByUserId && settingName != "canPushDirectly";
       }
-      if (user.id == repository.createdByUserId) {
+      if (user.id == repository.createdByUserId && settingName != "canPushDirectly") {
         return true;
       }
       if (!repoPermissions.canPushBranches) {
         return false;
       }
-      if (protectedBranchRule[settingName]) {
+      if (settingName != "canPushDirectly" && protectedBranchRule[settingName]) {
+        return true;
+      }
+      if (settingName == "canPushDirectly" && !protectedBranchRule.disableDirectPushing) {
         return true;
       }
       const protectedBranchRuleEnabledUserSettingsContext =
         await this.contextFactory.createContext(
-          ProtectedBranchRuleEnabledUserSettingsContext,
+          ProtectedBranchRulesEnabledUserSettingsContext,
           queryRunner
         );
       const hasUserPermission =
-        await protectedBranchRuleEnabledUserSettingsContext.hasRepoUserId(
+        await protectedBranchRuleEnabledUserSettingsContext.hasUserId(
           protectedBranchRule.id,
           user.id,
           settingName
@@ -322,7 +327,13 @@ export default class RepoRBACService {
       return false;
     }
 
-    if (protectedBranchRule[settingName]) {
+    if (settingName == "canPushDirectly" && !protectedBranchRule.disableDirectPushing) {
+      if (membership?.membershipState == "active" || repoPermissions.canPushBranches) {
+        return true;
+      }
+    }
+
+    if (settingName != "canPushDirectly" && protectedBranchRule[settingName]) {
       if (membership?.membershipState == "active" || repoPermissions.canPushBranches) {
         return true;
       }
@@ -337,12 +348,12 @@ export default class RepoRBACService {
       const roleIds = memberRoles?.map((r) => r.id);
       const protectedBranchRuleEnabledRoleSettingsContext =
         await this.contextFactory.createContext(
-          ProtectedBranchRuleEnabledRoleSettingsContext,
+          ProtectedBranchRulesEnabledRoleSettingsContext,
           queryRunner
         );
       const hasRoles =
-        await protectedBranchRuleEnabledRoleSettingsContext.hasRepoRoleIds(
-          repository.id,
+        await protectedBranchRuleEnabledRoleSettingsContext.hasOrgRoleIds(
+          protectedBranchRule.id,
           roleIds,
           settingName
         );
@@ -350,13 +361,16 @@ export default class RepoRBACService {
         return true;
       }
     }
+    if (repository.isPrivate && membership?.membershipState != "active") {
+      return false;
+    }
     const protectedBranchRuleEnabledUserSettingsContext =
       await this.contextFactory.createContext(
-        ProtectedBranchRuleEnabledUserSettingsContext,
+        ProtectedBranchRulesEnabledUserSettingsContext,
         queryRunner
       );
     const hasUserPermission =
-      await protectedBranchRuleEnabledUserSettingsContext.hasRepoUserId(
+      await protectedBranchRuleEnabledUserSettingsContext.hasUserId(
         protectedBranchRule.id,
         user.id,
         settingName

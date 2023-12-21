@@ -98,6 +98,16 @@ extend type Mutation {
     protectedBranchRuleId: ID!
     disableDirectPushing: Boolean!
   ): ProtectedBranchSettingChangeResponse
+  updateCanPushDirectlyUsers(
+    repositoryId: ID!
+    protectedBranchRuleId: ID!
+    userIds: [ID]!
+  ): ProtectedBranchSettingChangeResponse
+  updateCanPushDirectlyRoles(
+    repositoryId: ID!
+    protectedBranchRuleId: ID!
+    roleIds: [ID]!
+  ): ProtectedBranchSettingChangeResponse
 
   updateRequireApprovalToMerge(
     repositoryId: ID!

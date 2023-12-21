@@ -294,12 +294,12 @@ const LocalVCSViewMode = (props: Props) => {
     if (!fetchInfo?.canPull) {
       return;
     }
-    if (fetchInfo?.hasConflict) {
-      setShowConfirmForcePull(true);
-      return;
-    }
     if (fetchInfo?.pullCanMergeWip && props.apiResponse.isWIP) {
       setShowConfirmMergePullModal(true);
+      return;
+    }
+    if (fetchInfo?.hasConflict) {
+      setShowConfirmForcePull(true);
       return;
     }
     pullMutation.mutate();

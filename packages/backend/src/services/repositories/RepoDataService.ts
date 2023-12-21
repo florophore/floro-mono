@@ -200,10 +200,20 @@ export default class RepoDataService {
         queryRunner
       );
 
+    const canPushDirectly =
+      await this.repoRBAC.calculateUserProtectedBranchRuleSettingPermission(
+        protectedBranchRule,
+        repository,
+        user,
+        repoPermissions,
+        "canPushDirectly",
+        queryRunner
+      );
+
     return {
       branchId: protectedBranchRule.branchId as string,
       branchName: protectedBranchRule.branchName as string,
-      directPushingDisabled: protectedBranchRule.disableDirectPushing ?? false,
+      directPushingDisabled: protectedBranchRule.disableDirectPushing ? !canPushDirectly : false,
       requiresApprovalToMerge:
         protectedBranchRule.requireApprovalToMerge ?? false,
       requireReapprovalOnPushToMerge:

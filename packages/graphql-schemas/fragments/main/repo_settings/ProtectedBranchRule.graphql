@@ -7,6 +7,22 @@ fragment ProtectedBranchRule on ProtectedBranchRule {
   branchName
 
   disableDirectPushing
+
+  canPushDirectlyUsers {
+    id
+    firstName
+    lastName
+    username
+    profilePhoto {
+      ...Photo
+    }
+  }
+  canPushDirectlyRoles {
+    id
+    name
+  }
+
+
   requireApprovalToMerge
   requireReapprovalOnPushToMerge
 
