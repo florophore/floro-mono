@@ -316,6 +316,18 @@ const LocalVCSViewMode = (props: Props) => {
       return null;
     }
 
+    if (!props?.apiResponse?.repoState?.branch) {
+      return (
+          <ConflictInfoRow>
+            <ConflictError>
+              {
+                "You cannot push while not on a branch."
+              }
+            </ConflictError>
+          </ConflictInfoRow>
+      );
+    }
+
     if (fetchInfo?.hasOpenMergeRequestConflict) {
       return (
         <ConflictInfoRow>
