@@ -34,6 +34,7 @@ import RevertingDark from "@floro/main/public/doc_images/product/advancedcommand
 
 import ClearPluginStorageLight from "@floro/main/public/doc_images/product/advancedcommands/clear_plugin_storage.light.png"
 import ClearPluginStorageDark from "@floro/main/public/doc_images/product/advancedcommands/clear_plugin_storage.dark.png"
+import { useIcon } from "../../../../../floro_listener/FloroIconsProvider";
 
 
 const AboutWrapper = styled.div`
@@ -129,6 +130,8 @@ function AdvancedCommandsDocs() {
   const pageDocsTitle = usePlainText("doc_titles.product_docs_page_title");
   const mergeAndConflictsDocsTitle = usePlainText("doc_titles.merge_and_conflicts_docs_page_title");
   const advancedCommandsDocsTitle = usePlainText("doc_titles.advanced_commands_docs_page_title");
+
+  const cherryPickedExample = useIcon("docs.cherry-picked-example");
 
   const shaGraph = useMemo(() => {
     if (theme.name == 'light') {
@@ -243,6 +246,11 @@ function AdvancedCommandsDocs() {
       reverting: (
         <div>
           <ScreenshotImg src={reverting}/>
+        </div>
+      ),
+      cherryPickedExample: (
+        <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
+          <SlideImg style={{maxWidth: 400}} src={cherryPickedExample}/>
         </div>
       ),
       mainTitle: function (

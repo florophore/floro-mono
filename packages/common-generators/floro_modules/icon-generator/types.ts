@@ -31,6 +31,7 @@ export interface Icons {
     "about.version-update-revised":            AboutVersionUpdateRevised;
     "about.version-updates":                   AboutVersionUpdates;
     "about.visual-diff":                       AboutVisualDiff;
+    "docs.cherry-picked-example":              DocsCherryPickedExample;
     "docs.icons-plugin":                       DocsIconsPlugin;
     "docs.palette-plugin":                     DocsPalettePlugin;
     "docs.text-plugin":                        DocsTextPlugin;
@@ -282,6 +283,14 @@ export interface AboutVisualDiff {
 }
 
 export interface AboutVisualDiffVariants {
+}
+
+export interface DocsCherryPickedExample {
+    default:  Theme;
+    variants: DocsCherryPickedExampleVariants;
+}
+
+export interface DocsCherryPickedExampleVariants {
 }
 
 export interface DocsIconsPlugin {

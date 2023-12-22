@@ -1,5 +1,5 @@
 {
-  "version": "0.0.29",
+  "version": "0.0.30",
   "name": "text",
   "displayName": "Text",
   "description": "A plugin for managing strings and translations.",

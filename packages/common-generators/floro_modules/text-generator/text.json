@@ -221,7 +221,33 @@
           },
           {
             "children": [],
-            "content": " commands may come in handy. Problems like, how do we undo a commit are pretty core to ",
+            "content": " commands may come in handy. Problems like, ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "how do we undo a commit?",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ", are pretty core to ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -299,7 +325,7 @@
           },
           {
             "children": [],
-            "content": "Stashing & Discarding",
+            "content": "Stashing & discarding",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -520,7 +546,20 @@
           },
           {
             "children": [],
-            "content": " (",
+            "content": " ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "(",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -546,7 +585,7 @@
           },
           {
             "children": [],
-            "content": ") ",
+            "content": ") ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -559,33 +598,7 @@
           },
           {
             "children": [],
-            "content": "permanently",
-            "type": "text",
-            "styles": {
-              "isBold": false,
-              "isItalic": false,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": ".",
-            "type": "text",
-            "styles": {
-              "isBold": false,
-              "isItalic": true,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": " Discarding restores your state to the state of the last commit. If you are positive you do not want to commit your changes or you've made a huge mistake, this is a useful option.",
+            "content": "permanently. Discarding restores your state to the state of the last commit. If you are positive you do not want to commit your changes or you've made a huge mistake, this is a useful option.",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -845,7 +858,7 @@
           },
           {
             "children": [],
-            "content": "Clearing Plugin Client Storage",
+            "content": "Clearing plugin client storage",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -1027,7 +1040,7 @@
           },
           {
             "children": [],
-            "content": "Undoing Changes\n",
+            "content": "Undoing changes\n",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -1040,7 +1053,7 @@
           },
           {
             "children": [],
-            "content": "\nThere are two ways to undo a change in ",
+            "content": "\nThere are three ways to undo a change in ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -1092,7 +1105,7 @@
           },
           {
             "children": [],
-            "content": " a change if you are undoing a change remotely or on a shared branch. However, if you are the only person working on a branch it may be easier to change the head of your branch to a past commit.\n\n",
+            "content": " a or ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -1105,7 +1118,33 @@
           },
           {
             "children": [],
-            "content": "Changing the Branch Head",
+            "content": "fix forward a ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "change if you are undoing a change remotely or on a shared branch. However, if you are the only person working on a branch it may be more desirable to change the head of your branch to a past commit. This is considered a history destructive interaction though, so this should only be done on branches that you are working on independently of other collaborators. \n\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Undo method 1. Changing the branch head",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -1183,7 +1222,7 @@
           },
           {
             "children": [],
-            "content": " Manually editing branches can get a little bit messy. At times. Make sure your base branch is correct after editing a branch head.\n\n \n",
+            "content": " Manually editing branches can get a little bit messy. Make sure your base branch is correct after editing a branch head.  \n\n\n",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -1274,7 +1313,7 @@
           },
           {
             "children": [],
-            "content": "Reverting a Change\n",
+            "content": "Undo method 2. ",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -1287,7 +1326,20 @@
           },
           {
             "children": [],
-            "content": "\nSometimes we want to undo a commit, but other people may be working on the same branch as us. This can lead to conflicts and a lot of toe-stepping. In this case we ",
+            "content": "Reverting a change\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\nSometimes we want to undo a commit, but other people may be working on the same branch as us. Changing a branch head can lead to conflicts amongst collaborators and collaborators stepping on each other's toes. In the case of shared branches, we may  want to ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -1313,7 +1365,7 @@
           },
           {
             "children": [],
-            "content": "our changes. Reverting has the same end effect as rolling back a branch, however, reverting creates a new commit that undoes the changes between the last commit and the commit being reverted. This is useful when a branch is shared by multiple contributors since the reversion does not alter the version history (it just adds to it).\n\n\n",
+            "content": "our changes. Reverting has the same end effect as manually rolling back a branch's head, however, reverting creates a new commit that undoes the changes between the last commit and the commit being reverted. This is useful when a branch is shared by multiple contributors since the reversion does not alter the version history (it just adds to it), but resets the state of the branch to the commit before the reverted commit.\n\n\n",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -1339,7 +1391,254 @@
           },
           {
             "children": [],
+            "content": "\n\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Undo method 3. ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Fixing forward\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
             "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Fix forward",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " is similar to reverting but with one giant difference -- rather than undoing all changes after a commit, ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "fix forward",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " removes only the commit that is selected, not the entire history succeeding it. This makes fix forward a great option if there is a change you want to remove but additional work you want to keep has been performed on the branch already. ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Under the hood, ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "fix forward",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " performs a merge operation, which means it won't always be available if the forward merge has conflicts",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ". Like reverting, fixing forward is non-destructive to version history. This means it's entirely safe to use for shared branches.\n\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Deleting commits\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\nThere is no such thing as deleting a commit in ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ". If you could, ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " wouldn't work at all. The three methods mentioned above cover all the ways you can undo a commit. For this reason, you should be particularly careful about entering sensitive information into ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ". ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -1356,6 +1655,32 @@
             "type": "text",
             "styles": {
               "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "content": "\n",
+            "type": "text",
+            "children": [],
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Cherry picking\n\n\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
               "isItalic": false,
               "isUnderlined": false,
               "isStrikethrough": false,
@@ -3272,7 +3597,7 @@
           },
           {
             "children": [],
-            "content": "Merging Rule of Thumb",
+            "content": "Merging rule of thumb",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -3415,7 +3740,7 @@
           },
           {
             "children": [],
-            "content": " ",
+            "content": " branch ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -3480,7 +3805,7 @@
           },
           {
             "children": [],
-            "content": "Merging Locally",
+            "content": "Merging locally",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -3650,6 +3975,19 @@
           {
             "children": [],
             "content": ".",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -4000,6 +4338,19 @@
           },
           {
             "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
             "content": "{readyToMerge}",
             "type": "content-variable",
             "styles": {
@@ -4065,7 +4416,7 @@
           },
           {
             "children": [],
-            "content": "Merge Conflict",
+            "content": "merge conflict",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -4663,7 +5014,7 @@
           },
           {
             "children": [],
-            "content": "Auto Merge",
+            "content": "Auto merge",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -4779,11 +5130,50 @@
             }
           },
           {
-            "children": [],
             "content": "\n",
+            "type": "text",
+            "children": [],
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "To branch or not to (feature) branch\n\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Believe it or not, we actually believe most repositories do not need to make extensive use of branching. While, it is a very handy feature at times, it can lead to a lot of confusion and unnecessary process overhead. In the context of plain-text, branching makes a lot of sense, especially as a team scales. However, in the case of structured data, branching may hinder your workflow.\n\nWhen you pull a branch, like in git, the remote version of a branch is merged with your local version of the branch. In our opinion, it is easiest for most teams to work off of a single main branch and push directly to main. In doing so, you sacrifice the review process you gain with feature branches, but you gain considerable efficiencies in development workflow and make some of the more technical aspects of version control more accessible to contributors who may not have a software engineering background.",
             "type": "text",
             "styles": {
               "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
               "isItalic": false,
               "isUnderlined": false,
               "isStrikethrough": false,
@@ -4806,7 +5196,7 @@
           },
           {
             "children": [],
-            "content": "Next Section",
+            "content": "Next section",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -5587,7 +5977,7 @@
           },
           {
             "children": [],
-            "content": "Requesting Reviewers",
+            "content": "Requesting reviewers",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -6354,7 +6744,7 @@
           },
           {
             "children": [],
-            "content": "Commit History",
+            "content": "Commit history",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -6536,7 +6926,7 @@
           },
           {
             "children": [],
-            "content": " Settings",
+            "content": " settings",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -7082,7 +7472,7 @@
           },
           {
             "children": [],
-            "content": "Branch Rules & Settings",
+            "content": "Branch rules & settings",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -7329,7 +7719,7 @@
           },
           {
             "children": [],
-            "content": "Revisiting Local",
+            "content": "Revisiting local",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -7589,7 +7979,7 @@
           },
           {
             "children": [],
-            "content": "Branches",
+            "content": "branches",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -7836,7 +8226,7 @@
           },
           {
             "children": [],
-            "content": "Next Section",
+            "content": "Next section",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -8523,7 +8913,7 @@
           },
           {
             "children": [],
-            "content": "Cloning Repositories",
+            "content": "Cloning repositories",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -8705,7 +9095,7 @@
           },
           {
             "children": [],
-            "content": "Local & Remote Tabs",
+            "content": "Local & remote tabs",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -8978,7 +9368,7 @@
           },
           {
             "children": [],
-            "content": "Command Modes",
+            "content": "Command modes",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -9784,7 +10174,7 @@
           },
           {
             "children": [],
-            "content": "Creating a Branch",
+            "content": "Creating a branch",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -11318,7 +11708,7 @@
           },
           {
             "children": [],
-            "content": "Making the First Commit",
+            "content": "Making the first commit",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -12137,7 +12527,7 @@
           },
           {
             "children": [],
-            "content": "Next Section",
+            "content": "Next section",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -12637,7 +13027,7 @@
           },
           {
             "children": [],
-            "content": "Members, Invites & Roles",
+            "content": "Members, invites & roles",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -12923,7 +13313,7 @@
           },
           {
             "children": [],
-            "content": "Org Settings",
+            "content": "Org settings",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -13001,7 +13391,7 @@
           },
           {
             "children": [],
-            "content": "Developer Settings",
+            "content": "Developer settings",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -13573,7 +13963,7 @@
           },
           {
             "children": [],
-            "content": "Create Repo",
+            "content": "Create repo",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -13820,7 +14210,7 @@
           },
           {
             "children": [],
-            "content": "Next Section",
+            "content": "Next section",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -14342,22 +14732,8 @@
                     }
                   },
                   {
-                    "children": [
-                      {
-                        "children": [],
-                        "content": "announcements",
-                        "type": "text",
-                        "styles": {
-                          "isBold": false,
-                          "isItalic": false,
-                          "isUnderlined": false,
-                          "isStrikethrough": false,
-                          "isSuperscript": false,
-                          "isSubscript": false
-                        }
-                      }
-                    ],
-                    "content": "",
+                    "children": [],
+                    "content": "announcements",
                     "type": "text",
                     "styles": {
                       "isBold": true,
@@ -14475,48 +14851,34 @@
                     }
                   },
                   {
-                    "children": [
-                      {
-                        "children": [],
-                        "content": "new ",
-                        "type": "text",
-                        "styles": {
-                          "isBold": false,
-                          "isItalic": false,
-                          "isUnderlined": false,
-                          "isStrikethrough": false,
-                          "isSuperscript": false,
-                          "isSubscript": false
-                        }
-                      },
-                      {
-                        "children": [],
-                        "content": "plugins",
-                        "type": "text",
-                        "styles": {
-                          "isBold": false,
-                          "isItalic": false,
-                          "isUnderlined": false,
-                          "isStrikethrough": false,
-                          "isSuperscript": false,
-                          "isSubscript": false
-                        }
-                      },
-                      {
-                        "children": [],
-                        "content": " ",
-                        "type": "text",
-                        "styles": {
-                          "isBold": false,
-                          "isItalic": false,
-                          "isUnderlined": false,
-                          "isStrikethrough": false,
-                          "isSuperscript": false,
-                          "isSubscript": false
-                        }
-                      }
-                    ],
-                    "content": "",
+                    "children": [],
+                    "content": "new ",
+                    "type": "text",
+                    "styles": {
+                      "isBold": true,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  },
+                  {
+                    "children": [],
+                    "content": "plugins",
+                    "type": "text",
+                    "styles": {
+                      "isBold": true,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  },
+                  {
+                    "children": [],
+                    "content": " ",
                     "type": "text",
                     "styles": {
                       "isBold": true,
@@ -14660,22 +15022,8 @@
                     }
                   },
                   {
-                    "children": [
-                      {
-                        "children": [],
-                        "content": "new repositories ",
-                        "type": "text",
-                        "styles": {
-                          "isBold": false,
-                          "isItalic": false,
-                          "isUnderlined": false,
-                          "isStrikethrough": false,
-                          "isSuperscript": false,
-                          "isSubscript": false
-                        }
-                      }
-                    ],
-                    "content": "",
+                    "children": [],
+                    "content": "new repositories ",
                     "type": "text",
                     "styles": {
                       "isBold": true,
@@ -15271,7 +15619,7 @@
           },
           {
             "children": [],
-            "content": "Left Panel",
+            "content": "Left panel",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -15440,7 +15788,7 @@
           },
           {
             "children": [],
-            "content": "User Settings",
+            "content": "User settings",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -15752,7 +16100,7 @@
           },
           {
             "children": [],
-            "content": "Developer Settings",
+            "content": "Developer settings",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -16090,7 +16438,7 @@
           },
           {
             "children": [],
-            "content": "Create Repo",
+            "content": "Create repo",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -16454,7 +16802,7 @@
           },
           {
             "children": [],
-            "content": "Create Org",
+            "content": "Create org",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -16623,7 +16971,7 @@
           },
           {
             "children": [],
-            "content": "Next Section",
+            "content": "Next section",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -20127,7 +20475,7 @@
           },
           {
             "children": [],
-            "content": ".",
+            "content": ".\n\n",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -20140,7 +20488,20 @@
           },
           {
             "children": [],
-            "content": "\n",
+            "content": "What is a branch's head?\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\nA branch's head is the commit a branch currently points to. When you commit a change on a branch, the branch head is updated to the new commit. When you pull changes from a remote repository, or merge a branch, the branch head is updated. A branch can always be reset to a previous (or future) point by changing the branch's head.\n",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -21401,7 +21762,7 @@
           },
           {
             "children": [],
-            "content": "You can think of pulling as being nearly synonymous with downloading. When a remote branch has changes that you do not have on your local version of the branch, you will see an option to pull down the changes for the branch.",
+            "content": "You can think of pulling as being nearly synonymous with downloading. When a remote branch has changes that you do not have on your local version of the branch, you will see an option to pull down the changes for the branch. If you have any local changes that have not been pushed to the remote branch, pulling will merge your local changes with the remote changes for the branch. ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -33163,7 +33524,7 @@
             "href": [
               {
                 "type": "text",
-                "content": "https://github.com/florophore/floro/blob/main/src/sequenceoperations.ts#L294"
+                "content": "https://github.com/florophore/floro/blob/main/src/sequenceoperations.ts#L315"
               }
             ]
           },
@@ -38249,7 +38610,33 @@
           },
           {
             "children": [],
-            "content": " is biased towards \"right-sided\" reconciliation. Nonetheless, it will automatically merge if an automatic-merge exists using \"left-sided\" reconciliation. Please see the link to the ",
+            "content": " is biased towards \"right-sided\" reconciliation. Sometimes, left-sided automatic merges exist when a right automatic merge does not exist, given the infrequency of this and the performance overhead of checking both left and right reconciliations, ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " only uses right sided reconciliation. Please see the link to the ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -41226,7 +41613,7 @@
           },
           {
             "children": [],
-            "content": ", Mercurial, and Fossil are all fantastic for code and ",
+            "content": ", Mercurial, Pijul and Fossil are all fantastic for code and ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -49133,7 +49520,33 @@
           },
           {
             "children": [],
-            "content": " commands may come in handy. Problems like, how do we undo a commit are pretty core to ",
+            "content": " commands may come in handy. Problems like, ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "how do we undo a commit?",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ", are pretty core to ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -49211,7 +49624,7 @@
           },
           {
             "children": [],
-            "content": "Stashing & Discarding",
+            "content": "Stashing & discarding",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -49432,7 +49845,20 @@
           },
           {
             "children": [],
-            "content": " (",
+            "content": " ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "(",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -49458,7 +49884,7 @@
           },
           {
             "children": [],
-            "content": ") ",
+            "content": ") ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -49471,33 +49897,7 @@
           },
           {
             "children": [],
-            "content": "permanently",
-            "type": "text",
-            "styles": {
-              "isBold": false,
-              "isItalic": false,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": ".",
-            "type": "text",
-            "styles": {
-              "isBold": false,
-              "isItalic": true,
-              "isUnderlined": false,
-              "isStrikethrough": false,
-              "isSuperscript": false,
-              "isSubscript": false
-            }
-          },
-          {
-            "children": [],
-            "content": " Discarding restores your state to the state of the last commit. If you are positive you do not want to commit your changes or you've made a huge mistake, this is a useful option.",
+            "content": "permanently. Discarding restores your state to the state of the last commit. If you are positive you do not want to commit your changes or you've made a huge mistake, this is a useful option.",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -49757,7 +50157,7 @@
           },
           {
             "children": [],
-            "content": "Clearing Plugin Client Storage",
+            "content": "Clearing plugin client storage",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -49939,7 +50339,7 @@
           },
           {
             "children": [],
-            "content": "Undoing Changes\n",
+            "content": "Undoing changes\n",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -49952,7 +50352,7 @@
           },
           {
             "children": [],
-            "content": "\nThere are two ways to undo a change in ",
+            "content": "\nThere are three ways to undo a change in ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -50004,7 +50404,7 @@
           },
           {
             "children": [],
-            "content": " a change if you are undoing a change remotely or on a shared branch. However, if you are the only person working on a branch it may be easier to change the head of your branch to a past commit.\n\n",
+            "content": " a or ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -50017,7 +50417,33 @@
           },
           {
             "children": [],
-            "content": "Changing the Branch Head",
+            "content": "fix forward a ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "change if you are undoing a change remotely or on a shared branch. However, if you are the only person working on a branch it may be more desirable to change the head of your branch to a past commit. This is considered a history destructive interaction though, so this should only be done on branches that you are working on independently of other collaborators. \n\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Undo method 1. Changing the branch head",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -50095,7 +50521,7 @@
           },
           {
             "children": [],
-            "content": " Manually editing branches can get a little bit messy. At times. Make sure your base branch is correct after editing a branch head.\n\n \n",
+            "content": " Manually editing branches can get a little bit messy. Make sure your base branch is correct after editing a branch head.  \n\n\n",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -50186,7 +50612,7 @@
           },
           {
             "children": [],
-            "content": "Reverting a Change\n",
+            "content": "Undo method 2. ",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -50199,7 +50625,20 @@
           },
           {
             "children": [],
-            "content": "\nSometimes we want to undo a commit, but other people may be working on the same branch as us. This can lead to conflicts and a lot of toe-stepping. In this case we ",
+            "content": "Reverting a change\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\nSometimes we want to undo a commit, but other people may be working on the same branch as us. Changing a branch head can lead to conflicts amongst collaborators and collaborators stepping on each other's toes. In the case of shared branches, we may  want to ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -50225,7 +50664,7 @@
           },
           {
             "children": [],
-            "content": "our changes. Reverting has the same end effect as rolling back a branch, however, reverting creates a new commit that undoes the changes between the last commit and the commit being reverted. This is useful when a branch is shared by multiple contributors since the reversion does not alter the version history (it just adds to it).\n\n\n",
+            "content": "our changes. Reverting has the same end effect as manually rolling back a branch's head, however, reverting creates a new commit that undoes the changes between the last commit and the commit being reverted. This is useful when a branch is shared by multiple contributors since the reversion does not alter the version history (it just adds to it), but resets the state of the branch to the commit before the reverted commit.\n\n\n",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -50251,7 +50690,254 @@
           },
           {
             "children": [],
+            "content": "\n\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Undo method 3. ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Fixing forward\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
             "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Fix forward",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " is similar to reverting but with one giant difference -- rather than undoing all changes after a commit, ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "fix forward",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " removes only the commit that is selected, not the entire history succeeding it. This makes fix forward a great option if there is a change you want to remove but additional work you want to keep has been performed on the branch already. ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Under the hood, ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "fix forward",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " performs a merge operation, which means it won't always be available if the forward merge has conflicts",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ". Like reverting, fixing forward is non-destructive to version history. This means it's entirely safe to use for shared branches.\n\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Deleting commits\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\nThere is no such thing as deleting a commit in ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ". If you could, ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " wouldn't work at all. The three methods mentioned above cover all the ways you can undo a commit. For this reason, you should be particularly careful about entering sensitive information into ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ". ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -50268,6 +50954,32 @@
             "type": "text",
             "styles": {
               "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "content": "\n",
+            "type": "text",
+            "children": [],
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Cherry picking\n\n\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
               "isItalic": false,
               "isUnderlined": false,
               "isStrikethrough": false,
@@ -52184,7 +52896,7 @@
           },
           {
             "children": [],
-            "content": "Merging Rule of Thumb",
+            "content": "Merging rule of thumb",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -52327,7 +53039,7 @@
           },
           {
             "children": [],
-            "content": " ",
+            "content": " branch ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -52392,7 +53104,7 @@
           },
           {
             "children": [],
-            "content": "Merging Locally",
+            "content": "Merging locally",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -52562,6 +53274,19 @@
           {
             "children": [],
             "content": ".",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -52912,6 +53637,19 @@
           },
           {
             "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
             "content": "{readyToMerge}",
             "type": "content-variable",
             "styles": {
@@ -52977,7 +53715,7 @@
           },
           {
             "children": [],
-            "content": "Merge Conflict",
+            "content": "merge conflict",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -53575,7 +54313,7 @@
           },
           {
             "children": [],
-            "content": "Auto Merge",
+            "content": "Auto merge",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -53691,11 +54429,50 @@
             }
           },
           {
-            "children": [],
             "content": "\n",
+            "type": "text",
+            "children": [],
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "To branch or not to (feature) branch\n\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Believe it or not, we actually believe most repositories do not need to make extensive use of branching. While, it is a very handy feature at times, it can lead to a lot of confusion and unnecessary process overhead. In the context of plain-text, branching makes a lot of sense, especially as a team scales. However, in the case of structured data, branching may hinder your workflow.\n\nWhen you pull a branch, like in git, the remote version of a branch is merged with your local version of the branch. In our opinion, it is easiest for most teams to work off of a single main branch and push directly to main. In doing so, you sacrifice the review process you gain with feature branches, but you gain considerable efficiencies in development workflow and make some of the more technical aspects of version control more accessible to contributors who may not have a software engineering background.",
             "type": "text",
             "styles": {
               "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
               "isItalic": false,
               "isUnderlined": false,
               "isStrikethrough": false,
@@ -53718,7 +54495,7 @@
           },
           {
             "children": [],
-            "content": "Next Section",
+            "content": "Next section",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -54499,7 +55276,7 @@
           },
           {
             "children": [],
-            "content": "Requesting Reviewers",
+            "content": "Requesting reviewers",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -55266,7 +56043,7 @@
           },
           {
             "children": [],
-            "content": "Commit History",
+            "content": "Commit history",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -55448,7 +56225,7 @@
           },
           {
             "children": [],
-            "content": " Settings",
+            "content": " settings",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -55994,7 +56771,7 @@
           },
           {
             "children": [],
-            "content": "Branch Rules & Settings",
+            "content": "Branch rules & settings",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -56241,7 +57018,7 @@
           },
           {
             "children": [],
-            "content": "Revisiting Local",
+            "content": "Revisiting local",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -56501,7 +57278,7 @@
           },
           {
             "children": [],
-            "content": "Branches",
+            "content": "branches",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -56748,7 +57525,7 @@
           },
           {
             "children": [],
-            "content": "Next Section",
+            "content": "Next section",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -57435,7 +58212,7 @@
           },
           {
             "children": [],
-            "content": "Cloning Repositories",
+            "content": "Cloning repositories",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -57617,7 +58394,7 @@
           },
           {
             "children": [],
-            "content": "Local & Remote Tabs",
+            "content": "Local & remote tabs",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -57890,7 +58667,7 @@
           },
           {
             "children": [],
-            "content": "Command Modes",
+            "content": "Command modes",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -58696,7 +59473,7 @@
           },
           {
             "children": [],
-            "content": "Creating a Branch",
+            "content": "Creating a branch",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -60230,7 +61007,7 @@
           },
           {
             "children": [],
-            "content": "Making the First Commit",
+            "content": "Making the first commit",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -61049,7 +61826,7 @@
           },
           {
             "children": [],
-            "content": "Next Section",
+            "content": "Next section",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -61549,7 +62326,7 @@
           },
           {
             "children": [],
-            "content": "Members, Invites & Roles",
+            "content": "Members, invites & roles",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -61835,7 +62612,7 @@
           },
           {
             "children": [],
-            "content": "Org Settings",
+            "content": "Org settings",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -61913,7 +62690,7 @@
           },
           {
             "children": [],
-            "content": "Developer Settings",
+            "content": "Developer settings",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -62485,7 +63262,7 @@
           },
           {
             "children": [],
-            "content": "Create Repo",
+            "content": "Create repo",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -62732,7 +63509,7 @@
           },
           {
             "children": [],
-            "content": "Next Section",
+            "content": "Next section",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -63254,22 +64031,8 @@
                     }
                   },
                   {
-                    "children": [
-                      {
-                        "children": [],
-                        "content": "announcements",
-                        "type": "text",
-                        "styles": {
-                          "isBold": false,
-                          "isItalic": false,
-                          "isUnderlined": false,
-                          "isStrikethrough": false,
-                          "isSuperscript": false,
-                          "isSubscript": false
-                        }
-                      }
-                    ],
-                    "content": "",
+                    "children": [],
+                    "content": "announcements",
                     "type": "text",
                     "styles": {
                       "isBold": true,
@@ -63387,48 +64150,34 @@
                     }
                   },
                   {
-                    "children": [
-                      {
-                        "children": [],
-                        "content": "new ",
-                        "type": "text",
-                        "styles": {
-                          "isBold": false,
-                          "isItalic": false,
-                          "isUnderlined": false,
-                          "isStrikethrough": false,
-                          "isSuperscript": false,
-                          "isSubscript": false
-                        }
-                      },
-                      {
-                        "children": [],
-                        "content": "plugins",
-                        "type": "text",
-                        "styles": {
-                          "isBold": false,
-                          "isItalic": false,
-                          "isUnderlined": false,
-                          "isStrikethrough": false,
-                          "isSuperscript": false,
-                          "isSubscript": false
-                        }
-                      },
-                      {
-                        "children": [],
-                        "content": " ",
-                        "type": "text",
-                        "styles": {
-                          "isBold": false,
-                          "isItalic": false,
-                          "isUnderlined": false,
-                          "isStrikethrough": false,
-                          "isSuperscript": false,
-                          "isSubscript": false
-                        }
-                      }
-                    ],
-                    "content": "",
+                    "children": [],
+                    "content": "new ",
+                    "type": "text",
+                    "styles": {
+                      "isBold": true,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  },
+                  {
+                    "children": [],
+                    "content": "plugins",
+                    "type": "text",
+                    "styles": {
+                      "isBold": true,
+                      "isItalic": false,
+                      "isUnderlined": false,
+                      "isStrikethrough": false,
+                      "isSuperscript": false,
+                      "isSubscript": false
+                    }
+                  },
+                  {
+                    "children": [],
+                    "content": " ",
                     "type": "text",
                     "styles": {
                       "isBold": true,
@@ -63572,22 +64321,8 @@
                     }
                   },
                   {
-                    "children": [
-                      {
-                        "children": [],
-                        "content": "new repositories ",
-                        "type": "text",
-                        "styles": {
-                          "isBold": false,
-                          "isItalic": false,
-                          "isUnderlined": false,
-                          "isStrikethrough": false,
-                          "isSuperscript": false,
-                          "isSubscript": false
-                        }
-                      }
-                    ],
-                    "content": "",
+                    "children": [],
+                    "content": "new repositories ",
                     "type": "text",
                     "styles": {
                       "isBold": true,
@@ -64183,7 +64918,7 @@
           },
           {
             "children": [],
-            "content": "Left Panel",
+            "content": "Left panel",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -64352,7 +65087,7 @@
           },
           {
             "children": [],
-            "content": "User Settings",
+            "content": "User settings",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -64664,7 +65399,7 @@
           },
           {
             "children": [],
-            "content": "Developer Settings",
+            "content": "Developer settings",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -65002,7 +65737,7 @@
           },
           {
             "children": [],
-            "content": "Create Repo",
+            "content": "Create repo",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -65366,7 +66101,7 @@
           },
           {
             "children": [],
-            "content": "Create Org",
+            "content": "Create org",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -65535,7 +66270,7 @@
           },
           {
             "children": [],
-            "content": "Next Section",
+            "content": "Next section",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -69039,7 +69774,7 @@
           },
           {
             "children": [],
-            "content": ".",
+            "content": ".\n\n",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -69052,7 +69787,20 @@
           },
           {
             "children": [],
-            "content": "\n",
+            "content": "What is a branch's head?\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\nA branch's head is the commit a branch currently points to. When you commit a change on a branch, the branch head is updated to the new commit. When you pull changes from a remote repository, or merge a branch, the branch head is updated. A branch can always be reset to a previous (or future) point by changing the branch's head.\n",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -70313,7 +71061,7 @@
           },
           {
             "children": [],
-            "content": "You can think of pulling as being nearly synonymous with downloading. When a remote branch has changes that you do not have on your local version of the branch, you will see an option to pull down the changes for the branch.",
+            "content": "You can think of pulling as being nearly synonymous with downloading. When a remote branch has changes that you do not have on your local version of the branch, you will see an option to pull down the changes for the branch. If you have any local changes that have not been pushed to the remote branch, pulling will merge your local changes with the remote changes for the branch. ",
             "type": "text",
             "styles": {
               "isBold": false,

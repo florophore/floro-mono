@@ -305,7 +305,7 @@ const RichTextEditor = (props: Props) => {
       e.preventDefault();
       let paste = (e.clipboardData || window.Clipboard).getData('text/html');
       const sanitizizedString = sanitizeHtml(paste, {
-        allowedTags: [ 'b', 'i', 'u', 'br', 'sup', 's', 'strike', 'sub', 'ul', 'ol', 'li'],
+        allowedTags: [ 'b', 'i', 'u', 'br', 'sup', 's', 'strike', 'sub'],
       });
       if (isFocused.current) {
         document.execCommand("insertHtml", false, sanitizizedString);
@@ -684,7 +684,7 @@ const RichTextEditor = (props: Props) => {
             >
               <div
                 style={{
-                  whiteSpace: "pre-line",
+                  whiteSpace: "pre-wrap",
                   width: "100%",
                   display: "inline-block",
                   pointerEvents: "none",
@@ -721,7 +721,7 @@ const RichTextEditor = (props: Props) => {
                   //color: "transparent",
                   caretColor: theme.colors.contrastText,
                   borderInline: `1px solid transparent`,
-                  whiteSpace: "pre-line",
+                  whiteSpace: "pre-wrap",
                   position: "relative",
                   zIndex: 0
                 }}

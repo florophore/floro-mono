@@ -278,6 +278,7 @@ const ContentEditor = (props: Props) => {
       props.editorDoc.cursor.removeEventListener("changed", onChanged)
     }
   }, [props.editorDoc.cursor])
+  console.log(props.content)
 
   useEffect(() => {
     const onPaste = (e) => {
@@ -288,7 +289,7 @@ const ContentEditor = (props: Props) => {
       e.preventDefault();
       let paste = (e.clipboardData || window.Clipboard).getData('text/html');
       const sanitizizedString = sanitizeHtml(paste, {
-        allowedTags: [ 'b', 'i', 'u', 'br', 'sup', 's', 'strike', 'sub', 'ul', 'ol', 'li'],
+        allowedTags: [ 'b', 'i', 'u', 'br', 'sup', 's', 'strike', 'sub'],
       });
       if (isFocused.current) {
         document.execCommand("insertHtml", false, sanitizizedString);
@@ -676,7 +677,7 @@ const ContentEditor = (props: Props) => {
             >
               <div
                 style={{
-                  whiteSpace: "pre-line",
+                  whiteSpace: "pre-wrap",
                   width: "100%",
                   display: "inline-block",
                   pointerEvents: "none",
@@ -709,11 +710,11 @@ const ContentEditor = (props: Props) => {
                   width: "100%",
                   display: "inline-block",
                   outline: "none",
-                  //color: props.isDebugMode ? "red" : "transparent",
-                  color: "transparent",
+                  color: props.isDebugMode ? "red" : "transparent",
+                  //color: "#FF000080",
                   caretColor: theme.colors.contrastText,
                   borderInline: `1px solid transparent`,
-                  whiteSpace: "pre-line",
+                  whiteSpace: "pre-wrap",
                   position: "relative",
                   zIndex: 0
                 }}

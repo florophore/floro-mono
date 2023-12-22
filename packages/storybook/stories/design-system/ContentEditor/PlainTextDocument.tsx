@@ -228,7 +228,7 @@ const PlainTextDocument = (props: Props) => {
             >
               <div
                 style={{
-                  whiteSpace: "pre-line",
+                  whiteSpace: "pre-wrap",
                   width: "100%",
                   display: "inline-block",
                   pointerEvents: "none",
@@ -250,7 +250,7 @@ const PlainTextDocument = (props: Props) => {
                   color: "transparent",
                   caretColor: theme.colors.contrastText,
                   borderInline: `1px solid transparent`,
-                  whiteSpace: "pre-line",
+                  whiteSpace: "pre-wrap",
                   position: "relative",
                   zIndex: 0
                 }}
