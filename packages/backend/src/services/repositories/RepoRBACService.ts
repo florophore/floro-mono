@@ -94,6 +94,43 @@ export default class RepoRBACService {
           );
         if (protectedBranch?.disableDirectPushing) {
           // test if they can push here, need to test they are an org member if org private
+        const protectedBranchRuleEnabledUserSettingsContext =
+          await this.contextFactory.createContext(
+            ProtectedBranchRulesEnabledUserSettingsContext,
+            queryRunner
+          );
+
+          const hasUserPermission =
+            await protectedBranchRuleEnabledUserSettingsContext.hasUserId(
+              protectedBranch.id,
+              currentUser?.id,
+              "canPushDirectly"
+            );
+          if (repository.isPrivate && hasUserPermission) {
+            return membership?.membershipState == "active";
+          }
+          if (hasUserPermission) {
+            return true;
+          }
+
+          const protectedBranchRuleEnabledRoleSettingsContext =
+            await this.contextFactory.createContext(
+              ProtectedBranchRulesEnabledRoleSettingsContext,
+              queryRunner
+            );
+          const roleIds = memberRoles?.map((r) => r.id);
+          const hasRoles =
+            await protectedBranchRuleEnabledRoleSettingsContext.hasOrgRoleIds(
+              protectedBranch.id,
+              roleIds,
+              "canPushDirectly"
+            );
+          if (repository.isPrivate && hasRoles) {
+            return membership?.membershipState == "active";
+          }
+          if (hasRoles) {
+            return true;
+          }
           return false;
         }
       }
