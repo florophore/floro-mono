@@ -66,14 +66,23 @@ jobs:
         run: sudo apt-get install -y rpm
         shell: bash
 
+      - name: Install jq on Ubuntu
+        if: runner.os == 'Linux'
+        run: sudo apt-get install jq
+
+      - name: Install jq on macOS
+        if: runner.os == 'macOS'
+        run: brew install jq
+
+      - name: Install jq on Windows
+        if: runner.os == 'Windows'
+        run: choco install jq
+
       - name: Install Electron dependencies
         working-directory: packages/floro-desktop
         run: |
           yarn install
           yarn postinstall:manual
-
-      - name: Install jq
-        run: sudo apt-get install jq
 
       - name: version
         run: echo "$(jq -r '.version' package.json)"
