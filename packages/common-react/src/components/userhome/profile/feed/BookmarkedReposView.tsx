@@ -20,9 +20,12 @@ const ScrollContainer = styled.div`
   max-height: 100%;
   width: 100%;
   overflow-y: scroll;
+  overflow-x: hidden;
   position: absolute;
   top: 0;
   left: 0;
+  padding-left: 16px;
+  padding-right: 16px;
 `;
 
 const LoadMoreWrapper = styled.div`

@@ -25,7 +25,8 @@
           "popStash": "string",
           "clearPluginStorage": "string",
           "changeHead": "string",
-          "reverting": "string"
+          "reverting": "string",
+          "cherryPickedExample": "string"
         },
         "styleClasses": {
           "mainTitle": "string"
@@ -38,6 +39,7 @@
           "clearPluginStorage": "string",
           "changeHead": "string",
           "reverting": "string",
+          "cherryPickedExample": "string",
           "mainTitle": "string"
         },
         "links": {},
@@ -1040,7 +1042,7 @@
           },
           {
             "children": [],
-            "content": "Undoing changes\n",
+            "content": "Undoing commits\n",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -1053,7 +1055,7 @@
           },
           {
             "children": [],
-            "content": "\nThere are three ways to undo a change in ",
+            "content": "\nThere are three ways to undo a commits in ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -1105,7 +1107,7 @@
           },
           {
             "children": [],
-            "content": " a or ",
+            "content": " a commit or ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -1131,7 +1133,7 @@
           },
           {
             "children": [],
-            "content": "change if you are undoing a change remotely or on a shared branch. However, if you are the only person working on a branch it may be more desirable to change the head of your branch to a past commit. This is considered a history destructive interaction though, so this should only be done on branches that you are working on independently of other collaborators. \n\n",
+            "content": "commit if you are undoing a commit remotely or on a shared branch. However, if you are the only person working on a branch it may be more desirable to change the head of your branch to a past commit. This is considered a history destructive interaction though, so this should only be done on branches that you are working on independently of other collaborators. \n\n",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -1326,7 +1328,7 @@
           },
           {
             "children": [],
-            "content": "Reverting a change\n",
+            "content": "Reverting a commit\n",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -1677,10 +1679,413 @@
           },
           {
             "children": [],
-            "content": "Cherry picking\n\n\n",
+            "content": "Cherry picking\n\n",
             "type": "text",
             "styles": {
               "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Cherry picking is the process of taking a commit and applying its changes to your current state. You can cherry pick any commit, it does not have to be in your current branch. A cherry pick looks at what changes the commit made from the commit directly before it and attempts to apply those same changes to the current state of your ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "repository",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ". Cherry-picking does not result in a new commit being created, it just alters your ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "work in progress",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " (",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "WIP",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ")",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ".\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{cherryPickedExample}",
+            "type": "content-variable",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Cherry picking also uses a merge operation to calculate the cherry-picked state. Therefore, it may not be available if the cherry pick results in a conflicted state.\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "content": "\n",
+            "type": "text",
+            "children": [],
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Amending ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "commits",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "You should not amend, but you can 🙃. Sometimes you make a mistake or a typo in a commit message. Some people care about these sorts of things (others do not). Since you cannot delete a commit from ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ", you need to amend your commit when you want to alter the commit message. When you amend, you create a new commit that contains all the changes of your commit but with a new commit message. Amending is risky because it is destructive to version history and can result in redundant conflicts for anyone working together collaboratively. You should only amend ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "commits",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " on ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "branches",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " you are working on in isolation or on ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "commits",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " that you have not pushed to your remote ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "repository",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " yet.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "content": "\n",
+            "type": "text",
+            "children": [],
+            "styles": {
+              "isBold": false,
               "isItalic": false,
               "isUnderlined": false,
               "isStrikethrough": false,
@@ -5157,7 +5562,7 @@
           },
           {
             "children": [],
-            "content": "Believe it or not, we actually believe most repositories do not need to make extensive use of branching. While, it is a very handy feature at times, it can lead to a lot of confusion and unnecessary process overhead. In the context of plain-text, branching makes a lot of sense, especially as a team scales. However, in the case of structured data, branching may hinder your workflow.\n\nWhen you pull a branch, like in git, the remote version of a branch is merged with your local version of the branch. In our opinion, it is easiest for most teams to work off of a single main branch and push directly to main. In doing so, you sacrifice the review process you gain with feature branches, but you gain considerable efficiencies in development workflow and make some of the more technical aspects of version control more accessible to contributors who may not have a software engineering background.",
+            "content": "Believe it or not, we actually believe most repositories do not need to make extensive use of branching. While, it is a very handy feature at times, it can lead to a lot of confusion and unnecessary process overhead. In the context of plain-text, branching makes a lot of sense, especially as a team scales. However, in the case of structured data, branching may hinder your workflow.\n\nWhen you pull a branch, like in git, the remote version of a branch is merged with your local version of the branch. In our opinion, it is easiest for most teams to work off of a single main branch and push directly to main. In doing so, you sacrifice the review process you gain with feature branches, but you gain considerable efficiencies in development workflow and remove some of the more technical aspects of version control making your process more accessible to contributors who may not have a software engineering background.",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -49324,7 +49729,8 @@
           "popStash": "string",
           "clearPluginStorage": "string",
           "changeHead": "string",
-          "reverting": "string"
+          "reverting": "string",
+          "cherryPickedExample": "string"
         },
         "styleClasses": {
           "mainTitle": "string"
@@ -49337,6 +49743,7 @@
           "clearPluginStorage": "string",
           "changeHead": "string",
           "reverting": "string",
+          "cherryPickedExample": "string",
           "mainTitle": "string"
         },
         "links": {},
@@ -50339,7 +50746,7 @@
           },
           {
             "children": [],
-            "content": "Undoing changes\n",
+            "content": "Undoing commits\n",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -50352,7 +50759,7 @@
           },
           {
             "children": [],
-            "content": "\nThere are three ways to undo a change in ",
+            "content": "\nThere are three ways to undo a commits in ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -50404,7 +50811,7 @@
           },
           {
             "children": [],
-            "content": " a or ",
+            "content": " a commit or ",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -50430,7 +50837,7 @@
           },
           {
             "children": [],
-            "content": "change if you are undoing a change remotely or on a shared branch. However, if you are the only person working on a branch it may be more desirable to change the head of your branch to a past commit. This is considered a history destructive interaction though, so this should only be done on branches that you are working on independently of other collaborators. \n\n",
+            "content": "commit if you are undoing a commit remotely or on a shared branch. However, if you are the only person working on a branch it may be more desirable to change the head of your branch to a past commit. This is considered a history destructive interaction though, so this should only be done on branches that you are working on independently of other collaborators. \n\n",
             "type": "text",
             "styles": {
               "isBold": false,
@@ -50625,7 +51032,7 @@
           },
           {
             "children": [],
-            "content": "Reverting a change\n",
+            "content": "Reverting a commit\n",
             "type": "text",
             "styles": {
               "isBold": true,
@@ -50976,10 +51383,413 @@
           },
           {
             "children": [],
-            "content": "Cherry picking\n\n\n",
+            "content": "Cherry picking\n\n",
             "type": "text",
             "styles": {
               "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Cherry picking is the process of taking a commit and applying its changes to your current state. You can cherry pick any commit, it does not have to be in your current branch. A cherry pick looks at what changes the commit made from the commit directly before it and attempts to apply those same changes to the current state of your ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "repository",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ". Cherry-picking does not result in a new commit being created, it just alters your ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "work in progress",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " (",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "WIP",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ")",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": true,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ".\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "{cherryPickedExample}",
+            "type": "content-variable",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Cherry picking also uses a merge operation to calculate the cherry-picked state. Therefore, it may not be available if the cherry pick results in a conflicted state.\n",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "content": "\n",
+            "type": "text",
+            "children": [],
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "Amending ",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "commits",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "You should not amend, but you can 🙃. Sometimes you make a mistake or a typo in a commit message. Some people care about these sorts of things (others do not). Since you cannot delete a commit from ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "floro",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": ", you need to amend your commit when you want to alter the commit message. When you amend, you create a new commit that contains all the changes of your commit but with a new commit message. Amending is risky because it is destructive to version history and can result in redundant conflicts for anyone working together collaboratively. You should only amend ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "commits",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " on ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "branches",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " you are working on in isolation or on ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "commits",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " that you have not pushed to your remote ",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "repository",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": " yet.",
+            "type": "text",
+            "styles": {
+              "isBold": false,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "children": [],
+            "content": "\n",
+            "type": "text",
+            "styles": {
+              "isBold": true,
+              "isItalic": false,
+              "isUnderlined": false,
+              "isStrikethrough": false,
+              "isSuperscript": false,
+              "isSubscript": false
+            }
+          },
+          {
+            "content": "\n",
+            "type": "text",
+            "children": [],
+            "styles": {
+              "isBold": false,
               "isItalic": false,
               "isUnderlined": false,
               "isStrikethrough": false,
@@ -54456,7 +55266,7 @@
           },
           {
             "children": [],
-            "content": "Believe it or not, we actually believe most repositories do not need to make extensive use of branching. While, it is a very handy feature at times, it can lead to a lot of confusion and unnecessary process overhead. In the context of plain-text, branching makes a lot of sense, especially as a team scales. However, in the case of structured data, branching may hinder your workflow.\n\nWhen you pull a branch, like in git, the remote version of a branch is merged with your local version of the branch. In our opinion, it is easiest for most teams to work off of a single main branch and push directly to main. In doing so, you sacrifice the review process you gain with feature branches, but you gain considerable efficiencies in development workflow and make some of the more technical aspects of version control more accessible to contributors who may not have a software engineering background.",
+            "content": "Believe it or not, we actually believe most repositories do not need to make extensive use of branching. While, it is a very handy feature at times, it can lead to a lot of confusion and unnecessary process overhead. In the context of plain-text, branching makes a lot of sense, especially as a team scales. However, in the case of structured data, branching may hinder your workflow.\n\nWhen you pull a branch, like in git, the remote version of a branch is merged with your local version of the branch. In our opinion, it is easiest for most teams to work off of a single main branch and push directly to main. In doing so, you sacrifice the review process you gain with feature branches, but you gain considerable efficiencies in development workflow and remove some of the more technical aspects of version control making your process more accessible to contributors who may not have a software engineering background.",
             "type": "text",
             "styles": {
               "isBold": false,

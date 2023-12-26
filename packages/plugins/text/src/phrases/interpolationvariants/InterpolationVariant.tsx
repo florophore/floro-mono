@@ -361,8 +361,6 @@ const InterpolationVariant = (props: Props) => {
         setDefaultValue(
           {
             ...defaultValue,
-            revisionCount: defaultValue.revisionCount + 1,
-            revisionTimestamp: new Date().toISOString(),
             richTextHtml,
             plainText,
             json: JSON.stringify(json),
@@ -447,8 +445,6 @@ const InterpolationVariant = (props: Props) => {
     if (sourceDefaultValue) {
       setDefaultValue({
         ...defaultValue,
-        revisionCount: sourceDefaultValue?.revisionCount,
-        revisionTimestamp: new Date().toISOString(),
         sourceAtRevision: {
           sourceLocaleRef: sourceLocaleRef,
           richTextHtml: sourceDefaultValue.richTextHtml,
@@ -472,10 +468,10 @@ const InterpolationVariant = (props: Props) => {
       return false;
     }
     return (
-      (sourceDefaultValue?.revisionCount ?? 0) >
-      (defaultValue?.revisionCount ?? 0)
+      (sourceDefaultValue?.json ?? "{}") !=
+      (defaultValue?.json ?? "{}")
     );
-  }, [defaultValue?.revisionCount, sourceDefaultValue?.revisionCount]);
+  }, [defaultValue?.json, sourceDefaultValue?.json]);
 
   const xIcon = useMemo(() => {
     if (theme.name == "light") {

@@ -1,12 +1,12 @@
 {
   "moduleFile": "floro.module.js",
   "repositoryId": "12aa1618-9e0b-404c-8423-7c38047e18c9",
-  "sha": "b0a4c19870e7e328af2b22e1db7f863641954d81078d0243a3dc064472489c06",
-  "message": "added more to advanced commands",
-  "idx": 45,
+  "sha": "405d958981749be17b974fb1a2102324ab5f1a17b3a419e4ab734cdf74489684",
+  "message": "changed text plugin",
+  "idx": 46,
   "genratorDependencies": {
     "text-generator": {
-      "text": "0.0.13"
+      "text": "0.0.31"
     },
     "icon-generator": {
       "icons": "0.0.40"

@@ -214,15 +214,29 @@ const SourceDefaultValueInterpolationVariant = (props: Props) => {
   }, [props.systemSourceLocale.localeCode, editorObserver]);
 
   const requireRevision = useMemo(() => {
-    if (!defaultValue) {
-        return false;
+    if (!sourceDefaultValue) {
+      return false;
     }
-    return (defaultValue?.revisionCount ?? 0) > (props.targetInterpolationVariantLocaleRule?.defaultValue?.revisionCount ?? 0);
-  }, [props.targetInterpolationVariantLocaleRule?.defaultValue?.revisionCount, defaultValue?.revisionCount])
+    return (
+      (sourceDefaultValue?.json ?? "{}") !=
+      (props.targetInterpolationVariantLocaleRule?.defaultValue
+        ?.sourceAtRevision?.json ?? "{}")
+    );
+  }, [
+    props.targetInterpolationVariantLocaleRule?.defaultValue?.sourceAtRevision
+      ?.json,
+    sourceDefaultValue?.json,
+  ]);
 
   const beforeText = useMemo(() => {
-    return splitTextForDiff(props.targetInterpolationVariantLocaleRule?.defaultValue?.sourceAtRevision?.plainText ?? "");
-  }, [props.targetInterpolationVariantLocaleRule.defaultValue?.sourceAtRevision?.plainText]);
+    return splitTextForDiff(
+      props.targetInterpolationVariantLocaleRule?.defaultValue?.sourceAtRevision
+        ?.plainText ?? ""
+    );
+  }, [
+    props.targetInterpolationVariantLocaleRule.defaultValue?.sourceAtRevision
+      ?.plainText,
+  ]);
 
   const afterText = useMemo(() => {
     return splitTextForDiff(sourceDefaultValue?.plainText ?? "");

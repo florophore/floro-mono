@@ -600,9 +600,9 @@ const PhraseGroup = (props: Props) => {
                   (l) => l.id == translateFromLocaleRef
                 );
                 if (
-                  (translation.displayValue.revisionCount ?? 0) <
-                  (translateFromDisplayValue?.displayValue?.revisionCount ??
-                    0)
+                  (translation?.displayValue?.sourceAtRevision?.json ?? "{}") !=
+                  (translateFromDisplayValue?.displayValue?.json ??
+                    "{}")
                 ) {
                   return true;
                 }
@@ -617,8 +617,8 @@ const PhraseGroup = (props: Props) => {
                 (l) => l.id == translateFromLocaleRef
               );
               if (
-                (localeGroup.revisionCount ?? 0) <
-                (translateFrom?.revisionCount ?? 0)
+                (localeGroup?.sourceAtRevision?.json ?? "{}") !=
+                (translateFrom?.json ?? "{}")
               ) {
                 return true;
               }
@@ -637,9 +637,9 @@ const PhraseGroup = (props: Props) => {
                 (l) => l.id == translateFromLocaleRef
               );
               if (
-                (translation.linkDisplayValue.revisionCount ?? 0) <
-                (translateFromDisplayValue?.linkDisplayValue?.revisionCount ??
-                  0)
+                (translation.linkDisplayValue?.sourceAtRevision?.json ?? "{}") !=
+                (translateFromDisplayValue?.linkDisplayValue?.json ??
+                  "{}")
               ) {
                 return true;
               }
@@ -647,8 +647,8 @@ const PhraseGroup = (props: Props) => {
                 (l) => l.id == translateFromLocaleRef
               );
               if (
-                (translation.linkHrefValue.revisionCount ?? 0) <
-                (translateFromHrefValue?.linkHrefValue?.revisionCount ?? 0)
+                (translation?.linkHrefValue?.sourceAtRevision?.json ?? "{}") !=
+                (translateFromHrefValue?.linkHrefValue?.json ?? "{}")
               ) {
                 return true;
               }
@@ -663,8 +663,8 @@ const PhraseGroup = (props: Props) => {
                 (l) => l.id == translateFromLocaleRef
               );
               if (
-                (translation.defaultValue.revisionCount ?? 0) <
-                (translateFrom?.defaultValue?.revisionCount ?? 0)
+                (translation?.defaultValue?.sourceAtRevision?.json ?? "{}") !=
+                (translateFrom?.defaultValue?.json ?? "{}")
               ) {
                 return true;
               }
@@ -679,8 +679,8 @@ const PhraseGroup = (props: Props) => {
                 (l) => l.id == translateFromLocaleRef
               );
               if (
-                (translation.displayValue.revisionCount ?? 0) <
-                (translateFrom?.displayValue?.revisionCount ?? 0)
+                (translation?.displayValue?.sourceAtRevision?.json ?? "{}") !=
+                (translateFrom?.displayValue?.json ?? "{}")
               ) {
                 return true;
               }
@@ -1052,9 +1052,9 @@ const PhraseGroup = (props: Props) => {
                   (l) => l.id == translateFromLocaleRef
                 );
                 if (
-                  (translation.displayValue.revisionCount ?? 0) <
-                  (translateFromDisplayValue?.displayValue?.revisionCount ??
-                    0)
+                  (translation?.displayValue?.sourceAtRevision?.json ?? "{}") !=
+                  (translateFromDisplayValue?.displayValue?.json ??
+                    "{}")
                 ) {
                   return true;
                 }
@@ -1069,8 +1069,8 @@ const PhraseGroup = (props: Props) => {
                 (l) => l.id == translateFromLocaleRef
               );
               if (
-                (localeGroup.revisionCount ?? 0) <
-                (translateFrom?.revisionCount ?? 0)
+                (localeGroup?.sourceAtRevision?.json ?? "{}") !=
+                (translateFrom?.json ?? "{}")
               ) {
                 return true;
               }
@@ -1089,9 +1089,9 @@ const PhraseGroup = (props: Props) => {
                 (l) => l.id == translateFromLocaleRef
               );
               if (
-                (translation.linkDisplayValue.revisionCount ?? 0) <
-                (translateFromDisplayValue?.linkDisplayValue?.revisionCount ??
-                  0)
+                (translation?.linkDisplayValue?.sourceAtRevision?.json ?? "{}") !=
+                (translateFromDisplayValue?.linkDisplayValue?.json ??
+                  "{}")
               ) {
                 return true;
               }
@@ -1099,8 +1099,8 @@ const PhraseGroup = (props: Props) => {
                 (l) => l.id == translateFromLocaleRef
               );
               if (
-                (translation.linkHrefValue.revisionCount ?? 0) <
-                (translateFromHrefValue?.linkHrefValue?.revisionCount ?? 0)
+                (translation?.linkHrefValue?.sourceAtRevision?.json ?? "{}") !=
+                (translateFromHrefValue?.linkHrefValue?.json ?? "{}")
               ) {
                 return true;
               }
@@ -1115,8 +1115,8 @@ const PhraseGroup = (props: Props) => {
                 (l) => l.id == translateFromLocaleRef
               );
               if (
-                (translation.defaultValue.revisionCount ?? 0) <
-                (translateFrom?.defaultValue?.revisionCount ?? 0)
+                (translation?.defaultValue?.sourceAtRevision?.json ?? "{}") !=
+                (translateFrom?.defaultValue?.json ?? "{}")
               ) {
                 return true;
               }
@@ -1131,8 +1131,8 @@ const PhraseGroup = (props: Props) => {
                 (l) => l.id == translateFromLocaleRef
               );
               if (
-                (translation.displayValue.revisionCount ?? 0) <
-                (translateFrom?.displayValue?.revisionCount ?? 0)
+                (translation?.displayValue?.sourceAtRevision?.json ?? "{}") !=
+                (translateFrom?.displayValue?.json ?? "{}")
               ) {
                 return true;
               }

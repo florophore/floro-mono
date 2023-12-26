@@ -226,11 +226,18 @@ const SourcePhraseSection = (props: Props) => {
   }, [props.systemSourceLocale.localeCode, editorObserver]);
 
   const requireRevision = useMemo(() => {
-    if (!displayValue) {
-        return false;
+    if (!sourceDisplayValue) {
+      return false;
     }
-    return (displayValue?.revisionCount ?? 0) > (props.targetPhraseSectionLocaleRule?.displayValue?.revisionCount ?? 0);
-  }, [props.targetPhraseSectionLocaleRule?.displayValue?.revisionCount, displayValue?.revisionCount])
+    return (
+      (sourceDisplayValue?.json ?? "{}") !=
+      (props.targetPhraseSectionLocaleRule?.displayValue?.sourceAtRevision
+        ?.json ?? "{}")
+    );
+  }, [
+    props.targetPhraseSectionLocaleRule?.displayValue?.sourceAtRevision?.json,
+    sourceDisplayValue?.json,
+  ]);
 
   const beforeText = useMemo(() => {
     return splitTextForDiff(props.targetPhraseSectionLocaleRule?.displayValue?.sourceAtRevision?.plainText ?? "");

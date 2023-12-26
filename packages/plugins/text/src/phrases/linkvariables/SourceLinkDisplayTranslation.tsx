@@ -184,10 +184,16 @@ const SourceLinkDisplayTranslation = (props: Props) => {
 
   const requireRevision = useMemo(() => {
     if (!sourceLinkDisplayTranslation) {
-        return false;
+      return false;
     }
-    return (sourceLinkDisplayTranslation?.revisionCount ?? 0) > (props.targetLinkDisplayTranslation?.revisionCount ?? 0);
-  }, [props.targetLinkDisplayTranslation?.revisionCount, sourceLinkDisplayTranslation?.revisionCount])
+    return (
+      (sourceLinkDisplayTranslation?.json ?? "{}") !=
+      (props.targetLinkDisplayTranslation?.sourceAtRevision?.json ?? "{}")
+    );
+  }, [
+    props.targetLinkDisplayTranslation?.sourceAtRevision?.json,
+    sourceLinkDisplayTranslation?.json,
+  ]);
 
   const beforeText = useMemo(() => {
     return splitTextForDiff(props.targetLinkDisplayTranslation?.sourceAtRevision?.plainText ?? "");

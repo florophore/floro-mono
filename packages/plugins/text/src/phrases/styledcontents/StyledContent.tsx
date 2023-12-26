@@ -354,8 +354,6 @@ const StyledContent = (props: Props) => {
       } else {
         setDisplayValue({
           ...displayValue,
-          revisionCount: displayValue.revisionCount + 1,
-          revisionTimestamp: new Date().toISOString(),
           richTextHtml,
           plainText,
           json: JSON.stringify(json),
@@ -446,8 +444,6 @@ const StyledContent = (props: Props) => {
     if (sourceDefaultValue) {
       setDisplayValue({
         ...displayValue,
-        revisionCount: sourceDefaultValue?.revisionCount,
-        revisionTimestamp: new Date().toISOString(),
         sourceAtRevision: {
           sourceLocaleRef: sourceLocaleRef,
           richTextHtml: sourceDefaultValue.richTextHtml,
@@ -472,12 +468,12 @@ const StyledContent = (props: Props) => {
       return false;
     }
     return (
-      (sourceDefaultValue?.revisionCount ?? 0) >
-      (displayValue?.revisionCount ?? 0)
+      (sourceDefaultValue?.json ?? "{}") !=
+      (displayValue?.sourceAtRevision?.json ?? "{}")
     );
   }, [
-    displayValue?.revisionCount,
-    sourceDefaultValue?.revisionCount,
+    displayValue?.sourceAtRevision?.json,
+    sourceDefaultValue?.json,
   ]);
 
   const xIcon = useMemo(() => {

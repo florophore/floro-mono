@@ -14,39 +14,10 @@ describe("generate", () => {
         vol.reset();
     });
     test("generates json and typescript mocks", async () => {
-        //console.log("S", mockState);
         await generate(mockState, outDir, { lang: "typescript" });
         //const files = fs.readdirSync(outDir);
-        //expect(files).toEqual(["index.ts", "palette.json"]);
-        //const jsonString = fs.readFileSync(path.join(outDir, "palette.json"), "utf8") as string;
-        //const json = JSON.parse(jsonString);
-        //expect(json).toEqual({
-        //  white: {
-        //    light: null,
-        //    regular: "#FFFFFF",
-        //    dark: null,
-        //  },
-        //  black: {
-        //    light: null,
-        //    regular: "#000000",
-        //    dark: null,
-        //  },
-        //  red: {
-        //    light: "#F93D44",
-        //    regular: "#CC2F35",
-        //    dark: "#AA2227",
-        //  },
-        //  green: {
-        //    light: "#77F075",
-        //    regular: "#3DD43A",
-        //    dark: "#26A324",
-        //  },
-        //  blue: {
-        //    light: "#7E91EC",
-        //    regular: "#3D65DB",
-        //    dark: "#1F38B2",
-        //  },
-        //});
+        //expect(files).toEqual(["index.ts", "text.json"]);
+        //const jsonString = fs.readFileSync(path.join(outDir, "text.json"), "utf8") as string;
     });
 });
 //# sourceMappingURL=index.spec.js.map

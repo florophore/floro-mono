@@ -146,7 +146,8 @@ const NewRepoRow = (props: Props) => {
             maxWidth: 624,
             width: "100%",
             borderRadius: 8,
-            margin: 16,
+            marginTop: 16,
+            marginBottom: 16,
             border: `1px solid ${theme.colors.commonBorder}`,
             boxShadow: `0px 2px 2px 2px ${theme.colors.tooltipOuterShadowColor}`
           }}

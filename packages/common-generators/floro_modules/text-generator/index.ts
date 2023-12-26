@@ -2741,24 +2741,26 @@ export interface ProductDocsAdvancedCommandsDocs {
 }
 
 export interface ProductDocsAdvancedCommandsDocsArgs {
-    changeHead:         string;
-    clearPluginStorage: string;
-    docSearch:          string;
-    mainTitle:          string;
-    popStash:           string;
-    reverting:          string;
-    shaGraph:           string;
-    stashing:           string;
+    changeHead:          string;
+    cherryPickedExample: string;
+    clearPluginStorage:  string;
+    docSearch:           string;
+    mainTitle:           string;
+    popStash:            string;
+    reverting:           string;
+    shaGraph:            string;
+    stashing:            string;
 }
 
 export interface ProductDocsAdvancedCommandsDocsContentVariables {
-    changeHead:         string;
-    clearPluginStorage: string;
-    docSearch:          string;
-    popStash:           string;
-    reverting:          string;
-    shaGraph:           string;
-    stashing:           string;
+    changeHead:          string;
+    cherryPickedExample: string;
+    clearPluginStorage:  string;
+    docSearch:           string;
+    popStash:            string;
+    reverting:           string;
+    shaGraph:            string;
+    stashing:            string;
 }
 
 export interface ProductDocsAdvancedCommandsDocsInterpolations {

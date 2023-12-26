@@ -401,8 +401,6 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
       } else {
         setPhraseTranslation({
           ...phraseTranslation,
-          revisionCount: phraseTranslation.revisionCount + 1,
-          revisionTimestamp: new Date().toISOString(),
           richTextHtml,
           plainText,
           json: JSON.stringify(json),
@@ -502,8 +500,6 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
     if (sourcePhraseTranslation) {
       setPhraseTranslation({
         ...phraseTranslation,
-        revisionCount: sourcePhraseTranslation.revisionCount,
-        revisionTimestamp: new Date().toISOString(),
         sourceAtRevision: {
           sourceLocaleRef: sourceLocaleRef,
           richTextHtml: sourcePhraseTranslation.richTextHtml,
@@ -527,12 +523,12 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
       return false;
     }
     return (
-      (sourcePhraseTranslation?.revisionCount ?? 0) >
-      (phraseTranslation?.revisionCount ?? 0)
+      (sourcePhraseTranslation?.json ?? "{}") !=
+      (phraseTranslation?.sourceAtRevision?.json ?? "{}")
     );
   }, [
-    phraseTranslation?.revisionCount,
-    sourcePhraseTranslation?.revisionCount,
+    phraseTranslation?.sourceAtRevision?.json,
+    sourcePhraseTranslation?.json,
   ]);
 
   const onChangeTerm = useCallback(

@@ -120,12 +120,12 @@ const SourceLinkHrefTranslation = (props: Props) => {
       return false;
     }
     return (
-      (sourceLinkHrefTranslation?.revisionCount ?? 0) >
-      (props.targetLinkHrefTranslation?.revisionCount ?? 0)
+      (sourceLinkHrefTranslation?.json ?? "{}") !=
+      (props.targetLinkHrefTranslation?.sourceAtRevision?.json ?? "{}")
     );
   }, [
-    props.targetLinkHrefTranslation?.revisionCount,
-    sourceLinkHrefTranslation?.revisionCount,
+    props.targetLinkHrefTranslation?.sourceAtRevision?.json,
+    sourceLinkHrefTranslation?.json,
   ]);
 
   const beforeText = useMemo(() => {

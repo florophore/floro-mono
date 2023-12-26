@@ -106,8 +106,6 @@ export type SchemaTypes = {
         ['enabledTerms']: Array<string>;
         ['json']?: string;
         ['plainText']?: string;
-        ['revisionCount']: number;
-        ['revisionTimestamp']?: string;
         ['richTextHtml']?: string;
         ['sourceAtRevision']: {
             ['json']?: string;
@@ -120,8 +118,6 @@ export type SchemaTypes = {
         ['enabledTerms']: Array<string>;
         ['json']?: string;
         ['plainText']?: string;
-        ['revisionCount']: number;
-        ['revisionTimestamp']?: string;
         ['richTextHtml']?: string;
         ['sourceAtRevision']: {
             ['json']?: string;
@@ -133,8 +129,6 @@ export type SchemaTypes = {
     ['$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkHrefValue']: {
         ['json']?: string;
         ['plainText']?: string;
-        ['revisionCount']: number;
-        ['revisionTimestamp']?: string;
         ['richTextHtml']?: string;
         ['sourceAtRevision']: {
             ['json']?: string;
@@ -147,8 +141,6 @@ export type SchemaTypes = {
         ['enabledTerms']: Array<string>;
         ['json']?: string;
         ['plainText']?: string;
-        ['revisionCount']: number;
-        ['revisionTimestamp']?: string;
         ['richTextHtml']?: string;
         ['sourceAtRevision']: {
             ['json']?: string;
@@ -161,8 +153,6 @@ export type SchemaTypes = {
         ['enabledTerms']: Array<string>;
         ['json']?: string;
         ['plainText']?: string;
-        ['revisionCount']: number;
-        ['revisionTimestamp']?: string;
         ['richTextHtml']?: string;
         ['sourceAtRevision']: {
             ['json']?: string;
@@ -204,8 +194,6 @@ export type SchemaTypes = {
             ['enabledTerms']: Array<string>;
             ['json']?: string;
             ['plainText']?: string;
-            ['revisionCount']: number;
-            ['revisionTimestamp']?: string;
             ['richTextHtml']?: string;
             ['sourceAtRevision']: {
                 ['json']?: string;
@@ -222,8 +210,6 @@ export type SchemaTypes = {
             ['enabledTerms']: Array<string>;
             ['json']?: string;
             ['plainText']?: string;
-            ['revisionCount']: number;
-            ['revisionTimestamp']?: string;
             ['richTextHtml']?: string;
             ['sourceAtRevision']: {
                 ['json']?: string;
@@ -235,8 +221,6 @@ export type SchemaTypes = {
         ['linkHrefValue']: {
             ['json']?: string;
             ['plainText']?: string;
-            ['revisionCount']: number;
-            ['revisionTimestamp']?: string;
             ['richTextHtml']?: string;
             ['sourceAtRevision']: {
                 ['json']?: string;
@@ -251,8 +235,6 @@ export type SchemaTypes = {
             ['enabledTerms']: Array<string>;
             ['json']?: string;
             ['plainText']?: string;
-            ['revisionCount']: number;
-            ['revisionTimestamp']?: string;
             ['richTextHtml']?: string;
             ['sourceAtRevision']: {
                 ['json']?: string;
@@ -268,8 +250,6 @@ export type SchemaTypes = {
             ['enabledTerms']: Array<string>;
             ['json']?: string;
             ['plainText']?: string;
-            ['revisionCount']: number;
-            ['revisionTimestamp']?: string;
             ['richTextHtml']?: string;
             ['sourceAtRevision']: {
                 ['json']?: string;
@@ -316,8 +296,6 @@ export type SchemaTypes = {
             ['enabledTerms']: Array<string>;
             ['json']?: string;
             ['plainText']?: string;
-            ['revisionCount']: number;
-            ['revisionTimestamp']?: string;
             ['richTextHtml']?: string;
             ['sourceAtRevision']: {
                 ['json']?: string;
@@ -334,8 +312,6 @@ export type SchemaTypes = {
             ['enabledTerms']: Array<string>;
             ['json']?: string;
             ['plainText']?: string;
-            ['revisionCount']: number;
-            ['revisionTimestamp']?: string;
             ['richTextHtml']?: string;
             ['sourceAtRevision']: {
                 ['json']?: string;
@@ -347,8 +323,6 @@ export type SchemaTypes = {
         ['linkHrefValue']: {
             ['json']?: string;
             ['plainText']?: string;
-            ['revisionCount']: number;
-            ['revisionTimestamp']?: string;
             ['richTextHtml']?: string;
             ['sourceAtRevision']: {
                 ['json']?: string;
@@ -363,8 +337,6 @@ export type SchemaTypes = {
             ['enabledTerms']: Array<string>;
             ['json']?: string;
             ['plainText']?: string;
-            ['revisionCount']: number;
-            ['revisionTimestamp']?: string;
             ['richTextHtml']?: string;
             ['sourceAtRevision']: {
                 ['json']?: string;
@@ -386,8 +358,6 @@ export type SchemaTypes = {
             ['enabledTerms']: Array<string>;
             ['json']?: string;
             ['plainText']?: string;
-            ['revisionCount']: number;
-            ['revisionTimestamp']?: string;
             ['richTextHtml']?: string;
             ['sourceAtRevision']: {
                 ['json']?: string;
@@ -439,8 +409,6 @@ export type SchemaTypes = {
                 ['enabledTerms']: Array<string>;
                 ['json']?: string;
                 ['plainText']?: string;
-                ['revisionCount']: number;
-                ['revisionTimestamp']?: string;
                 ['richTextHtml']?: string;
                 ['sourceAtRevision']: {
                     ['json']?: string;
@@ -462,8 +430,6 @@ export type SchemaTypes = {
                 ['enabledTerms']: Array<string>;
                 ['json']?: string;
                 ['plainText']?: string;
-                ['revisionCount']: number;
-                ['revisionTimestamp']?: string;
                 ['richTextHtml']?: string;
                 ['sourceAtRevision']: {
                     ['json']?: string;
@@ -475,8 +441,6 @@ export type SchemaTypes = {
             ['linkHrefValue']: {
                 ['json']?: string;
                 ['plainText']?: string;
-                ['revisionCount']: number;
-                ['revisionTimestamp']?: string;
                 ['richTextHtml']?: string;
                 ['sourceAtRevision']: {
                     ['json']?: string;
@@ -493,8 +457,6 @@ export type SchemaTypes = {
                 ['enabledTerms']: Array<string>;
                 ['json']?: string;
                 ['plainText']?: string;
-                ['revisionCount']: number;
-                ['revisionTimestamp']?: string;
                 ['richTextHtml']?: string;
                 ['sourceAtRevision']: {
                     ['json']?: string;
@@ -512,8 +474,6 @@ export type SchemaTypes = {
         ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
         ['json']?: string;
         ['plainText']?: string;
-        ['revisionCount']: number;
-        ['revisionTimestamp']?: string;
         ['richTextHtml']?: string;
         ['sourceAtRevision']: {
             ['json']?: string;
@@ -532,8 +492,6 @@ export type SchemaTypes = {
                 ['enabledTerms']: Array<string>;
                 ['json']?: string;
                 ['plainText']?: string;
-                ['revisionCount']: number;
-                ['revisionTimestamp']?: string;
                 ['richTextHtml']?: string;
                 ['sourceAtRevision']: {
                     ['json']?: string;
@@ -599,8 +557,6 @@ export type SchemaTypes = {
                 ['enabledTerms']: Array<string>;
                 ['json']?: string;
                 ['plainText']?: string;
-                ['revisionCount']: number;
-                ['revisionTimestamp']?: string;
                 ['richTextHtml']?: string;
                 ['sourceAtRevision']: {
                     ['json']?: string;
@@ -622,8 +578,6 @@ export type SchemaTypes = {
                 ['enabledTerms']: Array<string>;
                 ['json']?: string;
                 ['plainText']?: string;
-                ['revisionCount']: number;
-                ['revisionTimestamp']?: string;
                 ['richTextHtml']?: string;
                 ['sourceAtRevision']: {
                     ['json']?: string;
@@ -635,8 +589,6 @@ export type SchemaTypes = {
             ['linkHrefValue']: {
                 ['json']?: string;
                 ['plainText']?: string;
-                ['revisionCount']: number;
-                ['revisionTimestamp']?: string;
                 ['richTextHtml']?: string;
                 ['sourceAtRevision']: {
                     ['json']?: string;
@@ -653,8 +605,6 @@ export type SchemaTypes = {
                 ['enabledTerms']: Array<string>;
                 ['json']?: string;
                 ['plainText']?: string;
-                ['revisionCount']: number;
-                ['revisionTimestamp']?: string;
                 ['richTextHtml']?: string;
                 ['sourceAtRevision']: {
                     ['json']?: string;
@@ -672,8 +622,6 @@ export type SchemaTypes = {
         ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
         ['json']?: string;
         ['plainText']?: string;
-        ['revisionCount']: number;
-        ['revisionTimestamp']?: string;
         ['richTextHtml']?: string;
         ['sourceAtRevision']: {
             ['json']?: string;
@@ -692,8 +640,6 @@ export type SchemaTypes = {
                 ['enabledTerms']: Array<string>;
                 ['json']?: string;
                 ['plainText']?: string;
-                ['revisionCount']: number;
-                ['revisionTimestamp']?: string;
                 ['richTextHtml']?: string;
                 ['sourceAtRevision']: {
                     ['json']?: string;
@@ -762,8 +708,6 @@ export type SchemaTypes = {
                     ['enabledTerms']: Array<string>;
                     ['json']?: string;
                     ['plainText']?: string;
-                    ['revisionCount']: number;
-                    ['revisionTimestamp']?: string;
                     ['richTextHtml']?: string;
                     ['sourceAtRevision']: {
                         ['json']?: string;
@@ -786,8 +730,6 @@ export type SchemaTypes = {
                     ['enabledTerms']: Array<string>;
                     ['json']?: string;
                     ['plainText']?: string;
-                    ['revisionCount']: number;
-                    ['revisionTimestamp']?: string;
                     ['richTextHtml']?: string;
                     ['sourceAtRevision']: {
                         ['json']?: string;
@@ -799,8 +741,6 @@ export type SchemaTypes = {
                 ['linkHrefValue']: {
                     ['json']?: string;
                     ['plainText']?: string;
-                    ['revisionCount']: number;
-                    ['revisionTimestamp']?: string;
                     ['richTextHtml']?: string;
                     ['sourceAtRevision']: {
                         ['json']?: string;
@@ -819,8 +759,6 @@ export type SchemaTypes = {
                     ['enabledTerms']: Array<string>;
                     ['json']?: string;
                     ['plainText']?: string;
-                    ['revisionCount']: number;
-                    ['revisionTimestamp']?: string;
                     ['richTextHtml']?: string;
                     ['sourceAtRevision']: {
                         ['json']?: string;
@@ -838,8 +776,6 @@ export type SchemaTypes = {
             ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
             ['json']?: string;
             ['plainText']?: string;
-            ['revisionCount']: number;
-            ['revisionTimestamp']?: string;
             ['richTextHtml']?: string;
             ['sourceAtRevision']: {
                 ['json']?: string;
@@ -860,8 +796,6 @@ export type SchemaTypes = {
                     ['enabledTerms']: Array<string>;
                     ['json']?: string;
                     ['plainText']?: string;
-                    ['revisionCount']: number;
-                    ['revisionTimestamp']?: string;
                     ['richTextHtml']?: string;
                     ['sourceAtRevision']: {
                         ['json']?: string;
@@ -945,8 +879,6 @@ export type SchemaTypes = {
                     ['enabledTerms']: Array<string>;
                     ['json']?: string;
                     ['plainText']?: string;
-                    ['revisionCount']: number;
-                    ['revisionTimestamp']?: string;
                     ['richTextHtml']?: string;
                     ['sourceAtRevision']: {
                         ['json']?: string;
@@ -969,8 +901,6 @@ export type SchemaTypes = {
                     ['enabledTerms']: Array<string>;
                     ['json']?: string;
                     ['plainText']?: string;
-                    ['revisionCount']: number;
-                    ['revisionTimestamp']?: string;
                     ['richTextHtml']?: string;
                     ['sourceAtRevision']: {
                         ['json']?: string;
@@ -982,8 +912,6 @@ export type SchemaTypes = {
                 ['linkHrefValue']: {
                     ['json']?: string;
                     ['plainText']?: string;
-                    ['revisionCount']: number;
-                    ['revisionTimestamp']?: string;
                     ['richTextHtml']?: string;
                     ['sourceAtRevision']: {
                         ['json']?: string;
@@ -1002,8 +930,6 @@ export type SchemaTypes = {
                     ['enabledTerms']: Array<string>;
                     ['json']?: string;
                     ['plainText']?: string;
-                    ['revisionCount']: number;
-                    ['revisionTimestamp']?: string;
                     ['richTextHtml']?: string;
                     ['sourceAtRevision']: {
                         ['json']?: string;
@@ -1021,8 +947,6 @@ export type SchemaTypes = {
             ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
             ['json']?: string;
             ['plainText']?: string;
-            ['revisionCount']: number;
-            ['revisionTimestamp']?: string;
             ['richTextHtml']?: string;
             ['sourceAtRevision']: {
                 ['json']?: string;
@@ -1043,8 +967,6 @@ export type SchemaTypes = {
                     ['enabledTerms']: Array<string>;
                     ['json']?: string;
                     ['plainText']?: string;
-                    ['revisionCount']: number;
-                    ['revisionTimestamp']?: string;
                     ['richTextHtml']?: string;
                     ['sourceAtRevision']: {
                         ['json']?: string;
@@ -1131,8 +1053,6 @@ export type SchemaTypes = {
                         ['enabledTerms']: Array<string>;
                         ['json']?: string;
                         ['plainText']?: string;
-                        ['revisionCount']: number;
-                        ['revisionTimestamp']?: string;
                         ['richTextHtml']?: string;
                         ['sourceAtRevision']: {
                             ['json']?: string;
@@ -1155,8 +1075,6 @@ export type SchemaTypes = {
                         ['enabledTerms']: Array<string>;
                         ['json']?: string;
                         ['plainText']?: string;
-                        ['revisionCount']: number;
-                        ['revisionTimestamp']?: string;
                         ['richTextHtml']?: string;
                         ['sourceAtRevision']: {
                             ['json']?: string;
@@ -1168,8 +1086,6 @@ export type SchemaTypes = {
                     ['linkHrefValue']: {
                         ['json']?: string;
                         ['plainText']?: string;
-                        ['revisionCount']: number;
-                        ['revisionTimestamp']?: string;
                         ['richTextHtml']?: string;
                         ['sourceAtRevision']: {
                             ['json']?: string;
@@ -1188,8 +1104,6 @@ export type SchemaTypes = {
                         ['enabledTerms']: Array<string>;
                         ['json']?: string;
                         ['plainText']?: string;
-                        ['revisionCount']: number;
-                        ['revisionTimestamp']?: string;
                         ['richTextHtml']?: string;
                         ['sourceAtRevision']: {
                             ['json']?: string;
@@ -1207,8 +1121,6 @@ export type SchemaTypes = {
                 ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
                 ['json']?: string;
                 ['plainText']?: string;
-                ['revisionCount']: number;
-                ['revisionTimestamp']?: string;
                 ['richTextHtml']?: string;
                 ['sourceAtRevision']: {
                     ['json']?: string;
@@ -1229,8 +1141,6 @@ export type SchemaTypes = {
                         ['enabledTerms']: Array<string>;
                         ['json']?: string;
                         ['plainText']?: string;
-                        ['revisionCount']: number;
-                        ['revisionTimestamp']?: string;
                         ['richTextHtml']?: string;
                         ['sourceAtRevision']: {
                             ['json']?: string;
@@ -1325,8 +1235,6 @@ export type SchemaTypes = {
                         ['enabledTerms']: Array<string>;
                         ['json']?: string;
                         ['plainText']?: string;
-                        ['revisionCount']: number;
-                        ['revisionTimestamp']?: string;
                         ['richTextHtml']?: string;
                         ['sourceAtRevision']: {
                             ['json']?: string;
@@ -1349,8 +1257,6 @@ export type SchemaTypes = {
                         ['enabledTerms']: Array<string>;
                         ['json']?: string;
                         ['plainText']?: string;
-                        ['revisionCount']: number;
-                        ['revisionTimestamp']?: string;
                         ['richTextHtml']?: string;
                         ['sourceAtRevision']: {
                             ['json']?: string;
@@ -1362,8 +1268,6 @@ export type SchemaTypes = {
                     ['linkHrefValue']: {
                         ['json']?: string;
                         ['plainText']?: string;
-                        ['revisionCount']: number;
-                        ['revisionTimestamp']?: string;
                         ['richTextHtml']?: string;
                         ['sourceAtRevision']: {
                             ['json']?: string;
@@ -1382,8 +1286,6 @@ export type SchemaTypes = {
                         ['enabledTerms']: Array<string>;
                         ['json']?: string;
                         ['plainText']?: string;
-                        ['revisionCount']: number;
-                        ['revisionTimestamp']?: string;
                         ['richTextHtml']?: string;
                         ['sourceAtRevision']: {
                             ['json']?: string;
@@ -1401,8 +1303,6 @@ export type SchemaTypes = {
                 ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
                 ['json']?: string;
                 ['plainText']?: string;
-                ['revisionCount']: number;
-                ['revisionTimestamp']?: string;
                 ['richTextHtml']?: string;
                 ['sourceAtRevision']: {
                     ['json']?: string;
@@ -1423,8 +1323,6 @@ export type SchemaTypes = {
                         ['enabledTerms']: Array<string>;
                         ['json']?: string;
                         ['plainText']?: string;
-                        ['revisionCount']: number;
-                        ['revisionTimestamp']?: string;
                         ['richTextHtml']?: string;
                         ['sourceAtRevision']: {
                             ['json']?: string;
@@ -1582,8 +1480,6 @@ export type SchemaRoot = {
                             ['enabledTerms']: Array<string>;
                             ['json']?: string;
                             ['plainText']?: string;
-                            ['revisionCount']: number;
-                            ['revisionTimestamp']?: string;
                             ['richTextHtml']?: string;
                             ['sourceAtRevision']: {
                                 ['json']?: string;
@@ -1606,8 +1502,6 @@ export type SchemaRoot = {
                             ['enabledTerms']: Array<string>;
                             ['json']?: string;
                             ['plainText']?: string;
-                            ['revisionCount']: number;
-                            ['revisionTimestamp']?: string;
                             ['richTextHtml']?: string;
                             ['sourceAtRevision']: {
                                 ['json']?: string;
@@ -1619,8 +1513,6 @@ export type SchemaRoot = {
                         ['linkHrefValue']: {
                             ['json']?: string;
                             ['plainText']?: string;
-                            ['revisionCount']: number;
-                            ['revisionTimestamp']?: string;
                             ['richTextHtml']?: string;
                             ['sourceAtRevision']: {
                                 ['json']?: string;
@@ -1639,8 +1531,6 @@ export type SchemaRoot = {
                             ['enabledTerms']: Array<string>;
                             ['json']?: string;
                             ['plainText']?: string;
-                            ['revisionCount']: number;
-                            ['revisionTimestamp']?: string;
                             ['richTextHtml']?: string;
                             ['sourceAtRevision']: {
                                 ['json']?: string;
@@ -1658,8 +1548,6 @@ export type SchemaRoot = {
                     ['id']: QueryTypes['$(text).localeSettings.locales.localeCode<?>'];
                     ['json']?: string;
                     ['plainText']?: string;
-                    ['revisionCount']: number;
-                    ['revisionTimestamp']?: string;
                     ['richTextHtml']?: string;
                     ['sourceAtRevision']: {
                         ['json']?: string;
@@ -1680,8 +1568,6 @@ export type SchemaRoot = {
                             ['enabledTerms']: Array<string>;
                             ['json']?: string;
                             ['plainText']?: string;
-                            ['revisionCount']: number;
-                            ['revisionTimestamp']?: string;
                             ['richTextHtml']?: string;
                             ['sourceAtRevision']: {
                                 ['json']?: string;

@@ -218,12 +218,12 @@ const SourcePhraseTranslation = (props: Props) => {
       return false;
     }
     return (
-      (sourcePhraseTranslation?.revisionCount ?? 0) >
-      (props.targetPhraseTranslation?.revisionCount ?? 0)
+      (sourcePhraseTranslation?.json ?? "{}") !=
+      (props.targetPhraseTranslation?.sourceAtRevision?.json ?? "{}")
     );
   }, [
-    props.targetPhraseTranslation?.revisionCount,
-    sourcePhraseTranslation?.revisionCount,
+    props.targetPhraseTranslation?.sourceAtRevision?.json,
+    sourcePhraseTranslation?.json,
   ]);
 
   const beforeText = useMemo(() => {

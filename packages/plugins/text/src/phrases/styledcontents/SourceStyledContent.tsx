@@ -222,11 +222,19 @@ const SourceStyledContent = (props: Props) => {
   }, [props.systemSourceLocale.localeCode, editorObserver]);
 
   const requireRevision = useMemo(() => {
-    if (!displayValue) {
-        return false;
+    if (!sourceDisplayValue) {
+      return false;
     }
-    return (displayValue?.revisionCount ?? 0) > (props.targetStyledContentLocaleRule?.displayValue?.revisionCount ?? 0);
-  }, [props.targetStyledContentLocaleRule?.displayValue?.revisionCount, displayValue?.revisionCount])
+    return (
+      (sourceDisplayValue?.json ?? "{}") !=
+      (props.targetStyledContentLocaleRule?.displayValue?.sourceAtRevision
+        ?.json ?? "{}")
+    );
+  }, [
+    sourceDisplayValue,
+    props.targetStyledContentLocaleRule?.displayValue?.sourceAtRevision?.json,
+    sourceDisplayValue?.json,
+  ]);
 
   const beforeText = useMemo(() => {
     return splitTextForDiff(props.targetStyledContentLocaleRule?.displayValue?.sourceAtRevision?.plainText ?? "");

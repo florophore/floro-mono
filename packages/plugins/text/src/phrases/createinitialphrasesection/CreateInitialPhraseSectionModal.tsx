@@ -97,8 +97,6 @@ const CreateInitialPhraseSectionModal = (props: Props) => {
             json: copyTranslation.json,
             plainText: copyTranslation.plainText,
             richTextHtml: copyTranslation.richTextHtml,
-            revisionCount: copyTranslation.revisionCount,
-            revisionTimestamp: copyTranslation.revisionTimestamp,
             sourceAtRevision: copyTranslation.sourceAtRevision,
           },
         };

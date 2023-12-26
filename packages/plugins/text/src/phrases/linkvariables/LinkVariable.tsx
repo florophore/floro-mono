@@ -398,8 +398,6 @@ const LinkVariable = (props: Props) => {
       } else {
         setLinkDisplayValue({
           ...linkDisplayValue,
-          revisionCount: linkDisplayValue.revisionCount + 1,
-          revisionTimestamp: new Date().toISOString(),
           richTextHtml,
           plainText,
           json: JSON.stringify(json),
@@ -462,8 +460,6 @@ const LinkVariable = (props: Props) => {
       } else {
         setLinkHrefValue({
           ...linkHrefValue,
-          revisionCount: linkHrefValue.revisionCount + 1,
-          revisionTimestamp: new Date().toISOString(),
           richTextHtml,
           plainText,
           json: JSON.stringify(json),
@@ -568,8 +564,6 @@ const LinkVariable = (props: Props) => {
     if (sourceLinkTranslation?.linkDisplayValue) {
       setLinkDisplayValue({
         ...linkDisplayValue,
-        revisionCount: sourceLinkTranslation?.linkDisplayValue.revisionCount,
-        revisionTimestamp: new Date().toISOString(),
         sourceAtRevision: {
           sourceLocaleRef: sourceLocaleRef,
           richTextHtml: sourceLinkTranslation?.linkDisplayValue.richTextHtml,
@@ -622,8 +616,6 @@ const LinkVariable = (props: Props) => {
     if (sourceLinkTranslation?.linkHrefValue) {
       setLinkHrefValue({
         ...linkHrefValue,
-        revisionCount: sourceLinkTranslation?.linkHrefValue.revisionCount,
-        revisionTimestamp: new Date().toISOString(),
         sourceAtRevision: {
           sourceLocaleRef: sourceLocaleRef,
           json: sourceLinkTranslation?.linkHrefValue.json,
@@ -646,12 +638,12 @@ const LinkVariable = (props: Props) => {
       return false;
     }
     return (
-      (sourceLinkTranslation?.linkDisplayValue?.revisionCount ?? 0) >
-      (linkDisplayValue?.revisionCount ?? 0)
+      (sourceLinkTranslation?.linkDisplayValue?.json ?? "{}") !=
+      (linkDisplayValue?.json ?? "{}")
     );
   }, [
-    linkDisplayValue?.revisionCount,
-    sourceLinkTranslation?.linkDisplayValue?.revisionCount,
+    linkDisplayValue?.json,
+    sourceLinkTranslation?.linkDisplayValue?.json,
   ]);
 
   const hrefRequireRevision = useMemo(() => {
@@ -659,12 +651,12 @@ const LinkVariable = (props: Props) => {
       return false;
     }
     return (
-      (sourceLinkTranslation?.linkHrefValue?.revisionCount ?? 0) >
-      (linkHrefValue?.revisionCount ?? 0)
+      (sourceLinkTranslation?.linkHrefValue?.json ?? "{}") >
+      (linkHrefValue?.json ?? "{}")
     );
   }, [
-    linkHrefValue?.revisionCount,
-    sourceLinkTranslation?.linkHrefValue?.revisionCount,
+    linkHrefValue?.json,
+    sourceLinkTranslation?.linkHrefValue?.json,
   ]);
 
   const xIcon = useMemo(() => {

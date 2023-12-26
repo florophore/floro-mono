@@ -1,5 +1,5 @@
 {
-  "version": "0.0.30",
+  "version": "0.0.31",
   "name": "text",
   "displayName": "Text",
   "description": "A plugin for managing strings and translations.",
@@ -207,14 +207,6 @@
                         "type": "string",
                         "nullable": true
                       },
-                      "revisionCount": {
-                        "type": "int",
-                        "default": 0
-                      },
-                      "revisionTimestamp": {
-                        "type": "string",
-                        "nullable": true
-                      },
                       "enabledTerms": {
                         "type": "set",
                         "values": "string"
@@ -270,14 +262,6 @@
                         "type": "string",
                         "nullable": true
                       },
-                      "revisionCount": {
-                        "type": "int",
-                        "default": 0
-                      },
-                      "revisionTimestamp": {
-                        "type": "string",
-                        "nullable": true
-                      },
                       "enabledTerms": {
                         "type": "set",
                         "values": "string"
@@ -311,14 +295,6 @@
                         "nullable": true
                       },
                       "plainText": {
-                        "type": "string",
-                        "nullable": true
-                      },
-                      "revisionCount": {
-                        "type": "int",
-                        "default": 0
-                      },
-                      "revisionTimestamp": {
                         "type": "string",
                         "nullable": true
                       },
@@ -373,14 +349,6 @@
                         "nullable": true
                       },
                       "plainText": {
-                        "type": "string",
-                        "nullable": true
-                      },
-                      "revisionCount": {
-                        "type": "int",
-                        "default": 0
-                      },
-                      "revisionTimestamp": {
                         "type": "string",
                         "nullable": true
                       },
@@ -504,14 +472,6 @@
                   "type": "string",
                   "nullable": true
                 },
-                "revisionCount": {
-                  "type": "int",
-                  "default": 0
-                },
-                "revisionTimestamp": {
-                  "type": "string",
-                  "nullable": true
-                },
                 "enabledTerms": {
                   "type": "set",
                   "values": "string"
@@ -561,14 +521,6 @@
                         "nullable": true
                       },
                       "plainText": {
-                        "type": "string",
-                        "nullable": true
-                      },
-                      "revisionCount": {
-                        "type": "int",
-                        "default": 0
-                      },
-                      "revisionTimestamp": {
                         "type": "string",
                         "nullable": true
                       },
@@ -676,8 +628,6 @@
                 "id": "$(text).localeSettings.locales.localeCode<EN>",
                 "json": "{\"content\":\"\",\"type\":\"root\",\"children\":[{\"content\":\"Hello World from Floro!\",\"type\":\"text\",\"marks\":{\"isBold\":true,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]},{\"content\":\"\\n\",\"type\":\"text\",\"marks\":{\"isBold\":false,\"isItalic\":false,\"isUnderlined\":false,\"isStrikethrough\":false,\"isSuperscript\":false,\"isSubscript\":false},\"children\":[]}]}",
                 "plainText": "Hello World from Floro!\n",
-                "revisionCount": 1,
-                "revisionTimestamp": null,
                 "richTextHtml": "<b>Hello World from Floro!</b><br />",
                 "sourceAtRevision": {
                   "json": null,
