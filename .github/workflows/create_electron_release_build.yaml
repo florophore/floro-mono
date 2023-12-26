@@ -1,8 +1,21 @@
-name: Create Electron Release
+name: Create Electron Build
 
 on:
-  release:
-    types: [created]
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: 'Compiles the app but does not upload artifacts to distribution server'
+        default: true
+        required: false
+        type: boolean
+      buildType:
+        description: 'Build Environment'
+        required: true
+        default: staging
+        type: choice
+        options:
+          - staging
+          - prod
 
 defaults:
   run:
@@ -10,7 +23,7 @@ defaults:
 
 jobs:
   release_electron:
-    name: 'Create Electron Release'
+    name: 'Draft Electron Release'
 
     permissions:
       contents: write
@@ -27,6 +40,19 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           cache: 'yarn'
+
+      - uses: haya14busa/action-cond@v1
+        id: buildEnv
+        with:
+          cond: ${{ github.event.inputs.buildType == 'prod' }}
+          if_true: 'prod'
+          if_false: 'staging'
+      - uses: haya14busa/action-cond@v1
+        id: viteHost
+        with:
+          cond: ${{ github.event.inputs.buildType == 'prod' }}
+          if_true: 'floro.io'
+          if_false: 'floro-staging.com'
       - name: Yarn install cache
         uses: c-hive/gha-yarn-cache@v1
 
@@ -45,13 +71,21 @@ jobs:
         run: |
           yarn install
           yarn postinstall:manual
+
+      - name: Install jq
+          run: sudo apt-get install jq
+
+      - name: version
+        run: echo "$(jq -r '.version' package.json)"
+        id: version
+
       - name: Install Electron dependencies
         working-directory: packages/floro-desktop
         run: yarn build
         env:
-          BUILD_ENV: prod
+          BUILD_ENV: ${{ steps.buildEnv.outputs.value }}
 
-      - name: Compile prod artifacts and upload them to github release
+      - name: Compile ${{ steps.buildEnv.outputs.value }} artifacts ${{ inputs.dry-run && '' || 'and upload them to github release' }}
         uses: nick-fields/retry@v2
         with:
           timeout_minutes: 15
@@ -61,9 +95,9 @@ jobs:
           shell: 'bash'
           command: |
             cd packages/floro-desktop
-            npx --no-install electron-builder --config .electron-builder.config.js --publish 'always'
+            npx --no-install electron-builder --config .electron-builder.config.js --publish ${{ inputs.dry-run && 'never' || 'always' }}
         env:
-          BUILD_ENV: prod
+          BUILD_ENV: ${{ steps.buildEnv.outputs.value }}
           TEAM_ID: ${{secrets.TEAM_ID}}
           APPLE_ID: ${{secrets.APPLE_ID}}
           APPLE_APP_SPECIFIC_PASSWORD: ${{secrets.APPLE_APP_SPECIFIC_PASSWORD}}
@@ -71,6 +105,19 @@ jobs:
           CSC_LINK: ${{secrets.CSC_LINK}}
           CSC_KEY_PASSWORD: ${{secrets.CSC_KEY_PASSWORD}}
           GH_TOKEN: ${{ secrets.github_token }}
+
+      - name: release
+        if: ${{ steps.buildEnv.outputs.value }} == 'prod' && github.event.inputs.dry-run == 'false'
+        uses: actions/create-release@v1
+        id: create_release
+        with:
+          draft: false
+          prerelease: false
+          release_name: ${{ steps.version.outputs.version }}
+          tag_name: ${{ github.ref }}
+          body_path: CHANGELOG.md
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
 
       - uses: actions/upload-artifact@v3
         with:
