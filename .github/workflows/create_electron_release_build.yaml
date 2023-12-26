@@ -1,4 +1,4 @@
-name: Create Electron Release
+name: Create Electron Build
 
 on:
   workflow_dispatch:
@@ -25,42 +25,51 @@ jobs:
   build_artifacts:
     name: 'Build Electron Artifacts'
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: write
     strategy:
       fail-fast: true
       matrix:
         os: [ macos-12, ubuntu-latest, windows-latest ]
 
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     steps:
-      - uses: actions/checkout@v2
-
-      # Node.js setup
+      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4
       - uses: actions/setup-node@v3
         with:
           cache: 'yarn'
 
-      # Conditional build environment setup
       - uses: haya14busa/action-cond@v1
         id: buildEnv
         with:
           cond: ${{ github.event.inputs.buildType == 'prod' }}
           if_true: 'prod'
           if_false: 'staging'
+      - uses: haya14busa/action-cond@v1
+        id: viteHost
+        with:
+          cond: ${{ github.event.inputs.buildType == 'prod' }}
+          if_true: 'floro.io'
+          if_false: 'floro-staging.com'
+      - name: Yarn install cache
+        uses: c-hive/gha-yarn-cache@v1
 
-      # Yarn install with cache
-      - uses: c-hive/gha-yarn-cache@v1
-
-      # Install dependencies
       - name: Install dependencies
         run: yarn
 
-      # Build GraphQL
       - name: Build Graph QL
         run: yarn graphql-schemas:build
-
-      # Install rpm for Linux
       - name: Install rpm
         if: runner.os == 'Linux'
         run: sudo apt-get install -y rpm
+        shell: bash
+
+      - name: Install Electron dependencies
+        working-directory: packages/floro-desktop
+        run: |
+          yarn install
+          yarn postinstall:manual
 
       # Install jq
       - name: Install jq
@@ -73,34 +82,77 @@ jobs:
             choco install jq
           fi
 
-      # Extract version number from package.json
       - name: Extract version number
-        run: echo "VERSION=$(jq -r '.version' package.json)" >> $GITHUB_ENV
+        run: echo "::set-output name=version::$(jq -r '.version' package.json)"
         id: version
 
-      # Install Electron dependencies and build
-      - name: Install and Build Electron
+      - name: Install Electron dependencies
         working-directory: packages/floro-desktop
-        run: |
-          yarn install
-          yarn postinstall:manual
-          yarn build
+        run: yarn build
         env:
           BUILD_ENV: ${{ steps.buildEnv.outputs.value }}
 
-      # Compile artifacts
-      - name: Compile artifacts
-        working-directory: packages/floro-desktop
-        run: npx --no-install electron-builder --config .electron-builder.config.js --publish never
-        env:
-          BUILD_ENV: ${{ steps.buildEnv.outputs.value }}
-
-      # Upload artifacts
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
+      - name: Compile ${{ steps.buildEnv.outputs.value }} artifacts ${{ inputs.dry-run && '' || 'and upload them to github release' }}
+        uses: nick-fields/retry@v2
         with:
-          name: ${{ matrix.os }}-artifact
-          path: packages/floro-desktop/dist/*
+          timeout_minutes: 15
+          max_attempts: 6
+          retry_wait_seconds: 15
+          retry_on: error
+          shell: 'bash'
+          command: |
+            cd packages/floro-desktop
+            npx --no-install electron-builder --config .electron-builder.config.js --publish ${{ inputs.dry-run && 'never' || 'always' }}
+        env:
+          BUILD_ENV: ${{ steps.buildEnv.outputs.value }}
+          TEAM_ID: ${{secrets.TEAM_ID}}
+          APPLE_ID: ${{secrets.APPLE_ID}}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{secrets.APPLE_APP_SPECIFIC_PASSWORD}}
+          APPLE_ID_PASS: ${{secrets.APPLE_ID_PASS}}
+          CSC_LINK: ${{secrets.CSC_LINK}}
+          CSC_KEY_PASSWORD: ${{secrets.CSC_KEY_PASSWORD}}
+          GH_TOKEN: ${{ secrets.github_token }}
+
+      - name: release
+        if: ${{ steps.buildEnv.outputs.value }} == 'prod'
+        uses: actions/create-release@v1
+        id: create_release
+        with:
+          draft: false
+          prerelease: false
+          release_name: ${{ steps.version.outputs.version }}
+          tag_name: ${{ github.ref }}
+          body_path: CHANGELOG.md
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Mac Artifact
+          path: packages/floro-desktop/dist/*.dmg
+        env:
+          GH_TOKEN: ${{ secrets.github_token }}
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Windows Artifact
+          path: packages/floro-desktop/dist/*.exe
+        env:
+          GH_TOKEN: ${{ secrets.github_token }}
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Debian Artifact
+          path: packages/floro-desktop/dist/*.deb
+        env:
+          GH_TOKEN: ${{ secrets.github_token }}
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: RPM Artifact
+          path: packages/floro-desktop/dist/*.rpm
+        env:
+          GH_TOKEN: ${{ secrets.github_token }}
 
   create_release:
     name: 'Create and Upload Release'
@@ -110,30 +162,49 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      # Create GitHub Release
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+
       - name: Create Release
-        id: create_release
         uses: actions/create-release@v1
+        id: create_release
         with:
           draft: false
           prerelease: false
-          release_name: ${{ env.VERSION }}
-          tag_name: v${{ env.VERSION }}
+          release_name: Release ${{ needs.build_artifacts.outputs.version }}
+          tag_name: v${{ needs.build_artifacts.outputs.version }}
           body_path: CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Download artifacts
-      - name: Download Artifacts
-        uses: actions/download-artifact@v2
-
-      # Upload each artifact to the release
-      - name: Upload Artifacts to Release
+      - name: Upload Mac Artifact
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./*.zip
-          asset_name: ${{ runner.os }}-artifact.zip
-          asset_content_type: application/zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          asset_path: ./Mac Artifact/*.dmg
+          asset_name: Floro-Mac-${{ needs.build_artifacts.outputs.version }}.dmg
+          asset_content_type: application/octet-stream
+
+      - name: Upload Windows Artifact
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./Windows Artifact/*.exe
+          asset_name: Floro-Windows-${{ needs.build_artifacts.outputs.version }}.exe
+          asset_content_type: application/octet-stream
+
+      - name: Upload Debian Artifact
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./Debian Artifact/*.deb
+          asset_name: Floro-Debian-${{ needs.build_artifacts.outputs.version }}.deb
+          asset_content_type: application/octet-stream
+
+      - name: Upload RPM Artifact
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./RPM Artifact/*.rpm
+          asset_name: Floro-RPM-${{ needs.build_artifacts.outputs.version }}.rpm
+          asset_content_type: application/octet-stream
