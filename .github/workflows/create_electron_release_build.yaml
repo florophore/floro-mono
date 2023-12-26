@@ -173,6 +173,7 @@ jobs:
           prerelease: false
           release_name: Release ${{ needs.build_artifacts.outputs.version }}
           tag_name: v${{ needs.build_artifacts.outputs.version }}
+          body: Release ${{ needs.build_artifacts.outputs.version }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
