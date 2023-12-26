@@ -1,4 +1,4 @@
-name: Create Electron Build
+name: Create Electron Release
 
 on:
   workflow_dispatch:
@@ -166,6 +166,7 @@ jobs:
         uses: actions/download-artifact@v2
 
       - name: Create Release
+        working-directory: packages/floro-desktop
         uses: actions/create-release@v1
         id: create_release
         with:
