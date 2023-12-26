@@ -1,4 +1,4 @@
-name: Create Electron Build
+name: Create Electron Release
 
 on:
   workflow_dispatch:
@@ -73,7 +73,7 @@ jobs:
           yarn postinstall:manual
 
       - name: Install jq
-          run: sudo apt-get install jq
+        run: sudo apt-get install jq
 
       - name: version
         run: echo "$(jq -r '.version' package.json)"
