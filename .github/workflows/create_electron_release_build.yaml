@@ -152,6 +152,9 @@ jobs:
       - name: Download Artifacts
         uses: actions/download-artifact@v2
 
+      - name: List downloaded artifacts
+        run: ls -R
+
       - name: Create Release
         uses: actions/create-release@v1
         id: create_release
