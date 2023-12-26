@@ -51,7 +51,7 @@ module.exports = async function () {
 
   return {
     appId: 'com.florophore.floro',
-    asar: false,
+    asar: true,
     directories: {
       output: 'dist',
       buildResources: 'buildResources',
