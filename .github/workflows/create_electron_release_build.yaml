@@ -171,7 +171,7 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./Mac Artifact/*.dmg
+          asset_path: ./Mac Artifact/Floro-${{ needs.build_artifacts.outputs.version }}.dmg
           asset_name: Floro-Mac-${{ needs.build_artifacts.outputs.version }}.dmg
           asset_content_type: application/octet-stream
 
@@ -179,7 +179,7 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./Windows Artifact/*.exe
+          asset_path: ./Windows Artifact/Floro Setup ${{ needs.build_artifacts.outputs.version }}.exe
           asset_name: Floro-Windows-${{ needs.build_artifacts.outputs.version }}.exe
           asset_content_type: application/octet-stream
 
@@ -187,7 +187,7 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./Debian Artifact/*.deb
+          asset_path: ./Debian Artifact/floro-desktop_${{ needs.build_artifacts.outputs.version }}_amd64.deb
           asset_name: Floro-Debian-${{ needs.build_artifacts.outputs.version }}.deb
           asset_content_type: application/octet-stream
 
@@ -195,6 +195,6 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./RPM Artifact/*.rpm
+          asset_path: ./RPM Artifact/floro-desktop-${{ needs.build_artifacts.outputs.version }}.x86_64.rpm
           asset_name: Floro-RPM-${{ needs.build_artifacts.outputs.version }}.rpm
           asset_content_type: application/octet-stream
