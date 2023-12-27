@@ -11279,6 +11279,14 @@ builder-util-runtime@9.2.1:
     debug "^4.3.4"
     sax "^1.2.4"
 
+builder-util-runtime@9.2.3:
+  version "9.2.3"
+  resolved "https://registry.yarnpkg.com/builder-util-runtime/-/builder-util-runtime-9.2.3.tgz#0a82c7aca8eadef46d67b353c638f052c206b83c"
+  integrity sha512-FGhkqXdFFZ5dNC4C+yuQB9ak311rpGAw+/ASz8ZdxwODCv1GGMWgLDeofRkdi0F3VCHQEWy/aXcJQozx2nOPiw==
+  dependencies:
+    debug "^4.3.4"
+    sax "^1.2.4"
+
 builder-util@24.5.0:
   version "24.5.0"
   resolved "https://registry.yarnpkg.com/builder-util/-/builder-util-24.5.0.tgz#8683c9a7a1c5c9f9a4c4d2789ecca0e47dddd3f9"
@@ -13977,6 +13985,11 @@ electron-builder@24.6.4:
     simple-update-notifier "2.0.0"
     yargs "^17.6.2"
 
+electron-log@^5.0.2:
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/electron-log/-/electron-log-5.0.2.tgz#6dae26cb7fce9feaa4605d575e02fee75da7b085"
+  integrity sha512-uzUXpUGZ5lJeCEIn4Hrxt6zQWiURu+EbFyTul0Y81huc6UrvWXIOMx4WxNdaGJYWPk9YLWrz2dQf3894MoZKXw==
+
 electron-publish@24.5.0:
   version "24.5.0"
   resolved "https://registry.yarnpkg.com/electron-publish/-/electron-publish-24.5.0.tgz#492a4d7caa232e88ee3c18f5c3b4dc637e5e1b3a"
@@ -13995,12 +14008,12 @@ electron-to-chromium@^1.4.535:
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.551.tgz#14db6660a88f66ce095ea2657abe5653bc7f42ed"
   integrity sha512-/Ng/W/kFv7wdEHYzxdK7Cv0BHEGSkSB3M0Ssl8Ndr1eMiYeas/+Mv4cNaDqamqWx6nd2uQZfPz6g25z25M/sdw==
 
-electron-updater@6.1.4:
-  version "6.1.4"
-  resolved "https://registry.yarnpkg.com/electron-updater/-/electron-updater-6.1.4.tgz#86f7e1fc4353f578456c34304b48df7d976cf348"
-  integrity sha512-yYAJc6RQjjV4WtInZVn+ZcLyXRhbVXoomKEfUUwDqIk5s2wxzLhWaor7lrNgxODyODhipjg4SVPMhJHi5EnsCA==
+electron-updater@6.1.7:
+  version "6.1.7"
+  resolved "https://registry.yarnpkg.com/electron-updater/-/electron-updater-6.1.7.tgz#7ebd5fb0dde6372309bdfa8031e8eac3817f9955"
+  integrity sha512-SNOhYizjkm4ET+Y8ilJyUzcVsFJDtINzVN1TyHnZeMidZEG3YoBebMyXc/J6WSiXdUaOjC7ngekN6rNp6ardHA==
   dependencies:
-    builder-util-runtime "9.2.1"
+    builder-util-runtime "9.2.3"
     fs-extra "^10.1.0"
     js-yaml "^4.1.0"
     lazy-val "^1.0.5"

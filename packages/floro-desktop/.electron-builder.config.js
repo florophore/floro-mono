@@ -44,10 +44,9 @@ const executableName = (buildEnv) => {
 }
 
 module.exports = async function () {
-  const dotenv = await import ('dotenv');
+  const dotenv = await import('dotenv');
   dotenv.config();
   const {getVersion} = await import('./version/getVersion.mjs');
-
 
   return {
     appId: 'com.florophore.floro',
@@ -63,30 +62,38 @@ module.exports = async function () {
     appId: appId(buildEnv),
     productName: productName(buildEnv),
     forceCodeSigning: true,
-    linux: {"target": ["deb", "rpm"]},
-    rpm: {"depends": ["openssl"]},
-    deb: {"depends": ["openssl"]},
+    linux: {target: ['deb', 'rpm']},
+    rpm: {depends: ['openssl']},
+    deb: {depends: ['openssl']},
     mac: {
-      category: "developer-tools",
-      target: "dmg",
+      category: 'developer-tools',
+      target: 'dmg',
       executableName: executableName(buildEnv),
       hardenedRuntime: true,
-      entitlements: "buildResources/entitlements.mac.plist",
-      entitlementsInherit: "buildResources/entitlements.mac.plist",
+      entitlements: 'buildResources/entitlements.mac.plist',
+      entitlementsInherit: 'buildResources/entitlements.mac.plist',
       gatekeeperAssess: false,
       notarize: {
         appBundleId: appId(buildEnv),
-        teamId: process.env.TEAM_ID
-      }
+        teamId: process.env.TEAM_ID,
+      },
     },
-    //afterSign: async (context) => {
-    //  if (context.electronPlatformName === "darwin") {
-    //    await notarizeMac(context)
-    //  }
-    //},
-    publish: null
-    //publish: {
-    //  "provider": "github"
-    //},
+    win: {
+      target: [
+        {
+          target: 'nsis',
+          arch: ['x64'],
+        },
+      ],
+      artifactName: '${productName}_${version}.${ext}',
+      icon: 'buildResources/icon.ico',
+    },
+    nsis: {
+      oneClick: false,
+      perMachine: false,
+      allowToChangeInstallationDirectory: true,
+      deleteAppDataOnUninstall: false,
+    },
+    publish: null,
   };
 };
