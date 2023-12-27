@@ -14,12 +14,11 @@ const UPDATE_DOWNLOAD_PROGRESS = "update-download-progress"
 const UPDATE_START_DOWNLOAD = "auto-update:startDownload"
 const UPDATE_INSTALL_AND_RESTART = "auto-update:installAndRestart"
 const UPDATE_CHECK_FOR_UPDATES = "auto-update:checkForUpdates"
-import log from 'electron-log';
 
 // will reference the main window
 let window
 
-autoUpdater.logger = log;
+//autoUpdater.logger = log;
 //autoUpdater.logger.transports.file.level = "info"
 
 autoUpdater.autoDownload = false
