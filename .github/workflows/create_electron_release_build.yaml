@@ -174,6 +174,8 @@ jobs:
           asset_path: ./Mac Artifact/Floro-${{ needs.build_artifacts.outputs.version }}.dmg
           asset_name: Floro-Mac-${{ needs.build_artifacts.outputs.version }}.dmg
           asset_content_type: application/octet-stream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Windows Artifact
         uses: actions/upload-release-asset@v1
@@ -182,6 +184,8 @@ jobs:
           asset_path: ./Windows Artifact/Floro Setup ${{ needs.build_artifacts.outputs.version }}.exe
           asset_name: Floro-Windows-${{ needs.build_artifacts.outputs.version }}.exe
           asset_content_type: application/octet-stream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Debian Artifact
         uses: actions/upload-release-asset@v1
@@ -190,6 +194,8 @@ jobs:
           asset_path: ./Debian Artifact/floro-desktop_${{ needs.build_artifacts.outputs.version }}_amd64.deb
           asset_name: Floro-Debian-${{ needs.build_artifacts.outputs.version }}.deb
           asset_content_type: application/octet-stream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload RPM Artifact
         uses: actions/upload-release-asset@v1
@@ -198,3 +204,5 @@ jobs:
           asset_path: ./RPM Artifact/floro-desktop-${{ needs.build_artifacts.outputs.version }}.x86_64.rpm
           asset_name: Floro-RPM-${{ needs.build_artifacts.outputs.version }}.rpm
           asset_content_type: application/octet-stream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
