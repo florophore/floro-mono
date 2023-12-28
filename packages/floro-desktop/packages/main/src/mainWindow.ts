@@ -1,7 +1,6 @@
 import {app, BrowserWindow, ipcMain, nativeTheme, shell } from 'electron';
 import {join, resolve} from 'node:path';
-import { initializeAutoUpdate } from './auto-update';
-
+import { update } from './auto-update';
 
 let ipcRendererHasMounted = false;
 
@@ -157,7 +156,10 @@ export async function restoreOrCreateWindow() {
     window.restore();
   }
 
+  if (process.env.NODE_ENV != "test") {
+    update(window);
+  }
   window.focus();
-  initializeAutoUpdate(window);
+  //initializeAutoUpdate(window);
   return window;
 }
