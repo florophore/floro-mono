@@ -11,7 +11,6 @@ import GoogleButton from '@floro/storybook/stories/design-system/GoogleButton/in
 import { createSearchParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import { useSystemAPI } from '../contexts/SystemAPIContext';
-import mixpanel from 'mixpanel-browser';
 import SignupLoginModal from '@floro/common-react/src/components/signup/SignupLoginModal';
 import { useFloroSocket, useSocketEvent } from '@floro/common-react/src/pubsub/socket';
 import type { CompleteSignupAction, PassedLoginAction } from '@floro/graphql-schemas/src/generated/main-client-graphql';
@@ -160,44 +159,34 @@ const LoggedOutPage = ({isOpen}: Props) => {
     const backButtonCursor = useMemo(() => showBackButton ? 'pointer' : 'default', [showBackButton]);
 
     const onGoToSignUpCB = useCallback(() => {
-        mixpanel.track('Go to Sign up page');
         setSearchParams(createSearchParams({pageAction: 'sign_up'}));
     }, [setSearchParams]);
 
     const onGoToSignInCB = useCallback(() => {
-        mixpanel.track('Go to Sign in page');
         setSearchParams(createSearchParams({pageAction: 'sign_in'}));
     }, [setSearchParams]);
 
     const onBackCallback = useCallback(() => {
-        mixpanel.track('Go to back to logged out page page', {
-          pageAction,
-        });
         setSearchParams(createSearchParams({}));
     }, [setSearchParams, pageAction]);
 
     const onOpenGithub = useCallback(async () => {
-        mixpanel.track('OAuth with Github');
       systemAPI?.openOAuthWindow('github');
     }, [systemAPI]);
 
     const onOpenGoogle = useCallback(async () => {
-      mixpanel.track('OAuth with Google');
       systemAPI?.openOAuthWindow('google');
     }, [systemAPI]);
 
     const onOpenEmailSignup = useCallback(async () => {
-      mixpanel.track('Sign up with email');
       setShowEmailModal(true);
     }, []);
 
     const onOpenEmailLogin = useCallback(async () => {
-      mixpanel.track('Login with email');
       setShowEmailModal(true);
     }, []);
 
     const onDismissModal = useCallback(async () => {
-      mixpanel.track('Close signup/login modal');
       setShowEmailModal(false);
     }, []);
 

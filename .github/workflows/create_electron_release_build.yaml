@@ -181,7 +181,7 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./Windows Artifact/Floro Setup ${{ needs.build_artifacts.outputs.version }}.exe
+          asset_path: ./Windows Artifact/Floro_${{ needs.build_artifacts.outputs.version }}.exe
           asset_name: Floro-Windows-${{ needs.build_artifacts.outputs.version }}.exe
           asset_content_type: application/octet-stream
         env:
