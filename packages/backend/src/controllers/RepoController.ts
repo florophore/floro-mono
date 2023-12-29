@@ -848,6 +848,7 @@ export default class RepoController extends BaseController {
         );
         if (!parentCommit) {
           response.sendStatus(400);
+          console.log("Missing parent commit", commitData.parent)
           return;
         }
         parentId = parentCommit.id;
@@ -863,6 +864,7 @@ export default class RepoController extends BaseController {
           commitData.historicalParent
         );
         if (!historicalParentCommit) {
+          console.log("Missing historicalParentCommit commit", commitData.historicalParent)
           response.sendStatus(400);
           return;
         }
@@ -870,17 +872,20 @@ export default class RepoController extends BaseController {
 
       const diffSha = getDiffHash(commitData);
       if (diffSha != commitData.sha) {
+        console.log("Bad sha", commitData.sha, diffSha)
         response.sendStatus(400);
         return;
       }
       const containsDevPlugins = commitDataContainsDevPlugins(commitData);
       if (containsDevPlugins) {
         response.sendStatus(400);
+        console.log("dev plugins in commit", commitData)
         return;
       }
 
       if (!commitData?.userId) {
         response.sendStatus(400);
+        console.log("no user id", commitData)
         return;
       }
 
@@ -890,6 +895,7 @@ export default class RepoController extends BaseController {
       const commitUser = await usersContext.getById(commitData?.userId);
       if (!commitUser || commitUser.username != commitData.username) {
         response.sendStatus(400);
+        console.log("bad commit user", commitUser, commitData.username)
         return;
       }
       if (repo.repoType == "org_repo" && repo?.isPrivate) {
@@ -902,7 +908,7 @@ export default class RepoController extends BaseController {
             commitUser.id
           );
         // should test if org_repo if user if member (does not need to be active)
-        if (!membership) {
+        if (!membership && repo.isPrivate) {
           response.sendStatus(400);
           return;
         }
@@ -919,6 +925,7 @@ export default class RepoController extends BaseController {
         const authorUser = await usersContext.getById(commitData?.authorUserId);
         // should test if org_repo if user if member (does not need to be active)
         if (!authorUser || authorUser.username != commitData.authorUsername) {
+          console.log("bad commit author user", authorUser, commitData.authorUsername)
           response.sendStatus(400);
           return;
         }
@@ -933,12 +940,14 @@ export default class RepoController extends BaseController {
             );
           // should test if org_repo if user if member (does not need to be active)
           if (!authorMembership) {
+            console.log("no author membership")
             response.sendStatus(400);
             return;
           }
         }
         if (repo.repoType == "user_repo" && repo.isPrivate) {
           if (authorUser.id != session.userId) {
+            console.log("author session mismatch")
             response.sendStatus(400);
             return;
           }
@@ -947,11 +956,13 @@ export default class RepoController extends BaseController {
 
       if (!commitData?.message) {
         response.sendStatus(400);
+        console.log("no commit message")
         return;
       }
 
       if (commitData?.idx != parentIdx + 1) {
         response.sendStatus(400);
+        console.log("bad idx", parentIdx, commitData.idx)
         return;
       }
       const binaryRefs = Object.values(commitData.diff.binaries.add);
@@ -1001,6 +1012,7 @@ export default class RepoController extends BaseController {
         const plugin = await pluginsContext.getByNameKey(pluginVersion.nameKey);
         if (!plugin) {
           response.sendStatus(400);
+          console.log("missing plugin", pluginVersion.nameKey)
           return;
         }
         pluginIdMappings[pluginName] = {
@@ -1020,6 +1032,7 @@ export default class RepoController extends BaseController {
               plugin.organizationId != pluginVersion.organizationId)
           ) {
             response.sendStatus(400);
+            console.log("private plugin problem", pluginVersion)
             return;
           }
 
@@ -1034,6 +1047,7 @@ export default class RepoController extends BaseController {
               plugin.userId != pluginVersion.userId)
           ) {
             response.sendStatus(400);
+            console.log("private plugin problem", pluginVersion)
             return;
           }
         }
@@ -1103,6 +1117,7 @@ export default class RepoController extends BaseController {
         commitData
       );
       if (!didWriteCommit) {
+        console.log("!didWriteCommit", didWriteCommit)
         response.sendStatus(400);
         return;
       }
@@ -1114,6 +1129,7 @@ export default class RepoController extends BaseController {
       );
       if (!didWriteKV) {
         response.sendStatus(400);
+        console.log("!didWriteKV", didWriteKV)
         return;
       }
 
@@ -1124,6 +1140,7 @@ export default class RepoController extends BaseController {
       );
       if (!didWriteState) {
         response.sendStatus(400);
+        console.log("!didWriteState", didWriteState)
         return;
       }
 
@@ -1223,6 +1240,7 @@ export default class RepoController extends BaseController {
 
 
       if (!insertedCommit) {
+        console.log("!insertedCommit", insertedCommit)
         response.sendStatus(400);
         return;
       }
@@ -1247,6 +1265,7 @@ export default class RepoController extends BaseController {
         const plugin = await pluginsContext.getByNameKey(pluginVersion.nameKey);
         if (!plugin) {
           response.sendStatus(400);
+          console.log("!plugin", plugin)
           return;
         }
         const pluginId = plugin.id;

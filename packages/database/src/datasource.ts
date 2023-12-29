@@ -61,7 +61,7 @@ const prodDataSource = new DataSource({
   database: process.env?.['POSTGRES_DB_NAME'],
   username: process.env?.['POSTGRES_USER'],
   password: process.env?.['POSTGRES_PASSWORD'],
-  logging: true,
+  logging: false,
   poolSize: parseDBPoolSize()
 });
 
