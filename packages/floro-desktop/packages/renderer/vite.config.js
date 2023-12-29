@@ -28,7 +28,6 @@ const serverOptions = process.env.MODE == 'production' ? {
     port: 7779,
   }
 };
-console.log("TEST", process.env.MODE)
 
 /**
  * @type {import('vite').UserConfig}
