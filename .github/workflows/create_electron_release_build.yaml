@@ -83,6 +83,7 @@ jobs:
           fi
 
       - name: Extract version number
+        working-directory: packages/floro-desktop
         run: echo "::set-output name=version::$(jq -r '.version' package.json)"
         id: version
 
