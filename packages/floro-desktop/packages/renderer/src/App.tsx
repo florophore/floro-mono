@@ -121,6 +121,7 @@ const App = (props: Props): React.ReactElement => {
     props.systemAPI.openUrl(linkifyObject.href);
   }, []);
 
+
   return (
     <EnvProvider env={props.env}>
       <MemoryRouter>

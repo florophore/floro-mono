@@ -500,7 +500,7 @@ export default class RepoController extends BaseController {
         session.user
       );
       if (canPull && links && Array.isArray(links)) {
-        const links: Array<{ fileName: string; link: string }> = [];
+        const outLinks: Array<{ fileName: string; link: string }> = [];
         for (const fileName of links) {
           if (!fileName || typeof fileName != "string") {
             response.sendStatus(400);
@@ -516,7 +516,6 @@ export default class RepoController extends BaseController {
           }
 
           const privateCdnUrl = this.mainConfig.privateRoot();
-          //const expiration = new Date().getTime() + (3600*1000);
           const urlPath = "/" + this.binaryAccessor.getRelativeBinaryPath(fileName);
           const url = privateCdnUrl + urlPath;
           const signedUrl = this.storageAuthenticator.signURL(
@@ -524,12 +523,12 @@ export default class RepoController extends BaseController {
             urlPath,
             3600
           );
-          links.push({
+          outLinks.push({
             fileName,
             link: signedUrl,
           });
         }
-        response.send(links);
+        response.send(outLinks);
         return;
       } else {
         response.sendStatus(400);

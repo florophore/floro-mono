@@ -7,16 +7,15 @@ import {restoreOrCreateWindow} from '/@/mainWindow';
 import {platform} from 'node:process';
 import { startDaemon, killDaemon } from './daemon';
 
-
-if (process.env.BUILD_ENV === "dev") {
+if (import.meta.env.VITE_BUILD_ENV === "dev") {
   setFloroEnv("dev");
 }
 
-if (process.env.BUILD_ENV === "staging") {
+if (import.meta.env.VITE_BUILD_ENV === "staging") {
   setFloroEnv("staging");
 }
 
-if (process.env.BUILD_ENV === "prod") {
+if (import.meta.env.VITE_BUILD_ENV === "prod") {
   setFloroEnv("production");
 }
 

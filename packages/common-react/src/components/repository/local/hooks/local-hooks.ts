@@ -1278,10 +1278,11 @@ export const useCloneState = (repository: Repository) => {
   const queryClient = useQueryClient();
   useSocketEvent(
     "clone-progress:" + repository.id,
-    () => {
+    (e) => {
       queryClient.refetchQueries("clone-state:" + repository.id);
     },
-    [repository.id]
+    [repository.id],
+    false
   );
 
   useSocketEvent(
@@ -1292,7 +1293,8 @@ export const useCloneState = (repository: Repository) => {
       queryClient.refetchQueries("repo-exists:" + repository.id);
       queryClient.refetchQueries("clone-state:" + repository.id);
     },
-    [repository.id]
+    [repository.id],
+    false
   );
 
   return useQuery(

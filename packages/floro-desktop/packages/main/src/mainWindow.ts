@@ -9,6 +9,7 @@ const getSystemTheme = (): 'light' | 'dark' => {
 };
 
 async function createWindow() {
+  const metaEnv = import.meta.env;
   const browserWindow = new BrowserWindow({
     show: false, // Use the 'ready-to-show' event to show the instantiated BrowserWindow.
     titleBarStyle: 'hidden',
@@ -88,11 +89,11 @@ async function createWindow() {
       });
 
       if (provider == 'github') {
-        const githubOAuthUrl = `https://github.com/login/oauth/authorize?client_id=${process?.env?.['GITHUB_OAUTH_CLIENT_ID']}&scope=user`
+        const githubOAuthUrl = `https://github.com/login/oauth/authorize?client_id=${metaEnv?.['VITE_GITHUB_OAUTH_CLIENT_ID']}&scope=user`
         oauthWindow.loadURL(githubOAuthUrl);
       }
       if (provider == 'google') {
-        const googleOAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A//www.googleapis.com/auth/userinfo.email%20https://www.googleapis.com/auth/userinfo.profile&include_granted_scopes=true&response_type=code&redirect_uri=${process.env['GOOGLE_OAUTH_REDIRECT_URI']}&client_id=${process.env['GOOGLE_OAUTH_CLIENT_ID']}`;
+        const googleOAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A//www.googleapis.com/auth/userinfo.email%20https://www.googleapis.com/auth/userinfo.profile&include_granted_scopes=true&response_type=code&redirect_uri=${metaEnv?.['VITE_GOOGLE_OAUTH_REDIRECT_URI']}&client_id=${metaEnv?.['VITE_GOOGLE_OAUTH_CLIENT_ID']}`;
         oauthWindow.loadURL(googleOAuthUrl);
       }
       oauthWindow.once('ready-to-show', () => {

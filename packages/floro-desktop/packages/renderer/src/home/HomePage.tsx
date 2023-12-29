@@ -29,7 +29,7 @@ const HomePage = (props: Props) => {
   });
 
   useEffect(() => {
-    const userSessionToken = Cookies.get('user-session');
+    const userSessionToken = localStorage.getItem('session_key');
     if (!userSessionToken) {
       navigate('/loggedout');
     }

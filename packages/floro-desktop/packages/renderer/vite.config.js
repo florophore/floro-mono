@@ -28,6 +28,7 @@ const serverOptions = process.env.MODE == 'production' ? {
     port: 7779,
   }
 };
+console.log("TEST", process.env.MODE)
 
 /**
  * @type {import('vite').UserConfig}
@@ -45,7 +46,7 @@ const config = {
   base: '',
   server: serverOptions,
   build: {
-    sourcemap: true,
+    sourcemap: process.env.MODE != 'production',
     target: `chrome${chrome}`,
     outDir: 'dist',
     assetsDir: '.',

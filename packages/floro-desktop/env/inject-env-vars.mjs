@@ -21,10 +21,14 @@ const envVars = parse(getEnvVarString(buildEnv));
  * @return {import('vite').Plugin}
  */
 export const injectEnvVars = () => ({
-  name: 'inject-version',
+  name: 'inject-env-vars',
   config: () => {
     for (const key in envVars) {
-      process.env[key] = envVars[key];
+      if (!key.startsWith("VITE_")) {
+        process.env["VITE_" + key] = envVars[key];
+      } else {
+        process.env[key] = envVars[key];
+      }
     }
   },
 });
