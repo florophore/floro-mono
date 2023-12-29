@@ -48,6 +48,7 @@ module.exports = async function () {
   dotenv.config();
   const {getVersion} = await import('./version/getVersion.mjs');
 
+  console.log("V", getVersion())
   return {
     appId: 'com.florophore.floro',
     asar: true,

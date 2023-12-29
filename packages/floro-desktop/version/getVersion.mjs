@@ -1,3 +1,4 @@
+import pckg from '../package.json' assert { type: "json" };
 /**
  * Entry function for get app version.
  * In current implementation, it returns `version` from `package.json`, but you can implement any logic here.
@@ -5,5 +6,5 @@
  * @return {string}
  */
 export function getVersion() {
-  return process.env.npm_package_version;
+  return pckg.version;
 }
