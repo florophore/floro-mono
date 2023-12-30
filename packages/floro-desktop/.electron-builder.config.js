@@ -64,7 +64,6 @@ module.exports = async function () {
     forceCodeSigning: true,
     linux: {
       target: ['deb', 'rpm'],
-      artifactName: productName(buildEnv),
     },
     rpm: {
       depends: ['openssl'],
