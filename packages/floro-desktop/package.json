@@ -69,7 +69,7 @@
     "electron-log": "^5.0.2",
     "electron-updater": "6.1.7",
     "esbuild-plugins-node-modules-polyfill": "^1.4.0",
-    "floro": "0.0.44",
+    "floro": "0.0.45",
     "framer-motion": "^10.10.0",
     "http-terminator": "^3.2.0",
     "isomorphic-fetch": "^3.0.0",

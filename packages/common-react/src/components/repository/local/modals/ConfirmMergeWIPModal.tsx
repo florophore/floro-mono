@@ -80,6 +80,7 @@ export interface Props {
   onConfirm: () => void;
   show?: boolean;
   repository: Repository;
+  isLoading: boolean;
 }
 
 const ConfirmMergeWIPModal = (props: Props) => {
@@ -123,6 +124,7 @@ const ConfirmMergeWIPModal = (props: Props) => {
             label={"pull & merge"}
             bg={"purple"}
             size={"medium"}
+            isLoading={props.isLoading}
           />
         </BottomContentContainer>
       </ContentContainer>

@@ -28,7 +28,7 @@ export default class CommitsContext extends BaseContext {
       where: {
         repositoryId,
       },
-      relations: { user: { profilePhoto: true } },
+      relations: { user: { profilePhoto: true }, authorUser: { profilePhoto: true } },
       order: {
         idx: "ASC",
       },
@@ -39,9 +39,9 @@ export default class CommitsContext extends BaseContext {
     return await this.queryRunner.manager.findOne(Commit, {
       where: {
         repositoryId,
-        sha
+        sha,
       },
-      relations: { user: { profilePhoto: true } },
+      relations: { user: { profilePhoto: true }, authorUser: { profilePhoto: true } },
     });
   }
   public async repoHasCommit(repositoryId: string, sha: string): Promise<boolean> {

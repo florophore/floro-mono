@@ -662,6 +662,7 @@ const LocalVCSViewMode = (props: Props) => {
           onDismiss={onCloseConfirmMergePullModal}
           onConfirm={onConfirmPull}
           repository={props.repository}
+          isLoading={pullMutation.isLoading}
         />
         <ConfirmForcePullModal
           show={showConfirmForcePull}
