@@ -116,19 +116,19 @@ const LocalRepoController = (props: Props) => {
 
   useEffect(() => {
     const commandToggleListeners = (event: KeyboardEvent) => {
-      if (event.metaKey && event.shiftKey  && event.key == "e") {
+      if ((event.metaKey || event.ctrlKey) && event.shiftKey  && event.key?.toLowerCase() == "e") {
         onToggleCommandMode();
       }
 
-      if (event.metaKey && event.shiftKey  && event.key == "c") {
+      if ((event.metaKey || event.ctrlKey) && event.shiftKey  && event.key?.toLowerCase() == "c") {
         onToggleCompare();
       }
 
-      if (event.metaKey && event.shiftKey  && event.key == "[") {
+      if ((event.metaKey || event.ctrlKey) && event.shiftKey  && event.key?.toLowerCase() == "[") {
         onGoToBefore();
       }
 
-      if (event.metaKey && event.shiftKey  && event.key == "]") {
+      if ((event.metaKey || event.ctrlKey) && event.shiftKey  && event.key?.toLowerCase() == "]") {
         onGoToAfter();
       }
     };

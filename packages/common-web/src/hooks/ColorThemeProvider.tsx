@@ -28,12 +28,12 @@ export const ColorThemeProvider = (props: Props): React.ReactElement => {
     );
 
     useEffect(() => {
-        const localPreference = localStorage.get?.('theme-preference') ?? 'system';
-        setThemePreference(localPreference);
+        const localPreference = localStorage.getItem?.('theme-preference') as "system"|"light"|"dark" ?? 'system';
+        setThemePreference(localPreference ?? "system");
     }, []);
 
     const selectColorTheme = useCallback((themePreference: 'system'|'light'|'dark') => {
-        localStorage.set?.('theme-preference', themePreference);
+        localStorage.setItem?.('theme-preference', themePreference);
         Cookies.set("theme-preference", themePreference);
         setThemePreference(themePreference);
     }, []);

@@ -52,7 +52,7 @@ const RepoController = (props: Props) => {
 
   useEffect(() => {
     const commandPToggleListener = (event: KeyboardEvent) => {
-      if (event.metaKey && event.shiftKey && event.key == "p") {
+      if ((event.metaKey || event.ctrlKey) && event.shiftKey && event.key?.toLowerCase() == "p") {
         onTogglePanel?.();
       }
     };

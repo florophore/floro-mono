@@ -261,7 +261,7 @@ const ContentEditor = (props: Props) => {
   }, [])
 
   const onKeyDown = useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event?.metaKey && event?.key == "f") {
+    if ((event?.metaKey || event?.ctrlKey) && event?.key?.toLowerCase() == "f") {
       event.preventDefault();
       props?.onSearch?.();
     } else {
@@ -278,7 +278,6 @@ const ContentEditor = (props: Props) => {
       props.editorDoc.cursor.removeEventListener("changed", onChanged)
     }
   }, [props.editorDoc.cursor])
-  console.log(props.content)
 
   useEffect(() => {
     const onPaste = (e) => {
