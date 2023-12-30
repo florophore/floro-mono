@@ -82,7 +82,7 @@ module.exports = async function () {
       gatekeeperAssess: false,
       notarize: {
         appBundleId: appId(buildEnv),
-        //teamId: process.env.TEAM_ID,
+        teamId: process.env.TEAM_ID,
       },
     },
     win: {
