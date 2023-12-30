@@ -179,7 +179,7 @@ const LocalVCSEditMode = (props: Props) => {
 
   useEffect(() => {
     const commandToggleListeners = (event: KeyboardEvent) => {
-      if (event.metaKey && event.shiftKey && event.key == "b") {
+      if ((event.metaKey || event.ctrlKey) && event.shiftKey && event.key?.toLowerCase() == "b") {
         onShowBranches();
       }
     };

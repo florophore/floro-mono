@@ -102,3 +102,15 @@ input[type="color"]::-webkit-color-swatch {
 ::placeholder {
   color: var(--placeholder-color);
 }
+
+div::-webkit-scrollbar {
+  width: 9px;
+}
+div::-webkit-scrollbar-track {
+  background: transparent;
+}
+div::-webkit-scrollbar-thumb {
+  background-color: rgba(155, 155, 155, 0.5);
+  border-radius: 20px;
+  border: transparent;
+}

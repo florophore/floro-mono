@@ -62,9 +62,16 @@ module.exports = async function () {
     appId: appId(buildEnv),
     productName: productName(buildEnv),
     forceCodeSigning: true,
-    linux: {target: ['deb', 'rpm']},
-    rpm: {depends: ['openssl']},
-    deb: {depends: ['openssl']},
+    linux: {
+      target: ['deb', 'rpm'],
+      artifactName: productName(buildEnv),
+    },
+    rpm: {
+      depends: ['openssl'],
+    },
+    deb: {
+      depends: ['openssl'],
+    },
     mac: {
       category: 'developer-tools',
       target: 'dmg',
@@ -75,7 +82,7 @@ module.exports = async function () {
       gatekeeperAssess: false,
       notarize: {
         appBundleId: appId(buildEnv),
-        teamId: process.env.TEAM_ID,
+        //teamId: process.env.TEAM_ID,
       },
     },
     win: {

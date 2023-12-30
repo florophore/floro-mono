@@ -358,7 +358,7 @@ const EditBranchNavPage = (props: Props) => {
 
   useEffect(() => {
     const commandToggleListeners = (event: KeyboardEvent) => {
-      if (event.metaKey && event.shiftKey && event.key == "Backspace") {
+      if ((event.metaKey || event.ctrlKey) && event.shiftKey && event.key?.toLowerCase() == "backspace") {
         onGoBack();
       }
     };

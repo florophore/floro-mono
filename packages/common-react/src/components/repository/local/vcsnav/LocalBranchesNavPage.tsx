@@ -175,11 +175,11 @@ const LocalBranchesNavPage = (props: Props) => {
 
   useEffect(() => {
     const commandToggleListeners = (event: KeyboardEvent) => {
-      if (event.metaKey && event.shiftKey && event.key == "b") {
+      if ((event.metaKey || event.ctrlKey) && event.shiftKey && (event.key?.toLowerCase() == "b" || event.key?.toLowerCase() == "backspace")) {
         onGoBack();
       }
 
-      if (event.metaKey && event.shiftKey && event.key == "n") {
+      if ((event.metaKey || event.ctrlKey) && event.shiftKey && event.key?.toLowerCase() == "n") {
         onShowNewBranch();
       }
     };
