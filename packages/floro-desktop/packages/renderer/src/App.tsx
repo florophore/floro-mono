@@ -114,6 +114,7 @@ interface Props {
 const themePreference = localStorage.get?.('theme-preference') ?? 'system';
 
 const App = (props: Props): React.ReactElement => {
+  console.log("buildVersion", props?.systemAPI?.buildVersion)
   const queryClient = useMemo(() => new QueryClient(), []);
 
   const openUrl = useCallback((url: string) => {

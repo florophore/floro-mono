@@ -6,6 +6,7 @@ declare global {
       openOAuthWindow: (_: string) => void;
       bringToFront: () => void;
       openUrl: (url: string) => void,
+      buildVersion: string;
     }
 
     interface Window {
