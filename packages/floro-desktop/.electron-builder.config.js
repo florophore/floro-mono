@@ -92,7 +92,8 @@ module.exports = async function () {
         },
       ],
       artifactName: '${productName}_${version}.${ext}',
-      icon: 'buildResources/icon.ico'
+      icon: 'buildResources/icon.ico',
+      certificateSubjectName: "Cheqout Payments, Inc"
     },
     nsis: {
       oneClick: false,

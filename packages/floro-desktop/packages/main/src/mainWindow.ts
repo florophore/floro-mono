@@ -20,9 +20,8 @@ async function createWindow() {
     minWidth: 900,
     webPreferences: {
       webSecurity: false,
-      nodeIntegration: false,
+      nodeIntegration: true,
       contextIsolation: true,
-      //sandbox: false,
       webviewTag: false, // The webview tag is not recommended. Consider alternatives like an iframe or Electron's BrowserView. @see https://www.electronjs.org/docs/latest/api/webview-tag#warning
       preload: join(app.getAppPath(), 'packages/preload/dist/index.cjs'),
       zoomFactor: 0.9,
@@ -79,9 +78,8 @@ async function createWindow() {
         roundedCorners: true,
         webPreferences: {
           webSecurity: true, // THIS CREATES CORS ISSUES if false
-          nodeIntegration: false,
+          nodeIntegration: true,
           contextIsolation: true,
-          sandbox: false,
           webviewTag: false,
           preload: join(app.getAppPath(), 'packages/oauth/dist/index.cjs'),
           zoomFactor: 0.9,
