@@ -2,13 +2,17 @@
   "name": "floro-desktop",
   "description": "Desktop client for floro",
   "homepage": "https://floro.io",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "private": true,
   "author": {
     "email": "jamie.sunderland@floro.io",
     "name": "Cheqout Payments Inc"
   },
   "main": "packages/main/dist/index.cjs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/florophore/floro-mono.git"
+  },
   "scripts": {
     "build": "npm run build:main && npm run build:preload && npm run build:renderer && npm run build:oauth",
     "build:main": "cd ./packages/main && vite build",
