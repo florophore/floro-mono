@@ -196,7 +196,7 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./Mac Artifact/Floro-${{ needs.build_artifacts.outputs.version }}-mac.zip
+          asset_path: ./Zip Artifact/Floro-${{ needs.build_artifacts.outputs.version }}-mac.zip
           asset_name: Floro-${{ needs.build_artifacts.outputs.version }}-mac.zip
           asset_content_type: application/zip
         env:
