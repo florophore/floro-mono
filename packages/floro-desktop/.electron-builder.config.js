@@ -64,6 +64,7 @@ module.exports = async function () {
     forceCodeSigning: true,
     linux: {
       target: ['deb', 'rpm'],
+      publish: ["github"]
     },
     rpm: {
       depends: ['openssl'],
@@ -83,6 +84,7 @@ module.exports = async function () {
         appBundleId: appId(buildEnv),
         teamId: process.env.TEAM_ID,
       },
+      publish: ["github"]
     },
     win: {
       target: [
@@ -93,7 +95,8 @@ module.exports = async function () {
       ],
       artifactName: '${productName}_${version}.${ext}',
       icon: 'buildResources/icon.ico',
-      certificateSubjectName: "Cheqout Payments, Inc"
+      certificateSubjectName: "Cheqout Payments, Inc",
+      publish: ["github"]
     },
     nsis: {
       oneClick: false,
@@ -101,6 +104,6 @@ module.exports = async function () {
       allowToChangeInstallationDirectory: true,
       deleteAppDataOnUninstall: false,
     },
-    publish: null,
+    //publish: null,
   };
 };
