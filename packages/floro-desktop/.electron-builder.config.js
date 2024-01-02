@@ -74,7 +74,7 @@ module.exports = async function () {
     },
     mac: {
       category: 'developer-tools',
-      target: 'dmg',
+      target: ['dmg', 'zip'],
       executableName: executableName(buildEnv),
       hardenedRuntime: true,
       entitlements: 'buildResources/entitlements.mac.plist',
