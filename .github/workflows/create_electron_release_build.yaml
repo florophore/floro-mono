@@ -128,6 +128,13 @@ jobs:
           path: packages/floro-desktop/dist/*.dmg
         env:
           GH_TOKEN: ${{ secrets.github_token }}
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Zip Artifact
+          path: packages/floro-desktop/dist/*.zip
+        env:
+          GH_TOKEN: ${{ secrets.github_token }}
       #- uses: actions/upload-artifact@v3
       #  with:
       #    name: Windows Artifact
