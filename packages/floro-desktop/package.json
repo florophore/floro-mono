@@ -2,7 +2,7 @@
   "name": "floro-desktop",
   "description": "Desktop client for floro",
   "homepage": "https://floro.io",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "private": true,
   "author": {
     "email": "jamie.sunderland@floro.io",
