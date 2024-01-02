@@ -117,11 +117,17 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         with:
+          name: Update YAMLs
+          path: packages/floro-desktop/dist/*.yml
+        env:
+          GH_TOKEN: ${{ secrets.github_token }}
+
+      - uses: actions/upload-artifact@v3
+        with:
           name: Mac Artifact
           path: packages/floro-desktop/dist/*.dmg
         env:
           GH_TOKEN: ${{ secrets.github_token }}
-
       #- uses: actions/upload-artifact@v3
       #  with:
       #    name: Windows Artifact
