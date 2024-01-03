@@ -2,7 +2,7 @@
   "name": "floro-desktop",
   "description": "Desktop client for floro",
   "homepage": "https://floro.io",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "private": true,
   "author": {
     "email": "jamie.sunderland@floro.io",
@@ -45,7 +45,7 @@
     "@typescript-eslint/eslint-plugin": "6.7.0",
     "@vitejs/plugin-react": "2.0.1",
     "cross-env": "7.0.3",
-    "electron": "26.2.1",
+    "electron": "28.1.0",
     "electron-builder": "24.6.4",
     "eslint": "8.49.0",
     "eslint-plugin-vue": "9.17.0",
