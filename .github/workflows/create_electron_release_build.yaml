@@ -217,7 +217,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./Debian Artifact/floro-desktop_${{ needs.build_artifacts.outputs.version }}_amd64.deb
-          asset_name: Floro-Debian-${{ needs.build_artifacts.outputs.version }}.deb
+          asset_name: floro-desktop_${{ needs.build_artifacts.outputs.version }}_amd64.deb
           asset_content_type: application/octet-stream
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -227,7 +227,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./RPM Artifact/floro-desktop-${{ needs.build_artifacts.outputs.version }}.x86_64.rpm
-          asset_name: Floro-RPM-${{ needs.build_artifacts.outputs.version }}.rpm
+          asset_name: floro-desktop-${{ needs.build_artifacts.outputs.version }}.x86_64.rpm
           asset_content_type: application/octet-stream
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
