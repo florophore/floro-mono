@@ -23,7 +23,6 @@ export function update(win: Electron.BrowserWindow) {
         }
       })
     });
-
   }, 6000);
 
   autoUpdater.on("error", (e) => {
@@ -31,5 +30,9 @@ export function update(win: Electron.BrowserWindow) {
     console.error("There was a problem updating the application");
     console.error(e);
   });
+
+  setInterval(() => {
+    autoUpdater.checkForUpdatesAndNotify();
+  }, 10_000)
 
 }
