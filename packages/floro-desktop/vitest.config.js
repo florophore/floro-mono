@@ -10,6 +10,7 @@ const config = {
     '@floro/common-assets/assets/**/*.png',
     '@floro/common-assets/assets/**/*.ttf',
     '@floro/common-assets/assets/**/*.txt',
+    '**/*.mp3',
   ],
   test: {
     /**

@@ -8,6 +8,7 @@ import {motion} from 'framer-motion';
 import colorPalette, {Opacity} from '@floro/styles/ColorPalette';
 import {useSession} from '@floro/common-react/src/session/session-context';
 import {useNavigationAnimator} from '@floro/common-react/src/navigation/navigation-animator';
+import quakeLink from '../../assets/sounds/quack.mp3';
 
 const colorTransition = keyframes`
   from, 0% {
@@ -87,7 +88,7 @@ const DragBar = styled.div`
 `;
 
 const quack = () => {
-  const audio = new Audio('./assets/sounds/quack.mp3');
+  const audio = new Audio(quakeLink);
   audio.play();
 };
 
