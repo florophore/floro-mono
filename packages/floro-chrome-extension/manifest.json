@@ -5,8 +5,6 @@
   "description": "Test your Floro state anywhere!",
   "permissions": [
     "activeTab",
-    "cookies",
-    "declarativeContent",
     "scripting",
     "storage",
     "tabs",

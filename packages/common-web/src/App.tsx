@@ -16,6 +16,11 @@ import { EnvProvider } from "@floro/common-react/src/env/EnvContext";
 import { ColorThemeProvider } from "./hooks/ColorThemeProvider";
 import ThemeMount from "./hooks/ThemeMount";
 import { ThemeSet } from "@floro/common-generators/floro_modules/theme-generator";
+import TimeAgo from "javascript-time-ago";
+
+import en from "javascript-time-ago/locale/en";
+
+TimeAgo.addDefaultLocale(en);
 
 export interface Props {
   routing: IsomorphicRoute[];

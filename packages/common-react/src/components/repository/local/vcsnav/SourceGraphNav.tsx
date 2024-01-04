@@ -34,13 +34,9 @@ import BackArrowIconDark from "@floro/common-assets/assets/images/icons/back_arr
 import RepoActionButton from "@floro/storybook/stories/repo-components/RepoActionButton";
 import SGSelectShaModal from "../../sourcegraph/sourgraphmodals/SGSelectShaModal";
 import TimeAgo from "javascript-time-ago";
-
-import en from "javascript-time-ago/locale/en";
 import ConfirmCheckoutShaModal from "../modals/ConfirmCheckoutShaModal";
 import SGPlainModal from "../../sourcegraph/sourgraphmodals/SGPlainModal";
 import WarningLabel from "@floro/storybook/stories/design-system/WarningLabel";
-
-TimeAgo.addDefaultLocale(en);
 
 const InnerContent = styled.div`
   display: flex;

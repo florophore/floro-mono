@@ -30,7 +30,6 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        #os: [ macos-12, ubuntu-latest, windows-latest ]
         os: [ macos-12, ubuntu-latest ]
 
     outputs:
@@ -135,12 +134,6 @@ jobs:
           path: packages/floro-desktop/dist/*.zip
         env:
           GH_TOKEN: ${{ secrets.github_token }}
-      #- uses: actions/upload-artifact@v3
-      #  with:
-      #    name: Windows Artifact
-      #    path: packages/floro-desktop/dist/*.exe
-      #  env:
-      #    GH_TOKEN: ${{ secrets.github_token }}
 
       - uses: actions/upload-artifact@v3
         with:
@@ -201,16 +194,6 @@ jobs:
           asset_content_type: application/zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      #- name: Upload Windows Artifact
-      #  uses: actions/upload-release-asset@v1
-      #  with:
-      #    upload_url: ${{ steps.create_release.outputs.upload_url }}
-      #    asset_path: ./Windows Artifact/Floro_${{ needs.build_artifacts.outputs.version }}.exe
-      #    asset_name: Floro-Windows-${{ needs.build_artifacts.outputs.version }}.exe
-      #    asset_content_type: application/octet-stream
-      #  env:
-      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Debian Artifact
         uses: actions/upload-release-asset@v1

@@ -127,7 +127,7 @@ const TextArea = styled.textarea`
 
 const GrowCommentContainer = styled.div`
   flex-grow: 1;
-  overflow: scroll;
+  overflow-y: scroll;
 `;
 
 interface Props {

@@ -151,7 +151,7 @@ const MainText = styled.div`
 
 const GrowCommentContainer = styled.div`
   flex-grow: 1;
-  overflow: scroll;
+  overflow-y: scroll;
 `;
 
 const GrowWrap = styled.div`

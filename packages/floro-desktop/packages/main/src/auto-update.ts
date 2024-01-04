@@ -26,9 +26,10 @@ export function update(win: Electron.BrowserWindow) {
   }, 6000);
 
   autoUpdater.on("error", (e) => {
-    dialog.showMessageBox(win, { message: (e as Error).message });
+    dialog.showMessageBox(win, { message: "An auto-update error occured" });
     console.error("There was a problem updating the application");
     console.error(e);
+    log.info(e.message)
   });
 
   setInterval(() => {

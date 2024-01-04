@@ -6,7 +6,7 @@ export const useSelectedTheme = (themeName: "dark"| "light"): ColorTheme => {
     return themeName == 'light' ? LightTheme : DarkTheme;
 }
 
-export const useSystemColorTheme = (initTheme: keyof ThemeSet): ColorTheme => {
+export const useSystemColorTheme = (initTheme?: keyof ThemeSet): ColorTheme => {
     const [colorTheme, setColorTheme] = useState(initTheme == 'dark' ? DarkTheme : LightTheme);
 
     useEffect(() => {

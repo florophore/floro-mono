@@ -23,6 +23,10 @@ import {CurrentUserSubscriberMount} from '@floro/common-react/src/components/sub
 import {DesktopSocketProvider} from './contexts/DesktopSocketContext';
 import * as linkify from 'linkifyjs';
 import DesktopThemeMount from './DesktopThemeMount';
+import TimeAgo from "javascript-time-ago";
+
+import en from "javascript-time-ago/locale/en";
+TimeAgo.addDefaultLocale(en);
 
 const authMiddleware = setContext((_, {headers}) => {
   // add the authorization to the headers
