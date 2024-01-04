@@ -10,12 +10,12 @@ export function update(win: Electron.BrowserWindow) {
   log.transports.file.level = "info";
   autoUpdater.logger = log;
   let hasAcked = false;
-  setTimeout(() => {
-    autoUpdater.on('update-downloaded', (event) => {
-      log.info("update-available");
-      if (hasAcked) {
-        return;
-      }
+  autoUpdater.on('update-downloaded', (event) => {
+    log.info("update-available");
+    if (hasAcked) {
+      return;
+    }
+    setTimeout(() => {
       dialog.showMessageBox({
         title: 'New Version Downloaded',
         message: 'A New Version of floro was downloaded. The update will be applied the next time you start the app. Close and restart now to run the latest version.',
@@ -26,9 +26,9 @@ export function update(win: Electron.BrowserWindow) {
         if (returnValue.response == 0){
           autoUpdater.quitAndInstall();
         }
-      })
-    });
-  }, 6000);
+      });
+    }, 6000);
+  });
 
   autoUpdater.on("error", (e) => {
     dialog.showMessageBox(win, { message: "An auto-update error occured" });
