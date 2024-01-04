@@ -36,6 +36,7 @@ import ResolveMediumGray from '@floro/common-assets/assets/images/repo_icons/res
 import AbortWhite from '@floro/common-assets/assets/images/repo_icons/abort.white.svg';
 import AbortGray from '@floro/common-assets/assets/images/repo_icons/abort.gray.svg';
 import AbortMediumGray from '@floro/common-assets/assets/images/repo_icons/abort.medium_gray.svg';
+import DotsLoader from "@floro/storybook/stories/design-system/DotsLoader";
 
 const InnerContent = styled.div`
   display: flex;
@@ -273,6 +274,7 @@ interface Props {
   remoteCommitState: RemoteCommitState;
   comparisonState: ComparisonState;
   plugin: string;
+  isLoading: boolean;
 }
 
 const RemoteCreateMergeRequest = (props: Props) => {
@@ -485,6 +487,40 @@ const RemoteCreateMergeRequest = (props: Props) => {
     return false;
 
   }, [branch, title, description, mergeError]);
+
+  if (props.isLoading) {
+    return (
+      <>
+        <InnerContent>
+          <TopContainer>
+            <TitleRow>
+              <TitleSpan
+                style={{
+                  paddingTop: 6,
+                }}
+              >
+                {"Create Merge Request"}
+              </TitleSpan>
+              <div
+                style={{
+                  paddingRight: 10,
+                  paddingTop: 14,
+                }}
+              >
+                <GoBackIcon src={backArrowIcon} onClick={onGoBack} />
+              </div>
+            </TitleRow>
+            <Row style={{justifyContent: "center", marginTop: 72}}>
+              <DotsLoader
+                color={theme.name == "light" ? "purple" : "lightPurple"}
+                size={"medium"}
+              />
+            </Row>
+          </TopContainer>
+        </InnerContent>
+      </>
+    );
+  }
 
   return (
     <>

@@ -19,6 +19,7 @@ import SearchInput from "@floro/storybook/stories/design-system/SearchInput";
 import { useRepoLinkBase } from "../hooks/remote-hooks";
 import { useNavigate } from "react-router";
 import { RepoPage } from "../../types";
+import DotsLoader from "@floro/storybook/stories/design-system/DotsLoader";
 
 const InnerContent = styled.div`
   display: flex;
@@ -143,6 +144,7 @@ interface Props {
   remoteCommitState: RemoteCommitState;
   plugin: string;
   page: RepoPage;
+  isLoading: boolean;
 }
 
 const RemoteVCSBranchHistory = (props: Props) => {
@@ -231,6 +233,11 @@ const RemoteVCSBranchHistory = (props: Props) => {
               onFocus={onFocus}
               onBlur={onBlur}
             />
+          </Row>
+          <Row style={{justifyContent: "center"}}>
+            {props.isLoading && (
+              <DotsLoader size="medium" color={theme.name == "light" ? "purple" : "lightPurple"}/>
+            )}
           </Row>
         </TopContainer>
         <BottomContainer>

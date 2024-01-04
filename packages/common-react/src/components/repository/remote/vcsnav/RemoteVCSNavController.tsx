@@ -15,6 +15,7 @@ import RemoteVCSConversation from "./RemoteVCSConversation";
 import RemoteVCSApiSettings from "./RemoteVCSApiSettings";
 import RemoteVCSAnnouncements from "./RemoteVCSAnnouncements";
 import RemoteVCSAnnouncement from "./RemoteVCSAnnouncement";
+import RemoteVCSLoader from "./RemoteVCSLoader";
 
 interface Props {
   repository: Repository;
@@ -79,6 +80,7 @@ const RemoteVCSNavController = (props: Props) => {
       <RemoteVCSMergeRequestsHistory
         repository={props.repository}
         plugin={props.plugin}
+        isLoading={props.isLoading}
       />
     );
   }
@@ -108,6 +110,7 @@ const RemoteVCSNavController = (props: Props) => {
           remoteCommitState={props.remoteCommitState}
           plugin={props.plugin}
           page={props.page}
+          isLoading={props.isLoading}
         />
       );
 
@@ -118,6 +121,7 @@ const RemoteVCSNavController = (props: Props) => {
           remoteCommitState={props.remoteCommitState}
           plugin={props.plugin}
           page={props.page}
+          isLoading={props.isLoading}
         />
       );
   }
@@ -129,8 +133,13 @@ const RemoteVCSNavController = (props: Props) => {
         remoteCommitState={props.remoteCommitState}
         comparisonState={props.comparisonState}
         plugin={props.plugin}
+        isLoading={props.isLoading}
       />
     );
+  }
+
+  if (props.isLoading) {
+    return <RemoteVCSLoader/>
   }
 
   return (

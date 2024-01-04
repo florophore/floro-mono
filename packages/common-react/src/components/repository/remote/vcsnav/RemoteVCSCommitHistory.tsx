@@ -28,6 +28,7 @@ import { RepoPage } from "../../types";
 import UserProfilePhoto from "@floro/storybook/stories/common-components/UserProfilePhoto";
 import ConfirmRevertCommitModal from "../modals/ConfirmRevertCommitModal";
 import ConfirmAutofixCommitModal from "../modals/ConfirmAutofixCommitModal";
+import RemoteVCSLoader from "./RemoteVCSLoader";
 
 const InnerContent = styled.div`
   display: flex;
@@ -284,6 +285,7 @@ interface Props {
   remoteCommitState: RemoteCommitState;
   plugin: string;
   page: RepoPage;
+  isLoading: boolean;
 }
 
 const RemoteVCSCommitHistory = (props: Props) => {
@@ -439,6 +441,10 @@ const RemoteVCSCommitHistory = (props: Props) => {
       (b) => b?.id == props?.repository?.branchState?.branchId
     );
   }, [props?.repository?.branchState, props?.repository?.repoBranches])
+
+  if (props.isLoading) {
+    return <RemoteVCSLoader/>
+  }
 
   return (
     <>

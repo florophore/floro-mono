@@ -4,6 +4,7 @@ import React, {
   useCallback
 } from "react";
 import styled from "@emotion/styled";
+import { useTheme } from "@emotion/react";
 import {
   CommitInfo,
   MergeRequest,
@@ -16,6 +17,7 @@ import { useSearchParams } from "react-router-dom";
 
 import MergeRequestHistoryRow from "./MergeRequestHistoryRow";
 import PaginationToggle from "@floro/storybook/stories/repo-components/PaginationToggle";
+import DotsLoader from "@floro/storybook/stories/design-system/DotsLoader";
 
 const Container = styled.div`
   height: 100%;
@@ -119,6 +121,7 @@ interface Props {
 }
 
 const MergeRequestHistoryDisplay = (props: Props) => {
+  const theme = useTheme();
   const container = useRef<HTMLDivElement>(null);
   const { filterMR } = useMergeRequestsFilter();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -194,6 +197,21 @@ const MergeRequestHistoryDisplay = (props: Props) => {
     }
     return "No closed merge requests to display";
   }, [hasNone, filterMR, hasSearch, searchQuery]);
+
+  const loaderColor = useMemo(
+    () => (theme.name == "light" ? "purple" : "lightPurple"),
+    [theme.name]
+  );
+
+  if (props.isLoading) {
+    return (
+      <Container>
+        <NoMRContainer>
+          <DotsLoader color={loaderColor} size={"large"} />
+        </NoMRContainer>
+      </Container>
+    );
+  }
 
   if (hasNone) {
     return (

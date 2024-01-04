@@ -195,6 +195,13 @@ const RemoteRepoController = (props: Props) => {
     if (props.page == "merge-request" && reviewPage == "none") {
       return <MergeRequest repository={props.repository} page={props.page} isLoading={props.isLoading} />;
     }
+    if (props.isLoading) {
+        return (
+          <NoPluginContainer style={{paddingBottom: 72}}>
+            <DotsLoader size={"large"} color={theme.name == "light" ? "purple" : "lightPurple"}/>
+          </NoPluginContainer>
+        );
+    }
     if (props.page == "home" || props.page == "merge-request-create" || props.page == "merge-request") {
       if (props.plugin != "home") {
         if (viewMode == "compare" && compareFrom == "before") {

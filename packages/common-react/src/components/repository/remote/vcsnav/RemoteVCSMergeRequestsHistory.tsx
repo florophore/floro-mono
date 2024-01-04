@@ -28,6 +28,7 @@ import { RepoPage } from "../../types";
 import BranchSelector from "@floro/storybook/stories/repo-components/BranchSelector";
 import { Branch } from "floro/dist/src/repo";
 import CreateMergeRequest from "@floro/storybook/stories/repo-components/CreateMergeRequest";
+import DotsLoader from "@floro/storybook/stories/design-system/DotsLoader";
 
 const InnerContent = styled.div`
   display: flex;
@@ -196,6 +197,7 @@ export const getBranchIdFromName = (name: string): string => {
 interface Props {
   repository: Repository;
   plugin: string;
+  isLoading: boolean;
 }
 
 const RemoteVCSMergeRequestsHistory = (props: Props) => {
@@ -310,6 +312,11 @@ const RemoteVCSMergeRequestsHistory = (props: Props) => {
                   onFocus={onFocus}
                   onBlur={onBlur}
                 />
+              </Row>
+              <Row style={{justifyContent: "center"}}>
+                {props.isLoading && (
+                  <DotsLoader size="medium" color={theme.name == "light" ? "purple" : "lightPurple"}/>
+                )}
               </Row>
               {(props?.repository?.openUserBranchesWithoutMergeRequests
                 ?.length ?? 0) > 0 && (
