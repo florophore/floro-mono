@@ -1846,26 +1846,26 @@ export const FloroProvider = (props: Props) => {
 
   useEffect(() => {
     const commandToggleListeners = (event: KeyboardEvent) => {
-      if (event.metaKey && event.shiftKey && event.key == "p") {
+      if ((event.metaKey || event.ctrlKey) && event.shiftKey && event.key?.toLowerCase() == "p") {
         window.parent?.postMessage("toggle-vcs", "*");
       }
-      if (event.metaKey && event.shiftKey && event.key == "e") {
+      if ((event.metaKey || event.ctrlKey) && event.shiftKey && event.key?.toLowerCase() == "e") {
         window.parent?.postMessage("toggle-command-mode", "*");
       }
 
-      if (event.metaKey && event.shiftKey && event.key == "[") {
+      if ((event.metaKey || event.ctrlKey) && event.shiftKey && event.key?.toLowerCase() == "[") {
         window.parent?.postMessage("toggle-before", "*");
       }
 
-      if (event.metaKey && event.shiftKey && event.key == "]") {
+      if ((event.metaKey || event.ctrlKey) && event.shiftKey && event.key?.toLowerCase() == "]") {
         window.parent?.postMessage("toggle-after", "*");
       }
 
-      if (event.metaKey && event.shiftKey && event.key == "c") {
+      if ((event.metaKey || event.ctrlKey) && event.shiftKey && event.key?.toLowerCase() == "c") {
         window.parent?.postMessage("toggle-compare-mode", "*");
       }
 
-      if (event.metaKey && event.shiftKey && event.key == "b") {
+      if ((event.metaKey || event.ctrlKey) && event.shiftKey && event.key?.toLowerCase() == "b") {
         window.parent?.postMessage("toggle-branches", "*");
       }
     };
@@ -3448,10 +3448,6 @@ export function useFloroState<T>(query: string, defaultData?: T): [T|null, (t: T
       ) as SchemaRoot;
       ctx.currentPluginAppState.current = next;
       ctx.saveState(pluginName, ctx.applicationState);
-      ctx.setPluginState({
-        ...ctx.pluginState,
-        applicationState: next
-      });
     }
   }, [
     query,
@@ -3484,10 +3480,6 @@ export function useFloroState<T>(query: string, defaultData?: T): [T|null, (t: T
           ) as SchemaRoot;
           ctx.currentPluginAppState.current = next;
           ctx.saveState(pluginName, next);
-          ctx.setPluginState({
-            ...ctx.pluginState,
-            applicationState: next
-          });
         } else {
           return () => {
             ctx.lastEditKey.current = query;
@@ -3499,10 +3491,6 @@ export function useFloroState<T>(query: string, defaultData?: T): [T|null, (t: T
             ) as SchemaRoot;
             ctx.currentPluginAppState.current = next;
             ctx.saveState(pluginName, next);
-            ctx.setPluginState({
-              ...ctx.pluginState,
-              applicationState: next
-            });
           };
         }
       }

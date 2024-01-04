@@ -16,7 +16,6 @@ import LockLight from "@floro/common-assets/assets/images/icons/lock.medium_gray
 import LockDark from "@floro/common-assets/assets/images/icons/lock.dark.svg";
 
 const Container = styled.div`
-  height: 100%;
   max-width: 100%;
   overflow-x: scroll;
   padding: 24px;
