@@ -9,15 +9,20 @@ export function update(win: Electron.BrowserWindow) {
   const icon = nativeImage.createFromDataURL(dialogIcon)
   log.transports.file.level = "info";
   autoUpdater.logger = log;
+  let hasAcked = false;
   setTimeout(() => {
     autoUpdater.on('update-downloaded', (event) => {
       log.info("update-available");
+      if (hasAcked) {
+        return;
+      }
       dialog.showMessageBox({
         title: 'New Version Downloaded',
         message: 'A New Version of floro was downloaded. The update will be applied the next time you start the app. Close and restart now to run the latest version.',
         buttons: ['Restart', 'Later'],
         icon
       }).then(returnValue => {
+        hasAcked = true;
         if (returnValue.response == 0){
           autoUpdater.quitAndInstall();
         }
