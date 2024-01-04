@@ -34,6 +34,7 @@ export function update(win: Electron.BrowserWindow) {
 
   setInterval(() => {
     autoUpdater.checkForUpdatesAndNotify();
-  }, 10_000)
+  }, 60_000)
+  autoUpdater.checkForUpdatesAndNotify();
 
 }
