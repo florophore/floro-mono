@@ -37,6 +37,9 @@ export function update(win: Electron.BrowserWindow) {
     log.info(e.message)
   });
 
+  if (process.env.NODE_ENV == "development" || process.env.NODE_ENV == "test") {
+    return;
+  }
   setInterval(() => {
     autoUpdater.checkForUpdatesAndNotify();
   }, 60_000)

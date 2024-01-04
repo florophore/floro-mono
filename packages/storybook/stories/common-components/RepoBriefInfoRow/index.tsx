@@ -12,10 +12,7 @@ import TimeAgo from "javascript-time-ago";
 import { Link } from "react-router-dom";
 
 // English.
-import en from "javascript-time-ago/locale/en";
 import ColorPalette from "@floro/styles/ColorPalette";
-
-TimeAgo.addDefaultLocale(en);
 
 const Container = styled.div`
   display: flex;

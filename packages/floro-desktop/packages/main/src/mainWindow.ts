@@ -1,6 +1,9 @@
 import {app, BrowserWindow, ipcMain, nativeTheme, shell } from 'electron';
 import {join, resolve} from 'node:path';
 import { update } from './auto-update';
+import os from 'node:os';
+
+const platform = os.platform();
 
 let ipcRendererHasMounted = false;
 
@@ -12,8 +15,8 @@ async function createWindow() {
   const metaEnv = import.meta.env;
   const browserWindow = new BrowserWindow({
     show: false, // Use the 'ready-to-show' event to show the instantiated BrowserWindow.
-    titleBarStyle: 'hidden',
-    titleBarOverlay: true,
+    titleBarStyle: platform == 'darwin' ? 'hidden' : 'default',
+    titleBarOverlay: platform == 'darwin',
     height: 920,
     width: 1200,
     minHeight: 675,
@@ -68,7 +71,7 @@ async function createWindow() {
     ipcMain.on('system:openOAuthWindow', async (_: any, provider: any) => {
       const oauthWindow = new BrowserWindow({
         show: true, // Use the 'ready-to-show' event to show the instantiated BrowserWindow.
-        titleBarStyle: 'hidden',
+        titleBarStyle: platform == 'darwin' ? 'hidden' : 'default',
         trafficLightPosition: { x: 10, y: 10 },
         titleBarOverlay: true,
         parent: browserWindow,

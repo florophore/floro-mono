@@ -54,8 +54,6 @@ const ButtonRow = styled.div`
   justify-content: space-between;
 `;
 
-TimeAgo.addDefaultLocale(en);
-
 export interface RemoteCommitState {
   renderedState: RenderedApplicationState;
   schemaMap: { [pluginName: string]: Manifest };
