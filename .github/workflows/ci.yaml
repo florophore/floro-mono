@@ -54,7 +54,7 @@ jobs:
         run: yarn
 
       - name: Add Floro CLI
-        run: yarn global add floro
+        run: npm install -g floro
 
       - name: Build Floro Assets
         working-directory: packages/common-generators
