@@ -60,7 +60,11 @@ jobs:
         run: yarn
 
       - name: Build Floro Assets
-        run: yarn build:floro_assets
+        working-directory: packages/common-generators
+        run: floro module build
+        env:
+          ACTIONS_RUNNER_DEBUG: true
+          #FLORO_REMOTE_API_KEY: ${{ secrets.FLORO_REMOTE_API_KEY }}
 
       - name: Build Project
         run: yarn build:all
