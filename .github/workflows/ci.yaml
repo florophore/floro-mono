@@ -47,11 +47,11 @@ jobs:
         with:
           node-version: 16
 
-      - name: Add Floro CLI
-        run: npm install -g floro
+      #- name: Add Floro CLI
+      #  run: npm install -g floro
 
-      - name: Echo floro version
-        run: echo "$(floro --version)"
+      #- name: Echo floro version
+      #  run: echo "$(floro --version)"
 
       - name: Yarn install cache
         uses: c-hive/gha-yarn-cache@v1
@@ -59,12 +59,12 @@ jobs:
       - name: Install dependencies
         run: yarn
 
-      - name: Build Floro Assets
-        working-directory: packages/common-generators
-        run: floro module build
-        env:
-          ACTIONS_RUNNER_DEBUG: true
-          FLORO_REMOTE_API_KEY: ${{ secrets.FLORO_REMOTE_API_KEY }}
+      #- name: Build Floro Assets
+      #  working-directory: packages/common-generators
+      #  run: floro module build
+      #  env:
+      #    ACTIONS_RUNNER_DEBUG: true
+      #    FLORO_REMOTE_API_KEY: ${{ secrets.FLORO_REMOTE_API_KEY }}
 
       - name: Build Project
         run: yarn build:all

@@ -60,12 +60,12 @@ jobs:
       - name: Install dependencies
         run: yarn
 
-      - name: Add Floro CLI
-        run: npm install -g floro
+      #- name: Add Floro CLI
+      #  run: npm install -g floro
 
-      - name: Build Floro Assets
-        working-directory: packages/common-generators
-        run: floro module build
+      #- name: Build Floro Assets
+      #  working-directory: packages/common-generators
+      #  run: floro module build
 
       - name: Build Graph QL
         run: yarn graphql-schemas:build

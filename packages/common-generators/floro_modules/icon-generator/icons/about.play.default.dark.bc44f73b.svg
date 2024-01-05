@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg  viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>play</title>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="play">
+            <circle id="Oval" fill="#9B8EF6ff" cx="16" cy="16" r="16"></circle>
+            <g id="Symbols" transform="translate(9.75, 6)" fill="#FFFFFFFF">
+                <path d="M15.3112799,11.7370205 L3.2072107,19.6613909 C2.24904654,20.2886881 0.964428944,20.0194691 0.337936994,19.0600735 C0.117434069,18.7224003 0,18.3276989 0,17.9242516 L0,2.0755107 C0,0.929237791 0.928045068,0 2.07284667,0 C2.4757762,0 2.86997093,0.117584995 3.2072107,0.33837131 L15.3112799,8.26274174 C16.2694441,8.89003886 16.5383175,10.1763074 15.9118256,11.135703 C15.7813365,11.335531 15.6175932,11.5110133 15.4280454,11.6546905 L15.3112799,11.7370205 Z" id="play"></path>
+            </g>
+        </g>
+    </g>
+</svg>

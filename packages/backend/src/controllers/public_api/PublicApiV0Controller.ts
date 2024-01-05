@@ -614,7 +614,7 @@ export default class PublicApiV0Controller extends BaseController {
     const repository = await repositoryContext.getById(repositoryId);
     const urlPath =
       "/" +
-      this.repoAccessor.getRelativeCommitKVPath(repository as Repository, sha);
+      this.repoAccessor.getRelativeCommitStatePath(repository as Repository, sha);
     const privateCdnUrl = this.mainConfig.privateRoot();
     const url = privateCdnUrl + urlPath;
     const stateLink = this.storageAuthenticator.signURL(url, urlPath, 3600);

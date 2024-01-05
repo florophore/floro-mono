@@ -67,6 +67,11 @@ export default class SyncController extends BaseController {
   }
 
   @Get("/sync/api/v0/repo/:ownerHandle/:repoName")
+  public async getRepo_DEPRECATED(request, response): Promise<void> {
+    return await this.getRepo(request, response);
+  }
+
+  @Get("/sync/api/v0/repository/:ownerHandle/:repoName")
   public async getRepo(request, response): Promise<void> {
     try {
       const ownerHandle = request?.params?.ownerHandle;
@@ -380,7 +385,7 @@ export default class SyncController extends BaseController {
       }
 
       const urlPath =
-        "/" + this.repoAccessor.getRelativeCommitKVPath(repo, sha);
+        "/" + this.repoAccessor.getRelativeCommitStatePath(repo, sha);
       const privateCdnUrl = this.mainConfig.privateRoot();
       const url = privateCdnUrl + urlPath;
       const stateLink = this.storageAuthenticator.signURL(url, urlPath, 3600);
