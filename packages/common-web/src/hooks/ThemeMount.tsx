@@ -4,7 +4,7 @@ import { useSystemColorTheme } from "./color-theme";
 import { useColorTheme } from "./ColorThemeProvider";
 import { DarkTheme, LightTheme } from "@floro/styles/ColorThemes";
 import ColorPalette from "@floro/styles/ColorPalette";
-import { ThemeSet } from "@floro/common-generators/floro_modules/theme-generator";
+import { ThemeSet } from "@floro/common-generators/floro_modules/themes-generator";
 
 interface Props {
   initTheme?: keyof ThemeSet;

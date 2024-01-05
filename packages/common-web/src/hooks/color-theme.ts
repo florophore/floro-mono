@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { DarkTheme, LightTheme, ColorTheme } from '@floro/styles/ColorThemes';
-import { ThemeSet } from '@floro/common-generators/floro_modules/theme-generator';
+import { ThemeSet } from '@floro/common-generators/floro_modules/themes-generator';
 
 export const useSelectedTheme = (themeName: "dark"| "light"): ColorTheme => {
     return themeName == 'light' ? LightTheme : DarkTheme;
