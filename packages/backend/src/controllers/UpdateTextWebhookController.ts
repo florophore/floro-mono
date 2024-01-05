@@ -9,8 +9,8 @@ import fetch from "node-fetch";
 import { getJSON } from "@floro/generators/text-generator/dist/cjs/src";
 import {  LocalizedPhrases } from "@floro/common-generators/floro_modules/text-generator";
 
-const FLORO_WEBHOOK_KEY = "iOWG3icy13lqO0xOGXD/O1YquZDAssDvytCIrOfDQPo=";
-const FLORO_API_KEY = "3V8JGwztge9Nij5BRsEstEZxBjCtPpUNiat6CNj9v7g=";
+const FLORO_WEBHOOK_KEY = process.env.FLORO_WEBHOOK_KEY ?? "";
+const FLORO_API_KEY = process.env.FLORO_API_KEY ?? "";
 
 @injectable()
 export default class UpdateTextWebhookController extends BaseController {

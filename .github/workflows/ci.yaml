@@ -53,6 +53,15 @@ jobs:
       - name: Install dependencies
         run: yarn
 
+      - name: Add Floro CLI
+        run: yarn global add floro
+
+      - name: Build Floro Assets
+        working-directory: packages/common-generators
+        run: floro build
+        env:
+          FLORO_REMOTE_API_KEY: ${{ secrets.FLORO_REMOTE_API_KEY }}
+
       - name: Build Project
         run: yarn build:all
 

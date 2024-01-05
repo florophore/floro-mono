@@ -32,7 +32,7 @@ const IFRAME_PERMISSIONS = new Set<Permissions>([
 const ALLOWED_ORIGINS_AND_PERMISSIONS = new Map<string, Set<Permissions>>(
   import.meta.env.DEV && import.meta.env.VITE_DEV_SERVER_URL
     ? [[new URL(import.meta.env.VITE_DEV_SERVER_URL).origin, IFRAME_PERMISSIONS]]
-    : [],
+    : [[new URL("file://").origin, IFRAME_PERMISSIONS]],
 );
 
 ALLOWED_ORIGINS_AND_PERMISSIONS.set(
