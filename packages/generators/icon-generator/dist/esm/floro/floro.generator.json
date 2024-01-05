@@ -1,0 +1,6 @@
+{
+    "name": "icon-generator",
+    "dependencies": {
+        "icons": "0.0.40"
+    }
+}

@@ -1,0 +1,110 @@
+{
+    "palette": {
+        "colorPalettes": [
+            {
+                "id": "white",
+                "name": "White",
+                "colorShades": [
+                    {
+                        "id": "$(palette).shades.id<light>",
+                        "hexcode": null
+                    },
+                    {
+                        "id": "$(palette).shades.id<regular>",
+                        "hexcode": "#FFFFFF"
+                    },
+                    {
+                        "id": "$(palette).shades.id<dark>",
+                        "hexcode": null
+                    }
+                ]
+            },
+            {
+                "id": "black",
+                "name": "Black",
+                "colorShades": [
+                    {
+                        "id": "$(palette).shades.id<light>",
+                        "hexcode": null
+                    },
+                    {
+                        "id": "$(palette).shades.id<regular>",
+                        "hexcode": "#000000"
+                    },
+                    {
+                        "id": "$(palette).shades.id<dark>",
+                        "hexcode": null
+                    }
+                ]
+            },
+            {
+                "id": "red",
+                "name": "Red",
+                "colorShades": [
+                    {
+                        "id": "$(palette).shades.id<light>",
+                        "hexcode": "#F93D44"
+                    },
+                    {
+                        "id": "$(palette).shades.id<regular>",
+                        "hexcode": "#CC2F35"
+                    },
+                    {
+                        "id": "$(palette).shades.id<dark>",
+                        "hexcode": "#AA2227"
+                    }
+                ]
+            },
+            {
+                "id": "green",
+                "name": "Green",
+                "colorShades": [
+                    {
+                        "id": "$(palette).shades.id<light>",
+                        "hexcode": "#77F075"
+                    },
+                    {
+                        "id": "$(palette).shades.id<regular>",
+                        "hexcode": "#3DD43A"
+                    },
+                    {
+                        "id": "$(palette).shades.id<dark>",
+                        "hexcode": "#26A324"
+                    }
+                ]
+            },
+            {
+                "id": "blue",
+                "name": "Blue",
+                "colorShades": [
+                    {
+                        "id": "$(palette).shades.id<light>",
+                        "hexcode": "#7E91EC"
+                    },
+                    {
+                        "id": "$(palette).shades.id<regular>",
+                        "hexcode": "#3D65DB"
+                    },
+                    {
+                        "id": "$(palette).shades.id<dark>",
+                        "hexcode": "#1F38B2"
+                    }
+                ]
+            }
+        ],
+        "shades": [
+            {
+                "id": "light",
+                "name": "Light"
+            },
+            {
+                "id": "regular",
+                "name": "Regular"
+            },
+            {
+                "id": "dark",
+                "name": "Dark"
+            }
+        ]
+    }
+}

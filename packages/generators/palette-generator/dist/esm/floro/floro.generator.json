@@ -1,0 +1,6 @@
+{
+    "name": "palette-generator",
+    "dependencies": {
+        "palette": "0.0.39"
+    }
+}

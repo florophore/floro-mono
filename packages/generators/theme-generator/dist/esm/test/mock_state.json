@@ -1,0 +1,708 @@
+{
+    "palette": {
+        "colorPalettes": [
+            {
+                "colorShades": [
+                    {
+                        "id": "$(palette).shades.id<light>"
+                    },
+                    {
+                        "hexcode": "#23C2B9",
+                        "id": "$(palette).shades.id<regular>"
+                    },
+                    {
+                        "id": "$(palette).shades.id<dark>"
+                    }
+                ],
+                "id": "teal",
+                "name": "teal"
+            },
+            {
+                "colorShades": [
+                    {
+                        "hexcode": "#C36060",
+                        "id": "$(palette).shades.id<light>"
+                    },
+                    {
+                        "hexcode": "#FFFFFF",
+                        "id": "$(palette).shades.id<regular>"
+                    },
+                    {
+                        "hexcode": "#E52A2A",
+                        "id": "$(palette).shades.id<dark>"
+                    }
+                ],
+                "id": "white",
+                "name": "White"
+            },
+            {
+                "colorShades": [
+                    {
+                        "hexcode": null,
+                        "id": "$(palette).shades.id<light>"
+                    },
+                    {
+                        "hexcode": "#000000",
+                        "id": "$(palette).shades.id<regular>"
+                    },
+                    {
+                        "hexcode": null,
+                        "id": "$(palette).shades.id<dark>"
+                    }
+                ],
+                "id": "black",
+                "name": "Black"
+            },
+            {
+                "colorShades": [
+                    {
+                        "hexcode": "#414141",
+                        "id": "$(palette).shades.id<light>"
+                    },
+                    {
+                        "hexcode": "#7C7C7C",
+                        "id": "$(palette).shades.id<regular>"
+                    },
+                    {
+                        "hexcode": "#E3E2E2",
+                        "id": "$(palette).shades.id<dark>"
+                    }
+                ],
+                "id": "gray",
+                "name": "Gray"
+            },
+            {
+                "colorShades": [
+                    {
+                        "hexcode": "#9B8FF7",
+                        "id": "$(palette).shades.id<light>"
+                    },
+                    {
+                        "hexcode": "#5445C4",
+                        "id": "$(palette).shades.id<regular>"
+                    },
+                    {
+                        "hexcode": "#251F51",
+                        "id": "$(palette).shades.id<dark>"
+                    }
+                ],
+                "id": "purple",
+                "name": "Purple"
+            },
+            {
+                "colorShades": [
+                    {
+                        "hexcode": "#F93D44",
+                        "id": "$(palette).shades.id<light>"
+                    },
+                    {
+                        "hexcode": "#CC2F35",
+                        "id": "$(palette).shades.id<regular>"
+                    },
+                    {
+                        "hexcode": "#AA2227",
+                        "id": "$(palette).shades.id<dark>"
+                    }
+                ],
+                "id": "red",
+                "name": "Red"
+            },
+            {
+                "colorShades": [
+                    {
+                        "hexcode": "#77F075",
+                        "id": "$(palette).shades.id<light>"
+                    },
+                    {
+                        "hexcode": "#3DD43A",
+                        "id": "$(palette).shades.id<regular>"
+                    },
+                    {
+                        "hexcode": "#26A324",
+                        "id": "$(palette).shades.id<dark>"
+                    }
+                ],
+                "id": "green",
+                "name": "Green"
+            },
+            {
+                "colorShades": [
+                    {
+                        "hexcode": "#7E91EC",
+                        "id": "$(palette).shades.id<light>"
+                    },
+                    {
+                        "hexcode": "#3D65DB",
+                        "id": "$(palette).shades.id<regular>"
+                    },
+                    {
+                        "hexcode": "#1F38B2",
+                        "id": "$(palette).shades.id<dark>"
+                    }
+                ],
+                "id": "blue",
+                "name": "Blue"
+            }
+        ],
+        "shades": [
+            {
+                "id": "light",
+                "name": "Light"
+            },
+            {
+                "id": "regular",
+                "name": "Regular"
+            },
+            {
+                "id": "dark",
+                "name": "Dark"
+            }
+        ]
+    },
+    "theme": {
+        "stateVariants": [
+            {
+                "id": "hovered",
+                "name": "Hovered"
+            },
+            {
+                "id": "selected",
+                "name": "Selected"
+            },
+            {
+                "id": "focused",
+                "name": "Focused"
+            }
+        ],
+        "themeColors": [
+            {
+                "id": "new-theme",
+                "includeVariants": true,
+                "name": "New Theme",
+                "themeDefinitions": [
+                    {
+                        "alpha": 255,
+                        "id": "$(theme).themes.id<light>",
+                        "paletteColorShade": "$(palette).colorPalettes.id<gray>.colorShades.id<$(palette).shades.id<regular>>"
+                    },
+                    {
+                        "alpha": 255,
+                        "id": "$(theme).themes.id<dark>",
+                        "paletteColorShade": "$(palette).colorPalettes.id<white>.colorShades.id<$(palette).shades.id<regular>>"
+                    }
+                ],
+                "variants": [
+                    {
+                        "id": "$(theme).stateVariants.id<hovered>",
+                        "variantDefinitions": [
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<light>",
+                                "paletteColorShade": "$(palette).colorPalettes.id<purple>.colorShades.id<$(palette).shades.id<regular>>"
+                            },
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<dark>",
+                                "paletteColorShade": "$(palette).colorPalettes.id<purple>.colorShades.id<$(palette).shades.id<light>>"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "$(theme).stateVariants.id<selected>",
+                        "variantDefinitions": [
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<light>",
+                                "paletteColorShade": "$(palette).colorPalettes.id<white>.colorShades.id<$(palette).shades.id<dark>>"
+                            },
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<dark>",
+                                "paletteColorShade": null
+                            }
+                        ]
+                    },
+                    {
+                        "id": "$(theme).stateVariants.id<focused>",
+                        "variantDefinitions": [
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<light>",
+                                "paletteColorShade": null
+                            },
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<dark>",
+                                "paletteColorShade": null
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "main-theme",
+                "includeVariants": false,
+                "name": "Main Theme",
+                "themeDefinitions": [
+                    {
+                        "alpha": 255,
+                        "id": "$(theme).themes.id<light>",
+                        "paletteColorShade": "$(palette).colorPalettes.id<white>.colorShades.id<$(palette).shades.id<regular>>"
+                    },
+                    {
+                        "alpha": 255,
+                        "id": "$(theme).themes.id<dark>",
+                        "paletteColorShade": "$(palette).colorPalettes.id<teal>.colorShades.id<$(palette).shades.id<regular>>"
+                    }
+                ],
+                "variants": [
+                    {
+                        "id": "$(theme).stateVariants.id<hovered>",
+                        "variantDefinitions": [
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<light>",
+                                "paletteColorShade": null
+                            },
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<dark>",
+                                "paletteColorShade": null
+                            }
+                        ]
+                    },
+                    {
+                        "id": "$(theme).stateVariants.id<selected>",
+                        "variantDefinitions": [
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<light>",
+                                "paletteColorShade": null
+                            },
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<dark>",
+                                "paletteColorShade": null
+                            }
+                        ]
+                    },
+                    {
+                        "id": "$(theme).stateVariants.id<focused>",
+                        "variantDefinitions": [
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<light>",
+                                "paletteColorShade": null
+                            },
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<dark>",
+                                "paletteColorShade": null
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "main-background",
+                "includeVariants": false,
+                "name": "Main Background",
+                "themeDefinitions": [
+                    {
+                        "alpha": 255,
+                        "id": "$(theme).themes.id<light>",
+                        "paletteColorShade": "$(palette).colorPalettes.id<white>.colorShades.id<$(palette).shades.id<regular>>"
+                    },
+                    {
+                        "alpha": 255,
+                        "id": "$(theme).themes.id<dark>",
+                        "paletteColorShade": "$(palette).colorPalettes.id<gray>.colorShades.id<$(palette).shades.id<light>>"
+                    }
+                ],
+                "variants": [
+                    {
+                        "id": "$(theme).stateVariants.id<hovered>",
+                        "variantDefinitions": [
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<light>",
+                                "paletteColorShade": null
+                            },
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<dark>",
+                                "paletteColorShade": null
+                            }
+                        ]
+                    },
+                    {
+                        "id": "$(theme).stateVariants.id<selected>",
+                        "variantDefinitions": [
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<light>",
+                                "paletteColorShade": null
+                            },
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<dark>",
+                                "paletteColorShade": null
+                            }
+                        ]
+                    },
+                    {
+                        "id": "$(theme).stateVariants.id<focused>",
+                        "variantDefinitions": [
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<light>",
+                                "paletteColorShade": null
+                            },
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<dark>",
+                                "paletteColorShade": null
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "primary-negative",
+                "includeVariants": true,
+                "name": "Primary Negative",
+                "themeDefinitions": [
+                    {
+                        "alpha": 255,
+                        "id": "$(theme).themes.id<light>",
+                        "paletteColorShade": "$(palette).colorPalettes.id<black>.colorShades.id<$(palette).shades.id<regular>>"
+                    },
+                    {
+                        "alpha": 255,
+                        "id": "$(theme).themes.id<dark>",
+                        "paletteColorShade": "$(palette).colorPalettes.id<gray>.colorShades.id<$(palette).shades.id<regular>>"
+                    }
+                ],
+                "variants": [
+                    {
+                        "id": "$(theme).stateVariants.id<hovered>",
+                        "variantDefinitions": [
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<light>",
+                                "paletteColorShade": "$(palette).colorPalettes.id<teal>.colorShades.id<$(palette).shades.id<regular>>"
+                            },
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<dark>",
+                                "paletteColorShade": "$(palette).colorPalettes.id<green>.colorShades.id<$(palette).shades.id<regular>>"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "$(theme).stateVariants.id<selected>",
+                        "variantDefinitions": [
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<light>",
+                                "paletteColorShade": null
+                            },
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<dark>",
+                                "paletteColorShade": null
+                            }
+                        ]
+                    },
+                    {
+                        "id": "$(theme).stateVariants.id<focused>",
+                        "variantDefinitions": [
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<light>",
+                                "paletteColorShade": null
+                            },
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<dark>",
+                                "paletteColorShade": null
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "primary-color",
+                "includeVariants": false,
+                "name": "Primary Color",
+                "themeDefinitions": [
+                    {
+                        "alpha": 255,
+                        "id": "$(theme).themes.id<light>",
+                        "paletteColorShade": "$(palette).colorPalettes.id<red>.colorShades.id<$(palette).shades.id<light>>"
+                    },
+                    {
+                        "alpha": 255,
+                        "id": "$(theme).themes.id<dark>",
+                        "paletteColorShade": "$(palette).colorPalettes.id<red>.colorShades.id<$(palette).shades.id<regular>>"
+                    }
+                ],
+                "variants": [
+                    {
+                        "id": "$(theme).stateVariants.id<hovered>",
+                        "variantDefinitions": [
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<light>",
+                                "paletteColorShade": null
+                            },
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<dark>",
+                                "paletteColorShade": null
+                            }
+                        ]
+                    },
+                    {
+                        "id": "$(theme).stateVariants.id<selected>",
+                        "variantDefinitions": [
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<light>",
+                                "paletteColorShade": null
+                            },
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<dark>",
+                                "paletteColorShade": null
+                            }
+                        ]
+                    },
+                    {
+                        "id": "$(theme).stateVariants.id<focused>",
+                        "variantDefinitions": [
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<light>",
+                                "paletteColorShade": null
+                            },
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<dark>",
+                                "paletteColorShade": null
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "primary-font-color",
+                "includeVariants": false,
+                "name": "Primary Font Color",
+                "themeDefinitions": [
+                    {
+                        "alpha": 255,
+                        "id": "$(theme).themes.id<light>",
+                        "paletteColorShade": "$(palette).colorPalettes.id<green>.colorShades.id<$(palette).shades.id<regular>>"
+                    },
+                    {
+                        "alpha": 255,
+                        "id": "$(theme).themes.id<dark>",
+                        "paletteColorShade": "$(palette).colorPalettes.id<green>.colorShades.id<$(palette).shades.id<light>>"
+                    }
+                ],
+                "variants": [
+                    {
+                        "id": "$(theme).stateVariants.id<hovered>",
+                        "variantDefinitions": [
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<light>",
+                                "paletteColorShade": null
+                            },
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<dark>",
+                                "paletteColorShade": null
+                            }
+                        ]
+                    },
+                    {
+                        "id": "$(theme).stateVariants.id<selected>",
+                        "variantDefinitions": [
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<light>",
+                                "paletteColorShade": null
+                            },
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<dark>",
+                                "paletteColorShade": null
+                            }
+                        ]
+                    },
+                    {
+                        "id": "$(theme).stateVariants.id<focused>",
+                        "variantDefinitions": [
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<light>",
+                                "paletteColorShade": null
+                            },
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<dark>",
+                                "paletteColorShade": null
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "secondary-color",
+                "includeVariants": false,
+                "name": "Secondary Color",
+                "themeDefinitions": [
+                    {
+                        "alpha": 255,
+                        "id": "$(theme).themes.id<light>",
+                        "paletteColorShade": "$(palette).colorPalettes.id<blue>.colorShades.id<$(palette).shades.id<regular>>"
+                    },
+                    {
+                        "alpha": 255,
+                        "id": "$(theme).themes.id<dark>",
+                        "paletteColorShade": "$(palette).colorPalettes.id<blue>.colorShades.id<$(palette).shades.id<light>>"
+                    }
+                ],
+                "variants": [
+                    {
+                        "id": "$(theme).stateVariants.id<hovered>",
+                        "variantDefinitions": [
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<light>",
+                                "paletteColorShade": null
+                            },
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<dark>",
+                                "paletteColorShade": null
+                            }
+                        ]
+                    },
+                    {
+                        "id": "$(theme).stateVariants.id<selected>",
+                        "variantDefinitions": [
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<light>",
+                                "paletteColorShade": null
+                            },
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<dark>",
+                                "paletteColorShade": null
+                            }
+                        ]
+                    },
+                    {
+                        "id": "$(theme).stateVariants.id<focused>",
+                        "variantDefinitions": [
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<light>",
+                                "paletteColorShade": null
+                            },
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<dark>",
+                                "paletteColorShade": null
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "secondary-font-color",
+                "includeVariants": false,
+                "name": "Secondary Font Color",
+                "themeDefinitions": [
+                    {
+                        "alpha": 255,
+                        "id": "$(theme).themes.id<light>",
+                        "paletteColorShade": "$(palette).colorPalettes.id<black>.colorShades.id<$(palette).shades.id<regular>>"
+                    },
+                    {
+                        "alpha": 255,
+                        "id": "$(theme).themes.id<dark>",
+                        "paletteColorShade": "$(palette).colorPalettes.id<white>.colorShades.id<$(palette).shades.id<regular>>"
+                    }
+                ],
+                "variants": [
+                    {
+                        "id": "$(theme).stateVariants.id<hovered>",
+                        "variantDefinitions": [
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<light>",
+                                "paletteColorShade": null
+                            },
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<dark>",
+                                "paletteColorShade": null
+                            }
+                        ]
+                    },
+                    {
+                        "id": "$(theme).stateVariants.id<selected>",
+                        "variantDefinitions": [
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<light>",
+                                "paletteColorShade": null
+                            },
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<dark>",
+                                "paletteColorShade": null
+                            }
+                        ]
+                    },
+                    {
+                        "id": "$(theme).stateVariants.id<focused>",
+                        "variantDefinitions": [
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<light>",
+                                "paletteColorShade": null
+                            },
+                            {
+                                "alpha": 255,
+                                "id": "$(theme).themes.id<dark>",
+                                "paletteColorShade": null
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "themes": [
+            {
+                "backgroundColor": {
+                    "hexcode": "#FFFFFF"
+                },
+                "id": "light",
+                "name": "Light"
+            },
+            {
+                "backgroundColor": {
+                    "hexcode": "#000000"
+                },
+                "id": "dark",
+                "name": "Dark"
+            }
+        ]
+    }
+}
