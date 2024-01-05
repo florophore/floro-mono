@@ -66,8 +66,6 @@ jobs:
       - name: Build Floro Assets
         working-directory: packages/common-generators
         run: floro module build
-        env:
-          FLORO_REMOTE_API_KEY: ${{ secrets.FLORO_REMOTE_API_KEY }}
 
       - name: Build Graph QL
         run: yarn graphql-schemas:build
