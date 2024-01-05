@@ -30,6 +30,10 @@ COPY . /app
 
 RUN yarn install
 
+RUN floro install -g
+
+RUN floro module build -m packages/common-generators/floro.module.js
+
 RUN yarn graphql-schemas:build
 
 RUN yarn main build
