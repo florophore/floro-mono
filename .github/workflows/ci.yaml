@@ -60,8 +60,7 @@ jobs:
         run: yarn
 
       - name: Build Floro Assets
-        working-directory: packages/common-generators
-        run: floro module build
+        run: floro module build -m ./packages/common-generators/floro.module.js
 
       - name: Build Project
         run: yarn build:all

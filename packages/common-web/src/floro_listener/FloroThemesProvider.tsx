@@ -1,6 +1,6 @@
 import React, { useContext} from "react";
 import metaFile from "@floro/common-generators/meta.floro.json";
-import initThemes from "@floro/common-generators/floro_modules/theme-generator/index";
+import initThemes from "@floro/common-generators/floro_modules/themes-generator/index";
 import {getJSON} from "@floro/themes-generator";
 import { useWatchFloroState } from "./FloroListener";
 
