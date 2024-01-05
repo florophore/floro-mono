@@ -18,6 +18,10 @@ ENV VITE_IS_SECURE=$vite_is_secure_arg
 
 ARG vite_build_env_normalized_arg
 
+ARG floro_remote_api_key_arg
+
+ARG test_arg
+
 ENV VITE_BUILD_ENV_NORMALIZED=$vite_build_env_normalized_arg
 
 WORKDIR /app
@@ -32,7 +36,9 @@ RUN yarn install
 
 RUN floro install -g
 
-RUN floro module build -m packages/common-generators/floro.module.js
+RUN echo "TEST ARG " + $test_arg
+
+RUN floro module build -m packages/common-generators/floro.module.js -k $floro_remote_api_key_arg
 
 RUN yarn graphql-schemas:build
 
