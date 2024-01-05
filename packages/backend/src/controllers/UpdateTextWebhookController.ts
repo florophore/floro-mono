@@ -6,7 +6,7 @@ import FloroTextStore from "@floro/redis/src/stores/FloroTextStore";
 import MainConfig from "@floro/config/src/MainConfig";
 import metaFile from "@floro/common-generators/meta.floro.json" assert {type: "json"};
 import fetch from "node-fetch";
-import { getJSON } from "@floro/generators/text-generator/dist/cjs/src";
+import { getJSON } from "@floro/text-generator";
 import {  LocalizedPhrases } from "@floro/common-generators/floro_modules/text-generator";
 
 const FLORO_WEBHOOK_KEY = process.env.FLORO_WEBHOOK_KEY ?? "";

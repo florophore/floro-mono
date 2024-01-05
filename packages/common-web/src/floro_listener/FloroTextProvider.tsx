@@ -1,7 +1,7 @@
 import React, { useContext} from "react";
 import metaFile from "@floro/common-generators/meta.floro.json";
 import initText, { LocalizedPhrases } from "@floro/common-generators/floro_modules/text-generator";
-import { getJSON } from "@floro/generators/text-generator/src/index";
+import { getJSON } from "@floro/text-generator";
 import { useWatchFloroState } from "./FloroListener";
 
 

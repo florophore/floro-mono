@@ -1,7 +1,7 @@
 import React, { useContext, useMemo} from "react";
 import metaFile from "@floro/common-generators/meta.floro.json";
 import initIcons from '@floro/common-generators/floro_modules/icon-generator/index';
-import {getJSON} from "@floro/generators/icon-generator/src/index";
+import {getJSON} from "@floro/icon-generator";
 import { useWatchFloroState } from "./FloroListener";
 import { Icons } from "@floro/common-generators/floro_modules/icon-generator/types";
 import { useTheme } from "@emotion/react";

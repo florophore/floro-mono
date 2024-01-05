@@ -1,6 +1,0 @@
-{
-    "name": "text-generator",
-    "dependencies": {
-        "text": "0.0.31"
-    }
-}
