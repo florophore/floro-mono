@@ -5,10 +5,8 @@
   "description": "Test your Floro state anywhere!",
   "permissions": [
     "activeTab",
-    "scripting",
     "storage",
-    "tabs",
-    "webRequest"
+    "tabs"
   ],
   "action": {
     "default_popup": "index.html",

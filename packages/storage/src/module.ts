@@ -9,12 +9,15 @@ import StorageAuthenticator from './StorageAuthenticator';
 import StorageClient from './StorageClient';
 import BinaryAccessor from './accessors/BinaryAccessor';
 import AwsStorageDriver from './drivers/AwsStorageDriver';
+import LocalesAccessor from './accessors/LocalesAccessor';
 
 export default new ContainerModule((bind): void => {
     bind<DiskStorageDriver>("PublicDiskStorageDriver").toConstantValue(new DiskStorageDriver("public"));
     bind<DiskStorageDriver>("PrivateDiskStorageDriver").toConstantValue(new DiskStorageDriver("private"));
+    bind<DiskStorageDriver>("StaticDiskStorageDriver").toConstantValue(new DiskStorageDriver("static"));
     bind<AwsStorageDriver>("PublicAwsStorageDriver").toConstantValue(new AwsStorageDriver("public"));
     bind<AwsStorageDriver>("PrivateAwsStorageDriver").toConstantValue(new AwsStorageDriver("private"));
+    bind<AwsStorageDriver>("StaticAwsStorageDriver").toConstantValue(new AwsStorageDriver("static"));
 
     bind(StorageClient).toSelf();
     bind(StorageAuthenticator).toSelf();
@@ -24,4 +27,5 @@ export default new ContainerModule((bind): void => {
     bind(PluginAccessor).toSelf();
     bind(PluginTarAccessor).toSelf();
     bind(BinaryAccessor).toSelf();
+    bind(LocalesAccessor).toSelf();
 });

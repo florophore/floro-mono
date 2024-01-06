@@ -7,22 +7,38 @@ import MainConfig from "@floro/config/src/MainConfig";
 import metaFile from "@floro/common-generators/meta.floro.json" assert {type: "json"};
 import fetch from "node-fetch";
 import { getJSON } from "@floro/text-generator";
-import {  LocalizedPhrases } from "@floro/common-generators/floro_modules/text-generator";
+import { LocalizedPhrases } from "@floro/common-generators/floro_modules/text-generator";
+import LocalesAccessor from "@floro/storage/src/accessors/LocalesAccessor";
 
 const FLORO_WEBHOOK_KEY = process.env.FLORO_WEBHOOK_KEY ?? "";
 const FLORO_API_KEY = process.env.FLORO_API_KEY ?? "";
+
+const shortHash = (str) => {
+    let hash = 0;
+    str = str.padEnd(8, "0");
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = (hash << 5) - hash + char;
+      hash &= hash;
+    }
+    return new Uint32Array([hash])[0].toString(16);
+  };
 
 @injectable()
 export default class UpdateTextWebhookController extends BaseController {
   public floroTextStore: FloroTextStore;
   public mainConfig: MainConfig;
+  public localesAccessor: LocalesAccessor;
+
   constructor(
     @inject(FloroTextStore) floroTextStore: FloroTextStore,
-    @inject(MainConfig) mainConfig: MainConfig
+    @inject(MainConfig) mainConfig: MainConfig,
+    @inject(LocalesAccessor) localesAccesor: LocalesAccessor
   ) {
     super();
     this.mainConfig = mainConfig;
     this.floroTextStore = floroTextStore;
+    this.localesAccessor = localesAccesor;
   }
 
   @Post("/webhook/floro/update_text")
@@ -38,6 +54,9 @@ export default class UpdateTextWebhookController extends BaseController {
         "sha256=" + hmac.update(stringPayload).digest("hex");
       if (signature == reproducedSignature) {
         res.sendStatus(204);
+        if (req.body.event == "test") {
+          return;
+        }
         if (req.body?.repositoryId != metaFile.repositoryId) {
           return;
         }
@@ -73,7 +92,21 @@ export default class UpdateTextWebhookController extends BaseController {
             return;
           }
           const textUpdate: LocalizedPhrases = await getJSON(state.store);
-          this.floroTextStore.setText(payload.branch.lastCommit, textUpdate);
+          const loadsLoads = {};
+          // upload to s3 here
+          for (const localeCode in textUpdate.localizedPhraseKeys) {
+            const jsonString = JSON.stringify(textUpdate.localizedPhraseKeys[localeCode]);
+            const sha = shortHash(jsonString);
+            const fileName = `${localeCode}.${sha}.json`;
+            const didWrite = await this.localesAccessor.writeLocales(fileName, jsonString);
+            if (didWrite) {
+              loadsLoads[localeCode] = fileName;
+            } else {
+              // if we don't write, then don't publish
+              return;
+            }
+          }
+          this.floroTextStore.setText(payload.branch.lastCommit, textUpdate, loadsLoads);
         } catch(e) {
           console.log("Text update failed", e);
         }

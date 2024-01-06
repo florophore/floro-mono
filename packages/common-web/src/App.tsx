@@ -27,7 +27,10 @@ export interface Props {
   text: LocalizedPhrases;
   env: string;
   initTheme: string;
-  initLocaleCode: keyof LocalizedPhrases["locales"]&string;
+  initLocaleCode: keyof LocalizedPhrases["locales"] & string;
+  cdnHost: string;
+  ssrPhraseKeySet?: Set<string>;
+  localeLoads: { [key: string]: string };
 }
 
 function App(props: Props) {
@@ -40,7 +43,13 @@ function App(props: Props) {
   return (
     <EnvProvider env={props.env}>
       <OpenLinkProvider openUrl={openUrl}>
-        <FloroMount text={props.text} initLocaleCode={props.initLocaleCode}>
+        <FloroMount
+          ssrPhraseKeySet={props.ssrPhraseKeySet}
+          cdnHost={props.cdnHost}
+          text={props.text}
+          initLocaleCode={props.initLocaleCode}
+          localeLoads={props.localeLoads}
+        >
           <ColorThemeProvider initThemePreference={props.initTheme}>
             <ThemeMount initTheme={props.initTheme as keyof ThemeSet}>
               <QueryClientProvider client={queryClient}>

@@ -16,6 +16,7 @@ const isTest = NODE_ENV == "test";
 export default class StorageClient {
   public publicDriver!: StorageDriver;
   public privateDriver!: StorageDriver;
+  public staticDriver!: StorageDriver;
   public storageAuthenticator!: StorageAuthenticator;
 
   constructor(
@@ -23,12 +24,15 @@ export default class StorageClient {
     @inject(MainConfig) mainConfig: MainConfig,
     @inject("PublicDiskStorageDriver") publicDiskStorageDriver: DiskStorageDriver,
     @inject("PrivateDiskStorageDriver") privateDiskStorageDriver: DiskStorageDriver,
+    @inject("StaticDiskStorageDriver") staticDiskStorageDriver: DiskStorageDriver,
     @inject("PublicAwsStorageDriver") publicAwsStorageDriver: AwsStorageDriver,
     @inject("PrivateAwsStorageDriver") privateAwsStorageDriver: AwsStorageDriver,
+    @inject("StaticAwsStorageDriver") staticAwsStorageDriver: AwsStorageDriver,
     ) {
     if (isDevelopment || isTest) {
       this.publicDriver = publicDiskStorageDriver;
       this.privateDriver = privateDiskStorageDriver;
+      this.staticDriver = staticDiskStorageDriver;
     }
     if (isProduction) {
       publicAwsStorageDriver.setMainConfig(mainConfig);
@@ -36,16 +40,23 @@ export default class StorageClient {
       privateAwsStorageDriver.setMainConfig(mainConfig);
       privateAwsStorageDriver.setAuthenticator(storageAuthenticator);
       this.privateDriver = privateAwsStorageDriver;
+      this.staticDriver = staticAwsStorageDriver;
     }
   }
 
   public async start(): Promise<void> {
     await this.publicDriver.init();
     await this.privateDriver.init();
+    if (isTest) {
+      await this.staticDriver.init();
+    }
   }
 
-  public getStaticRoot(storageType: "public" | "private") {
+  public getStaticRoot(storageType: "public" | "private" | "static") {
     if (isDevelopment || isTest) {
+      if (storageType == "static") {
+        return this.staticDriver.staticRoot?.();
+      }
       return storageType == "public" ? this.publicDriver?.staticRoot?.() : this.privateDriver?.staticRoot?.();
     }
     return null;

@@ -19,13 +19,23 @@ function JSONHmr() {
   }
 }
 
+function defineCDNHost() {
+  return {
+    name: 'cdn-host',
+    config: () => {
+      const cdnHost = process.env?.CDN_HOST ?? "http://localhost:9000/public";
+      process.env.VITE_CDN_HOST = cdnHost;
+    }
+  }
+}
+
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }): any => {
   const cdnHost = process.env?.CDN_HOST ?? "";
   return {
     mode: process.env.MODE,
     outDir: 'dist',
-    plugins: [react(), JSONHmr()],
+    plugins: [react(), JSONHmr(), defineCDNHost()],
     publicDir: 'public',
     assetsInclude: [
       '../common-assets/assets/**/*.svg',

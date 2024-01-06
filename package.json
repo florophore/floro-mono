@@ -45,7 +45,7 @@
         "admin": "yarn workspace @floro/admin",
         "admin:build": "yarn admin build || exit 1",
         "build:floro_assets": "./node_modules/floro/dist/src/command.js module build -m ./packages/common-generators/floro.module.js",
-        "build:common": "yarn graphql-schemas:build || exit 1; yarn config-repo:build || exit 1; yarn storage:build || exit 1; yarn styles:build || exit 1; yarn common-web:build || exit 1; yarn database:build || exit 1; yarn redis:build || exit 1; yarn mailer:build || exit 1; yarn backend:build || exit 1; yarn servers:build || exit 1",
+        "build:common": "yarn postprocess:locales || exit 1; yarn graphql-schemas:build || exit 1; yarn config-repo:build || exit 1; yarn storage:build || exit 1; yarn styles:build || exit 1; yarn common-web:build || exit 1; yarn database:build || exit 1; yarn redis:build || exit 1; yarn mailer:build || exit 1; yarn backend:build || exit 1; yarn servers:build || exit 1",
         "build:main": " yarn build:common || exit 1; yarn main:build || exit 1",
         "build:admin": "yarn build:common || exit 1; yarn admin:build || exit 1",
         "build:all": "yarn build:common || exit 1; yarn main:build || exit 1; yarn admin:build || exit 1",
@@ -54,7 +54,8 @@
         "main:start": "cross-env-shell yarn main start",
         "main:start:debug": "cross-env-shell yarn main start:debug",
         "admin:dev": "yarn admin dev",
-        "admin:start": "yarn admin start"
+        "admin:start": "yarn admin start",
+        "postprocess:locales": "node packages/common-generators/postprocess.floro.js"
     },
     "dependencies": {
         "@apollo/client": "^3.6.9",

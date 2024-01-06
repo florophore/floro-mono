@@ -222,14 +222,17 @@ export default class AppServer {
           }),
           cache: new InMemoryCache(),
         });
+        const ssrPhraseKeySet = new Set<string>();
         const { appHtml, appState, helmet } = await render(
           url,
           {
             client,
             floroText: this.backend.floroTextStore.getText(),
+            localeLoads: this.backend.floroTextStore.getLocaleLoads(),
             env: env.VITE_BUILD_ENV_NORMALIZED ?? "development",
             initLocaleCode,
             initTheme,
+            ssrPhraseKeySet
           },
           context
         );
@@ -257,7 +260,8 @@ export default class AppServer {
           .replace("__HELMET_META__", helmet?.meta?.toString?.() ?? "")
           .replace("__HELMET_LINK__", helmet?.link?.toString?.() ?? "")
           .replace("__BASE_URL__", baseUrl)
-          .replace("__SSR_FLORO_TEXT__", this.backend.floroTextStore.getTextString());
+          .replace("__SSR_FLORO_TEXT__", this.backend.floroTextStore.getTextSubSet(initLocaleCode, ssrPhraseKeySet))
+          .replace("__SSR_FLORO_LOCALE_LOADS__", this.backend.floroTextStore.getLocaleLoadsString());
 
         if (context.should404) {
           return res.status(404).set({ "Content-Type": "text/html" }).end(html);

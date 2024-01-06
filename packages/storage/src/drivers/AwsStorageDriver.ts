@@ -30,13 +30,17 @@ async function streamToString (stream: Readable): Promise<string> {
 export default class AwsStorageDriver implements StorageDriver {
   private bucket!: string;
   public s3Client!: S3Client;
-  public storageType!: "public"|"private";
+  public storageType!: "public"|"private"|"static";
   private storageAuthenticator?: StorageAuthenticator;
   private mainConfig?: MainConfig;
 
-  constructor(storageType: "public" | "private") {
+  constructor(storageType: "public" | "private" | "static") {
     this.storageType = storageType;
-    this.bucket = storageType == "private" ? env.PRIVATE_BUCKET ?? "" : env.PUBLIC_BUCKET ?? "";
+    if (storageType == "static") {
+      this.bucket == env.STATIC_BUCKET ?? "";
+    } else {
+      this.bucket = storageType == "private" ? env.PRIVATE_BUCKET ?? "" : env.PUBLIC_BUCKET ?? "";
+    }
     this.s3Client = new S3Client({
       region: env.AWS_S3_REGION ?? "us-east-1",
       credentials:{

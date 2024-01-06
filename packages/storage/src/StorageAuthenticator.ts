@@ -34,7 +34,6 @@ export default class StorageAuthenticator {
       const dateLessThan = new Date(Date.now() + 1000 * ttlSec);
       const keyPairId = this.config.cdnKeypairId();
       const privateKey = this.config.cdnPrivatePEM();
-      console.log("SIGNING EXPIRATION", dateLessThan.toUTCString())
       return getSignedUrl({
         url,
         keyPairId,

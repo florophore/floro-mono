@@ -1,11 +1,12 @@
 import React, { useContext, useMemo, useState, useCallback } from "react";
-import initText, {
+import {
   Locales,
   LocalizedPhrases,
   PhraseKeys,
   getDebugInfo,
   getPhraseValue,
 } from "@floro/common-generators/floro_modules/text-generator";
+import defaultText from "@floro/common-generators/floro_modules/text-generator/default.locale.json";
 import { useFloroText } from "../FloroTextProvider";
 import {
   TextRenderers,
@@ -17,12 +18,13 @@ import {
   plainTextRenderers,
 } from "../FloroPlainTextRenderer";
 import Cookies from "js-cookie";
+import { useSSRPhraseKeyMemo } from "../FloroSSRPhraseKeyMemoProvider";
 
 const FloroLocalesContext = React.createContext({
-  localeCodes: Object.keys(initText.locales),
-  locales: Object.values(initText.locales),
-  selectedLocaleCode: Object.keys(initText.locales).find(
-    (localeCode: string) => initText.locales[localeCode]?.isGlobalDefault
+  localeCodes: Object.keys(defaultText.locales),
+  locales: Object.values(defaultText.locales),
+  selectedLocaleCode: Object.keys(defaultText.locales).find(
+    (localeCode: string) => defaultText.locales[localeCode]?.isGlobalDefault
   ) as keyof LocalizedPhrases["locales"] & string,
   setSelectedLocaleCode: (_: keyof LocalizedPhrases["locales"] & string) => {},
 });
@@ -136,12 +138,17 @@ export const useRichText = <
     debugTextColorHex: "white",
   };
 
+  const ssrSet = useSSRPhraseKeyMemo();
+  if (ssrSet && !ssrSet.has(phraseKey)) {
+    ssrSet.add(phraseKey);
+  }
+
   const floroText = useFloroText();
   const isDebugMode = useIsDebugMode();
   const { selectedLocaleCode } = useLocales();
   const debugInfo = useMemo(
     () => getDebugInfo(floroText.phraseKeyDebugInfo, phraseKey),
-    [phraseKey, floroText.phraseKeyDebugInfo]
+    [phraseKey, floroText.phraseKeyDebugInfo, floroText]
   );
 
   const nodes = getPhraseValue<React.ReactElement, keyof Locales, K>(
@@ -198,6 +205,10 @@ export const usePlainText = <
 ) => {
   const args = opts[0] ?? ({} as ARGS);
   const renderers = opts?.[1] ?? plainTextRenderers;
+  const ssrSet = useSSRPhraseKeyMemo();
+  if (ssrSet && !ssrSet.has(phraseKey)) {
+    ssrSet.add(phraseKey);
+  }
   const floroText = useFloroText();
   const { selectedLocaleCode } = useLocales();
   return useMemo(() => {

@@ -19,12 +19,20 @@ const privateRoot = isTest
   ? join(__dirname, "..", "..", ".test_private_root")
   : join(__dirname, "..", "..", ".local_private_root");
 
+const staticRoot = isTest
+  ? join(__dirname, "..", "..", ".test_static_root")
+  : join(__dirname, "..", "..", "..", "main", "public");
+
 @injectable()
 export default class DiskStorageDriver implements StorageDriver {
   private root: string;
 
-  constructor(storageType: "public" | "private") {
-    this.root = storageType == "public" ? root : privateRoot;
+  constructor(storageType: "public" | "private" | "static") {
+    if (storageType == "static") {
+        this.root = staticRoot;
+    } else {
+      this.root = storageType == "public" ? root : privateRoot;
+    }
   }
   public writeStream(path: string): [WriteStream, null] {
     return [fs.createWriteStream(path), null];

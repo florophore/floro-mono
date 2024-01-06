@@ -5,6 +5,7 @@ node_modules
 .local_private_root
 .test_root
 .test_private_root
+.test_static_root
 yarn-error.log
 build/
 coverage/
