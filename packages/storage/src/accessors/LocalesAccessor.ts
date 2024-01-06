@@ -32,9 +32,11 @@ export default class LocalesAccessor {
         }
       }
       const filePath = path.join(this.localesDirectory(), fileName);
+      console.log("UPLOADING ", filePath)
       await this.driver.write(filePath, localesJson);
       return true;
     } catch (e) {
+      console.log("static upload failed")
       return false;
     }
   }

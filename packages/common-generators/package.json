@@ -5,7 +5,7 @@
   "dependencies": {
     "@floro/icon-generator": "^0.0.6",
     "@floro/palette-generator": "^0.0.6",
-    "@floro/text-generator": "^0.0.6",
+    "@floro/text-generator": "^0.0.8",
     "@floro/themes-generator": "^0.0.6",
     "quicktype-core": "^23.0.80"
   }

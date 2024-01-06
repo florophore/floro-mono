@@ -2823,10 +2823,10 @@
     quicktype-core "^23.0.71"
     ts-node "^10.9.1"
 
-"@floro/text-generator@^0.0.6":
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/@floro/text-generator/-/text-generator-0.0.6.tgz#6602fc980766a816ad2cb8e23f451b885f4142da"
-  integrity sha512-xywwIbGTdjgNjU3VXLl99+26A+Qz3cDRlIjJz9HbbQ8UOoqmXa++fsmYyQwwYZcmAwznVL7XKLVIh0nvw8VUMw==
+"@floro/text-generator@^0.0.8":
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/@floro/text-generator/-/text-generator-0.0.8.tgz#915a999a542841c33ac93359d5bc0c728650213a"
+  integrity sha512-0Nm7LKvLoTnb8Nyn1baBdzD3sxEyrzsDZ5znHOMy+fXfckxvXvIUZce+xOQLog7ygllmsBnS8gjN+BoWd4M2Hg==
   dependencies:
     memfs "^3.4.7"
     quicktype-core "^23.0.71"
