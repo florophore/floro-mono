@@ -38,6 +38,8 @@ RUN floro module build -m packages/common-generators/floro.module.js -k $floro_r
 
 RUN yarn graphql-schemas:build
 
+RUN yarn postprocess:locales
+
 RUN yarn main build
 
 COPY . .

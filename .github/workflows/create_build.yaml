@@ -72,6 +72,9 @@ jobs:
       - name: Build Graph QL
         run: yarn graphql-schemas:build
 
+      - name: Post process locales
+        run: yarn postprocess:locales
+
       - name: Build Main
         run: CDN_HOST=${{ steps.cdnHost.outputs.value }} VITE_HOST=${{ steps.viteHost.outputs.value }} VITE_IS_SECURE=true VITE_BUILD_ENV_NORMALIZED=${{ steps.viteBuildEnvNormalized.outputs.value }} yarn main build
 
