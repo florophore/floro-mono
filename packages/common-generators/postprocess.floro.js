@@ -36,8 +36,8 @@ const localesDirPath = path.join(__dirname, '../main/public/locales');
 const localesDirExists = fs.existsSync(localesDirPath);
 if (localesDirExists) {
     fs.rmSync(localesDirPath, {recursive: true});
-    fs.mkdirSync(localesDirPath);
 }
+fs.mkdirSync(localesDirPath);
 
 const localeJSONs = {};
 
