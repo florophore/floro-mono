@@ -32,7 +32,6 @@ export default class LocalesAccessor {
         }
       }
       const filePath = path.join(this.localesDirectory(), fileName);
-      console.log("UPLOADING ", filePath)
       await this.driver.write(filePath, Buffer.from(localesJson));
       return true;
     } catch (e) {
