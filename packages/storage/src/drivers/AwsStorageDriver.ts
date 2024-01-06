@@ -136,6 +136,9 @@ export default class AwsStorageDriver implements StorageDriver {
         ContentType: mimeType
       });
       const response = await this.s3Client.send(command);
+      if (this.storageType == "static") {
+        console.log("STATIC RES", response)
+      }
       if (response.$metadata.httpStatusCode != 200) {
         throw new Error("failed to upload")
       }
