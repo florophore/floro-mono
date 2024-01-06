@@ -37,7 +37,7 @@ export default class AwsStorageDriver implements StorageDriver {
   constructor(storageType: "public" | "private" | "static") {
     this.storageType = storageType;
     if (storageType == "static") {
-      this.bucket == env.STATIC_BUCKET ?? "";
+      this.bucket = env.STATIC_BUCKET ?? "";
     } else {
       this.bucket = storageType == "private" ? env.PRIVATE_BUCKET ?? "" : env.PUBLIC_BUCKET ?? "";
     }
