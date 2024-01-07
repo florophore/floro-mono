@@ -3,10 +3,11 @@ import RedisClient from "../RedisClient";
 import MainConfig from "@floro/config/src/MainConfig";
 import metaFile from "@floro/common-generators/meta.floro.json" assert { type: "json" };
 import { LocalizedPhrases } from "@floro/common-generators/floro_modules/text-generator";
-import initText from "@floro/common-generators/floro_modules/text-generator/text.json" assert { type: "json" };
+import initText from "@floro/common-generators/floro_modules/text-generator/server-text.json" assert { type: "json" };
 import initLocaleLoads from "@floro/common-generators/floro_modules/text-generator/locale.loads.json" assert { type: "json" };
+import staticStructure from "@floro/common-generators/floro_modules/text-generator/static-structure.json" assert { type: "json" };
 
-const FLORO_TEXT_PREFIX = "floro_text_repo";
+const FLORO_TEXT_PREFIX = `floro_text_repo:${staticStructure.hash}`;
 
 @injectable()
 export default class FloroTextStore {

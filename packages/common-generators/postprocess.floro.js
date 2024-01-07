@@ -1,6 +1,27 @@
 const fs = require('fs');
 const path = require('path');
+require("./static-analysis"); // run static analysis
+const localesStatic = require('./floro_modules/text-generator/locales.static.json');
+const localesSet = new Set(localesStatic);
 const localesJSON = require('./floro_modules/text-generator/text.json');
+
+const localesStaticStructure = {};
+
+for (const localeCode in localesJSON.locales) {
+  for (let phraseKey in localesJSON.localizedPhraseKeys[localeCode]) {
+    if (!localesSet.has(phraseKey)) {
+      delete localesJSON.localizedPhraseKeys[localeCode][phraseKey]
+      delete localesJSON.phraseKeyDebugInfo[phraseKey]
+    } else {
+      const argKeys = Object.keys(localesJSON.localizedPhraseKeys[localeCode][phraseKey].args).sort();
+      const args = {};
+      for (const key of argKeys) {
+        args[key] = localesJSON.localizedPhraseKeys[localeCode][phraseKey].args[key];
+      }
+      localesStaticStructure[phraseKey] = args;
+    }
+  }
+}
 
 const shortHash = (str) => {
     let hash = 0;
@@ -24,6 +45,12 @@ const defaultJSON = {
     },
     phraseKeyDebugInfo: localesJSON.phraseKeyDebugInfo
 }
+
+fs.writeFileSync(
+  path.join(__dirname, "./floro_modules/text-generator/server-text.json"),
+  JSON.stringify(localesJSON),
+  "utf-8"
+);
 
 // write default locale json
 fs.writeFileSync(
@@ -61,5 +88,19 @@ for (const localeCode in localesJSON.locales) {
 fs.writeFileSync(
   path.join(__dirname, "./floro_modules/text-generator/locale.loads.json"),
   JSON.stringify(localeJSONs),
+  "utf-8"
+);
+
+
+const hash = shortHash(JSON.stringify(localesStaticStructure, null, 2));
+
+const staticStructure = {
+  structure: localesStaticStructure,
+  hash
+}
+
+fs.writeFileSync(
+  path.join(__dirname, "./floro_modules/text-generator/static-structure.json"),
+  JSON.stringify(staticStructure),
   "utf-8"
 );

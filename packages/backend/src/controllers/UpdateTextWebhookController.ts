@@ -9,10 +9,39 @@ import fetch from "node-fetch";
 import { getJSON } from "@floro/text-generator";
 import { LocalizedPhrases } from "@floro/common-generators/floro_modules/text-generator";
 import LocalesAccessor from "@floro/storage/src/accessors/LocalesAccessor";
+import staticStructure from "@floro/common-generators/floro_modules/text-generator/static-structure.json" assert { type: "json" };
+import initText from "@floro/common-generators/floro_modules/text-generator/server-text.json" assert { type: "json" };
 
-const FLORO_WEBHOOK_KEY = process.env.FLORO_WEBHOOK_KEY ?? "";
-const FLORO_API_KEY = process.env.FLORO_API_KEY ?? "";
+const argsAreSame = (existingArgs: {[key: string]: string|number|boolean}, incomingArgs: {[key: string]: string|number|boolean}): boolean => {
+  if (Object.keys(existingArgs).length != Object.keys(incomingArgs).length) {
+    return false;
+  }
+  for (const key in existingArgs) {
+    if (incomingArgs?.[key] != existingArgs[key]) {
+      return false;
+    }
+  }
+  return true;
+}
 
+const getUpdatedText = (localesJSON: LocalizedPhrases): LocalizedPhrases => {
+  for (const localeCode in localesJSON.locales) {
+    for (let phraseKey in localesJSON.localizedPhraseKeys[localeCode]) {
+      if (!staticStructure[phraseKey]) {
+        delete localesJSON.localizedPhraseKeys[localeCode][phraseKey]
+        delete localesJSON.phraseKeyDebugInfo[phraseKey]
+      } else {
+        if (!initText.localizedPhraseKeys[localeCode]) {
+          continue;
+        }
+        if (!argsAreSame(staticStructure.structure[phraseKey], localesJSON.localizedPhraseKeys[localeCode][phraseKey].args)) {
+          localesJSON.localizedPhraseKeys[localeCode][phraseKey] = initText.localizedPhraseKeys[localeCode][phraseKey];
+        }
+      }
+    }
+  }
+  return localesJSON;
+}
 const shortHash = (str) => {
     let hash = 0;
     str = str.padEnd(8, "0");
@@ -23,6 +52,10 @@ const shortHash = (str) => {
     }
     return new Uint32Array([hash])[0].toString(16);
   };
+
+const FLORO_WEBHOOK_KEY = process.env.FLORO_WEBHOOK_KEY ?? "";
+const FLORO_API_KEY = process.env.FLORO_API_KEY ?? "";
+
 
 @injectable()
 export default class UpdateTextWebhookController extends BaseController {
@@ -68,32 +101,6 @@ export default class UpdateTextWebhookController extends BaseController {
           return
         }
         try {
-          const isValidTopologicalSubsetRequestForward = await fetch(
-            `${this.mainConfig.floroApiServer()}/public/api/v0/repository/${metaFile.repositoryId}/commit/${metaFile.sha}/isTopologicalSubsetValid/${payload.branch.lastCommit}/text`,{
-              headers: {
-                'floro-api-key': FLORO_API_KEY
-              }
-          });
-          if (isValidTopologicalSubsetRequestForward.status != 200) {
-            return;
-          }
-          const isValidTopologicalSubsetJSONForward = await isValidTopologicalSubsetRequestForward.json();
-          if (!isValidTopologicalSubsetJSONForward.isTopologicalSubsetValid) {
-            return;
-          }
-          const isValidTopologicalSubsetRequestReverse = await fetch(
-            `${this.mainConfig.floroApiServer()}/public/api/v0/repository/${metaFile.repositoryId}/commit/${payload.branch.lastCommit}/isTopologicalSubsetValid/${metaFile.sha}/text`,{
-              headers: {
-                'floro-api-key': FLORO_API_KEY
-              }
-          });
-          if (isValidTopologicalSubsetRequestReverse.status != 200) {
-            return;
-          }
-          const isValidTopologicalSubsetJSONReverse = await isValidTopologicalSubsetRequestReverse.json();
-          if (!isValidTopologicalSubsetJSONReverse.isTopologicalSubsetValid) {
-            return;
-          }
           const stateRequest = await fetch(
             `${this.mainConfig.floroApiServer()}/public/api/v0/repository/${metaFile.repositoryId}/commit/${payload.branch.lastCommit}/state`,{
               headers: {
@@ -104,7 +111,9 @@ export default class UpdateTextWebhookController extends BaseController {
           if (!state?.store?.text) {
             return;
           }
-          const textUpdate: LocalizedPhrases = await getJSON(state.store);
+          const textUpdateJSON: LocalizedPhrases = await getJSON(state.store);
+          const textUpdate = getUpdatedText(textUpdateJSON);
+          // mutate here
           const loadsLoads = {};
           // upload to s3 here
           for (const localeCode in textUpdate.localizedPhraseKeys) {
