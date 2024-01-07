@@ -27,7 +27,7 @@ const argsAreSame = (existingArgs: {[key: string]: string|number|boolean}, incom
 const getUpdatedText = (localesJSON: LocalizedPhrases): LocalizedPhrases => {
   for (const localeCode in localesJSON.locales) {
     for (let phraseKey in localesJSON.localizedPhraseKeys[localeCode]) {
-      if (!staticStructure[phraseKey]) {
+      if (!staticStructure.structure[phraseKey]) {
         delete localesJSON.localizedPhraseKeys[localeCode][phraseKey]
         delete localesJSON.phraseKeyDebugInfo[phraseKey]
       } else {
