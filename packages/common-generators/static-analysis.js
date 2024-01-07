@@ -2,15 +2,17 @@ const { Project, SyntaxKind } = require("ts-morph");
 const path = require('path');
 const fs = require('fs');
 
+const tsConfigFilePath =  path.join(__dirname, "../common-web/tsconfig.json");
 const project = new Project({
-    tsConfigFilePath: "../common-web/tsconfig.json",
+    tsConfigFilePath
   });
 
 project.resolveSourceFileDependencies();
 const languageService = project.getLanguageService();
 
 const phraseKeys = new Set();
-const localesHooks = project.getSourceFile('../common-web/src/floro_listener/hooks/locales.tsx');
+const localesHooksPath =  path.join(__dirname, '../common-web/src/floro_listener/hooks/locales.tsx');
+const localesHooks = project.getSourceFile(localesHooksPath);
 
 const useRichTextNode = localesHooks.getVariableDeclaration('useRichText');
 const useRichTextSourceRefs = languageService.findReferences(useRichTextNode.getNameNode());
