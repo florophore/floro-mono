@@ -10,6 +10,7 @@ export function update(win: Electron.BrowserWindow) {
   log.transports.file.level = "info";
   autoUpdater.logger = log;
   let hasAcked = false;
+  let hasAckedError = false;
   autoUpdater.on('update-downloaded', (event) => {
     log.info("update-available");
     if (hasAcked) {
@@ -31,6 +32,10 @@ export function update(win: Electron.BrowserWindow) {
   });
 
   autoUpdater.on("error", (e) => {
+    if (hasAckedError) {
+      return;
+    }
+    hasAckedError = true;
     dialog.showMessageBox(win, { message: "An auto-update error occured" });
     console.error("There was a problem updating the application");
     console.error(e);

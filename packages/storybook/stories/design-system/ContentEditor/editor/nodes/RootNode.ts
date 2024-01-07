@@ -10,9 +10,9 @@ import VariantTagNode from "./VariantTagNode";
 
 export default class RootNode extends Node {
 
-  public children: Node[];
+  public children: TextNode[];
 
-  constructor(observer: Observer, content: string, lang: string, children?: Node[]) {
+  constructor(observer: Observer, content: string, lang: string, children?: TextNode[]) {
     super(null, observer, content, lang, children);
     this.content = content;
     this.children = children ?? [];
@@ -79,4 +79,5 @@ export default class RootNode extends Node {
     }
     return this.children.length - 1;
   }
+
 }

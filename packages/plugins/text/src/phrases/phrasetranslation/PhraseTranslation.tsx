@@ -193,7 +193,7 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
 
   const diffColor = useDiffColor(`${phraseTranslationRef}`, true, "darker");
 
-  const [phraseTranslation, setPhraseTranslation, savePhraseTranslation] =
+  const [phraseTranslation, setPhraseTranslation] =
     useFloroState(phraseTranslationRef);
 
   const terms = useReferencedObject("$(text).terms");
@@ -308,13 +308,14 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
     return observer;
   }, [
     props.searchText,
-    phrase.variables,
-    phrase.linkVariables,
-    phrase.interpolationVariants,
-    phrase.contentVariables,
-    phrase.styledContents,
+    phrase?.variables,
+    phrase?.linkVariables,
+    phrase?.interpolationVariants,
+    phrase?.contentVariables,
+    phrase?.styledContents,
     enabledMentionedValues,
   ]);
+
 
   const editorDoc = useMemo(() => {
     if (phraseTranslation) {
@@ -332,9 +333,9 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
   }, [props.selectedLocale.localeCode, editorObserver]);
 
   const targetEditorObserver = useMemo(() => {
-    const variables = phrase.variables?.map((v) => v.name) ?? [];
+    const variables = phrase?.variables?.map((v) => v.name) ?? [];
     const linkVariables =
-      phrase.linkVariables?.map?.((v) => v.linkName) ?? [];
+      phrase?.linkVariables?.map?.((v) => v.linkName) ?? [];
     const interpolationVariants =
       phrase?.interpolationVariants?.map?.((v) => v.name) ?? [];
     const contentVariables =
@@ -350,11 +351,11 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
       styledContents ?? []
     );
   }, [
-    phrase.variables,
-    phrase.linkVariables,
-    phrase.interpolationVariants,
-    phrase.contentVariables,
-    phrase.styledContents,
+    phrase?.variables,
+    phrase?.linkVariables,
+    phrase?.interpolationVariants,
+    phrase?.contentVariables,
+    phrase?.styledContents,
     enabledMentionedValues,
   ]);
 
@@ -382,29 +383,37 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
   }, [sourcePhraseTranslation?.plainText]);
 
 
+  const timeout = useRef<NodeJS.Timeout>();
   const onSetContent = useCallback(
     (richTextHtml: string) => {
-      editorDoc.observer.searchString = "";
       editorDoc.tree.updateRootFromHTML(richTextHtml ?? "");
-      const plainText = editorDoc.tree.rootNode.toUnescapedString();
-      const json = editorDoc.tree.rootNode.toJSON();
+      const plainText = editorDoc.toPlainText();
+      const json = editorDoc.toJSON();
       if (!phraseTranslation) {
         return;
       }
       if (sourcePhraseTranslation) {
-        setPhraseTranslation({
+        const updateFn = setPhraseTranslation({
           ...phraseTranslation,
           richTextHtml,
           plainText,
           json: JSON.stringify(json),
         }, false);
+        if (updateFn) {
+          clearTimeout(timeout.current);
+          timeout.current = setTimeout(updateFn, 100);
+        }
       } else {
-        setPhraseTranslation({
+        const updateFn = setPhraseTranslation({
           ...phraseTranslation,
           richTextHtml,
           plainText,
           json: JSON.stringify(json),
         }, false);
+        if (updateFn) {
+          clearTimeout(timeout.current);
+          timeout.current = setTimeout(updateFn, 100);
+        }
       }
       if (contentIsEmpty && props.globalFilterUntranslated && !props.isPinned) {
         props.setPinnedPhrases([
@@ -428,24 +437,10 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
     ]
   );
 
-  useEffect(() => {
-    if (commandMode == "edit") {
-      const timeout = setTimeout(() => {
-        if (!phraseTranslation) {
-          return;
-        }
-        savePhraseTranslation();
-      }, 500);
-      return () => {
-        clearTimeout(timeout);
-      }
-    }
-  }, [phraseTranslation?.richTextHtml, commandMode])
-
   const highlightableVariables = useMemo(() => {
-    const variables = phrase.variables?.map((v) => v.name) ?? [];
+    const variables = phrase?.variables?.map((v) => v.name) ?? [];
     const linkVariables =
-      phrase.linkVariables?.map?.((v) => v.linkName) ?? [];
+      phrase?.linkVariables?.map?.((v) => v.linkName) ?? [];
     const interpolationVariants =
       phrase?.interpolationVariants?.map?.((v) => v.name) ?? [];
     const contentVariables =
@@ -461,37 +456,40 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
       ...styledContents ?? []
     ].join(":");
   }, [
-    phrase.variables,
-    phrase.linkVariables,
-    phrase.interpolationVariants,
-    phrase.contentVariables,
-    phrase.styledContents,
+    phrase?.variables,
+    phrase?.linkVariables,
+    phrase?.interpolationVariants,
+    phrase?.contentVariables,
+    phrase?.styledContents,
     enabledMentionedValues,
   ]);
 
   const onSaveContent = useCallback(() => {
-      editorDoc.observer.searchString = "";
-      const json = editorDoc.tree.rootNode.toJSON();
       if (!phraseTranslation) {
         return;
       }
-      setPhraseTranslation({
-        ...phraseTranslation,
-        json: JSON.stringify(json),
-      }, true);
+      const jsonString = JSON.stringify(editorDoc.toJSON());
+      if (phraseTranslation?.json != jsonString) {
+        setPhraseTranslation({
+          ...phraseTranslation,
+          json: jsonString,
+        }, true);
+      }
 
   }, [highlightableVariables, phraseTranslation?.json])
 
   useEffect(() => {
-      editorDoc.observer.searchString = "";
-      const json = JSON.stringify(editorDoc.tree.rootNode.toJSON());
+      if (commandMode != "edit") {
+        return;
+      }
+      const json = JSON.stringify(editorDoc.toJSON());
       if (json != phraseTranslation?.json) {
-        const timeout = setTimeout(onSaveContent, 500)
+        const timeout = setTimeout(onSaveContent, 300)
         return () => {
           clearTimeout(timeout)
         }
       }
-  }, [onSaveContent, phraseTranslation?.json])
+  }, [onSaveContent, highlightableVariables, phraseTranslation?.json, commandMode])
 
   const onMarkResolved = useCallback(() => {
     if (!phraseTranslation) {
@@ -570,7 +568,7 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
   }, [mentionedTerms, sourcePhraseTranslation?.enabledTerms]);
 
   const sourceEditorObserver = useMemo(() => {
-    const variables = phrase.variables?.map((v) => v.name) ?? [];
+    const variables = phrase?.variables?.map((v) => v.name) ?? [];
     const linkVariables =
       phrase?.linkVariables?.map?.((v) => v.linkName) ?? [];
     const interpolationVariants =

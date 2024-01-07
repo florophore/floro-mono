@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState, useEffect } from "react";
+import React, { useMemo, useCallback, useState, useEffect, useRef } from "react";
 import {
   PointerTypes,
   SchemaTypes,
@@ -158,7 +158,7 @@ const InterpolationVariant = (props: Props) => {
 
   const variable = useReferencedObject(props.interpolationVariant.variableRef);
 
-  const [defaultValue, setDefaultValue, saveDefaultValue] = useFloroState(
+  const [defaultValue, setDefaultValue] = useFloroState(
     `${localRuleTranslationRef}.defaultValue`
   );
 
@@ -266,7 +266,7 @@ const InterpolationVariant = (props: Props) => {
     return observer
   }, [
     props.searchText,
-    props.phrase.variables,
+    props.phrase?.variables,
     props.phrase?.contentVariables,
     props.interpolationVariant,
     enabledMentionedValues,
@@ -328,12 +328,12 @@ const InterpolationVariant = (props: Props) => {
     return (sourceDefaultValue?.plainText ?? "") == "";
   }, [sourceDefaultValue?.plainText]);
 
+  const timeout = useRef<NodeJS.Timeout>();
   const onSetDefaultValueContent = useCallback(
     (richTextHtml: string) => {
       localeRuleEditorDoc.tree.updateRootFromHTML(richTextHtml ?? "");
-      localeRuleEditorDoc.observer.searchString = "";
-      const plainText = localeRuleEditorDoc.tree.rootNode.toUnescapedString();
-      const json = localeRuleEditorDoc.tree.rootNode.toJSON();
+      const plainText = localeRuleEditorDoc.toPlainText();
+      const json = localeRuleEditorDoc.toJSON();
       if (!defaultValue) {
         return;
       }
@@ -348,7 +348,7 @@ const InterpolationVariant = (props: Props) => {
         ]);
       }
       if (sourceDefaultValue) {
-        setDefaultValue(
+        const updateFn = setDefaultValue(
           {
             ...defaultValue,
             richTextHtml,
@@ -357,8 +357,12 @@ const InterpolationVariant = (props: Props) => {
           },
           false
         );
+        if (updateFn) {
+          clearTimeout(timeout.current);
+          timeout.current = setTimeout(updateFn, 300);
+        }
       } else {
-        setDefaultValue(
+        const updateFn = setDefaultValue(
           {
             ...defaultValue,
             richTextHtml,
@@ -367,6 +371,10 @@ const InterpolationVariant = (props: Props) => {
           },
           false
         );
+        if (updateFn) {
+          clearTimeout(timeout.current);
+          timeout.current = setTimeout(updateFn, 300);
+        }
       }
     },
     [
@@ -384,17 +392,6 @@ const InterpolationVariant = (props: Props) => {
     ]
   );
 
-  useEffect(() => {
-    if (commandMode == "edit") {
-      const timeout = setTimeout(() => {
-        saveDefaultValue();
-      }, 500);
-      return () => {
-        clearTimeout(timeout);
-      };
-    }
-  }, [defaultValue?.richTextHtml, commandMode]);
-
   const highlightableVariables = useMemo(() => {
     const variables = props.phrase.variables?.map((v) => v.name) ?? [];
     const contentVariables =
@@ -411,8 +408,7 @@ const InterpolationVariant = (props: Props) => {
   ]);
 
   const onSaveContent = useCallback(() => {
-    localeRuleEditorDoc.observer.searchString = "";
-    const json = JSON.stringify(localeRuleEditorDoc.tree.rootNode.toJSON());
+    const json = JSON.stringify(localeRuleEditorDoc.toJSON());
     if (!defaultValue) {
       return;
     }
@@ -425,17 +421,17 @@ const InterpolationVariant = (props: Props) => {
   }, [highlightableVariables, defaultValue?.json])
 
   useEffect(() => {
-    if (commandMode != "edit" || props.isSearching) {
+    if (commandMode != "edit") {
       return;
     }
-    const json = JSON.stringify(localeRuleEditorDoc.tree.rootNode.toJSON());
+    const json = JSON.stringify(localeRuleEditorDoc.toJSON());
     if (json != defaultValue?.json) {
-      const timeout = setTimeout(onSaveContent, 500)
+      const timeout = setTimeout(onSaveContent, 300)
       return () => {
         clearTimeout(timeout)
       }
     }
-  }, [onSaveContent, defaultValue?.json, commandMode, props.isSearching])
+  }, [onSaveContent, highlightableVariables, defaultValue?.json, commandMode])
 
 
   const onMarkDisplayResolved = useCallback(() => {

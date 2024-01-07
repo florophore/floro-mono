@@ -263,7 +263,7 @@ export default class TextNode extends Node {
   }
 
   public markHash(): string {
-    const markHash = `type:${this.type}:isBold:${this.marks.isBold}:isItalic:${this.marks.isItalic}:isUnderlined:${this.marks.isUnderlined}`;
+    const markHash = `type:${this.type}:isBold:${this.marks.isBold}:isItalic:${this.marks.isItalic}:isUnderlined:${this.marks.isUnderlined}:isStrikethrough:${this.marks.isStrikethrough}:isSuperscript:${this.marks.isSuperscript}:isSubscript:${this.marks.isSubscript}`;
     return `markHash:${markHash}`;
   }
 
@@ -332,7 +332,7 @@ export default class TextNode extends Node {
   }
 
   public shouldCoalesce(nextSibling: Node) {
-    return (
+    return this.type == nextSibling?.type && this.children.length == 0 && nextSibling.children.length == 0 && (
       nextSibling.markHash() == this.markHash() || nextSibling.content == ""
     );
   }

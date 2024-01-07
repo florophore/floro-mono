@@ -312,6 +312,7 @@ const PhraseGroup = (props: Props) => {
     setIsDragging(false);
     save();
   }, [save]);
+
   const phrases = useMemo(
     () =>
       phraseGroup?.phrases ??
@@ -336,7 +337,7 @@ const PhraseGroup = (props: Props) => {
         doSave
       );
     },
-    [phraseGroup]
+    [phraseGroup, setPhraseGroup]
   );
 
   useEffect(() => {
@@ -352,7 +353,7 @@ const PhraseGroup = (props: Props) => {
         setPhrases(filteredPhrases);
       }
     },
-    [phraseGroup, phrases, applicationState]
+    [setPhrases, phraseGroup, phrases, applicationState]
   );
 
   const onRemoveGroup = useCallback(() => {

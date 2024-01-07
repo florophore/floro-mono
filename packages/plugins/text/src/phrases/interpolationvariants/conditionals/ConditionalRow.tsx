@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState, useEffect } from "react";
+import React, { useMemo, useCallback, useState, useEffect, useRef } from "react";
 import {
   PointerTypes,
   SchemaTypes,
@@ -204,7 +204,7 @@ const ConditionalRow = (props: Props): React.ReactElement|null => {
   const { commandMode } = useFloroContext();
 
   const [conditional, setConditional] = useFloroState(props.conditionalRef);
-  const [resultant, setResultant, saveResultant] = useFloroState(
+  const [resultant, setResultant] = useFloroState(
     `${props.conditionalRef}.resultant`
   );
   const [stringValue, setStringValue] = useState<string>(
@@ -222,7 +222,7 @@ const ConditionalRow = (props: Props): React.ReactElement|null => {
     const observer = new Observer(variables, [], []);
     observer.setSearchString(props.searchText);
     return observer;
-  }, [props.phrase.variables, props.searchText]);
+  }, [props.phrase?.variables, props.searchText]);
 
   const conditionalEditorDoc = useMemo(() => {
     if (conditional) {
@@ -357,12 +357,12 @@ const ConditionalRow = (props: Props): React.ReactElement|null => {
     return (conditional?.resultant?.plainText ?? "") == "";
   }, [conditional?.resultant?.plainText]);
 
+  const timeout = useRef<NodeJS.Timeout>();
   const onSetResultantValueContent = useCallback(
     (richTextHtml: string) => {
       conditionalEditorDoc.tree.updateRootFromHTML(richTextHtml ?? "");
-      conditionalEditorDoc.observer.searchString = "";
-      const plainText = conditionalEditorDoc.tree.rootNode.toUnescapedString();
-      const json = conditionalEditorDoc.tree.rootNode.toJSON();
+      const plainText = conditionalEditorDoc.toPlainText();
+      const json = conditionalEditorDoc.toJSON();
       if (
         defaultValueIsEmpty &&
         props.globalFilterUntranslated &&
@@ -373,11 +373,15 @@ const ConditionalRow = (props: Props): React.ReactElement|null => {
           props.phraseRef,
         ]);
       }
-      setResultant({
+      const updateFn = setResultant({
         richTextHtml,
         plainText,
         json: JSON.stringify(json),
       }, false);
+      if (updateFn) {
+        clearTimeout(timeout.current);
+        timeout.current = setTimeout(updateFn, 300);
+      }
     },
     [
       conditionalEditorDoc?.tree,
@@ -391,17 +395,6 @@ const ConditionalRow = (props: Props): React.ReactElement|null => {
       props.globalFilterUntranslated,
     ]
   );
-
-  useEffect(() => {
-    if (commandMode == "edit") {
-      const timeout = setTimeout(() => {
-        saveResultant();
-      }, 500);
-      return () => {
-        clearTimeout(timeout);
-      };
-    }
-  }, [resultant?.richTextHtml, commandMode]);
 
   const highlightableVariables = useMemo(() => {
     const variables = props.phrase.variables?.map((v) => v.name) ?? [];
@@ -417,8 +410,7 @@ const ConditionalRow = (props: Props): React.ReactElement|null => {
   ]);
 
   const onSaveContent = useCallback(() => {
-      conditionalEditorDoc.observer.searchString = "";
-      const json = JSON.stringify(conditionalEditorDoc.tree.rootNode.toJSON());
+      const json = JSON.stringify(conditionalEditorDoc.toJSON());
       if (!resultant) {
         return;
       }
@@ -432,18 +424,17 @@ const ConditionalRow = (props: Props): React.ReactElement|null => {
   }, [highlightableVariables, resultant?.json])
 
   useEffect(() => {
-    if (commandMode != "edit" || props.isSearching) {
+    if (commandMode != "edit") {
       return;
     }
-    conditionalEditorDoc.observer.searchString = "";
-    const json = JSON.stringify(conditionalEditorDoc.tree.rootNode.toJSON());
+    const json = JSON.stringify(conditionalEditorDoc.toJSON());
     if (json != resultant?.json) {
-      const timeout = setTimeout(onSaveContent, 500)
+      const timeout = setTimeout(onSaveContent, 300)
       return () => {
         clearTimeout(timeout)
       }
     }
-  }, [onSaveContent, resultant?.json, commandMode, props.isSearching])
+  }, [onSaveContent, resultant?.json, highlightableVariables, commandMode, props.isSearching])
 
   useEffect(() => {
     if (commandMode == "edit") {
@@ -457,7 +448,7 @@ const ConditionalRow = (props: Props): React.ReactElement|null => {
             stringComparatorValue: stringValue,
           });
         }
-      }, 500);
+      }, 300);
       return () => {
         clearTimeout(timeout);
       };
@@ -476,7 +467,7 @@ const ConditionalRow = (props: Props): React.ReactElement|null => {
             intComparatorValue: parseInt(integerValue),
           });
         }
-      }, 500);
+      }, 300);
       return () => {
         clearTimeout(timeout);
       };
@@ -495,7 +486,7 @@ const ConditionalRow = (props: Props): React.ReactElement|null => {
             floatComparatorValue: parseFloat(floatValue),
           });
         }
-      }, 500);
+      }, 300);
       return () => {
         clearTimeout(timeout);
       };

@@ -1,5 +1,6 @@
 import Cursor from "./Cursor";
 import DocumentTree from "./DocumentTree";
+import { NodeJSON } from "./Node";
 import Observer from "./Observer";
 import RootNodeLexer from "./lexers/RootNodeLexer";
 import TextNodeLexer from "./lexers/TextNodeLexer";
@@ -26,5 +27,23 @@ export default class EditorDocument {
       this.rootNodeLexer
     );
     this.lang = lang ?? "en";
+  }
+
+  public toJSON(): NodeJSON {
+    const searchString = this.observer.searchString;
+    this.observer.searchString = '';
+    const tmpNode = this.tree.getTmpRoot();
+    const json = tmpNode.toJSON();
+    this.observer.searchString = searchString;
+    return json;
+  }
+
+  public toPlainText(): string {
+    const searchString = this.observer.searchString;
+    this.observer.searchString = '';
+    const tmpNode = this.tree.getTmpRoot();
+    const plainText = tmpNode.toUnescapedString();
+    this.observer.searchString = searchString;
+    return plainText;
   }
 }

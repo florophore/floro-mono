@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState, useEffect } from "react";
+import React, { useMemo, useCallback, useState, useEffect, useRef } from "react";
 import {
   PointerTypes,
   SchemaTypes,
@@ -162,7 +162,7 @@ const StyledContent = (props: Props) => {
 
   const styleClass = useReferencedObject(props.styledContent.styleClassRef);
 
-  const [displayValue, setDisplayValue, saveDisplayValue] = useFloroState(
+  const [displayValue, setDisplayValue] = useFloroState(
     `${localRuleTranslationRef}.displayValue`
   );
 
@@ -261,10 +261,10 @@ const StyledContent = (props: Props) => {
     return observer;
   }, [
     props.searchText,
-    props.phrase.variables,
-    props.phrase.linkVariables,
-    props.phrase.interpolationVariants,
-    props.phrase.contentVariables,
+    props.phrase?.variables,
+    props.phrase?.linkVariables,
+    props.phrase?.interpolationVariants,
+    props.phrase?.contentVariables,
     props.styledContent,
     enabledMentionedValues,
   ]);
@@ -332,12 +332,12 @@ const StyledContent = (props: Props) => {
     return (sourceDefaultValue?.plainText ?? "") == "";
   }, [sourceDefaultValue?.plainText])
 
+  const timeout = useRef<NodeJS.Timeout>();
   const onSetDefaultValueContent = useCallback(
     (richTextHtml: string) => {
       localeRuleEditorDoc.tree.updateRootFromHTML(richTextHtml ?? "");
-      localeRuleEditorDoc.observer.searchString = "";
-      const plainText = localeRuleEditorDoc.tree.rootNode.toUnescapedString();
-      const json = localeRuleEditorDoc.tree.rootNode.toJSON();
+      const plainText = localeRuleEditorDoc.toPlainText();
+      const json = localeRuleEditorDoc.toJSON();
       if (!displayValue) {
         return;
       }
@@ -345,19 +345,27 @@ const StyledContent = (props: Props) => {
         props.setPinnedPhrases([...(props?.pinnedPhrases ?? []), props.phraseRef]);
       }
       if (sourceDefaultValue) {
-        setDisplayValue({
+        const updateFn = setDisplayValue({
           ...displayValue,
           richTextHtml,
           plainText,
           json: JSON.stringify(json),
         }, false);
+        if (updateFn) {
+          clearTimeout(timeout.current);
+          timeout.current = setTimeout(updateFn, 300);
+        }
       } else {
-        setDisplayValue({
+        const updateFn = setDisplayValue({
           ...displayValue,
           richTextHtml,
           plainText,
           json: JSON.stringify(json),
         }, false);
+        if (updateFn) {
+          clearTimeout(timeout.current);
+          timeout.current = setTimeout(updateFn, 300);
+        }
       }
     },
     [
@@ -374,17 +382,6 @@ const StyledContent = (props: Props) => {
       props.globalFilterUntranslated
     ]
   );
-
-  useEffect(() => {
-    if (commandMode == "edit") {
-      const timeout = setTimeout(() => {
-        saveDisplayValue();
-      }, 500);
-      return () => {
-        clearTimeout(timeout);
-      }
-    }
-  }, [displayValue?.richTextHtml, commandMode])
 
   const highlightableVariables = useMemo(() => {
     const variables = props.phrase.variables?.map((v) => v.name) ?? [];
@@ -410,31 +407,32 @@ const StyledContent = (props: Props) => {
   ]);
 
   const onSaveContent = useCallback(() => {
-      localeRuleEditorDoc.observer.searchString = "";
-      const json = localeRuleEditorDoc.tree.rootNode.toJSON();
+      const json = localeRuleEditorDoc.toJSON();
       if (!displayValue) {
         return;
       }
-      setDisplayValue({
-        ...displayValue,
-        json: JSON.stringify(json),
-      }, true);
+      const jsonString = JSON.stringify(json);
+      if (jsonString != displayValue?.json) {
+        setDisplayValue({
+          ...displayValue,
+          json: jsonString,
+        }, true);
+      }
 
-  }, [highlightableVariables, displayValue?.richTextHtml])
+  }, [highlightableVariables, displayValue?.json])
 
   useEffect(() => {
-    if (commandMode != "edit" || props.isSearching) {
+    if (commandMode != "edit") {
       return;
     }
-    localeRuleEditorDoc.observer.searchString = "";
-    const json = JSON.stringify(localeRuleEditorDoc.tree.rootNode.toJSON());
+    const json = JSON.stringify(localeRuleEditorDoc.toJSON());
     if (json != displayValue?.json) {
-      const timeout = setTimeout(onSaveContent, 500)
+      const timeout = setTimeout(onSaveContent, 300)
       return () => {
         clearTimeout(timeout)
       }
     }
-  }, [onSaveContent, displayValue?.json, commandMode, props.isSearching])
+  }, [onSaveContent, displayValue?.json, commandMode])
 
 
   const onMarkDisplayResolved = useCallback(() => {
@@ -488,17 +486,6 @@ const StyledContent = (props: Props) => {
       props.onRemove(props.styledContent);
     }
   }, [props.styledContent, props.onRemove]);
-
-  const [hasMounted, setHasMounted] = useState(false);
-  useEffect(() => {
-    setHasMounted(false);
-    const timeout = setTimeout(() => {
-      setHasMounted(true);
-    }, 0);
-    return () =>{
-      clearTimeout(timeout);
-    }
-  }, [props.selectedLocale]);
 
   const onChangeTerm = useCallback(
     (termId: string) => {

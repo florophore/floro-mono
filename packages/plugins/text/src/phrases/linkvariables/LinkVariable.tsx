@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState, useEffect } from "react";
+import React, { useMemo, useCallback, useState, useEffect, useRef } from "react";
 import {
   PointerTypes,
   SchemaTypes,
@@ -186,10 +186,10 @@ const LinkVariable = (props: Props) => {
     localeRef
   );
 
-  const [linkDisplayValue, setLinkDisplayValue, saveLinkDisplayValue] = useFloroState(
+  const [linkDisplayValue, setLinkDisplayValue] = useFloroState(
     `${linkTranslationRef}.linkDisplayValue`
   );
-  const [linkHrefValue, setLinkHrefValue, saveLinkHrefValue] = useFloroState(
+  const [linkHrefValue, setLinkHrefValue] = useFloroState(
     `${linkTranslationRef}.linkHrefValue`
   );
 
@@ -296,7 +296,7 @@ const LinkVariable = (props: Props) => {
     const observer = new Observer(variables);
     observer.setSearchString(props.searchText);
     return observer;
-  }, [props.searchText, props.phrase.variables]);
+  }, [props.searchText, props.phrase?.variables]);
 
   const linkDisplayEditorDoc = useMemo(() => {
     if (linkDisplayValue) {
@@ -376,12 +376,12 @@ const LinkVariable = (props: Props) => {
     return (sourceLinkTranslation?.linkDisplayValue?.plainText ?? "") == "";
   }, [sourceLinkTranslation?.linkDisplayValue?.plainText])
 
+  const timeoutDisplay = useRef<NodeJS.Timeout>();
   const onSetDisplayValueContent = useCallback(
     (richTextHtml: string) => {
       linkDisplayEditorDoc.tree.updateRootFromHTML(richTextHtml ?? "");
-      linkDisplayEditorDoc.observer.searchString = "";
-      const plainText = linkDisplayEditorDoc.tree.rootNode.toUnescapedString();
-      const json = linkDisplayEditorDoc.tree.rootNode.toJSON();
+      const plainText = linkDisplayEditorDoc.toPlainText();
+      const json = linkDisplayEditorDoc.toJSON();
       if (!linkDisplayValue) {
         return;
       }
@@ -389,19 +389,27 @@ const LinkVariable = (props: Props) => {
         props.setPinnedPhrases([...(props?.pinnedPhrases ?? []), props.phraseRef]);
       }
       if (sourceLinkTranslation) {
-        setLinkDisplayValue({
+        const updateFn =setLinkDisplayValue({
           ...linkDisplayValue,
           richTextHtml,
           plainText,
           json: JSON.stringify(json),
         }, false);
+        if (updateFn) {
+          clearTimeout(timeoutDisplay.current);
+          setTimeout(updateFn, 300);
+        }
       } else {
-        setLinkDisplayValue({
+        const updateFn =setLinkDisplayValue({
           ...linkDisplayValue,
           richTextHtml,
           plainText,
           json: JSON.stringify(json),
         }, false);
+        if (updateFn) {
+          clearTimeout(timeoutDisplay.current);
+          setTimeout(updateFn, 300);
+        }
       }
     },
     [
@@ -438,12 +446,12 @@ const LinkVariable = (props: Props) => {
     enabledMentionedValues,
   ]);
 
+  const timeoutHref = useRef<NodeJS.Timeout>();
   const onSetHrefValueContent = useCallback(
     (richTextHtml: string) => {
       linkHrefEditorDoc.tree.updateRootFromHTML(richTextHtml ?? "");
-      linkHrefEditorDoc.observer.searchString = "";
-      const plainText = linkHrefEditorDoc.tree.rootNode.toUnescapedString();
-      const json = linkHrefEditorDoc.tree.rootNode.toJSON();
+      const plainText = linkHrefEditorDoc.toPlainText();
+      const json = linkHrefEditorDoc.toJSON();
       if (!linkHrefValue) {
         return;
       }
@@ -451,19 +459,27 @@ const LinkVariable = (props: Props) => {
         props.setPinnedPhrases([...(props?.pinnedPhrases ?? []), props.phraseRef]);
       }
       if (sourceLinkTranslation) {
-        setLinkHrefValue({
+        const updateFn = setLinkHrefValue({
           ...linkHrefValue,
           richTextHtml,
           plainText,
           json: JSON.stringify(json),
         }, false);
+        if (updateFn) {
+          clearTimeout(timeoutHref.current);
+          timeoutHref.current = setTimeout(updateFn, 300);
+        }
       } else {
-        setLinkHrefValue({
+        const updateFn = setLinkHrefValue({
           ...linkHrefValue,
           richTextHtml,
           plainText,
           json: JSON.stringify(json),
         }, false);
+        if (updateFn) {
+          clearTimeout(timeoutHref.current);
+          timeoutHref.current = setTimeout(updateFn, 300);
+        }
       }
     },
     [
@@ -481,31 +497,8 @@ const LinkVariable = (props: Props) => {
     ]
   );
 
-  useEffect(() => {
-    if (commandMode == "edit") {
-      const timeout = setTimeout(() => {
-        saveLinkDisplayValue();
-      }, 500);
-      return () => {
-        clearTimeout(timeout);
-      }
-    }
-  }, [linkDisplayValue?.richTextHtml, commandMode])
-
-  useEffect(() => {
-    if (commandMode == "edit") {
-      const timeout = setTimeout(() => {
-        saveLinkHrefValue();
-      }, 500);
-      return () => {
-        clearTimeout(timeout);
-      }
-    }
-  }, [linkHrefValue?.plainText, commandMode])
-
   const onSaveContent = useCallback(() => {
-    linkDisplayEditorDoc.observer.searchString = "";
-    const displayJSON = JSON.stringify(linkDisplayEditorDoc.tree.rootNode.toJSON());
+    const displayJSON = JSON.stringify(linkDisplayEditorDoc.toJSON());
     if (!linkDisplayValue) {
       return;
     }
@@ -521,8 +514,7 @@ const LinkVariable = (props: Props) => {
     if (!linkHrefValue) {
       return;
     }
-    linkHrefEditorDoc.observer.searchString = "";
-    const hrefJSON = JSON.stringify(linkHrefEditorDoc.tree.rootNode.toJSON());
+    const hrefJSON = JSON.stringify(linkHrefEditorDoc.toJSON());
     if (hrefJSON != linkHrefValue?.json) {
       setLinkHrefValue(
         {
@@ -539,23 +531,21 @@ const LinkVariable = (props: Props) => {
   ]);
 
   useEffect(() => {
-    if (commandMode != "edit" || props.isSearching) {
+    if (commandMode != "edit") {
       return;
     }
-    linkDisplayEditorDoc.observer.searchString = "";
-    linkHrefEditorDoc.observer.searchString = "";
-    const displayJSON = JSON.stringify(linkDisplayEditorDoc.tree.rootNode.toJSON());
-    const hrefJSON = JSON.stringify(linkHrefEditorDoc.tree.rootNode.toJSON());
+    const displayJSON = JSON.stringify(linkDisplayEditorDoc.toJSON());
+    const hrefJSON = JSON.stringify(linkHrefEditorDoc.toJSON());
     if (
       displayJSON != linkDisplayValue?.json ||
       hrefJSON != linkHrefValue?.json
     ) {
-      const timeout = setTimeout(onSaveContent, 500);
+      const timeout = setTimeout(onSaveContent, 300);
       return () => {
         clearTimeout(timeout);
       };
     }
-  }, [onSaveContent, linkDisplayValue?.json, linkHrefValue?.json, commandMode, props.isSearching])
+  }, [onSaveContent, highlightableVariables, linkDisplayValue?.json, linkHrefValue?.json, commandMode])
 
   const onMarkDisplayResolved = useCallback(() => {
     if (!linkDisplayValue) {
@@ -574,6 +564,7 @@ const LinkVariable = (props: Props) => {
     }
   }, [
     linkDisplayEditorDoc?.tree,
+    linkHrefEditorDoc?.tree,
     sourceLinkTranslation?.linkDisplayValue,
     setLinkDisplayValue,
     sourceLinkTranslation?.linkDisplayValue?.richTextHtml,

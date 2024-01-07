@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState, useEffect } from "react";
+import React, { useMemo, useCallback, useState, useEffect, useRef } from "react";
 import {
   PointerTypes,
   SchemaTypes,
@@ -161,7 +161,7 @@ const PhraseSection = (props: Props) => {
     localRuleTranslationRef
   );
 
-  const [displayValue, setDisplayValue, saveDisplayValue] = useFloroState(
+  const [displayValue, setDisplayValue] = useFloroState(
     `${localRuleTranslationRef}.displayValue`
   );
 
@@ -263,11 +263,11 @@ const PhraseSection = (props: Props) => {
     return observer;
   }, [
     props.searchText,
-    props.phrase.variables,
-    props.phrase.linkVariables,
-    props.phrase.interpolationVariants,
-    props.phrase.contentVariables,
-    props.phrase.styledContents,
+    props.phrase?.variables,
+    props.phrase?.linkVariables,
+    props.phrase?.interpolationVariants,
+    props.phrase?.contentVariables,
+    props.phrase?.styledContents,
     props.phraseSection,
     enabledMentionedValues,
   ])
@@ -340,12 +340,12 @@ const PhraseSection = (props: Props) => {
     return (sourceDefaultValue?.plainText ?? "") == "";
   }, [sourceDefaultValue?.plainText])
 
+  const timeout = useRef<NodeJS.Timeout>();
   const onSetDefaultValueContent = useCallback(
     (richTextHtml: string) => {
-      localeRuleEditorDoc.observer.searchString = "";
       localeRuleEditorDoc.tree.updateRootFromHTML(richTextHtml ?? "");
-      const plainText = localeRuleEditorDoc.tree.rootNode.toUnescapedString();
-      const json = localeRuleEditorDoc.tree.rootNode.toJSON();
+      const plainText = localeRuleEditorDoc.toPlainText();
+      const json = localeRuleEditorDoc.toJSON();
       if (!displayValue) {
         return;
       }
@@ -353,19 +353,26 @@ const PhraseSection = (props: Props) => {
         props.setPinnedPhrases([...(props?.pinnedPhrases ?? []), props.phraseRef]);
       }
       if (sourceDefaultValue) {
-        setDisplayValue({
+        const updateFn = setDisplayValue({
           ...displayValue,
           richTextHtml,
           plainText,
           json: JSON.stringify(json),
         }, false);
+        if (updateFn) {
+          timeout.current = setTimeout(updateFn, 300);
+        }
       } else {
-        setDisplayValue({
+        const updateFn = setDisplayValue({
           ...displayValue,
           richTextHtml,
           plainText,
           json: JSON.stringify(json),
         }, false);
+        if (updateFn) {
+          clearTimeout(timeout.current)
+          timeout.current = setTimeout(updateFn, 300);
+        }
       }
     },
     [
@@ -382,17 +389,6 @@ const PhraseSection = (props: Props) => {
       props.globalFilterUntranslated
     ]
   );
-
-  useEffect(() => {
-    if (commandMode == "edit") {
-      const timeout = setTimeout(() => {
-        saveDisplayValue();
-      }, 500);
-      return () => {
-        clearTimeout(timeout);
-      }
-    }
-  }, [displayValue?.richTextHtml, commandMode])
 
   const highlightableVariables = useMemo(() => {
     const variables = props.phrase.variables?.map((v) => v.name) ?? [];
@@ -422,12 +418,12 @@ const PhraseSection = (props: Props) => {
   ]);
 
   const onSaveContent = useCallback(() => {
-      localeRuleEditorDoc.observer.searchString = "";
-      const json = JSON.stringify(localeRuleEditorDoc.tree.rootNode.toJSON());
+      const json = JSON.stringify(localeRuleEditorDoc.toJSON());
       if (!displayValue) {
         return;
       }
       if (json != displayValue?.json) {
+        console.log("FIRING OFF")
         setDisplayValue({
           ...displayValue,
           json
@@ -439,25 +435,12 @@ const PhraseSection = (props: Props) => {
 
   useEffect(() => {
     if (commandMode == "edit") {
-      const timeout = setTimeout(() => {
-        saveDisplayValue();
-      }, 500);
+      const timeout = setTimeout(onSaveContent, 300);
       return () => {
         clearTimeout(timeout);
       }
     }
-  }, [displayValue?.richTextHtml, commandMode])
-
-  useEffect(() => {
-    if (commandMode == "edit" && !props.isSearching) {
-      const timeout = setTimeout(onSaveContent, 500);
-      return () => {
-        clearTimeout(timeout);
-      }
-    }
-  }, [highlightableVariables, onSaveContent, commandMode, props.isSearching])
-
-
+  }, [highlightableVariables, onSaveContent, commandMode])
 
   const onMarkDisplayResolved = useCallback(() => {
     if (!displayValue) {
@@ -510,17 +493,6 @@ const PhraseSection = (props: Props) => {
       props.onRemove(props.phraseSection);
     }
   }, [props.phraseSection, props.onRemove]);
-
-  const [hasMounted, setHasMounted] = useState(false);
-  useEffect(() => {
-    setHasMounted(false);
-    const timeout = setTimeout(() => {
-      setHasMounted(true);
-    }, 0);
-    return () =>{
-      clearTimeout(timeout);
-    }
-  }, [props.selectedLocale]);
 
   const onChangeTerm = useCallback(
     (termId: string) => {
