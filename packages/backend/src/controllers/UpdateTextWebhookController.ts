@@ -68,17 +68,30 @@ export default class UpdateTextWebhookController extends BaseController {
           return
         }
         try {
-          const isValidTopologicalSubsetRequest = await fetch(
+          const isValidTopologicalSubsetRequestForward = await fetch(
             `${this.mainConfig.floroApiServer()}/public/api/v0/repository/${metaFile.repositoryId}/commit/${metaFile.sha}/isTopologicalSubsetValid/${payload.branch.lastCommit}/text`,{
               headers: {
                 'floro-api-key': FLORO_API_KEY
               }
-          })
-          if (isValidTopologicalSubsetRequest.status != 200) {
+          });
+          if (isValidTopologicalSubsetRequestForward.status != 200) {
             return;
           }
-          const isValidTopologicalSubsetJSON = await isValidTopologicalSubsetRequest.json();
-          if (!isValidTopologicalSubsetJSON.isTopologicalSubsetValid) {
+          const isValidTopologicalSubsetJSONForward = await isValidTopologicalSubsetRequestForward.json();
+          if (!isValidTopologicalSubsetJSONForward.isTopologicalSubsetValid) {
+            return;
+          }
+          const isValidTopologicalSubsetRequestReverse = await fetch(
+            `${this.mainConfig.floroApiServer()}/public/api/v0/repository/${metaFile.repositoryId}/commit/${payload.branch.lastCommit}/isTopologicalSubsetValid/${metaFile.sha}/text`,{
+              headers: {
+                'floro-api-key': FLORO_API_KEY
+              }
+          });
+          if (isValidTopologicalSubsetRequestReverse.status != 200) {
+            return;
+          }
+          const isValidTopologicalSubsetJSONReverse = await isValidTopologicalSubsetRequestReverse.json();
+          if (!isValidTopologicalSubsetJSONReverse.isTopologicalSubsetValid) {
             return;
           }
           const stateRequest = await fetch(
