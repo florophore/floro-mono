@@ -26,17 +26,19 @@ const argsAreSame = (existingArgs: {[key: string]: string|number|boolean}, incom
 
 const getUpdatedText = (localesJSON: LocalizedPhrases): LocalizedPhrases => {
   for (const localeCode in localesJSON.locales) {
-    for (let phraseKey in localesJSON.localizedPhraseKeys[localeCode]) {
-      if (!staticStructure.structure[phraseKey]) {
-        delete localesJSON.localizedPhraseKeys[localeCode][phraseKey]
-        delete localesJSON.phraseKeyDebugInfo[phraseKey]
+    for (let phraseKey in staticStructure.structure) {
+      if (!localesJSON.localizedPhraseKeys?.[localeCode]?.[phraseKey] ?? {}) {
+        localesJSON.localizedPhraseKeys[localeCode][phraseKey] = initText.localizedPhraseKeys[localeCode][phraseKey];
       } else {
-        if (!initText.localizedPhraseKeys[localeCode]) {
-          continue;
-        }
         if (!argsAreSame(staticStructure.structure[phraseKey], localesJSON.localizedPhraseKeys[localeCode][phraseKey].args)) {
           localesJSON.localizedPhraseKeys[localeCode][phraseKey] = initText.localizedPhraseKeys[localeCode][phraseKey];
         }
+      }
+    }
+    for (let phraseKey in localesJSON.localizedPhraseKeys?.[localeCode] ?? {}) {
+      if (!staticStructure.structure[phraseKey]) {
+        delete localesJSON.localizedPhraseKeys[localeCode][phraseKey]
+        delete localesJSON.phraseKeyDebugInfo[phraseKey]
       }
     }
   }
