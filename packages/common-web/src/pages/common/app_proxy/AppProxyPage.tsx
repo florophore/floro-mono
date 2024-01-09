@@ -128,6 +128,10 @@ function AppProxyPage(): React.ReactElement {
 
     }, [isDaemonConnected, redirectLink]);
 
+    const isSafari = useMemo(() => {
+      return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    }, [])
+
     useEffect(() => {
       onOpenPage();
     }, [onOpenPage])
@@ -199,11 +203,20 @@ function AppProxyPage(): React.ReactElement {
                   textAlign: 'center'
                 }}
               >
-                <NotInstalledSpan style={{ color: theme.colors.contrastText }}>
-                  {
-                    "It looks like floro isn't running or isn't installed yet. If you have the floro desktop app installed just open up the app. Otherwise, you can find a download link below."
-                  }
-                </NotInstalledSpan>
+                {isSafari && (
+                  <NotInstalledSpan style={{ color: theme.colors.contrastText }}>
+                    {
+                      "The Safari browser cannot connect to floro. Please open this link in a different browser to access it in floro. If you know someone at Apple who works on the Safari browser, please inform them that it makes no sense to enforce SSL restrictions on web requests to a local web server."
+                    }
+                  </NotInstalledSpan>
+                )}
+                {!isSafari && (
+                  <NotInstalledSpan style={{ color: theme.colors.contrastText }}>
+                    {
+                      "It looks like floro isn't running or isn't installed yet. If you have the floro desktop app installed just open up the app. Otherwise, you can find a download link below."
+                    }
+                  </NotInstalledSpan>
+                )}
               </div>
             </Row>
             <Row>

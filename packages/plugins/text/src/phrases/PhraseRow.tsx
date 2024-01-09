@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback, useState, useEffect, useRef } from "react";
-import { PointerTypes, SchemaTypes, extractQueryArgs, makeQueryRef, useClientStorageApi, useCopyApi, useExtractQueryArgs, useFloroContext, useFloroState, useHasIndication, useReferencedObject } from "../floro-schema-api";
+import { PointerTypes, SchemaTypes, containsDiffable, extractQueryArgs, makeQueryRef, useClientStorageApi, useCopyApi, useExtractQueryArgs, useFloroContext, useFloroState, useHasIndication, useReferencedObject } from "../floro-schema-api";
 import { Reorder, useDragControls } from "framer-motion";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
@@ -260,17 +260,37 @@ const PhraseRow = (props: Props) => {
   const {isCopied, toggleCopy} = useCopyApi(props.phraseRef);
 
   const hasIndications = useHasIndication(props.phraseRef);
-
   const indicatedLocales = useMemo(() => {
     if (!hasIndications) {
       return [];
     }
     return locales.filter(locale => {
-      const localeRef = makeQueryRef("$(text).localeSettings.locales.localeCode<?>", locale?.localeCode);
-      const phraseLocaleRef = `${props.phraseRef}.phraseTranslations.id<${localeRef}>`;
-      return changeset?.has?.(phraseLocaleRef) || conflictSet?.has?.(phraseLocaleRef);
+      const localeRef = makeQueryRef(
+        "$(text).localeSettings.locales.localeCode<?>",
+        locale?.localeCode
+      );
+      const phraseLocaleRef: PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>"] = `${props.phraseRef}.phraseTranslations.id<${localeRef}>`;
+      return (
+        containsDiffable(changeset, phraseLocaleRef, true) ||
+        containsDiffable(conflictSet, phraseLocaleRef, true)
+      );
     })
   }, [hasIndications, conflictSet, changeset, props.phraseRef, locales]);
+  const hasConflict = useMemo(() => {
+    if (!hasIndications) {
+      return [];
+    }
+    return locales.filter(locale => {
+      const localeRef = makeQueryRef(
+        "$(text).localeSettings.locales.localeCode<?>",
+        locale?.localeCode
+      );
+      const phraseLocaleRef: PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>"] = `${props.phraseRef}.phraseTranslations.id<${localeRef}>`;
+      return (
+        containsDiffable(conflictSet, phraseLocaleRef, true)
+      );
+    })
+  }, [hasIndications, conflictSet, props.phraseRef, locales]);
 
   const indicatedLocaleCodes = useMemo(() => {
     return indicatedLocales?.map(l => l.localeCode).join(", ");
@@ -709,7 +729,7 @@ const PhraseRow = (props: Props) => {
             <PinPhrase
               style={{ fontWeight: 700, fontSize: "1.4rem", color: diffColor }}
             >
-              {"Changed Locales: " + indicatedLocaleCodes}
+              {(hasConflict ? "Conflicted Locales: " : "Changed Locales: ") + indicatedLocaleCodes}
             </PinPhrase>
           </span>
         </div>
