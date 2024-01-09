@@ -10,6 +10,7 @@ import defaultText from "@floro/common-generators/floro_modules/text-generator/d
 import initLocaleLoads from "@floro/common-generators/floro_modules/text-generator/locale.loads.json";
 import Cookies from 'js-cookie';
 
+const allTextModule = import.meta.env?.MODE == "development" ? await import("@floro/common-generators/floro_modules/text-generator/text.json") : null;
 
 const client = createApolloClient(import.meta.env?.['VITE_HOST'] ?? 'localhost:9000', !!import.meta.env?.['VITE_IS_SECURE']);
 
@@ -59,7 +60,7 @@ const ClientApp = () => {
     initLocaleCode,
     //@ts-ignore
     window.__FLORO_TEXT__ as LocalizedPhrases,
-    defaultText as LocalizedPhrases
+    import.meta.env?.MODE == "development" ? allTextModule.default as LocalizedPhrases: defaultText as LocalizedPhrases
   );
   //@ts-ignore
   // CHANGE FOR CODE HMR

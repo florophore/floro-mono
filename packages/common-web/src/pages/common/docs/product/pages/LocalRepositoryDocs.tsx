@@ -268,7 +268,7 @@ function LocalRepositoryDocs() {
         }
       }
     }
-  }, []);
+  }, [docsTitle, pageDocsTitle, localRepositoriesDocsTitle]);
 
   const rtRenderers = useMemo(() => {
     return {

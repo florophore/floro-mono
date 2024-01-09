@@ -169,7 +169,7 @@ function OrgPortalDocs() {
         }
       }
     }
-  }, []);
+  }, [docsTitle, pageDocsTitle, orgPortalDocsTitle]);
 
   const rtRenderers = useMemo(() => {
     return {

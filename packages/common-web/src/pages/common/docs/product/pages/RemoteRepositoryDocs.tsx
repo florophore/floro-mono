@@ -232,7 +232,7 @@ function RemoteRepositoryDocs() {
         }
       }
     }
-  }, []);
+  }, [docsTitle, pageDocsTitle, remoteRepositoriesDocsTitle]);
 
   const rtRenderers = useMemo(() => {
     return {

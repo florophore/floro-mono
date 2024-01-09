@@ -149,7 +149,7 @@ function UserPortalDocs() {
         }
       }
     }
-  }, []);
+  }, [docsTitle, pageDocsTitle, userPortalDocsTitle]);
 
   const rtRenderers = useMemo(() => {
     return {

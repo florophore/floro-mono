@@ -563,6 +563,7 @@ const LinkVariable = (props: Props) => {
       });
     }
   }, [
+    linkDisplayValue,
     linkDisplayEditorDoc?.tree,
     linkHrefEditorDoc?.tree,
     sourceLinkTranslation?.linkDisplayValue,
@@ -630,10 +631,10 @@ const LinkVariable = (props: Props) => {
     }
     return (
       (sourceLinkTranslation?.linkDisplayValue?.json ?? "{}") !=
-      (linkDisplayValue?.json ?? "{}")
+      (linkDisplayValue?.sourceAtRevision?.json ?? "{}")
     );
   }, [
-    linkDisplayValue?.json,
+    linkDisplayValue?.sourceAtRevision?.json,
     sourceLinkTranslation?.linkDisplayValue?.json,
   ]);
 
@@ -643,10 +644,10 @@ const LinkVariable = (props: Props) => {
     }
     return (
       (sourceLinkTranslation?.linkHrefValue?.json ?? "{}") >
-      (linkHrefValue?.json ?? "{}")
+      (linkHrefValue?.sourceAtRevision?.json ?? "{}")
     );
   }, [
-    linkHrefValue?.json,
+    linkHrefValue?.sourceAtRevision?.json,
     sourceLinkTranslation?.linkHrefValue?.json,
   ]);
 

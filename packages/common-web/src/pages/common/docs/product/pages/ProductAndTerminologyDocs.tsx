@@ -223,7 +223,7 @@ function ProductAndTerminologyDocs() {
         }
       }
     }
-  }, []);
+  }, [docsTitle, pageDocsTitle, pageProductAndTermsDocsTitle]);
 
   const rtRenderers = useMemo(() => {
     return {

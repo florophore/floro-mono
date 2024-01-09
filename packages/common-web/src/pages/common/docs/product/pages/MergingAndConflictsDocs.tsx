@@ -194,7 +194,7 @@ function MergingAndConflictsDocs() {
         }
       }
     }
-  }, []);
+  }, [docsTitle, pageDocsTitle, mergeAndConflictsDocsTitle]);
 
   const rtRenderers = useMemo(() => {
     return {

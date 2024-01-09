@@ -235,7 +235,7 @@ const PhraseGroup = (props: Props) => {
 
   useEffect(() => {
     setRealManualSearchText(props.searchText ?? "");
-  }, [props.searchText])
+  }, [props.searchText, props.selectedTopLevelLocale])
 
   const searchText = useMemo(() => {
     return props.searchText;
@@ -865,6 +865,7 @@ const PhraseGroup = (props: Props) => {
     filterUntranslatedForGroup,
     filterRequiresUpdate,
     props.showOnlyPinnedPhrases,
+    props.selectedTopLevelLocale,
     props.pinnedPhrases,
   ]);
 
@@ -1309,6 +1310,7 @@ const PhraseGroup = (props: Props) => {
     filterRequiresUpdate,
     props.showOnlyPinnedPhrases,
     props.pinnedPhrases,
+    props.selectedTopLevelLocale
   ]);
 
   const manualPhrasesToRender = useMemo(() => {
@@ -1472,13 +1474,14 @@ const PhraseGroup = (props: Props) => {
     phrasesToRender,
     isManualSearching,
     manualSearchText,
+    props.selectedTopLevelLocale
   ]);
 
   const [renderLimit, setRenderLimit] = useState(RENDER_CONSTANT);
 
   useEffect(() => {
     setRenderLimit(RENDER_CONSTANT);
-  }, [searchText]);
+  }, [searchText, props.selectedTopLevelLocale]);
 
   useEffect(() => {
     if (isDisplayingPhrases) {
@@ -1504,7 +1507,7 @@ const PhraseGroup = (props: Props) => {
   // this allows us to edit searched results
   const memoryLeakedPhrasesToRender = useMemo(() => {
     return manualPhrasesToRender;
-  }, [props.searchText, manualSearchText, props.filterTag, phrases.length])
+  }, [props.searchText, props.selectedTopLevelLocale, manualSearchText, props.filterTag, phrases.length])
 
   const renderLimitedPhrases = useMemo(() => {
     if (isReOrderPhrasesMode) {
@@ -1514,7 +1517,7 @@ const PhraseGroup = (props: Props) => {
       return phrasesToRender.slice(0, renderLimit);
     }
     return memoryLeakedPhrasesToRender.slice(0, renderLimit);
-  }, [phrasesToRender, memoryLeakedPhrasesToRender, isSearching, isManualSearching, renderLimit, isReOrderPhrasesMode]);
+  }, [phrasesToRender, memoryLeakedPhrasesToRender, isSearching, props.selectedTopLevelLocale, isManualSearching, renderLimit, isReOrderPhrasesMode]);
 
   useEffect(() => {
     if (isSearching && isReOrderPhrasesMode) {

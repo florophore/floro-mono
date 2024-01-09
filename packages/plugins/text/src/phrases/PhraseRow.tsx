@@ -172,7 +172,7 @@ const PhraseRow = (props: Props) => {
     return () => {
       clearTimeout(timeout);
     }
-  }, [realManualSearchText])
+  }, [realManualSearchText, props.selectedTopLevelLocale])
 
   const isSearching = useMemo(
     () => manualSearchText.trim() != "",
@@ -193,7 +193,7 @@ const PhraseRow = (props: Props) => {
       return;
     }
     setRealManualSearchText(props.searchText ?? "");
-  }, [props.searchText, props.showOnlyPinnedPhrases])
+  }, [props.searchText, props.showOnlyPinnedPhrases, props.selectedTopLevelLocale])
 
   const onClearSearch = useCallback(() => {
     setRealManualSearchText("");

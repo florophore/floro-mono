@@ -89,6 +89,7 @@ export default class PhotoUploadService {
         stream.on("end", () => resolve(Buffer.concat(bytes)));
       });
       const image: Buffer = await sharp(rawBuffer)
+        .rotate()
         .extract({
           left: x,
           top: y,
@@ -173,6 +174,7 @@ export default class PhotoUploadService {
         stream.on("end", () => resolve(Buffer.concat(bytes)));
       });
       const image: Buffer = await sharp(rawBuffer)
+        .rotate()
         .extract({
           left: x,
           top: y,

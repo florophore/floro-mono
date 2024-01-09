@@ -1,21 +1,21 @@
 {
   "moduleFile": "floro.module.js",
   "repositoryId": "12aa1618-9e0b-404c-8423-7c38047e18c9",
-  "sha": "db0fa247c07bd4bb1589c97dc17dc4c8bb90be73c66b1c3eb763cb1d5fc530bf",
-  "message": "added updated plugins",
-  "idx": 54,
+  "sha": "c29bbc13c76e48e13f3740595a724966a1f2a347ab446c58f4b229f15d026c45",
+  "message": "added site copy",
+  "idx": 65,
   "genratorDependencies": {
-    "text-generator": {
-      "text": "0.0.31"
-    },
     "icon-generator": {
       "icons": "0.0.40"
     },
-    "theme-generator": {
+    "themes-generator": {
       "theme": "0.0.40"
     },
     "palette-generator": {
       "palette": "0.0.39"
+    },
+    "text-generator": {
+      "text": "0.0.32"
     }
   }
 }

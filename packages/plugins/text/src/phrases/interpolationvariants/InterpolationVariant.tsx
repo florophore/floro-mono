@@ -465,9 +465,9 @@ const InterpolationVariant = (props: Props) => {
     }
     return (
       (sourceDefaultValue?.json ?? "{}") !=
-      (defaultValue?.json ?? "{}")
+      (defaultValue?.sourceAtRevision?.json ?? "{}")
     );
-  }, [defaultValue?.json, sourceDefaultValue?.json]);
+  }, [defaultValue?.sourceAtRevision?.json, sourceDefaultValue?.json]);
 
   const xIcon = useMemo(() => {
     if (theme.name == "light") {

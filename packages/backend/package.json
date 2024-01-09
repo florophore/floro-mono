@@ -18,7 +18,7 @@
     "@dhkatz/json-ts": "^4.4.1",
     "@floro/database": "1.0.0",
     "@floro/graphql-schemas": "1.0.0",
-    "@floro/text-generator": "^0.0.8",
+    "@floro/text-generator": "^0.0.10",
     "@layered/dns-records": "^1.5.0",
     "@types/tar": "^6.1.3",
     "apollo-server": "^3.10.1",
@@ -50,7 +50,7 @@
     "readable-stream-clone": "^0.0.7",
     "reflect-metadata": "^0.1.13",
     "sanitize-html": "^2.11.0",
-    "sharp": "^0.31.2",
+    "sharp": "^0.32.6",
     "trie-search": "^1.3.6",
     "ts-jest": "^28.0.7",
     "uuid": "^8.3.2"

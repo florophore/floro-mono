@@ -238,7 +238,7 @@ const TextAppHeader = (props: Props) => {
     return () => {
       clearTimeout(timeout);
     }
-  }, [searchText, props.onSetSearchText])
+  }, [searchText, props.selectedTopLevelLocale, props.onSetSearchText])
 
   return (
     <div>

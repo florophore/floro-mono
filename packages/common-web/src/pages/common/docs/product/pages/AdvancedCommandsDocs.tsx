@@ -197,7 +197,7 @@ function AdvancedCommandsDocs() {
         }
       }
     }
-  }, []);
+  }, [docsTitle, pageDocsTitle, advancedCommandsDocsTitle]);
 
   const rtRenderers = useMemo(() => {
     return {
