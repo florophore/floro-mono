@@ -144,7 +144,7 @@ const LabelBorderEnd = styled.div`
 interface Props {
   show: boolean;
   onDismiss: () => void;
-  onAdd: () => void;
+  onAdd: (phrase: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>"]) => void;
   phraseGroup: SchemaTypes["$(text).phraseGroups.id<?>"];
 }
 
@@ -212,38 +212,30 @@ const AddPhraseModal = (props: Props) => {
     if (!newId || !phraseKey) {
       return;
     }
-    setPhraseGroup({
-      id: phraseGroup.id,
-      name: phraseGroup.name,
-      phrases: [
-        {
-          id: newId,
-          phraseKey,
-          description: {
-            value: description ?? ""
-          },
-          tags: [],
-          phraseTranslations: [],
-          variables: [],
-          linkVariables: [],
-          interpolationVariants: [],
-          testCases: [],
-          styleClasses: [],
-          styledContents: [],
-          contentVariables: [],
-          phraseSections: [],
-          usePhraseSections: false,
-          tagsEnabled: false,
-          phraseVariablesEnabled: false,
-          linkVariablesEnabled: false,
-          interpolationsEnabled: false,
-          contentVariablesEnabled: false,
-          styledContentEnabled: false,
-        },
-        ...(phraseGroup.phrases ?? []),
-      ],
+    props.onAdd({
+      id: newId,
+      phraseKey,
+      description: {
+        value: description ?? "",
+      },
+      tags: [],
+      phraseTranslations: [],
+      variables: [],
+      linkVariables: [],
+      interpolationVariants: [],
+      testCases: [],
+      styleClasses: [],
+      styledContents: [],
+      contentVariables: [],
+      phraseSections: [],
+      usePhraseSections: false,
+      tagsEnabled: false,
+      phraseVariablesEnabled: false,
+      linkVariablesEnabled: false,
+      interpolationsEnabled: false,
+      contentVariablesEnabled: false,
+      styledContentEnabled: false,
     });
-    props.onAdd?.();
   }, [
     props.onAdd,
     newId,

@@ -1,19 +1,14 @@
 
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
   SchemaTypes,
   containsDiffable,
-  getReferencedObject,
   makeQueryRef,
   useFloroContext,
-  useFloroState,
-  useHasConflict,
-  useWasRemoved,
 } from "../floro-schema-api";
 import PhraseGroup from "./PhraseGroup";
 import styled from "@emotion/styled";
 import { AnimatePresence, Reorder } from "framer-motion";
-import throttle from "lodash/throttle";
 
 const Container = styled.div`
   margin-top: 24px;
@@ -42,11 +37,12 @@ interface Props {
   setPinnedPhrases: (phraseRegs: Array<string>) => void;
   removePinnedPhrases: () => void;
   scrollContainer: HTMLDivElement;
+  phraseGroups: SchemaTypes['$(text).phraseGroups'];
+  setPhraseGroups: (pgs: SchemaTypes['$(text).phraseGroups'], doSave?: boolean) => void;
+  savePhraseGroups: () => void;
 }
 
 const PhraseGroups = (props: Props) => {
-  const [phraseGroups, setPhraseGroups, savePhraseGroups] =
-    useFloroState("$(text).phraseGroups") ?? [];
   const [isDragging, setIsDragging] = useState(false);
   const { applicationState, commandMode, changeset, conflictSet, compareFrom } = useFloroContext();
 
@@ -56,26 +52,26 @@ const PhraseGroups = (props: Props) => {
 
   const onDragEnd = useCallback(() => {
     setIsDragging(false);
-    savePhraseGroups();
-  }, [savePhraseGroups]);
+    props.savePhraseGroups();
+  }, [props.savePhraseGroups]);
 
   const onReOrderPhraseGroups = useCallback(
     (values: SchemaTypes["$(text).phraseGroups"]) => {
       if (values) {
-        setPhraseGroups(values, false);
+        props.setPhraseGroups(values, false);
       }
     },
-    [applicationState]
+    [applicationState, props.setPhraseGroups]
   );
 
   const onRemoveGroup = useCallback(
     (value: SchemaTypes["$(text).phraseGroups.id<?>"]) => {
-      if (phraseGroups) {
-        const remap = phraseGroups.filter(v => v.id != value.id);
-        setPhraseGroups(remap);
+      if (props.phraseGroups) {
+        const remap = props.phraseGroups.filter(v => v.id != value.id);
+        props.setPhraseGroups(remap);
       }
     },
-    [phraseGroups]
+    [props.phraseGroups, props.setPhraseGroups]
   );
 
   const diffedPhrases = useMemo(() => {
@@ -120,11 +116,11 @@ const PhraseGroups = (props: Props) => {
         <AnimatePresence>
           <Reorder.Group
             axis="y"
-            values={phraseGroups ?? []}
+            values={props.phraseGroups ?? []}
             onReorder={onReOrderPhraseGroups}
             style={{listStyle: "none"}}
           >
-            {phraseGroups?.map((phraseGroup, index: number) => {
+            {props.phraseGroups?.map((phraseGroup, index: number) => {
               return (
                 <PhraseGroup
                   key={phraseGroup.id}
@@ -159,11 +155,11 @@ const PhraseGroups = (props: Props) => {
         <AnimatePresence>
           <Reorder.Group
             axis="y"
-            values={phraseGroups ?? []}
+            values={props.phraseGroups ?? []}
             onReorder={onReOrderPhraseGroups}
             style={{listStyle: "none"}}
           >
-            {phraseGroups?.map((phraseGroup, index: number) => {
+            {props.phraseGroups?.map((phraseGroup, index: number) => {
               return (
                 <PhraseGroup
                   key={phraseGroup.id}
@@ -190,7 +186,7 @@ const PhraseGroups = (props: Props) => {
         </AnimatePresence>
       )}
       {(!props.isEditingGroups || commandMode != "edit") &&
-        phraseGroups?.map((phraseGroup, index: number) => {
+        props.phraseGroups?.map((phraseGroup, index: number) => {
           return (
             <PhraseGroup
               key={phraseGroup.id}

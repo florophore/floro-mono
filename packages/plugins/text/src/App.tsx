@@ -8,6 +8,7 @@ import {
   useClientStorageApi,
   useExtractQueryArgs,
   useFloroContext,
+  useFloroState,
   useReferencedObject,
 } from "./floro-schema-api";
 import TextAppHeader from "./header/TextAppHeader";
@@ -42,8 +43,8 @@ const Container = styled.div`
 const ScrollTopButton = styled.div`
   height: 60px;
   width: 60px;
-  position: fixed;
-  bottom: 96px;
+  position: absolute;
+  bottom: 0px;
   right: 64px;
   background: ${props => props.theme.colors.titleText};
   border-radius: 50%;
@@ -52,12 +53,38 @@ const ScrollTopButton = styled.div`
   justify-content: center;
   align-items: center;
   box-shadow: 0px 0px 6px 6px ${props => props.theme.shadows.outerDropdown};
+  z-index: 1;
+  pointer-events: all;
 `;
 
 const ChevronImage = styled.img`
   height: 24px;
   width: 24px;
-  transform: rotate(-90deg);
+  cursor: pointer;
+  transition: transform 300ms;
+`;
+
+const BottomFloat = styled.div`
+  position: fixed;
+  bottom: 96px;
+  left: 0;
+  height: 880px;
+  pointer-events: none;
+  width: 100%;
+  min-width: 1040px;
+`;
+
+const InnerFloatContainer = styled.div`
+  height: calc(100% - 80px);
+  width: calc(100% - 48px);
+  position: absolute;
+  left: 24px;
+  top: 0px;
+  background: ${props => props.theme.background};
+  border-radius: 8px;
+  box-shadow: 0px 0px 6px 6px ${props => props.theme.shadows.outerDropdown};
+  pointer-events: all;
+
 `;
 
 const Layout = () => {
@@ -66,10 +93,15 @@ const Layout = () => {
     useFloroContext();
   const clientStorageEnabled = clientStorage != null;
   const [searchText, setSearchText] = useState<string>("");
+  const [searchTextState, setSearchTextState] = useState<string>("");
+  const [isHovering, setIsHovering] = useState<boolean>(false);
   const [searchTermText, setSearchTermText] = useState<string>("");
   const [isEditGroups, setIsEditGroups] = useState<boolean>(false);
   const [showLocales, setShowLocales] = useState<boolean>(false);
   const [showEditTerms, setShowEditTerms] = useState<boolean>(false);
+
+  const [phraseGroups, setPhraseGroups, savePhraseGroups] =
+    useFloroState("$(text).phraseGroups") ?? [];
 
   const localeSettings = useReferencedObject("$(text).localeSettings");
   const locales = useReferencedObject("$(text).localeSettings.locales");
@@ -170,7 +202,6 @@ const Layout = () => {
     if (container.current) {
       container.current.scrollTo({top: 0, behavior: "smooth"})
     }
-
   }, [])
 
   return (
@@ -189,7 +220,6 @@ const Layout = () => {
                 isEditLocales={showLocales}
                 onShowEditLocales={onShowLocales}
                 onHideEditLocales={onHideLocales}
-
               />
               {showLocales && <LocalesSections />}
               {!hidePhrases && (
@@ -213,6 +243,10 @@ const Layout = () => {
                     pinnedPhrases={pinnedPhrases}
                     setPinnedPhrases={setPinnedPhrases}
                     removePinnedPhrases={removePinnedPhrases}
+                    searchTextState={searchTextState}
+                    onSetSearchTextState={setSearchTextState}
+                    phraseGroups={phraseGroups ?? []}
+                    setPhraseGroups={setPhraseGroups}
                   />
                   {container.current && (
                     <PhraseGroups
@@ -229,6 +263,9 @@ const Layout = () => {
                       setPinnedPhrases={setPinnedPhrases}
                       removePinnedPhrases={removePinnedPhrases}
                       scrollContainer={container.current}
+                      phraseGroups={phraseGroups ?? []}
+                      setPhraseGroups={setPhraseGroups}
+                      savePhraseGroups={savePhraseGroups}
                     />
                   )}
                 </>
@@ -264,9 +301,88 @@ const Layout = () => {
                   />
                 </>
               )}
-              <ScrollTopButton onClick={onScrollUp}>
-                <ChevronImage src={Chevron}/>
-              </ScrollTopButton>
+              <BottomFloat style={{
+                pointerEvents: isHovering ? 'all' : 'none',
+                height: 880
+              }} onMouseLeave={() => {
+                setIsHovering(false);
+              }}>
+                {isHovering && (
+                  <InnerFloatContainer onMouseLeave={() => {
+                setIsHovering(false);
+              }}>
+                <div style={{padding: 24}}>
+                  <DisplayHeader
+                    hidePhrases={hidePhrases}
+                    onTogglePhrases={onTogglePhrases}
+                    hideTerms={hideTerms}
+                    onToggleTerms={onToggleTerms}
+                    selectedTopLevelLocale={selectedTopLevelLocale as string}
+                    setSelectedTopLevelLocale={onChangeTopLevelLocale}
+                    isEditLocales={showLocales}
+                    onShowEditLocales={onShowLocales}
+                    onHideEditLocales={onHideLocales}
+                  />
+
+                  {!hidePhrases && (
+                    <TextAppHeader
+                      isEditGroups={isEditGroups}
+                      onShowEditGroups={onShowEditGroups}
+                      onHideEditGroups={onHideEditGroups}
+                      searchText={searchText ?? ""}
+                      onSetSearchText={setSearchText}
+                      selectedTopLevelLocale={selectedTopLevelLocale as string}
+                      setSelectedTopLevelLocale={onChangeTopLevelLocale}
+                      globalFilterUntranslated={globalFilterUntranslated}
+                      setGlobalFilterUnstranslated={setGlobalFilterUnstranslated}
+                      globalFilterRequiresUpdate={globalFilterRequiresUpdate}
+                      setGlobalFilterRequiresUpdate={setGlobalFilterRequiresUpdate}
+                      filterTag={filterTag}
+                      setFilterTag={setFilterTag}
+                      showOnlyPinnedPhrases={showOnlyPinnedPhrases ?? false}
+                      setShowOnlyPinnedPhrases={setShowOnlyPinnedPhrases}
+                      pinnedPhrases={pinnedPhrases}
+                      setPinnedPhrases={setPinnedPhrases}
+                      removePinnedPhrases={removePinnedPhrases}
+                      searchTextState={searchTextState}
+                      onSetSearchTextState={setSearchTextState}
+                      phraseGroups={phraseGroups ?? []}
+                      setPhraseGroups={setPhraseGroups}
+                    />
+                  )}
+                  {!hideTerms && ((terms?.length ?? 0) > 0 || commandMode == "edit") && (
+                    <>
+                      <TermGlossaryHeader
+                        onSetSearchTermText={setSearchTermText}
+                        searchTermText={searchTermText}
+                        isEditTerms={showEditTerms}
+                        onShowEditTerms={onShowEditTerms}
+                        onHideEditTerms={onHideEditTerms}
+                        globalFilterUntranslatedTerms={globalFilterUntranslatedTerms}
+                        setGlobalFilterUnstranslatedTerms={
+                          setGlobalFilterUnstranslatedTerms
+                        }
+                        showOnlyPinnedTerms={showOnlyPinnedTerms ?? false}
+                        setShowOnlyPinnedTerms={setShowOnlyPinnedTerms}
+                        pinnedTerms={pinnedTerms}
+                        setPinnedTerms={setPinnedPhrases}
+                        removePinnedTerms={removePinnedTerms}
+                        selectedTopLevelLocale={selectedTopLevelLocale}
+                      />
+                    </>
+                  )}
+                </div>
+
+                  </InnerFloatContainer>
+                )}
+                <ScrollTopButton onMouseEnter={() => {
+                  setIsHovering(true);
+                }}>
+                  <ChevronImage src={Chevron} style={{
+                    transform: `rotate(${isHovering ? '-90deg' : '-180deg'})`
+                  }}/>
+                </ScrollTopButton>
+              </BottomFloat>
             </Container>
           </TranslationMemoryProvider>
         </DeepLProvider>

@@ -20,19 +20,19 @@ interface Props {
 
 const FloroMount = (props: Props) => {
   return (
-    <FloroSSRPhraseKeyMemoProvider ssrPhraseKeySet={props.ssrPhraseKeySet}>
       <FloroDebugProvider>
         <FloroPaletteProvider>
           <FloroThemesProvider>
             <FloroIconsProvider>
-              <FloroTextProvider cdnHost={props.cdnHost} text={props.text} localeLoads={props.localeLoads}>
-                <FloroLocalesProvider initLocaleCode={props.initLocaleCode}>{props.children}</FloroLocalesProvider>
-              </FloroTextProvider>
+              <FloroSSRPhraseKeyMemoProvider ssrPhraseKeySet={props.ssrPhraseKeySet}>
+                <FloroTextProvider cdnHost={props.cdnHost} text={props.text} localeLoads={props.localeLoads}>
+                  <FloroLocalesProvider initLocaleCode={props.initLocaleCode}>{props.children}</FloroLocalesProvider>
+                </FloroTextProvider>
+              </FloroSSRPhraseKeyMemoProvider>
             </FloroIconsProvider>
           </FloroThemesProvider>
         </FloroPaletteProvider>
       </FloroDebugProvider>
-    </FloroSSRPhraseKeyMemoProvider>
   );
 };
 

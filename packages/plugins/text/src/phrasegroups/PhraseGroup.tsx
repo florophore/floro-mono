@@ -267,13 +267,6 @@ const PhraseGroup = (props: Props) => {
     useClientStorageApi<PointerTypes["$(text).phraseGroups.id<?>"]>(
       "lastExpandedDir"
     );
-  const onAddPhraseKey = useCallback(() => {
-    if (!isExpanded) {
-      setIsExpanded(true);
-      setLastExpanded(phraseGroupRef);
-    }
-    setShowAddPhraseKey(false);
-  }, [isExpanded, phraseGroupRef]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -339,6 +332,28 @@ const PhraseGroup = (props: Props) => {
     },
     [phraseGroup, setPhraseGroup]
   );
+
+  const onAddPhraseKey = useCallback((phrase: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>']) => {
+    if (!isExpanded) {
+      setIsExpanded(true);
+      setLastExpanded(phraseGroupRef);
+    }
+    setShowAddPhraseKey(false);
+    if (!phraseGroup?.id || !phraseGroup?.name) {
+      return;
+    }
+    const updateFn =setPhraseGroup(
+      {
+        id: phraseGroup.id,
+        name: phraseGroup.name,
+        phrases: [phrase, ...(phraseGroup?.phrases ?? [])],
+      } as SchemaTypes["$(text).phraseGroups.id<?>"],
+      false
+    );
+    if (updateFn) {
+      setTimeout(updateFn, 0);
+    }
+  }, [isExpanded, phraseGroupRef, phraseGroup?.phrases, setPhraseGroup]);
 
   useEffect(() => {
     if (wasAdded || wasRemoved || hasConflict) {

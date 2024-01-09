@@ -5,7 +5,7 @@ import Input from "@floro/storybook/stories/design-system/Input";
 import SearchInput from "@floro/storybook/stories/design-system/SearchInput";
 import ColorPalette from "@floro/styles/ColorPalette";
 import Button from "@floro/storybook/stories/design-system/Button";
-import { useFloroContext, useFloroState, useHasIndication, useReferencedObject } from "../floro-schema-api";
+import { SchemaTypes, useFloroContext, useFloroState, useHasIndication, useReferencedObject } from "../floro-schema-api";
 import InputSelector from "@floro/storybook/stories/design-system/InputSelector";
 import Checkbox from "@floro/storybook/stories/design-system/Checkbox";
 
@@ -113,6 +113,10 @@ interface Props {
   pinnedPhrases: Array<string>|null;
   setPinnedPhrases: (phraseRegs: Array<string>) => void;
   removePinnedPhrases: () => void;
+  onSetSearchTextState: (str: string) => void;
+  searchTextState: string;
+  phraseGroups: SchemaTypes['$(text).phraseGroups'];
+  setPhraseGroups: (pgs: SchemaTypes['$(text).phraseGroups'], doSave?: boolean) => void|(() => void);
 }
 
 const TextAppHeader = (props: Props) => {
@@ -124,7 +128,6 @@ const TextAppHeader = (props: Props) => {
     [props.searchText]
   );
   const [newGroupName, setNewGroupName] = useState("");
-  const [phraseGroups, setPhraseGroups] = useFloroState("$(text).phraseGroups");
 
   useEffect(() => {
     if ((props.pinnedPhrases?.length ?? 0) == 0 && clientStorageIsEnabled && props.showOnlyPinnedPhrases) {
@@ -138,7 +141,7 @@ const TextAppHeader = (props: Props) => {
 
 
   const allTags = useMemo(() => {
-    const tagSet =  new Set(phraseGroups?.flatMap(phraseGroup => {
+    const tagSet =  new Set(props.phraseGroups?.flatMap(phraseGroup => {
       return phraseGroup?.phrases?.flatMap(phrase => {
         return phrase.tags;
       })
@@ -156,7 +159,7 @@ const TextAppHeader = (props: Props) => {
         };
       }),
     ];
-  }, [phraseGroups, applicationState]);
+  }, [props.phraseGroups, applicationState]);
 
   const searchBorderColor = useMemo(() => {
     if (theme.name == "light") {
@@ -178,24 +181,27 @@ const TextAppHeader = (props: Props) => {
     if (!newId) {
       return false;
     }
-    for (const { id } of phraseGroups ?? []) {
+    for (const { id } of props.phraseGroups ?? []) {
       if (id == newId) {
         return false;
       }
     }
     return true;
-  }, [newId, phraseGroups]);
+  }, [newId, props.phraseGroups]);
 
   const onPrependNewGroup = useCallback(() => {
-    if (!newId || !newGroupName || !canAddNewName || !phraseGroups) {
+    if (!newId || !newGroupName || !canAddNewName || !props.phraseGroups) {
       return;
     }
-    setPhraseGroups([
+    const updateFn = props.setPhraseGroups([
       { id: newId, name: newGroupName, phrases: [] },
-      ...phraseGroups,
-    ]);
+      ...props.phraseGroups,
+    ], false);
     setNewGroupName("");
-  }, [newGroupName, newId, canAddNewName, phraseGroups]);
+    if (updateFn) {
+      setTimeout(updateFn, 0);
+    }
+  }, [newGroupName, newId, canAddNewName, props.phraseGroups]);
 
   const onToggleFilterUntranslated = useCallback(() => {
     props.setGlobalFilterUnstranslated(!props.globalFilterUntranslated);
@@ -225,20 +231,20 @@ const TextAppHeader = (props: Props) => {
       props.setGlobalFilterRequiresUpdate(false);
       props.setGlobalFilterUnstranslated(false);
       props.onSetSearchText("");
-      setSearchText("");
+      props.onSetSearchTextState("");
     }
   }, [props.showOnlyPinnedPhrases])
 
-  const [searchText, setSearchText] = useState(props.searchText ?? "");
+  //const [searchText, setSearchText] = useState(props.searchText ?? "");
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      props.onSetSearchText(searchText);
+      props.onSetSearchText(props.searchTextState);
     }, 200);
     return () => {
       clearTimeout(timeout);
     }
-  }, [searchText, props.selectedTopLevelLocale, props.onSetSearchText])
+  }, [props.searchTextState, props.selectedTopLevelLocale, props.onSetSearchText])
 
   return (
     <div>
@@ -251,9 +257,9 @@ const TextAppHeader = (props: Props) => {
                 <div style={{ marginLeft: 24 }}>
                   <SearchInput
                     showClear
-                    value={searchText}
+                    value={props.searchTextState}
                     placeholder={"search phrases"}
-                    onTextChanged={setSearchText}
+                    onTextChanged={props.onSetSearchTextState}
                     borderColor={searchBorderColor}
                     disabled={props.isEditGroups || props.showOnlyPinnedPhrases}
                   />
