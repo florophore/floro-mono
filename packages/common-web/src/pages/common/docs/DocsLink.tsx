@@ -5,6 +5,8 @@ import ColorPalette from "@floro/styles/ColorPalette";
 import LinkWhiteIcon from "@floro/common-assets/assets/images/icons/link.white.svg";
 import LinkBlueIcon from "@floro/common-assets/assets/images/icons/link.blue.svg";
 import { useLocation } from "react-router-dom";
+import { useSelectedTheme } from "../../../hooks/color-theme";
+import { useLocales } from "../../../floro_listener/hooks/locales";
 
 const LinkContainer = styled.div`
   user-select: none;
@@ -102,7 +104,8 @@ const DocsLink = (props: Props) => {
 };
 
 export const useLinkTitle = (chain: LinkChain, deps: unknown[]) => {
-  return useMemo(() => <DocsLink chain={chain} />, [chain, ...(deps ?? [])]);
+  const { selectedLocaleCode } = useLocales();
+  return useMemo(() => <DocsLink chain={chain} />, [selectedLocaleCode, chain, ...(deps ?? [])]);
 };
 
 export default React.memo(DocsLink);

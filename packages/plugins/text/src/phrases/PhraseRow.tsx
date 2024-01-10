@@ -276,21 +276,12 @@ const PhraseRow = (props: Props) => {
       );
     })
   }, [hasIndications, conflictSet, changeset, props.phraseRef, locales]);
+
   const hasConflict = useMemo(() => {
-    if (!hasIndications) {
-      return [];
-    }
-    return locales.filter(locale => {
-      const localeRef = makeQueryRef(
-        "$(text).localeSettings.locales.localeCode<?>",
-        locale?.localeCode
-      );
-      const phraseLocaleRef: PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>"] = `${props.phraseRef}.phraseTranslations.id<${localeRef}>`;
-      return (
-        containsDiffable(conflictSet, phraseLocaleRef, true)
-      );
-    })
-  }, [hasIndications, conflictSet, props.phraseRef, locales]);
+    return (
+      containsDiffable(conflictSet, props.phraseRef, true)
+    );
+  }, [conflictSet, props.phraseRef, locales]);
 
   const indicatedLocaleCodes = useMemo(() => {
     return indicatedLocales?.map(l => l.localeCode).join(", ");

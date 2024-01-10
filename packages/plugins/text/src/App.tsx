@@ -375,7 +375,7 @@ const Layout = () => {
 
                   </InnerFloatContainer>
                 )}
-                <ScrollTopButton onMouseEnter={() => {
+                <ScrollTopButton onClick={onScrollUp} onMouseEnter={() => {
                   setIsHovering(true);
                 }}>
                   <ChevronImage src={Chevron} style={{
