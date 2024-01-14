@@ -117,7 +117,7 @@ const LocalesSection = (props: Props) => {
   );
 
   return (
-    <div>
+    <div style={{padding: 24}}>
       <AddLocaleModal show={showAdd && commandMode == "edit"} onDismiss={onHideAdd} onCreate={onCreate}/>
       <Container>
         <TitleRow>

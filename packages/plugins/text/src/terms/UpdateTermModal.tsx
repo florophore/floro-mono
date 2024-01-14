@@ -124,6 +124,7 @@ const UpdateTermModal = (props: Props) => {
       disableBackgroundDismiss
       headerSize={"small"}
       topOffset={80}
+      zIndex={4}
       headerChildren={
         <HeaderWrapper>
           <HeaderTitle>{"update term name"}</HeaderTitle>

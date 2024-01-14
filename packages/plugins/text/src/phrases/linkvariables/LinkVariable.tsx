@@ -643,7 +643,7 @@ const LinkVariable = (props: Props) => {
       return false;
     }
     return (
-      (sourceLinkTranslation?.linkHrefValue?.json ?? "{}") >
+      (sourceLinkTranslation?.linkHrefValue?.json ?? "{}") !=
       (linkHrefValue?.sourceAtRevision?.json ?? "{}")
     );
   }, [
@@ -907,7 +907,7 @@ const LinkVariable = (props: Props) => {
               <span style={{ color: theme.colors.contrastText }}>
                 {`(${props.selectedLocale.localeCode}):`}
               </span>
-              {props.systemSourceLocale && commandMode == "edit" && !props.isSearching && (
+              {props.systemSourceLocale && commandMode == "edit" && (
                 <div style={{ width: 120, marginLeft: 12 }}>
                   <Button
                     isDisabled={

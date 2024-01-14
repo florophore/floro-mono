@@ -823,7 +823,7 @@ const InterpolationVariant = (props: Props) => {
                       {`(${props.selectedLocale.localeCode}):`}
                     </span>
                   </div>
-                  {props.systemSourceLocale && commandMode == "edit" && !props.isSearching && (
+                  {props.systemSourceLocale && commandMode == "edit" && (
                     <div style={{ width: 120, marginLeft: 12 }}>
                       <Button
                         label={"ML translate"}

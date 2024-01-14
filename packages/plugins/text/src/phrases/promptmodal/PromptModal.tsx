@@ -387,6 +387,7 @@ const PromptModal = (props: Props) => {
       headerSize={"small"}
       topOffset={80}
       width={1040}
+      zIndex={4}
       headerChildren={
         <HeaderWrapper>
           <HeaderTitle>{"ChatGPT"}</HeaderTitle>

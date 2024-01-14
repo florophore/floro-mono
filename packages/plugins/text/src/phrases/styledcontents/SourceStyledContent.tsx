@@ -245,9 +245,14 @@ const SourceStyledContent = (props: Props) => {
   }, [sourceDisplayValue?.plainText]);
 
   const diff = useMemo(() => {
+    if (!requireRevision) {
+      const past = [];
+      const present = [];
+      return getArrayStringDiff(past, present);
+    }
     const diff = getArrayStringDiff(beforeText, afterText);
     return diff;
-  }, [beforeText, afterText])
+  }, [beforeText, afterText, requireRevision])
 
   const diffIsEmpty = useMemo(() => {
     return Object.keys(diff.add).length == 0 && Object.keys(diff.remove).length == 0;

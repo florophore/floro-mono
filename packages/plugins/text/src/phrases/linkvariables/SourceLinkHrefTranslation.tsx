@@ -139,9 +139,14 @@ const SourceLinkHrefTranslation = (props: Props) => {
   }, [sourceLinkHrefTranslation?.plainText]);
 
   const diff = useMemo(() => {
+    if (!requireRevision) {
+      const past = [];
+      const present = [];
+      return getArrayStringDiff(past, present);
+    }
     const diff = getArrayStringDiff(beforeText, afterText);
     return diff;
-  }, [beforeText, afterText]);
+  }, [beforeText, afterText, requireRevision])
 
   const diffIsEmpty = useMemo(() => {
     return (

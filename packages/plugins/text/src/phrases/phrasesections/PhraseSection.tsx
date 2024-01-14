@@ -21,6 +21,7 @@ import Button from "@floro/storybook/stories/design-system/Button";
 import PlainTextDocument from "@floro/storybook/stories/design-system/ContentEditor/PlainTextDocument";
 import Observer from "@floro/storybook/stories/design-system/ContentEditor/editor/Observer";
 import ColorPalette from "@floro/styles/ColorPalette";
+import throttle from "lodash/throttle";
 
 import TextNode from "@floro/storybook/stories/design-system/ContentEditor/editor/nodes/TextNode";
 import TermList from "../termdisplay/TermList";
@@ -31,11 +32,9 @@ import MLModal from "../mlmodal/MLModal";
 import { useTranslationMemory } from "../../memory/TranslationMemoryContext";
 import TranslationMemoryList from "../translationmemory/TranslationMemoryList";
 import { useDiffColor } from "../../diff";
-import SourceStyledContent from "./SourcePhraseSection";
 import TermModal from "../termmodal/TermModal";
 import PromptModal from "../promptmodal/PromptModal";
 import SourcePhraseSection from "./SourcePhraseSection";
-import Checkbox from "@floro/storybook/stories/design-system/Checkbox";
 
 
 const Container = styled.div`
@@ -115,6 +114,8 @@ interface Props {
   searchText: string;
   isSearching: boolean;
   onFocusSearch: () => void;
+  scrollContainer?: HTMLDivElement;
+  isFocusingPhraseSelector: boolean;
 }
 
 const PhraseSection = (props: Props) => {
@@ -123,6 +124,63 @@ const PhraseSection = (props: Props) => {
     props.phraseSectionRef
   );
   const { commandMode, applicationState } = useFloroContext();
+  const container = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(true);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+
+    const timeout = setTimeout(() => {
+      setIsLoaded(true)
+    }, 100);
+    return () => {
+      clearTimeout(timeout);
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!props.scrollContainer) {
+      return;
+    }
+    const onScroll = () => {
+      if (!container.current) {
+        return;
+      }
+      if (!props.scrollContainer) {
+        return;
+      }
+      const rect = container.current.getBoundingClientRect();
+      const scrollRect = props.scrollContainer.getBoundingClientRect();
+      const windowHeight = scrollRect.height - 72;
+      let isVisible = false;
+      if (rect.top > 0) {
+        isVisible = rect.top <= windowHeight * 3;
+      } else {
+        if ((rect.top + rect.height) >= 0) {
+          isVisible = true;
+        } else {
+            isVisible = Math.abs(rect.top + rect.height) < windowHeight * 3;
+        }
+      }
+      setIsVisible(isVisible);
+    }
+    const onScrollThrottle = throttle(onScroll, 30, { trailing: true, leading: true})
+    props.scrollContainer.addEventListener("scroll", onScrollThrottle);
+    props.scrollContainer.addEventListener("keydown", onScroll);
+    props.scrollContainer.addEventListener("click", onScroll);
+    props.scrollContainer.addEventListener("resize", onScroll);
+    onScroll();
+    return () => {
+      if (!props.scrollContainer) {
+        return;
+      }
+      props.scrollContainer.removeEventListener("scroll", onScrollThrottle);
+      props.scrollContainer.removeEventListener("keydown", onScroll);
+      props.scrollContainer.removeEventListener("click", onScroll);
+      props.scrollContainer.removeEventListener("resize", onScroll);
+    }
+
+  }, [props.scrollContainer])
 
   const localeRef = makeQueryRef(
     "$(text).localeSettings.locales.localeCode<?>",
@@ -231,7 +289,7 @@ const PhraseSection = (props: Props) => {
       }
     }
     return foundTerms;
-  }, [displayValue?.plainText, displayValue?.json, localeTerms])
+  }, [displayValue?.plainText, displayValue?.json, localeTerms, isLoaded])
 
   const enabledMentionedValues = useMemo(() => {
     return mentionedTerms
@@ -242,6 +300,9 @@ const PhraseSection = (props: Props) => {
   }, [mentionedTerms, displayValue?.enabledTerms])
 
   const editorObserver = useMemo(() => {
+    if (!isVisible || !isLoaded) {
+      return new Observer();
+    }
     const variables = props.phrase.variables.map((v) => v.name);
     const linkVariables =
       props?.phrase.linkVariables?.map?.((v) => v.linkName) ?? [];
@@ -262,6 +323,8 @@ const PhraseSection = (props: Props) => {
     observer.setSearchString(props.searchText);
     return observer;
   }, [
+    isVisible,
+    isLoaded,
     props.searchText,
     props.phrase?.variables,
     props.phrase?.linkVariables,
@@ -273,6 +336,9 @@ const PhraseSection = (props: Props) => {
   ])
 
   const localeRuleEditorDoc = useMemo(() => {
+    if (!isVisible || !isLoaded) {
+      return new EditorDocument(new Observer());
+    }
     if (displayValue) {
       const doc = new EditorDocument(
         editorObserver,
@@ -285,9 +351,12 @@ const PhraseSection = (props: Props) => {
       editorObserver,
       props.selectedLocale.localeCode?.toLowerCase() ?? "en"
     );
-  }, [props.selectedLocale.localeCode, editorObserver]);
+  }, [isVisible, isLoaded, props.selectedLocale.localeCode, editorObserver]);
 
   const targetEditorObserver = useMemo(() => {
+    if (!isVisible || !isLoaded) {
+      return new Observer();
+    }
     const variables = props.phrase.variables.map((v) => v.name);
     const linkVariables =
       props?.phrase.linkVariables?.map?.((v) => v.linkName) ?? [];
@@ -307,6 +376,8 @@ const PhraseSection = (props: Props) => {
     );
     return observer;
   }, [
+    isVisible,
+    isLoaded,
     props.phrase.variables,
     props.phrase.linkVariables,
     props.phrase.interpolationVariants,
@@ -317,6 +388,9 @@ const PhraseSection = (props: Props) => {
   ]);
 
   const targetEditorDoc = useMemo(() => {
+    if (!isVisible || !isLoaded) {
+      return new EditorDocument(new Observer());
+    }
     if (displayValue) {
       const doc = new EditorDocument(
         targetEditorObserver,
@@ -329,7 +403,7 @@ const PhraseSection = (props: Props) => {
       targetEditorObserver,
       props.selectedLocale.localeCode?.toLowerCase() ?? "en"
     );
-  }, [props.selectedLocale.localeCode, targetEditorObserver]);
+  }, [isLoaded, isVisible, props.selectedLocale.localeCode, targetEditorObserver]);
 
 
   const defaultValueIsEmpty = useMemo(() => {
@@ -343,12 +417,15 @@ const PhraseSection = (props: Props) => {
   const timeout = useRef<NodeJS.Timeout>();
   const onSetDefaultValueContent = useCallback(
     (richTextHtml: string) => {
-      localeRuleEditorDoc.tree.updateRootFromHTML(richTextHtml ?? "");
-      const plainText = localeRuleEditorDoc.toPlainText();
-      const json = localeRuleEditorDoc.toJSON();
+      if (!isVisible || !isLoaded) {
+        return;
+      }
       if (!displayValue) {
         return;
       }
+      localeRuleEditorDoc.tree.updateRootFromHTML(richTextHtml ?? "");
+      const plainText = localeRuleEditorDoc.toPlainText();
+      const json = localeRuleEditorDoc.toJSON();
       if (defaultValueIsEmpty && props.globalFilterUntranslated && !props.isPinned) {
         props.setPinnedPhrases([...(props?.pinnedPhrases ?? []), props.phraseRef]);
       }
@@ -376,6 +453,8 @@ const PhraseSection = (props: Props) => {
       }
     },
     [
+      isVisible,
+      isLoaded,
       localeRuleEditorDoc?.tree,
       displayValue,
       setDisplayValue,
@@ -418,31 +497,41 @@ const PhraseSection = (props: Props) => {
   ]);
 
   const onSaveContent = useCallback(() => {
-      const json = JSON.stringify(localeRuleEditorDoc.toJSON());
-      if (!displayValue) {
-        return;
-      }
-      if (json != displayValue?.json) {
-        console.log("FIRING OFF")
-        setDisplayValue({
+    if (!isVisible || !isLoaded) {
+      return;
+    }
+    const json = JSON.stringify(localeRuleEditorDoc.toJSON());
+    if (!displayValue) {
+      return;
+    }
+    if (json != displayValue?.json) {
+      console.log("FIRING OFF");
+      setDisplayValue(
+        {
           ...displayValue,
-          json
-        }, true);
-
-      }
-
-  }, [highlightableVariables, displayValue?.json])
+          json,
+        },
+        true
+      );
+    }
+  }, [isVisible, isLoaded, highlightableVariables, displayValue?.json]);
 
   useEffect(() => {
+    if (!isVisible || !isLoaded) {
+      return;
+    }
     if (commandMode == "edit") {
       const timeout = setTimeout(onSaveContent, 300);
       return () => {
         clearTimeout(timeout);
       }
     }
-  }, [highlightableVariables, onSaveContent, commandMode])
+  }, [isVisible, isLoaded, highlightableVariables, onSaveContent, commandMode])
 
   const onMarkDisplayResolved = useCallback(() => {
+    if (!isVisible || !isLoaded) {
+      return;
+    }
     if (!displayValue) {
       return;
     }
@@ -458,6 +547,8 @@ const PhraseSection = (props: Props) => {
       });
     }
   }, [
+    isVisible,
+    isLoaded,
     localeRuleEditorDoc?.tree,
     sourceDefaultValue,
     setDisplayValue,
@@ -530,6 +621,9 @@ const PhraseSection = (props: Props) => {
   }, [mentionedTerms, sourceDefaultValue?.enabledTerms])
 
   const sourceEditorObserver = useMemo(() => {
+    if (!isVisible || !isLoaded) {
+      return new Observer();
+    }
     const variables = props.phrase.variables?.map((v) => v.name) ?? [];
     const linkVariables =
       props?.phrase.linkVariables?.map?.((v) => v.linkName) ?? [];
@@ -548,6 +642,8 @@ const PhraseSection = (props: Props) => {
       styledContents
     );
   }, [
+    isVisible,
+    isLoaded,
     props.phrase.variables,
     props.phrase.linkVariables,
     props.phrase.interpolationVariants,
@@ -557,13 +653,28 @@ const PhraseSection = (props: Props) => {
   ]);
 
   const sourceEditorDoc = useMemo(() => {
-    if (sourceDefaultValue && props?.systemSourceLocale?.localeCode) {
-        const doc = new EditorDocument(sourceEditorObserver, props.systemSourceLocale.localeCode?.toLowerCase() ?? "en");
-        doc.tree.updateRootFromHTML(sourceDefaultValue?.richTextHtml ?? "")
-        return doc;
+    if (!isVisible || !isLoaded) {
+      return new EditorDocument(new Observer());
     }
-    return new EditorDocument(sourceEditorObserver, props?.systemSourceLocale?.localeCode?.toLowerCase() ?? "en");
-  }, [props?.systemSourceLocale?.localeCode, sourceEditorObserver, sourceDefaultValue]);
+    if (sourceDefaultValue && props?.systemSourceLocale?.localeCode) {
+      const doc = new EditorDocument(
+        sourceEditorObserver,
+        props.systemSourceLocale.localeCode?.toLowerCase() ?? "en"
+      );
+      doc.tree.updateRootFromHTML(sourceDefaultValue?.richTextHtml ?? "");
+      return doc;
+    }
+    return new EditorDocument(
+      sourceEditorObserver,
+      props?.systemSourceLocale?.localeCode?.toLowerCase() ?? "en"
+    );
+  }, [
+    isVisible,
+    isLoaded,
+    props?.systemSourceLocale?.localeCode,
+    sourceEditorObserver,
+    sourceDefaultValue,
+  ]);
 
   const sourceMockHtml = useMemo(() => {
     return sourceEditorDoc.tree.getHtml();
@@ -659,7 +770,7 @@ const PhraseSection = (props: Props) => {
   }
 
   return (
-    <div style={{ marginBottom: 24 }}>
+    <div ref={container} style={{ marginBottom: 24, visibility: isVisible ? 'visible' : 'hidden'  }}>
       <TermModal
         show={showFindTerms && commandMode == "edit"}
         onDismiss={onHideFindTerms}
@@ -765,7 +876,7 @@ const PhraseSection = (props: Props) => {
                   {`(${props.selectedLocale.localeCode}):`}
                 </span>
               </div>
-              {props.systemSourceLocale && commandMode == "edit" && !props.isSearching && (
+              {props.systemSourceLocale && commandMode == "edit" && (
                 <div style={{ width: 120, marginLeft: 12 }}>
                   <Button
                     label={"ML translate"}

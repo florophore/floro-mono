@@ -56,6 +56,7 @@ export interface Props {
   headerSize?: "small"|"normal";
   width?: number
   topOffest?: number
+  zIndex?: number
 }
 
 const Modal = (props: Props): React.ReactElement => {
@@ -83,6 +84,7 @@ const Modal = (props: Props): React.ReactElement => {
       show={props.show}
       onDismiss={props?.onDismiss}
       disableBackgroundDismiss={props?.disableBackgroundDismiss}
+      zIndex={props?.zIndex}
     >
       <ModalContainer style={{width: props?.width ?? 592, marginTop: -(props.topOffest ?? 0)}}>
         <ModalHeaderContainer style={{height: headerSize}}>

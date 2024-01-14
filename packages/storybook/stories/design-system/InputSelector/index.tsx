@@ -153,6 +153,8 @@ export interface Props<T> {
   onFocus?: (event: React.FocusEvent<HTMLInputElement, Element>) => void;
   onBlur?: (event: React.FocusEvent<HTMLInputElement, Element>) => void;
   onChange?: (option: Option<T> | null) => void;
+  onOpen?: () => void;
+  onClose?: () => void;
   tabIndex?: number;
   filterInput?: boolean;
   isDropdown?: boolean;
@@ -164,6 +166,7 @@ export interface Props<T> {
   isDisabled?: boolean
   hideLabel?: boolean
   maxHeight?: number
+  zIndex?: number
 }
 
 const InputSelector = <T,>({
@@ -458,6 +461,14 @@ const InputSelector = <T,>({
     }
   }, [highlightIndex, isTapping]);
 
+  useEffect(() => {
+    if (showList && rest?.onOpen) {
+      rest?.onOpen?.();
+    } else if (!showList && rest?.onClose){
+      rest?.onClose?.();
+    }
+  }, [showList, rest?.onClose, rest?.onClose])
+
   return (
     <div style={{ display: "flex", position: "relative" }}>
       <Container
@@ -484,6 +495,9 @@ const InputSelector = <T,>({
           <DropdownContainer
             onMouseEnter={onStartHoveringList}
             onMouseLeave={onStopHoveringList}
+            style={{
+              zIndex: rest?.zIndex ?? 1
+            }}
           >
             <InnerContainer style={{maxHeight}} onMouseMove={onReEnableHover} ref={optionContainer}>
               {options}

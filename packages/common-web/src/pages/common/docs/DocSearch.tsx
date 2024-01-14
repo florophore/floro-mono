@@ -151,7 +151,10 @@ function DocsSearch(props: Props) {
 
   const [searchValue, setSearchValue] = useState("");
   const linkTitle = useLinkTitle(props.linkChain, [])
-  const lastSectionTitleChain = useLinkTitle(props.lastSectionTitleChain ?? {label: '', value: ''}, [])
+  const lastSectionTitleChain = useLinkTitle(
+    props.lastSectionTitleChain ?? { label: "", value: "" },
+    [props.lastSectionTitleChain]
+  );
   const page = usePlainText("docs.search_product_docs_page");
   const lastSection = usePlainText("docs.search_product_docs_last_section");
   const productPlaceholder = usePlainText("docs.search_product_docs");

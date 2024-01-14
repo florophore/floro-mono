@@ -253,6 +253,7 @@ const AddPhraseModal = (props: Props) => {
       disableBackgroundDismiss
       headerSize={"small"}
       topOffset={80}
+      zIndex={4}
       headerChildren={
         <HeaderWrapper>
           <HeaderTitle>{"add phrase key"}</HeaderTitle>

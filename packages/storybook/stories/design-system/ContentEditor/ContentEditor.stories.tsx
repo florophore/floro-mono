@@ -51,7 +51,7 @@ const Template = (args) => {
               searchRef?.current?.focus();
             }
           }}
-          isDebugMode
+          isDebugMode={args.isDebugMode}
         />
       </div>
     );

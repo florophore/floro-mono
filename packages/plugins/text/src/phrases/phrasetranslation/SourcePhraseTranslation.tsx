@@ -57,6 +57,8 @@ interface Props {
   selectedLocale: SchemaTypes["$(text).localeSettings.locales.localeCode<?>"];
   phraseRef: PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>"];
   targetPhraseTranslation: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>"];
+  isFocusingPhraseSelector: boolean;
+  isVisible: boolean;
 }
 
 const SourcePhraseTranslation = (props: Props) => {
@@ -168,6 +170,9 @@ const SourcePhraseTranslation = (props: Props) => {
   }, [mentionedTerms, sourcePhraseTranslation?.enabledTerms]);
 
   const editorObserver = useMemo(() => {
+    if (!props.isVisible) {
+      return new Observer();
+    }
     const variables = props.phrase?.variables?.map((v) => v.name) ?? [];
     const linkVariables =
       props.phrase?.linkVariables?.map((v) => v.linkName) ?? [];
@@ -186,6 +191,7 @@ const SourcePhraseTranslation = (props: Props) => {
       styledContents,
     );
   }, [
+    props.isVisible,
     props.phrase.variables,
     props.phrase.linkVariables,
     props.phrase.interpolationVariants,
@@ -195,6 +201,9 @@ const SourcePhraseTranslation = (props: Props) => {
   ]);
 
   const editorDoc = useMemo(() => {
+    if (!props.isVisible) {
+      return new EditorDocument( new Observer());
+    }
     if (sourcePhraseTranslation) {
       const doc = new EditorDocument(
         editorObserver,
@@ -208,6 +217,7 @@ const SourcePhraseTranslation = (props: Props) => {
       props.systemSourceLocale.localeCode?.toLowerCase() ?? "en"
     );
   }, [
+    props.isVisible,
     sourcePhraseTranslation,
     props.systemSourceLocale.localeCode,
     editorObserver,
@@ -237,9 +247,14 @@ const SourcePhraseTranslation = (props: Props) => {
   }, [sourcePhraseTranslation?.plainText]);
 
   const diff = useMemo(() => {
+    if (!requireRevision) {
+      const past = [];
+      const present = [];
+      return getArrayStringDiff(past, present);
+    }
     const diff = getArrayStringDiff(beforeText, afterText);
     return diff;
-  }, [beforeText, afterText]);
+  }, [beforeText, afterText, requireRevision])
 
   const diffIsEmpty = useMemo(() => {
     return (

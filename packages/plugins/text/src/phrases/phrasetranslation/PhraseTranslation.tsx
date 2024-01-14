@@ -153,6 +153,8 @@ interface Props {
   isSearching: boolean;
   searchText: string;
   onFocusSearch: () => void;
+  scrollContainer?: HTMLDivElement;
+  isFocusingPhraseSelector: boolean;
 }
 
 const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRef<HTMLDivElement>) => {
@@ -286,6 +288,9 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
   }, [mentionedTerms, phraseTranslation?.enabledTerms]);
 
   const editorObserver = useMemo(() => {
+    if (!props.isVisible) {
+      return new Observer();
+    }
     const variables = phrase?.variables?.map((v) => v.name) ?? [];
     const linkVariables =
       phrase?.linkVariables?.map?.((v) => v.linkName) ?? [];
@@ -307,6 +312,7 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
     observer.setSearchString(props.searchText);
     return observer;
   }, [
+    props.isVisible,
     props.searchText,
     phrase?.variables,
     phrase?.linkVariables,
@@ -318,6 +324,9 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
 
 
   const editorDoc = useMemo(() => {
+    if (!props.isVisible) {
+      return new EditorDocument(new Observer())
+    }
     if (phraseTranslation) {
       const doc = new EditorDocument(
         editorObserver,
@@ -330,7 +339,7 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
       editorObserver,
       props.selectedLocale.localeCode?.toLowerCase() ?? "en"
     );
-  }, [props.selectedLocale.localeCode, editorObserver]);
+  }, [props.selectedLocale.localeCode, editorObserver, props.isVisible]);
 
   const targetEditorObserver = useMemo(() => {
     const variables = phrase?.variables?.map((v) => v.name) ?? [];
@@ -360,6 +369,9 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
   ]);
 
   const targetEditorDoc = useMemo(() => {
+    if (!props.isVisible) {
+      return new EditorDocument(new Observer());
+    }
     if (phraseTranslation) {
       const doc = new EditorDocument(
         targetEditorObserver,
@@ -372,7 +384,7 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
       targetEditorObserver,
       props.selectedLocale.localeCode?.toLowerCase() ?? "en"
     );
-  }, [props.selectedLocale.localeCode, targetEditorObserver]);
+  }, [props.selectedLocale.localeCode, targetEditorObserver, props.isVisible]);
 
   const contentIsEmpty = useMemo(() => {
     return (phraseTranslation?.plainText ?? "") == "";
@@ -386,6 +398,9 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
   const timeout = useRef<NodeJS.Timeout>();
   const onSetContent = useCallback(
     (richTextHtml: string) => {
+      if (!props.isVisible) {
+        return;
+      }
       editorDoc.tree.updateRootFromHTML(richTextHtml ?? "");
       const plainText = editorDoc.toPlainText();
       const json = editorDoc.toJSON();
@@ -423,6 +438,7 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
       }
     },
     [
+      props.isVisible,
       editorDoc?.tree,
       phraseTranslation?.richTextHtml,
       setPhraseTranslation,
@@ -465,6 +481,9 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
   ]);
 
   const onSaveContent = useCallback(() => {
+      if (!props.isVisible) {
+        return;
+      }
       if (!phraseTranslation) {
         return;
       }
@@ -476,9 +495,12 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
         }, true);
       }
 
-  }, [highlightableVariables, phraseTranslation?.json])
+  }, [props.isVisible, highlightableVariables, phraseTranslation?.json])
 
   useEffect(() => {
+      if (!props.isVisible) {
+        return;
+      }
       if (commandMode != "edit") {
         return;
       }
@@ -489,7 +511,7 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
           clearTimeout(timeout)
         }
       }
-  }, [onSaveContent, highlightableVariables, phraseTranslation?.json, commandMode])
+  }, [props.isVisible, onSaveContent, highlightableVariables, phraseTranslation?.json, commandMode])
 
   const onMarkResolved = useCallback(() => {
     if (!phraseTranslation) {
@@ -806,6 +828,8 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
           isSearching={props.isSearching}
           searchText={props.searchText}
           onFocusSearch={props.onFocusSearch}
+          scrollContainer={props?.scrollContainer}
+          isFocusingPhraseSelector={props.isFocusingPhraseSelector}
         />
       )}
       {!phrase?.usePhraseSections && (
@@ -823,7 +847,7 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
                 <span style={{ color: diffColor }}>
                   {`Phrase Value (${props.selectedLocale.localeCode}):`}
                 </span>
-                {props.systemSourceLocale && commandMode == "edit" && !props.isSearching && (
+                {props.systemSourceLocale && commandMode == "edit" && (
                   <div style={{ width: 120, marginLeft: 12 }}>
                     <Button
                       isDisabled={
@@ -939,6 +963,8 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
               phraseRef={props.phraseRef}
               targetPhraseTranslation={phraseTranslation}
               selectedLocale={props.selectedLocale}
+              isFocusingPhraseSelector={props.isFocusingPhraseSelector}
+              isVisible={props.isVisible}
             />
           )}
         </>

@@ -13,6 +13,7 @@ export interface Props {
   headerSize?: "small"|"normal";
   width?: number;
   topOffset?: number;
+  zIndex?: number;
 }
 
 const RootLongModal = (props: Props) => {
@@ -27,6 +28,7 @@ const RootLongModal = (props: Props) => {
       headerSize={props?.headerSize}
       width={props?.width}
       topOffest={props.topOffset}
+      zIndex={props.zIndex}
     >
       {props?.children}
     </LongModal>,

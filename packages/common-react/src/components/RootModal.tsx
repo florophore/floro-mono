@@ -12,6 +12,7 @@ export interface Props {
   headerChildren?: React.ReactElement | React.ReactElement[];
   headerSize?: "small"|"normal";
   topOffset?: number;
+  zIndex?: number;
 }
 
 const RootModal = (props: Props) => {
@@ -25,6 +26,7 @@ const RootModal = (props: Props) => {
       disableBackgroundDismiss={props?.disableBackgroundDismiss}
       headerSize={props?.headerSize}
       topOffest={props.topOffset}
+      zIndex={props?.zIndex}
     >
       {props?.children}
     </Modal>,

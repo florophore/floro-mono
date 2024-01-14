@@ -11,10 +11,10 @@ import styled from "@emotion/styled";
 import { AnimatePresence, Reorder } from "framer-motion";
 
 const Container = styled.div`
-  margin-top: 24px;
   padding-bottom: 40px;
-  max-width: 1020px;
   width: 100%;
+  min-height: 100vh;
+  margin-bottom: 700px;
 `;
 
 const NothingChangedText = styled.h3`
@@ -33,6 +33,7 @@ interface Props {
   globalFilterRequiresUpdate: boolean;
   filterTag: string|null;
   showOnlyPinnedPhrases: boolean;
+  showOnlyPinnedGroups: boolean;
   pinnedPhrases: Array<string>|null;
   setPinnedPhrases: (phraseRegs: Array<string>) => void;
   removePinnedPhrases: () => void;
@@ -40,6 +41,14 @@ interface Props {
   phraseGroups: SchemaTypes['$(text).phraseGroups'];
   setPhraseGroups: (pgs: SchemaTypes['$(text).phraseGroups'], doSave?: boolean) => void;
   savePhraseGroups: () => void;
+  showFilters?: boolean;
+  pinnedPhrasesWithGroups: {
+    phrase: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>"];
+    phraseGroup: SchemaTypes["$(text).phraseGroups.id<?>"];
+  }[];
+  selectedGroup: string | null;
+  pinnedGroups: Array<string>|null;
+  setPinnedGroups: (groupRefs: Array<string>) => void;
 }
 
 const PhraseGroups = (props: Props) => {
@@ -140,6 +149,12 @@ const PhraseGroups = (props: Props) => {
                   setPinnedPhrases={props.setPinnedPhrases}
                   removePinnedPhrases={props.removePinnedPhrases}
                   scrollContainer={props.scrollContainer}
+                  showFilters={props.showFilters}
+                  pinnedPhrasesWithGroups={props.pinnedPhrasesWithGroups}
+                  selectedGroup={props.selectedGroup}
+                  pinnedGroups={props.pinnedGroups}
+                  setPinnedGroups={props.setPinnedGroups}
+                  showOnlyPinnedGroups={props.showOnlyPinnedGroups}
                 />
               );
             })}
@@ -179,6 +194,12 @@ const PhraseGroups = (props: Props) => {
                   setPinnedPhrases={props.setPinnedPhrases}
                   removePinnedPhrases={props.removePinnedPhrases}
                   scrollContainer={props.scrollContainer}
+                  showFilters={props.showFilters}
+                  pinnedPhrasesWithGroups={props.pinnedPhrasesWithGroups}
+                  selectedGroup={props.selectedGroup}
+                  pinnedGroups={props.pinnedGroups}
+                  setPinnedGroups={props.setPinnedGroups}
+                  showOnlyPinnedGroups={props.showOnlyPinnedGroups}
                 />
               );
             })}
@@ -206,6 +227,12 @@ const PhraseGroups = (props: Props) => {
               setPinnedPhrases={props.setPinnedPhrases}
               removePinnedPhrases={props.removePinnedPhrases}
               scrollContainer={props.scrollContainer}
+              showFilters={props.showFilters}
+              pinnedPhrasesWithGroups={props.pinnedPhrasesWithGroups}
+              selectedGroup={props.selectedGroup}
+              pinnedGroups={props.pinnedGroups}
+              setPinnedGroups={props.setPinnedGroups}
+              showOnlyPinnedGroups={props.showOnlyPinnedGroups}
             />
           );
         })}

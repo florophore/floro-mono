@@ -119,6 +119,8 @@ const Layout = () => {
     useClientStorageApi<boolean>("show-only-pinned-phrases");
   const [showOnlyPinnedTerms, setShowOnlyPinnedTerms] =
     useClientStorageApi<boolean>("show-only-pinned-terms");
+  const [pinnedGroups, setPinnedGroups, removePinnedGroups] =
+    useClientStorageApi<Array<string>>("pinned-groups");
   const [pinnedPhrases, setPinnedPhrases, removePinnedPhrases] =
     useClientStorageApi<Array<string>>("pinned-phrases");
   const [pinnedTerms, setPinnedTerms, removePinnedTerms] =
@@ -210,44 +212,48 @@ const Layout = () => {
         <DeepLProvider>
           <TranslationMemoryProvider>
             <Container ref={container}>
-              <DisplayHeader
-                hidePhrases={hidePhrases}
-                onTogglePhrases={onTogglePhrases}
-                hideTerms={hideTerms}
-                onToggleTerms={onToggleTerms}
-                selectedTopLevelLocale={selectedTopLevelLocale as string}
-                setSelectedTopLevelLocale={onChangeTopLevelLocale}
-                isEditLocales={showLocales}
-                onShowEditLocales={onShowLocales}
-                onHideEditLocales={onHideLocales}
-              />
+              {false && (
+                <DisplayHeader
+                  hidePhrases={hidePhrases}
+                  onTogglePhrases={onTogglePhrases}
+                  hideTerms={hideTerms}
+                  onToggleTerms={onToggleTerms}
+                  selectedTopLevelLocale={selectedTopLevelLocale as string}
+                  setSelectedTopLevelLocale={onChangeTopLevelLocale}
+                  isEditLocales={showLocales}
+                  onShowEditLocales={onShowLocales}
+                  onHideEditLocales={onHideLocales}
+                />
+              )}
               {showLocales && <LocalesSections />}
               {!hidePhrases && (
                 <>
-                  <TextAppHeader
-                    isEditGroups={isEditGroups}
-                    onShowEditGroups={onShowEditGroups}
-                    onHideEditGroups={onHideEditGroups}
-                    searchText={searchText ?? ""}
-                    onSetSearchText={setSearchText}
-                    selectedTopLevelLocale={selectedTopLevelLocale as string}
-                    setSelectedTopLevelLocale={onChangeTopLevelLocale}
-                    globalFilterUntranslated={globalFilterUntranslated}
-                    setGlobalFilterUnstranslated={setGlobalFilterUnstranslated}
-                    globalFilterRequiresUpdate={globalFilterRequiresUpdate}
-                    setGlobalFilterRequiresUpdate={setGlobalFilterRequiresUpdate}
-                    filterTag={filterTag}
-                    setFilterTag={setFilterTag}
-                    showOnlyPinnedPhrases={showOnlyPinnedPhrases ?? false}
-                    setShowOnlyPinnedPhrases={setShowOnlyPinnedPhrases}
-                    pinnedPhrases={pinnedPhrases}
-                    setPinnedPhrases={setPinnedPhrases}
-                    removePinnedPhrases={removePinnedPhrases}
-                    searchTextState={searchTextState}
-                    onSetSearchTextState={setSearchTextState}
-                    phraseGroups={phraseGroups ?? []}
-                    setPhraseGroups={setPhraseGroups}
-                  />
+                  {false && (
+                    <TextAppHeader
+                      isEditGroups={isEditGroups}
+                      onShowEditGroups={onShowEditGroups}
+                      onHideEditGroups={onHideEditGroups}
+                      searchText={searchText ?? ""}
+                      onSetSearchText={setSearchText}
+                      selectedTopLevelLocale={selectedTopLevelLocale as string}
+                      setSelectedTopLevelLocale={onChangeTopLevelLocale}
+                      globalFilterUntranslated={globalFilterUntranslated}
+                      setGlobalFilterUnstranslated={setGlobalFilterUnstranslated}
+                      globalFilterRequiresUpdate={globalFilterRequiresUpdate}
+                      setGlobalFilterRequiresUpdate={setGlobalFilterRequiresUpdate}
+                      filterTag={filterTag}
+                      setFilterTag={setFilterTag}
+                      showOnlyPinnedPhrases={showOnlyPinnedPhrases ?? false}
+                      setShowOnlyPinnedPhrases={setShowOnlyPinnedPhrases}
+                      pinnedPhrases={pinnedPhrases}
+                      setPinnedPhrases={setPinnedPhrases}
+                      removePinnedPhrases={removePinnedPhrases}
+                      searchTextState={searchTextState}
+                      onSetSearchTextState={setSearchTextState}
+                      phraseGroups={phraseGroups ?? []}
+                      setPhraseGroups={setPhraseGroups}
+                    />
+                  )}
                   {container.current && (
                     <PhraseGroups
                       selectedTopLevelLocale={selectedTopLevelLocale}
@@ -266,11 +272,12 @@ const Layout = () => {
                       phraseGroups={phraseGroups ?? []}
                       setPhraseGroups={setPhraseGroups}
                       savePhraseGroups={savePhraseGroups}
+                      pinnedPhrasesWithGroups={[]}
                     />
                   )}
                 </>
               )}
-              {!hideTerms && ((terms?.length ?? 0) > 0 || commandMode == "edit") && (
+              {false && !hideTerms && ((terms?.length ?? 0) > 0 || commandMode == "edit") && (
                 <>
                   <TermGlossaryHeader
                     onSetSearchTermText={setSearchTermText}
@@ -301,88 +308,90 @@ const Layout = () => {
                   />
                 </>
               )}
-              <BottomFloat style={{
-                pointerEvents: isHovering ? 'all' : 'none',
-                height: 880
-              }} onMouseLeave={() => {
-                setIsHovering(false);
-              }}>
-                {isHovering && (
-                  <InnerFloatContainer onMouseLeave={() => {
-                setIsHovering(false);
-              }}>
-                <div style={{padding: 24}}>
-                  <DisplayHeader
-                    hidePhrases={hidePhrases}
-                    onTogglePhrases={onTogglePhrases}
-                    hideTerms={hideTerms}
-                    onToggleTerms={onToggleTerms}
-                    selectedTopLevelLocale={selectedTopLevelLocale as string}
-                    setSelectedTopLevelLocale={onChangeTopLevelLocale}
-                    isEditLocales={showLocales}
-                    onShowEditLocales={onShowLocales}
-                    onHideEditLocales={onHideLocales}
-                  />
-
-                  {!hidePhrases && (
-                    <TextAppHeader
-                      isEditGroups={isEditGroups}
-                      onShowEditGroups={onShowEditGroups}
-                      onHideEditGroups={onHideEditGroups}
-                      searchText={searchText ?? ""}
-                      onSetSearchText={setSearchText}
+              {/*false && (
+                <BottomFloat style={{
+                  pointerEvents: isHovering ? 'all' : 'none',
+                  height: 880
+                }} onMouseLeave={() => {
+                  setIsHovering(false);
+                }}>
+                  {isHovering && (
+                    <InnerFloatContainer onMouseLeave={() => {
+                  setIsHovering(false);
+                }}>
+                  <div style={{padding: 24}}>
+                    <DisplayHeader
+                      hidePhrases={hidePhrases}
+                      onTogglePhrases={onTogglePhrases}
+                      hideTerms={hideTerms}
+                      onToggleTerms={onToggleTerms}
                       selectedTopLevelLocale={selectedTopLevelLocale as string}
                       setSelectedTopLevelLocale={onChangeTopLevelLocale}
-                      globalFilterUntranslated={globalFilterUntranslated}
-                      setGlobalFilterUnstranslated={setGlobalFilterUnstranslated}
-                      globalFilterRequiresUpdate={globalFilterRequiresUpdate}
-                      setGlobalFilterRequiresUpdate={setGlobalFilterRequiresUpdate}
-                      filterTag={filterTag}
-                      setFilterTag={setFilterTag}
-                      showOnlyPinnedPhrases={showOnlyPinnedPhrases ?? false}
-                      setShowOnlyPinnedPhrases={setShowOnlyPinnedPhrases}
-                      pinnedPhrases={pinnedPhrases}
-                      setPinnedPhrases={setPinnedPhrases}
-                      removePinnedPhrases={removePinnedPhrases}
-                      searchTextState={searchTextState}
-                      onSetSearchTextState={setSearchTextState}
-                      phraseGroups={phraseGroups ?? []}
-                      setPhraseGroups={setPhraseGroups}
+                      isEditLocales={showLocales}
+                      onShowEditLocales={onShowLocales}
+                      onHideEditLocales={onHideLocales}
                     />
-                  )}
-                  {!hideTerms && ((terms?.length ?? 0) > 0 || commandMode == "edit") && (
-                    <>
-                      <TermGlossaryHeader
-                        onSetSearchTermText={setSearchTermText}
-                        searchTermText={searchTermText}
-                        isEditTerms={showEditTerms}
-                        onShowEditTerms={onShowEditTerms}
-                        onHideEditTerms={onHideEditTerms}
-                        globalFilterUntranslatedTerms={globalFilterUntranslatedTerms}
-                        setGlobalFilterUnstranslatedTerms={
-                          setGlobalFilterUnstranslatedTerms
-                        }
-                        showOnlyPinnedTerms={showOnlyPinnedTerms ?? false}
-                        setShowOnlyPinnedTerms={setShowOnlyPinnedTerms}
-                        pinnedTerms={pinnedTerms}
-                        setPinnedTerms={setPinnedPhrases}
-                        removePinnedTerms={removePinnedTerms}
-                        selectedTopLevelLocale={selectedTopLevelLocale}
-                      />
-                    </>
-                  )}
-                </div>
 
-                  </InnerFloatContainer>
-                )}
-                <ScrollTopButton onClick={onScrollUp} onMouseEnter={() => {
-                  setIsHovering(true);
-                }}>
-                  <ChevronImage src={Chevron} style={{
-                    transform: `rotate(${isHovering ? '-90deg' : '-180deg'})`
-                  }}/>
-                </ScrollTopButton>
-              </BottomFloat>
+                    {!hidePhrases && (
+                      <TextAppHeader
+                        isEditGroups={isEditGroups}
+                        onShowEditGroups={onShowEditGroups}
+                        onHideEditGroups={onHideEditGroups}
+                        searchText={searchText ?? ""}
+                        onSetSearchText={setSearchText}
+                        selectedTopLevelLocale={selectedTopLevelLocale as string}
+                        setSelectedTopLevelLocale={onChangeTopLevelLocale}
+                        globalFilterUntranslated={globalFilterUntranslated}
+                        setGlobalFilterUnstranslated={setGlobalFilterUnstranslated}
+                        globalFilterRequiresUpdate={globalFilterRequiresUpdate}
+                        setGlobalFilterRequiresUpdate={setGlobalFilterRequiresUpdate}
+                        filterTag={filterTag}
+                        setFilterTag={setFilterTag}
+                        showOnlyPinnedPhrases={showOnlyPinnedPhrases ?? false}
+                        setShowOnlyPinnedPhrases={setShowOnlyPinnedPhrases}
+                        pinnedPhrases={pinnedPhrases}
+                        setPinnedPhrases={setPinnedPhrases}
+                        removePinnedPhrases={removePinnedPhrases}
+                        searchTextState={searchTextState}
+                        onSetSearchTextState={setSearchTextState}
+                        phraseGroups={phraseGroups ?? []}
+                        setPhraseGroups={setPhraseGroups}
+                      />
+                    )}
+                    {!hideTerms && ((terms?.length ?? 0) > 0 || commandMode == "edit") && (
+                      <>
+                        <TermGlossaryHeader
+                          onSetSearchTermText={setSearchTermText}
+                          searchTermText={searchTermText}
+                          isEditTerms={showEditTerms}
+                          onShowEditTerms={onShowEditTerms}
+                          onHideEditTerms={onHideEditTerms}
+                          globalFilterUntranslatedTerms={globalFilterUntranslatedTerms}
+                          setGlobalFilterUnstranslatedTerms={
+                            setGlobalFilterUnstranslatedTerms
+                          }
+                          showOnlyPinnedTerms={showOnlyPinnedTerms ?? false}
+                          setShowOnlyPinnedTerms={setShowOnlyPinnedTerms}
+                          pinnedTerms={pinnedTerms}
+                          setPinnedTerms={setPinnedPhrases}
+                          removePinnedTerms={removePinnedTerms}
+                          selectedTopLevelLocale={selectedTopLevelLocale}
+                        />
+                      </>
+                    )}
+                  </div>
+
+                    </InnerFloatContainer>
+                  )}
+                  <ScrollTopButton onClick={onScrollUp} onMouseEnter={() => {
+                    setIsHovering(true);
+                  }}>
+                    <ChevronImage src={Chevron} style={{
+                      transform: `rotate(${isHovering ? '-90deg' : '-180deg'})`
+                    }}/>
+                  </ScrollTopButton>
+                </BottomFloat>
+                  )*/}
             </Container>
           </TranslationMemoryProvider>
         </DeepLProvider>

@@ -8,6 +8,7 @@ export interface Props {
   onDismiss?: () => void;
   children?: React.ReactElement | React.ReactElement[];
   disableBackgroundDismiss?: boolean;
+  zIndex?: number;
 }
 
 const ModalBackdrop = (props: Props): React.ReactElement => {
@@ -45,10 +46,12 @@ const ModalBackdrop = (props: Props): React.ReactElement => {
               duration: 0.5,
             },
           }}
+          style={{
+            zIndex: props?.zIndex ?? 2
+          }}
           className={css`
             top: 0;
             left: 0;
-            z-index: 2;
             position: absolute;
             display: flex;
             flex: 1;

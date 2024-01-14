@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg  viewBox="0 0 32 28" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>filter.selected</title>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="1-Action-Icons/21-Filter/3-Selected" transform="translate(0, -2)" fill="#56A4FA">
+            <path d="M22,26 C23.1045695,26 24,26.8954305 24,28 C24,29.1045695 23.1045695,30 22,30 L10,30 C8.8954305,30 8,29.1045695 8,28 C8,26.8954305 8.8954305,26 10,26 L22,26 Z M26,14 C27.1045695,14 28,14.8954305 28,16 C28,17.1045695 27.1045695,18 26,18 L6,18 C4.8954305,18 4,17.1045695 4,16 C4,14.8954305 4.8954305,14 6,14 L26,14 Z M29.9130435,2 C31.0656377,2 32,2.8954305 32,4 C32,5.1045695 31.0656377,6 29.9130435,6 L2.08695652,6 C0.934362261,6 0,5.1045695 0,4 C0,2.8954305 0.934362261,2 2.08695652,2 L29.9130435,2 Z" id="filter.selected"></path>
+        </g>
+    </g>
+</svg>

@@ -26,6 +26,7 @@ export interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   onBlur?: (event: React.FocusEvent<HTMLInputElement, Element>) => void;
   tabIndex?: number;
   width?: number;
+  height?: number;
   showClear?: boolean;
 }
 
@@ -175,9 +176,14 @@ const SearchInput = React.forwardRef(
     return (
       <Container
         onClick={onClickContainer}
-        style={{ border: `2px solid ${borderColor}`, width: rest?.width ?? 400, cursor: rest.disabled ? 'not-allowed' : 'auto' }}
+        style={{ border: `2px solid ${borderColor}`, height: rest?.height ?? 48, width: rest?.width ?? 400, cursor: rest.disabled ? 'not-allowed' : 'auto' }}
       >
-        <IconContainer>
+        <IconContainer
+        style={{
+              height: rest?.height ?? 48,
+              width: rest?.height ?? 48,
+          }}
+        >
             <Icon src={icon}/>
         </IconContainer>
         <InputElement
@@ -191,11 +197,15 @@ const SearchInput = React.forwardRef(
           type={'search'}
           {...rest}
           style={{
-              cursor: rest.disabled ? 'not-allowed' : 'auto'
+              cursor: rest.disabled ? 'not-allowed' : 'auto',
+              top: ((rest?.height ?? 48) - 48)/2 + 6,
           }}
         />
         {isActive && showClear && (
-          <ClearIconContainer onClick={onClear}>
+          <ClearIconContainer style={{
+              height: rest?.height ?? 48,
+              width: rest?.height ?? 48,
+          }} onClick={onClear}>
             <Icon src={clearIcon}/>
           </ClearIconContainer>
         )}

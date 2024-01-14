@@ -87,6 +87,8 @@ interface Props {
   searchText: string;
   isSearching: boolean;
   onFocusSearch: () => void;
+  scrollContainer?: HTMLDivElement;
+  isFocusingPhraseSelector: boolean;
 }
 
 const PhraseSectionsList = (props: Props) => {
@@ -266,6 +268,8 @@ const PhraseSectionsList = (props: Props) => {
                 isSearching={props.isSearching}
                 searchText={props.searchText}
                 onFocusSearch={props.onFocusSearch}
+                scrollContainer={props.scrollContainer}
+                isFocusingPhraseSelector={props.isFocusingPhraseSelector}
               />
             );
           })}

@@ -1,9 +1,16 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useRef,
+} from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import {
   PointerTypes,
   SchemaTypes,
+  containsDiffable,
   getReferencedObject,
   makeQueryRef,
   useClientStorageApi,
@@ -15,6 +22,7 @@ import {
   useWasAdded,
   useWasRemoved,
 } from "../floro-schema-api";
+import throttle from "lodash/throttle";
 import FolderLight from "@floro/common-assets/assets/images/icons/folder.light.svg";
 import FolderDark from "@floro/common-assets/assets/images/icons/folder.dark.svg";
 
@@ -39,6 +47,21 @@ import TrashDark from "@floro/common-assets/assets/images/icons/discard.dark.svg
 import EditLight from "@floro/common-assets/assets/images/icons/edit.light.svg";
 import EditDark from "@floro/common-assets/assets/images/icons/edit.dark.svg";
 
+import FocusLight from "@floro/common-assets/assets/images/icons/focus.light.svg";
+import FocusDark from "@floro/common-assets/assets/images/icons/focus.dark.svg";
+
+import PlusLight from "@floro/common-assets/assets/images/icons/plus.light.svg";
+import PlusDark from "@floro/common-assets/assets/images/icons/plus.dark.svg";
+
+import SearchLight from "@floro/common-assets/assets/images/icons/search_glass_active.light.svg";
+import SearchDark from "@floro/common-assets/assets/images/icons/search_glass_active.dark.svg";
+
+import MinusLight from "@floro/common-assets/assets/images/icons/minus.light.svg";
+import MinusDark from "@floro/common-assets/assets/images/icons/minus.dark.svg";
+
+import ScrollToTopLight from "@floro/common-assets/assets/images/icons/scroll.to.top.light.svg";
+import ScrollToTopDark from "@floro/common-assets/assets/images/icons/scroll.to.top.dark.svg";
+
 import ColorPalette from "@floro/styles/ColorPalette";
 import { AnimatePresence, Reorder, useDragControls } from "framer-motion";
 import Button from "@floro/storybook/stories/design-system/Button";
@@ -46,11 +69,12 @@ import Checkbox from "@floro/storybook/stories/design-system/Checkbox";
 import AddPhraseModal from "../phrases/AddPhraseModal";
 import PhraseReOrderRow from "../phrases/PhraseReOrderRow";
 import PhraseRow from "../phrases/PhraseRow";
-import SearchInput from "@floro/storybook/stories/design-system/SearchInput";
 import InputSelector from "@floro/storybook/stories/design-system/InputSelector";
+import SearchInput from "@floro/storybook/stories/design-system/SearchInput";
+import { filterPhrasesOnSearch, filterPinnedPhrasesFromPhraseGroup, getPhrasesFilteredForPhraseGroup, getPhrasesGroupHasMatches } from "./filterhooks";
 
 const Container = styled.div`
-  margin-bottom: 24px;
+  border-top: 1px solid ${ColorPalette.gray};
   min-width: 1020px;
 `;
 
@@ -59,6 +83,23 @@ const TopRow = styled.div`
   flex-direction: row;
   align-items: flex-start;
   justify-content: space-between;
+  padding: 32px 48px 8px 24px;
+  height: 96px;
+`;
+
+const StickRow = styled.div`
+  position: sticky;
+  z-index: 1;
+  transition: box-shadow 100ms top 100ms;
+`;
+
+const PinPhrase = styled.p`
+  font-family: "MavenPro";
+  font-weight: 500;
+  font-size: 1.4rem;
+  color: ${(props) => props.theme.colors.contrastText};
+  padding: 0;
+  margin: 0;
 `;
 
 const FolderRow = styled.div`
@@ -186,6 +227,24 @@ const FilterUntranslated = styled.p`
   margin-left: 12px;
 `;
 
+const FocusIcon = styled.img`
+  height: 24px;
+  width: 24px;
+  cursor: pointer;
+`;
+
+const ScrollTopIcon = styled.img`
+  height: 28px;
+  width: 28px;
+  cursor: pointer;
+`;
+
+const PlusIcon = styled.img`
+  height: 28px;
+  width: 28px;
+  cursor: pointer;
+`;
+
 const colorPaletteItemVariants = {
   hidden: { opacity: 0 },
   visible: (custom: number) => ({
@@ -210,19 +269,45 @@ interface Props {
   globalFilterUntranslated: boolean;
   globalFilterRequiresUpdate: boolean;
   filterTag: string | null;
-  showOnlyPinnedPhrases: boolean;
+
   pinnedPhrases: Array<string> | null;
   setPinnedPhrases: (phraseRegs: Array<string>) => void;
   removePinnedPhrases: () => void;
   scrollContainer: HTMLDivElement;
+  showFilters?: boolean;
+  showOnlyPinnedPhrases: boolean;
+  showOnlyPinnedGroups: boolean;
+  pinnedPhrasesWithGroups: {
+    phrase: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>"];
+    phraseGroup: SchemaTypes["$(text).phraseGroups.id<?>"];
+  }[];
+  selectedGroup: string | null;
+  pinnedGroups: Array<string>|null;
+  setPinnedGroups: (groupRefs: Array<string>) => void;
 }
 
 const PhraseGroup = (props: Props) => {
   const theme = useTheme();
   const controls = useDragControls();
+  const sticky = useRef<HTMLDivElement>(null);
+  const phraseGroupContainer = useRef<HTMLDivElement>(null);
+  const scrollContainer = useRef<HTMLDivElement>(null);
 
+  const [showGroupSearch, setShowGroupSearch] = useState(false);
+  const [isFocusingSearch, setIsFocusingSearch] = useState(false);
   const [manualSearchText, setManualSearchText] = useState("");
   const [realManualSearchText, setRealManualSearchText] = useState("");
+
+
+  const hasPinnedPhrases = useMemo(() => {
+    return props.pinnedPhrasesWithGroups.filter(pinnedPhraseWithGroup => {
+      if (pinnedPhraseWithGroup.phraseGroup.id == props.phraseGroup.id) {
+        return true;
+      }
+      return false;
+    }).length > 0;
+  }, [props.pinnedPhrasesWithGroups, props.phraseGroup.id]);
+
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -230,30 +315,45 @@ const PhraseGroup = (props: Props) => {
     }, 300);
     return () => {
       clearTimeout(timeout);
-    }
-  }, [realManualSearchText])
+    };
+  }, [realManualSearchText]);
 
   useEffect(() => {
     setRealManualSearchText(props.searchText ?? "");
-  }, [props.searchText, props.selectedTopLevelLocale])
+  }, [props.searchText, props.selectedTopLevelLocale]);
 
-  const searchText = useMemo(() => {
-    return props.searchText;
-  }, [props.searchText])
-
-  const { applicationState, commandMode, compareFrom, saveState } =
-    useFloroContext();
+  const {
+    applicationState,
+    commandMode,
+    compareFrom,
+    saveState,
+    conflictSet,
+    changeset,
+  } = useFloroContext();
   const [isReOrderPhrasesMode, setIsReOrderPhrasesMode] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [showAddPhraseKey, setShowAddPhraseKey] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [filterUntranslatedForGroup, setFilterUntranslatedForGroup] =
-    useState(false);
-  const [filterRequiresUpdate, setFilterRequiresUpdate] = useState(false);
   const phraseGroupRef = useQueryRef(
     "$(text).phraseGroups.id<?>",
     props.phraseGroup.id
   );
+
+  const isPinned = useMemo(() => {
+    return !!props.pinnedGroups?.includes(phraseGroupRef);
+  }, [props.pinnedGroups, phraseGroupRef])
+
+  useEffect(() => {
+    if (props.showOnlyPinnedPhrases && isExpanded && !hasPinnedPhrases) {
+      setIsExpanded(false);
+    }
+  }, [hasPinnedPhrases, isExpanded, props.showOnlyPinnedPhrases])
+
+  useEffect(() => {
+    if (props.showOnlyPinnedGroups && isExpanded && !isPinned) {
+      setIsExpanded(false);
+    }
+  }, [isPinned, isExpanded, props.showOnlyPinnedGroups])
 
   const onShowAddPhraseKey = useCallback(() => {
     setShowAddPhraseKey(true);
@@ -267,29 +367,6 @@ const PhraseGroup = (props: Props) => {
     useClientStorageApi<PointerTypes["$(text).phraseGroups.id<?>"]>(
       "lastExpandedDir"
     );
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (
-        commandMode != "compare" &&
-        lastExpanded &&
-        phraseGroupRef == lastExpanded
-      ) {
-        setIsExpanded(true);
-      }
-    });
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, [lastExpanded, commandMode, phraseGroupRef]);
-
-  useEffect(() => {
-    setFilterUntranslatedForGroup(props.globalFilterUntranslated);
-  }, [props.globalFilterUntranslated]);
-
-  useEffect(() => {
-    setFilterRequiresUpdate(props.globalFilterRequiresUpdate);
-  }, [props.globalFilterRequiresUpdate]);
 
   const wasRemoved = useWasRemoved(phraseGroupRef, true);
   const wasAdded = useWasAdded(phraseGroupRef, true);
@@ -333,32 +410,37 @@ const PhraseGroup = (props: Props) => {
     [phraseGroup, setPhraseGroup]
   );
 
-  const onAddPhraseKey = useCallback((phrase: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>']) => {
-    if (!isExpanded) {
-      setIsExpanded(true);
-      setLastExpanded(phraseGroupRef);
-    }
-    setShowAddPhraseKey(false);
-    if (!phraseGroup?.id || !phraseGroup?.name) {
-      return;
-    }
-    const updateFn =setPhraseGroup(
-      {
-        id: phraseGroup.id,
-        name: phraseGroup.name,
-        phrases: [phrase, ...(phraseGroup?.phrases ?? [])],
-      } as SchemaTypes["$(text).phraseGroups.id<?>"],
-      false
-    );
-    if (updateFn) {
-      setTimeout(updateFn, 0);
-    }
-  }, [isExpanded, phraseGroupRef, phraseGroup?.phrases, setPhraseGroup]);
+  const onAddPhraseKey = useCallback(
+    (phrase: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>"]) => {
+      if (!isExpanded) {
+        setIsExpanded(true);
+      }
+      setShowAddPhraseKey(false);
+      if (!phraseGroup?.id || !phraseGroup?.name) {
+        return;
+      }
+      const updateFn = setPhraseGroup(
+        {
+          id: phraseGroup.id,
+          name: phraseGroup.name,
+          phrases: [phrase, ...(phraseGroup?.phrases ?? [])],
+        } as SchemaTypes["$(text).phraseGroups.id<?>"],
+        false
+      );
+      if (updateFn) {
+        setTimeout(updateFn, 0);
+      }
+    },
+    [isExpanded, phraseGroupRef, phraseGroup?.phrases, setPhraseGroup]
+  );
 
   useEffect(() => {
-    if (wasAdded || wasRemoved || hasConflict) {
+    if (hasConflict) {
       setIsExpanded(true);
     }
+    //if (wasAdded || wasRemoved || hasConflict) {
+    //  setIsExpanded(true);
+    //}
   }, [wasAdded, wasRemoved, hasConflict]);
 
   const onRemovePhrase = useCallback(
@@ -419,11 +501,32 @@ const PhraseGroup = (props: Props) => {
     return TrashDark;
   }, [theme.name]);
 
-  const editIcon = useMemo(() => {
+  const focusIcon = useMemo(() => {
     if (theme.name == "light") {
-      return EditLight;
+      return FocusLight;
     }
-    return EditDark;
+    return FocusDark;
+  }, [theme.name]);
+
+  const searchIcon = useMemo(() => {
+    if (theme.name == "light") {
+      return SearchLight;
+    }
+    return SearchDark;
+  }, [theme.name]);
+
+  const minusIcon = useMemo(() => {
+    if (theme.name == "light") {
+      return MinusLight;
+    }
+    return MinusDark;
+  }, [theme.name]);
+
+  const scrollToTopIcon = useMemo(() => {
+    if (theme.name == "light") {
+      return ScrollToTopLight;
+    }
+    return ScrollToTopDark;
   }, [theme.name]);
 
   const folderText = useMemo(() => {
@@ -448,10 +551,7 @@ const PhraseGroup = (props: Props) => {
     return ChevronDark;
   }, [theme.name]);
 
-  const isSearching = useMemo(
-    () => searchText.trim() != "",
-    [searchText]
-  );
+  const isSearching = useMemo(() => props.searchText.trim() != "", [props.searchText]);
   const isManualSearching = useMemo(
     () => manualSearchText.trim() != "",
     [manualSearchText]
@@ -465,433 +565,75 @@ const PhraseGroup = (props: Props) => {
     if (!applicationState) {
       return false;
     }
-    if (props.showOnlyPinnedPhrases && props.pinnedPhrases) {
-      for (const phrase of props.phraseGroup.phrases) {
-        const phraseRef = `${phraseGroupRef}.phrases.id<${phrase.id}>`;
-        if (props.pinnedPhrases?.includes(phraseRef)) {
-          return true;
-        }
-      }
-      return false;
-    }
-    const locale = getReferencedObject(applicationState, topLevelLocaleRef);
-    const localeSettings = getReferencedObject(
-      applicationState,
-      "$(text).localeSettings"
-    );
-    const defaultLocale = localeSettings.locales.find(
-      (l) =>
-        makeQueryRef(
-          "$(text).localeSettings.locales.localeCode<?>",
-          l.localeCode
-        ) == localeSettings.defaultLocaleRef
-    );
-    const translateFromLocale = locale.defaultTranslateFromLocaleRef
-      ? getReferencedObject(
-          applicationState,
-          locale.defaultTranslateFromLocaleRef
-        )
-      : defaultLocale;
-    const translateFromLocaleRef = makeQueryRef(
-      "$(text).localeSettings.locales.localeCode<?>",
-      translateFromLocale?.localeCode as string
-    );
-    const shouldSkipUpdates =
-      topLevelLocaleRef == locale.defaultTranslateFromLocaleRef &&
-      (!locale.defaultTranslateFromLocaleRef ||
-        locale.defaultFallbackLocaleRef == translateFromLocaleRef);
-    if (!isSearching) {
-      const filteredPhrases = props?.phraseGroup?.phrases
-        ?.filter((phrase) => {
-          if (props.filterTag) {
-            return phrase.tags.includes(props.filterTag);
-          }
-          return true;
-        })
-        ?.filter((phrase) => {
-          if (!filterUntranslatedForGroup) {
-            return true;
-          }
-          const phraseRef = `${phraseGroupRef}.phrases.id<${phrase.id}>`;
-          if (props.pinnedPhrases?.includes(phraseRef)) {
-            return true;
-          }
-          if (!phrase.usePhraseSections) {
-            for (let localeGroup of phrase.phraseTranslations ?? []) {
-              if (localeGroup.id != topLevelLocaleRef) {
-                continue;
-              }
-              if ((localeGroup.plainText ?? "").trim() == "") {
-                return true;
-              }
-            }
-          } else {
-            for (let phraseSection of phrase?.phraseSections ?? []) {
-              if ((phraseSection.name ?? "").trim() == "") {
-                return true;
-              }
-              for (let translation of phraseSection.localeRules ?? []) {
-                if (translation.id != topLevelLocaleRef) {
-                  continue;
-                }
-                if ((translation.displayValue.plainText ?? "").trim() == "") {
-                  return true;
-                }
-                if ((translation.displayValue.plainText ?? "").trim() == "") {
-                  return true;
-                }
-              }
-            }
-          }
-
-          for (let styledContent of phrase?.styledContents ?? []) {
-            if ((styledContent.name ?? "").trim() == "") {
-              return true;
-            }
-            for (let translation of styledContent.localeRules ?? []) {
-              if (translation.id != topLevelLocaleRef) {
-                continue;
-              }
-              if ((translation.displayValue.plainText ?? "").trim() == "") {
-                return true;
-              }
-              if ((translation.displayValue.plainText ?? "").trim() == "") {
-                return true;
-              }
-            }
-          }
-
-          for (let linkVariable of phrase?.linkVariables ?? []) {
-            if ((linkVariable.linkName ?? "").trim() == "") {
-              return true;
-            }
-            for (let translation of linkVariable.translations ?? []) {
-              if (translation.id != topLevelLocaleRef) {
-                continue;
-              }
-              if ((translation.linkDisplayValue.plainText ?? "").trim() == "") {
-                return true;
-              }
-              if ((translation.linkHrefValue.plainText ?? "").trim() == "") {
-                return true;
-              }
-            }
-          }
-          for (let variant of phrase?.interpolationVariants ?? []) {
-            for (let translation of variant?.localeRules ?? []) {
-              if (translation.id != topLevelLocaleRef) {
-                continue;
-              }
-              if ((translation.defaultValue?.plainText ?? "").trim() == "") {
-                return true;
-              }
-
-              for (let conditional of translation.conditionals ?? []) {
-                if ((conditional?.resultant?.plainText ?? "").trim() == "") {
-                  return true;
-                }
-              }
-            }
-          }
-          return false;
-        })
-        ?.filter((phrase) => {
-          if (!filterRequiresUpdate) {
-            return true;
-          }
-          if (shouldSkipUpdates) {
-            return false;
-          }
-
-          if (phrase.usePhraseSections) {
-            for (let phraseSection of phrase?.phraseSections ?? []) {
-              if ((phraseSection.name ?? "").trim() == "") {
-                return true;
-              }
-              for (let translation of phraseSection.localeRules ?? []) {
-                if (translation.id != topLevelLocaleRef) {
-                  continue;
-                }
-                const translateFromDisplayValue = phraseSection.localeRules.find(
-                  (l) => l.id == translateFromLocaleRef
-                );
-                if (
-                  (translation?.displayValue?.sourceAtRevision?.json ?? "{}") !=
-                  (translateFromDisplayValue?.displayValue?.json ??
-                    "{}")
-                ) {
-                  return true;
-                }
-              }
-            }
-          } else {
-            for (let localeGroup of phrase.phraseTranslations ?? []) {
-              if (localeGroup.id != topLevelLocaleRef) {
-                continue;
-              }
-              const translateFrom = phrase.phraseTranslations.find(
-                (l) => l.id == translateFromLocaleRef
-              );
-              if (
-                (localeGroup?.sourceAtRevision?.json ?? "{}") !=
-                (translateFrom?.json ?? "{}")
-              ) {
-                return true;
-              }
-            }
-          }
-
-          for (let linkVariable of phrase?.linkVariables ?? []) {
-            if ((linkVariable.linkName ?? "").trim() == "") {
-              return true;
-            }
-            for (let translation of linkVariable.translations ?? []) {
-              if (translation.id != topLevelLocaleRef) {
-                continue;
-              }
-              const translateFromDisplayValue = linkVariable.translations.find(
-                (l) => l.id == translateFromLocaleRef
-              );
-              if (
-                (translation.linkDisplayValue?.sourceAtRevision?.json ?? "{}") !=
-                (translateFromDisplayValue?.linkDisplayValue?.json ??
-                  "{}")
-              ) {
-                return true;
-              }
-              const translateFromHrefValue = linkVariable.translations.find(
-                (l) => l.id == translateFromLocaleRef
-              );
-              if (
-                (translation?.linkHrefValue?.sourceAtRevision?.json ?? "{}") !=
-                (translateFromHrefValue?.linkHrefValue?.json ?? "{}")
-              ) {
-                return true;
-              }
-            }
-          }
-          for (let variant of phrase?.interpolationVariants ?? []) {
-            for (let translation of variant?.localeRules ?? []) {
-              if (translation.id != topLevelLocaleRef) {
-                continue;
-              }
-              const translateFrom = variant?.localeRules.find(
-                (l) => l.id == translateFromLocaleRef
-              );
-              if (
-                (translation?.defaultValue?.sourceAtRevision?.json ?? "{}") !=
-                (translateFrom?.defaultValue?.json ?? "{}")
-              ) {
-                return true;
-              }
-            }
-          }
-          for (let styledContent of phrase?.styledContents ?? []) {
-            for (let translation of styledContent?.localeRules ?? []) {
-              if (translation.id != topLevelLocaleRef) {
-                continue;
-              }
-              const translateFrom = styledContent?.localeRules.find(
-                (l) => l.id == translateFromLocaleRef
-              );
-              if (
-                (translation?.displayValue?.sourceAtRevision?.json ?? "{}") !=
-                (translateFrom?.displayValue?.json ?? "{}")
-              ) {
-                return true;
-              }
-            }
-          }
-          return false;
-        });
-      if (
-        props.filterTag ||
-        filterUntranslatedForGroup ||
-        filterRequiresUpdate
-      ) {
-        return filteredPhrases.length > 0;
-      }
-      return false;
-    }
-    const filteredPhrases = props?.phraseGroup?.phrases?.filter((phrase) => {
-      if (props.filterTag) {
-        return phrase.tags.includes(props.filterTag);
-      }
-      return true;
-    });
-
-    for (const phrase of filteredPhrases ?? []) {
-      if (
-        (phrase?.phraseKey ?? "")
-          ?.toLowerCase()
-          .indexOf(searchText.toLowerCase().trim()) != -1 ||
-        (phrase?.description?.value ?? "")
-          ?.toLowerCase()
-          .indexOf(searchText.toLowerCase().trim()) != -1
-      ) {
-        return true;
-      }
-      if (phrase.usePhraseSections) {
-        for (let phraseSection of phrase?.phraseSections ?? []) {
-          if (
-            (phraseSection.name ?? "")
-              ?.toLowerCase()
-              .indexOf(searchText.toLowerCase().trim()) != -1
-          ) {
-            return true;
-          }
-          for (let translation of phraseSection.localeRules ?? []) {
-            if (translation.id != topLevelLocaleRef) {
-              continue;
-            }
-            if (
-              (translation.displayValue.plainText ?? "")
-                ?.toLowerCase()
-                .indexOf(searchText.toLowerCase().trim()) != -1
-            ) {
-              return true;
-            }
-          }
-        }
-      } else {
-        for (let localeGroup of phrase.phraseTranslations ?? []) {
-          if (localeGroup.id != topLevelLocaleRef) {
-            continue;
-          }
-          if (
-            (localeGroup.plainText ?? "")
-              ?.toLowerCase()
-              .indexOf(searchText.toLowerCase().trim()) != -1
-          ) {
-            return true;
-          }
-        }
-      }
-      for (let variable of phrase?.variables ?? []) {
-        if (
-          (variable.name ?? "")
-            ?.toLowerCase()
-            .indexOf(searchText.toLowerCase().trim()) != -1
-        ) {
-          return true;
-        }
-      }
-      for (let contentVariable of phrase?.contentVariables ?? []) {
-        if (
-          (contentVariable.name ?? "")
-            ?.toLowerCase()
-            .indexOf(searchText.toLowerCase().trim()) != -1
-        ) {
-          return true;
-        }
-      }
-      for (let styleClass of phrase?.styleClasses ?? []) {
-        if (
-          (styleClass.name ?? "")
-            ?.toLowerCase()
-            .indexOf(searchText.toLowerCase().trim()) != -1
-        ) {
-          return true;
-        }
-      }
-
-      for (let styledContent of phrase?.styledContents ?? []) {
-        if (
-          (styledContent.name ?? "")
-            ?.toLowerCase()
-            .indexOf(searchText.toLowerCase().trim()) != -1
-        ) {
-          return true;
-        }
-        for (let translation of styledContent.localeRules ?? []) {
-          if (translation.id != topLevelLocaleRef) {
-            continue;
-          }
-          if (
-            (translation.displayValue.plainText ?? "")
-              ?.toLowerCase()
-              .indexOf(searchText.toLowerCase().trim()) != -1
-          ) {
-            return true;
-          }
-        }
-      }
-      for (let linkVariable of phrase?.linkVariables ?? []) {
-        if (
-          (linkVariable.linkName ?? "")
-            ?.toLowerCase()
-            .indexOf(searchText.toLowerCase().trim()) != -1
-        ) {
-          return true;
-        }
-        for (let translation of linkVariable.translations ?? []) {
-          if (translation.id != topLevelLocaleRef) {
-            continue;
-          }
-          if (
-            (translation.linkDisplayValue.plainText ?? "")
-              ?.toLowerCase()
-              .indexOf(searchText.toLowerCase().trim()) != -1
-          ) {
-            return true;
-          }
-          if (
-            (translation.linkHrefValue.plainText ?? "")
-              ?.toLowerCase()
-              .indexOf(searchText.toLowerCase().trim()) != -1
-          ) {
-            return true;
-          }
-        }
-      }
-      for (let variant of phrase?.interpolationVariants ?? []) {
-        for (let translation of variant?.localeRules ?? []) {
-          if (translation.id != topLevelLocaleRef) {
-            continue;
-          }
-          if (
-            (translation.defaultValue?.plainText ?? "")
-              ?.toLowerCase()
-              .indexOf(searchText.toLowerCase().trim()) != -1
-          ) {
-            return true;
-          }
-
-          for (let conditional of translation.conditionals ?? []) {
-            if (
-              (conditional?.resultant?.plainText ?? "")
-                ?.toLowerCase()
-                .indexOf(searchText.toLowerCase().trim()) != -1
-            ) {
-              return true;
-            }
-          }
-        }
-      }
-    }
-    return false;
+    return getPhrasesGroupHasMatches(
+        applicationState,
+        phraseGroupRef,
+        phrases,
+        topLevelLocaleRef,
+        props.pinnedPhrases,
+        props.showOnlyPinnedPhrases,
+        props.filterTag,
+        props.globalFilterRequiresUpdate,
+        props.globalFilterUntranslated,
+        props.searchText
+    )
   }, [
     applicationState,
-    searchText,
+    props.searchText,
     topLevelLocaleRef,
     props?.phraseGroup?.phrases,
     isSearching,
     props.filterTag,
-    filterUntranslatedForGroup,
-    filterRequiresUpdate,
+    props.globalFilterRequiresUpdate,
+    props.globalFilterUntranslated,
     props.showOnlyPinnedPhrases,
     props.selectedTopLevelLocale,
     props.pinnedPhrases,
   ]);
+  const isMounted = useRef(true);
+  useEffect(
+    () => () => {
+      isMounted.current = false;
+    },
+    []
+  );
+
+  const [dimissedUntraslated, setDismissedUntranslated] = useState<Array<string>>([]);
+  const [dimissedNeedsUpdate, setDismissedNeedsUpdate] = useState<Array<string>>([]);
+
+  const onFocusPhraseGroup = useCallback(() => {
+    setTimeout(() => {
+      if (phraseGroupContainer.current) {
+        const filtersAdjust = props.showFilters ? 132 : 0;
+        props.scrollContainer.scrollTo({
+          left: 0,
+          top: phraseGroupContainer.current.offsetTop - (236 + filtersAdjust),
+          behavior: "smooth",
+        });
+      }
+    }, 50);
+  }, [props.showFilters]);
+
+  const onScrollTop = useCallback(() => {
+    scrollContainer?.current?.scrollTo?.({left: 0, top: 0});
+  }, [props.showFilters]);
 
   const onToggle = useCallback(() => {
     if (!isExpanded) {
-      setLastExpanded(phraseGroupRef);
-    } else if (phraseGroupRef == lastExpanded) {
-      setLastExpanded(null);
+      onFocusPhraseGroup();
+    } else {
+      props.scrollContainer?.scrollTo?.({left: 0, top: 0, behavior: "smooth"});
     }
     setIsExpanded(!isExpanded);
-  }, [isExpanded, phraseGroupRef, setLastExpanded, lastExpanded]);
+  }, [
+    props.scrollContainer,
+    onFocusPhraseGroup,
+    props.showFilters,
+    isExpanded,
+    phraseGroupRef,
+    setLastExpanded,
+    lastExpanded,
+  ]);
 
   const onReOrderPhrases = useCallback(
     (values: SchemaTypes["$(text).phraseGroups.id<?>.phrases"]) => {
@@ -923,395 +665,18 @@ const PhraseGroup = (props: Props) => {
       if (!applicationState) {
         return phrases;
       }
-      if (props.showOnlyPinnedPhrases && props.pinnedPhrases) {
-        return phrases?.filter((phrase) => {
-          const phraseRef = `${phraseGroupRef}.phrases.id<${phrase.id}>`;
-          return props.pinnedPhrases?.includes(phraseRef);
-        });
-      }
-      const locale = getReferencedObject(applicationState, topLevelLocaleRef);
-      const localeSettings = getReferencedObject(
-        applicationState,
-        "$(text).localeSettings"
+      return getPhrasesFilteredForPhraseGroup(
+          applicationState,
+          phraseGroupRef,
+          phrases,
+          topLevelLocaleRef,
+          props.pinnedPhrases,
+          props.showOnlyPinnedPhrases,
+          props.filterTag,
+          props.globalFilterRequiresUpdate,
+          props.globalFilterUntranslated,
+          props.searchText
       );
-      const defaultLocale = localeSettings.locales.find(
-        (l) =>
-          makeQueryRef(
-            "$(text).localeSettings.locales.localeCode<?>",
-            l.localeCode
-          ) == localeSettings.defaultLocaleRef
-      );
-      const translateFromLocale = locale.defaultTranslateFromLocaleRef
-        ? getReferencedObject(
-            applicationState,
-            locale.defaultTranslateFromLocaleRef
-          )
-        : defaultLocale;
-      const translateFromLocaleRef = makeQueryRef(
-        "$(text).localeSettings.locales.localeCode<?>",
-        translateFromLocale?.localeCode as string
-      );
-      const shouldSkipUpdates =
-        topLevelLocaleRef == locale.defaultTranslateFromLocaleRef &&
-        (!locale.defaultTranslateFromLocaleRef ||
-          locale.defaultFallbackLocaleRef == translateFromLocaleRef);
-      return phrases
-        ?.filter((phrase) => {
-          if (props.filterTag) {
-            return phrase.tags.includes(props.filterTag);
-          }
-          return true;
-        })
-        ?.filter((phrase) => {
-          if (props.filterTag) {
-            return phrase.tags.includes(props.filterTag);
-          }
-          return true;
-        })
-        ?.filter((phrase) => {
-          if (!filterUntranslatedForGroup) {
-            return true;
-          }
-          const phraseRef = `${phraseGroupRef}.phrases.id<${phrase.id}>`;
-          if (props.pinnedPhrases?.includes(phraseRef)) {
-            return true;
-          }
-          if (phrase.usePhraseSections) {
-            for (let phraseSection of phrase?.phraseSections ?? []) {
-              if ((phraseSection.name ?? "").trim() == "") {
-                return true;
-              }
-              for (let translation of phraseSection.localeRules ?? []) {
-                if (translation.id != topLevelLocaleRef) {
-                  continue;
-                }
-                if ((translation.displayValue.plainText ?? "").trim() == "") {
-                  return true;
-                }
-                if ((translation.displayValue.plainText ?? "").trim() == "") {
-                  return true;
-                }
-              }
-            }
-
-          } else {
-            for (let localeGroup of phrase.phraseTranslations ?? []) {
-              if (localeGroup.id != topLevelLocaleRef) {
-                continue;
-              }
-              if ((localeGroup.plainText ?? "").trim() == "") {
-                return true;
-              }
-            }
-          }
-
-          for (let linkVariable of phrase?.linkVariables ?? []) {
-            if ((linkVariable.linkName ?? "").trim() == "") {
-              return true;
-            }
-            for (let translation of linkVariable.translations ?? []) {
-              if (translation.id != topLevelLocaleRef) {
-                continue;
-              }
-              if ((translation.linkDisplayValue.plainText ?? "").trim() == "") {
-                return true;
-              }
-              if ((translation.linkHrefValue.plainText ?? "").trim() == "") {
-                return true;
-              }
-            }
-          }
-          for (let variant of phrase?.interpolationVariants ?? []) {
-            for (let translation of variant?.localeRules ?? []) {
-              if (translation.id != topLevelLocaleRef) {
-                continue;
-              }
-              if ((translation.defaultValue?.plainText ?? "").trim() == "") {
-                return true;
-              }
-
-              for (let conditional of translation.conditionals ?? []) {
-                if ((conditional?.resultant?.plainText ?? "").trim() == "") {
-                  return true;
-                }
-              }
-            }
-          }
-          for (let styledContent of phrase?.styledContents ?? []) {
-            for (let translation of styledContent?.localeRules ?? []) {
-              if (translation.id != topLevelLocaleRef) {
-                continue;
-              }
-              if ((translation.displayValue?.plainText ?? "").trim() == "") {
-                return true;
-              }
-            }
-          }
-          return false;
-        })
-        ?.filter((phrase) => {
-          if (!filterRequiresUpdate) {
-            return true;
-          }
-          if (shouldSkipUpdates) {
-            return false;
-          }
-          if (phrase.usePhraseSections) {
-            for (let phraseSection of phrase?.phraseSections ?? []) {
-              if ((phraseSection.name ?? "").trim() == "") {
-                return true;
-              }
-              for (let translation of phraseSection.localeRules ?? []) {
-                if (translation.id != topLevelLocaleRef) {
-                  continue;
-                }
-                const translateFromDisplayValue = phraseSection.localeRules.find(
-                  (l) => l.id == translateFromLocaleRef
-                );
-                if (
-                  (translation?.displayValue?.sourceAtRevision?.json ?? "{}") !=
-                  (translateFromDisplayValue?.displayValue?.json ??
-                    "{}")
-                ) {
-                  return true;
-                }
-              }
-            }
-          } else {
-            for (let localeGroup of phrase.phraseTranslations ?? []) {
-              if (localeGroup.id != topLevelLocaleRef) {
-                continue;
-              }
-              const translateFrom = phrase.phraseTranslations.find(
-                (l) => l.id == translateFromLocaleRef
-              );
-              if (
-                (localeGroup?.sourceAtRevision?.json ?? "{}") !=
-                (translateFrom?.json ?? "{}")
-              ) {
-                return true;
-              }
-            }
-          }
-
-          for (let linkVariable of phrase?.linkVariables ?? []) {
-            if ((linkVariable.linkName ?? "").trim() == "") {
-              return true;
-            }
-            for (let translation of linkVariable.translations ?? []) {
-              if (translation.id != topLevelLocaleRef) {
-                continue;
-              }
-              const translateFromDisplayValue = linkVariable.translations.find(
-                (l) => l.id == translateFromLocaleRef
-              );
-              if (
-                (translation?.linkDisplayValue?.sourceAtRevision?.json ?? "{}") !=
-                (translateFromDisplayValue?.linkDisplayValue?.json ??
-                  "{}")
-              ) {
-                return true;
-              }
-              const translateFromHrefValue = linkVariable.translations.find(
-                (l) => l.id == translateFromLocaleRef
-              );
-              if (
-                (translation?.linkHrefValue?.sourceAtRevision?.json ?? "{}") !=
-                (translateFromHrefValue?.linkHrefValue?.json ?? "{}")
-              ) {
-                return true;
-              }
-            }
-          }
-          for (let variant of phrase?.interpolationVariants ?? []) {
-            for (let translation of variant?.localeRules ?? []) {
-              if (translation.id != topLevelLocaleRef) {
-                continue;
-              }
-              const translateFrom = variant?.localeRules.find(
-                (l) => l.id == translateFromLocaleRef
-              );
-              if (
-                (translation?.defaultValue?.sourceAtRevision?.json ?? "{}") !=
-                (translateFrom?.defaultValue?.json ?? "{}")
-              ) {
-                return true;
-              }
-            }
-          }
-          for (let styledContent of phrase?.styledContents ?? []) {
-            for (let translation of styledContent?.localeRules ?? []) {
-              if (translation.id != topLevelLocaleRef) {
-                continue;
-              }
-              const translateFrom = styledContent?.localeRules.find(
-                (l) => l.id == translateFromLocaleRef
-              );
-              if (
-                (translation?.displayValue?.sourceAtRevision?.json ?? "{}") !=
-                (translateFrom?.displayValue?.json ?? "{}")
-              ) {
-                return true;
-              }
-            }
-          }
-          return false;
-        })
-        .filter?.((phrase) => {
-          if (!phrase?.phraseKey) {
-            return false;
-          }
-          if (
-            (phrase?.phraseKey ?? "")
-              ?.toLowerCase()
-              .indexOf(searchText.toLowerCase().trim()) != -1 ||
-            (phrase?.description?.value ?? "")
-              ?.toLowerCase()
-              .indexOf(searchText.toLowerCase().trim()) != -1
-          ) {
-            return true;
-          }
-          if (phrase.usePhraseSections) {
-            for (let phraseSection of phrase?.phraseSections ?? []) {
-              if (
-                (phraseSection.name ?? "")
-                  ?.toLowerCase()
-                  .indexOf(searchText.toLowerCase().trim()) != -1
-              ) {
-                return true;
-              }
-              for (let localeRule of phraseSection.localeRules ?? []) {
-                if (localeRule.id != topLevelLocaleRef) {
-                  continue;
-                }
-                if (
-                  (localeRule?.displayValue?.plainText ?? "")
-                    ?.toLowerCase()
-                    .indexOf(searchText.toLowerCase().trim()) != -1
-                ) {
-                  return true;
-                }
-              }
-            }
-          } else {
-            for (let localeGroup of phrase?.phraseTranslations ?? []) {
-              if (localeGroup.id != topLevelLocaleRef) {
-                continue;
-              }
-              if (
-                (localeGroup.plainText ?? "")
-                  ?.toLowerCase()
-                  .indexOf(searchText.toLowerCase().trim()) != -1
-              ) {
-                return true;
-              }
-            }
-          }
-          for (let variable of phrase?.variables ?? []) {
-            if (
-              (variable.name ?? "")
-                ?.toLowerCase()
-                .indexOf(searchText.toLowerCase().trim()) != -1
-            ) {
-              return true;
-            }
-          }
-          for (let contentVariable of phrase?.contentVariables ?? []) {
-            if (
-              (contentVariable.name ?? "")
-                ?.toLowerCase()
-                .indexOf(searchText.toLowerCase().trim()) != -1
-            ) {
-              return true;
-            }
-          }
-          for (let styleClass of phrase?.styleClasses ?? []) {
-            if (
-              (styleClass.name ?? "")
-                ?.toLowerCase()
-                .indexOf(searchText.toLowerCase().trim()) != -1
-            ) {
-              return true;
-            }
-          }
-          for (let linkVariable of phrase?.linkVariables ?? []) {
-            if (
-              (linkVariable.linkName ?? "")
-                ?.toLowerCase()
-                .indexOf(searchText.toLowerCase().trim()) != -1
-            ) {
-              return true;
-            }
-            for (let translation of linkVariable.translations ?? []) {
-              if (translation.id != topLevelLocaleRef) {
-                continue;
-              }
-              if (
-                (translation?.linkDisplayValue?.plainText ?? "")
-                  ?.toLowerCase()
-                  .indexOf(searchText.toLowerCase().trim()) != -1
-              ) {
-                return true;
-              }
-              if (
-                (translation?.linkHrefValue?.plainText ?? "")
-                  ?.toLowerCase()
-                  .indexOf(searchText.toLowerCase().trim()) != -1
-              ) {
-                return true;
-              }
-            }
-          }
-
-          for (let styledContent of phrase?.styledContents ?? []) {
-            if (
-              (styledContent.name ?? "")
-                ?.toLowerCase()
-                .indexOf(searchText.toLowerCase().trim()) != -1
-            ) {
-              return true;
-            }
-            for (let localeRule of styledContent?.localeRules ?? []) {
-              if (localeRule.id != topLevelLocaleRef) {
-                continue;
-              }
-              if (
-                (localeRule.displayValue?.plainText ?? "")
-                  ?.toLowerCase()
-                  .indexOf(searchText.toLowerCase().trim()) != -1
-              ) {
-                return true;
-              }
-            }
-          }
-
-
-          for (let variant of phrase?.interpolationVariants ?? []) {
-            for (let translation of variant?.localeRules ?? []) {
-              if (translation.id != topLevelLocaleRef) {
-                continue;
-              }
-              if (
-                (translation.defaultValue?.plainText ?? "")
-                  ?.toLowerCase()
-                  .indexOf(searchText.toLowerCase().trim()) != -1
-              ) {
-                return true;
-              }
-
-              for (let conditional of translation.conditionals ?? []) {
-                if (
-                  (conditional?.resultant?.plainText ?? "")
-                    ?.toLowerCase()
-                    .indexOf(searchText.toLowerCase().trim()) != -1
-                ) {
-                  return true;
-                }
-              }
-            }
-          }
-          return false;
-        });
     }
     return [];
   }, [
@@ -1319,184 +684,38 @@ const PhraseGroup = (props: Props) => {
     isDisplayingPhrases,
     topLevelLocaleRef,
     phrases,
-    searchText,
+    props.searchText,
     props.filterTag,
-    filterUntranslatedForGroup,
-    filterRequiresUpdate,
+    props.globalFilterRequiresUpdate,
+    props.globalFilterUntranslated,
     props.showOnlyPinnedPhrases,
     props.pinnedPhrases,
-    props.selectedTopLevelLocale
+    props.selectedTopLevelLocale,
   ]);
 
   const manualPhrasesToRender = useMemo(() => {
     if (!isManualSearching || !applicationState) {
       return phrasesToRender;
     }
-    return phrasesToRender.filter((phrase) => {
-          if (
-            (phrase?.phraseKey ?? "")
-              ?.toLowerCase()
-              .indexOf(manualSearchText.toLowerCase().trim()) != -1 ||
-            (phrase?.description?.value ?? "")
-              ?.toLowerCase()
-              .indexOf(manualSearchText.toLowerCase().trim()) != -1
-          ) {
-            return true;
-          }
-          if (phrase.usePhraseSections) {
-            for (let phraseSection of phrase?.phraseSections ?? []) {
-              if (
-                (phraseSection.name ?? "")
-                  ?.toLowerCase()
-                  .indexOf(manualSearchText.toLowerCase().trim()) != -1
-              ) {
-                return true;
-              }
-              for (let localeRule of phraseSection.localeRules ?? []) {
-                if (localeRule.id != topLevelLocaleRef) {
-                  continue;
-                }
-                if (
-                  (localeRule?.displayValue?.plainText ?? "")
-                    ?.toLowerCase()
-                    .indexOf(manualSearchText.toLowerCase().trim()) != -1
-                ) {
-                  return true;
-                }
-              }
-            }
-          } else {
-            for (let localeGroup of phrase?.phraseTranslations ?? []) {
-              if (localeGroup.id != topLevelLocaleRef) {
-                continue;
-              }
-              if (
-                (localeGroup.plainText ?? "")
-                  ?.toLowerCase()
-                  .indexOf(manualSearchText.toLowerCase().trim()) != -1
-              ) {
-                return true;
-              }
-            }
-          }
-          for (let variable of phrase?.variables ?? []) {
-            if (
-              (variable.name ?? "")
-                ?.toLowerCase()
-                .indexOf(manualSearchText.toLowerCase().trim()) != -1
-            ) {
-              return true;
-            }
-          }
-          for (let contentVariable of phrase?.contentVariables ?? []) {
-            if (
-              (contentVariable.name ?? "")
-                ?.toLowerCase()
-                .indexOf(manualSearchText.toLowerCase().trim()) != -1
-            ) {
-              return true;
-            }
-          }
-          for (let styleClass of phrase?.styleClasses ?? []) {
-            if (
-              (styleClass.name ?? "")
-                ?.toLowerCase()
-                .indexOf(manualSearchText.toLowerCase().trim()) != -1
-            ) {
-              return true;
-            }
-          }
-          for (let linkVariable of phrase?.linkVariables ?? []) {
-            if (
-              (linkVariable.linkName ?? "")
-                ?.toLowerCase()
-                .indexOf(manualSearchText.toLowerCase().trim()) != -1
-            ) {
-              return true;
-            }
-            for (let translation of linkVariable.translations ?? []) {
-              if (translation.id != topLevelLocaleRef) {
-                continue;
-              }
-              if (
-                (translation?.linkDisplayValue?.plainText ?? "")
-                  ?.toLowerCase()
-                  .indexOf(manualSearchText.toLowerCase().trim()) != -1
-              ) {
-                return true;
-              }
-              if (
-                (translation?.linkHrefValue?.plainText ?? "")
-                  ?.toLowerCase()
-                  .indexOf(manualSearchText.toLowerCase().trim()) != -1
-              ) {
-                return true;
-              }
-            }
-          }
-
-          for (let styledContent of phrase?.styledContents ?? []) {
-            if (
-              (styledContent.name ?? "")
-                ?.toLowerCase()
-                .indexOf(manualSearchText.toLowerCase().trim()) != -1
-            ) {
-              return true;
-            }
-            for (let localeRule of styledContent?.localeRules ?? []) {
-              if (localeRule.id != topLevelLocaleRef) {
-                continue;
-              }
-              if (
-                (localeRule.displayValue?.plainText ?? "")
-                  ?.toLowerCase()
-                  .indexOf(manualSearchText.toLowerCase().trim()) != -1
-              ) {
-                return true;
-              }
-            }
-          }
-
-          for (let variant of phrase?.interpolationVariants ?? []) {
-            for (let translation of variant?.localeRules ?? []) {
-              if (translation.id != topLevelLocaleRef) {
-                continue;
-              }
-              if (
-                (translation.defaultValue?.plainText ?? "")
-                  ?.toLowerCase()
-                  .indexOf(manualSearchText.toLowerCase().trim()) != -1
-              ) {
-                return true;
-              }
-
-              for (let conditional of translation.conditionals ?? []) {
-                if (
-                  (conditional?.resultant?.plainText ?? "")
-                    ?.toLowerCase()
-                    .indexOf(manualSearchText.toLowerCase().trim()) != -1
-                ) {
-                  return true;
-                }
-              }
-            }
-          }
-          return false;
-    });
+    return filterPhrasesOnSearch(phrasesToRender, topLevelLocaleRef, manualSearchText);
   }, [
+    props.pinnedPhrases,
+    props.showOnlyPinnedPhrases,
     applicationState,
     topLevelLocaleRef,
     phrasesToRender,
     isManualSearching,
     manualSearchText,
-    props.selectedTopLevelLocale
+    props.selectedTopLevelLocale,
   ]);
 
   const [renderLimit, setRenderLimit] = useState(RENDER_CONSTANT);
+  const [isFocusingPhraseSelector, setIsFocusingPhraseSelector] =
+    useState(false);
 
   useEffect(() => {
     setRenderLimit(RENDER_CONSTANT);
-  }, [searchText, props.selectedTopLevelLocale]);
+  }, [props.searchText, props.selectedTopLevelLocale]);
 
   useEffect(() => {
     if (isDisplayingPhrases) {
@@ -1517,22 +736,72 @@ const PhraseGroup = (props: Props) => {
         setRenderLimit(RENDER_CONSTANT);
       }
     }
-  }, [isDisplayingPhrases, manualPhrasesToRender, renderLimit, isReOrderPhrasesMode]);
+  }, [
+    isDisplayingPhrases,
+    manualPhrasesToRender,
+    renderLimit,
+    isReOrderPhrasesMode,
+  ]);
 
   // this allows us to edit searched results
   const memoryLeakedPhrasesToRender = useMemo(() => {
     return manualPhrasesToRender;
-  }, [props.searchText, props.selectedTopLevelLocale, manualSearchText, props.filterTag, phrases.length])
+  }, [
+    props.pinnedPhrases,
+    props.showOnlyPinnedPhrases,
+    props.searchText,
+    props.selectedTopLevelLocale,
+    manualSearchText,
+    props.filterTag,
+    phrases.length,
+    isExpanded,
+    props.globalFilterRequiresUpdate,
+    props.globalFilterUntranslated,
+  ]);
 
   const renderLimitedPhrases = useMemo(() => {
     if (isReOrderPhrasesMode) {
       return phrasesToRender;
     }
-    if (!isSearching && !isManualSearching) {
+    if (!isSearching && !isManualSearching && !props.globalFilterRequiresUpdate && !props.globalFilterUntranslated) {
       return phrasesToRender.slice(0, renderLimit);
     }
-    return memoryLeakedPhrasesToRender.slice(0, renderLimit);
-  }, [phrasesToRender, memoryLeakedPhrasesToRender, isSearching, props.selectedTopLevelLocale, isManualSearching, renderLimit, isReOrderPhrasesMode]);
+    return memoryLeakedPhrasesToRender.slice(0, renderLimit).filter(phrase => {
+      if (!phrase?.id) {
+        return false;
+      }
+      if (dimissedNeedsUpdate.includes(phrase.id)) {
+        return false;
+      }
+      if (dimissedUntraslated.includes(phrase.id)) {
+        return false;
+      }
+      return true;
+    });
+  }, [
+    phrasesToRender,
+    memoryLeakedPhrasesToRender,
+    isSearching,
+    props.selectedTopLevelLocale,
+    isManualSearching,
+    renderLimit,
+    isReOrderPhrasesMode,
+    dimissedUntraslated,
+    dimissedNeedsUpdate
+  ]);
+
+
+  useEffect(() => {
+    if (props.globalFilterUntranslated) {
+      setDismissedUntranslated([]);
+    }
+  }, [props.globalFilterUntranslated, memoryLeakedPhrasesToRender])
+
+  useEffect(() => {
+    if (props.globalFilterRequiresUpdate) {
+      setDismissedNeedsUpdate([]);
+    }
+  }, [memoryLeakedPhrasesToRender])
 
   useEffect(() => {
     if (isSearching && isReOrderPhrasesMode) {
@@ -1559,14 +828,6 @@ const PhraseGroup = (props: Props) => {
   const hasAnyRemovals = useWasRemoved("$(text).phraseGroups", true);
   const hasAnyAdditions = useWasAdded("$(text).phraseGroups", true);
 
-  const onToggleFilterUntranslated = useCallback(() => {
-    setFilterUntranslatedForGroup(!filterUntranslatedForGroup);
-  }, [filterUntranslatedForGroup]);
-
-  const onToggleFilterRequiresUpdate = useCallback(() => {
-    setFilterRequiresUpdate(!filterRequiresUpdate);
-  }, [filterRequiresUpdate]);
-
   useEffect(() => {
     if (isSearching && hasSearchMatches) {
       setIsExpanded(true);
@@ -1574,23 +835,48 @@ const PhraseGroup = (props: Props) => {
   }, [isSearching, hasSearchMatches]);
 
   useEffect(() => {
+    if (!isExpanded) {
+      setIsFocusingPhraseSelector(false);
+    }
+  }, [isExpanded]);
+
+  useEffect(() => {
     if (isReOrderPhrasesMode && commandMode != "edit") {
-      setIsReOrderPhrasesMode(false)
+      setIsReOrderPhrasesMode(false);
     }
-
-  }, [isReOrderPhrasesMode, commandMode])
+  }, [isReOrderPhrasesMode, commandMode]);
 
   useEffect(() => {
-    if (searchText == "" && !props.showOnlyPinnedPhrases && isExpanded) {
+    if (props.searchText == "" && !props.showOnlyPinnedPhrases && isExpanded) {
       setIsExpanded(false);
+      props?.scrollContainer?.scrollTo?.({left: 0, top: 0, behavior: "smooth"});
     }
-  }, [searchText])
+  }, [
+    props.searchText,
+    props.showOnlyPinnedPhrases,
+    props.filterTag,
+    //filterRequiresUpdate,
+    //filterUntranslatedForGroup,
+    //phrasesToRender.length,
+  ]);
 
   useEffect(() => {
-    if (searchText == "" && props.showOnlyPinnedPhrases && !isExpanded && phrasesToRender.length > 0) {
+    if (
+      props.searchText == "" &&
+      props.showOnlyPinnedPhrases &&
+      !isExpanded &&
+      phrasesToRender.length > 0
+    ) {
       setIsExpanded(true);
     }
-  }, [searchText, phrasesToRender.length])
+  }, [
+    props.searchText,
+    props.showOnlyPinnedPhrases,
+    props.filterTag,
+    //filterRequiresUpdate,
+    //filterUntranslatedForGroup,
+    phrasesToRender.length,
+  ]);
 
   const [selectedPhraseRef, setSelectedPhraseRef] =
     useState<PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>"] | null>(
@@ -1600,10 +886,7 @@ const PhraseGroup = (props: Props) => {
     if (selectedPhraseRef) {
       setSelectedPhraseRef(null);
     }
-    //if (!isExpanded) {
-    //  setSelectedPhraseRef(null);
-    //}
-  }, [selectedPhraseRef])
+  }, [selectedPhraseRef]);
 
   const onSelectPhraseKey = useCallback((option) => {
     setSelectedPhraseRef(
@@ -1613,20 +896,33 @@ const PhraseGroup = (props: Props) => {
   }, []);
 
   const phraseKeyOptions = useMemo(() => {
-    return renderLimitedPhrases.map(phrase => {
-
-      const phraseRef = makeQueryRef(
-        "$(text).phraseGroups.id<?>.phrases.id<?>",
-        phraseGroup?.id as string,
-        phrase.id as string
-      );
-      return {
-        label: phrase.phraseKey,
-        value: phraseRef,
-      }
-    })
-
-  }, [renderLimitedPhrases])
+    return renderLimitedPhrases
+      .filter((phrase) => {
+        if (commandMode == "compare") {
+          const phraseRef = makeQueryRef(
+            "$(text).phraseGroups.id<?>.phrases.id<?>",
+            phraseGroup?.id as string,
+            phrase.id as string
+          );
+          return (
+            containsDiffable(changeset, phraseRef, true) ||
+            containsDiffable(conflictSet, phraseRef, true)
+          );
+        }
+        return true;
+      })
+      .map((phrase) => {
+        const phraseRef = makeQueryRef(
+          "$(text).phraseGroups.id<?>.phrases.id<?>",
+          phraseGroup?.id as string,
+          phrase.id as string
+        );
+        return {
+          label: phrase.phraseKey,
+          value: phraseRef,
+        };
+      });
+  }, [renderLimitedPhrases, commandMode, changeset, conflictSet]);
 
   const searchBorderColor = useMemo(() => {
     if (theme.name == "light") {
@@ -1635,10 +931,99 @@ const PhraseGroup = (props: Props) => {
     return ColorPalette.gray;
   }, [theme.name]);
 
-  if (
-    commandMode == "compare"
-    && !hasConflict
-  ) {
+
+  useEffect(() => {
+    if (props.selectedGroup && props.selectedGroup == phraseGroupRef) {
+      if (!isExpanded) {
+        setIsExpanded(true);
+      }
+      onFocusPhraseGroup();
+    }
+    if (props.selectedGroup && props.selectedGroup != phraseGroupRef) {
+      if (isExpanded) {
+        setIsExpanded(false);
+      }
+    }
+  }, [props.selectedGroup, isExpanded, onFocusPhraseGroup, phraseGroupRef])
+
+  useEffect(() => {
+    if (props.isEditingGroups && isExpanded) {
+      setIsExpanded(false);
+    }
+
+  }, [isExpanded, props.isEditingGroups])
+
+  useEffect(() => {
+    if (isReOrderPhrasesMode && showGroupSearch) {
+      setShowGroupSearch(false)
+    }
+
+  }, [isReOrderPhrasesMode, showGroupSearch])
+
+  const matchesPinnedPhrases = useMemo(() => {
+    const phrasesFilteredByPins = filterPinnedPhrasesFromPhraseGroup(
+        phraseGroupRef,
+        props.phraseGroup.phrases,
+        props.pinnedPhrases,
+        props.showOnlyPinnedPhrases
+    );
+    return phrasesFilteredByPins.length > 0;
+  }, [
+    phraseGroupRef,
+    props.phraseGroup.phrases,
+    props.pinnedPhrases,
+    props.showOnlyPinnedPhrases
+  ]);
+
+  const [isGroupVisible, setIsGroupVisible] = useState(false);
+
+  useEffect(() => {
+    if (!props?.scrollContainer) {
+      return;
+    }
+    const onScroll = () => {
+      if (!props?.scrollContainer) {
+        return;
+      }
+      if (!phraseGroupContainer.current) {
+        return;
+      }
+      const rect = phraseGroupContainer.current.getBoundingClientRect();
+      const scrollRect = props.scrollContainer.getBoundingClientRect();
+      const windowHeight = scrollRect.height - 72;
+      let isVisible = false;
+      if (rect.top > 0) {
+        isVisible = rect.top <= windowHeight;
+      } else {
+        if ((rect.top + rect.height) >= 0) {
+          isVisible = true;
+        } else {
+            isVisible = Math.abs(rect.top + rect.height) < windowHeight;
+        }
+      }
+      setIsGroupVisible(isVisible);
+    }
+    const onScrollThrottle = throttle(onScroll, 30, { trailing: true, leading: true})
+    props.scrollContainer.addEventListener("scroll", onScrollThrottle);
+    props.scrollContainer.addEventListener("keydown", onScroll);
+    props.scrollContainer.addEventListener("click", onScroll);
+    props.scrollContainer.addEventListener("resize", onScroll);
+    onScroll();
+    const interval = setInterval(onScroll, 100);
+    return () => {
+      clearInterval(interval);
+      if (!props?.scrollContainer) {
+        return;
+      }
+      props.scrollContainer.removeEventListener("scroll", onScrollThrottle);
+      props.scrollContainer.removeEventListener("keydown", onScroll);
+      props.scrollContainer.removeEventListener("click", onScroll);
+      props.scrollContainer.removeEventListener("resize", onScroll);
+    }
+
+  }, [props?.scrollContainer])
+
+  if (commandMode == "compare" && !hasConflict) {
     if (!hasAnyRemovals && compareFrom == "before") {
       return null;
     }
@@ -1646,52 +1031,94 @@ const PhraseGroup = (props: Props) => {
       return null;
     }
   }
-
-  if (isSearching && phrasesToRender.length == 0 && memoryLeakedPhrasesToRender.length == 0) {
-    return null;
-  }
-  if (!!props.filterTag && phrasesToRender.length == 0 && memoryLeakedPhrasesToRender.length == 0) {
-    return null;
-  }
-  if (props.showOnlyPinnedPhrases && phrasesToRender.length == 0 && memoryLeakedPhrasesToRender.length == 0) {
-    return null;
+  if (!matchesPinnedPhrases) {
+    return false;
   }
 
-  if ((props.globalFilterRequiresUpdate) && phrasesToRender.length == 0 && memoryLeakedPhrasesToRender.length == 0) {
+  if (
+    isSearching &&
+    phrasesToRender.length == 0
+    && memoryLeakedPhrasesToRender.length == 0
+  ) {
+    return null;
+  }
+  if (
+    !!props.filterTag &&
+    phrasesToRender.length == 0 &&
+    memoryLeakedPhrasesToRender.length == 0
+  ) {
+    return null;
+  }
+  if (
+    props.showOnlyPinnedPhrases &&
+    phrasesToRender.length == 0 &&
+    memoryLeakedPhrasesToRender.length == 0
+  ) {
     return null;
   }
 
-  if ((props.globalFilterUntranslated) && phrasesToRender.length == 0 && memoryLeakedPhrasesToRender.length == 0) {
+  if (
+    props.globalFilterRequiresUpdate &&
+    phrasesToRender.length == 0 &&
+    memoryLeakedPhrasesToRender.length == 0
+  ) {
+    // show thing here
+    return null;
+  }
+
+  if (
+    props.globalFilterUntranslated &&
+    phrasesToRender.length == 0 &&
+    memoryLeakedPhrasesToRender.length == 0
+  ) {
+    // show thing here
     return null;
   }
 
   const container = (
-    <Container>
+    <Container
+      ref={phraseGroupContainer}
+      style={{
+        borderTop: props.isEditingGroups
+          ? `0px`
+          : `1px solid ${ColorPalette.gray}`,
+      }}
+    >
       <AddPhraseModal
         show={showAddPhraseKey && commandMode == "edit"}
         onDismiss={onHideAddPhraseKey}
         onAdd={onAddPhraseKey}
         phraseGroup={props.phraseGroup}
       />
-      <TopRow>
-        <FolderRow>
-          {props.isEditingGroups && commandMode == "edit" && (
-            <DragShadeContainer onPointerDown={onPointerDown}>
-              <DragIcon src={draggerIcon} />
-            </DragShadeContainer>
-          )}
-          <FolderIcon onClick={onToggle} src={folderIcon} />
-          <Title style={{ color: folderText }} onClick={onToggle}>
-            {props.phraseGroup.name}
-          </Title>
-          {props.isEditingGroups && commandMode == "edit" && (
-            <>
-              <DeleteShadeContainer onClick={onRemoveGroup}>
-                <DeleteShade src={trashIcon} />
-              </DeleteShadeContainer>
-            </>
-          )}
-          {(phrases?.length ?? 0) > 0 && (
+      <StickRow
+        ref={sticky}
+        style={{
+          top: props.showFilters ? 368 : 236,
+          background: !props.isEditingGroups ? theme.background : "transparent",
+          boxShadow: !isExpanded
+            ? `0px 0px 0px ${theme.shadows.outerDropdown}`
+            : `-4px 4px 2px 2px ${theme.shadows.outerDropdown}`,
+        }}
+      >
+        <TopRow>
+          <FolderRow>
+            {props.isEditingGroups && commandMode == "edit" && (
+              <DragShadeContainer onPointerDown={onPointerDown}>
+                <DragIcon src={draggerIcon} />
+              </DragShadeContainer>
+            )}
+            <FolderIcon onClick={onToggle} src={folderIcon} />
+            <Title style={{ color: folderText }} onClick={onToggle}>
+              {props.phraseGroup.name}
+            </Title>
+            {props.isEditingGroups && commandMode == "edit" && (
+              <>
+                <DeleteShadeContainer onClick={onRemoveGroup}>
+                  <DeleteShade src={trashIcon} />
+                </DeleteShadeContainer>
+              </>
+            )}
+            {(phrases?.length ?? 0) > 0 && !props.isEditingGroups && (
               <>
                 <ChevronWrapper onClick={onToggle}>
                   <ChevronIcon
@@ -1703,168 +1130,253 @@ const PhraseGroup = (props: Props) => {
                 </ChevronWrapper>
               </>
             )}
-        </FolderRow>
-        <AddRow>
-          {(
-            <>
-              {isExpanded && !isReOrderPhrasesMode && (
-                <div style={{ marginTop: -24}}>
-                  <div style={{ display: "flex" }}>
-                    <InputSelector
-                      value={selectedPhraseRef}
-                      size={"semi-short"}
-                      options={phraseKeyOptions}
-                      label={"phrase key"}
-                      placeholder={"select phrase key"}
-                      onChange={onSelectPhraseKey}
+          </FolderRow>
+          <AddRow>
+            {
+              <>
+                {isExpanded && !isReOrderPhrasesMode && (
+                  <div style={{ marginTop: -24 }}>
+                    <div style={{ display: "flex" }}>
+                      <InputSelector
+                        value={selectedPhraseRef}
+                        size={"mid"}
+                        options={phraseKeyOptions}
+                        label={"phrase key"}
+                        placeholder={"select phrase key"}
+                        onChange={onSelectPhraseKey}
+                        onOpen={() => {
+                          setIsFocusingPhraseSelector(true);
+                        }}
+                        onClose={() => {
+                          setIsFocusingPhraseSelector(false);
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
+                {commandMode == "edit" && !props.isEditingGroups && (
+                  <div style={{ width: 180, marginLeft: 24 }}>
+                    <Button
+                      onClick={onShowAddPhraseKey}
+                      label={"+ add phrase"}
+                      bg={"teal"}
+                      size={"medium"}
                     />
                   </div>
-                </div>
-              )}
-              {commandMode == "edit" && !props.isEditingGroups && (
-                <div style={{ width: 180, marginLeft: 24 }}>
-                  <Button
-                    onClick={onShowAddPhraseKey}
-                    label={"+ add phrase"}
-                    bg={"teal"}
-                    size={"medium"}
-                  />
-                </div>
-              )}
-            </>
-          )}
-        </AddRow>
-      </TopRow>
-      <Row
-        style={{
-          alignItems: commandMode == "edit" ? "flex-start" : "flex-end",
-          width: "100%",
-          marginTop: 24,
-        }}
-      >
-        {commandMode == "edit" &&
-          isExpanded &&
-          !isSearching &&
-          !(props.showOnlyPinnedPhrases && props.pinnedPhrases) &&
-          !props.filterTag &&
-          (props?.phraseGroup?.phrases?.length ?? 0) > 0 &&
-          !props.isEditingGroups && (
-            <SubTitleRow>
-              {!isReOrderPhrasesMode && (
-                <SubTitle
-                  onClick={onStartReOrderMode}
-                >{`organize ${props.phraseGroup.name} phrases`}</SubTitle>
-              )}
-              {isReOrderPhrasesMode && (
-                <SubTitle
-                  onClick={onStopReOrderMode}
-                >{`done organizing ${props.phraseGroup.name} phrases`}</SubTitle>
-              )}
-            </SubTitleRow>
-          )}
-        <div></div>
-        {(phrases?.length ?? 0) > 0 &&
-          !isReOrderPhrasesMode &&
-          isExpanded &&
-          !props.isEditingGroups && (
-            <div
+                )}
+              </>
+            }
+          </AddRow>
+        </TopRow>
+        {!props.isEditingGroups && (
+          <>
+            <Row
               style={{
-                marginTop: 0,
-                width: commandMode == "edit" ? "auto" : "100%",
+                padding: "0px 48px 8px 24px",
+                height: 72,
               }}
             >
-              <Row
+              <div
                 style={{
-                  justifyContent: "flex-end",
+                  height: 72,
+                  display: "flex",
+                  flexDirection: "row",
                   alignItems: "center",
                 }}
               >
-                <FilterUntranslated
+                <span
                   style={{
-                    color: !filterUntranslatedForGroup
-                      ? theme.colors.contrastTextLight
-                      : theme.colors.warningTextColor,
+                    marginRight: 24,
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
                   }}
                 >
-                  {`Filter un-translated (${props.selectedTopLevelLocale}) phrases`}
-                </FilterUntranslated>
-                <Checkbox
-                  isChecked={filterUntranslatedForGroup}
-                  onChange={onToggleFilterUntranslated}
-                />
-              </Row>
+                  <Checkbox
+                    isChecked={isPinned}
+                    onChange={() => {
+                      if (isPinned) {
+                        props.setPinnedGroups(props.pinnedGroups?.filter(p => p != phraseGroupRef) ?? []);
+                      } else {
+                        props.setPinnedGroups([...(props.pinnedGroups?.filter(p => p != phraseGroupRef) ?? []), phraseGroupRef]);
+                      }
+                    }}
+                  />
+                  <span style={{ marginLeft: 12 }}>
+                    <PinPhrase>{"Pin Group"}</PinPhrase>
+                  </span>
+                </span>
+                {isExpanded && !isReOrderPhrasesMode && (
+                  <>
+                    <span
+                      onClick={onFocusPhraseGroup}
+                      style={{ marginLeft: 0, marginTop: 8 }}
+                    >
+                      <FocusIcon src={focusIcon} />
+                    </span>
+                    <span
+                      onClick={() => {
+                        //setShowGroupSearch(!showGroupSearch);
+                      }}
+                      style={{ marginLeft: 24, marginTop: 8 }}
+                    >
+                      <ScrollTopIcon
+                        onClick={onScrollTop}
+                        src={scrollToTopIcon}
+                      />
+                    </span>
+                    <span
+                      onClick={() => {
+                        setShowGroupSearch(!showGroupSearch);
+                        onFocusPhraseGroup();
+                      }}
+                      style={{ marginLeft: 24, marginTop: 8 }}
+                    >
+                      <PlusIcon
+                        src={showGroupSearch ? minusIcon : searchIcon}
+                      />
+                    </span>
+                  </>
+                )}
+              </div>
+
+              {commandMode == "edit" &&
+                isExpanded &&
+                !isSearching &&
+                !(props.showOnlyPinnedPhrases && props.pinnedPhrases) &&
+                !props.filterTag &&
+                (props?.phraseGroup?.phrases?.length ?? 0) > 0 &&
+                !props.isEditingGroups && (
+                  <SubTitleRow>
+                    {!isReOrderPhrasesMode && (
+                      <SubTitle
+                        onClick={onStartReOrderMode}
+                      >{`organize ${props.phraseGroup.name} phrases`}</SubTitle>
+                    )}
+                    {isReOrderPhrasesMode && (
+                      <SubTitle
+                        onClick={onStopReOrderMode}
+                      >{`done organizing ${props.phraseGroup.name} phrases`}</SubTitle>
+                    )}
+                  </SubTitleRow>
+                )}
+            </Row>
+            <div
+              style={{
+                transition: "height 100ms",
+                borderTop: `1px solid ${ColorPalette.gray}`,
+                height: isExpanded && showGroupSearch ? 96 : 0,
+                width: "100%",
+                overflow: "hidden",
+              }}
+            >
+              {(phrases?.length ?? 0) > 0 &&
+                !isReOrderPhrasesMode &&
+                isExpanded &&
+                !props.isEditingGroups && (
+                  <div
+                    style={{
+                      marginTop: 0,
+                      width: "100%",
+                      paddingRight: 48,
+                    }}
+                  >
+                    <Row style={{ marginTop: 24, paddingLeft: 16 }}>
+                      <SearchInput
+                        value={realManualSearchText}
+                        placeholder={`subsearch ${phraseGroup?.name ?? ""}`}
+                        borderColor={searchBorderColor}
+                        onTextChanged={(text) => {
+                          setRealManualSearchText(text);
+                          onScrollTop();
+                        }}
+                        width={480}
+                        showClear
+                        onFocus={() => {
+                          setIsFocusingSearch(true);
+                          onFocusPhraseGroup();
+                        }}
+                        onBlur={() => {
+                          setIsFocusingSearch(false);
+                        }}
+                      />
+                    </Row>
+                  </div>
+                )}
+            </div>
+          </>
+        )}
+      </StickRow>
+      {isExpanded && (
+        <div
+          ref={scrollContainer}
+          style={{
+            paddingTop: 80,
+            paddingLeft: 16,
+            paddingRight: 16,
+            paddingBottom: 300,
+            minHeight: 700,
+            height: "100vh",
+            overflowY: "auto",
+            resize: "vertical",
+            borderTop: `1px solid ${ColorPalette.gray}`,
+            borderBottom: `1px solid ${ColorPalette.gray}`,
+            background:
+              theme.name == "light"
+                ? ColorPalette.extraLightGray
+                : ColorPalette.darkerGray,
+          }}
+        >
+          {phraseKeyOptions.length == 0 && (
+            <div>
+              {commandMode == "compare" && (
+                <Row style={{ alignItems: "center", justifyContent: "center" }}>
+                  <Title>{"No phrases to show in diff"}</Title>
+                </Row>
+              )}
             </div>
           )}
-      </Row>
-      {(phrases?.length ?? 0) > 0 &&
-        !isReOrderPhrasesMode &&
-        isExpanded &&
-        !props.isEditingGroups && (
-          <div
-            style={{
-              marginTop: 0,
-              width: "100%",
-            }}
-          >
-            <Row style={{ marginTop: 24 }}>
-              <SearchInput
-                value={realManualSearchText}
-                placeholder={`search ${phraseGroup?.name ?? ""}`}
-                borderColor={searchBorderColor}
-                onTextChanged={setRealManualSearchText}
-                showClear
-              />
-              <Row
-                style={{
-                  justifyContent: "flex-end",
-                  alignItems: "center",
-                }}
-              >
-                <FilterUntranslated
-                  style={{
-                    color: !filterRequiresUpdate
-                      ? theme.colors.contrastTextLight
-                      : theme.colors.warningTextColor,
-                  }}
-                >
-                  {`Filter (${props.selectedTopLevelLocale}) phrases to update`}
-                </FilterUntranslated>
-                <Checkbox
-                  isChecked={filterRequiresUpdate}
-                  onChange={onToggleFilterRequiresUpdate}
-                />
-              </Row>
-            </Row>
-          </div>
-        )}
-      {isExpanded && (
-        <>
-          {!isReOrderPhrasesMode &&
-            renderLimitedPhrases?.map?.((phrase, index) => {
-              const phraseRef = makeQueryRef(
-                "$(text).phraseGroups.id<?>.phrases.id<?>",
-                phraseGroup?.id as string,
-                phrase.id as string
-              );
-              return (
-                <PhraseRow
-                  globalFilterUntranslated={filterUntranslatedForGroup}
-                  pinnedPhrases={props.pinnedPhrases}
-                  setPinnedPhrases={props.setPinnedPhrases}
-                  phraseRef={phraseRef}
-                  selectedTopLevelLocale={props.selectedTopLevelLocale}
-                  key={phraseRef}
-                  index={index}
-                  phrase={phrase}
-                  onRemove={onRemovePhrase}
-                  phraseGroup={props.phraseGroup}
-                  scrollContainer={props.scrollContainer}
-                  searchText={manualSearchText}
-                  selectedPhraseRef={selectedPhraseRef}
-                  showOnlyPinnedPhrases={props.showOnlyPinnedPhrases}
-                />
-              );
-            })}
+          {
+            <>
+              {!isReOrderPhrasesMode &&
+                renderLimitedPhrases?.map?.((phrase, index) => {
+                  const phraseRef = makeQueryRef(
+                    "$(text).phraseGroups.id<?>.phrases.id<?>",
+                    phraseGroup?.id as string,
+                    phrase.id as string
+                  );
+                  return (
+                    <PhraseRow
+                      globalFilterRequiresUpdate={props.globalFilterRequiresUpdate}
+                      globalFilterUntranslated={props.globalFilterUntranslated}
+                      pinnedPhrases={props.pinnedPhrases}
+                      setPinnedPhrases={props.setPinnedPhrases}
+                      phraseRef={phraseRef}
+                      selectedTopLevelLocale={props.selectedTopLevelLocale}
+                      key={phraseRef}
+                      index={index}
+                      phrase={phrase}
+                      onRemove={onRemovePhrase}
+                      phraseGroup={props.phraseGroup}
+                      scrollContainer={
+                        scrollContainer?.current as HTMLDivElement
+                      }
+                      searchText={manualSearchText}
+                      selectedPhraseRef={selectedPhraseRef}
+                      showOnlyPinnedPhrases={props.showOnlyPinnedPhrases}
+                      isFocusingPhraseSelector={isFocusingPhraseSelector || isFocusingSearch}
+                      isGroupVisible={isGroupVisible}
+                      onSetDismissedUnTranslated={(phraseId) => {
+                        setDismissedUntranslated([...dimissedUntraslated, phraseId])
+                      }}
+                      onSetDismissedRequiredUpdated={(phraseId) => {
+                        setDismissedNeedsUpdate([...dimissedNeedsUpdate, phraseId])
+                      }}
+                    />
+                  );
+                })}
+            </>
+          }
           {isReOrderPhrasesMode && (
             <AnimatePresence>
               <Reorder.Group
@@ -1887,7 +1399,7 @@ const PhraseGroup = (props: Props) => {
               </Reorder.Group>
             </AnimatePresence>
           )}
-        </>
+        </div>
       )}
     </Container>
   );
@@ -1908,7 +1420,7 @@ const PhraseGroup = (props: Props) => {
       whileHover={{ scale: 1 }}
       whileDrag={{ scale: 1.02 }}
       key={phraseGroupRef}
-      style={{ position: "relative", listStyle: 'none' }}
+      style={{ position: "relative", listStyle: "none" }}
       onDragStart={props.onDragStart}
       onDragEnd={props.onDragEnd}
     >
