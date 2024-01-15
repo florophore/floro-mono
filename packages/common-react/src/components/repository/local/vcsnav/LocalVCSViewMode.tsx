@@ -14,6 +14,7 @@ import {
   useRepoManifestList,
   useClearPluginStorage,
   useUpdateCurrentCommand,
+  useClearPluginStorageV2,
 } from "../hooks/local-hooks";
 import {
   usePullButtonEnabled,
@@ -140,6 +141,7 @@ interface Props {
   repository: Repository;
   apiResponse: ApiResponse;
   plugin: string;
+  storage: object;
 }
 
 const LocalVCSViewMode = (props: Props) => {
@@ -150,7 +152,7 @@ const LocalVCSViewMode = (props: Props) => {
   const [showConfirmForcePush, setShowConfirmForcePush] = useState(false);
   const { isCopyEnabled, setShowCopyPaste, isSelectMode, setSelectedRepoInfo, setCopyInstructions, setIsSelectMode, copyInstructions } = useCopyPasteContext("local");
   const { setShowLocalSettings} = useLocalVCSNavContext();
-  const clearStorageMutation =  useClearPluginStorage(props.plugin, props.repository);
+  const clearStorageMutation =  useClearPluginStorageV2(props.plugin, props.repository);
   const onClearStorage = useCallback(() => {
     clearStorageMutation.mutate({});
   }, []);
@@ -490,11 +492,11 @@ const LocalVCSViewMode = (props: Props) => {
   }, [copyInstructions, installedPluginVersions]);
 
   const showClearStorage = useMemo(() => {
-    if (!props?.apiResponse?.storageMap?.[props.plugin]) {
+    if (!props?.storage?.[props.plugin]) {
       return false;
     }
-    return JSON.stringify(props?.apiResponse?.storageMap?.[props.plugin]) != JSON.stringify({});
-  }, [props.apiResponse?.storageMap, props.plugin]);
+    return JSON.stringify(props.storage?.[props.plugin]) != JSON.stringify({});
+  }, [props.storage, props.plugin]);
 
   const onShowSettings = useCallback(() => {
     setShowLocalSettings(true);

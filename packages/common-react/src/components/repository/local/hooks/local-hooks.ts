@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
-import { useQuery, useMutation, useQueryClient } from "react-query";
+import { useQuery, useMutation, useQueryClient, QueryObserver } from "react-query";
 import axios from "axios";
 import { Repository, useExchangeSessionMutation } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { ApiResponse, Branch, BranchesMetaState, CloneFile, FetchInfo, RemoteSettings, RepoInfo, SourceGraphResponse } from "floro/dist/src/repo";
@@ -18,7 +18,23 @@ export interface ClientSourceGraph {
   branchesMetaState: BranchesMetaState;
 }
 
-export const useCurrentRepoState = (repository: Repository|RepoInfo) => {
+export const useWatchRepoId = (repositoryId: string) => {
+  const queryClient = useQueryClient();
+  useEffect(() => {
+
+  const observer = new QueryObserver(queryClient, { queryKey: ["repo-current:" + repositoryId] })
+
+    const unsubscribe = observer.subscribe(result => {
+      console.log("RES", result)
+    })
+    return () => {
+      unsubscribe();
+    }
+  }, []);
+
+}
+
+export const useCurrentRepoState = (repository: Repository|RepoInfo, from: string) => {
   return useQuery(
     "repo-current:" + repository.id,
     async (): Promise<ApiResponse | null> => {
@@ -29,11 +45,17 @@ export const useCurrentRepoState = (repository: Repository|RepoInfo) => {
         const result = await axios.get(
           `http://localhost:63403/repo/${repository.id}/current`
         );
+        //@ts-ignore
+        result.data.cameFrom = "useCurrentRepoState"
+        //@ts-ignore
+        result.data.compFrom = from;
+        console.log("FROM", from);
         return result?.data ?? null;
       } catch (e) {
         return null;
       }
-    }
+    },
+    {staleTime: Infinity, cacheTime: Infinity}
   );
 };
 
@@ -229,15 +251,19 @@ export const useCurrentLicenses = () => {
 export const useUpdateCurrentCommand = (repository: Repository) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (commandMode: "view" | "edit" | "compare") => {
-      return axios.post<ApiResponse>(
+    mutationFn: async (commandMode: "view" | "edit" | "compare") => {
+      const result = await axios.post<ApiResponse>(
         `http://localhost:63403/repo/${repository.id}/command`,
         {
           commandMode,
         }
       );
+      return result;
     },
     onSuccess: (result: { data?: ApiResponse }) => {
+
+      //@ts-ignore
+      result.data.cameFrom = "useUpdateCurrentCommand"
       queryClient.setQueryData(["repo-current:" + repository.id], result?.data);
     },
   });
@@ -255,6 +281,8 @@ export const useUpdateDescription = (repository: Repository) => {
       );
     },
     onSuccess: (result: { data?: ApiResponse }) => {
+      //@ts-ignore
+      result.data.cameFrom = "useUpdateDescription"
       queryClient.setQueryData(["repo-current:" + repository.id], result?.data);
     },
   });
@@ -272,6 +300,8 @@ export const useUpdateLicenses = (repository: Repository) => {
       );
     },
     onSuccess: (result: { data?: ApiResponse }) => {
+      //@ts-ignore
+      result.data.cameFrom = "useUpdateLicenses"
       queryClient.setQueryData(["repo-current:" + repository.id], result?.data);
     },
   });
@@ -289,6 +319,8 @@ export const useUpdatePlugins = (repository: Repository) => {
       );
     },
     onSuccess: (result: { data?: ApiResponse }) => {
+      //@ts-ignore
+      result.data.cameFrom = "useUpdatePlugins"
       queryClient.setQueryData(["repo-current:" + repository.id], result?.data);
       queryClient.invalidateQueries(["manifest-list:" + repository.id]);
     },
@@ -318,6 +350,8 @@ export const useUpdatePluginState = (pluginName: string, repository: Repository,
       if (refCount?.current && refCount?.current > id) {
         return;
       }
+      //@ts-ignore
+      result.cameFrom = "useUpdatePluginState"
       queryClient.setQueryData(["repo-current:" + repository.id], result);
     }
   });
@@ -340,6 +374,8 @@ export const useClearPluginStorage = (pluginName: string, repository: Repository
       if (refCount?.current && id && refCount?.current > id) {
         return;
       }
+      //@ts-ignore
+      result.cameFrom = "useClearPluginStorage"
       queryClient.setQueryData(["repo-current:" + repository.id], result);
     }
   });
@@ -364,7 +400,74 @@ export const useUpdatePluginStorage = (pluginName: string, repository: Repositor
       if (refCount?.current && refCount?.current > id) {
         return;
       }
+      //@ts-ignore
+      result.cameFrom = "useUpdatePluginStorage"
       queryClient.setQueryData(["repo-current:" + repository.id], result);
+    }
+  });
+};
+
+export const usePluginStorageV2 = (repository: Repository|RepoInfo) => {
+  return useQuery(
+    "repo-storage:" + repository.id,
+    async (): Promise<object | null> => {
+      try {
+        if (!repository.id) {
+          return null;
+        }
+        const result = await axios.get(
+          `http://localhost:63403/repo/${repository.id}/storage/v2`
+        );
+        return result?.data ?? null;
+      } catch (e) {
+        return null;
+      }
+    }
+  );
+};
+
+export const useClearPluginStorageV2 = (pluginName: string, repository: Repository, refCount?: React.MutableRefObject<number>) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({id}: {id?: number}): Promise<{id?: number, result: object}> => {
+      const result = await axios.post<object>(
+        `http://localhost:63403/repo/${repository.id}/plugin/${pluginName}/storage/clear/v2`,
+        {}
+      );
+      return {
+        id,
+        result: result?.data
+      }
+    },
+    onSuccess: ({id, result}) => {
+      if (refCount?.current && id && refCount?.current > id) {
+        return;
+      }
+      queryClient.setQueryData(["repo-storage:" + repository.id], result);
+    }
+  });
+};
+
+export const useUpdatePluginStorageV2 = (pluginName: string, repository: Repository, refCount: React.MutableRefObject<number>) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ storage, id}: {storage: object, id: number}): Promise<{id: number, result: object}> => {
+      const result = await axios.post<object>(
+        `http://localhost:63403/repo/${repository.id}/plugin/${pluginName}/storage/v2`,
+        {
+          storage,
+        }
+      );
+      return {
+        id,
+        result: result?.data
+      }
+    },
+    onSuccess: ({result, id}) => {
+      if (refCount?.current && refCount?.current > id) {
+        return;
+      }
+      queryClient.setQueryData(["repo-storage:" + repository.id], result);
     }
   });
 };

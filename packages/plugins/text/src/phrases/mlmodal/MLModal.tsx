@@ -215,7 +215,7 @@ const MLModal = (props: Props) => {
       disableBackgroundDismiss
       headerSize={"small"}
       topOffset={80}
-      zIndex={4}
+      zIndex={5}
       headerChildren={
         <HeaderWrapper>
           <HeaderTitle>{"ML Translate"}</HeaderTitle>

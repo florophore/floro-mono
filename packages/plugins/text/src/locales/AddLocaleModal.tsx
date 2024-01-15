@@ -247,7 +247,7 @@ const AddLocaleModal = (props: Props) => {
       disableBackgroundDismiss
       headerSize={"small"}
       topOffset={80}
-      zIndex={4}
+      zIndex={5}
       headerChildren={
         <HeaderWrapper>
           <HeaderTitle>{"add locale"}</HeaderTitle>

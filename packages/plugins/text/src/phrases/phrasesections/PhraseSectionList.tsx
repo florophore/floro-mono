@@ -89,6 +89,7 @@ interface Props {
   onFocusSearch: () => void;
   scrollContainer?: HTMLDivElement;
   isFocusingPhraseSelector: boolean;
+  isFocused: boolean;
 }
 
 const PhraseSectionsList = (props: Props) => {
@@ -270,6 +271,7 @@ const PhraseSectionsList = (props: Props) => {
                 onFocusSearch={props.onFocusSearch}
                 scrollContainer={props.scrollContainer}
                 isFocusingPhraseSelector={props.isFocusingPhraseSelector}
+                isFocused={props.isFocused}
               />
             );
           })}

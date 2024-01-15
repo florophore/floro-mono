@@ -7,6 +7,7 @@ import { ApiResponse } from "floro/dist/src/repo";
 import { useLocalVCSNavContext } from "./LocalVCSContext";
 import {
   useClearPluginStorage,
+  useClearPluginStorageV2,
   usePopStashedChanges,
   useStashChanges,
   useUpdateCurrentCommand,
@@ -66,13 +67,14 @@ interface Props {
   apiResponse: ApiResponse;
   plugin: string;
   page: RepoPage;
+  storage: object;
 }
 
 const LocalVCSEditMode = (props: Props) => {
   const { setSubAction, isStashing, setIsStashing } = useLocalVCSNavContext();
   const [showDiscard, setShowDiscard] = useState(false);
 
-  const clearStorageMutation =  useClearPluginStorage(props.plugin, props.repository);
+  const clearStorageMutation =  useClearPluginStorageV2(props.plugin, props.repository);
   const onClearStorage = useCallback(() => {
     clearStorageMutation.mutate({});
   }, []);
@@ -190,11 +192,11 @@ const LocalVCSEditMode = (props: Props) => {
   }, []);
 
   const showClearStorage = useMemo(() => {
-    if (!props.plugin || !props?.apiResponse?.storageMap?.[props.plugin]) {
+    if (!props.plugin || !props?.storage?.[props.plugin]) {
       return false;
     }
-    return JSON.stringify(props?.apiResponse?.storageMap?.[props.plugin]) != JSON.stringify({});
-  }, [props.apiResponse?.storageMap, props.plugin])
+    return JSON.stringify(props?.storage?.[props.plugin]) != JSON.stringify({});
+  }, [props.storage, props.plugin])
 
   return (
     <InnerContent>

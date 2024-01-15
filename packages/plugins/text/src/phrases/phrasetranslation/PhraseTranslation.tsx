@@ -155,10 +155,11 @@ interface Props {
   onFocusSearch: () => void;
   scrollContainer?: HTMLDivElement;
   isFocusingPhraseSelector: boolean;
+  isFocused: boolean;
 }
 
 const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRef<HTMLDivElement>) => {
-  const phrase = useReferencedObject(props.phraseRef);
+  const [phrase, setPhrase] = useFloroState(props.phraseRef);
   const theme = useTheme();
   const [phraseGroupId, phraseId] = useExtractQueryArgs(props.phraseRef);
   const { commandMode, applicationState } =
@@ -830,6 +831,7 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
           onFocusSearch={props.onFocusSearch}
           scrollContainer={props?.scrollContainer}
           isFocusingPhraseSelector={props.isFocusingPhraseSelector}
+          isFocused={props.isFocused}
         />
       )}
       {!phrase?.usePhraseSections && (
@@ -956,7 +958,7 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
                 />
               )}
           </Container>
-          {props.systemSourceLocale && phraseTranslation && (
+          {phrase && props.systemSourceLocale && phraseTranslation && (
             <SourcePhraseTranslation
               phrase={phrase}
               systemSourceLocale={props.systemSourceLocale}
@@ -988,7 +990,7 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
               </AddPhraseFeatures>
             </div>
           )}
-          {props.showEnabledFeatures && !props.isSearching && (
+          {phrase && props.showEnabledFeatures && !props.isSearching && (
             <div
               style={{
                 borderTop: `1px solid ${theme.colors.contrastTextLight}`,
@@ -999,6 +1001,8 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
                 onHide={() => {
                   props.setShowEnabledFeatures(false);
                 }}
+                phrase={phrase}
+                setPhrase={setPhrase}
                 phraseRef={props.phraseRef}
                 mockRichText={
                   props.systemSourceLocale ? sourceMockHtml : targetMockHtml
@@ -1035,7 +1039,7 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
             (phrase?.styleClasses?.length ?? 0) > 0) && !props.isSearching && (
             <StyledClassList phraseRef={props.phraseRef} />
           )}
-          {(phrase?.styleClasses?.length ?? 0) > 0 && (
+          {phrase && (phrase?.styleClasses?.length ?? 0) > 0 && (
             <StyledContentList
               phrase={phrase}
               phraseRef={props.phraseRef}
@@ -1050,7 +1054,7 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
               onFocusSearch={props.onFocusSearch}
             />
           )}
-          {(phrase?.linkVariablesEnabled ||
+          {phrase && (phrase?.linkVariablesEnabled ||
             (phrase.linkVariables?.length ?? 0) > 0) && (
             <LinkVariablesList
               phrase={phrase}
@@ -1067,7 +1071,7 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
               onFocusSearch={props.onFocusSearch}
             />
           )}
-          {(phrase?.interpolationsEnabled ||
+          {phrase && (phrase?.interpolationsEnabled ||
             (phrase?.interpolationVariants?.length ?? 0) > 0) &&
             (phrase?.variables?.length ?? 0) > 0 && (
               <InterpolationVariantList
@@ -1084,7 +1088,7 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
                 onFocusSearch={props.onFocusSearch}
               />
             )}
-          {(phrase?.variables?.length ?? 0) > 0 && !props.isSearching && (
+          {phrase && (phrase?.variables?.length ?? 0) > 0 && !props.isSearching && (
             <TestCaseList
               phrase={phrase}
               phraseRef={props.phraseRef}

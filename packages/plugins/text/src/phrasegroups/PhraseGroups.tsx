@@ -99,25 +99,25 @@ const PhraseGroups = (props: Props) => {
     return count;
   }, [commandMode, applicationState, changeset, conflictSet])
 
-  if (commandMode == "compare" && compareFrom == "before" && diffedPhrases == 0) {
-    return (
-      <Container>
-        <NothingChangedText>
-          {'No phrases were removed'}
-        </NothingChangedText>
-      </Container>
-    );
+  //if (commandMode == "compare" && compareFrom == "before" && diffedPhrases == 0) {
+  //  return (
+  //    <Container>
+  //      <NothingChangedText>
+  //        {'No phrases were removed'}
+  //      </NothingChangedText>
+  //    </Container>
+  //  );
 
-  }
-  if (commandMode == "compare" && compareFrom == "after" && diffedPhrases == 0) {
-    return (
-      <Container>
-        <NothingChangedText>
-          {'No phrases were added'}
-        </NothingChangedText>
-      </Container>
-    );
-  }
+  //}
+  //if (commandMode == "compare" && compareFrom == "after" && diffedPhrases == 0) {
+  //  return (
+  //    <Container>
+  //      <NothingChangedText>
+  //        {'No phrases were added'}
+  //      </NothingChangedText>
+  //    </Container>
+  //  );
+  //}
 
   if (props.isEditingGroups && commandMode == "edit") {
     return (

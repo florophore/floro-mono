@@ -177,9 +177,10 @@ export interface Props {
 
 const CopyPluginsContainer = (props: Props) => {
   const theme = useTheme();
-  const { data: apiResponse } = useCurrentRepoState(props.repoInfo);
+  const { data: apiResponse } = useCurrentRepoState(props.repoInfo, "CopyPluginsContainer");
   const { setSelectedRepoInfo, copyInstructions, setIsSelectMode, setShowCopyPaste } = useCopyPasteContext(props.client);
   const navigate = useNavigate();
+
 
   const pasteMutation = usePaste(props.fromRepository, props.repoInfo);
   const canCopy = useMemo(() => {

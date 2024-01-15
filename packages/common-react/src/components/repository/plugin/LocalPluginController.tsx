@@ -8,7 +8,7 @@ import React, {
 import {useTheme} from "@emotion/react";
 import { ApiResponse } from "floro/dist/src/repo";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
-import { useClearPluginStorage, useUpdatePluginState, useUpdatePluginStorage } from "../local/hooks/local-hooks";
+import { useClearPluginStorageV2, useUpdatePluginState, useUpdatePluginStorageV2 } from "../local/hooks/local-hooks";
 import { useLocalVCSNavContext } from "../local/vcsnav/LocalVCSContext";
 import { useCopyPasteContext } from "../copypaste/CopyPasteContext";
 import { useRootSchemaMap } from "../remote/hooks/remote-hooks";
@@ -16,6 +16,7 @@ import { useRootSchemaMap } from "../remote/hooks/remote-hooks";
 interface Props {
   pluginName: string;
   apiResponse: ApiResponse;
+  storage: object;
   repository: Repository;
   isExpanded: boolean;
   onSetIsExpanded: (isExpanded: boolean) => void;
@@ -83,13 +84,13 @@ const LocalPluginController = (props: Props) => {
     clientUpdateCounter
   );
 
-  const updatePluginClientStorage = useUpdatePluginStorage(
+  const updatePluginClientStorage = useUpdatePluginStorageV2(
     props.pluginName,
     props.repository,
     clientUpdateCounter
   );
 
-  const clearStorageMutation =  useClearPluginStorage(props.pluginName, props.repository);
+  const clearStorageMutation =  useClearPluginStorageV2(props.pluginName, props.repository);
   const onClearStorage = useCallback(() => {
     clearStorageMutation.mutate({});
   }, []);
@@ -294,8 +295,8 @@ const LocalPluginController = (props: Props) => {
     if (!manifest?.name) {
       return {};
     }
-    return props.apiResponse.storageMap?.[manifest?.name] ?? {};
-  }, [manifest?.name, props.apiResponse.storageMap]);
+    return props.storage?.[manifest?.name] ?? {};
+  }, [manifest?.name, props.storage]);
 
   const pluginState = useMemo(() => {
     return {

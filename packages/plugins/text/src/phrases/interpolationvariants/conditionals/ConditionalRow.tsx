@@ -219,10 +219,11 @@ const ConditionalRow = (props: Props): React.ReactElement|null => {
 
   const editorObserver = useMemo(() => {
     const variables = props.phrase.variables.map((v) => v.name);
-    const observer = new Observer(variables, [], []);
+    const contentVariables = props.phrase.contentVariables.map((v) => v.name);
+    const observer = new Observer(variables, [], [], [], contentVariables);
     observer.setSearchString(props.searchText);
     return observer;
-  }, [props.phrase?.variables, props.searchText]);
+  }, [props.phrase?.variables, props?.phrase?.contentVariables, props.searchText]);
 
   const conditionalEditorDoc = useMemo(() => {
     if (conditional) {

@@ -636,6 +636,15 @@ export const getPhrasesGroupHasMatches = (
   filterUntranslatedForGroup: boolean,
   searchText: string
 ): boolean => {
+    if (
+      !showOnlyPinnedPhrases &&
+      !filterRequiresUpdate &&
+      !filterUntranslatedForGroup &&
+      !filterTag &&
+      searchText?.trim() == ""
+    ) {
+      return true;
+    }
     const filteredPhrases = getPhrasesFilteredForPhraseGroup(
         applicationState,
         phraseGroupRef,

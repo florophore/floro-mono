@@ -14,7 +14,7 @@ import RootLongModal from "../../../RootLongModal";
 import { useCopyPasteContext } from "../CopyPasteContext";
 import LocalRepoInfoList from "@floro/storybook/stories/common-components/LocalRepoInfoList";
 import CopyPluginsContainer from "./CopyPluginsContainer";
-import { RenderedApplicationState } from "floro/dist/src/repo";
+import { ApiResponse, RenderedApplicationState } from "floro/dist/src/repo";
 
 const HeaderContainer = styled.div`
   display: flex;

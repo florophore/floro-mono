@@ -9,11 +9,8 @@ import {
   PointerTypes,
   SchemaTypes,
   containsDiffable,
-  extractQueryArgs,
   makeQueryRef,
-  useClientStorageApi,
   useCopyApi,
-  useExtractQueryArgs,
   useFloroContext,
   useFloroState,
   useHasIndication,
@@ -21,6 +18,7 @@ import {
 } from "../floro-schema-api";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
+import ReactDOM from "react-dom";
 
 import InputSelector from "@floro/storybook/stories/design-system/InputSelector";
 import PhraseTranslation from "./phrasetranslation/PhraseTranslation";
@@ -34,6 +32,18 @@ import EditDark from "@floro/common-assets/assets/images/icons/edit.dark.svg";
 
 import CopyLight from "@floro/common-assets/assets/images/icons/copy.lighter.svg";
 import CopyDark from "@floro/common-assets/assets/images/icons/copy.dark.svg";
+
+import FocusLight from "@floro/common-assets/assets/images/icons/focus.light.lighter.svg";
+import FocusDark from "@floro/common-assets/assets/images/icons/focus.dark.svg";
+
+import CrossLight from "@floro/common-assets/assets/images/icons/cross.light.svg";
+import CrossDark from "@floro/common-assets/assets/images/icons/cross.dark.svg";
+
+import ChevronLight from "@floro/common-assets/assets/images/icons/chevron.light.svg";
+import ChevronDark from "@floro/common-assets/assets/images/icons/chevron.dark.svg";
+
+import ScrollToTopLight from "@floro/common-assets/assets/images/icons/scroll.to.top.light.svg";
+import ScrollToTopDark from "@floro/common-assets/assets/images/icons/scroll.to.top.dark.svg";
 
 import Checkbox from "@floro/storybook/stories/design-system/Checkbox";
 import DescriptionContainer from "./DescriptionContainer";
@@ -50,19 +60,28 @@ import {
   getTranslateFromLocale,
 } from "../phrasegroups/filterhooks";
 import Button from "@floro/storybook/stories/design-system/Button";
+import { useFocusContext } from "../focusview/FocusContext";
 
 const Container = styled.div`
   padding: 0;
   margin-bottom: 8px;
   border: 2px solid ${(props) => props.theme.colors.contrastText};
   background: ${(props) => props.theme.background};
-  padding: 18px 16px;
+  padding: 0px 16px 18px 16px;
   border-radius: 8px;
-  position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
   margin-top: 24px;
+`;
+
+const Sticky = styled.div`
+  position: sticky;
+  top: -82px;
+  z-index: 1;
+  margin-bottom: 24px;
+  background: white;
+  padding-top: 24px;
 `;
 
 const RowTitle = styled.h1`
@@ -165,6 +184,35 @@ const ClearLocalSearch = styled.p`
   cursor: pointer;
 `;
 
+const CrossIcon = styled.img`
+  height: 40px;
+  width: 40px;
+  cursor: pointer;
+`;
+
+const ChevronWrapper = styled.div`
+  height: 32px;
+  width: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 4px;
+  cursor: pointer;
+`;
+
+const ChevronIcon = styled.img`
+  height: 16px;
+  width: 16px;
+  transition: transform 150ms;
+  user-select: none;
+`;
+
+const ScrollTopIcon = styled.img`
+  height: 28px;
+  width: 28px;
+  cursor: pointer;
+`;
+
 interface Props {
   phrase: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>"];
   phraseGroup: SchemaTypes["$(text).phraseGroups.id<?>"];
@@ -188,12 +236,17 @@ interface Props {
   globalFilterRequiresUpdate: boolean;
   onSetDismissedUnTranslated: (phraseId: string) => void;
   onSetDismissedRequiredUpdated: (phraseId: string) => void;
+  onScrollToPhrase: (phraseRef: PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>"]) => void;
 }
 
 const PhraseRow = (props: Props) => {
   const container = useRef<HTMLDivElement>(null);
   const subContainer = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(true);
+  const toggleExpanded = useCallback(() => {
+    setIsExpanded(!isExpanded);
+  }, [isExpanded])
   const [manualSearchText, setManualSearchText] = useState<string>(
     props.searchText ?? ""
   );
@@ -330,27 +383,47 @@ const PhraseRow = (props: Props) => {
       localeSettings.locales.find((l) => l.localeCode == selectedLocaleCode),
     [localeSettings.locales, selectedLocaleCode]
   );
-  const diffColor = useDiffColor(props.phraseRef, false, "darker");
+  const externalDiffColor = useDiffColor(props.phraseRef, false, "darker");
+  const diffColor = useDiffColor(props.phraseRef, true, "darker");
 
   const { isCopied, toggleCopy } = useCopyApi(props.phraseRef);
 
-  const hasIndications = useHasIndication(props.phraseRef);
+  const hasIndications = useHasIndication(props.phraseRef, true);
   const indicatedLocales = useMemo(() => {
     if (!hasIndications) {
       return [];
     }
+    const changesetDiffables = Array.from(changeset).filter((ref) => {
+      return ref.startsWith(props.phraseRef);
+    });
+    const conflictSetDiffables = Array.from(conflictSet).filter((ref) => {
+      return ref.startsWith(props.phraseRef);
+    });
     return locales.filter((locale) => {
       const localeRef = makeQueryRef(
         "$(text).localeSettings.locales.localeCode<?>",
         locale?.localeCode
       );
-      const phraseLocaleRef: PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>"] = `${props.phraseRef}.phraseTranslations.id<${localeRef}>`;
-      return (
-        containsDiffable(changeset, phraseLocaleRef, true) ||
-        containsDiffable(conflictSet, phraseLocaleRef, true)
-      );
+      for (let change of changesetDiffables) {
+        if (change.indexOf(localeRef) != -1) {
+          return true;
+        }
+      }
+      for (let conflict of conflictSetDiffables) {
+        if (conflict.indexOf(localeRef) != -1) {
+          return true;
+        }
+      }
+      return false;
     });
-  }, [hasIndications, conflictSet, changeset, props.phraseRef, locales]);
+  }, [
+    hasIndications,
+    commandMode,
+    conflictSet,
+    changeset,
+    props.phraseRef,
+    locales,
+  ]);
 
   const hasConflict = useMemo(() => {
     return containsDiffable(conflictSet, props.phraseRef, true);
@@ -496,52 +569,6 @@ const PhraseRow = (props: Props) => {
       translateFromDisplayValue?.localeCode as string
     );
     return getPhraseIsUntranslated(props.phrase, localeRef, translateFromRef);
-    //if (phrase?.usePhraseSections) {
-    //  if (phrase?.phraseSections.length == 0) {
-    //    return true;
-    //  }
-    //  for (const phraseSection of phrase?.phraseSections ?? []) {
-    //    const phraseSectionTranslation = phraseSection.localeRules.find(
-    //      (t) => t.id == localeRef
-    //    );
-    //    if ((phraseSectionTranslation?.displayValue?.plainText ?? "") == "") {
-    //      return true;
-    //    }
-    //  }
-
-    //} else {
-    //  const phraseTranslation = phrase?.phraseTranslations.find(
-    //    (p) => p.id == localeRef
-    //  );
-    //  if ((phraseTranslation?.plainText ?? "") == "") {
-    //    return true;
-    //  }
-    //}
-    //for (const linkVariable of phrase?.linkVariables ?? []) {
-    //  const linkTranslation = linkVariable.translations.find(
-    //    (t) => t.id == localeRef
-    //  );
-    //  if ((linkTranslation?.linkDisplayValue?.plainText ?? "") == "") {
-    //    return true;
-    //  }
-    //  if ((linkTranslation?.linkHrefValue?.plainText ?? "") == "") {
-    //    return true;
-    //  }
-    //}
-    //for (const interpolationVariant of phrase?.interpolationVariants ?? []) {
-    //  const localeRule = interpolationVariant.localeRules.find(
-    //    (lr) => lr.id == localeRef
-    //  );
-    //  if ((localeRule?.defaultValue?.plainText ?? "") == "") {
-    //    return true;
-    //  }
-    //  for (const conditional of localeRule?.conditionals ?? []) {
-    //    if ((conditional.resultant?.plainText ?? "") == "") {
-    //      return true;
-    //    }
-    //  }
-    //}
-    //return false;
   }, [applicationState, phrase, selectedLocale?.localeCode, selectedLocale]);
 
   const showAllTranslated = useMemo(() => {
@@ -634,6 +661,34 @@ const PhraseRow = (props: Props) => {
     return CopyDark;
   }, [theme.name]);
 
+  const focusIcon = useMemo(() => {
+    if (theme.name == "light") {
+      return FocusLight;
+    }
+    return FocusDark;
+  }, [theme.name]);
+
+  const crossIcon = useMemo(() => {
+    if (theme.name == "light") {
+      return CrossLight;
+    }
+    return CrossDark;
+  }, [theme.name]);
+
+  const chevronIcon = useMemo(() => {
+    if (theme.name == "light") {
+      return ChevronLight;
+    }
+    return ChevronDark;
+  }, [theme.name]);
+
+  const scrollToTopIcon = useMemo(() => {
+    if (theme.name == "light") {
+      return ScrollToTopLight;
+    }
+    return ScrollToTopDark;
+  }, [theme.name]);
+
   const isPinned = useMemo(() => {
     return props.pinnedPhrases?.includes(props.phraseRef) ?? false;
   }, [props.pinnedPhrases, props.phraseRef, clientStorage]);
@@ -679,19 +734,39 @@ const PhraseRow = (props: Props) => {
     return ColorPalette.gray;
   }, [theme.name]);
 
+  const {
+    showFocus,
+    focusPortal,
+    focusScroll,
+    focusPhraseRef,
+    setShowFocus,
+    setFocusPhraseRef,
+    onCloseFocus,
+  } = useFocusContext();
+
   const memoizedTranslation = useMemo(() => {
     if (!selectedLocale) {
       return null;
     }
 
-    if (!props.isGroupVisible) {
+    const isFocused =
+      showFocus &&
+      focusPortal?.current &&
+      props.phraseRef &&
+      focusPhraseRef == props.phraseRef;
+    if (!isFocused && !isExpanded) {
+      return null;
+    }
+
+    if (!props.isGroupVisible && !isFocused) {
       return null;
     }
 
     if (
       !isVisible &&
       !props.isFocusingPhraseSelector &&
-      commandMode != "compare"
+      commandMode != "compare" &&
+      !isFocused
     ) {
       return null;
     }
@@ -713,11 +788,13 @@ const PhraseRow = (props: Props) => {
         isSearching={isSearching}
         searchText={manualSearchText}
         onFocusSearch={onFocusSearch}
-        scrollContainer={props?.scrollContainer}
+        scrollContainer={isFocused ? (focusScroll?.current ?? props?.scrollContainer) : props?.scrollContainer}
         isFocusingPhraseSelector={props.isFocusingPhraseSelector}
+        isFocused={!!isFocused}
       />
     );
   }, [
+    isExpanded,
     props.isFocusingPhraseSelector,
     props.selectedPhraseRef,
     isSearching,
@@ -740,6 +817,7 @@ const PhraseRow = (props: Props) => {
     setShowEnabledFeatures,
     onFocusSearch,
     commandMode,
+    focusScroll
   ]);
 
   const showNoResults = useMemo(() => {
@@ -767,303 +845,453 @@ const PhraseRow = (props: Props) => {
     return !hasMatch;
   }, [manualSearchText, selectedLocale?.localeCode, isSearching]);
 
-  if (commandMode == "compare" && !hasIndications) {
-    return null;
-  }
+  const onShowFocus = useCallback(() => {
+    setShowFocus(true);
+    setFocusPhraseRef(props.phraseRef);
+  }, [props.phraseRef]);
 
-  const inner = (
-    <>
-      <UpdatePhraseModal
-        show={showUpdate}
-        onDismiss={onHideUpdate}
-        phraseGroup={props.phraseGroup}
-        phrase={props.phrase}
-      />
-      <DuplicatePhraseModal
-        show={showDuplicate}
-        onDismiss={onHideDuplicate}
-        phraseGroup={props.phraseGroup}
-        phrase={props.phrase}
-      />
-      <TitleRow>
-        <RowTitle
-          style={{
-            fontWeight: 600,
-            marginTop: 0,
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-          }}
-        >
-          <span style={{ color: theme.colors.contrastText }}>
-            {"Phrase Key: "}
-          </span>
-          <span style={{ color: theme.colors.titleText, marginLeft: 8 }}>
-            {props.phrase.phraseKey}
-          </span>
-          <span>
-            {hasUnTranslatedParts && (
-              <MissingTranslationsPill>
-                <MissingTranslationsTitle>{`missing ${
-                  selectedLocale?.localeCode ?? props.selectedTopLevelLocale
-                } values`}</MissingTranslationsTitle>
-              </MissingTranslationsPill>
-            )}
-          </span>
-        </RowTitle>
-        <div>
-          <div
+  const isFocused =
+    showFocus &&
+    focusPortal?.current &&
+    props.phraseRef &&
+    focusPhraseRef == props.phraseRef;
+  useEffect(() => {
+    if (isFocused) {
+      return () => {
+        onCloseFocus();
+      };
+    }
+  }, [isFocused]);
+
+  const compareModeMissing =
+    commandMode == "compare" && !hasIndications ? (
+      <div style={{ padding: `24px 24px 0px 24px` }}>
+        <TitleRow>
+          <RowTitle
             style={{
+              fontWeight: 600,
+              marginTop: 0,
               display: "flex",
+              flexDirection: "row",
               alignItems: "center",
-              marginTop: -16,
-              marginLeft: 24,
             }}
           >
-            {commandMode == "edit" && (
-              <>
-                <DeleteVarContainer>
-                  <DeleteVar onClick={onShowDuplicate} src={copyIcon} />
-                </DeleteVarContainer>
-                <DeleteVarContainer>
-                  <DeleteVar onClick={onShowUpdate} src={editIcon} />
-                </DeleteVarContainer>
-                <DeleteVarContainer style={{ marginRight: 24 }}>
-                  <DeleteVar src={trashIcon} onClick={onRemove} />
-                </DeleteVarContainer>
-              </>
-            )}
-            <InputSelector
-              hideLabel
-              options={localeOptions}
-              value={selectedLocaleCode ?? null}
-              label={"locale"}
-              placeholder={"locale"}
-              size="shortest"
-              onChange={(option) => {
-                setSelectedLocaleCode(option?.value as string);
-              }}
-              maxHeight={800}
-            />
-          </div>
-        </div>
-      </TitleRow>
-      {hasIndications && (
-        <div
-          style={{
-            height: 56,
-            width: "100%",
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-          }}
-        >
-          <span style={{ marginLeft: 0 }}>
-            <PinPhrase
-              style={{ fontWeight: 700, fontSize: "1.4rem", color: diffColor }}
-            >
-              {(hasConflict ? "Conflicted Locales: " : "Changed Locales: ") +
-                indicatedLocaleCodes}
-            </PinPhrase>
-          </span>
-        </div>
-      )}
-      <div
-        style={{
-          marginTop: 12,
-          marginBottom: 12,
-          width: "100%",
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <div>
-          {clientStorageIsEnabled && (
-            <div
+            <span style={{ color: theme.colors.contrastText }}>
+              {"Phrase Key: "}
+            </span>
+            <span style={{ color: theme.colors.titleText, marginLeft: 8 }}>
+              {props.phrase.phraseKey}
+            </span>
+            <span>
+              <MissingTranslationsPill>
+                <MissingTranslationsTitle>{`nothing to show in diff`}</MissingTranslationsTitle>
+              </MissingTranslationsPill>
+            </span>
+          </RowTitle>
+        </TitleRow>
+      </div>
+    ) : null;
+
+  const inner =
+    commandMode == "compare" && !hasIndications ? (
+      compareModeMissing
+    ) : (
+      <>
+        <UpdatePhraseModal
+          show={showUpdate}
+          onDismiss={onHideUpdate}
+          phraseGroup={props.phraseGroup}
+          phrase={props.phrase}
+        />
+        <DuplicatePhraseModal
+          show={showDuplicate}
+          onDismiss={onHideDuplicate}
+          phraseGroup={props.phraseGroup}
+          phrase={props.phrase}
+        />
+        <Sticky style={{
+          borderBottom: isExpanded || isFocused ? `1px solid ${ColorPalette.gray}` : 0
+        }}>
+          <TitleRow>
+            <RowTitle
               style={{
-                height: 56,
+                fontWeight: 600,
+                marginTop: 0,
                 display: "flex",
                 flexDirection: "row",
                 alignItems: "center",
               }}
             >
-              <Checkbox isChecked={isPinned} onChange={onTogglePin} />
-              <span style={{ marginLeft: 12 }}>
-                <PinPhrase>{"Keep Phrase Pinned"}</PinPhrase>
+              <span style={{ color: theme.colors.contrastText }}>
+                {"Phrase Key: "}
+              </span>
+              <span onClick={toggleExpanded} style={{ color: theme.colors.titleText, marginLeft: 8 }}>
+                {props.phrase.phraseKey}
+              </span>
+              {!isFocused && (
+                <ChevronWrapper onClick={toggleExpanded}>
+                  <ChevronIcon
+                    src={chevronIcon}
+                    style={{
+                      transform: isExpanded ? "rotate(90deg)" : "rotate(0deg)",
+                    }}
+                  />
+                </ChevronWrapper>
+              )}
+              <span>
+                {hasUnTranslatedParts && (
+                  <MissingTranslationsPill>
+                    <MissingTranslationsTitle>{`missing ${
+                      selectedLocale?.localeCode ?? props.selectedTopLevelLocale
+                    } values`}</MissingTranslationsTitle>
+                  </MissingTranslationsPill>
+                )}
+              </span>
+            </RowTitle>
+            <div>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginTop: -16,
+                  marginLeft: 24,
+                }}
+              >
+                {commandMode != "edit" && !showFocus && isExpanded && (
+                  <>
+                    <DeleteVarContainer
+                      onClick={onShowFocus}
+                      style={{ marginRight: 24 }}
+                    >
+                      <DeleteVar src={focusIcon} />
+                    </DeleteVarContainer>
+                  </>
+                )}
+                {commandMode == "edit" && !showFocus && isExpanded && (
+                  <>
+                    <DeleteVarContainer
+                      onClick={onShowFocus}
+                      style={{ marginRight: 12 }}
+                    >
+                      <DeleteVar src={focusIcon} />
+                    </DeleteVarContainer>
+                    <DeleteVarContainer>
+                      <DeleteVar onClick={onShowDuplicate} src={copyIcon} />
+                    </DeleteVarContainer>
+                    <DeleteVarContainer>
+                      <DeleteVar onClick={onShowUpdate} src={editIcon} />
+                    </DeleteVarContainer>
+                    <DeleteVarContainer style={{ marginRight: 24 }}>
+                      <DeleteVar src={trashIcon} onClick={onRemove} />
+                    </DeleteVarContainer>
+                  </>
+                )}
+                {(isExpanded || isFocused) && (
+                  <InputSelector
+                    hideLabel
+                    options={localeOptions}
+                    value={selectedLocaleCode ?? null}
+                    label={"locale"}
+                    placeholder={"locale"}
+                    size="shortest"
+                    onChange={(option) => {
+                      setSelectedLocaleCode(option?.value as string);
+                    }}
+                    maxHeight={800}
+                  />
+                )}
+              </div>
+            </div>
+          </TitleRow>
+          {hasIndications && (
+            <div
+              style={{
+                height: 56,
+                width: "100%",
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <span style={{ marginLeft: 0 }}>
+                <PinPhrase
+                  style={{
+                    fontWeight: 700,
+                    fontSize: "1.4rem",
+                    color: diffColor,
+                  }}
+                >
+                  {(hasConflict
+                    ? "Conflicted Locales: "
+                    : "Changed Locales: ") + indicatedLocaleCodes}
+                </PinPhrase>
               </span>
             </div>
           )}
-        </div>
-        <SearchInput
-          ref={searchRef}
-          borderColor={searchBorderColor}
-          value={realManualSearchText}
-          placeholder={`search ${phrase?.phraseKey}`}
-          onTextChanged={setRealManualSearchText}
-          showClear
-        />
-      </div>
-      {isCopyMode && (
-        <div
-          style={{
-            height: 56,
-            width: "100%",
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-          }}
-        >
-          <Checkbox isChecked={isCopied} onChange={toggleCopy} />
-          <span style={{ marginLeft: 12 }}>
-            <PinPhrase>{"Copy Phrase"}</PinPhrase>
-          </span>
-        </div>
-      )}
-      {commandMode == "edit" && showAllTranslated && (
-        <div
-          style={{
-            width: "100%",
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <div>
-            {clientStorageIsEnabled && (
+          <div
+            style={{
+              marginTop: 12,
+              marginBottom: 12,
+              width: "100%",
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <div>
               <div
                 style={{
                   height: 56,
                   display: "flex",
                   flexDirection: "row",
-                  justifyContent: "space-between",
-                  width: 250,
+                  alignItems: "center",
                 }}
-              >
-                <PinPhrase style={{ color: theme.colors.warningTextColor }}>
-                  {"All translated "}
-                </PinPhrase>
-                <div style={{ marginLeft: 12, width: 80 }}>
-                  <Button
-                    onClick={() => {
-                      if (!props?.phrase.id) {
-                        return;
-                      }
-                      props.onSetDismissedUnTranslated(props?.phrase.id);
+                >
+                {clientStorageIsEnabled && (
+
+                  <div
+                    style={{
+                      height: 56,
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
                     }}
-                    label={"dismiss"}
-                    bg={"orange"}
-                    size={"extra-small"}
-                  />
-                </div>
+                  >
+                    <Checkbox isChecked={isPinned} onChange={onTogglePin} />
+                    <span style={{ marginLeft: 12 }}>
+                      <PinPhrase>{"Keep Phrase Pinned"}</PinPhrase>
+                    </span>
+                  </div>
+                )}
+                {(isFocused || isExpanded) && (
+                  <span
+                    onClick={() => {
+                      if (isFocused) {
+                        focusScroll?.current?.scroll?.({top: 0, left: 0, behavior: "smooth"})
+                      } else {
+                        props.onScrollToPhrase(props.phraseRef);
+                      }
+                    }}
+                    style={{ marginLeft: 24, marginTop: 8 }}
+                  >
+                    <ScrollTopIcon
+                      src={scrollToTopIcon}
+                    />
+                  </span>
+                )}
               </div>
-            )}
-          </div>
-        </div>
-      )}
-      {commandMode == "edit" && showUpToDate && (
-        <div
-          style={{
-            width: "100%",
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <div>
-            {clientStorageIsEnabled && (
+            </div>
+            {(isExpanded || isFocused) && (
               <div
                 style={{
                   height: 56,
                   display: "flex",
                   flexDirection: "row",
-                  justifyContent: "space-between",
-                  width: 250,
+                  alignItems: "center",
                 }}
               >
-                <PinPhrase style={{ color: theme.colors.warningTextColor }}>
-                  {"Up to date "}
-                </PinPhrase>
-                <div style={{ marginLeft: 12, width: 80 }}>
-                  <Button
-                    onClick={() => {
-                      if (!props?.phrase.id) {
-                        return;
-                      }
-                      props?.onSetDismissedRequiredUpdated(props?.phrase?.id);
-                    }}
-                    label={"dismiss"}
-                    bg={"orange"}
-                    size={"extra-small"}
+                <SearchInput
+                  ref={searchRef}
+                  borderColor={searchBorderColor}
+                  value={realManualSearchText}
+                  placeholder={`search ${phrase?.phraseKey}`}
+                  onTextChanged={setRealManualSearchText}
+                  showClear
+                />
+                {showFocus && (
+                  <CrossIcon
+                    onClick={onCloseFocus}
+                    style={{ marginLeft: 24 }}
+                    src={crossIcon}
                   />
-                </div>
+                )}
               </div>
             )}
           </div>
-        </div>
-      )}
-      {(commandMode == "edit" ||
-        (props?.phrase?.description?.value?.trim() ?? "") != "") && (
-        <div
-          style={{
-            marginTop: 24,
-          }}
-        >
-          <DescriptionContainer
-            description={descriptionValue?.value ?? ""}
-            onUpdateDescription={onUpdateDescription}
-            isReadOnly={commandMode != "edit"}
-            phraseRef={props.phraseRef}
-          />
-        </div>
-      )}
-      <div
-        style={{
-          marginBottom: commandMode != "edit" ? 24 : 48,
-        }}
-      >
-        {(phrase?.tagsEnabled || (phrase?.tags?.length ?? 0) > 0) && (
-          <TagList phraseRef={props.phraseRef} />
+        </Sticky>
+        {(isFocused || isExpanded) && (
+          <>
+            {isCopyMode && (
+              <div
+                style={{
+                  height: 56,
+                  width: "100%",
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <Checkbox isChecked={isCopied} onChange={toggleCopy} />
+                <span style={{ marginLeft: 12 }}>
+                  <PinPhrase>{"Copy Phrase"}</PinPhrase>
+                </span>
+              </div>
+            )}
+            {commandMode == "edit" && showAllTranslated && (
+              <div
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <div>
+                  {clientStorageIsEnabled && (
+                    <div
+                      style={{
+                        height: 56,
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        width: 250,
+                      }}
+                    >
+                      <PinPhrase
+                        style={{ color: theme.colors.warningTextColor }}
+                      >
+                        {"All translated "}
+                      </PinPhrase>
+                      <div style={{ marginLeft: 12, width: 80 }}>
+                        <Button
+                          onClick={() => {
+                            if (!props?.phrase.id) {
+                              return;
+                            }
+                            props.onSetDismissedUnTranslated(props?.phrase.id);
+                          }}
+                          label={"dismiss"}
+                          bg={"orange"}
+                          size={"extra-small"}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+            {commandMode == "edit" && showUpToDate && (
+              <div
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <div>
+                  {clientStorageIsEnabled && (
+                    <div
+                      style={{
+                        height: 56,
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        width: 250,
+                      }}
+                    >
+                      <PinPhrase
+                        style={{ color: theme.colors.warningTextColor }}
+                      >
+                        {"Up to date "}
+                      </PinPhrase>
+                      <div style={{ marginLeft: 12, width: 80 }}>
+                        <Button
+                          onClick={() => {
+                            if (!props?.phrase.id) {
+                              return;
+                            }
+                            props?.onSetDismissedRequiredUpdated(
+                              props?.phrase?.id
+                            );
+                          }}
+                          label={"dismiss"}
+                          bg={"orange"}
+                          size={"extra-small"}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+            {(commandMode == "edit" ||
+              (props?.phrase?.description?.value?.trim() ?? "") != "") && (
+              <div
+                style={{
+                  marginTop: 24,
+                }}
+              >
+                <DescriptionContainer
+                  description={descriptionValue?.value ?? ""}
+                  onUpdateDescription={onUpdateDescription}
+                  isReadOnly={commandMode != "edit"}
+                  phraseRef={props.phraseRef}
+                />
+              </div>
+            )}
+            <div
+              style={{
+                marginBottom: commandMode != "edit" ? 24 : 48,
+              }}
+            >
+              {(phrase?.tagsEnabled || (phrase?.tags?.length ?? 0) > 0) && (
+                <TagList phraseRef={props.phraseRef} />
+              )}
+            </div>
+            {!showNoResults && (
+              <div
+                style={{
+                  borderTop: `1px solid ${theme.colors.contrastTextLight}`,
+                  paddingTop: 24,
+                  visibility: isVisible || isFocused ? "visible" : "hidden",
+                }}
+              >
+                {memoizedTranslation}
+              </div>
+            )}
+            {showNoResults && (
+              <div
+                style={{
+                  borderTop: `1px solid ${theme.colors.contrastTextLight}`,
+                  paddingTop: 24,
+                  visibility: isVisible || isFocused ? "visible" : "hidden",
+                }}
+              >
+                <NoResultsContainer>
+                  <AllContentFiltered>
+                    {"all content has been filtered by local search"}
+                  </AllContentFiltered>
+                  <ClearLocalSearch onClick={onClearSearch}>
+                    {"clear local search & show content"}
+                  </ClearLocalSearch>
+                </NoResultsContainer>
+              </div>
+            )}
+          </>
         )}
-      </div>
-      {!showNoResults && (
-        <div
-          style={{
-            borderTop: `1px solid ${theme.colors.contrastTextLight}`,
-            paddingTop: 24,
-            visibility: isVisible ? "visible" : "hidden",
-          }}
-        >
-          {memoizedTranslation}
-        </div>
-      )}
-      {showNoResults && (
-        <div
-          style={{
-            borderTop: `1px solid ${theme.colors.contrastTextLight}`,
-            paddingTop: 24,
-            visibility: isVisible ? "visible" : "hidden",
-          }}
-        >
-          <NoResultsContainer>
-            <AllContentFiltered>
-              {"all content has been filtered by local search"}
-            </AllContentFiltered>
-            <ClearLocalSearch onClick={onClearSearch}>
-              {"clear local search & show content"}
-            </ClearLocalSearch>
-          </NoResultsContainer>
-        </div>
-      )}
-    </>
-  )
+      </>
+    );
+
+  const innerWithPortal =
+    showFocus &&
+    focusPortal?.current &&
+    props.phraseRef &&
+    focusPhraseRef == props.phraseRef ? (
+      <>
+        {ReactDOM.createPortal(inner, focusPortal.current)}
+        {inner}
+      </>
+    ) : (
+      inner
+    );
 
   return (
-    <Container style={{ borderColor: diffColor }} ref={container}>
-      {inner}
+    <Container style={{ borderColor: externalDiffColor }} ref={container}>
+      {innerWithPortal}
     </Container>
   );
 };

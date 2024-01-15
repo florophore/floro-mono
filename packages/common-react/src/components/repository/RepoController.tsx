@@ -17,6 +17,7 @@ import { RepoPage } from "./types";
 import { MergeRequestNavProvider } from "./remote/mergerequest/MergeRequestContext";
 import { CopyPasteProvider } from "./copypaste/CopyPasteContext";
 import { CreateAnnouncementsProvider } from "./remote/announcements/CreateAnnouncementsContext";
+import { useCurrentRepoState, usePluginStorageV2, useWatchRepoId } from "./local/hooks/local-hooks";
 
 interface Props {
   from: "local" | "remote";
@@ -62,6 +63,10 @@ const RepoController = (props: Props) => {
     };
   }, [onTogglePanel]);
 
+  const { data: repoData } = useCurrentRepoState(props.repository, "RepoController");
+  const { data: storage } = usePluginStorageV2(props.repository);
+  useWatchRepoId(props?.repository?.id ?? "");
+
   return (
     <CreateAnnouncementsProvider>
       <CopyPasteProvider repository={props.repository}>
@@ -77,12 +82,16 @@ const RepoController = (props: Props) => {
                 remoteCommitState={remoteCommitState}
                 comparisonState={comparisonState}
                 page={props.page}
+                apiResponse={repoData}
+                storage={storage}
                 isLoading={props.isLoading}
               >
                 <>
                     <>
-                      {props.from == "local" && (
+                      {props.from == "local" && !!repoData && !!storage && (
                         <LocalRepoController
+                          apiResponse={repoData}
+                          storage={storage}
                           repository={props.repository}
                           plugin={props.plugin ?? "home"}
                           isExpanded={isExpanded}

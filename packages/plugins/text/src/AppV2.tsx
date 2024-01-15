@@ -26,8 +26,12 @@ import ChatGPTProvider from "./chatgpt/ChatGPTContext";
 import DisplayHeader from "./header/DisplayHeader";
 import Chevron from "@floro/common-assets/assets/images/icons/chevron.dark.svg";
 import HeaderV2 from "./headerv2/HeaderV2";
-import { filterPinnedPhraseGroups, getFilteredPhrasesGroups } from "./phrasegroups/filterhooks";
+import {
+  filterPinnedPhraseGroups,
+  getFilteredPhrasesGroups,
+} from "./phrasegroups/filterhooks";
 import FocusView from "./focusview/FocusView";
+import { FocusProvider } from "./focusview/FocusContext";
 
 const Container = styled.div`
   width: 100%;
@@ -109,7 +113,7 @@ const Layout = () => {
   const [showLocales, setShowLocales] = useState<boolean>(false);
   const [showEditTerms, setShowEditTerms] = useState<boolean>(false);
   const [showFilters, setShowFilters] = useState<boolean>(false);
-  const [selectedGroup, setSelectedGroup] = useState<string|null>(null);
+  const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
 
   const [phraseGroups, setPhraseGroups, savePhraseGroups] =
     useFloroState("$(text).phraseGroups") ?? [];
@@ -215,15 +219,27 @@ const Layout = () => {
     if (!applicationState) {
       return [];
     }
-    return pinnedPhrases?.map((phraseKey) => {
-      const [phraseGroupKey] = extractQueryArgs(phraseKey as PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>']);
-      const phraseGroup = getReferencedObject(applicationState, `$(text).phraseGroups.id<${phraseGroupKey}>`);
-      const phrase = getReferencedObject(applicationState, phraseKey as PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>']);
-      return {
-        phrase,
-        phraseGroup
-      }
-    })?.filter(pg => !!pg?.phrase && !!pg?.phraseGroup) ?? [];
+    return (
+      pinnedPhrases
+        ?.map((phraseKey) => {
+          const [phraseGroupKey] = extractQueryArgs(
+            phraseKey as PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>"]
+          );
+          const phraseGroup = getReferencedObject(
+            applicationState,
+            `$(text).phraseGroups.id<${phraseGroupKey}>`
+          );
+          const phrase = getReferencedObject(
+            applicationState,
+            phraseKey as PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>"]
+          );
+          return {
+            phrase,
+            phraseGroup,
+          };
+        })
+        ?.filter((pg) => !!pg?.phrase && !!pg?.phraseGroup) ?? []
+    );
   }, [pinnedPhrases, applicationState]);
 
   const pinFilteredPhraseGroups = useMemo(() => {
@@ -276,98 +292,100 @@ const Layout = () => {
     return filterPinnedPhraseGroups(
       phraseGroups,
       pinnedGroups,
-      !!showOnlyPinnedGroups,
+      !!showOnlyPinnedGroups
     );
-  }, [
-    phraseGroups,
-    pinnedGroups,
-    showOnlyPinnedGroups,
-  ]);
+  }, [phraseGroups, pinnedGroups, showOnlyPinnedGroups]);
 
   useEffect(() => {
     if (selectedGroup) {
       setSelectedGroup(null);
     }
-  }, [selectedGroup])
+  }, [selectedGroup]);
 
   return (
     <ThemeProvider theme={colorTheme}>
       <ChatGPTProvider>
         <DeepLProvider>
           <TranslationMemoryProvider>
-            <Container ref={container}>
-              <HeaderV2
-                showFilters={showFilters}
-                setShowFilters={setShowFilters}
-                isEditGroups={isEditGroups}
-                searchText={searchText ?? ""}
-                onSetSearchText={setSearchText}
-                selectedTopLevelLocale={selectedTopLevelLocale as string}
-                setGlobalFilterUnstranslated={setGlobalFilterUnstranslated}
-                setGlobalFilterRequiresUpdate={setGlobalFilterRequiresUpdate}
-                showOnlyPinnedPhrases={showOnlyPinnedPhrases ?? false}
-                setShowOnlyPinnedPhrases={setShowOnlyPinnedPhrases}
-                pinnedPhrases={pinnedPhrases}
-                setPinnedPhrases={setPinnedPhrases}
-                removePinnedPhrases={removePinnedPhrases}
-                searchTextState={searchTextState}
-                onSetSearchTextState={setSearchTextState}
-                phraseGroups={phraseGroups ?? []}
-                filteredPhraseGroups={filteredPhraseGroups ?? []}
-                onShowEditGroups={onShowEditGroups}
-                onHideEditGroups={onHideEditGroups}
-                setSelectedTopLevelLocale={onChangeTopLevelLocale}
-                onShowEditLocales={onShowLocales}
-                page={page}
-                setPage={setPage}
-                globalFilterUntranslated={globalFilterUntranslated}
-                globalFilterRequiresUpdate={globalFilterRequiresUpdate}
-                filterTag={filterTag}
-                setFilterTag={setFilterTag}
-                pinnedPhrasesWithGroups={pinnedPhrasesWithGroups}
-                selectedGroup={selectedGroup}
-                setSelectedGroup={setSelectedGroup}
-                pinnedGroups={pinnedGroups ?? []}
-                setPinnedGroups={setPinnedGroups}
-                showOnlyPinnedGroups={!!showOnlyPinnedGroups}
-                setShowOnlyPinnedGroups={setShowOnlyPinnedGroups}
-              />
-              <Inner>
-                {container.current && (
-                  <>
-                    {page == "phrases" && (
-                      <PhraseGroups
-                        selectedTopLevelLocale={selectedTopLevelLocale}
-                        globalFilterUntranslated={globalFilterUntranslated}
-                        globalFilterRequiresUpdate={globalFilterRequiresUpdate}
-                        searchText={searchText}
-                        isEditingGroups={isEditGroups}
-                        filterTag={filterTag}
-                        showOnlyPinnedPhrases={
-                          (showOnlyPinnedPhrases ?? false) &&
-                          clientStorageEnabled
-                        }
-                        pinnedPhrases={pinnedPhrases}
-                        setPinnedPhrases={setPinnedPhrases}
-                        removePinnedPhrases={removePinnedPhrases}
-                        scrollContainer={container.current}
-                        phraseGroups={filteredPinnedPhraseGroups ?? []}
-                        setPhraseGroups={setPhraseGroups}
-                        savePhraseGroups={savePhraseGroups}
-                        showFilters={showFilters}
-                        pinnedPhrasesWithGroups={pinnedPhrasesWithGroups}
-                        selectedGroup={selectedGroup}
-                        pinnedGroups={pinnedGroups}
-                        setPinnedGroups={setPinnedGroups}
-                        showOnlyPinnedGroups={!!showOnlyPinnedGroups}
-                      />
+              <FocusProvider>
+                <Container ref={container}>
+                  <HeaderV2
+                    showFilters={showFilters}
+                    setShowFilters={setShowFilters}
+                    isEditGroups={isEditGroups}
+                    searchText={searchText ?? ""}
+                    onSetSearchText={setSearchText}
+                    selectedTopLevelLocale={selectedTopLevelLocale as string}
+                    setGlobalFilterUnstranslated={setGlobalFilterUnstranslated}
+                    setGlobalFilterRequiresUpdate={
+                      setGlobalFilterRequiresUpdate
+                    }
+                    showOnlyPinnedPhrases={showOnlyPinnedPhrases ?? false}
+                    setShowOnlyPinnedPhrases={setShowOnlyPinnedPhrases}
+                    pinnedPhrases={pinnedPhrases}
+                    setPinnedPhrases={setPinnedPhrases}
+                    removePinnedPhrases={removePinnedPhrases}
+                    searchTextState={searchTextState}
+                    onSetSearchTextState={setSearchTextState}
+                    phraseGroups={phraseGroups ?? []}
+                    filteredPhraseGroups={filteredPhraseGroups ?? []}
+                    onShowEditGroups={onShowEditGroups}
+                    onHideEditGroups={onHideEditGroups}
+                    setSelectedTopLevelLocale={onChangeTopLevelLocale}
+                    onShowEditLocales={onShowLocales}
+                    page={page}
+                    setPage={setPage}
+                    globalFilterUntranslated={globalFilterUntranslated}
+                    globalFilterRequiresUpdate={globalFilterRequiresUpdate}
+                    filterTag={filterTag}
+                    setFilterTag={setFilterTag}
+                    pinnedPhrasesWithGroups={pinnedPhrasesWithGroups}
+                    selectedGroup={selectedGroup}
+                    setSelectedGroup={setSelectedGroup}
+                    pinnedGroups={pinnedGroups ?? []}
+                    setPinnedGroups={setPinnedGroups}
+                    showOnlyPinnedGroups={!!showOnlyPinnedGroups}
+                    setShowOnlyPinnedGroups={setShowOnlyPinnedGroups}
+                    setPhraseGroups={setPhraseGroups}
+                  />
+                  <Inner>
+                    {container.current && (
+                      <>
+                        {page == "phrases" && (
+                          <PhraseGroups
+                            selectedTopLevelLocale={selectedTopLevelLocale}
+                            globalFilterUntranslated={globalFilterUntranslated}
+                            globalFilterRequiresUpdate={
+                              globalFilterRequiresUpdate
+                            }
+                            searchText={searchText}
+                            isEditingGroups={isEditGroups}
+                            filterTag={filterTag}
+                            showOnlyPinnedPhrases={
+                              (showOnlyPinnedPhrases ?? false) &&
+                              clientStorageEnabled
+                            }
+                            pinnedPhrases={pinnedPhrases}
+                            setPinnedPhrases={setPinnedPhrases}
+                            removePinnedPhrases={removePinnedPhrases}
+                            scrollContainer={container.current}
+                            phraseGroups={filteredPinnedPhraseGroups ?? []}
+                            setPhraseGroups={setPhraseGroups}
+                            savePhraseGroups={savePhraseGroups}
+                            showFilters={showFilters}
+                            pinnedPhrasesWithGroups={pinnedPhrasesWithGroups}
+                            selectedGroup={selectedGroup}
+                            pinnedGroups={pinnedGroups}
+                            setPinnedGroups={setPinnedGroups}
+                            showOnlyPinnedGroups={!!showOnlyPinnedGroups}
+                          />
+                        )}
+                        {page == "locales" && <LocalesSections />}
+                      </>
                     )}
-                    {page == "locales" && <LocalesSections />}
-                  </>
-                )}
-              </Inner>
-              <FocusView/>
-            </Container>
+                  </Inner>
+                </Container>
+              </FocusProvider>
           </TranslationMemoryProvider>
         </DeepLProvider>
       </ChatGPTProvider>

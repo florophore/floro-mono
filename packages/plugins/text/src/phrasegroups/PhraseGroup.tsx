@@ -53,6 +53,7 @@ import FocusDark from "@floro/common-assets/assets/images/icons/focus.dark.svg";
 import PlusLight from "@floro/common-assets/assets/images/icons/plus.light.svg";
 import PlusDark from "@floro/common-assets/assets/images/icons/plus.dark.svg";
 
+
 import SearchLight from "@floro/common-assets/assets/images/icons/search_glass_active.light.svg";
 import SearchDark from "@floro/common-assets/assets/images/icons/search_glass_active.dark.svg";
 
@@ -89,7 +90,7 @@ const TopRow = styled.div`
 
 const StickRow = styled.div`
   position: sticky;
-  z-index: 1;
+  z-index: 2;
   transition: box-shadow 100ms top 100ms;
 `;
 
@@ -895,22 +896,29 @@ const PhraseGroup = (props: Props) => {
     );
   }, []);
 
+  const onScrollToPhrase = useCallback((ref: PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>"]) => {
+    setSelectedPhraseRef(
+      (ref) ??
+        null
+    );
+  }, []);
+
   const phraseKeyOptions = useMemo(() => {
     return renderLimitedPhrases
-      .filter((phrase) => {
-        if (commandMode == "compare") {
-          const phraseRef = makeQueryRef(
-            "$(text).phraseGroups.id<?>.phrases.id<?>",
-            phraseGroup?.id as string,
-            phrase.id as string
-          );
-          return (
-            containsDiffable(changeset, phraseRef, true) ||
-            containsDiffable(conflictSet, phraseRef, true)
-          );
-        }
-        return true;
-      })
+      //.filter((phrase) => {
+      //  if (commandMode == "compare") {
+      //    const phraseRef = makeQueryRef(
+      //      "$(text).phraseGroups.id<?>.phrases.id<?>",
+      //      phraseGroup?.id as string,
+      //      phrase.id as string
+      //    );
+      //    return (
+      //      containsDiffable(changeset, phraseRef, true) ||
+      //      containsDiffable(conflictSet, phraseRef, true)
+      //    );
+      //  }
+      //  return true;
+      //})
       .map((phrase) => {
         const phraseRef = makeQueryRef(
           "$(text).phraseGroups.id<?>.phrases.id<?>",
@@ -961,6 +969,9 @@ const PhraseGroup = (props: Props) => {
   }, [isReOrderPhrasesMode, showGroupSearch])
 
   const matchesPinnedPhrases = useMemo(() => {
+    if (!props.showOnlyPinnedPhrases) {
+      return true;
+    }
     const phrasesFilteredByPins = filterPinnedPhrasesFromPhraseGroup(
         phraseGroupRef,
         props.phraseGroup.phrases,
@@ -1023,14 +1034,14 @@ const PhraseGroup = (props: Props) => {
 
   }, [props?.scrollContainer])
 
-  if (commandMode == "compare" && !hasConflict) {
-    if (!hasAnyRemovals && compareFrom == "before") {
-      return null;
-    }
-    if (!hasAnyAdditions && compareFrom == "after") {
-      return null;
-    }
-  }
+  //if (commandMode == "compare" && !hasConflict) {
+  //  if (!hasAnyRemovals && compareFrom == "before") {
+  //    return null;
+  //  }
+  //  if (!hasAnyAdditions && compareFrom == "after") {
+  //    return null;
+  //  }
+  //}
   if (!matchesPinnedPhrases) {
     return false;
   }
@@ -1329,7 +1340,7 @@ const PhraseGroup = (props: Props) => {
         >
           {phraseKeyOptions.length == 0 && (
             <div>
-              {commandMode == "compare" && (
+              {commandMode == "compare" && false && (
                 <Row style={{ alignItems: "center", justifyContent: "center" }}>
                   <Title>{"No phrases to show in diff"}</Title>
                 </Row>
@@ -1358,6 +1369,7 @@ const PhraseGroup = (props: Props) => {
                       phrase={phrase}
                       onRemove={onRemovePhrase}
                       phraseGroup={props.phraseGroup}
+                      onScrollToPhrase={onScrollToPhrase}
                       scrollContainer={
                         scrollContainer?.current as HTMLDivElement
                       }

@@ -74,27 +74,30 @@ function isVarName(str) {
 }
 
 interface Props {
-  phraseRef: PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>"];
   onHide: () => void;
   mockRichText: string;
   isEmpty: boolean;
+  phraseRef: PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>'];
+  phrase: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>'];
+  setPhrase: (phrase: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>']) => void;
 }
 
 const FeatureEnabler = (props: Props) => {
   const theme = useTheme();
   const { commandMode} = useFloroContext();
-  const [phrase, setPhrase] = useFloroState(props.phraseRef);
   const [showCreateSection, setShowCreateSection] = useState(false);
+  const phrase = props.phrase;
+  const setPhrase = props.setPhrase;
 
   const onHideCreateSection = useCallback(() => {
     setShowCreateSection(false);
   }, []);
 
   const onToggleUseSections = useCallback(() => {
-    if (!phrase) {
+    if (!props.phrase) {
       return;
     }
-    if (!phrase?.usePhraseSections) {
+    if (!props?.phrase?.usePhraseSections) {
       setPhrase({
         ...phrase,
         usePhraseSections: true,

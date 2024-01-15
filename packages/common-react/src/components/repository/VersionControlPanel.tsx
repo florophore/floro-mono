@@ -1,10 +1,6 @@
-import React, {
-  useMemo,
-  useCallback,
-  useEffect,
-} from "react";
+import React, { useMemo, useCallback, useEffect } from "react";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
-import {  useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import ColorPalette from "@floro/styles/ColorPalette";
@@ -16,11 +12,15 @@ import LocalRemoteToggle from "@floro/storybook/stories/common-components/LocalR
 import { useDaemonIsConnected } from "../../pubsub/socket";
 import LocalVCSNavController from "./local/vcsnav/LocalVCSNavController";
 import { useSourceGraphIsShown } from "./ui-state-hook";
-import {  useCloneState, useRepoExistsLocally } from "./local/hooks/local-hooks";
-import { ComparisonState, RemoteCommitState } from "./remote/hooks/remote-state";
+import { useCloneState, useRepoExistsLocally } from "./local/hooks/local-hooks";
+import {
+  ComparisonState,
+  RemoteCommitState,
+} from "./remote/hooks/remote-state";
 import RemoteVCSNavController from "./remote/vcsnav/RemoteVCSNavController";
 import { RepoPage } from "./types";
 import { useLocalVCSNavContext } from "./local/vcsnav/LocalVCSContext";
+import { ApiResponse } from "floro/dist/src/repo";
 
 const Container = styled.nav`
   display: flex;
@@ -107,12 +107,15 @@ const OuterShadow = styled.div`
   width: 0px;
   left: -2px;
   position: absolute;
-  box-shadow: -2px 4px 3px 4px ${props => props.theme.shadows.versionControlSideBarShadow};
+  box-shadow: -2px 4px 3px 4px
+    ${(props) => props.theme.shadows.versionControlSideBarShadow};
   transform: opacity 400ms;
 `;
 
 interface Props {
   repository: Repository;
+  storage?: object|null;
+  apiResponse?: ApiResponse|null;
   remoteCommitState: RemoteCommitState;
   comparisonState: ComparisonState;
   isExpanded: boolean;
@@ -122,13 +125,15 @@ interface Props {
   isLoading: boolean;
 }
 
-
 const VersionControlPanel = (props: Props) => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const from: "remote"|"local" = searchParams.get?.('from') as "remote"|"local" ?? "remote";
-  const { data: repoExistsLocally, isLoading } = useRepoExistsLocally(props.repository);
+  const from: "remote" | "local" =
+    (searchParams.get?.("from") as "remote" | "local") ?? "remote";
+  const { data: repoExistsLocally, isLoading } = useRepoExistsLocally(
+    props.repository
+  );
   const sourceGraphIsShown = useSourceGraphIsShown();
-  const { showLocalSettings} = useLocalVCSNavContext();
+  const { showLocalSettings } = useLocalVCSNavContext();
 
   const isFullShadow = useMemo(() => {
     if (from == "remote") {
@@ -158,7 +163,13 @@ const VersionControlPanel = (props: Props) => {
       return true;
     }
     return false;
-  }, [sourceGraphIsShown, showLocalSettings, repoExistsLocally, props.page, from]);
+  }, [
+    sourceGraphIsShown,
+    showLocalSettings,
+    repoExistsLocally,
+    props.page,
+    from,
+  ]);
   const { data: cloneState } = useCloneState(props.repository);
 
   const theme = useTheme();
@@ -171,10 +182,9 @@ const VersionControlPanel = (props: Props) => {
   useEffect(() => {
     if (!isDaemonConnected && from == "local") {
       setSearchParams({
-        from: "remote"
+        from: "remote",
       });
     }
-
   }, [searchParams, isDaemonConnected, from]);
 
   const onTogglePanel = useCallback(() => {
@@ -259,40 +269,40 @@ const VersionControlPanel = (props: Props) => {
     return 0;
   }, [props.isExpanded]);
 
-  const onToggleFrom = useCallback((from: "local"|"remote") => {
-    const params = {};
-    for (const [k,v] of searchParams.entries()) {
-      params[k] = v;
-    }
-    setSearchParams({
-      ...params,
-      from
-    });
-
-  }, [searchParams]);
+  const onToggleFrom = useCallback(
+    (from: "local" | "remote") => {
+      const params = {};
+      for (const [k, v] of searchParams.entries()) {
+        params[k] = v;
+      }
+      setSearchParams({
+        ...params,
+        from,
+      });
+    },
+    [searchParams]
+  );
 
   const onGoToLocal = useCallback(() => {
     const params = {};
-    for (const [k,v] of searchParams.entries()) {
+    for (const [k, v] of searchParams.entries()) {
       params[k] = v;
     }
     setSearchParams({
       ...params,
-      from: "local"
+      from: "local",
     });
-
   }, [searchParams]);
 
   const onGoToRemote = useCallback(() => {
     const params = {};
-    for (const [k,v] of searchParams.entries()) {
+    for (const [k, v] of searchParams.entries()) {
       params[k] = v;
     }
     setSearchParams({
       ...params,
-      from: "remote"
+      from: "remote",
     });
-
   }, [searchParams]);
 
   return (
@@ -306,10 +316,23 @@ const VersionControlPanel = (props: Props) => {
           )}
           <NavigationWrapper>
             {from == "remote" && (
-              <RemoteVCSNavController isLoading={props.isLoading} plugin={props.plugin} page={props.page} repository={props.repository} remoteCommitState={props.remoteCommitState} comparisonState={props.comparisonState} />
+              <RemoteVCSNavController
+                isLoading={props.isLoading}
+                plugin={props.plugin}
+                page={props.page}
+                repository={props.repository}
+                remoteCommitState={props.remoteCommitState}
+                comparisonState={props.comparisonState}
+              />
             )}
             {from == "local" && (
-              <LocalVCSNavController plugin={props.plugin} repository={props.repository} page={props.page} />
+              <LocalVCSNavController
+                plugin={props.plugin}
+                repository={props.repository}
+                page={props.page}
+                apiResponse={props.apiResponse}
+                storage={props.storage}
+              />
             )}
           </NavigationWrapper>
         </InnerContainerContent>
@@ -324,7 +347,7 @@ const VersionControlPanel = (props: Props) => {
       <AdjustIconWrapper onClick={onTogglePanel} style={iconOffset}>
         <AdjustIcon src={adjustIcon} />
       </AdjustIconWrapper>
-      {isDaemonConnected && (cloneState?.state == "done") && (
+      {isDaemonConnected && cloneState?.state == "done" && (
         <>
           <RemoteToggleIconWrapper
             style={{
@@ -334,7 +357,6 @@ const VersionControlPanel = (props: Props) => {
                 from == "remote" ? ColorPalette.teal : ColorPalette.gray,
             }}
             onClick={onGoToRemote}
-
           >
             <ToggleIcon src={GlobeWhite} />
           </RemoteToggleIconWrapper>

@@ -116,6 +116,7 @@ interface Props {
   onFocusSearch: () => void;
   scrollContainer?: HTMLDivElement;
   isFocusingPhraseSelector: boolean;
+  isFocused: boolean;
 }
 
 const PhraseSection = (props: Props) => {
@@ -125,8 +126,13 @@ const PhraseSection = (props: Props) => {
   );
   const { commandMode, applicationState } = useFloroContext();
   const container = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(true);
+  const [isSectionVisible, setIsSectionVisible] = useState(true);
   const [isLoaded, setIsLoaded] = useState(false);
+
+  const isVisible = useMemo(() => {
+    return isSectionVisible || props.isFocused;
+
+  }, [isSectionVisible, props.isFocused])
 
   useEffect(() => {
 
@@ -162,7 +168,7 @@ const PhraseSection = (props: Props) => {
             isVisible = Math.abs(rect.top + rect.height) < windowHeight * 3;
         }
       }
-      setIsVisible(isVisible);
+      setIsSectionVisible(isVisible);
     }
     const onScrollThrottle = throttle(onScroll, 30, { trailing: true, leading: true})
     props.scrollContainer.addEventListener("scroll", onScrollThrottle);
@@ -170,7 +176,9 @@ const PhraseSection = (props: Props) => {
     props.scrollContainer.addEventListener("click", onScroll);
     props.scrollContainer.addEventListener("resize", onScroll);
     onScroll();
+    const interval = setInterval(onScroll, 100);
     return () => {
+      clearInterval(interval);
       if (!props.scrollContainer) {
         return;
       }
@@ -770,7 +778,7 @@ const PhraseSection = (props: Props) => {
   }
 
   return (
-    <div ref={container} style={{ marginBottom: 24, visibility: isVisible ? 'visible' : 'hidden'  }}>
+    <div ref={container} style={{ marginBottom: 24 }}>
       <TermModal
         show={showFindTerms && commandMode == "edit"}
         onDismiss={onHideFindTerms}

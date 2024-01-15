@@ -147,7 +147,7 @@ const PhraseFilter = (props: Props) => {
                   props.setFilterTag((option?.value as string) ?? null);
                 }}
                 size="short"
-                zIndex={4}
+                zIndex={5}
               />
             </div>
             {props.filterTag && (

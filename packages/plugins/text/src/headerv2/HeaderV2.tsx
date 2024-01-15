@@ -16,13 +16,14 @@ import TriToggle from "@floro/storybook/stories/design-system/TriToggle";
 import InputSelector from "@floro/storybook/stories/design-system/InputSelector";
 import PhraseFilter from "./PhraseFilter";
 import LocalesSections from "../locales/LocalesSections";
+import { useFocusContext } from "../focusview/FocusContext";
 
 const HeaderContainer = styled.div`
   width: 100%;
   height: 104px;
   position: sticky;
   top: 0;
-  z-index: 4;
+  z-index: 5;
   border-bottom: 1px inset ${ColorPalette.gray};
   background: ${props=> props.theme.background};
   display: flex;
@@ -36,7 +37,7 @@ const FilterContainer = styled.div`
   width: 100%;
   position: sticky;
   top: 104px;
-  z-index: 3;
+  z-index: 4;
   transition: height 100ms;
   background: ${props=> props.theme.background};
   border-bottom: 1px inset ${ColorPalette.gray};
@@ -46,7 +47,7 @@ const HeaderSearchContainer = styled.div`
   width: 100%;
   height: 132px;
   position: sticky;
-  z-index: 2;
+  z-index: 3;
   border-bottom: 1px solid ${ColorPalette.gray};
   background: ${props=> props.theme.background};
   transition: top 100ms;
@@ -96,12 +97,15 @@ interface Props {
   setPinnedGroups: (groupRefs: Array<string>) => void;
   showOnlyPinnedGroups: boolean;
   setShowOnlyPinnedGroups: (filter: boolean) => void;
+  setPhraseGroups: (pgs: SchemaTypes['$(text).phraseGroups'], doSave?: boolean) => void|(() => void);
 }
 
 const HeaderV2 = (props: Props) => {
 
   const locales = useReferencedObject("$(text).localeSettings.locales");
   const localesHasIndication = useHasIndication("$(text).localeSettings.locales");
+
+  const { showFocus } = useFocusContext();
 
   useEffect(() => {
     if (localesHasIndication) {
@@ -162,20 +166,22 @@ const HeaderV2 = (props: Props) => {
           />
         </div>
         <div>
-          <div style={{marginTop: -12, zIndex: 3}}>
-            <InputSelector
-              hideLabel
-              options={localeOptions}
-              value={props.selectedTopLevelLocale ?? null}
-              label={"locale"}
-              placeholder={"locale"}
-              size="shortest"
-              onChange={(option) => {
-                props.setSelectedTopLevelLocale(option?.value as string);
-              }}
-              maxHeight={800}
-            />
-          </div>
+          {!showFocus && props.page != "locales" && (
+            <div style={{marginTop: -12, zIndex: 3}}>
+              <InputSelector
+                hideLabel
+                options={localeOptions}
+                value={props.selectedTopLevelLocale ?? null}
+                label={"locale"}
+                placeholder={"locale"}
+                size="shortest"
+                onChange={(option) => {
+                  props.setSelectedTopLevelLocale(option?.value as string);
+                }}
+                maxHeight={800}
+              />
+            </div>
+          )}
         </div>
       </HeaderContainer>
       {props.page != "locales" && (
@@ -238,6 +244,7 @@ const HeaderV2 = (props: Props) => {
               setPinnedGroups={props.setPinnedGroups}
               showOnlyPinnedGroups={props.showOnlyPinnedGroups}
               setShowOnlyPinnedGroups={props.setShowOnlyPinnedGroups}
+              setPhraseGroups={props.setPhraseGroups}
             />
           )}
         </HeaderSearchContainer>
