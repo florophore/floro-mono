@@ -97,7 +97,7 @@ const InnerFloatContainer = styled.div`
 
 const Layout = () => {
   const container = useRef<HTMLDivElement>(null);
-  const { commandMode, pluginState, applicationState, clientStorage } =
+  const { pluginState, applicationState, clientStorage } =
     useFloroContext();
   const clientStorageEnabled = clientStorage != null;
   const [page, setPage] = useState<"phrases" | "terms" | "locales">("phrases");
@@ -333,7 +333,7 @@ const Layout = () => {
                   searchTextState={searchTextState}
                   onSetSearchTextState={setSearchTextState}
                   phraseGroups={phraseGroups ?? []}
-                  filteredPhraseGroups={filteredPhraseGroups ?? []}
+                  filteredPhraseGroups={filteredPhraseGroups}
                   onShowEditGroups={onShowEditGroups}
                   onHideEditGroups={onHideEditGroups}
                   setSelectedTopLevelLocale={onChangeTopLevelLocale}

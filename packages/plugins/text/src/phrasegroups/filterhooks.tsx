@@ -105,7 +105,8 @@ export const filterUntranslatedPhrases = (
   applicationState: SchemaRoot,
   phrases: SchemaTypes["$(text).phraseGroups.id<?>.phrases"],
   localeRef: PointerTypes["$(text).localeSettings.locales.localeCode<?>"],
-  filterUntranslatedForGroup: boolean
+  filterUntranslatedForGroup: boolean,
+  filterRequiresUpdate = false
 ) => {
   if (!filterUntranslatedForGroup) {
     return phrases;
@@ -119,11 +120,20 @@ export const filterUntranslatedPhrases = (
     translateFromDisplayValue?.localeCode as string
   );
   return phrases.filter((phrase) => {
-    return getPhraseIsUntranslated(phrase, localeRef, translateFromRef)
+    const isUntranslated = getPhraseIsUntranslated(phrase, localeRef, translateFromRef)
+    if (!isUntranslated && filterRequiresUpdate) {
+      return getPhraseTranslationRequiresUpdate(
+        phrase,
+        localeRef,
+        translateFromRef
+      )
+    }
+    return isUntranslated
   }
   );
 };
 
+// UPDATE TO fallbackFromLocaleRef
 export const getPhraseIsUntranslated = (
   phrase: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>"],
   localeRef: PointerTypes["$(text).localeSettings.locales.localeCode<?>"],
@@ -184,10 +194,9 @@ export const getPhraseIsUntranslated = (
             (l) => l.id == translateFromLocaleRef
         );
         if (localeRef != translateFromLocaleRef &&
-            (translation?.linkHrefValue?.sourceAtRevision?.json ?? "{}") !=
-            (translateFromHrefValue?.linkHrefValue?.json ?? "{}")
+            (translateFromHrefValue?.linkHrefValue?.plainText ?? "") != ""
         ) {
-            return true;
+            continue;
         }
         return true;
       }
@@ -216,6 +225,7 @@ export const filterPhrasesToUpdate = (
   applicationState: SchemaRoot,
   phrases: SchemaTypes["$(text).phraseGroups.id<?>.phrases"],
   localeRef: PointerTypes["$(text).localeSettings.locales.localeCode<?>"],
+  filterUntranslatedForGroup: boolean,
   filterRequiresUpdate: boolean
 ) => {
   const locale = getReferencedObject(applicationState, localeRef);
@@ -242,7 +252,13 @@ export const filterPhrasesToUpdate = (
     return [];
   }
   return phrases.filter((phrase) =>
-    getPhraseTranslationRequiresUpdate(phrase, localeRef, translateFromRef)
+    {
+      const requiresUpdate = getPhraseTranslationRequiresUpdate(phrase, localeRef, translateFromRef)
+      if (!requiresUpdate && filterUntranslatedForGroup) {
+          return getPhraseIsUntranslated(phrase, localeRef, translateFromRef)
+      }
+      return requiresUpdate;
+    }
   );
 };
 
@@ -258,6 +274,12 @@ export const getPhraseTranslationRequiresUpdate = (
       }
       for (let translation of phraseSection.localeRules ?? []) {
         if (translation.id != localeRef) {
+          continue;
+        }
+        if (
+          (translation?.displayValue?.plainText ?? "") == "" &&
+          (translation?.displayValue?.sourceAtRevision?.plainText ?? "") == ""
+        ) {
           continue;
         }
         const translateFromDisplayValue = phraseSection.localeRules.find(
@@ -279,6 +301,12 @@ export const getPhraseTranslationRequiresUpdate = (
   } else {
     for (let localeGroup of phrase.phraseTranslations ?? []) {
       if (localeGroup.id != localeRef) {
+        continue;
+      }
+      if (
+        (localeGroup?.plainText ?? "") == "" &&
+        (localeGroup?.sourceAtRevision?.plainText ?? "") == ""
+      ) {
         continue;
       }
       const translateFrom = phrase.phraseTranslations.find(
@@ -306,23 +334,38 @@ export const getPhraseTranslationRequiresUpdate = (
       if (translation.id != localeRef) {
         continue;
       }
+      let skip = false;
+      if (
+        (translation?.linkDisplayValue?.plainText ?? "") == "" &&
+        (translation?.linkDisplayValue?.sourceAtRevision?.plainText ?? "") == ""
+      ) {
+        skip = true;
+      }
       const translateFromDisplayValue = linkVariable.translations.find(
         (l) => l.id == translateFromLocaleRef
       );
-      if (
-        (translation?.linkDisplayValue?.sourceAtRevision?.json ?? "{}") !=
-        (translateFromDisplayValue?.linkDisplayValue?.json ?? "{}")
-      ) {
-        if (localeRef == translateFromLocaleRef) {
-          return true;
-        }
-        if (translateFromDisplayValue?.linkDisplayValue?.plainText != "") {
-          return true;
+      if (!skip) {
+        if (
+          (translation?.linkDisplayValue?.sourceAtRevision?.json ?? "{}") !=
+          (translateFromDisplayValue?.linkDisplayValue?.json ?? "{}")
+        ) {
+          if (localeRef == translateFromLocaleRef) {
+            return true;
+          }
+          if (translateFromDisplayValue?.linkDisplayValue?.plainText != "") {
+            return true;
+          }
         }
       }
       const translateFromHrefValue = linkVariable.translations.find(
         (l) => l.id == translateFromLocaleRef
       );
+      if (
+        (translation?.linkHrefValue?.plainText ?? "") == "" &&
+        (translation?.linkHrefValue?.sourceAtRevision?.plainText ?? "") == ""
+      ) {
+        continue;
+      }
       if (
         (translation?.linkHrefValue?.sourceAtRevision?.json ?? "{}") !=
         (translateFromHrefValue?.linkHrefValue?.json ?? "{}")
@@ -334,6 +377,12 @@ export const getPhraseTranslationRequiresUpdate = (
   for (let variant of phrase?.interpolationVariants ?? []) {
     for (let translation of variant?.localeRules ?? []) {
       if (translation.id != localeRef) {
+        continue;
+      }
+      if (
+        (translation?.defaultValue?.plainText ?? "") == "" &&
+        (translation?.defaultValue?.sourceAtRevision?.plainText ?? "") == ""
+      ) {
         continue;
       }
       const translateFrom = variant?.localeRules.find(
@@ -355,6 +404,12 @@ export const getPhraseTranslationRequiresUpdate = (
   for (let styledContent of phrase?.styledContents ?? []) {
     for (let translation of styledContent?.localeRules ?? []) {
       if (translation.id != localeRef) {
+        continue;
+      }
+      if (
+        (translation?.displayValue?.plainText ?? "") == "" &&
+        (translation?.displayValue?.sourceAtRevision?.plainText ?? "") == ""
+      ) {
         continue;
       }
       const translateFrom = styledContent?.localeRules.find(
@@ -611,12 +666,14 @@ export const getPhrasesFilteredForPhraseGroup = (
       applicationState,
       phrasesFilteredOnTag,
       localeRef,
-      filterUntranslatedForGroup
+      filterUntranslatedForGroup,
+      filterRequiresUpdate
     );
     const phrasesToUpdate = filterPhrasesToUpdate(
       applicationState,
       phrasesFilteredOnUnTranslated,
       localeRef,
+      filterUntranslatedForGroup,
       filterRequiresUpdate
     );
 

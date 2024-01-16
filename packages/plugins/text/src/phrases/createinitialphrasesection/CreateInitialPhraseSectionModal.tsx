@@ -118,6 +118,7 @@ const CreateInitialPhraseSectionModal = (props: Props) => {
       disableBackgroundDismiss
       headerSize={"small"}
       topOffset={80}
+      zIndex={5}
       headerChildren={
         <HeaderWrapper>
           <HeaderTitle>{"Create Phrase Section"}</HeaderTitle>

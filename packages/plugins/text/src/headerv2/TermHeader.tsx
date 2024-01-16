@@ -198,7 +198,7 @@ interface Props {
 const TermHeader = (props: Props) => {
   const theme = useTheme();
 
-  const { commandMode, } = useFloroContext();
+  const { commandMode, applicationState } = useFloroContext();
   const [showPinnedTerms, setShowPinnedTerms] = useState(false);
   const [showAddTerm, setShowAddTerm] = useState(false);
   const pinnedTermsContainer = useRef<HTMLDivElement>(null);
@@ -323,6 +323,9 @@ const TermHeader = (props: Props) => {
   ]);
 
   useEffect(() => {
+    if (Object.keys(applicationState ?? {}).length == 0) {
+      return;
+    }
     if (
       pinnedTerms?.length == 0 &&
       props.showOnlyPinnedTerms
@@ -330,6 +333,7 @@ const TermHeader = (props: Props) => {
       props.setShowOnlyPinnedTerms(false);
     }
   }, [
+    applicationState,
     pinnedTerms?.length,
     props.showOnlyPinnedTerms,
     props.setShowOnlyPinnedTerms,

@@ -214,15 +214,20 @@ const SourceLinkDisplayTranslation = (props: Props) => {
   }, [beforeText, afterText, requireRevision])
 
   const diffIsEmpty = useMemo(() => {
-    return Object.keys(diff.add ?? {}).length == 0 && Object.keys(diff?.remove ?? {}).length == 0;
-  }, [Object.keys(diff.add ?? {}).length == 0 && Object.keys(diff?.remove ?? {}).length == 0]);
+    if (beforeText.length == 0) {
+      return true;
+    }
+    return Object.keys(diff.add).length == 0 && Object.keys(diff.remove).length == 0;
+  }, [Object.keys(diff.add).length == 0 && Object.keys(diff.remove).length == 0, beforeText]);
 
   const [showDiff, setShowDiff] = useState(!diffIsEmpty);
   useEffect(() => {
     if (diffIsEmpty) {
       setShowDiff(false);
+    } else {
+      setShowDiff(true)
     }
-  }, [diffIsEmpty])
+  }, [diffIsEmpty, props.selectedLocale])
 
   return (
     <>

@@ -345,23 +345,41 @@ const StyledContent = (props: Props) => {
         props.setPinnedPhrases([...(props?.pinnedPhrases ?? []), props.phraseRef]);
       }
       if (sourceDefaultValue) {
-        const updateFn = setDisplayValue({
-          ...displayValue,
-          richTextHtml,
-          plainText,
-          json: JSON.stringify(json),
-        }, false);
+        const shouldUpdateFromSource =
+          (sourceDefaultValue?.plainText ?? "") != "" &&
+          (displayValue?.sourceAtRevision?.plainText ?? "") == "";
+        const updateFn = setDisplayValue(
+          {
+            ...displayValue,
+            richTextHtml,
+            plainText,
+            json: JSON.stringify(json),
+            sourceAtRevision: shouldUpdateFromSource
+              ? {
+                  richTextHtml: sourceDefaultValue.richTextHtml,
+                  plainText: sourceDefaultValue.plainText,
+                  json: sourceDefaultValue.json,
+                  sourceLocaleRef:
+                    displayValue.sourceAtRevision.sourceLocaleRef,
+                }
+              : displayValue.sourceAtRevision,
+          },
+          false
+        );
         if (updateFn) {
           clearTimeout(timeout.current);
           timeout.current = setTimeout(updateFn, 300);
         }
       } else {
-        const updateFn = setDisplayValue({
-          ...displayValue,
-          richTextHtml,
-          plainText,
-          json: JSON.stringify(json),
-        }, false);
+        const updateFn = setDisplayValue(
+          {
+            ...displayValue,
+            richTextHtml,
+            plainText,
+            json: JSON.stringify(json),
+          },
+          false
+        );
         if (updateFn) {
           clearTimeout(timeout.current);
           timeout.current = setTimeout(updateFn, 300);
@@ -462,6 +480,9 @@ const StyledContent = (props: Props) => {
   ]);
 
   const displayRequireRevision = useMemo(() => {
+    if ((displayValue?.plainText ?? "") == "") {
+      return true;
+    }
     if (!sourceDefaultValue) {
       return false;
     }
@@ -470,6 +491,7 @@ const StyledContent = (props: Props) => {
       (displayValue?.sourceAtRevision?.json ?? "{}")
     );
   }, [
+    displayValue?.plainText,
     displayValue?.sourceAtRevision?.json,
     sourceDefaultValue?.json,
   ]);
@@ -601,6 +623,9 @@ const StyledContent = (props: Props) => {
     if (!props.selectedLocale?.localeCode) {
       return [];
     }
+    if ((displayValue?.plainText?.trim() ?? "") == "") {
+      return [];
+    }
 
     if ((sourceDefaultValue?.plainText?.trim() ?? "") == "") {
       return [];
@@ -610,15 +635,23 @@ const StyledContent = (props: Props) => {
     if (!memory) {
       return [];
     }
-    if (!memory?.[sourceDefaultValue?.plainText?.trim().toLowerCase() as string]) {
+    if (
+      !memory?.[sourceDefaultValue?.plainText?.trim().toLowerCase() as string]
+    ) {
       return [];
     }
-    const termSet = memory?.[sourceDefaultValue?.plainText?.trim().toLowerCase() as string];
+    const termSet =
+      memory?.[sourceDefaultValue?.plainText?.trim().toLowerCase() as string];
     if (!termSet) {
       return [];
     }
     return Array.from(termSet);
-  }, [translationMemory, sourceDefaultValue, props.selectedLocale]);
+  }, [
+    translationMemory,
+    sourceDefaultValue,
+    props.selectedLocale,
+    displayValue?.plainText,
+  ]);
 
   const [showContent, setShowContent] = useState(false);
 
@@ -670,19 +703,21 @@ const StyledContent = (props: Props) => {
         enabledTermIds={sourceDefaultValue?.enabledTerms ?? []}
         onApplyTranslation={onSetDefaultValueContent}
       />
-      {sourceDefaultValue?.richTextHtml && commandMode == "edit" && !props.isSearching && (
-        <MLModal
-          show={showMLTranslate && commandMode == "edit"}
-          selectedLocale={props.selectedLocale}
-          systemSourceLocale={props.systemSourceLocale}
-          sourceRichText={sourceDefaultValue?.richTextHtml}
-          sourceMockText={sourceMockHtml}
-          sourceEditorDoc={sourceEditorDoc}
-          onDismiss={onHideMLTranslate}
-          enabledTermIds={sourceDefaultValue.enabledTerms}
-          onApplyTranslation={onSetDefaultValueContent}
-        />
-      )}
+      {sourceDefaultValue?.richTextHtml &&
+        commandMode == "edit" &&
+        !props.isSearching && (
+          <MLModal
+            show={showMLTranslate && commandMode == "edit"}
+            selectedLocale={props.selectedLocale}
+            systemSourceLocale={props.systemSourceLocale}
+            sourceRichText={sourceDefaultValue?.richTextHtml}
+            sourceMockText={sourceMockHtml}
+            sourceEditorDoc={sourceEditorDoc}
+            onDismiss={onHideMLTranslate}
+            enabledTermIds={sourceDefaultValue.enabledTerms}
+            onApplyTranslation={onSetDefaultValueContent}
+          />
+        )}
       <TitleRow>
         <RowTitle
           style={{
@@ -721,21 +756,21 @@ const StyledContent = (props: Props) => {
           </DeleteVarContainer>
         )}
       </TitleRow>
-      <SubContainer style={{borderColor: diffColor}}>
-          <StyledContentClass
-            phrase={props.phrase}
-            phraseRef={props.phraseRef}
-            selectedLocale={props.selectedLocale}
-            systemSourceLocale={props.systemSourceLocale}
-            globalFilterUntranslated={props.globalFilterUntranslated}
-            pinnedPhrases={props.pinnedPhrases}
-            setPinnedPhrases={props.setPinnedPhrases}
-            isPinned={props.isPinned}
-            localeRule={localeRule}
-            localeRuleRef={localRuleTranslationRef}
-            styleClass={styleClass}
-            styledContent={props.styledContent}
-          />
+      <SubContainer style={{ borderColor: diffColor }}>
+        <StyledContentClass
+          phrase={props.phrase}
+          phraseRef={props.phraseRef}
+          selectedLocale={props.selectedLocale}
+          systemSourceLocale={props.systemSourceLocale}
+          globalFilterUntranslated={props.globalFilterUntranslated}
+          pinnedPhrases={props.pinnedPhrases}
+          setPinnedPhrases={props.setPinnedPhrases}
+          isPinned={props.isPinned}
+          localeRule={localeRule}
+          localeRuleRef={localRuleTranslationRef}
+          styleClass={styleClass}
+          styledContent={props.styledContent}
+        />
         <Container>
           <TitleRow style={{ marginBottom: 24 }}>
             <RowTitle
@@ -811,16 +846,18 @@ const StyledContent = (props: Props) => {
                   <RequiresRevision style={{ marginRight: 12 }}>
                     {"requires revision"}
                   </RequiresRevision>
-                  {commandMode == "edit" && (
-                    <Button
-                      onClick={onMarkDisplayResolved}
-                      style={{ width: 120 }}
-                      label={"mark resolved"}
-                      bg={"orange"}
-                      size={"small"}
-                      textSize="small"
-                    />
-                  )}
+                  {commandMode == "edit" &&
+                    (displayValue?.plainText ?? "") != "" &&
+                    (displayValue?.sourceAtRevision?.plainText ?? "") != "" && (
+                      <Button
+                        onClick={onMarkDisplayResolved}
+                        style={{ width: 120 }}
+                        label={"mark resolved"}
+                        bg={"orange"}
+                        size={"small"}
+                        textSize="small"
+                      />
+                    )}
                 </div>
               )}
             </div>
@@ -887,30 +924,29 @@ const StyledContent = (props: Props) => {
               }
             />
           )}
-        {translationMemories.length > 0 &&
-          (displayValue?.plainText ?? "").trim() == "" &&
-          commandMode == "edit" && !props.isSearching && (
-            <TranslationMemoryList
-              memories={translationMemories}
-              observer={editorObserver}
-              onApply={onSetDefaultValueContent}
-              lang={props.selectedLocale?.localeCode}
-            />
-          )}
+          {translationMemories.length > 0 &&
+            (displayValue?.plainText ?? "").trim() == "" &&
+            commandMode == "edit" &&
+            !props.isSearching && (
+              <TranslationMemoryList
+                memories={translationMemories}
+                observer={editorObserver}
+                onApply={onSetDefaultValueContent}
+                lang={props.selectedLocale?.localeCode}
+              />
+            )}
         </Container>
-        {props.systemSourceLocale &&
-          props.styledContent &&
-          localeRule && (
-            <SourceStyledContent
-              phrase={props.phrase}
-              phraseRef={props.phraseRef}
-              selectedLocale={props.selectedLocale}
-              systemSourceLocale={props.systemSourceLocale}
-              styledContent={props.styledContent}
-              styledContentRef={props.styledContentRef}
-              targetStyledContentLocaleRule={localeRule}
-            />
-          )}
+        {props.systemSourceLocale && props.styledContent && localeRule && (
+          <SourceStyledContent
+            phrase={props.phrase}
+            phraseRef={props.phraseRef}
+            selectedLocale={props.selectedLocale}
+            systemSourceLocale={props.systemSourceLocale}
+            styledContent={props.styledContent}
+            styledContentRef={props.styledContentRef}
+            targetStyledContentLocaleRule={localeRule}
+          />
+        )}
       </SubContainer>
     </div>
   );

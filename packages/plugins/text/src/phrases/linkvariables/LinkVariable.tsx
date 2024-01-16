@@ -389,11 +389,20 @@ const LinkVariable = (props: Props) => {
         props.setPinnedPhrases([...(props?.pinnedPhrases ?? []), props.phraseRef]);
       }
       if (sourceLinkTranslation) {
+        const shouldUpdateFromSource =
+          (sourceLinkTranslation?.linkDisplayValue?.plainText ?? "") != "" &&
+          (linkDisplayValue?.sourceAtRevision?.plainText ?? "") == "";
         const updateFn =setLinkDisplayValue({
           ...linkDisplayValue,
           richTextHtml,
           plainText,
           json: JSON.stringify(json),
+          sourceAtRevision: shouldUpdateFromSource ? {
+            richTextHtml: sourceLinkTranslation?.linkDisplayValue.richTextHtml,
+            plainText: sourceLinkTranslation?.linkDisplayValue?.plainText,
+            json: sourceLinkTranslation?.linkDisplayValue.json,
+            sourceLocaleRef: linkDisplayValue.sourceAtRevision.sourceLocaleRef
+          } : linkDisplayValue.sourceAtRevision
         }, false);
         if (updateFn) {
           clearTimeout(timeoutDisplay.current);
@@ -459,11 +468,21 @@ const LinkVariable = (props: Props) => {
         props.setPinnedPhrases([...(props?.pinnedPhrases ?? []), props.phraseRef]);
       }
       if (sourceLinkTranslation) {
+
+        const shouldUpdateFromSource =
+          sourceLinkTranslation?.linkHrefValue?.plainText != "" &&
+          (linkHrefValue?.sourceAtRevision?.plainText ?? "") == "";
         const updateFn = setLinkHrefValue({
           ...linkHrefValue,
           richTextHtml,
           plainText,
           json: JSON.stringify(json),
+          sourceAtRevision: shouldUpdateFromSource ? {
+            richTextHtml: sourceLinkTranslation?.linkHrefValue.richTextHtml,
+            plainText: sourceLinkTranslation?.linkHrefValue?.plainText,
+            json: sourceLinkTranslation?.linkHrefValue.json,
+            sourceLocaleRef: linkHrefValue.sourceAtRevision.sourceLocaleRef
+          } : linkHrefValue.sourceAtRevision
         }, false);
         if (updateFn) {
           clearTimeout(timeoutHref.current);
@@ -626,6 +645,10 @@ const LinkVariable = (props: Props) => {
   ]);
 
   const displayRequireRevision = useMemo(() => {
+
+    if ((linkDisplayValue?.plainText ?? "") == "") {
+      return true;
+    }
     if (!sourceLinkTranslation?.linkDisplayValue) {
       return false;
     }
@@ -634,21 +657,32 @@ const LinkVariable = (props: Props) => {
       (linkDisplayValue?.sourceAtRevision?.json ?? "{}")
     );
   }, [
+    linkDisplayValue?.plainText,
     linkDisplayValue?.sourceAtRevision?.json,
     sourceLinkTranslation?.linkDisplayValue?.json,
+    linkDisplayValue?.sourceAtRevision?.plainText,
+    sourceLinkTranslation?.linkDisplayValue?.plainText,
   ]);
 
   const hrefRequireRevision = useMemo(() => {
+    if (
+      (sourceLinkTranslation?.linkHrefValue?.plainText ?? "") != "" &&
+      (linkHrefValue?.plainText ?? "") == ""
+    ) {
+      return false;
+    }
+    // think harder
     if (!sourceLinkTranslation?.linkHrefValue) {
       return false;
     }
     return (
-      (sourceLinkTranslation?.linkHrefValue?.json ?? "{}") !=
-      (linkHrefValue?.sourceAtRevision?.json ?? "{}")
+      (sourceLinkTranslation?.linkHrefValue?.plainText ?? "") !=
+      (linkHrefValue?.sourceAtRevision?.plainText ?? "")
     );
   }, [
-    linkHrefValue?.sourceAtRevision?.json,
-    sourceLinkTranslation?.linkHrefValue?.json,
+    linkHrefValue?.plainText,
+    linkHrefValue?.sourceAtRevision?.plainText,
+    sourceLinkTranslation?.linkHrefValue?.plainText,
   ]);
 
   const xIcon = useMemo(() => {
@@ -751,7 +785,13 @@ const LinkVariable = (props: Props) => {
       return [];
     }
 
-    if ((sourceLinkTranslation?.linkDisplayValue?.plainText?.trim() ?? "") == "") {
+    if ((linkDisplayValue?.plainText?.trim() ?? "") == "") {
+      return [];
+    }
+
+    if (
+      (sourceLinkTranslation?.linkDisplayValue?.plainText?.trim() ?? "") == ""
+    ) {
       return [];
     }
 
@@ -759,15 +799,31 @@ const LinkVariable = (props: Props) => {
     if (!memory) {
       return [];
     }
-    if (!memory?.[sourceLinkTranslation?.linkDisplayValue?.plainText?.trim().toLowerCase() as string]) {
+    if (
+      !memory?.[
+        sourceLinkTranslation?.linkDisplayValue?.plainText
+          ?.trim()
+          .toLowerCase() as string
+      ]
+    ) {
       return [];
     }
-    const termSet = memory?.[sourceLinkTranslation?.linkDisplayValue?.plainText?.trim().toLowerCase() as string];
+    const termSet =
+      memory?.[
+        sourceLinkTranslation?.linkDisplayValue?.plainText
+          ?.trim()
+          .toLowerCase() as string
+      ];
     if (!termSet) {
       return [];
     }
     return Array.from(termSet);
-  }, [translationMemory, sourceLinkTranslation?.linkDisplayValue, props.selectedLocale]);
+  }, [
+    linkDisplayValue?.plainText,
+    translationMemory,
+    sourceLinkTranslation?.linkDisplayValue,
+    props.selectedLocale,
+  ]);
 
   const [showContent, setShowContent] = useState(false);
 
@@ -821,22 +877,29 @@ const LinkVariable = (props: Props) => {
         targetEditorDoc={targetLinkDisplayEditorDoc}
         sourceEditorDoc={sourceEditorDoc}
         onDismiss={onHidePrompt}
-        enabledTermIds={sourceLinkTranslation?.linkDisplayValue?.enabledTerms ?? []}
+        enabledTermIds={
+          sourceLinkTranslation?.linkDisplayValue?.enabledTerms ?? []
+        }
         onApplyTranslation={onSetDisplayValueContent}
       />
-      {sourceLinkTranslation?.linkDisplayValue?.richTextHtml && commandMode == "edit" && (
-        <MLModal
-          show={showMLTranslate && commandMode == "edit"}
-          selectedLocale={props.selectedLocale}
-          systemSourceLocale={props.systemSourceLocale}
-          sourceRichText={sourceLinkTranslation?.linkDisplayValue?.richTextHtml}
-          sourceMockText={sourceMockHtml}
-          sourceEditorDoc={sourceEditorDoc}
-          onDismiss={onHideMLTranslate}
-          enabledTermIds={sourceLinkTranslation?.linkDisplayValue.enabledTerms}
-          onApplyTranslation={onSetDisplayValueContent}
-        />
-      )}
+      {sourceLinkTranslation?.linkDisplayValue?.richTextHtml &&
+        commandMode == "edit" && (
+          <MLModal
+            show={showMLTranslate && commandMode == "edit"}
+            selectedLocale={props.selectedLocale}
+            systemSourceLocale={props.systemSourceLocale}
+            sourceRichText={
+              sourceLinkTranslation?.linkDisplayValue?.richTextHtml
+            }
+            sourceMockText={sourceMockHtml}
+            sourceEditorDoc={sourceEditorDoc}
+            onDismiss={onHideMLTranslate}
+            enabledTermIds={
+              sourceLinkTranslation?.linkDisplayValue.enabledTerms
+            }
+            onApplyTranslation={onSetDisplayValueContent}
+          />
+        )}
       <TitleRow>
         <RowTitle
           style={{
@@ -875,7 +938,7 @@ const LinkVariable = (props: Props) => {
           </DeleteVarContainer>
         )}
       </TitleRow>
-      <SubContainer style={{borderColor: diffColor}}>
+      <SubContainer style={{ borderColor: diffColor }}>
         <Container>
           <TitleRow style={{ marginBottom: 24 }}>
             <RowTitle
@@ -941,7 +1004,9 @@ const LinkVariable = (props: Props) => {
                   <RequiresRevision style={{ marginRight: 12 }}>
                     {"requires revision"}
                   </RequiresRevision>
-                  {commandMode == "edit" && (
+                  {commandMode == "edit" &&
+                    (linkDisplayValue?.plainText ?? "") != "" &&
+                    (linkDisplayValue?.sourceAtRevision?.plainText ?? "") != "" && (
                     <Button
                       onClick={onMarkDisplayResolved}
                       style={{ width: 120 }}
@@ -965,7 +1030,8 @@ const LinkVariable = (props: Props) => {
               onOpenGPT={onShowPrompt}
               showGPTIcon={
                 (!!sourceLinkTranslation?.linkDisplayValue &&
-                  (sourceLinkTranslation.linkDisplayValue?.richTextHtml?.trim() ?? "") != "" &&
+                  (sourceLinkTranslation.linkDisplayValue?.richTextHtml?.trim() ??
+                    "") != "" &&
                   (linkDisplayValue?.plainText?.trim() ?? "") != "") ||
                 (!sourceLinkTranslation?.linkDisplayValue &&
                   (linkDisplayValue?.plainText?.trim() ?? "") != "")
@@ -1019,7 +1085,7 @@ const LinkVariable = (props: Props) => {
           )}
           {translationMemories.length > 0 &&
             (linkDisplayValue?.plainText ?? "").trim() == "" &&
-            commandMode == "edit" && !props.isSearching && (
+            commandMode == "edit" && (
               <TranslationMemoryList
                 memories={translationMemories}
                 observer={editorObserver}
@@ -1083,7 +1149,9 @@ const LinkVariable = (props: Props) => {
                   <RequiresRevision style={{ marginRight: 12 }}>
                     {"requires revision"}
                   </RequiresRevision>
-                  {commandMode == "edit" && !props.isSearching && (
+                  {commandMode == "edit" &&
+                    (linkHrefValue?.plainText ?? "") != "" &&
+                    (linkHrefValue?.sourceAtRevision?.plainText ?? "") != "" && (
                     <Button
                       onClick={onMarkHrefResolved}
                       style={{ width: 120 }}
@@ -1098,7 +1166,7 @@ const LinkVariable = (props: Props) => {
             </div>
           </TitleRow>
           {(fallbackLinkTranslation?.linkHrefValue?.plainText ?? "") != "" && (
-            <div style={{marginBottom: 12}}>
+            <div style={{ marginBottom: 12 }}>
               <BlankDisclaimer>
                 <span>{`Okay to leave HREF blank, will fallback to (${props?.fallbackLocale?.localeCode}) "${fallbackLinkTranslation.linkHrefValue?.plainText}"`}</span>
               </BlankDisclaimer>

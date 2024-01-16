@@ -211,7 +211,7 @@ interface Props {
 const PhraseHeader = (props: Props) => {
   const theme = useTheme();
 
-  const { commandMode, } = useFloroContext();
+  const { commandMode, applicationState } = useFloroContext();
   const [showPinnedGroups, setShowPinnedGroups] = useState(false);
   const [showPinnedPhrases, setShowPinnedPhrases] = useState(false);
   const [showAddGroup, setShowAddPhraseGroup] = useState(false);

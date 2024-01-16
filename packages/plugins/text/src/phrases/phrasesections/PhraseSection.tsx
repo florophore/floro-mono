@@ -443,6 +443,12 @@ const PhraseSection = (props: Props) => {
           richTextHtml,
           plainText,
           json: JSON.stringify(json),
+          sourceAtRevision: (sourceDefaultValue?.plainText) != "" && (displayValue?.sourceAtRevision?.plainText ?? "") == "" ? {
+            richTextHtml: sourceDefaultValue.richTextHtml,
+            plainText: sourceDefaultValue.plainText,
+            json: sourceDefaultValue.json,
+            sourceLocaleRef: displayValue.sourceAtRevision.sourceLocaleRef
+          } : displayValue.sourceAtRevision
         }, false);
         if (updateFn) {
           timeout.current = setTimeout(updateFn, 300);
@@ -513,7 +519,6 @@ const PhraseSection = (props: Props) => {
       return;
     }
     if (json != displayValue?.json) {
-      console.log("FIRING OFF");
       setDisplayValue(
         {
           ...displayValue,
@@ -568,6 +573,9 @@ const PhraseSection = (props: Props) => {
   ]);
 
   const displayRequireRevision = useMemo(() => {
+    if ((displayValue?.plainText ?? "") == "") {
+      return true;
+    }
     if (!sourceDefaultValue) {
       return false;
     }
@@ -576,6 +584,7 @@ const PhraseSection = (props: Props) => {
       (displayValue?.sourceAtRevision?.json ?? "{}")
     );
   }, [
+    displayValue?.plainText,
     displayValue?.sourceAtRevision?.json,
     sourceDefaultValue?.json,
   ]);
@@ -731,6 +740,9 @@ const PhraseSection = (props: Props) => {
     if (!props.selectedLocale?.localeCode) {
       return [];
     }
+    if ((displayValue?.plainText?.trim() ?? "") == "") {
+      return [];
+    }
 
     if ((sourceDefaultValue?.plainText?.trim() ?? "") == "") {
       return [];
@@ -748,7 +760,7 @@ const PhraseSection = (props: Props) => {
       return [];
     }
     return Array.from(termSet);
-  }, [translationMemory, sourceDefaultValue, props.selectedLocale]);
+  }, [translationMemory, sourceDefaultValue, props.selectedLocale, displayValue?.plainText]);
 
   const [showContent, setShowContent] = useState(false);
 
@@ -918,16 +930,18 @@ const PhraseSection = (props: Props) => {
                   <RequiresRevision style={{ marginRight: 12 }}>
                     {"requires revision"}
                   </RequiresRevision>
-                  {commandMode == "edit" && (
-                    <Button
-                      onClick={onMarkDisplayResolved}
-                      style={{ width: 120 }}
-                      label={"mark resolved"}
-                      bg={"orange"}
-                      size={"small"}
-                      textSize="small"
-                    />
-                  )}
+                  {commandMode == "edit" &&
+                    (displayValue?.plainText ?? "") != "" &&
+                    (displayValue?.sourceAtRevision?.plainText ?? "") != "" && (
+                      <Button
+                        onClick={onMarkDisplayResolved}
+                        style={{ width: 120 }}
+                        label={"mark resolved"}
+                        bg={"orange"}
+                        size={"small"}
+                        textSize="small"
+                      />
+                    )}
                 </div>
               )}
             </div>
@@ -992,7 +1006,7 @@ const PhraseSection = (props: Props) => {
           )}
           {translationMemories.length > 0 &&
             (displayValue?.plainText ?? "").trim() == "" &&
-            commandMode == "edit" && !props.isSearching && (
+            commandMode == "edit" && (
               <TranslationMemoryList
                 memories={translationMemories}
                 observer={editorObserver}

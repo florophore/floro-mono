@@ -409,11 +409,20 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
         return;
       }
       if (sourcePhraseTranslation) {
+        const shouldUpdateFromSource =
+          (sourcePhraseTranslation?.plainText ?? "") != "" &&
+          (phraseTranslation?.sourceAtRevision?.plainText ?? "") == "";
         const updateFn = setPhraseTranslation({
           ...phraseTranslation,
           richTextHtml,
           plainText,
           json: JSON.stringify(json),
+          sourceAtRevision: shouldUpdateFromSource ? {
+            richTextHtml: sourcePhraseTranslation.richTextHtml,
+            plainText: sourcePhraseTranslation.plainText,
+            json: sourcePhraseTranslation.json,
+            sourceLocaleRef: phraseTranslation.sourceAtRevision.sourceLocaleRef
+          } : phraseTranslation.sourceAtRevision
         }, false);
         if (updateFn) {
           clearTimeout(timeout.current);
@@ -540,6 +549,9 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
   ]);
 
   const requireRevision = useMemo(() => {
+    if ((phraseTranslation?.plainText ?? "") == "") {
+      return true;
+    }
     if (!sourcePhraseTranslation) {
       return false;
     }
@@ -548,6 +560,7 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
       (phraseTranslation?.sourceAtRevision?.json ?? "{}")
     );
   }, [
+    phraseTranslation?.plainText,
     phraseTranslation?.sourceAtRevision?.json,
     sourcePhraseTranslation?.json,
   ]);
@@ -684,6 +697,10 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
       return [];
     }
 
+    if ((phraseTranslation?.plainText?.trim() ?? "") == "") {
+      return [];
+    }
+
     if ((sourcePhraseTranslation?.plainText?.trim() ?? "") == "") {
       return [];
     }
@@ -707,7 +724,12 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
       return [];
     }
     return Array.from(termSet);
-  }, [translationMemory, sourcePhraseTranslation, props.selectedLocale]);
+  }, [
+    translationMemory,
+    sourcePhraseTranslation,
+    props.selectedLocale,
+    phraseTranslation?.plainText,
+  ]);
 
   const showMiddleBox = useMemo(() => {
     if (
@@ -890,16 +912,19 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
                     <RequiresRevision style={{ marginRight: 12 }}>
                       {"requires revision"}
                     </RequiresRevision>
-                    {commandMode == "edit" && (
-                      <Button
-                        onClick={onMarkResolved}
-                        style={{ width: 120 }}
-                        label={"mark resolved"}
-                        bg={"orange"}
-                        size={"small"}
-                        textSize="small"
-                      />
-                    )}
+                    {commandMode == "edit" &&
+                      (phraseTranslation?.plainText ?? "") != "" &&
+                      (phraseTranslation?.sourceAtRevision?.plainText ?? "") !=
+                        "" && (
+                        <Button
+                          onClick={onMarkResolved}
+                          style={{ width: 120 }}
+                          label={"mark resolved"}
+                          bg={"orange"}
+                          size={"small"}
+                          textSize="small"
+                        />
+                      )}
                   </div>
                 )}
               </div>
@@ -949,7 +974,7 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
             )}
             {translationMemories.length > 0 &&
               (phraseTranslation?.plainText ?? "").trim() == "" &&
-              commandMode == "edit" && !props.isSearching && (
+              commandMode == "edit" && (
                 <TranslationMemoryList
                   memories={translationMemories}
                   observer={editorObserver}
@@ -1028,17 +1053,18 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
           }}
         >
           {(phrase?.phraseVariablesEnabled ||
-            (phrase?.variables?.length ?? 0) > 0) &&  !props.isSearching && (
-            <VariablesList phraseRef={props.phraseRef} />
-          )}
+            (phrase?.variables?.length ?? 0) > 0) &&
+            !props.isSearching && <VariablesList phraseRef={props.phraseRef} />}
           {(phrase?.contentVariablesEnabled ||
-            (phrase?.contentVariables?.length ?? 0) > 0) && !props.isSearching && (
-            <ContentVariablesList phraseRef={props.phraseRef} />
-          )}
+            (phrase?.contentVariables?.length ?? 0) > 0) &&
+            !props.isSearching && (
+              <ContentVariablesList phraseRef={props.phraseRef} />
+            )}
           {(phrase?.styledContentEnabled ||
-            (phrase?.styleClasses?.length ?? 0) > 0) && !props.isSearching && (
-            <StyledClassList phraseRef={props.phraseRef} />
-          )}
+            (phrase?.styleClasses?.length ?? 0) > 0) &&
+            !props.isSearching && (
+              <StyledClassList phraseRef={props.phraseRef} />
+            )}
           {phrase && (phrase?.styleClasses?.length ?? 0) > 0 && (
             <StyledContentList
               phrase={phrase}
@@ -1054,25 +1080,27 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
               onFocusSearch={props.onFocusSearch}
             />
           )}
-          {phrase && (phrase?.linkVariablesEnabled ||
-            (phrase.linkVariables?.length ?? 0) > 0) && (
-            <LinkVariablesList
-              phrase={phrase}
-              phraseRef={props.phraseRef}
-              selectedLocale={props.selectedLocale}
-              systemSourceLocale={props.systemSourceLocale}
-              globalFilterUntranslated={props.globalFilterUntranslated}
-              fallbackLocale={props.fallbackLocale}
-              pinnedPhrases={props.pinnedPhrases}
-              setPinnedPhrases={props.setPinnedPhrases}
-              isPinned={props.isPinned}
-              isSearching={props.isSearching}
-              searchText={props.searchText}
-              onFocusSearch={props.onFocusSearch}
-            />
-          )}
-          {phrase && (phrase?.interpolationsEnabled ||
-            (phrase?.interpolationVariants?.length ?? 0) > 0) &&
+          {phrase &&
+            (phrase?.linkVariablesEnabled ||
+              (phrase.linkVariables?.length ?? 0) > 0) && (
+              <LinkVariablesList
+                phrase={phrase}
+                phraseRef={props.phraseRef}
+                selectedLocale={props.selectedLocale}
+                systemSourceLocale={props.systemSourceLocale}
+                globalFilterUntranslated={props.globalFilterUntranslated}
+                fallbackLocale={props.fallbackLocale}
+                pinnedPhrases={props.pinnedPhrases}
+                setPinnedPhrases={props.setPinnedPhrases}
+                isPinned={props.isPinned}
+                isSearching={props.isSearching}
+                searchText={props.searchText}
+                onFocusSearch={props.onFocusSearch}
+              />
+            )}
+          {phrase &&
+            (phrase?.interpolationsEnabled ||
+              (phrase?.interpolationVariants?.length ?? 0) > 0) &&
             (phrase?.variables?.length ?? 0) > 0 && (
               <InterpolationVariantList
                 phrase={phrase}
@@ -1088,15 +1116,17 @@ const PhraseTranslation = React.forwardRef((props: Props, ref: React.ForwardedRe
                 onFocusSearch={props.onFocusSearch}
               />
             )}
-          {phrase && (phrase?.variables?.length ?? 0) > 0 && !props.isSearching && (
-            <TestCaseList
-              phrase={phrase}
-              phraseRef={props.phraseRef}
-              selectedLocale={props.selectedLocale}
-              fallbackLocale={props.fallbackLocale}
-              globalFallbackLocale={props.globalFallbackLocale}
-            />
-          )}
+          {phrase &&
+            (phrase?.variables?.length ?? 0) > 0 &&
+            !props.isSearching && (
+              <TestCaseList
+                phrase={phrase}
+                phraseRef={props.phraseRef}
+                selectedLocale={props.selectedLocale}
+                fallbackLocale={props.fallbackLocale}
+                globalFallbackLocale={props.globalFallbackLocale}
+              />
+            )}
         </div>
       )}
     </div>

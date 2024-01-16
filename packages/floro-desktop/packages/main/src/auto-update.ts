@@ -32,11 +32,11 @@ export function update(win: Electron.BrowserWindow) {
   });
 
   autoUpdater.on("error", (e) => {
-    if (hasAckedError) {
-      return;
-    }
+    //if (hasAckedError) {
+    //  return;
+    //}
     hasAckedError = true;
-    dialog.showMessageBox(win, { message: "An auto-update error occured" });
+    //dialog.showMessageBox(win, { message: "An auto-update error occured" });
     console.error("There was a problem updating the application");
     console.error(e);
     log.info(e.message)

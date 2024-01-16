@@ -700,6 +700,8 @@ const PhraseGroup = (props: Props) => {
     isManualSearching,
     manualSearchText,
     props.selectedTopLevelLocale,
+    props.globalFilterRequiresUpdate,
+    props.globalFilterUntranslated,
   ]);
 
   const [renderLimit, setRenderLimit] = useState(RENDER_CONSTANT);

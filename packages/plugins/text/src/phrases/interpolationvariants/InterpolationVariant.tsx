@@ -348,12 +348,21 @@ const InterpolationVariant = (props: Props) => {
         ]);
       }
       if (sourceDefaultValue) {
+        const shouldUpdateFromSource =
+          sourceDefaultValue?.plainText != "" &&
+          (defaultValue?.sourceAtRevision?.plainText ?? "") == "";
         const updateFn = setDefaultValue(
           {
             ...defaultValue,
             richTextHtml,
             plainText,
             json: JSON.stringify(json),
+            sourceAtRevision: shouldUpdateFromSource ? {
+              richTextHtml: sourceDefaultValue.richTextHtml,
+              plainText: sourceDefaultValue.plainText,
+              json: sourceDefaultValue.json,
+              sourceLocaleRef: defaultValue.sourceAtRevision.sourceLocaleRef
+            } : defaultValue.sourceAtRevision
           },
           false
         );
@@ -460,6 +469,10 @@ const InterpolationVariant = (props: Props) => {
   ]);
 
   const displayRequireRevision = useMemo(() => {
+    if ((defaultValue?.plainText ?? "") == "") {
+      return true;
+    }
+
     if (!sourceDefaultValue) {
       return false;
     }
@@ -467,7 +480,12 @@ const InterpolationVariant = (props: Props) => {
       (sourceDefaultValue?.json ?? "{}") !=
       (defaultValue?.sourceAtRevision?.json ?? "{}")
     );
-  }, [defaultValue?.sourceAtRevision?.json, sourceDefaultValue?.json]);
+  }, [
+    defaultValue?.plainText,
+    defaultValue?.sourceAtRevision?.json,
+    sourceDefaultValue?.json,
+    defaultValue?.plainText,
+  ]);
 
   const xIcon = useMemo(() => {
     if (theme.name == "light") {
@@ -609,6 +627,9 @@ const InterpolationVariant = (props: Props) => {
     if (!sourceDefaultValue) {
       return [];
     }
+    if ((defaultValue?.plainText?.trim() ?? "") == "") {
+      return [];
+    }
     if (!props.selectedLocale?.localeCode) {
       return [];
     }
@@ -632,7 +653,12 @@ const InterpolationVariant = (props: Props) => {
       return [];
     }
     return Array.from(termSet);
-  }, [translationMemory, sourceDefaultValue, props.selectedLocale]);
+  }, [
+    translationMemory,
+    sourceDefaultValue,
+    props.selectedLocale,
+    defaultValue?.plainText,
+  ]);
 
   const [showContent, setShowContent] = useState(false);
 
@@ -857,16 +883,19 @@ const InterpolationVariant = (props: Props) => {
                       <RequiresRevision style={{ marginRight: 12 }}>
                         {"requires revision"}
                       </RequiresRevision>
-                      {commandMode == "edit" && (
-                        <Button
-                          onClick={onMarkDisplayResolved}
-                          style={{ width: 120 }}
-                          label={"mark resolved"}
-                          bg={"orange"}
-                          size={"small"}
-                          textSize="small"
-                        />
-                      )}
+                      {commandMode == "edit" &&
+                        (defaultValue?.plainText ?? "") != "" &&
+                        (defaultValue?.sourceAtRevision?.plainText ?? "") !=
+                          "" && (
+                          <Button
+                            onClick={onMarkDisplayResolved}
+                            style={{ width: 120 }}
+                            label={"mark resolved"}
+                            bg={"orange"}
+                            size={"small"}
+                            textSize="small"
+                          />
+                        )}
                     </div>
                   )}
                 </div>
@@ -903,7 +932,9 @@ const InterpolationVariant = (props: Props) => {
                   systemSourceLocale={props.systemSourceLocale}
                   onChange={onChangeTerm}
                   enabledTerms={defaultValue?.enabledTerms ?? []}
-                  showFindTerms={!props.systemSourceLocale && !props.isSearching}
+                  showFindTerms={
+                    !props.systemSourceLocale && !props.isSearching
+                  }
                   onShowFindTerms={onShowFindTerms}
                   isEmpty={(defaultValue?.plainText?.trim?.() ?? "") == ""}
                   title={
@@ -935,7 +966,7 @@ const InterpolationVariant = (props: Props) => {
               )}
               {translationMemories.length > 0 &&
                 (defaultValue?.plainText ?? "").trim() == "" &&
-                commandMode == "edit" && !props.isSearching && (
+                commandMode == "edit" && (
                   <TranslationMemoryList
                     memories={translationMemories}
                     observer={editorObserver}
