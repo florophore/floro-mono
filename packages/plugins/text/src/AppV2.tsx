@@ -15,23 +15,19 @@ import {
   useFloroState,
   useReferencedObject,
 } from "./floro-schema-api";
-import TextAppHeader from "./header/TextAppHeader";
 import LocalesSections from "./locales/LocalesSections";
 import PhraseGroups from "./phrasegroups/PhraseGroups";
-import TermGlossaryHeader from "./header/TermGlossaryHeader";
 import TermList from "./terms/TermList";
 import DeepLProvider from "./deepl/DeepLContext";
 import TranslationMemoryProvider from "./memory/TranslationMemoryContext";
 import ChatGPTProvider from "./chatgpt/ChatGPTContext";
-import DisplayHeader from "./header/DisplayHeader";
-import Chevron from "@floro/common-assets/assets/images/icons/chevron.dark.svg";
 import HeaderV2 from "./headerv2/HeaderV2";
 import {
   filterPinnedPhraseGroups,
   getFilteredPhrasesGroups,
 } from "./phrasegroups/filterhooks";
-import FocusView from "./focusview/FocusView";
 import { FocusProvider } from "./focusview/FocusContext";
+import { getFilteredTerms } from "./terms/termfilterhooks";
 
 const Container = styled.div`
   width: 100%;
@@ -107,20 +103,19 @@ const Layout = () => {
   const [page, setPage] = useState<"phrases" | "terms" | "locales">("phrases");
   const [searchText, setSearchText] = useState<string>("");
   const [searchTextState, setSearchTextState] = useState<string>("");
-  const [isHovering, setIsHovering] = useState<boolean>(false);
   const [searchTermText, setSearchTermText] = useState<string>("");
   const [isEditGroups, setIsEditGroups] = useState<boolean>(false);
-  const [showLocales, setShowLocales] = useState<boolean>(false);
   const [showEditTerms, setShowEditTerms] = useState<boolean>(false);
   const [showFilters, setShowFilters] = useState<boolean>(false);
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
+  const [selectedTerm, setSelectedTerm] = useState<string | null>(null);
 
   const [phraseGroups, setPhraseGroups, savePhraseGroups] =
     useFloroState("$(text).phraseGroups") ?? [];
 
   const localeSettings = useReferencedObject("$(text).localeSettings");
   const locales = useReferencedObject("$(text).localeSettings.locales");
-  const terms = useReferencedObject("$(text).terms");
+  const [terms, setTerms, saveTerms] = useFloroState("$(text).terms");
   const localeCodes = useMemo(
     () => new Set(locales?.map((l) => l.localeCode)),
     [locales]
@@ -152,19 +147,6 @@ const Layout = () => {
     useState(false);
   const [filterTag, setFilterTag] = useState<string | null>(null);
 
-  const [hidePhrases, setHidePhrases] =
-    useClientStorageApi<boolean>("hide-phrases");
-
-  const onTogglePhrases = useCallback(() => {
-    setHidePhrases(!hidePhrases);
-  }, [hidePhrases, setHidePhrases]);
-
-  const [hideTerms, setHideTerms] = useClientStorageApi<boolean>("hide-terms");
-
-  const onToggleTerms = useCallback(() => {
-    setHideTerms(!hideTerms);
-  }, [hideTerms, setHideTerms]);
-
   useEffect(() => {
     if (!!lastSelectedLocale) {
       setSelectedTopLevelLocale(
@@ -187,14 +169,6 @@ const Layout = () => {
 
   const onHideEditGroups = useCallback(() => {
     setIsEditGroups(false);
-  }, []);
-
-  const onShowLocales = useCallback(() => {
-    setShowLocales(true);
-  }, []);
-
-  const onHideLocales = useCallback(() => {
-    setShowLocales(false);
   }, []);
 
   const onShowEditTerms = useCallback(() => {
@@ -285,6 +259,31 @@ const Layout = () => {
     searchText,
   ]);
 
+  const filteredTerms = useMemo(() => {
+    const localeRef = makeQueryRef(
+      "$(text).localeSettings.locales.localeCode<?>",
+      selectedTopLevelLocale
+    );
+    if (!terms) {
+      return [];
+    }
+    return getFilteredTerms(
+      terms,
+      localeRef,
+      pinnedTerms,
+      !!showOnlyPinnedTerms,
+      globalFilterUntranslatedTerms,
+      searchTermText
+    );
+  }, [
+    selectedTopLevelLocale,
+    terms,
+    pinnedTerms,
+    !!showOnlyPinnedTerms,
+    globalFilterUntranslatedTerms,
+    searchTermText,
+  ]);
+
   const filteredPinnedPhraseGroups = useMemo(() => {
     if (!phraseGroups) {
       return [];
@@ -302,90 +301,135 @@ const Layout = () => {
     }
   }, [selectedGroup]);
 
+  useEffect(() => {
+    if (container.current) {
+      container.current.scroll(0, 0)
+    }
+
+  }, [page])
+
   return (
     <ThemeProvider theme={colorTheme}>
       <ChatGPTProvider>
         <DeepLProvider>
           <TranslationMemoryProvider>
-              <FocusProvider>
-                <Container ref={container}>
-                  <HeaderV2
-                    showFilters={showFilters}
-                    setShowFilters={setShowFilters}
-                    isEditGroups={isEditGroups}
-                    searchText={searchText ?? ""}
-                    onSetSearchText={setSearchText}
-                    selectedTopLevelLocale={selectedTopLevelLocale as string}
-                    setGlobalFilterUnstranslated={setGlobalFilterUnstranslated}
-                    setGlobalFilterRequiresUpdate={
-                      setGlobalFilterRequiresUpdate
-                    }
-                    showOnlyPinnedPhrases={showOnlyPinnedPhrases ?? false}
-                    setShowOnlyPinnedPhrases={setShowOnlyPinnedPhrases}
-                    pinnedPhrases={pinnedPhrases}
-                    setPinnedPhrases={setPinnedPhrases}
-                    removePinnedPhrases={removePinnedPhrases}
-                    searchTextState={searchTextState}
-                    onSetSearchTextState={setSearchTextState}
-                    phraseGroups={phraseGroups ?? []}
-                    filteredPhraseGroups={filteredPhraseGroups ?? []}
-                    onShowEditGroups={onShowEditGroups}
-                    onHideEditGroups={onHideEditGroups}
-                    setSelectedTopLevelLocale={onChangeTopLevelLocale}
-                    onShowEditLocales={onShowLocales}
-                    page={page}
-                    setPage={setPage}
-                    globalFilterUntranslated={globalFilterUntranslated}
-                    globalFilterRequiresUpdate={globalFilterRequiresUpdate}
-                    filterTag={filterTag}
-                    setFilterTag={setFilterTag}
-                    pinnedPhrasesWithGroups={pinnedPhrasesWithGroups}
-                    selectedGroup={selectedGroup}
-                    setSelectedGroup={setSelectedGroup}
-                    pinnedGroups={pinnedGroups ?? []}
-                    setPinnedGroups={setPinnedGroups}
-                    showOnlyPinnedGroups={!!showOnlyPinnedGroups}
-                    setShowOnlyPinnedGroups={setShowOnlyPinnedGroups}
-                    setPhraseGroups={setPhraseGroups}
-                  />
-                  <Inner>
-                    {container.current && (
-                      <>
-                        {page == "phrases" && (
-                          <PhraseGroups
-                            selectedTopLevelLocale={selectedTopLevelLocale}
-                            globalFilterUntranslated={globalFilterUntranslated}
-                            globalFilterRequiresUpdate={
-                              globalFilterRequiresUpdate
-                            }
-                            searchText={searchText}
-                            isEditingGroups={isEditGroups}
-                            filterTag={filterTag}
-                            showOnlyPinnedPhrases={
-                              (showOnlyPinnedPhrases ?? false) &&
-                              clientStorageEnabled
-                            }
-                            pinnedPhrases={pinnedPhrases}
-                            setPinnedPhrases={setPinnedPhrases}
-                            removePinnedPhrases={removePinnedPhrases}
-                            scrollContainer={container.current}
-                            phraseGroups={filteredPinnedPhraseGroups ?? []}
-                            setPhraseGroups={setPhraseGroups}
-                            savePhraseGroups={savePhraseGroups}
-                            showFilters={showFilters}
-                            pinnedPhrasesWithGroups={pinnedPhrasesWithGroups}
-                            selectedGroup={selectedGroup}
-                            pinnedGroups={pinnedGroups}
-                            setPinnedGroups={setPinnedGroups}
-                            showOnlyPinnedGroups={!!showOnlyPinnedGroups}
-                          />
-                        )}
-                        {page == "locales" && <LocalesSections />}
-                      </>
-                    )}
-                  </Inner>
-                </Container>
-              </FocusProvider>
+            <FocusProvider>
+              <Container ref={container}>
+                <HeaderV2
+                  showFilters={showFilters}
+                  setShowFilters={setShowFilters}
+                  isEditGroups={isEditGroups}
+                  searchText={searchText ?? ""}
+                  onSetSearchText={setSearchText}
+                  selectedTopLevelLocale={selectedTopLevelLocale as string}
+                  setGlobalFilterUnstranslated={setGlobalFilterUnstranslated}
+                  setGlobalFilterRequiresUpdate={setGlobalFilterRequiresUpdate}
+                  showOnlyPinnedPhrases={showOnlyPinnedPhrases ?? false}
+                  setShowOnlyPinnedPhrases={setShowOnlyPinnedPhrases}
+                  pinnedPhrases={pinnedPhrases}
+                  setPinnedPhrases={setPinnedPhrases}
+                  removePinnedPhrases={removePinnedPhrases}
+                  removePinnedGroups={removePinnedGroups}
+                  searchTextState={searchTextState}
+                  onSetSearchTextState={setSearchTextState}
+                  phraseGroups={phraseGroups ?? []}
+                  filteredPhraseGroups={filteredPhraseGroups ?? []}
+                  onShowEditGroups={onShowEditGroups}
+                  onHideEditGroups={onHideEditGroups}
+                  setSelectedTopLevelLocale={onChangeTopLevelLocale}
+                  page={page}
+                  setPage={setPage}
+                  globalFilterUntranslated={globalFilterUntranslated}
+                  globalFilterRequiresUpdate={globalFilterRequiresUpdate}
+                  filterTag={filterTag}
+                  setFilterTag={setFilterTag}
+                  pinnedPhrasesWithGroups={pinnedPhrasesWithGroups}
+                  selectedGroup={selectedGroup}
+                  setSelectedGroup={setSelectedGroup}
+                  pinnedGroups={pinnedGroups ?? []}
+                  setPinnedGroups={setPinnedGroups}
+                  showOnlyPinnedGroups={!!showOnlyPinnedGroups}
+                  setShowOnlyPinnedGroups={setShowOnlyPinnedGroups}
+                  setPhraseGroups={setPhraseGroups}
+                  terms={terms ?? []}
+                  filteredTerms={filteredTerms ?? []}
+                  onSetTerms={setTerms}
+
+                  onSetSearchTermText={setSearchTermText}
+                  searchTermText={searchTermText}
+                  isEditTerms={showEditTerms}
+                  onShowEditTerms={onShowEditTerms}
+                  onHideEditTerms={onHideEditTerms}
+                  globalFilterUntranslatedTerms={globalFilterUntranslatedTerms}
+                  setGlobalFilterUnstranslatedTerms={
+                    setGlobalFilterUnstranslatedTerms
+                  }
+                  showOnlyPinnedTerms={showOnlyPinnedTerms ?? false}
+                  setShowOnlyPinnedTerms={setShowOnlyPinnedTerms}
+                  pinnedTerms={pinnedTerms}
+                  setPinnedTerms={setPinnedTerms}
+                  removePinnedTerms={removePinnedTerms}
+                  selectedTerm={selectedTerm}
+                  setSelectedTerm={setSelectedTerm}
+                />
+                <Inner>
+                  {container.current && (
+                    <>
+                      {page == "phrases" && (
+                        <PhraseGroups
+                          selectedTopLevelLocale={selectedTopLevelLocale}
+                          globalFilterUntranslated={globalFilterUntranslated}
+                          globalFilterRequiresUpdate={
+                            globalFilterRequiresUpdate
+                          }
+                          searchText={searchText}
+                          isEditingGroups={isEditGroups}
+                          filterTag={filterTag}
+                          showOnlyPinnedPhrases={
+                            (showOnlyPinnedPhrases ?? false) &&
+                            clientStorageEnabled
+                          }
+                          pinnedPhrases={pinnedPhrases}
+                          setPinnedPhrases={setPinnedPhrases}
+                          removePinnedPhrases={removePinnedPhrases}
+                          scrollContainer={container.current}
+                          phraseGroups={filteredPinnedPhraseGroups ?? []}
+                          setPhraseGroups={setPhraseGroups}
+                          savePhraseGroups={savePhraseGroups}
+                          showFilters={showFilters}
+                          pinnedPhrasesWithGroups={pinnedPhrasesWithGroups}
+                          selectedGroup={selectedGroup}
+                          pinnedGroups={pinnedGroups}
+                          setPinnedGroups={setPinnedGroups}
+                          showOnlyPinnedGroups={!!showOnlyPinnedGroups}
+                        />
+                      )}
+                      {page == "locales" && <LocalesSections />}
+                      {page == "terms" && (
+                        <TermList
+                          showFilters={showFilters}
+                          searchTermText={searchTermText}
+                          isEditTerms={showEditTerms}
+                          selectedTopLevelLocale={selectedTopLevelLocale}
+                          globalFilterUntranslatedTerms={
+                            globalFilterUntranslatedTerms
+                          }
+                          showOnlyPinnedTerms={showOnlyPinnedTerms ?? false}
+                          pinnedTerms={pinnedTerms}
+                          setPinnedTerms={setPinnedTerms}
+                          removePinnedTerms={removePinnedTerms}
+                          terms={filteredTerms ?? []}
+                          setTerms={setTerms}
+                          saveTerms={saveTerms}
+                          scrollContainer={container.current}
+                          selectedTerm={selectedTerm}
+                        />
+                      )}
+                    </>
+                  )}
+                </Inner>
+              </Container>
+            </FocusProvider>
           </TranslationMemoryProvider>
         </DeepLProvider>
       </ChatGPTProvider>

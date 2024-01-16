@@ -80,7 +80,7 @@ const Sticky = styled.div`
   top: -82px;
   z-index: 1;
   margin-bottom: 24px;
-  background: white;
+  background: ${props => props.theme.background};
   padding-top: 24px;
 `;
 
@@ -1218,21 +1218,18 @@ const PhraseRow = (props: Props) => {
                 </div>
               </div>
             )}
-            {(commandMode == "edit" ||
-              (props?.phrase?.description?.value?.trim() ?? "") != "") && (
-              <div
-                style={{
-                  marginTop: 24,
-                }}
-              >
-                <DescriptionContainer
-                  description={descriptionValue?.value ?? ""}
-                  onUpdateDescription={onUpdateDescription}
-                  isReadOnly={commandMode != "edit"}
-                  phraseRef={props.phraseRef}
-                />
-              </div>
-            )}
+            <div
+              style={{
+                marginTop: 24,
+              }}
+            >
+              <DescriptionContainer
+                description={descriptionValue?.value ?? ""}
+                onUpdateDescription={onUpdateDescription}
+                isReadOnly={commandMode != "edit"}
+                phraseRef={props.phraseRef}
+              />
+            </div>
             <div
               style={{
                 marginBottom: commandMode != "edit" ? 24 : 48,

@@ -17,7 +17,9 @@ import { RepoPage } from "./types";
 import { MergeRequestNavProvider } from "./remote/mergerequest/MergeRequestContext";
 import { CopyPasteProvider } from "./copypaste/CopyPasteContext";
 import { CreateAnnouncementsProvider } from "./remote/announcements/CreateAnnouncementsContext";
-import { useCurrentRepoState, usePluginStorageV2, useWatchRepoId } from "./local/hooks/local-hooks";
+import { useCurrentRepoState, usePluginStorageV2 } from "./local/hooks/local-hooks";
+import { useDaemonIsConnected } from "../../pubsub/socket";
+import { useQueryClient } from "react-query";
 
 interface Props {
   from: "local" | "remote";
@@ -63,9 +65,17 @@ const RepoController = (props: Props) => {
     };
   }, [onTogglePanel]);
 
-  const { data: repoData } = useCurrentRepoState(props.repository, "RepoController");
+  const { data: repoData } = useCurrentRepoState(props.repository);
   const { data: storage } = usePluginStorageV2(props.repository);
-  useWatchRepoId(props?.repository?.id ?? "");
+  const isDaemonConnected = useDaemonIsConnected();
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (repoData && !isDaemonConnected) {
+      queryClient.invalidateQueries(["repo-current:" + props.repository.id]);
+    }
+
+  }, [repoData, isDaemonConnected, props.repository.id])
 
   return (
     <CreateAnnouncementsProvider>

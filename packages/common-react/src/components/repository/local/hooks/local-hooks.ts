@@ -18,42 +18,17 @@ export interface ClientSourceGraph {
   branchesMetaState: BranchesMetaState;
 }
 
-export const useWatchRepoId = (repositoryId: string) => {
-  const queryClient = useQueryClient();
-  useEffect(() => {
-
-  const observer = new QueryObserver(queryClient, { queryKey: ["repo-current:" + repositoryId] })
-
-    const unsubscribe = observer.subscribe(result => {
-      console.log("RES", result)
-    })
-    return () => {
-      unsubscribe();
-    }
-  }, []);
-
-}
-
-export const useCurrentRepoState = (repository: Repository|RepoInfo, from: string) => {
+export const useCurrentRepoState = (repository: Repository|RepoInfo) => {
   return useQuery(
     "repo-current:" + repository.id,
     async (): Promise<ApiResponse | null> => {
-      try {
-        if (!repository.id) {
-          return null;
-        }
-        const result = await axios.get(
-          `http://localhost:63403/repo/${repository.id}/current`
-        );
-        //@ts-ignore
-        result.data.cameFrom = "useCurrentRepoState"
-        //@ts-ignore
-        result.data.compFrom = from;
-        console.log("FROM", from);
-        return result?.data ?? null;
-      } catch (e) {
+      if (!repository.id) {
         return null;
       }
+      const result = await axios.get(
+        `http://localhost:63403/repo/${repository.id}/current`
+      );
+      return result?.data ?? null;
     },
     {staleTime: Infinity, cacheTime: Infinity}
   );
@@ -262,8 +237,6 @@ export const useUpdateCurrentCommand = (repository: Repository) => {
     },
     onSuccess: (result: { data?: ApiResponse }) => {
 
-      //@ts-ignore
-      result.data.cameFrom = "useUpdateCurrentCommand"
       queryClient.setQueryData(["repo-current:" + repository.id], result?.data);
     },
   });
@@ -281,8 +254,6 @@ export const useUpdateDescription = (repository: Repository) => {
       );
     },
     onSuccess: (result: { data?: ApiResponse }) => {
-      //@ts-ignore
-      result.data.cameFrom = "useUpdateDescription"
       queryClient.setQueryData(["repo-current:" + repository.id], result?.data);
     },
   });
@@ -300,8 +271,6 @@ export const useUpdateLicenses = (repository: Repository) => {
       );
     },
     onSuccess: (result: { data?: ApiResponse }) => {
-      //@ts-ignore
-      result.data.cameFrom = "useUpdateLicenses"
       queryClient.setQueryData(["repo-current:" + repository.id], result?.data);
     },
   });
@@ -319,8 +288,6 @@ export const useUpdatePlugins = (repository: Repository) => {
       );
     },
     onSuccess: (result: { data?: ApiResponse }) => {
-      //@ts-ignore
-      result.data.cameFrom = "useUpdatePlugins"
       queryClient.setQueryData(["repo-current:" + repository.id], result?.data);
       queryClient.invalidateQueries(["manifest-list:" + repository.id]);
     },
@@ -350,8 +317,6 @@ export const useUpdatePluginState = (pluginName: string, repository: Repository,
       if (refCount?.current && refCount?.current > id) {
         return;
       }
-      //@ts-ignore
-      result.cameFrom = "useUpdatePluginState"
       queryClient.setQueryData(["repo-current:" + repository.id], result);
     }
   });
@@ -374,8 +339,6 @@ export const useClearPluginStorage = (pluginName: string, repository: Repository
       if (refCount?.current && id && refCount?.current > id) {
         return;
       }
-      //@ts-ignore
-      result.cameFrom = "useClearPluginStorage"
       queryClient.setQueryData(["repo-current:" + repository.id], result);
     }
   });
@@ -400,8 +363,6 @@ export const useUpdatePluginStorage = (pluginName: string, repository: Repositor
       if (refCount?.current && refCount?.current > id) {
         return;
       }
-      //@ts-ignore
-      result.cameFrom = "useUpdatePluginStorage"
       queryClient.setQueryData(["repo-current:" + repository.id], result);
     }
   });

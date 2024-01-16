@@ -44,15 +44,8 @@ import DraggerDark from "@floro/common-assets/assets/images/icons/dragger.dark.s
 import TrashLight from "@floro/common-assets/assets/images/icons/discard.light.svg";
 import TrashDark from "@floro/common-assets/assets/images/icons/discard.dark.svg";
 
-import EditLight from "@floro/common-assets/assets/images/icons/edit.light.svg";
-import EditDark from "@floro/common-assets/assets/images/icons/edit.dark.svg";
-
 import FocusLight from "@floro/common-assets/assets/images/icons/focus.light.svg";
 import FocusDark from "@floro/common-assets/assets/images/icons/focus.dark.svg";
-
-import PlusLight from "@floro/common-assets/assets/images/icons/plus.light.svg";
-import PlusDark from "@floro/common-assets/assets/images/icons/plus.dark.svg";
-
 
 import SearchLight from "@floro/common-assets/assets/images/icons/search_glass_active.light.svg";
 import SearchDark from "@floro/common-assets/assets/images/icons/search_glass_active.dark.svg";
@@ -411,11 +404,26 @@ const PhraseGroup = (props: Props) => {
     [phraseGroup, setPhraseGroup]
   );
 
+
+  const onFocusPhraseGroup = useCallback(() => {
+    setTimeout(() => {
+      if (phraseGroupContainer.current) {
+        const filtersAdjust = props.showFilters ? 132 : 0;
+        props.scrollContainer.scrollTo({
+          left: 0,
+          top: phraseGroupContainer.current.offsetTop - (236 + filtersAdjust),
+          behavior: "smooth",
+        });
+      }
+    }, 50);
+  }, [props.showFilters]);
+
   const onAddPhraseKey = useCallback(
     (phrase: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>"]) => {
       if (!isExpanded) {
         setIsExpanded(true);
       }
+      onFocusPhraseGroup();
       setShowAddPhraseKey(false);
       if (!phraseGroup?.id || !phraseGroup?.name) {
         return;
@@ -432,17 +440,14 @@ const PhraseGroup = (props: Props) => {
         setTimeout(updateFn, 0);
       }
     },
-    [isExpanded, phraseGroupRef, phraseGroup?.phrases, setPhraseGroup]
+    [onFocusPhraseGroup, isExpanded, phraseGroupRef, phraseGroup?.phrases, setPhraseGroup]
   );
 
   useEffect(() => {
     if (hasConflict) {
       setIsExpanded(true);
     }
-    //if (wasAdded || wasRemoved || hasConflict) {
-    //  setIsExpanded(true);
-    //}
-  }, [wasAdded, wasRemoved, hasConflict]);
+  }, [hasConflict]);
 
   const onRemovePhrase = useCallback(
     (phrase: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>"]) => {
@@ -601,19 +606,6 @@ const PhraseGroup = (props: Props) => {
 
   const [dimissedUntraslated, setDismissedUntranslated] = useState<Array<string>>([]);
   const [dimissedNeedsUpdate, setDismissedNeedsUpdate] = useState<Array<string>>([]);
-
-  const onFocusPhraseGroup = useCallback(() => {
-    setTimeout(() => {
-      if (phraseGroupContainer.current) {
-        const filtersAdjust = props.showFilters ? 132 : 0;
-        props.scrollContainer.scrollTo({
-          left: 0,
-          top: phraseGroupContainer.current.offsetTop - (236 + filtersAdjust),
-          behavior: "smooth",
-        });
-      }
-    }, 50);
-  }, [props.showFilters]);
 
   const onScrollTop = useCallback(() => {
     scrollContainer?.current?.scrollTo?.({left: 0, top: 0});
@@ -826,9 +818,6 @@ const PhraseGroup = (props: Props) => {
     return DraggerDark;
   }, [theme.name]);
 
-  const hasAnyRemovals = useWasRemoved("$(text).phraseGroups", true);
-  const hasAnyAdditions = useWasAdded("$(text).phraseGroups", true);
-
   useEffect(() => {
     if (isSearching && hasSearchMatches) {
       setIsExpanded(true);
@@ -856,9 +845,6 @@ const PhraseGroup = (props: Props) => {
     props.searchText,
     props.showOnlyPinnedPhrases,
     props.filterTag,
-    //filterRequiresUpdate,
-    //filterUntranslatedForGroup,
-    //phrasesToRender.length,
   ]);
 
   useEffect(() => {
@@ -874,8 +860,6 @@ const PhraseGroup = (props: Props) => {
     props.searchText,
     props.showOnlyPinnedPhrases,
     props.filterTag,
-    //filterRequiresUpdate,
-    //filterUntranslatedForGroup,
     phrasesToRender.length,
   ]);
 
@@ -905,20 +889,6 @@ const PhraseGroup = (props: Props) => {
 
   const phraseKeyOptions = useMemo(() => {
     return renderLimitedPhrases
-      //.filter((phrase) => {
-      //  if (commandMode == "compare") {
-      //    const phraseRef = makeQueryRef(
-      //      "$(text).phraseGroups.id<?>.phrases.id<?>",
-      //      phraseGroup?.id as string,
-      //      phrase.id as string
-      //    );
-      //    return (
-      //      containsDiffable(changeset, phraseRef, true) ||
-      //      containsDiffable(conflictSet, phraseRef, true)
-      //    );
-      //  }
-      //  return true;
-      //})
       .map((phrase) => {
         const phraseRef = makeQueryRef(
           "$(text).phraseGroups.id<?>.phrases.id<?>",
@@ -1034,14 +1004,6 @@ const PhraseGroup = (props: Props) => {
 
   }, [props?.scrollContainer])
 
-  //if (commandMode == "compare" && !hasConflict) {
-  //  if (!hasAnyRemovals && compareFrom == "before") {
-  //    return null;
-  //  }
-  //  if (!hasAnyAdditions && compareFrom == "after") {
-  //    return null;
-  //  }
-  //}
   if (!matchesPinnedPhrases) {
     return false;
   }

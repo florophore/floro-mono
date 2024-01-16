@@ -340,10 +340,6 @@ const LocaleBox = (props: Props) => {
     </>
   );
 
-  if (!localesHasIndication && commandMode == "compare") {
-    return null;
-  }
-
   return (
     <Reorder.Item
       dragListener={false}

@@ -1,5 +1,4 @@
-
-import React, { useMemo, useCallback, useState, useEffect } from "react";
+import React, { useMemo, useCallback, useState, useEffect, useRef } from "react";
 import { PointerTypes, SchemaTypes, makeQueryRef, useCopyApi, useFloroContext, useHasIndication, useReferencedObject } from "../floro-schema-api";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
@@ -17,6 +16,8 @@ import TermValueTranslation from "./values/TermValueTranslation";
 import TermNotesTranslation from "./values/TermNotesTranslation";
 import UpdateTermModal from "./UpdateTermModal";
 import { useDiffColor } from "../diff";
+import { getTermIsUntranslated } from "./termfilterhooks";
+import Button from "@floro/storybook/stories/design-system/Button";
 
 const Container = styled.div`
   padding: 0;
@@ -108,10 +109,15 @@ interface Props {
   setPinnedTerms: (phraseRegs: Array<string>) => void;
   globalFilterUntranslatedTerms: boolean;
   onRemove: (phrase: SchemaTypes["$(text).terms.id<?>"]) => void;
+  scrollContainer: HTMLDivElement;
+  selectedTerm: string|null;
+  showFilters: boolean;
+  onSetDismissedUnTranslated: (id: string) => void;
 }
 
 const TermRow = (props: Props) => {
   const theme = useTheme();
+  const container = useRef<HTMLDivElement>(null);
   const locales = useReferencedObject("$(text).localeSettings.locales");
   const {
     applicationState,
@@ -124,7 +130,7 @@ const TermRow = (props: Props) => {
   const clientStorageIsEnabled = clientStorage != null;
   const [selectedLocaleCode, setSelectedLocaleCode] = useState(props.selectedTopLevelLocale);
   const localeSettings = useReferencedObject("$(text).localeSettings");
-  const term = useReferencedObject(props.termRef);
+  //const term = useReferencedObject(props.termRef);
   const selectedLocale = useMemo(
     () =>
       localeSettings.locales.find((l) => l.localeCode == selectedLocaleCode),
@@ -145,11 +151,34 @@ const TermRow = (props: Props) => {
     })
   }, [hasIndications, conflictSet, changeset, props.termRef, locales]);
 
+  const showAllTranslated = useMemo(() => {
+    if (commandMode != "edit") {
+      return false;
+    }
+    if (!props.globalFilterUntranslatedTerms) {
+      return false;
+    }
+    if (!props.term || !applicationState) {
+      return false;
+    }
+    const localeRef = makeQueryRef(
+      "$(text).localeSettings.locales.localeCode<?>",
+      selectedLocale?.localeCode ?? (props.selectedTopLevelLocale as string)
+    );
+    return !getTermIsUntranslated(props.term, localeRef);
+  }, [
+    applicationState,
+    props.globalFilterUntranslatedTerms,
+    commandMode,
+    props.term,
+    selectedLocale?.localeCode ?? props.selectedTopLevelLocale,
+  ]);
+
   const indicatedLocaleCodes = useMemo(() => {
     return indicatedLocales?.map(l => l.localeCode).join(", ");
   }, [indicatedLocales]);
 
-  const diffColor = useDiffColor(props.termRef, false, 'darker');
+  const diffColor = useDiffColor(props.termRef, true, 'darker');
 
   const systemSourceLocale = useMemo(() => {
     if (selectedLocale?.defaultTranslateFromLocaleRef) {
@@ -201,14 +230,14 @@ const TermRow = (props: Props) => {
       "$(text).localeSettings.locales.localeCode<?>",
       selectedLocale?.localeCode ?? props.selectedTopLevelLocale
     );
-    const termValue = term?.localizedTerms.find(
+    const termValue = props.term?.localizedTerms.find(
       (p) => p.id == localeRef
     );
     if ((termValue?.termValue ?? "") == "") {
       return true;
     }
     return false;
-  }, [applicationState, term, props.selectedTopLevelLocale, selectedLocale?.localeCode]);
+  }, [applicationState, props.term, props.selectedTopLevelLocale, selectedLocale?.localeCode]);
 
 
   const trashIcon = useMemo(() => {
@@ -264,6 +293,25 @@ const TermRow = (props: Props) => {
     }
   }, []);
 
+  useEffect(() => {
+    if (!props?.scrollContainer) {
+      return;
+    }
+    if (props.selectedTerm == props.termRef) {
+      if (container.current) {
+        const filtersAdjust = props.showFilters ? 132 : 0;
+        props.scrollContainer.scrollTo({
+          left: 0,
+          top: container.current.offsetTop - (236 + filtersAdjust),
+          behavior: "smooth",
+        });
+      }
+    }
+  }, [
+    props?.scrollContainer,
+    props.selectedTerm,
+  ]);
+
   if (!showContent) {
     return null;
   }
@@ -273,7 +321,7 @@ const TermRow = (props: Props) => {
   }
 
   return (
-    <Container style={{borderColor: diffColor}}>
+    <Container ref={container} style={{borderColor: diffColor}}>
       <UpdateTermModal
         show={showUpdate}
         onDismiss={onHideUpdate}
@@ -384,6 +432,51 @@ const TermRow = (props: Props) => {
           <span style={{ marginLeft: 12 }}>
             <PinPhrase>{"Copy Term"}</PinPhrase>
           </span>
+        </div>
+      )}
+
+      {commandMode == "edit" && showAllTranslated && (
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <div>
+            {clientStorageIsEnabled && (
+              <div
+                style={{
+                  height: 56,
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  width: 250,
+                }}
+              >
+                <PinPhrase
+                  style={{ color: theme.colors.warningTextColor }}
+                >
+                  {"All translated "}
+                </PinPhrase>
+                <div style={{ marginLeft: 12, width: 80 }}>
+                  <Button
+                    onClick={() => {
+                      if (!props?.term.id) {
+                        return;
+                      }
+                      props.onSetDismissedUnTranslated(props?.term.id);
+                    }}
+                    label={"dismiss"}
+                    bg={"orange"}
+                    size={"extra-small"}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       )}
       <div style={{ marginTop: 24 }}>

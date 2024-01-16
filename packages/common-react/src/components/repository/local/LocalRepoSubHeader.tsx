@@ -118,7 +118,7 @@ const LocalRepoSubHeader = (props: Props) => {
     return CopyDark;
   }, [theme.name])
   const { isSelectMode } = useCopyPasteContext("local");
-  const { data: repoData } = useCurrentRepoState(props.repository, "LocalRepoSubHeader");
+  const { data: repoData } = useCurrentRepoState(props.repository);
   const updateCommand = useUpdateCurrentCommand(props.repository);
   const { compareFrom, setCompareFrom } = useLocalVCSNavContext();
 

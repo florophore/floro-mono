@@ -114,11 +114,9 @@ interface Props {
 
 const LocalSideNavigator = (props: Props): React.ReactElement => {
   const theme = useTheme();
-  const location = useLocation();
   const { compareFrom } = useLocalVCSNavContext();
 
-  console.log("ETST", props?.repository?.id)
-  const { data: apiResponse } = useCurrentRepoState(props.repository, "LocalSideNavigator");
+  const { data: apiResponse } = useCurrentRepoState(props.repository);
   const repoManifestList = useRepoManifestList(props.repository, apiResponse);
   const devPluginsRequest = useRepoDevPlugins(props.repository);
 

@@ -167,7 +167,6 @@ const Pinned = styled.p`
   font-size: 1.4rem;
   padding: 0;
   text-align: center;
-  cursor: pointer;
   word-break: break-word;
 `;
 
@@ -181,6 +180,7 @@ interface Props {
   setPinnedPhrases: (phraseRegs: Array<string>) => void;
   setShowOnlyPinnedPhrases: (filter: boolean) => void;
   removePinnedPhrases: () => void;
+  removePinnedGroups: () => void;
   onSetSearchTextState: (str: string) => void;
   setGlobalFilterRequiresUpdate: (filter: boolean) => void;
   setGlobalFilterUnstranslated: (filter: boolean) => void;
@@ -469,7 +469,7 @@ const PhraseHeader = (props: Props) => {
           <div style={{ marginLeft: 24 }}>
             <SearchInput
               showClear
-              width={480}
+              width={400}
               height={60}
               value={props.searchTextState}
               placeholder={`search phrases (${locale?.localeCode})`}
@@ -491,7 +491,7 @@ const PhraseHeader = (props: Props) => {
                   <div style={{ display: "flex" }}>
                     <InputSelector
                       value={props.selectedGroup}
-                      size={"mid"}
+                      size={"semi-short"}
                       options={phraseGroupOptions}
                       label={"phrase group"}
                       placeholder={"select phrase key"}

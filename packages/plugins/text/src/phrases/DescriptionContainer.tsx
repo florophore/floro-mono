@@ -222,7 +222,7 @@ const DescriptionContainer = (props: Props) => {
             onInput={onInput}
             rows={1}
             ref={growTextarea}
-            placeholder="Write a description for this phrase"
+            placeholder={props?.isReadOnly ? "No description" : "Write a description for this phrase"}
             disabled={props.isReadOnly}
           />
           <BackgroundText>{props.description}</BackgroundText>
