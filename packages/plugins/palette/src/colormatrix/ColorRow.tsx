@@ -160,7 +160,7 @@ const ColorRow = (props: Props) => {
     "$(palette).colorPalettes.id<?>",
     props.colorPalette.id
   );
-  const [colorPalette] = useFloroState(colorPaletteRef);
+  const colorPalette = useReferencedObject(colorPaletteRef);
   const isInvalid = useIsFloroInvalid(colorPaletteRef, false);
   const wasRemoved = useWasRemoved(colorPaletteRef, false);
   const wasAdded = useWasAdded(colorPaletteRef, false);

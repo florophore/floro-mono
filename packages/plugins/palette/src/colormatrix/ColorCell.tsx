@@ -243,7 +243,7 @@ const ColorRow = (props: Props) => {
         });
     }
     setIsEdittingHex(false);
-  }, [paletteColor])
+  }, [setPaletteColor, paletteColor])
 
   const onChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     if (paletteColor) {
@@ -252,7 +252,7 @@ const ColorRow = (props: Props) => {
           hexcode: event.target.value?.toUpperCase(),
         });
     }
-  }, [paletteColor])
+  }, [setPaletteColor, paletteColor])
 
   const showEditor = useMemo(() => {
     return commandMode == "edit";

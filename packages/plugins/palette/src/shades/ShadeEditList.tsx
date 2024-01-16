@@ -91,7 +91,7 @@ const ShadeEditList = () => {
         setShades(values);
       }
     },
-    [shades]
+    [setShades, shades]
   );
 
   const newId = useMemo((): string | null => {
@@ -121,7 +121,7 @@ const ShadeEditList = () => {
     }
     setShades([...shades, { id: newId, name: newShadeName }]);
     setNewShadeName("");
-  }, [newShadeName, newId, canAddNewName, shades]);
+  }, [setShades, newShadeName, newId, canAddNewName, shades]);
 
   const onDragStart = useCallback(() => {
     setIsDragging(true);

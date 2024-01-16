@@ -118,7 +118,7 @@ const ShadeEditItem = (props: ShadeItemProps) => {
       ...shade,
       name
     });
-  }, [shade]);
+  }, [setShade, shade]);
 
   const onRemove = useCallback(() => {
     if (shade) {
