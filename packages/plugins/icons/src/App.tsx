@@ -14,6 +14,7 @@ import IconHeader from "./iconsheader/IconHeader";
 import AddIconModal from "./AddIconModal";
 import UpdateIconModal from "./UpdateIconModal";
 import IconGroups from "./iconsgroups/IconGroups";
+import { FocusProvider } from "./focus/FocusContext";
 
 const Container = styled.div`
   width: 100%;
@@ -109,33 +110,35 @@ const Layout = () => {
 
   return (
     <ThemeProvider theme={colorTheme}>
-      <Container ref={container}>
-        <IconHeader
-          isEditGroups={isEditGroups}
-          onShowEditGroups={onShowEditGroups}
-          onHideEditGroups={onHideEditGroups}
-          onUploaded={onShowAddSVG}
-          searchText={searchText ?? ""}
-          onSetSearchText={setSearchText}
-        />
-        <AddIconModal
-          show={show}
-          onDismiss={onHideAddSVG}
-          fileRef={addedSVGFileRef}
-          svgFileName={svgFileName}
-        />
-        <UpdateIconModal
-          show={showUpdate}
-          onDismiss={onHideUpdateSVG}
-          iconRef={updateIconRef}
-          originalIcon={updateIcon}
-        />
-        <IconGroups
-          searchText={searchText}
-          onEdit={onEdit}
-          isEditGroups={isEditGroups}
-        />
-      </Container>
+      <FocusProvider>
+        <Container ref={container}>
+          <IconHeader
+            isEditGroups={isEditGroups}
+            onShowEditGroups={onShowEditGroups}
+            onHideEditGroups={onHideEditGroups}
+            onUploaded={onShowAddSVG}
+            searchText={searchText ?? ""}
+            onSetSearchText={setSearchText}
+          />
+          <AddIconModal
+            show={show}
+            onDismiss={onHideAddSVG}
+            fileRef={addedSVGFileRef}
+            svgFileName={svgFileName}
+          />
+          <UpdateIconModal
+            show={showUpdate}
+            onDismiss={onHideUpdateSVG}
+            iconRef={updateIconRef}
+            originalIcon={updateIcon}
+          />
+          <IconGroups
+            searchText={searchText}
+            onEdit={onEdit}
+            isEditGroups={isEditGroups}
+          />
+        </Container>
+      </FocusProvider>
     </ThemeProvider>
   );
 };

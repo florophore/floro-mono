@@ -255,7 +255,7 @@ const AddIconModal = (props: Props) => {
         };
       }) ?? []
     );
-  }, [iconGroups]);
+  }, [applicationState, iconGroups]);
 
   const [group, setGroup] = useState<string | null>(
     iconOptions[0]?.value ?? null
@@ -383,6 +383,7 @@ const AddIconModal = (props: Props) => {
 
   useEffect(() => {
     if (!props.show) {
+      setGroup(iconOptions[0]?.value ?? null);
       setShowPaletteHexSelect(false);
       setShowAddHexToPalette(false);
       setShowReThemeModal(false);
@@ -391,15 +392,10 @@ const AddIconModal = (props: Props) => {
       setRemappedColors({});
       setSelectedVariants({});
     } else {
-      const selectedVariants = stateVariants.reduce((acc, stateVariant) => {
-        return {
-          ...acc,
-          [stateVariant.id]: true
-        }
-      }, {});
-      setSelectedVariants(selectedVariants);
+      setSelectedVariants({});
+      setGroup(iconOptions[0]?.value ?? null);
     }
-  }, [props.show]);
+  }, [props.show, iconOptions]);
 
   const { data: svgData } = useBinaryData(fileRef, "text");
   const [remappedColors, setRemappedColors] = useState({});

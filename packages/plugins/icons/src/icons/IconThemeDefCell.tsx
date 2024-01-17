@@ -13,6 +13,8 @@ import { rethemeSvg } from "../colorhooks";
 
 import CopyLight from "@floro/common-assets/assets/images/icons/copy.light.svg";
 import CopyDark from "@floro/common-assets/assets/images/icons/copy.dark.svg";
+import { useFocusContext } from "../focus/FocusContext";
+import ReactDOM from "react-dom";
 
 const Wrapper = styled.div`
   position: relative;
@@ -65,6 +67,27 @@ const SubTitle = styled.h4`
 const IconWrapper = styled.div`
   height: 104px;
   width: 104px;
+  cursor: pointer;
+`;
+
+
+const FocusWrapperIconWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: red;
+  align-self: center;
+  border-radius: 24px;
+  border: 1px solid;
+`;
+
+const FocusedIcon = styled.img`
+  width: 70%;
+  display: flex;
+  max-height: 80%;
 `;
 
 const Icon = styled.img`
@@ -93,6 +116,7 @@ const ClipboardCopyContainer = styled.div`
 const CopyIcon = styled.img`
   height: 16px;
   width: 16px;
+  cursor: pointer;
 `;
 
 const CopyOverlay = styled.div`
@@ -159,6 +183,9 @@ const IconThemeDefCell = (props: Props) => {
   const theme = useTheme();
   const { applicationState } = useFloroContext();
   const themeRef = useQueryRef("$(theme).themes.id<?>", props.themeObject.id);
+
+  const { focusPortal, showFocus, setShowFocus} = useFocusContext();
+  const [showFocusImg, setShowFocusImg] = useState(false);
 
   const [isHoveringClipboard, setIsHoveringClipboard] = useState(false);
   const [clickedCopy, setClickedCopy] = useState(false);
@@ -251,12 +278,37 @@ const IconThemeDefCell = (props: Props) => {
     setClickedCopy(true);
   }, [remappedSVGUrl, themedSvg]);
 
+  const onShowFocus = useCallback(() => {
+    setShowFocus(true);
+    setShowFocusImg(true)
+  }, [setShowFocus])
+
+  useEffect(() => {
+    if (showFocusImg && !showFocus) {
+      setShowFocusImg(false);
+    }
+
+  }, [showFocusImg, showFocus])
+
   if (!themedSvg && themedSvg == '') {
     return null;
   }
 
+  const focusImg = showFocusImg && focusPortal?.current? ReactDOM.createPortal(
+    (<FocusWrapperIconWrapper
+          style={{
+            borderColor: contrastColor,
+            background: props.themeObject.backgroundColor.hexcode,
+          }}
+    >
+      <FocusedIcon src={remappedSVGUrl}/>
+    </FocusWrapperIconWrapper>),
+    focusPortal?.current
+  ) : null;
+
   return (
     <Wrapper>
+      {focusImg}
       <Container>
         <SubTitle style={{ color: theme.colors.contrastText }}>
           {props.themeObject.name}
@@ -268,7 +320,7 @@ const IconThemeDefCell = (props: Props) => {
           }}
         >
           <CardInterior>
-            <IconWrapper>
+            <IconWrapper onClick={onShowFocus}>
               <Icon
                 draggable="true"
                 onDragStart={onDragStart}

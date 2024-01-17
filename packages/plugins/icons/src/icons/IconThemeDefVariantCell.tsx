@@ -20,6 +20,8 @@ import ColorPalette, { Opacity } from "@floro/styles/ColorPalette";
 import CopyLight from "@floro/common-assets/assets/images/icons/copy.light.svg";
 import CopyDark from "@floro/common-assets/assets/images/icons/copy.dark.svg";
 import { rethemeSvg } from "../colorhooks";
+import { useFocusContext } from "../focus/FocusContext";
+import ReactDOM from "react-dom";
 
 const Wrapper = styled.div`
   position: relative;
@@ -52,6 +54,25 @@ const CardInterior = styled.div`
   align-items: center;
 `;
 
+const FocusWrapperIconWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: red;
+  align-self: center;
+  border-radius: 24px;
+  border: 1px solid;
+`;
+
+const FocusedIcon = styled.img`
+  width: 70%;
+  display: flex;
+  max-height: 80%;
+`;
+
 const Title = styled.h4`
   font-family: "MavenPro";
   font-weight: 600;
@@ -65,6 +86,7 @@ const Title = styled.h4`
 const IconWrapper = styled.div`
   height: 104px;
   width: 104px;
+  cursor: pointer;
 `;
 
 const Icon = styled.img`
@@ -92,6 +114,7 @@ const ClipboardCopyContainer = styled.div`
 const CopyIcon = styled.img`
   height: 16px;
   width: 16px;
+  cursor: pointer;
 `;
 
 const CopyOverlay = styled.div`
@@ -164,6 +187,9 @@ const IconThemeDefVariantCell = (props: Props) => {
   const stateVariant = useReferencedObject(props.stateVariantRef);
   const [isHoveringClipboard, setIsHoveringClipboard] = useState(false);
   const [clickedCopy, setClickedCopy] = useState(false);
+
+  const { focusPortal, showFocus, setShowFocus} = useFocusContext();
+  const [showFocusImg, setShowFocusImg] = useState(false);
 
   const copyIcon = useMemo(() => {
     const lightDistance = getColorDistance(
@@ -256,12 +282,37 @@ const IconThemeDefVariantCell = (props: Props) => {
     setClickedCopy(true);
   }, [remappedSVGUrl, variantSvg]);
 
+  const onShowFocus = useCallback(() => {
+    setShowFocus(true);
+    setShowFocusImg(true)
+  }, [setShowFocus])
+
+  useEffect(() => {
+    if (showFocusImg && !showFocus) {
+      setShowFocusImg(false);
+    }
+
+  }, [showFocusImg, showFocus])
+
   if (!variantSvg && variantSvg == '') {
     return null;
   }
 
+  const focusImg = showFocusImg && focusPortal?.current? ReactDOM.createPortal(
+    (<FocusWrapperIconWrapper
+          style={{
+            borderColor: contrastColor,
+            background: themeObject.backgroundColor.hexcode,
+          }}
+    >
+      <FocusedIcon src={remappedSVGUrl}/>
+    </FocusWrapperIconWrapper>),
+    focusPortal?.current
+  ) : null;
+
   return (
     <Wrapper>
+      {focusImg}
       <Container>
         <Card
           style={{
@@ -270,7 +321,7 @@ const IconThemeDefVariantCell = (props: Props) => {
           }}
         >
           <CardInterior>
-            <IconWrapper>
+            <IconWrapper onClick={onShowFocus}>
               <Icon draggable="true" onDragStart={onDragStart} src={remappedSVGUrl} />
             </IconWrapper>
           </CardInterior>

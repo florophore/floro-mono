@@ -319,7 +319,7 @@ const IconHeader = (props: Props) => {
       return;
     }
     setIconGroups(
-      [...iconGroups, { id: newId, name: newGroupName, icons: [] }, ],
+      [{ id: newId, name: newGroupName, icons: [] }, ...iconGroups],
     );
     setNewGroupName("");
   }, [newGroupName, newId, canAddNewName, iconGroups]);
