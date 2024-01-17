@@ -236,7 +236,6 @@ const ThemeDefVariantCell = (props: Props) => {
   const paletteColorRef = useQueryRef("$(palette).colorPalettes.id<?>", paletteColorId);
   const paletteColor = useReferencedObject(paletteColorRef);
   const shade = useReferencedObject(paletteShadeRef);
-  const themeDefinitions = useReferencedObject("$(theme).themeColors");
 
   const wasRemoved = useWasRemoved(props.variantDefinitionRef, false);
   const wasAdded = useWasAdded(props.variantDefinitionRef, false);

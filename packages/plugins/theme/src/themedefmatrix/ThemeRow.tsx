@@ -193,7 +193,6 @@ const ThemeRow = (props: Props) => {
   const hasConflict = useHasConflict(themeColorRef, false);
   const { commandMode } = useFloroContext();
   const controls = useDragControls();
-  const [name, setName] = useState(props.themeColor.name ?? "");
 
   const motionState = useMemo(() => {
     if (props.isReOrderMode && commandMode == "edit") {
@@ -227,7 +226,7 @@ const ThemeRow = (props: Props) => {
     [isInvalid, props.themeColor]
   );
 
-  const [themes] = useFloroState("$(theme).themes", [], false);
+  const themes = useReferencedObject("$(theme).themes");
 
   const xIcon = useMemo(() => {
     if (theme.name == "light") {
@@ -243,29 +242,29 @@ const ThemeRow = (props: Props) => {
     return DraggerDark;
   }, [theme.name]);
 
-  let nameTimeout = useRef<NodeJS.Timer>();
-  useEffect(() => {
-    if (nameTimeout?.current) {
-      clearTimeout(nameTimeout?.current);
-    }
-    nameTimeout.current = setTimeout(() => {
-      if (themeColor) {
-        setThemeColor(
-          {
-            id: themeColor.id,
-            name: name.trimStart(),
-            includeVariants: themeColor?.includeVariants,
-            themeDefinitions: themeColor.themeDefinitions,
-            variants: themeColor?.variants ?? []
-          }
-        );
-      }
-    }, 100);
+  //let nameTimeout = useRef<NodeJS.Timer>();
+  //useEffect(() => {
+  //  if (nameTimeout?.current) {
+  //    clearTimeout(nameTimeout?.current);
+  //  }
+  //  nameTimeout.current = setTimeout(() => {
+  //    if (themeColor) {
+  //      setThemeColor(
+  //        {
+  //          id: themeColor.id,
+  //          name: name.trimStart(),
+  //          includeVariants: themeColor?.includeVariants,
+  //          themeDefinitions: themeColor.themeDefinitions,
+  //          variants: themeColor?.variants ?? []
+  //        }
+  //      );
+  //    }
+  //  }, 100);
 
-    return () => {
-      clearTimeout(nameTimeout.current);
-    }
-  }, [name]);
+  //  return () => {
+  //    clearTimeout(nameTimeout.current);
+  //  }
+  //}, [name]);
 
   const onRemove = useCallback(() => {
     if (props.themeColor) {
@@ -290,7 +289,7 @@ const ThemeRow = (props: Props) => {
         includeVariants
       });
     }
-  }, [props.themeColor, themeColor]);
+  }, [setThemeColor, props.themeColor, themeColor, themes]);
 
   const stateVariants = useReferencedObject("$(theme).stateVariants");
 
@@ -344,15 +343,6 @@ const ThemeRow = (props: Props) => {
                   <DragShadeContainer style={{ cursor: "default" }}>
                     <IndicatorCircle style={{ backgroundColor: color }} />
                   </DragShadeContainer>
-                  {false && (
-                    <Input
-                      value={name ?? ""}
-                      label={"definition name"}
-                      placeholder={themeColor?.id ?? ""}
-                      onTextChanged={setName}
-                      isValid={!isInvalid}
-                    />
-                  )}
                   <RowTitle style={{ color, marginTop: 12, width: 448 }}>
                     {title}
                   </RowTitle>

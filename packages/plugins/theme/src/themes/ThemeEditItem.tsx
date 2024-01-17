@@ -311,7 +311,7 @@ const ShadeEditItem = (props: ShadeItemProps) => {
           }
         });
     }
-  }, [themeObject]);
+  }, [setTheme, themeObject]);
 
 
   const onBlurHiddenInput = useCallback(() => {
@@ -324,7 +324,7 @@ const ShadeEditItem = (props: ShadeItemProps) => {
           }
         });
     }
-  }, [themeObject])
+  }, [setTheme, themeObject])
 
   const onChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     if (themeObject) {
@@ -336,7 +336,7 @@ const ShadeEditItem = (props: ShadeItemProps) => {
           }
         });
     }
-  }, [themeObject])
+  }, [setTheme, themeObject])
 
   return (
     <Reorder.Item

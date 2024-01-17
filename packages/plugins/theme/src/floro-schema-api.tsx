@@ -325,6 +325,9 @@ const sendMessagetoParent = (
   data: object,
   saveCounter?: React.MutableRefObject<number>
 ) => {
+  if (saveCounter && id > saveCounter.current) {
+    saveCounter.current = id;
+  }
   const dataString = JSON.stringify({ command, data });
   const totalPackets = Math.floor(dataString.length / MAX_DATA_SIZE);
   for (let i = 0; i < dataString.length; i += MAX_DATA_SIZE) {
@@ -355,7 +358,7 @@ const sendMessagetoParent = (
         },
         "*"
       );
-    }, 16);
+    }, 0);
   }
 };
 
@@ -729,17 +732,11 @@ export const useClientStorageApi = <T,>(
     return (clientStorage?.[clientStorageKey] as T) ?? (null as T);
   }, [clientStorageKey, clientStorage?.[clientStorageKey], commandMode]);
   const [getter, setter] = useState<T | null>(value);
-  const timeout = useRef<NodeJS.Timeout>();
+
   useEffect(() => {
-    clearTimeout(timeout?.current);
-    timeout.current = setTimeout(() => {
-      if (value != getter) {
-        setter(value);
-      }
-    }, 300);
-    return () => {
-      clearTimeout(timeout.current);
-    };
+    if (value != getter) {
+      setter(value);
+    }
   }, [value]);
 
   const set = useCallback(
@@ -1719,27 +1716,26 @@ export function useReferencedObject<T>(query?: string): T|null {
   }, [query, ctx.applicationState]);
 };
 
-export function useFloroState(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'], defaultData?: SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']): [SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']|null, (t: SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'], doSave?: boolean) => void, () => void];
-export function useFloroState(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'], defaultData?: SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions']): [SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions']|null, (t: SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'], doSave?: boolean) => void, () => void];
-export function useFloroState(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], defaultData?: SchemaTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']): [SchemaTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|null, (t: SchemaTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], doSave?: boolean) => void, () => void];
-export function useFloroState(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'], defaultData?: SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>']): [SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>']|null, (t: SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'], doSave?: boolean) => void, () => void];
-export function useFloroState(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>'], defaultData?: SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>']): [SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>']|null, (t: SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>'], doSave?: boolean) => void, () => void];
-export function useFloroState(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades'], defaultData?: SchemaTypes['$(palette).colorPalettes.id<?>.colorShades']): [SchemaTypes['$(palette).colorPalettes.id<?>.colorShades']|null, (t: SchemaTypes['$(palette).colorPalettes.id<?>.colorShades'], doSave?: boolean) => void, () => void];
-export function useFloroState(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions'], defaultData?: SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions']): [SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions']|null, (t: SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions'], doSave?: boolean) => void, () => void];
-export function useFloroState(query: PointerTypes['$(theme).themeColors.id<?>.variants'], defaultData?: SchemaTypes['$(theme).themeColors.id<?>.variants']): [SchemaTypes['$(theme).themeColors.id<?>.variants']|null, (t: SchemaTypes['$(theme).themeColors.id<?>.variants'], doSave?: boolean) => void, () => void];
-export function useFloroState(query: PointerTypes['$(theme).themes.id<?>.backgroundColor'], defaultData?: SchemaTypes['$(theme).themes.id<?>.backgroundColor']): [SchemaTypes['$(theme).themes.id<?>.backgroundColor']|null, (t: SchemaTypes['$(theme).themes.id<?>.backgroundColor'], doSave?: boolean) => void, () => void];
-export function useFloroState(query: PointerTypes['$(palette).colorPalettes.id<?>'], defaultData?: SchemaTypes['$(palette).colorPalettes.id<?>']): [SchemaTypes['$(palette).colorPalettes.id<?>']|null, (t: SchemaTypes['$(palette).colorPalettes.id<?>'], doSave?: boolean) => void, () => void];
-export function useFloroState(query: PointerTypes['$(palette).shades.id<?>'], defaultData?: SchemaTypes['$(palette).shades.id<?>']): [SchemaTypes['$(palette).shades.id<?>']|null, (t: SchemaTypes['$(palette).shades.id<?>'], doSave?: boolean) => void, () => void];
-export function useFloroState(query: PointerTypes['$(theme).stateVariants.id<?>'], defaultData?: SchemaTypes['$(theme).stateVariants.id<?>']): [SchemaTypes['$(theme).stateVariants.id<?>']|null, (t: SchemaTypes['$(theme).stateVariants.id<?>'], doSave?: boolean) => void, () => void];
-export function useFloroState(query: PointerTypes['$(theme).themeColors.id<?>'], defaultData?: SchemaTypes['$(theme).themeColors.id<?>']): [SchemaTypes['$(theme).themeColors.id<?>']|null, (t: SchemaTypes['$(theme).themeColors.id<?>'], doSave?: boolean) => void, () => void];
-export function useFloroState(query: PointerTypes['$(theme).themes.id<?>'], defaultData?: SchemaTypes['$(theme).themes.id<?>']): [SchemaTypes['$(theme).themes.id<?>']|null, (t: SchemaTypes['$(theme).themes.id<?>'], doSave?: boolean) => void, () => void];
-export function useFloroState(query: PointerTypes['$(palette).colorPalettes'], defaultData?: SchemaTypes['$(palette).colorPalettes']): [SchemaTypes['$(palette).colorPalettes']|null, (t: SchemaTypes['$(palette).colorPalettes'], doSave?: boolean) => void, () => void];
-export function useFloroState(query: PointerTypes['$(palette).shades'], defaultData?: SchemaTypes['$(palette).shades']): [SchemaTypes['$(palette).shades']|null, (t: SchemaTypes['$(palette).shades'], doSave?: boolean) => void, () => void];
-export function useFloroState(query: PointerTypes['$(theme).stateVariants'], defaultData?: SchemaTypes['$(theme).stateVariants']): [SchemaTypes['$(theme).stateVariants']|null, (t: SchemaTypes['$(theme).stateVariants'], doSave?: boolean) => void, () => void];
-export function useFloroState(query: PointerTypes['$(theme).themeColors'], defaultData?: SchemaTypes['$(theme).themeColors']): [SchemaTypes['$(theme).themeColors']|null, (t: SchemaTypes['$(theme).themeColors'], doSave?: boolean) => void, () => void];
-export function useFloroState(query: PointerTypes['$(theme).themes'], defaultData?: SchemaTypes['$(theme).themes']): [SchemaTypes['$(theme).themes']|null, (t: SchemaTypes['$(theme).themes'], doSave?: boolean) => void, () => void];
+export function useFloroState(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'], defaultData?: SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']): [SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']|null, (t: SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'], doSave?: boolean) => void|(() => void), () => void];
+export function useFloroState(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'], defaultData?: SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions']): [SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions']|null, (t: SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'], doSave?: boolean) => void|(() => void), () => void];
+export function useFloroState(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], defaultData?: SchemaTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']): [SchemaTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|null, (t: SchemaTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'], doSave?: boolean) => void|(() => void), () => void];
+export function useFloroState(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'], defaultData?: SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>']): [SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>']|null, (t: SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'], doSave?: boolean) => void|(() => void), () => void];
+export function useFloroState(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>'], defaultData?: SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>']): [SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>']|null, (t: SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>'], doSave?: boolean) => void|(() => void), () => void];
+export function useFloroState(query: PointerTypes['$(palette).colorPalettes.id<?>.colorShades'], defaultData?: SchemaTypes['$(palette).colorPalettes.id<?>.colorShades']): [SchemaTypes['$(palette).colorPalettes.id<?>.colorShades']|null, (t: SchemaTypes['$(palette).colorPalettes.id<?>.colorShades'], doSave?: boolean) => void|(() => void), () => void];
+export function useFloroState(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions'], defaultData?: SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions']): [SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions']|null, (t: SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions'], doSave?: boolean) => void|(() => void), () => void];
+export function useFloroState(query: PointerTypes['$(theme).themeColors.id<?>.variants'], defaultData?: SchemaTypes['$(theme).themeColors.id<?>.variants']): [SchemaTypes['$(theme).themeColors.id<?>.variants']|null, (t: SchemaTypes['$(theme).themeColors.id<?>.variants'], doSave?: boolean) => void|(() => void), () => void];
+export function useFloroState(query: PointerTypes['$(theme).themes.id<?>.backgroundColor'], defaultData?: SchemaTypes['$(theme).themes.id<?>.backgroundColor']): [SchemaTypes['$(theme).themes.id<?>.backgroundColor']|null, (t: SchemaTypes['$(theme).themes.id<?>.backgroundColor'], doSave?: boolean) => void|(() => void), () => void];
+export function useFloroState(query: PointerTypes['$(palette).colorPalettes.id<?>'], defaultData?: SchemaTypes['$(palette).colorPalettes.id<?>']): [SchemaTypes['$(palette).colorPalettes.id<?>']|null, (t: SchemaTypes['$(palette).colorPalettes.id<?>'], doSave?: boolean) => void|(() => void), () => void];
+export function useFloroState(query: PointerTypes['$(palette).shades.id<?>'], defaultData?: SchemaTypes['$(palette).shades.id<?>']): [SchemaTypes['$(palette).shades.id<?>']|null, (t: SchemaTypes['$(palette).shades.id<?>'], doSave?: boolean) => void|(() => void), () => void];
+export function useFloroState(query: PointerTypes['$(theme).stateVariants.id<?>'], defaultData?: SchemaTypes['$(theme).stateVariants.id<?>']): [SchemaTypes['$(theme).stateVariants.id<?>']|null, (t: SchemaTypes['$(theme).stateVariants.id<?>'], doSave?: boolean) => void|(() => void), () => void];
+export function useFloroState(query: PointerTypes['$(theme).themeColors.id<?>'], defaultData?: SchemaTypes['$(theme).themeColors.id<?>']): [SchemaTypes['$(theme).themeColors.id<?>']|null, (t: SchemaTypes['$(theme).themeColors.id<?>'], doSave?: boolean) => void|(() => void), () => void];
+export function useFloroState(query: PointerTypes['$(theme).themes.id<?>'], defaultData?: SchemaTypes['$(theme).themes.id<?>']): [SchemaTypes['$(theme).themes.id<?>']|null, (t: SchemaTypes['$(theme).themes.id<?>'], doSave?: boolean) => void|(() => void), () => void];
+export function useFloroState(query: PointerTypes['$(palette).colorPalettes'], defaultData?: SchemaTypes['$(palette).colorPalettes']): [SchemaTypes['$(palette).colorPalettes']|null, (t: SchemaTypes['$(palette).colorPalettes'], doSave?: boolean) => void|(() => void), () => void];
+export function useFloroState(query: PointerTypes['$(palette).shades'], defaultData?: SchemaTypes['$(palette).shades']): [SchemaTypes['$(palette).shades']|null, (t: SchemaTypes['$(palette).shades'], doSave?: boolean) => void|(() => void), () => void];
+export function useFloroState(query: PointerTypes['$(theme).stateVariants'], defaultData?: SchemaTypes['$(theme).stateVariants']): [SchemaTypes['$(theme).stateVariants']|null, (t: SchemaTypes['$(theme).stateVariants'], doSave?: boolean) => void|(() => void), () => void];
+export function useFloroState(query: PointerTypes['$(theme).themeColors'], defaultData?: SchemaTypes['$(theme).themeColors']): [SchemaTypes['$(theme).themeColors']|null, (t: SchemaTypes['$(theme).themeColors'], doSave?: boolean) => void|(() => void), () => void];
+export function useFloroState(query: PointerTypes['$(theme).themes'], defaultData?: SchemaTypes['$(theme).themes']): [SchemaTypes['$(theme).themes']|null, (t: SchemaTypes['$(theme).themes'], doSave?: boolean) => void|(() => void), () => void];
 
-export function useFloroState<T>(query: string, defaultData?: T): [T|null, (t: T, doSave?: true) => void, () => void];
 export function useFloroState<T>(query: string, defaultData?: T): [T|null, (t: T, doSave?: boolean) => void|(() => void), () => void] {
   const ctx = useFloroContext();
   const pluginName = useMemo(() => getPluginNameFromQuery(query), [query]);

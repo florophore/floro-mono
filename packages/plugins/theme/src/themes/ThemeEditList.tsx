@@ -70,7 +70,7 @@ const ThemeEditList = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [newThemeName, setNewThemeName] = useState("");
   const [newThemeColor, setNewThemeColor] = useState("#FFFFFF");
-  const [themes, setThemes] = useFloroState("$(theme).themes", [], false);
+  const [themes, setThemes] = useFloroState("$(theme).themes");
 
   const isInvalid = useIsFloroInvalid("$(theme).themes");
 
@@ -86,7 +86,7 @@ const ThemeEditList = () => {
         setThemes(remap);
       }
     },
-    [applicationState]
+    [setThemes, applicationState]
   );
 
   const onRemove = useCallback(
@@ -129,7 +129,7 @@ const ThemeEditList = () => {
     } }]);
     setNewThemeName("");
     setNewThemeColor("#FFFFFF");
-  }, [newThemeName, newThemeColor, newId, canAddNewName, themes]);
+  }, [setThemes, newThemeName, newThemeColor, newId, canAddNewName, themes]);
 
   const onDragStart = useCallback(() => {
     setIsDragging(true);

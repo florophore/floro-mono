@@ -96,7 +96,7 @@ const ThemeDefMatrix = (props: Props) => {
         setThemeColors(remap);
       }
     },
-    [applicationState]
+    [setThemeColors, applicationState]
   );
 
   const onRemove = useCallback(
@@ -106,7 +106,7 @@ const ThemeDefMatrix = (props: Props) => {
         setThemeColors(values);
       }
     },
-    [applicationState?.theme?.themeColors]
+    [setThemeColors, applicationState?.theme?.themeColors]
   );
 
   const newId = useMemo((): string | null => {
@@ -147,7 +147,7 @@ const ThemeDefMatrix = (props: Props) => {
       ],
     );
     setNewColorName("");
-  }, [newColorName, newId, canAddNewName, themeColors]);
+  }, [setThemeColors, newColorName, newId, canAddNewName, themeColors]);
 
   const onDragStart = useCallback(() => {
     setIsDragging(true);
@@ -164,20 +164,6 @@ const ThemeDefMatrix = (props: Props) => {
   const onEdit = useCallback(() => {
     setIsReOrderMode(false);
   }, []);
-
-  const onClickNewColor = useCallback(() => {
-    props.onScrollToBottom?.();
-    setTimeout(() => {
-      input?.current?.focus?.();
-    }, 600);
-  }, [props.onScrollToBottom]);
-
-  //useEffect(() => {
-  //  if (!isDragging) {
-  //    save();
-  //  }
-  //}, [isDragging]);
-
 
   return (
     <div style={{ marginBottom: 36, marginRight: 72 }}>
