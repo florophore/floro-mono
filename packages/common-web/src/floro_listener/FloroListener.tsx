@@ -21,6 +21,7 @@ export const useWatchDebugMode = (): boolean => {
       "floro:toggle-debug-mode",
       onToggleDebugMode as EventListenerOrEventListenerObject
     );
+    window.dispatchEvent(new CustomEvent("floro:ready"));
     return () => {
       window.removeEventListener(
         "floro:toggle-edit-mode",

@@ -471,6 +471,9 @@ export default class PublicApiV0Controller extends BaseController {
       console.log("E", e);
     }
   }
+  /**
+   * Need to deprecate this
+   */
 
   @Get("/public/api/v0/repository/:repositoryId/commit/:sha/state")
   public async getCommitState(req, res) {

@@ -2823,14 +2823,12 @@
     quicktype-core "^23.0.71"
     ts-node "^10.9.1"
 
-"@floro/text-generator@^0.0.10":
-  version "0.0.10"
-  resolved "https://registry.yarnpkg.com/@floro/text-generator/-/text-generator-0.0.10.tgz#b6e893f24622e29804d00af5d0f27dd7b8f93ff9"
-  integrity sha512-baIhKeg6vEmqDA06hWKTWHp2DQqZNr2p6kNNYQQXBtH6gR6/TccsVyZ5eNR84HE/W+B6IYaPLdO/Hclqwo1unA==
+"@floro/text-generator@^0.0.17":
+  version "0.0.17"
+  resolved "https://registry.yarnpkg.com/@floro/text-generator/-/text-generator-0.0.17.tgz#3a57a15f26fab30249eb8b828444a90a4d60aca6"
+  integrity sha512-l404SmnIQtO1I3dabIZ/0zg+49lZP9GD5roepk7vei8lOF6v0X88Mw7dHiDTx36P4FMoBsH0eZt/RsElDuy2GQ==
   dependencies:
-    memfs "^3.4.7"
     quicktype-core "^23.0.71"
-    ts-node "^10.9.1"
 
 "@floro/themes-generator@^0.0.6":
   version "0.0.6"
@@ -15618,10 +15616,10 @@ flatted@^3.2.9:
   resolved "https://registry.yarnpkg.com/flatted/-/flatted-3.2.9.tgz#7eb4c67ca1ba34232ca9d2d93e9886e611ad7daf"
   integrity sha512-36yxDn5H7OFZQla0/jFJmbIKTdZAQHngCedGxiMmpNfEZM0sdEeT+WczLQrjK6D7o2aiyLYDnkw0R3JK0Qv1RQ==
 
-floro@0.0.61:
-  version "0.0.61"
-  resolved "https://registry.yarnpkg.com/floro/-/floro-0.0.61.tgz#91fc55c6a721661ee002c27c15e6b651dbd6a3f3"
-  integrity sha512-em30ChsSdIDZBhoJMRMZj7Yu7m5oAQ+bO6tsO+szOYtt+a9cKtOerXS9TBT4dcqKj32hk7eRQMqI1CyIhk0AlQ==
+floro@0.0.67:
+  version "0.0.67"
+  resolved "https://registry.yarnpkg.com/floro/-/floro-0.0.67.tgz#43bc672a3bb3d6ac7e1e9b3b42a8212e20c88f7d"
+  integrity sha512-n2Ov7pJtTwjoj55IkeoGBq12qcSVAQJ9IS19B+5GMcDrbTePMFGiX1TK3j544wdOCzsSQNhFyDNoUTidFNl1oA==
   dependencies:
     "@types/busboy" "^1.5.0"
     "@types/express" "^4.17.15"

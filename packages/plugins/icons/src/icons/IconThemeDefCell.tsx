@@ -70,7 +70,6 @@ const IconWrapper = styled.div`
   cursor: pointer;
 `;
 
-
 const FocusWrapperIconWrapper = styled.div`
   width: 100%;
   height: 100%;

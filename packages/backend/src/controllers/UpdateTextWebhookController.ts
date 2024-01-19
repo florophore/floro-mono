@@ -7,12 +7,15 @@ import MainConfig from "@floro/config/src/MainConfig";
 import metaFile from "@floro/common-generators/meta.floro.json" assert {type: "json"};
 import fetch from "node-fetch";
 import { getJSON } from "@floro/text-generator";
-import { LocalizedPhrases } from "@floro/common-generators/floro_modules/text-generator";
+import { LocalizedPhraseKeys, LocalizedPhrases, PhraseKeyDebugInfo, PhraseKeys } from "@floro/common-generators/floro_modules/text-generator";
 import LocalesAccessor from "@floro/storage/src/accessors/LocalesAccessor";
 import staticStructure from "@floro/common-generators/floro_modules/text-generator/static-structure.json" assert { type: "json" };
 import initText from "@floro/common-generators/floro_modules/text-generator/server-text.json" assert { type: "json" };
 
-const argsAreSame = (existingArgs: {[key: string]: string|number|boolean}, incomingArgs: {[key: string]: string|number|boolean}): boolean => {
+const argsAreSame = (
+  existingArgs: { [key: string]: string | number | boolean },
+  incomingArgs: { [key: string]: string | number | boolean }
+): boolean => {
   if (Object.keys(existingArgs).length != Object.keys(incomingArgs).length) {
     return false;
   }
@@ -22,28 +25,59 @@ const argsAreSame = (existingArgs: {[key: string]: string|number|boolean}, incom
     }
   }
   return true;
-}
+};
 
 const getUpdatedText = (localesJSON: LocalizedPhrases): LocalizedPhrases => {
   for (const localeCode in localesJSON.locales) {
+    const localesJSONPhraseKeys =
+      localesJSON.localizedPhraseKeys?.[
+        localeCode as string & keyof LocalizedPhraseKeys
+      ] ?? {};
+    const initJSONPhraseKeys =
+      initText.localizedPhraseKeys?.[
+        localeCode as string & keyof LocalizedPhraseKeys
+      ] ?? {};
     for (let phraseKey in staticStructure.structure) {
-      if (!localesJSON.localizedPhraseKeys?.[localeCode]?.[phraseKey] ?? {}) {
-        localesJSON.localizedPhraseKeys[localeCode][phraseKey] = initText.localizedPhraseKeys[localeCode][phraseKey];
+      if (
+        !localesJSONPhraseKeys?.[
+          phraseKey as keyof typeof localesJSONPhraseKeys
+        ]
+      ) {
+        localesJSONPhraseKeys[phraseKey as keyof PhraseKeys] =
+          initJSONPhraseKeys[phraseKey as keyof PhraseKeys];
       } else {
-        if (!argsAreSame(staticStructure.structure[phraseKey], localesJSON.localizedPhraseKeys[localeCode][phraseKey].args)) {
-          localesJSON.localizedPhraseKeys[localeCode][phraseKey] = initText.localizedPhraseKeys[localeCode][phraseKey];
+        if (
+          !argsAreSame(
+            (
+              staticStructure?.structure as {
+                [key: string]: { [key: string]: string | number | boolean };
+              }
+            )?.[phraseKey as string] as {
+              [key: string]: string | number | boolean;
+            },
+            localesJSONPhraseKeys[phraseKey as keyof PhraseKeys].args as {
+              [key: string]: string | number | boolean;
+            }
+          )
+        ) {
+          localesJSONPhraseKeys[phraseKey as keyof PhraseKeys] =
+            initJSONPhraseKeys[phraseKey as keyof PhraseKeys];
         }
       }
     }
-    for (let phraseKey in localesJSON.localizedPhraseKeys?.[localeCode] ?? {}) {
-      if (!staticStructure.structure[phraseKey]) {
-        delete localesJSON.localizedPhraseKeys[localeCode][phraseKey]
-        delete localesJSON.phraseKeyDebugInfo[phraseKey]
+    for (let phraseKey in localesJSONPhraseKeys) {
+      if (!staticStructure.structure[phraseKey as keyof PhraseKeys]) {
+        const partialLocalesJSON = localesJSONPhraseKeys as Partial<PhraseKeys>;
+        const partialDebugInfo =
+          localesJSON.phraseKeyDebugInfo as Partial<PhraseKeyDebugInfo>;
+        delete partialLocalesJSON[phraseKey as keyof PhraseKeys];
+        delete partialDebugInfo[phraseKey as keyof PhraseKeys];
       }
     }
   }
   return localesJSON;
-}
+};
+
 const shortHash = (str) => {
     let hash = 0;
     str = str.padEnd(8, "0");
@@ -103,13 +137,25 @@ export default class UpdateTextWebhookController extends BaseController {
           return
         }
         try {
-          const stateRequest = await fetch(
+          const stateLinkRequest = await fetch(
             `${this.mainConfig.floroApiServer()}/public/api/v0/repository/${metaFile.repositoryId}/commit/${payload.branch.lastCommit}/state`,{
               headers: {
                 'floro-api-key': FLORO_API_KEY
               }
           })
-          const { state } = await stateRequest.json();
+          const { stateLink } = await stateLinkRequest.json();
+          if (!stateLinkRequest) {
+            return;
+          }
+          const stateRequest = await fetch(
+              stateLink,
+              {
+              headers: {
+                'floro-api-key': FLORO_API_KEY
+              }
+          })
+
+          const state = await stateRequest.json();
           if (!state?.store?.text) {
             return;
           }

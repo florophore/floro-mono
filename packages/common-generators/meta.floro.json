@@ -1,10 +1,10 @@
 {
-  "moduleFile": "floro.module.js",
+  "moduleFile": "packages/common-generators/floro.module.js",
   "repositoryId": "12aa1618-9e0b-404c-8423-7c38047e18c9",
-  "sha": "c29bbc13c76e48e13f3740595a724966a1f2a347ab446c58f4b229f15d026c45",
-  "message": "added site copy",
-  "idx": 65,
-  "genratorDependencies": {
+  "sha": "88373b97cfb863d4b8ac28e2ef610adbe6344dcaa10c5be9026884c1cc06fd12",
+  "message": "updated icons",
+  "idx": 75,
+  "generatorDependencies": {
     "icon-generator": {
       "icons": "0.0.40"
     },
