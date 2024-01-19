@@ -2,7 +2,6 @@ import React, { useCallback, useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import styled from "@emotion/styled";
 import ProfileInfo from "@floro/storybook/stories/common-components/ProfileInfo";
-import FollowerInfo from "@floro/storybook/stories/common-components/FollowerInfo";
 import UserSettingsTab from "@floro/storybook/stories/common-components/UserSettingsTab";
 import DevSettingsTab from "@floro/storybook/stories/common-components/DevSettingsTab";
 import PluginsTab from "@floro/storybook/stories/common-components/PluginsTab";
@@ -14,13 +13,15 @@ import Button from "@floro/storybook/stories/design-system/Button";
 import { useSession } from "../../session/session-context";
 import { useDaemonIsConnected } from "../../pubsub/socket";
 import RootPhotoCropper from "../RootPhotoCropper";
-import { User, useRemoveUserProfilePhotoMutation, useUploadUserProfilePhotoMutation, useCurrentUserHomeQuery, Organization, useUserPluginUpdatedSubscription } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import {
+  useRemoveUserProfilePhotoMutation,
+  useUploadUserProfilePhotoMutation,
+} from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import ChangeNameModal from "./ChangeNameModal";
 import { useOfflinePhoto, useSaveOfflinePhoto } from "../../offline/OfflinePhotoContext";
-import StorageTab from "@floro/storybook/stories/common-components/StorageTab";
 import HomeDashboard from "./HomeDashboard";
 import { useIsOnline } from "../../hooks/offline";
-import UserSubscriber from "../subscribers/UserSubscriber";
+import CertModal from "../cert/CertModal";
 
 const Background = styled.div`
   background-color: ${(props) => props.theme.background};
@@ -149,8 +150,15 @@ const UserHome = (props: Props) => {
 
   const offlinePhoto = useOfflinePhoto(currentUser?.profilePhoto ?? null);
 
+  const [showCertsModal, setShowCertsModal] = useState(false);
+
+  const onCloseCertsModal = useCallback(() => {
+    setShowCertsModal(false);
+  }, [])
+
   return (
     <>
+      <CertModal show={showCertsModal && !!isDaemonConnected} onClose={onCloseCertsModal}/>
       <RootPhotoCropper
         title={"Upload Profile Picture"}
         src={profilePhotoFileString ?? ""}
@@ -171,7 +179,9 @@ const UserHome = (props: Props) => {
               user={currentUser}
               isEdittable={isOnline}
               onSelectFile={onSelectUploadPhoto}
-              isLoading={removePhotoRequest.loading || uploadPhotoRequest.loading}
+              isLoading={
+                removePhotoRequest.loading || uploadPhotoRequest.loading
+              }
               onRemoveProfilePhoto={removePhoto}
               onOpenNameChange={onShowChangeName}
               offlinePhoto={offlinePhoto}
@@ -180,22 +190,32 @@ const UserHome = (props: Props) => {
           <BottomNavContainer>
             <TopInfo>
               <div style={{ marginTop: 0, display: "flex" }}>
-                <Link to={'/home/settings'}>
+                <Link to={"/home/settings"}>
                   <UserSettingsTab />
                 </Link>
               </div>
               <div style={{ marginTop: 16, display: "flex" }}>
-                <Link to={'/home/local/api'}>
+                <Link to={"/home/local/api"}>
                   <DevSettingsTab />
                 </Link>
               </div>
               <div style={{ marginTop: 16, display: "flex" }}>
-                <Link to={'/home/plugins'}>
-                  <PluginsTab pluginCount={currentUser?.pluginCount ?? 0} isClickable={true} />
+                <Link to={"/home/plugins"}>
+                  <PluginsTab
+                    pluginCount={currentUser?.pluginCount ?? 0}
+                    isClickable={true}
+                  />
                 </Link>
               </div>
               <div style={{ marginTop: 16, display: "flex" }}>
-                <ConnectionStatusTab isConnected={isDaemonConnected ?? false} />
+                <ConnectionStatusTab
+                  onClick={() => {
+                    if (isDaemonConnected) {
+                      setShowCertsModal(true);
+                    }
+                  }}
+                  isConnected={isDaemonConnected ?? false}
+                />
               </div>
             </TopInfo>
             <ButtonActionWrapper>
@@ -219,9 +239,7 @@ const UserHome = (props: Props) => {
           </BottomNavContainer>
         </UserNav>
         <MainContent>
-          {currentUser &&
-            <HomeDashboard notFound={props.notFound}/>
-          }
+          {currentUser && <HomeDashboard notFound={props.notFound} />}
         </MainContent>
       </Background>
     </>

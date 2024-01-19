@@ -5,9 +5,7 @@ import OrgProfileInfo from "@floro/storybook/stories/common-components/OrgProfil
 import OrgSettingsTab from "@floro/storybook/stories/common-components/OrgSettingsTab";
 import MemberSettingsTab from "@floro/storybook/stories/common-components/MemberSettingsTab";
 import DevSettingsTab from "@floro/storybook/stories/common-components/DevSettingsTab";
-import StorageTab from "@floro/storybook/stories/common-components/StorageTab";
 import BillingTab from "@floro/storybook/stories/common-components/BillingTab";
-import OrgFollowerTab from "@floro/storybook/stories/common-components/OrgFollowerTab";
 import MembersInfoTab from "@floro/storybook/stories/common-components/MembersInfoTab";
 import { CropArea } from "@floro/storybook/stories/common-components/PhotoCropper";
 import Button from "@floro/storybook/stories/design-system/Button";
@@ -27,6 +25,7 @@ import PluginsTab from "@floro/storybook/stories/common-components/PluginsTab";
 import { useIsOnline } from "../../hooks/offline";
 import OrgDashboard from "./OrgDashboard";
 import ConnectionStatusTab from "@floro/storybook/stories/common-components/ConnectionStatusTab";
+import CertModal from "../cert/CertModal";
 
 const Background = styled.div`
   background-color: ${(props) => props.theme.background};
@@ -183,8 +182,15 @@ const OrgHome = (props: Props) => {
     return !!props?.organization?.membership?.permissions?.canModifyInvites;
   }, [props?.organization?.membership?.permissions?.canModifyInvites]);
 
+  const [showCertsModal, setShowCertsModal] = useState(false);
+
+  const onCloseCertsModal = useCallback(() => {
+    setShowCertsModal(false);
+  }, [])
+
   return (
     <>
+      <CertModal show={showCertsModal && !!isDaemonConnected} onClose={onCloseCertsModal} />
       {props.organization && (
         <ChangeOrgNameModal
           show={showChangeName}
@@ -209,7 +215,9 @@ const OrgHome = (props: Props) => {
                 organization={props.organization}
                 isEdittable={
                   (props?.organization?.membership?.permissions
-                    ?.canModifyOrganizationSettings ?? false) && isOnline
+                    ?.canModifyOrganizationSettings ??
+                    false) &&
+                  isOnline
                 }
                 onSelectFile={onSelectUploadPhoto}
                 isLoading={
@@ -222,10 +230,13 @@ const OrgHome = (props: Props) => {
             </ProfileInfoWrapper>
             <BottomNavContainer>
               <TopInfo>
-                {props.organization?.membership?.membershipState == "active" && (
+                {props.organization?.membership?.membershipState ==
+                  "active" && (
                   <div style={{ marginTop: 0, display: "flex" }}>
                     <MembersInfoTab
-                      membersCount={props?.organization?.membersActiveCount ?? 0}
+                      membersCount={
+                        props?.organization?.membersActiveCount ?? 0
+                      }
                       invitedCount={
                         props?.organization?.invitationsSentCount ?? 0
                       }
@@ -239,31 +250,46 @@ const OrgHome = (props: Props) => {
                     <MemberSettingsTab />
                   </div>
                 )}
-                {props?.organization?.membership?.permissions?.canModifyOrganizationSettings && (
+                {props?.organization?.membership?.permissions
+                  ?.canModifyOrganizationSettings && (
                   <div style={{ marginTop: 16, display: "flex" }}>
                     <Link to={`/org/@/${props?.organization?.handle}/settings`}>
                       <OrgSettingsTab />
                     </Link>
                   </div>
                 )}
-                {props?.organization?.membership?.permissions?.canModifyOrganizationDeveloperSettings && (
+                {props?.organization?.membership?.permissions
+                  ?.canModifyOrganizationDeveloperSettings && (
                   <div style={{ marginTop: 16, display: "flex" }}>
-                    <Link to={`/org/@/${props?.organization?.handle}/remote/api`}>
+                    <Link
+                      to={`/org/@/${props?.organization?.handle}/remote/api`}
+                    >
                       <DevSettingsTab />
                     </Link>
                   </div>
                 )}
                 <div style={{ marginTop: 16, display: "flex" }}>
-                  {((props?.organization?.pluginCount ?? 0) > 0 || props.organization?.membership?.membershipState == "active") && (
+                  {((props?.organization?.pluginCount ?? 0) > 0 ||
+                    props.organization?.membership?.membershipState ==
+                      "active") && (
                     <Link to={`/org/@/${props?.organization?.handle}/plugins`}>
-                      <PluginsTab pluginCount={props?.organization?.pluginCount ?? 0} isClickable={true} />
+                      <PluginsTab
+                        pluginCount={props?.organization?.pluginCount ?? 0}
+                        isClickable={true}
+                      />
                     </Link>
                   )}
-                  {((props?.organization?.pluginCount ?? 0) == 0 && props.organization?.membership?.membershipState != "active") && (
-                    <PluginsTab pluginCount={props?.organization?.pluginCount ?? 0} isClickable={false} />
-                  )}
+                  {(props?.organization?.pluginCount ?? 0) == 0 &&
+                    props.organization?.membership?.membershipState !=
+                      "active" && (
+                      <PluginsTab
+                        pluginCount={props?.organization?.pluginCount ?? 0}
+                        isClickable={false}
+                      />
+                    )}
                 </div>
-                {props?.organization?.membership?.permissions?.canModifyBilling && (
+                {props?.organization?.membership?.permissions
+                  ?.canModifyBilling && (
                   <div style={{ marginTop: 16, display: "flex" }}>
                     <Link to={`/org/@/${props?.organization?.handle}/billing`}>
                       <BillingTab />
@@ -271,7 +297,14 @@ const OrgHome = (props: Props) => {
                   </div>
                 )}
                 <div style={{ marginTop: 16, display: "flex" }}>
-                  <ConnectionStatusTab isConnected={isDaemonConnected ?? false} />
+                  <ConnectionStatusTab
+                    onClick={() => {
+                      if (isDaemonConnected) {
+                        setShowCertsModal(true);
+                      }
+                    }}
+                    isConnected={isDaemonConnected ?? false}
+                  />
                 </div>
               </TopInfo>
               <ButtonActionWrapper>
@@ -292,7 +325,7 @@ const OrgHome = (props: Props) => {
         )}
         <MainContent>
           {!!props.organization && (
-            <OrgDashboard organization={props.organization}/>
+            <OrgDashboard organization={props.organization} />
           )}
         </MainContent>
       </Background>

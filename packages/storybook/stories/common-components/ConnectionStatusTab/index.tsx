@@ -46,6 +46,7 @@ const TextSpan = styled.span`
 
 export interface Props {
   isConnected: boolean;
+  onClick: () => void;
 }
 
 const ConnectionStatusTab = (props: Props): React.ReactElement => {
@@ -60,7 +61,9 @@ const ConnectionStatusTab = (props: Props): React.ReactElement => {
   );
 
   return (
-    <Container>
+    <Container onClick={props.onClick} style={{
+      cursor: props.isConnected ? 'pointer' : 'not-allowed'
+    }}>
       <ConnectionContainer>
         <ConnectionCircle style={{ background: circleColor }} />
       </ConnectionContainer>

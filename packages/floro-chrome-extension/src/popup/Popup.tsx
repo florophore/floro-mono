@@ -193,8 +193,8 @@ const Popup = () => {
       <Header>{"floro"}</Header>
       <Input
         value={authToken ?? ""}
-        label={"locale api key"}
-        placeholder={"locale api key"}
+        label={"local api key"}
+        placeholder={"local api key"}
         onTextChanged={onUpdateKey}
       />
       <DaemonContainer>

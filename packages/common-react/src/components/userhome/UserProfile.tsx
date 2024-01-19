@@ -1,29 +1,16 @@
-import React, { useCallback, useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import React, { useCallback, useState } from "react";
+import { Link } from "react-router-dom";
 import styled from "@emotion/styled";
 import ProfileInfo from "@floro/storybook/stories/common-components/ProfileInfo";
-import FollowerInfo from "@floro/storybook/stories/common-components/FollowerInfo";
-import UserSettingsTab from "@floro/storybook/stories/common-components/UserSettingsTab";
-import DevSettingsTab from "@floro/storybook/stories/common-components/DevSettingsTab";
 import PluginsTab from "@floro/storybook/stories/common-components/PluginsTab";
 import ConnectionStatusTab from "@floro/storybook/stories/common-components/ConnectionStatusTab";
-import {
-  CropArea,
-} from "@floro/storybook/stories/common-components/PhotoCropper";
-import Button from "@floro/storybook/stories/design-system/Button";
-import { useSession } from "../../session/session-context";
 import { useDaemonIsConnected } from "../../pubsub/socket";
-import RootPhotoCropper from "../RootPhotoCropper";
-import { User, useRemoveUserProfilePhotoMutation, useUploadUserProfilePhotoMutation, useCurrentUserHomeQuery, Organization, useUserPluginUpdatedSubscription } from "@floro/graphql-schemas/src/generated/main-client-graphql";
-import ChangeNameModal from "./ChangeNameModal";
-import { useOfflinePhoto, useSaveOfflinePhoto } from "../../offline/OfflinePhotoContext";
-import StorageTab from "@floro/storybook/stories/common-components/StorageTab";
-import HomeDashboard from "./HomeDashboard";
-import { useIsOnline } from "../../hooks/offline";
-import UserSubscriber from "../subscribers/UserSubscriber";
+import { User, Organization } from "@floro/graphql-schemas/src/generated/main-client-graphql";
+import { useOfflinePhoto } from "../../offline/OfflinePhotoContext";
 import ProfileDashboard from "./ProfileDashboard";
 import ColorPalette from "@floro/styles/ColorPalette";
 import OrganizationRow from "./OrganizationRow";
+import CertModal from "../cert/CertModal";
 
 const Background = styled.div`
   background-color: ${(props) => props.theme.background};
@@ -163,8 +150,15 @@ const UserProfile = (props: Props) => {
 
   const offlinePhoto = useOfflinePhoto(props.user?.profilePhoto ?? null);
 
+  const [showCertsModal, setShowCertsModal] = useState(false);
+
+  const onCloseCertsModal = useCallback(() => {
+    setShowCertsModal(false);
+  }, [])
+
   return (
     <>
+      <CertModal show={showCertsModal && !!isDaemonConnected} onClose={onCloseCertsModal}/>
       <Background>
         <UserNav>
           <ProfileInfoWrapper>
@@ -187,7 +181,13 @@ const UserProfile = (props: Props) => {
                 )}
               </div>
               <div style={{ marginTop: 16, display: "flex" }}>
-                <ConnectionStatusTab isConnected={isDaemonConnected ?? false} />
+                <ConnectionStatusTab
+                  onClick={() => {
+                    if (isDaemonConnected) {
+                      setShowCertsModal(true);
+                    }
+                  }}
+                isConnected={isDaemonConnected ?? false} />
               </div>
             </TopInfo>
             <ButtonActionWrapper>
