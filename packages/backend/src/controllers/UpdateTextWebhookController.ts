@@ -138,7 +138,7 @@ export default class UpdateTextWebhookController extends BaseController {
         }
         try {
           const stateLinkRequest = await fetch(
-            `${this.mainConfig.floroApiServer()}/public/api/v0/repository/${metaFile.repositoryId}/commit/${payload.branch.lastCommit}/state`,{
+            `${this.mainConfig.floroApiServer()}/public/api/v0/repository/${metaFile.repositoryId}/commit/${payload.branch.lastCommit}/stateLink`,{
               headers: {
                 'floro-api-key': FLORO_API_KEY
               }
