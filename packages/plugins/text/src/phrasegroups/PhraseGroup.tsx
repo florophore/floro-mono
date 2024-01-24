@@ -278,6 +278,8 @@ interface Props {
   selectedGroup: string | null;
   pinnedGroups: Array<string>|null;
   setPinnedGroups: (groupRefs: Array<string>) => void;
+  messagePhrase: {groupName: string, phraseKey: string}|null;
+  onClearMessage: () => void;
 }
 
 const PhraseGroup = (props: Props) => {
@@ -291,6 +293,28 @@ const PhraseGroup = (props: Props) => {
   const [isFocusingSearch, setIsFocusingSearch] = useState(false);
   const [manualSearchText, setManualSearchText] = useState("");
   const [realManualSearchText, setRealManualSearchText] = useState("");
+
+  const hasMessagePhrase = useMemo(() => {
+    if (!props.messagePhrase) {
+      return false;
+    }
+    if (
+      props.phraseGroup.name == props.messagePhrase?.groupName
+    ) {
+      const phrase = props.phraseGroup.phrases.find(
+        (p) => p.phraseKey == props.messagePhrase?.phraseKey
+      );
+      if (phrase) {
+        return true;
+      }
+    }
+    return false;
+  }, [
+    props.messagePhrase?.groupName,
+    props.messagePhrase?.phraseKey,
+    props.phraseGroup.name,
+    props.phraseGroup.phrases
+  ])
 
 
   const hasPinnedPhrases = useMemo(() => {
@@ -338,16 +362,16 @@ const PhraseGroup = (props: Props) => {
   }, [props.pinnedGroups, phraseGroupRef])
 
   useEffect(() => {
-    if (props.showOnlyPinnedPhrases && isExpanded && !hasPinnedPhrases) {
+    if (props.showOnlyPinnedPhrases && isExpanded && !hasPinnedPhrases && !hasMessagePhrase) {
       setIsExpanded(false);
     }
-  }, [hasPinnedPhrases, isExpanded, props.showOnlyPinnedPhrases])
+  }, [hasPinnedPhrases, isExpanded, props.showOnlyPinnedPhrases, hasMessagePhrase])
 
   useEffect(() => {
-    if (props.showOnlyPinnedGroups && isExpanded && !isPinned) {
+    if (props.showOnlyPinnedGroups && isExpanded && !isPinned && !hasMessagePhrase) {
       setIsExpanded(false);
     }
-  }, [isPinned, isExpanded, props.showOnlyPinnedGroups])
+  }, [isPinned, isExpanded, props.showOnlyPinnedGroups, hasMessagePhrase])
 
   const onShowAddPhraseKey = useCallback(() => {
     setShowAddPhraseKey(true);
@@ -356,6 +380,7 @@ const PhraseGroup = (props: Props) => {
   const onHideAddPhraseKey = useCallback(() => {
     setShowAddPhraseKey(false);
   }, []);
+
 
   const [lastExpanded, setLastExpanded] =
     useClientStorageApi<PointerTypes["$(text).phraseGroups.id<?>"]>(
@@ -684,6 +709,7 @@ const PhraseGroup = (props: Props) => {
     props.showOnlyPinnedPhrases,
     props.pinnedPhrases,
     props.selectedTopLevelLocale,
+    hasMessagePhrase
   ]);
 
   const manualPhrasesToRender = useMemo(() => {
@@ -702,6 +728,7 @@ const PhraseGroup = (props: Props) => {
     props.selectedTopLevelLocale,
     props.globalFilterRequiresUpdate,
     props.globalFilterUntranslated,
+    hasMessagePhrase,
   ]);
 
   const [renderLimit, setRenderLimit] = useState(RENDER_CONSTANT);
@@ -742,6 +769,7 @@ const PhraseGroup = (props: Props) => {
   const memoryLeakedPhrasesToRender = useMemo(() => {
     return manualPhrasesToRender;
   }, [
+    hasMessagePhrase,
     props.pinnedPhrases,
     props.showOnlyPinnedPhrases,
     props.searchText,
@@ -870,10 +898,13 @@ const PhraseGroup = (props: Props) => {
       null
     );
   useEffect(() => {
+    if (hasMessagePhrase) {
+      return;
+    }
     if (selectedPhraseRef) {
       setSelectedPhraseRef(null);
     }
-  }, [selectedPhraseRef]);
+  }, [selectedPhraseRef, hasMessagePhrase]);
 
   const onSelectPhraseKey = useCallback((option) => {
     setSelectedPhraseRef(
@@ -919,19 +950,26 @@ const PhraseGroup = (props: Props) => {
       }
       onFocusPhraseGroup();
     }
+    if (hasMessagePhrase) {
+      return;
+    }
     if (props.selectedGroup && props.selectedGroup != phraseGroupRef) {
       if (isExpanded) {
         setIsExpanded(false);
       }
     }
-  }, [props.selectedGroup, isExpanded, onFocusPhraseGroup, phraseGroupRef])
+  }, [props.selectedGroup, isExpanded, onFocusPhraseGroup, phraseGroupRef, hasMessagePhrase])
 
   useEffect(() => {
+    if (hasMessagePhrase) {
+      return;
+    }
     if (props.isEditingGroups && isExpanded) {
+
       setIsExpanded(false);
     }
 
-  }, [isExpanded, props.isEditingGroups])
+  }, [isExpanded, props.isEditingGroups, hasMessagePhrase])
 
   useEffect(() => {
     if (isReOrderPhrasesMode && showGroupSearch) {
@@ -1005,6 +1043,55 @@ const PhraseGroup = (props: Props) => {
     }
 
   }, [props?.scrollContainer])
+
+  useEffect(() => {
+    if (hasMessagePhrase) {
+      setIsExpanded(true);
+      onFocusPhraseGroup();
+    }
+
+  }, [onFocusPhraseGroup, hasMessagePhrase])
+
+  useEffect(() => {
+    console.log("WHAT", hasMessagePhrase)
+    if (!hasMessagePhrase) {
+      return;
+    }
+
+    console.log("HELLO WORLD");
+    const phrase = memoryLeakedPhrasesToRender.find(
+      (p) => p.phraseKey == props.messagePhrase?.phraseKey
+    );
+    console.log("HELLO WORLD P ", phrase);
+    if (!phrase) {
+      return;
+    }
+    if (
+      props.phraseGroup.name == props.messagePhrase?.groupName
+    ) {
+
+      const phraseKey = makeQueryRef(
+        "$(text).phraseGroups.id<?>.phrases.id<?>",
+        props?.messagePhrase.groupName,
+        props?.messagePhrase.phraseKey as string
+      );
+      setIsExpanded(true);
+      setTimeout(() => {
+        setSelectedPhraseRef(
+          phraseKey
+        );
+        console.log("TEST", phraseKey)
+
+      }, 100);
+    }
+  }, [
+    isExpanded,
+    memoryLeakedPhrasesToRender,
+    props.messagePhrase?.groupName,
+    props.phraseGroup.name,
+    props.phraseGroup.phrases?.length,
+    hasMessagePhrase
+  ]);
 
   if (!matchesPinnedPhrases) {
     return false;
@@ -1348,6 +1435,8 @@ const PhraseGroup = (props: Props) => {
                       onSetDismissedRequiredUpdated={(phraseId) => {
                         setDismissedNeedsUpdate([...dimissedNeedsUpdate, phraseId])
                       }}
+                      messagePhrase={props.messagePhrase}
+                      onClearMessage={props.onClearMessage}
                     />
                   );
                 })}

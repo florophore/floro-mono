@@ -97,7 +97,7 @@ const InnerFloatContainer = styled.div`
 
 const Layout = () => {
   const container = useRef<HTMLDivElement>(null);
-  const { pluginState, applicationState, clientStorage } =
+  const { pluginState, applicationState, clientStorage, commandMode } =
     useFloroContext();
   const clientStorageEnabled = clientStorage != null;
   const [page, setPage] = useState<"phrases" | "terms" | "locales">("phrases");
@@ -109,6 +109,10 @@ const Layout = () => {
   const [showFilters, setShowFilters] = useState<boolean>(false);
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
   const [selectedTerm, setSelectedTerm] = useState<string | null>(null);
+  const [messagedPhrase, setMessagedPhrase] = useState<{groupName: string, phraseKey: string}|null>(null);
+  const onClearMessage = useCallback(() => {
+    setMessagedPhrase(null);
+  }, []);
 
   const [phraseGroups, setPhraseGroups, savePhraseGroups] =
     useFloroState("$(text).phraseGroups") ?? [];
@@ -308,6 +312,105 @@ const Layout = () => {
 
   }, [page])
 
+  useEffect(() => {
+    if (commandMode == "compare") {
+      return;
+    }
+    const channel = new BroadcastChannel("open:phrase");
+    const onMessage = (message) => {
+      setMessagedPhrase(message.data);
+    }
+    channel.addEventListener("message", onMessage);
+    return () => {
+      channel.removeEventListener("message", onMessage);
+    }
+  }, [commandMode])
+
+  useEffect(() => {
+    if (!messagedPhrase) {
+      return;
+    }
+    if (!phraseGroups) {
+      return;
+    }
+    const phraseGroup = phraseGroups.find(
+      (group) => group.name == messagedPhrase.groupName
+    );
+    if (!phraseGroup) {
+      onClearMessage();
+      return;
+    }
+    const phrase = phraseGroup.phrases.find(
+      (phrase) => phrase.phraseKey == messagedPhrase.phraseKey
+    );
+    if (!phrase) {
+      onClearMessage();
+      return;
+    }
+    const filteredPinnedPhraseGroup = filteredPinnedPhraseGroups?.find?.(
+      (group) => group.name == messagedPhrase.groupName
+    );
+    const filteredPinnedPhrase = filteredPinnedPhraseGroup?.phrases?.find?.(
+      (phrase) => phrase.phraseKey == messagedPhrase.phraseKey
+    );
+    const filteredPhraseGroup = filteredPhraseGroups?.find?.(
+      (group) => group.name == messagedPhrase.groupName
+    );
+    const filteredPhrase = filteredPhraseGroup?.phrases?.find?.(
+      (phrase) => phrase.phraseKey == messagedPhrase.phraseKey
+    );
+    let showAgain = false;
+    if (!filteredPinnedPhrase && showOnlyPinnedGroups) {
+      setShowOnlyPinnedGroups(false);
+      showAgain = true;
+    }
+    if (!filteredPhrase && showOnlyPinnedPhrases) {
+      setShowOnlyPinnedPhrases(false);
+      showAgain = true;
+    }
+    if (!filteredPhrase && globalFilterRequiresUpdate) {
+      setGlobalFilterRequiresUpdate(false);
+      showAgain = true;
+    }
+    if (!filteredPhrase && globalFilterUntranslated) {
+      setGlobalFilterUnstranslated(false);
+      showAgain = true;
+    }
+    if (!filteredPhrase && searchText.trim() != "") {
+      setSearchText("");
+      setSearchTextState("");
+      showAgain = true;
+    }
+    if (isEditGroups) {
+      setIsEditGroups(false);
+      showAgain = true;
+    }
+    if (page != "phrases") {
+      setPage("phrases");
+      showAgain = true;
+    }
+    if (showAgain) {
+      onClearMessage();
+      setTimeout(() => {
+        setMessagedPhrase(messagedPhrase);
+      }, 300);
+    }
+  }, [
+    setShowOnlyPinnedGroups,
+    setShowOnlyPinnedPhrases,
+    isEditGroups,
+    globalFilterRequiresUpdate,
+    globalFilterUntranslated,
+    searchText,
+    showOnlyPinnedGroups,
+    showOnlyPinnedPhrases,
+    messagedPhrase,
+    phraseGroups,
+    filteredPhraseGroups,
+    filteredPinnedPhraseGroups,
+    page
+  ]);
+
   return (
     <ThemeProvider theme={colorTheme}>
       <ChatGPTProvider>
@@ -402,6 +505,8 @@ const Layout = () => {
                           pinnedGroups={pinnedGroups}
                           setPinnedGroups={setPinnedGroups}
                           showOnlyPinnedGroups={!!showOnlyPinnedGroups}
+                          messagePhrase={messagedPhrase}
+                          onClearMessage={onClearMessage}
                         />
                       )}
                       {page == "locales" && <LocalesSections />}

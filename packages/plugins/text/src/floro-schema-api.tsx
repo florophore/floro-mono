@@ -2003,6 +2003,13 @@ export const FloroProvider = (props: Props) => {
           commandModeRef.current = state.commandMode;
           setHasLoaded(true);
         }
+        if (response.event == "external:message") {
+          const messageData = response.data as {eventName: string, message: unknown};
+          if (messageData.eventName) {
+            const channel = new BroadcastChannel(messageData.eventName);
+            channel.postMessage(messageData.message);
+          }
+        }
         if (response.event == "ack" || response.event == "update") {
           clearTimeout(updateTimeout.current);
           const isStale = updateCounter?.current > data.id;
@@ -3937,7 +3944,7 @@ export function useHasIndication(query: PointerTypes['$(text).phraseGroups'], fu
 export function useHasIndication(query: PointerTypes['$(text).terms'], fuzzy?: boolean): boolean;
 
 export function useHasIndication(query: PartialDiffableQuery|DiffableQuery, fuzzy = true): boolean {
-  const { commandMode, compareFrom, changeset, conflictSet, apiStoreInvaliditySets} = useFloroContext();
+  const ctx = useFloroContext();
 
   const pluginName = useMemo(() => getPluginNameFromQuery(query), [query]);
   const invalidQueriesSet = useMemo(() => {
@@ -3945,10 +3952,10 @@ export function useHasIndication(query: PartialDiffableQuery|DiffableQuery, fuzz
       return new Set() as Set<PartialDiffableQuery | DiffableQuery>;
     }
     return (
-      apiStoreInvaliditySets?.[pluginName] ??
+      ctx.apiStoreInvaliditySets?.[pluginName] ??
       (new Set() as Set<PartialDiffableQuery | DiffableQuery>)
     );
-  }, [apiStoreInvaliditySets, pluginName]);
+  }, [ctx.apiStoreInvaliditySets, pluginName]);
   const isInvalid = useMemo(() => {
     if (fuzzy) {
       return containsDiffable(invalidQueriesSet, query, true);
@@ -3957,34 +3964,34 @@ export function useHasIndication(query: PartialDiffableQuery|DiffableQuery, fuzz
   }, [invalidQueriesSet, query, fuzzy])
 
   const wasAdded = useMemo(() => {
-    if (commandMode != "compare" || compareFrom != "after") {
+    if (ctx.commandMode != "compare" || ctx.compareFrom != "after") {
       return false;
     }
     if (fuzzy) {
-      return containsDiffable(changeset, query, true);
+      return containsDiffable(ctx.changeset, query, true);
     }
-    return containsDiffable(changeset, query, false);
-  }, [changeset, query, fuzzy, compareFrom, commandMode])
+    return containsDiffable(ctx.changeset, query, false);
+  }, [ctx.changeset, query, fuzzy, ctx.compareFrom, ctx.commandMode])
 
   const wasRemoved = useMemo(() => {
-    if (commandMode != "compare" || compareFrom != "before") {
+    if (ctx.commandMode != "compare" || ctx.compareFrom != "before") {
       return false;
     }
     if (fuzzy) {
-      return containsDiffable(changeset, query, true);
+      return containsDiffable(ctx.changeset, query, true);
     }
-    return containsDiffable(changeset, query, false);
-  }, [changeset, query, fuzzy, compareFrom, commandMode])
+    return containsDiffable(ctx.changeset, query, false);
+  }, [ctx.changeset, query, fuzzy, ctx.compareFrom, ctx.commandMode])
 
   const hasConflict = useMemo(() => {
-    if (commandMode != "compare") {
+    if (ctx.commandMode != "compare") {
       return false;
     }
     if (fuzzy) {
-      return containsDiffable(conflictSet, query, true);
+      return containsDiffable(ctx.conflictSet, query, true);
     }
-    return containsDiffable(conflictSet, query, false);
-  }, [conflictSet, query, fuzzy, commandMode])
+    return containsDiffable(ctx.conflictSet, query, false);
+  }, [ctx.conflictSet, query, fuzzy, ctx.commandMode])
   return isInvalid || wasAdded || wasRemoved || hasConflict;
 };
 

@@ -49,6 +49,8 @@ interface Props {
   selectedGroup: string | null;
   pinnedGroups: Array<string>|null;
   setPinnedGroups: (groupRefs: Array<string>) => void;
+  messagePhrase: {groupName: string, phraseKey: string}|null;
+  onClearMessage: () => void;
 }
 
 const PhraseGroups = (props: Props) => {
@@ -83,41 +85,21 @@ const PhraseGroups = (props: Props) => {
     [props.phraseGroups, props.setPhraseGroups]
   );
 
-  const diffedPhrases = useMemo(() => {
-    if (commandMode != "compare") {
-      return 0;
-    }
-    let count = 0;
-    for (const phraseGroup of applicationState?.text?.phraseGroups ?? []) {
-      const phraseGroupRef = makeQueryRef(`$(text).phraseGroups.id<?>`, phraseGroup.id);
-      const hasDiff = containsDiffable(changeset, `${phraseGroupRef}.phrases`, true)
-      const containConflict = containsDiffable(conflictSet, `${phraseGroupRef}.phrases`, true)
-      if (hasDiff || containConflict) {
-        count++;
-      }
-    }
-    return count;
-  }, [commandMode, applicationState, changeset, conflictSet])
-
-  //if (commandMode == "compare" && compareFrom == "before" && diffedPhrases == 0) {
-  //  return (
-  //    <Container>
-  //      <NothingChangedText>
-  //        {'No phrases were removed'}
-  //      </NothingChangedText>
-  //    </Container>
-  //  );
-
-  //}
-  //if (commandMode == "compare" && compareFrom == "after" && diffedPhrases == 0) {
-  //  return (
-  //    <Container>
-  //      <NothingChangedText>
-  //        {'No phrases were added'}
-  //      </NothingChangedText>
-  //    </Container>
-  //  );
-  //}
+  //const diffedPhrases = useMemo(() => {
+  //  if (commandMode != "compare") {
+  //    return 0;
+  //  }
+  //  let count = 0;
+  //  for (const phraseGroup of applicationState?.text?.phraseGroups ?? []) {
+  //    const phraseGroupRef = makeQueryRef(`$(text).phraseGroups.id<?>`, phraseGroup.id);
+  //    const hasDiff = containsDiffable(changeset, `${phraseGroupRef}.phrases`, true)
+  //    const containConflict = containsDiffable(conflictSet, `${phraseGroupRef}.phrases`, true)
+  //    if (hasDiff || containConflict) {
+  //      count++;
+  //    }
+  //  }
+  //  return count;
+  //}, [commandMode, applicationState, changeset, conflictSet])
 
   if (props.isEditingGroups && commandMode == "edit") {
     return (
@@ -155,6 +137,8 @@ const PhraseGroups = (props: Props) => {
                   pinnedGroups={props.pinnedGroups}
                   setPinnedGroups={props.setPinnedGroups}
                   showOnlyPinnedGroups={props.showOnlyPinnedGroups}
+                  messagePhrase={props.messagePhrase}
+                  onClearMessage={props.onClearMessage}
                 />
               );
             })}
@@ -200,6 +184,8 @@ const PhraseGroups = (props: Props) => {
                   pinnedGroups={props.pinnedGroups}
                   setPinnedGroups={props.setPinnedGroups}
                   showOnlyPinnedGroups={props.showOnlyPinnedGroups}
+                  messagePhrase={props.messagePhrase}
+                  onClearMessage={props.onClearMessage}
                 />
               );
             })}
@@ -233,6 +219,8 @@ const PhraseGroups = (props: Props) => {
               pinnedGroups={props.pinnedGroups}
               setPinnedGroups={props.setPinnedGroups}
               showOnlyPinnedGroups={props.showOnlyPinnedGroups}
+              messagePhrase={props.messagePhrase}
+              onClearMessage={props.onClearMessage}
             />
           );
         })}

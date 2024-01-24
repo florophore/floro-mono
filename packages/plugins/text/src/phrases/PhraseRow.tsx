@@ -237,6 +237,8 @@ interface Props {
   onSetDismissedUnTranslated: (phraseId: string) => void;
   onSetDismissedRequiredUpdated: (phraseId: string) => void;
   onScrollToPhrase: (phraseRef: PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>"]) => void;
+  messagePhrase: {groupName: string, phraseKey: string}|null;
+  onClearMessage: () => void;
 }
 
 const PhraseRow = (props: Props) => {
@@ -850,6 +852,7 @@ const PhraseRow = (props: Props) => {
     setFocusPhraseRef(props.phraseRef);
   }, [props.phraseRef]);
 
+
   const isFocused =
     showFocus &&
     focusPortal?.current &&
@@ -857,11 +860,26 @@ const PhraseRow = (props: Props) => {
     focusPhraseRef == props.phraseRef;
   useEffect(() => {
     if (isFocused) {
+      setTimeout(props.onClearMessage, 300);
       return () => {
         onCloseFocus();
       };
     }
-  }, [isFocused]);
+  }, [isFocused, props.onClearMessage]);
+  useEffect(() => {
+    if (
+      props.phraseGroup.name == props.messagePhrase?.groupName &&
+      props.phrase.phraseKey == props?.messagePhrase?.phraseKey
+    ) {
+      onShowFocus();
+    }
+  }, [
+    onShowFocus,
+    props.messagePhrase?.groupName,
+    props.messagePhrase?.phraseKey,
+    props.phraseGroup.name,
+    props.phrase.phraseKey,
+  ]);
 
   const compareModeMissing =
     commandMode == "compare" && !hasIndications ? (

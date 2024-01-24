@@ -41,7 +41,12 @@ interface MessageWithDebugMode {
   isDebugMode: boolean;
 }
 
-type Message = MessageWithoutPayload | MessageWithPayload | MessageWithMetaFile | MessageWithEditMode | MessageWithDebugMode | MessageWithTabState;
+interface MessageWithPluginMessage {
+  type: Actions.SEND_PLUGIN_MESSAGE;
+  data: object;
+}
+
+type Message = MessageWithoutPayload | MessageWithPayload | MessageWithMetaFile | MessageWithEditMode | MessageWithDebugMode | MessageWithTabState | MessageWithPluginMessage;
 export const createSocket = (authorizationKey: string) => {
   try {
     const manager = new Manager("ws://localhost:63403", {
@@ -122,6 +127,12 @@ function manageMessages() {
   try {
 
     chrome.runtime.onMessage.addListener((message: Message, sender, sendResponse) => {
+
+      if (message.type === Actions.SEND_PLUGIN_MESSAGE) {
+        socket?.emit("plugin:message", message.data);
+        return true;
+      }
+
       if (message.type == Actions.REGISTER_MODULE) {
         const tabId = sender.tab.id;
         if (tabId) {
@@ -218,6 +229,7 @@ function manageMessages() {
         chrome.storage.local.set(globalState);
         return undefined;
       }
+
       return true;
     });
 

@@ -21,6 +21,19 @@ export const useWatchDebugMode = (): boolean => {
       "floro:toggle-debug-mode",
       onToggleDebugMode as EventListenerOrEventListenerObject
     );
+    const onInit = ({
+      detail: {
+        isDebugMode,
+        isEditMode
+      },
+    }: CustomEvent<{isDebugMode: boolean, isEditMode: boolean}>) => {
+      setIsDebugMode(isDebugMode);
+      setIsEditMode(isEditMode);
+    };
+    window.addEventListener(
+      "floro:init",
+      onInit as EventListenerOrEventListenerObject
+    );
     window.dispatchEvent(new CustomEvent("floro:ready"));
     return () => {
       window.removeEventListener(
@@ -30,6 +43,10 @@ export const useWatchDebugMode = (): boolean => {
       window.removeEventListener(
         "floro:toggle-debug-mode",
         onToggleDebugMode as EventListenerOrEventListenerObject
+      );
+      window.removeEventListener(
+        "floro:init",
+        onInit as EventListenerOrEventListenerObject
       );
     };
   }, []);
@@ -59,6 +76,17 @@ export const useWatchFloroState = <T, U, K>(
     window.addEventListener(
       "floro:content-script:launched",
       onLaunchContentScript
+    );
+    const onInit = ({
+      detail: {
+        isEditMode
+      },
+    }: CustomEvent<{isDebugMode: boolean, isEditMode: boolean}>) => {
+      setIsEditMode(isEditMode);
+    };
+    window.addEventListener(
+      "floro:init",
+      onInit as EventListenerOrEventListenerObject
     );
     let debounce: NodeJS.Timeout;
     const onUpdate = ({
@@ -135,6 +163,10 @@ export const useWatchFloroState = <T, U, K>(
       window.removeEventListener(
         "floro:toggle-edit-mode",
         onToggleEditMode as EventListenerOrEventListenerObject
+      );
+      window.removeEventListener(
+        "floro:init",
+        onInit as EventListenerOrEventListenerObject
       );
     };
   }, [repositoryId, getJSON]);

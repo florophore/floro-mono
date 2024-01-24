@@ -46,6 +46,12 @@ document.addEventListener("readystatechange", () => {
             return false;
         });
     });
+
+    const onPluginMessage = (args) => {
+        chrome.runtime.sendMessage({type: "plugin:message", data: args.data});
+    }
+    const channel = new BroadcastChannel("floro:plugin:message")
+    channel.onmessage = onPluginMessage;
     const launchEvent = new CustomEvent("floro:content-script:launched");
     window.dispatchEvent(launchEvent);
 })

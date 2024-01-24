@@ -12,6 +12,7 @@ import { useClearPluginStorageV2, useUpdatePluginState, useUpdatePluginStorageV2
 import { useLocalVCSNavContext } from "../local/vcsnav/LocalVCSContext";
 import { useCopyPasteContext } from "../copypaste/CopyPasteContext";
 import { useRootSchemaMap } from "../remote/hooks/remote-hooks";
+import { usePluginMessage } from "../../../contexts/PluginMessageContext";
 
 interface Props {
   pluginName: string;
@@ -73,10 +74,13 @@ const LocalPluginController = (props: Props) => {
   const [hasLoaded, setHasLoaded] = useState(false);
   const [hasSentFirstData, setHasSetFirstData] = useState(false);
   const [ackId, setAckId] = useState<number | null>(null);
+  const [messagesReady, setMessagesRead] = useState(false);
   const { compareFrom, isStashing } = useLocalVCSNavContext();
   const { isSelectMode, copyInstructions, setCopyInstructions } = useCopyPasteContext("local");
   const updateCounter = useRef(0);
   const clientUpdateCounter = useRef(1);
+
+  const { lastPluginMessage, clearLastPluginMessage} = usePluginMessage();
 
   const updatePluginState = useUpdatePluginState(
     props.pluginName,
@@ -340,6 +344,17 @@ const LocalPluginController = (props: Props) => {
     props?.apiResponse?.repoState?.comparison,
   ]);
 
+  useEffect(() => {
+    if (lastPluginMessage && messagesReady && iframeRef.current) {
+      setTimeout(() => {
+        if (iframeRef.current) {
+          sendMessage(iframeRef.current, "external:message", lastPluginMessage);
+        }
+      }, 100);
+      clearLastPluginMessage();
+    }
+  }, [lastPluginMessage, messagesReady]);
+
   const isStashingRef = useRef(isStashing);
 
   useEffect(() => {
@@ -382,6 +397,7 @@ const LocalPluginController = (props: Props) => {
     if (iframeRef.current && hasLoaded && hasSentFirstData) {
         updateCounter.current += 2;
         sendMessage(iframeRef.current, "update", pluginState, updateCounter.current);
+        setMessagesRead(true);
     }
   }, [
     pluginState,

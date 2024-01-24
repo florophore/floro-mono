@@ -7,6 +7,7 @@ export enum Actions {
   REGISTER_MODULE = "register-module",
   SET_EDIT_MODE = "set-edit-mode",
   SET_DEBUG_MODE = "set-debug-mode",
+  SEND_PLUGIN_MESSAGE = "plugin:message",
 }
 export type Action = `${Actions}`;
 

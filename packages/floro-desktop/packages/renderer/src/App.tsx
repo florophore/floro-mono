@@ -20,6 +20,7 @@ import {OfflinePhotoProvider} from '@floro/common-react/src/offline/OfflinePhoto
 import {OfflineIconProvider} from '@floro/common-react/src/offline/OfflineIconsContext';
 import {createUploadLink} from 'apollo-upload-client';
 import {CurrentUserSubscriberMount} from '@floro/common-react/src/components/subscribers/UserSubscriber';
+import {PluginMessageProvider} from '@floro/common-react/src/contexts/PluginMessageContext';
 import {DesktopSocketProvider} from './contexts/DesktopSocketContext';
 import * as linkify from 'linkifyjs';
 import DesktopThemeMount from './DesktopThemeMount';
@@ -142,9 +143,11 @@ const App = (props: Props): React.ReactElement => {
                           <SessionProvider env={import.meta.env.VITE_BUILD_ENV_NORMALIZED} clientType={"app"}>
                             <CurrentUserSubscriberMount>
                               <DesktopSocketProvider>
-                                <DOMMount>
-                                  <Router />
-                                </DOMMount>
+                                <PluginMessageProvider>
+                                  <DOMMount>
+                                    <Router />
+                                  </DOMMount>
+                                </PluginMessageProvider>
                               </DesktopSocketProvider>
                             </CurrentUserSubscriberMount>
                           </SessionProvider>
