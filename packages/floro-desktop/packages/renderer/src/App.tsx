@@ -2,7 +2,7 @@ import React, {useMemo, useCallback} from 'react';
 import {MemoryRouter} from 'react-router-dom';
 import Router from './Router';
 import {SystemAPIProvider} from './contexts/SystemAPIContext';
-import {ApolloClient, ApolloProvider, InMemoryCache, split} from '@apollo/client';
+import {ApolloClient, ApolloProvider, InMemoryCache, split, from} from '@apollo/client';
 import {ColorThemeProvider} from '@floro/common-web/src/hooks/ColorThemeProvider';
 import { EnvProvider } from "@floro/common-react/src/env/EnvContext";
 import ThemeMount from '@floro/common-web/src/hooks/ThemeMount';
@@ -107,7 +107,7 @@ const cache = new InMemoryCache({
 });
 
 const client = new ApolloClient({
-  link: authMiddleware.concat(splitLink),
+  link: from([authMiddleware, splitLink]),
   cache,
 });
 

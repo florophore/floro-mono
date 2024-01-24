@@ -334,20 +334,6 @@ const Layout = () => {
     if (!phraseGroups) {
       return;
     }
-    const phraseGroup = phraseGroups.find(
-      (group) => group.name == messagedPhrase.groupName
-    );
-    if (!phraseGroup) {
-      onClearMessage();
-      return;
-    }
-    const phrase = phraseGroup.phrases.find(
-      (phrase) => phrase.phraseKey == messagedPhrase.phraseKey
-    );
-    if (!phrase) {
-      onClearMessage();
-      return;
-    }
     const filteredPinnedPhraseGroup = filteredPinnedPhraseGroups?.find?.(
       (group) => group.name == messagedPhrase.groupName
     );
@@ -360,42 +346,36 @@ const Layout = () => {
     const filteredPhrase = filteredPhraseGroup?.phrases?.find?.(
       (phrase) => phrase.phraseKey == messagedPhrase.phraseKey
     );
-    let showAgain = false;
     if (!filteredPinnedPhrase && showOnlyPinnedGroups) {
       setShowOnlyPinnedGroups(false);
-      showAgain = true;
     }
     if (!filteredPhrase && showOnlyPinnedPhrases) {
       setShowOnlyPinnedPhrases(false);
-      showAgain = true;
     }
     if (!filteredPhrase && globalFilterRequiresUpdate) {
       setGlobalFilterRequiresUpdate(false);
-      showAgain = true;
     }
     if (!filteredPhrase && globalFilterUntranslated) {
       setGlobalFilterUnstranslated(false);
-      showAgain = true;
     }
     if (!filteredPhrase && searchText.trim() != "") {
       setSearchText("");
       setSearchTextState("");
-      showAgain = true;
+    }
+    if (!filteredPhrase && !!filterTag) {
+      setFilterTag(null);
     }
     if (isEditGroups) {
       setIsEditGroups(false);
-      showAgain = true;
     }
     if (page != "phrases") {
       setPage("phrases");
-      showAgain = true;
-
     }
     if (!lastMessage.current) {
       lastMessage.current = messagedPhrase;
       onClearMessage();
       setTimeout(() => {
-        setMessagedPhrase(messagedPhrase);
+        setMessagedPhrase({...messagedPhrase});
       }, 300);
     } else {
       lastMessage.current = null;

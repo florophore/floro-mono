@@ -314,7 +314,7 @@ const PhraseGroup = (props: Props) => {
     props.messagePhrase?.phraseKey,
     props.phraseGroup.name,
     props.phraseGroup.phrases
-  ])
+  ]);
 
 
   const hasPinnedPhrases = useMemo(() => {
@@ -437,11 +437,11 @@ const PhraseGroup = (props: Props) => {
         props.scrollContainer.scrollTo({
           left: 0,
           top: phraseGroupContainer.current.offsetTop - (236 + filtersAdjust),
-          behavior: "smooth",
+          behavior: hasMessagePhrase ? "smooth" : "instant",
         });
       }
-    }, 50);
-  }, [props.showFilters]);
+    }, hasMessagePhrase ? 300 : 50);
+  }, [props.showFilters, hasMessagePhrase]);
 
   const onAddPhraseKey = useCallback(
     (phrase: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>"]) => {
@@ -1077,7 +1077,7 @@ const PhraseGroup = (props: Props) => {
         setSelectedPhraseRef(
           phraseKey
         );
-      }, 100);
+      }, 300);
     }
   }, [
     isExpanded,
@@ -1087,6 +1087,13 @@ const PhraseGroup = (props: Props) => {
     props.phraseGroup.phrases?.length,
     hasMessagePhrase
   ]);
+
+
+  useEffect(() => {
+    if (!hasMessagePhrase && !!props.messagePhrase?.groupName && isExpanded) {
+      setIsExpanded(false);
+    }
+  }, [hasMessagePhrase, isExpanded, props.messagePhrase]);
 
   if (!matchesPinnedPhrases) {
     return false;
@@ -1129,6 +1136,14 @@ const PhraseGroup = (props: Props) => {
     memoryLeakedPhrasesToRender.length == 0
   ) {
     // show thing here
+    return null;
+  }
+
+  if (
+    props.messagePhrase?.groupName != props?.phraseGroup?.name &&
+    !!props.messagePhrase?.groupName &&
+    commandMode != "compare"
+  ) {
     return null;
   }
 

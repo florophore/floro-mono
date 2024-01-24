@@ -736,6 +736,21 @@ const PhraseRow = (props: Props) => {
     return ColorPalette.gray;
   }, [theme.name]);
 
+  const isMessagePhrase = useMemo(() => {
+    if (
+      props.phraseGroup.name == props.messagePhrase?.groupName &&
+      props.phrase.phraseKey == props?.messagePhrase?.phraseKey
+    ) {
+      return true;
+    }
+    return false;
+  }, [
+    props.messagePhrase?.groupName,
+    props.messagePhrase?.phraseKey,
+    props.phraseGroup.name,
+    props.phrase.phraseKey,
+  ])
+
   const {
     showFocus,
     focusPortal,
@@ -757,6 +772,10 @@ const PhraseRow = (props: Props) => {
       props.phraseRef &&
       focusPhraseRef == props.phraseRef;
     if (!isFocused && !isExpanded) {
+      return null;
+    }
+
+    if (!isMessagePhrase && !!props.messagePhrase && commandMode != "compare") {
       return null;
     }
 
@@ -797,6 +816,7 @@ const PhraseRow = (props: Props) => {
     );
   }, [
     isExpanded,
+    isMessagePhrase,
     props.isFocusingPhraseSelector,
     props.selectedPhraseRef,
     isSearching,
@@ -819,7 +839,8 @@ const PhraseRow = (props: Props) => {
     setShowEnabledFeatures,
     onFocusSearch,
     commandMode,
-    focusScroll
+    focusScroll,
+    props.messagePhrase
   ]);
 
   const showNoResults = useMemo(() => {
@@ -867,19 +888,17 @@ const PhraseRow = (props: Props) => {
     }
   }, [isFocused, props.onClearMessage]);
   useEffect(() => {
-    if (
-      props.phraseGroup.name == props.messagePhrase?.groupName &&
-      props.phrase.phraseKey == props?.messagePhrase?.phraseKey
-    ) {
+    if (isMessagePhrase) {
       onShowFocus();
     }
   }, [
     onShowFocus,
-    props.messagePhrase?.groupName,
-    props.messagePhrase?.phraseKey,
-    props.phraseGroup.name,
-    props.phrase.phraseKey,
+    isMessagePhrase
   ]);
+
+  if (!isMessagePhrase && !!props.messagePhrase && commandMode != "compare") {
+    return null;
+  }
 
   const compareModeMissing =
     commandMode == "compare" && !hasIndications ? (

@@ -177,109 +177,124 @@ const renderContentVariable = (
   return node.data ?? <></>;
 };
 
-const render = <N extends string,>(
-  nodes: (StaticNode<React.ReactElement> | StaticListNode<React.ReactElement>)[],
+const render = <N extends string>(
+  nodes: (
+    | StaticNode<React.ReactElement>
+    | StaticListNode<React.ReactElement>
+  )[],
   renderers: TextRenderers<N>,
   isDebugMode: boolean,
   debugInfo: DebugInfo,
-  debugHex: `#${string}` = '#FF0000',
-  debugTextColorHex: string = 'white'
+  debugHex: `#${string}` = "#FF0000",
+  debugTextColorHex: string = "white"
 ): React.ReactElement => {
   const content = renderers.renderStaticNodes(nodes, renderers);
   if (isDebugMode) {
-      return (
+    return (
+      <span
+        onMouseEnter={(e) => {
+          if (e?.currentTarget?.lastChild) {
+            const div = e.currentTarget.lastChild as HTMLDivElement;
+            div.style.display = "block";
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (e?.currentTarget?.lastChild) {
+            const div = e.currentTarget.lastChild as HTMLDivElement;
+            div.style.display = "none";
+          }
+        }}
+        onClick={(e) => {
+          if (e?.currentTarget?.lastChild) {
+            const div = e.currentTarget.lastChild as HTMLDivElement;
+            div.style.display = "block";
+          }
+        }}
+        style={{
+          position: "relative",
+          boxShadow: `inset 0px 0px 0px 1px ${debugHex}`,
+          display: "inherit",
+          fontFamily: "inherit",
+        }}
+      >
+        {content}
         <span
-          onMouseEnter={(e) => {
-            if (e?.currentTarget?.lastChild) {
-              const div = e.currentTarget.lastChild as HTMLDivElement;
-              div.style.display = "block";
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (e?.currentTarget?.lastChild) {
-              const div = e.currentTarget.lastChild as HTMLDivElement;
-              div.style.display = "none";
-            }
-          }}
-          onClick={(e) => {
-            if (e?.currentTarget?.lastChild) {
-              const div = e.currentTarget.lastChild as HTMLDivElement;
-              div.style.display = "block";
-            }
-          }}
           style={{
-            position: "relative",
-            boxShadow: `inset 0px 0px 0px 1px ${debugHex}`,
-            display: "inherit",
+            position: "absolute",
+            top: 0,
+            left: 0,
+            background: `${debugHex}CC`,
+            padding: 8,
+            color: debugTextColorHex,
+            fontWeight: 500,
+            fontSize: "1.2rem",
+            display: "none",
             fontFamily: "inherit",
+            zIndex: 100,
           }}
         >
-          {content}
           <span
-            onClick={() => {
-              const channel = new BroadcastChannel("floro:plugin:message")
-              channel.postMessage({
-                repositoryId: metaFile.repositoryId,
-                plugin: "text",
-                eventName: "open:phrase",
-                message: {
-                  ...debugInfo
-                }
-              })
-            }}
             style={{
-              position: "absolute",
-              top: 0,
-              background: `${debugHex}CC`,
-              padding: 8,
-              color: debugTextColorHex,
-              fontWeight: 500,
-              fontSize: "1.2rem",
-              display: "none",
-              fontFamily: "inherit",
+              display: "flex",
+              flexDirection: "row",
             }}
           >
-            <span
-              style={{
-                display: "flex",
-                flexDirection: "row",
-              }}
-            >
-              <span style={{display: "block"}}>
-                <span style={{display: "block"}}>
-                  {"Phrase Group: "}
-                  <b>{debugInfo.groupName}</b>
-                </span>
-                <span style={{display: "block"}}>
-                  {"Phrase Key: "}
-                  <b>{debugInfo.phraseKey}</b>
-                </span>
+            <span style={{ display: "block" }}>
+              <span style={{ display: "block" }}>
+                {"Phrase Group: "}
+                <b>{debugInfo.groupName}</b>
               </span>
-              <span style={{ marginLeft: 24, display: "block" }}>
-                <span
-                  style={{ cursor: "pointer" }}
-                  onClick={(e) => {
-                    if (
+              <span style={{ display: "block" }}>
+                {"Phrase Key: "}
+                <b>{debugInfo.phraseKey}</b>
+              </span>
+              <span
+                onClick={() => {
+                  const channel = new BroadcastChannel("floro:plugin:message");
+                  channel.postMessage({
+                    repositoryId: metaFile.repositoryId,
+                    plugin: "text",
+                    eventName: "open:phrase",
+                    message: {
+                      ...debugInfo,
+                    },
+                  });
+                }}
+                style={{
+                  display: "block",
+                  textDecoration: "underline",
+                  marginTop: 4,
+                  cursor: "pointer",
+                }}
+              >
+                <b>{"OPEN"}</b>
+              </span>
+            </span>
+            <span style={{ marginLeft: 24, display: "block" }}>
+              <span
+                style={{ cursor: "pointer" }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (
+                    e?.currentTarget?.parentElement?.parentElement
+                      ?.parentElement
+                  ) {
+                    const div =
                       e?.currentTarget?.parentElement?.parentElement
-                        ?.parentElement
-                    ) {
-                      e.stopPropagation();
-                      const div =
-                        e?.currentTarget?.parentElement?.parentElement
-                          ?.parentElement;
-                      div.style.display = "none";
-                    }
-                  }}
-                >
-                  {"X"}
-                </span>
+                        ?.parentElement;
+                    div.style.display = "none";
+                  }
+                }}
+              >
+                {"X"}
               </span>
             </span>
           </span>
         </span>
-      );
+      </span>
+    );
   }
-  return content
+  return content;
 };
 
 export const richTextRenderers = {
@@ -291,5 +306,5 @@ export const richTextRenderers = {
   renderUnOrderedListNode,
   renderOrderedListNode,
   renderStyledContentNode,
-  renderContentVariable
+  renderContentVariable,
 };

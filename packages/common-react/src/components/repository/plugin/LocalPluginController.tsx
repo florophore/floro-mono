@@ -74,7 +74,6 @@ const LocalPluginController = (props: Props) => {
   const [hasLoaded, setHasLoaded] = useState(false);
   const [hasSentFirstData, setHasSetFirstData] = useState(false);
   const [ackId, setAckId] = useState<number | null>(null);
-  const [messagesReady, setMessagesRead] = useState(false);
   const { compareFrom, isStashing } = useLocalVCSNavContext();
   const { isSelectMode, copyInstructions, setCopyInstructions } = useCopyPasteContext("local");
   const updateCounter = useRef(0);
@@ -104,7 +103,7 @@ const LocalPluginController = (props: Props) => {
 
   useEffect(() => {
     setHasLoaded(false);
-  }, [props.pluginName]);
+  }, [props.pluginName, props.repository.id]);
 
   const manifest = useMemo(() => {
     if (props.apiResponse.repoState.commandMode == "compare" && compareFrom == "before") {
@@ -345,15 +344,15 @@ const LocalPluginController = (props: Props) => {
   ]);
 
   useEffect(() => {
-    if (lastPluginMessage && messagesReady && iframeRef.current) {
+    if (lastPluginMessage && hasLoaded) {
       setTimeout(() => {
         if (iframeRef.current) {
           sendMessage(iframeRef.current, "external:message", lastPluginMessage);
+          clearLastPluginMessage();
         }
-      }, 100);
-      clearLastPluginMessage();
+      }, 300);
     }
-  }, [lastPluginMessage, messagesReady]);
+  }, [lastPluginMessage, hasLoaded]);
 
   const isStashingRef = useRef(isStashing);
 
@@ -397,7 +396,6 @@ const LocalPluginController = (props: Props) => {
     if (iframeRef.current && hasLoaded && hasSentFirstData) {
         updateCounter.current += 2;
         sendMessage(iframeRef.current, "update", pluginState, updateCounter.current);
-        setMessagesRead(true);
     }
   }, [
     pluginState,
