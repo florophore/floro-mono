@@ -326,6 +326,7 @@ const Layout = () => {
     }
   }, [commandMode])
 
+  const lastMessage = useRef<null|{groupName: string, phraseKey: string}>(null);
   useEffect(() => {
     if (!messagedPhrase) {
       return;
@@ -388,12 +389,16 @@ const Layout = () => {
     if (page != "phrases") {
       setPage("phrases");
       showAgain = true;
+
     }
-    if (showAgain) {
+    if (!lastMessage.current) {
+      lastMessage.current = messagedPhrase;
       onClearMessage();
       setTimeout(() => {
         setMessagedPhrase(messagedPhrase);
       }, 300);
+    } else {
+      lastMessage.current = null;
     }
   }, [
     setShowOnlyPinnedGroups,

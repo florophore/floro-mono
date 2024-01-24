@@ -1053,16 +1053,13 @@ const PhraseGroup = (props: Props) => {
   }, [onFocusPhraseGroup, hasMessagePhrase])
 
   useEffect(() => {
-    console.log("WHAT", hasMessagePhrase)
-    if (!hasMessagePhrase) {
+    if (!hasMessagePhrase && isExpanded) {
       return;
     }
 
-    console.log("HELLO WORLD");
     const phrase = memoryLeakedPhrasesToRender.find(
       (p) => p.phraseKey == props.messagePhrase?.phraseKey
     );
-    console.log("HELLO WORLD P ", phrase);
     if (!phrase) {
       return;
     }
@@ -1080,8 +1077,6 @@ const PhraseGroup = (props: Props) => {
         setSelectedPhraseRef(
           phraseKey
         );
-        console.log("TEST", phraseKey)
-
       }, 100);
     }
   }, [
