@@ -20,7 +20,6 @@ import {
 import RemoteVCSNavController from "./remote/vcsnav/RemoteVCSNavController";
 import { RepoPage } from "./types";
 import { useLocalVCSNavContext } from "./local/vcsnav/LocalVCSContext";
-import { ApiResponse } from "floro/dist/src/repo";
 
 const Container = styled.nav`
   display: flex;
@@ -114,8 +113,6 @@ const OuterShadow = styled.div`
 
 interface Props {
   repository: Repository;
-  storage?: object|null;
-  apiResponse?: ApiResponse|null;
   remoteCommitState: RemoteCommitState;
   comparisonState: ComparisonState;
   isExpanded: boolean;
@@ -330,8 +327,6 @@ const VersionControlPanel = (props: Props) => {
                 plugin={props.plugin}
                 repository={props.repository}
                 page={props.page}
-                apiResponse={props.apiResponse}
-                storage={props.storage}
               />
             )}
           </NavigationWrapper>

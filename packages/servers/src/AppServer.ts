@@ -8,6 +8,7 @@ import MailDev from "maildev";
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.mjs";
+import kill from 'kill-port';
 
 import path from "path";
 import compression from "compression";
@@ -81,7 +82,7 @@ export default class AppServer {
     apolloServer.applyMiddleware({ app: this.app });
 
     if (isDevelopment || isTest) {
-      this.startMailDev();
+      await this.startMailDev();
     }
 
     // CORS POLICY
@@ -280,20 +281,32 @@ export default class AppServer {
     console.log(`🚀 Server ready at http://127.0.0.1:${this.port}`);
   }
 
-  protected startMailDev() {
-    const maildev = new MailDev({
-      basePathname: "/maildev",
-    });
+  protected async startMailDev() {
+    await (new Promise((resolve) => {
+      kill(1080, 'tcp')
+      .then((message) => {
+        console.log("KILLED", message)
+        resolve(true);
+      })
+      .catch((e) => {
+        console.log("FAILED KILL", e);
+        resolve(false);
+      })
+    }))
 
-    maildev.listen(function (error: Error) {
-      if (error) {
-        console.error("Mock mailer error", error);
-      } else {
-        console.log("send emails to port 1025!");
-      }
-    });
 
     try {
+      const maildev = new MailDev({
+        basePathname: "/maildev",
+      });
+
+      maildev.listen(function (error: Error) {
+        if (error) {
+          console.error("Mock mailer error", error);
+        } else {
+          console.log("send emails to port 1025!");
+        }
+      });
       const proxy = createProxyMiddleware("/maildev", {
         target: `http://localhost:1080`,
         ws: true,

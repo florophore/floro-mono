@@ -84,8 +84,4 @@ export class WebhookEvent extends BinaryPKBaseEntity {
 
   @Column("uuid")
   repositoryEnabledWebhookKeyId!: string;
-
-  @ManyToOne("RepositoryEnabledWebhookKey", "webhookEvents")
-  @JoinColumn()
-  repositoryEnabledWebhookKey?: Relation<RepositoryEnabledWebhookKey>;
 }

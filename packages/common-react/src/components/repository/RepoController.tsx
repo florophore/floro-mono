@@ -17,7 +17,6 @@ import { RepoPage } from "./types";
 import { MergeRequestNavProvider } from "./remote/mergerequest/MergeRequestContext";
 import { CopyPasteProvider } from "./copypaste/CopyPasteContext";
 import { CreateAnnouncementsProvider } from "./remote/announcements/CreateAnnouncementsContext";
-import { useCurrentRepoState, usePluginStorageV2 } from "./local/hooks/local-hooks";
 import { useDaemonIsConnected } from "../../pubsub/socket";
 import { useQueryClient } from "react-query";
 
@@ -65,17 +64,15 @@ const RepoController = (props: Props) => {
     };
   }, [onTogglePanel]);
 
-  const { data: repoData } = useCurrentRepoState(props.repository);
-  const { data: storage } = usePluginStorageV2(props.repository);
   const isDaemonConnected = useDaemonIsConnected();
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    if (repoData && !isDaemonConnected) {
+    if (!isDaemonConnected) {
       queryClient.invalidateQueries(["repo-current:" + props.repository.id]);
     }
 
-  }, [repoData, isDaemonConnected, props.repository.id])
+  }, [isDaemonConnected, props.repository.id])
 
   return (
     <CreateAnnouncementsProvider>
@@ -92,16 +89,12 @@ const RepoController = (props: Props) => {
                 remoteCommitState={remoteCommitState}
                 comparisonState={comparisonState}
                 page={props.page}
-                apiResponse={repoData}
-                storage={storage}
                 isLoading={props.isLoading}
               >
                 <>
                     <>
-                      {props.from == "local" && !!repoData && !!storage && (
+                      {props.from == "local"  && (
                         <LocalRepoController
-                          apiResponse={repoData}
-                          storage={storage}
                           repository={props.repository}
                           plugin={props.plugin ?? "home"}
                           isExpanded={isExpanded}

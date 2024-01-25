@@ -17,6 +17,7 @@ export default class TestWebhookController extends BaseController {
       const stringPayload = JSON.stringify(req.body);
       const hmac = createHmac(
         "sha256",
+        // PUT in ENV VARS
         "iOWG3icy13lqO0xOGXD/O1YquZDAssDvytCIrOfDQPo="
       );
       const reproducedSignature =

@@ -6,9 +6,7 @@ import VersionControlPanel from "./VersionControlPanel";
 import { useLocalVCSNavContext } from "./local/vcsnav/LocalVCSContext";
 import { useSourceGraphIsShown } from "./ui-state-hook";
 import { ComparisonState, RemoteCommitState, useMergeRequestReviewPage } from "./remote/hooks/remote-state";
-import { useSearchParams } from "react-router-dom";
 import { RepoPage } from "./types";
-import { ApiResponse } from "floro/dist/src/repo";
 
 const Container = styled.main`
   display: flex;
@@ -43,8 +41,6 @@ interface Props {
   from: "local"|"remote";
   page: RepoPage;
   isLoading: boolean;
-  apiResponse?: ApiResponse|null;
-  storage?: object|null;
 }
 
 const RepoNavigator = (props: Props): React.ReactElement => {
@@ -114,9 +110,6 @@ const RepoNavigator = (props: Props): React.ReactElement => {
         page={props.page}
         plugin={props.plugin}
         isLoading={props.isLoading}
-        storage={props.storage}
-        apiResponse={props.apiResponse}
-
       />
     </Container>
   );

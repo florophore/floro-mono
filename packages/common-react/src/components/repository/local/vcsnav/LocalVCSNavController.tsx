@@ -12,27 +12,27 @@ import LocalVCSCompareMergeMode from "./LocalVCSCompareMergeMode";
 import SourceGraphNav from "./SourceGraphNav";
 import LocalSettingsVCSPage from "./LocalSettingsVCSPage";
 import { RepoPage } from "../../types";
-import { ApiResponse } from "floro/dist/src/repo";
+import { useCurrentRepoState, usePluginStorageV2 } from "../hooks/local-hooks";
 
 interface Props {
   repository: Repository;
   plugin: string;
   page: RepoPage;
-  apiResponse?: ApiResponse|null;
-  storage?: object|null;
 }
 
 const LocalVCSNavController = (props: Props) => {
   const { subAction, showLocalSettings } = useLocalVCSNavContext();
+  const { data: repoData } = useCurrentRepoState(props.repository);
+  const { data: storage } = usePluginStorageV2(props.repository);
 
   if (showLocalSettings) {
     return <LocalSettingsVCSPage repository={props.repository} />;
   }
-  if (props?.apiResponse) {
+  if (repoData) {
     if (subAction == "branches") {
       return (
         <LocalBranchesNavPage
-          apiResponse={props?.apiResponse}
+          apiResponse={repoData}
           repository={props.repository}
         />
       );
@@ -40,7 +40,7 @@ const LocalVCSNavController = (props: Props) => {
     if (subAction == "new_branch") {
       return (
         <NewBranchNavPage
-          apiResponse={props?.apiResponse}
+          apiResponse={repoData}
           repository={props.repository}
         />
       );
@@ -49,7 +49,7 @@ const LocalVCSNavController = (props: Props) => {
     if (subAction == "edit_branch") {
       return (
         <EditBranchNavPage
-          apiResponse={props?.apiResponse}
+          apiResponse={repoData}
           repository={props.repository}
         />
       );
@@ -58,7 +58,7 @@ const LocalVCSNavController = (props: Props) => {
     if (subAction == "write_commit") {
       return (
         <WriteCommitNavPage
-          apiResponse={props?.apiResponse}
+          apiResponse={repoData}
           repository={props.repository}
         />
       );
@@ -67,45 +67,45 @@ const LocalVCSNavController = (props: Props) => {
     if (subAction == "source_graph") {
       return (
         <SourceGraphNav
-          apiResponse={props?.apiResponse}
+          apiResponse={repoData}
           repository={props.repository}
         />
       );
     }
   }
-  if (props?.apiResponse?.repoState.commandMode == "view" && props?.storage) {
+  if (repoData?.repoState.commandMode == "view" && storage) {
     return (
       <LocalVCSViewMode
-        storage={props?.storage}
-        apiResponse={props?.apiResponse}
+        storage={storage}
+        apiResponse={repoData}
         repository={props.repository}
         plugin={props.plugin}
       />
     );
   }
 
-  if (props?.apiResponse?.repoState.commandMode == "compare") {
-    if (props?.apiResponse?.repoState?.comparison?.against == "merge") {
+  if (repoData?.repoState.commandMode == "compare") {
+    if (repoData?.repoState?.comparison?.against == "merge") {
       return (
         <LocalVCSCompareMergeMode
-          apiResponse={props?.apiResponse}
+          apiResponse={repoData}
           repository={props.repository}
         />
       );
     }
     return (
       <LocalVCSCompareMode
-        apiResponse={props?.apiResponse}
+        apiResponse={repoData}
         repository={props.repository}
       />
     );
   }
 
-  if (props?.apiResponse?.repoState.commandMode == "edit" && props?.storage) {
+  if (repoData?.repoState.commandMode == "edit" && storage) {
     return (
       <LocalVCSEditMode
-        storage={props?.storage}
-        apiResponse={props?.apiResponse}
+        storage={storage}
+        apiResponse={repoData}
         repository={props.repository}
         plugin={props.plugin}
         page={props.page}

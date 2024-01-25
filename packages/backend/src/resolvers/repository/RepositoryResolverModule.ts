@@ -4444,7 +4444,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
       }
     ),
     removeEnabledWebhookKey: runWithHooks(
-      () => [this.repoApiSettingAccessGuard],
+      () => [this.loggedInUserGuard, this.repoApiSettingAccessGuard],
       async (_, args: main.MutationRemoveEnabledWebhookKeyArgs) => {
         const repository = await this.repoDataService.fetchRepoById(
           args.repositoryId
@@ -4467,7 +4467,7 @@ export default class RepositoryResolverModule extends BaseResolverModule {
             type: "FORBIDDEN_ACTION_ERROR",
           };
         }
-        await this.repoEnabledWebhookKeyService.removeEnabledApiKey(
+        const res = await this.repoEnabledWebhookKeyService.removeEnabledApiKey(
           repositoryEnabledWebhookKey
         );
         this.pubsub?.publish?.(`REPOSITORY_UPDATED:${repository?.id}`, {

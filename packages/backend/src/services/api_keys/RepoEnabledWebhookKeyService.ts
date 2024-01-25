@@ -105,7 +105,6 @@ export default class RepoEnabledWebhookKeyService {
       await this.contextFactory.createContext(
         RepositoryEnabledWebhookKeysContext
       );
-    await repositoryEnabledWebhookKeysContext.deleteById(repoEnabledWebhookKey.id);
-    return;
+    return await repositoryEnabledWebhookKeysContext.deleteById(repoEnabledWebhookKey.id);
   }
 }

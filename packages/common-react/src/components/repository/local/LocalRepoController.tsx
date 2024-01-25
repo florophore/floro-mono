@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useCallback, useMemo } from "react";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import { Repository } from "@floro/graphql-schemas/src/generated/main-client-graphql";
-import { useUpdateCurrentCommand } from "./hooks/local-hooks";
+import { useCurrentRepoState, usePluginStorageV2, useUpdateCurrentCommand } from "./hooks/local-hooks";
 import DotsLoader from "@floro/storybook/stories/design-system/DotsLoader";
 import LocalRepoSubHeader from "./LocalRepoSubHeader";
 import HomeRead from "../home/HomeRead";
@@ -50,8 +50,6 @@ const NoPluginText = styled.h3`
 
 interface Props {
   repository: Repository;
-  apiResponse: ApiResponse;
-  storage: object;
   plugin?: string;
   isExpanded: boolean;
   onSetIsExpanded: (isExpanded: boolean) => void;
@@ -63,6 +61,9 @@ const LocalRepoController = (props: Props) => {
     () => (theme.name == "light" ? "purple" : "lightPurple"),
     [theme.name]
   );
+
+  const { data: repoData } = useCurrentRepoState(props.repository);
+  const { data: storage } = usePluginStorageV2(props.repository);
   const { setCompareFrom, setSubAction, showLocalSettings } = useLocalVCSNavContext();
   const { isSelectMode } = useCopyPasteContext("local");
 
@@ -73,40 +74,40 @@ const LocalRepoController = (props: Props) => {
     if (showSourceGraph || isSelectMode) {
       return;
     }
-    if (props.apiResponse?.repoState?.commandMode == "edit") {
+    if (repoData?.repoState?.commandMode == "edit") {
       updateCommandState.mutate("view")
-    } else if (props.apiResponse?.repoState?.commandMode == "view") {
+    } else if (repoData?.repoState?.commandMode == "view") {
       updateCommandState.mutate("edit")
-    } else if (props.apiResponse?.repoState?.commandMode == "compare") {
+    } else if (repoData?.repoState?.commandMode == "compare") {
       updateCommandState.mutate("view")
     }
-  }, [props.apiResponse?.repoState?.commandMode, updateCommandState, showSourceGraph, isSelectMode]);
+  }, [repoData?.repoState?.commandMode, updateCommandState, showSourceGraph, isSelectMode]);
 
   const onToggleBranches = useCallback(() => {
-    if (props.apiResponse?.repoState?.commandMode != "view") {
+    if (repoData?.repoState?.commandMode != "view") {
       return;
     }
     setSubAction("branches");
-  }, [props.apiResponse?.repoState?.commandMode]);
+  }, [repoData?.repoState?.commandMode]);
 
   const onGoToBefore = useCallback(() => {
 
     if (showSourceGraph) {
       return;
     }
-    if (props.apiResponse?.repoState?.commandMode == "compare") {
+    if (repoData?.repoState?.commandMode == "compare") {
       setCompareFrom("before");
     }
-  }, [props.apiResponse?.repoState?.commandMode, showSourceGraph]);
+  }, [repoData?.repoState?.commandMode, showSourceGraph]);
 
   const onGoToAfter = useCallback(() => {
     if (showSourceGraph) {
       return;
     }
-    if (props.apiResponse?.repoState?.commandMode == "compare") {
+    if (repoData?.repoState?.commandMode == "compare") {
       setCompareFrom("after");
     }
-  }, [props.apiResponse?.repoState?.commandMode, showSourceGraph]);
+  }, [repoData?.repoState?.commandMode, showSourceGraph]);
 
 
   const onToggleCompare = useCallback(() => {
@@ -150,14 +151,14 @@ const LocalRepoController = (props: Props) => {
   const { compareFrom} = useLocalVCSNavContext();
 
   const pluginCode = useMemo(() => {
-    if (!props.apiResponse || !props.storage || !props.plugin) {
+    if (!repoData || !repoData || !props.plugin) {
       return null;
     }
     if (props.plugin == "home") {
       return null;
     }
-    if (props.apiResponse?.repoState?.commandMode == "compare" && compareFrom == "before") {
-      const hasPlugin = !!props.apiResponse?.beforeState?.plugins?.find?.(
+    if (repoData?.repoState?.commandMode == "compare" && compareFrom == "before") {
+      const hasPlugin = !!repoData?.beforeState?.plugins?.find?.(
         (v) => props.plugin == v.key
       );
       if (!hasPlugin) {
@@ -172,10 +173,10 @@ const LocalRepoController = (props: Props) => {
       }
     }
 
-    const hasPlugin = !!props.apiResponse?.applicationState?.plugins?.find?.(
+    const hasPlugin = !!repoData?.applicationState?.plugins?.find?.(
       (v) => props.plugin == v.key
     );
-    if (props.apiResponse?.repoState?.commandMode == "compare" && compareFrom == "after") {
+    if (repoData?.repoState?.commandMode == "compare" && compareFrom == "after") {
       if (!hasPlugin) {
         return (
           <NoPluginContainer>
@@ -187,7 +188,7 @@ const LocalRepoController = (props: Props) => {
       }
     }
 
-    if (!hasPlugin && props.apiResponse?.repoState?.commandMode != "compare") {
+    if (!hasPlugin && repoData?.repoState?.commandMode != "compare") {
         return (
           <NoPluginContainer>
             <NoPluginTextWrapper>
@@ -197,17 +198,17 @@ const LocalRepoController = (props: Props) => {
         );
     }
 
-    if (props.apiResponse?.repoState?.commandMode == "compare" && compareFrom == "before") {
+    if (repoData?.repoState?.commandMode == "compare" && compareFrom == "before" && storage) {
       return (
         <>
-          {props.apiResponse?.beforeState?.plugins?.map((plugin) => {
+          {repoData?.beforeState?.plugins?.map((plugin) => {
             return (
               <React.Fragment key={plugin.key + ":" + plugin.value}>
                 {plugin.key == props.plugin && (
                   <LocalPluginController
                     pluginName={props.plugin}
                     repository={props.repository}
-                    apiResponse={props.apiResponse}
+                    apiResponse={repoData}
                     isExpanded={props.isExpanded}
                     onSetIsExpanded={props.onSetIsExpanded}
                     onToggleCommandMode={onToggleCommandMode}
@@ -215,7 +216,7 @@ const LocalRepoController = (props: Props) => {
                     onToggleAfter={onGoToAfter}
                     onToggleBefore={onGoToBefore}
                     onToggleBranches={onToggleBranches}
-                    storage={props.storage}
+                    storage={storage}
                   />
                 )}
               </React.Fragment>
@@ -226,14 +227,14 @@ const LocalRepoController = (props: Props) => {
     }
       return (
         <>
-          {props?.apiResponse?.applicationState?.plugins?.map((plugin) => {
+          {repoData?.applicationState?.plugins?.map((plugin) => {
             return (
               <React.Fragment key={plugin.key + ":" + plugin.value}>
-                {plugin.key == props.plugin && (
+                {plugin.key == props.plugin && !!storage && (
                   <LocalPluginController
                     pluginName={props.plugin ?? "home"}
                     repository={props.repository}
-                    apiResponse={props?.apiResponse}
+                    apiResponse={repoData}
                     isExpanded={props.isExpanded}
                     onSetIsExpanded={props.onSetIsExpanded}
                     onToggleCommandMode={onToggleCommandMode}
@@ -241,7 +242,7 @@ const LocalRepoController = (props: Props) => {
                     onToggleAfter={onGoToAfter}
                     onToggleBefore={onGoToBefore}
                     onToggleBranches={onToggleBranches}
-                    storage={props.storage}
+                    storage={storage}
                   />
                 )}
               </React.Fragment>
@@ -253,20 +254,20 @@ const LocalRepoController = (props: Props) => {
     onToggleCommandMode,
     props.onSetIsExpanded,
     props.isExpanded,
-    props.apiResponse,
-    props?.storage,
+    repoData,
+    storage,
     props.plugin,
     props.repository,
     compareFrom,
     theme,
-    props.apiResponse?.repoState?.commandMode,
-    props.apiResponse?.applicationState?.plugins,
-    props.apiResponse?.beforeState?.plugins,
+    repoData?.repoState?.commandMode,
+    repoData?.applicationState?.plugins,
+    repoData?.beforeState?.plugins,
   ]);
 
   return (
     <>
-      {!props?.apiResponse && (
+      {!repoData && (
         <LoadingContainer>
           <DotsLoader color={loaderColor} size={"large"} />
         </LoadingContainer>
@@ -274,19 +275,19 @@ const LocalRepoController = (props: Props) => {
       {showLocalSettings && (
         <LocalSettingsHome repository={props.repository}/>
       )}
-      {!showLocalSettings && props?.apiResponse && (
+      {!showLocalSettings && repoData && (
         <>
           {localRepoHeader}
           {showSourceGraph && <SourceGraphMount/>}
           {!showSourceGraph && (
             <>
-              {props.plugin == "home" && props?.apiResponse?.repoState?.commandMode != "edit" && (
+              {props.plugin == "home" && repoData?.repoState?.commandMode != "edit" && (
                 <HomeRead
-                repository={props.repository} apiResponse={props?.apiResponse} />
+                repository={props.repository} apiResponse={repoData} />
               )}
-              {props.plugin == "home" && props?.apiResponse?.repoState?.commandMode == "edit" && (
+              {props.plugin == "home" && repoData?.repoState?.commandMode == "edit" && (
                 <HomeWrite
-                repository={props.repository} apiResponse={props?.apiResponse} />
+                repository={props.repository} apiResponse={repoData} />
               )}
             </>
           )}

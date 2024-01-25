@@ -82,8 +82,4 @@ export class ApiEvent extends BinaryPKBaseEntity {
 
   @Column("uuid")
   repositoryEnabledApiKeyId!: string;
-
-  @ManyToOne("RepositoryEnabledApiKey", "apiEvents")
-  @JoinColumn()
-  repositoryEnabledApiKey?: Relation<RepositoryEnabledApiKey>;
 }

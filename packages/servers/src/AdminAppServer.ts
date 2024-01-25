@@ -28,7 +28,7 @@ export default class AdminAppServer extends AppServer {
     });
   }
 
-  protected startMailDev() {
+  protected async startMailDev() {
     // Conflicts with maildev outbound port
   }
 }

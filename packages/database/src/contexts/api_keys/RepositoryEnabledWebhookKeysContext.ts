@@ -28,6 +28,7 @@ export default class RepositoryEnabledWebhookKeysContext extends BaseContext {
      await this.queryRunner.manager.delete(RepositoryEnabledWebhookKey, { id });
      return true;
     } catch(e) {
+      console.log("E", e);
       return false
     }
   }
