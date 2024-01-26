@@ -257,6 +257,7 @@ const PhraseRow = (props: Props) => {
     props.searchText ?? ""
   );
 
+
   useEffect(() => {
     const timeout = setTimeout(() => {
       setManualSearchText(realManualSearchText ?? "");
@@ -761,6 +762,18 @@ const PhraseRow = (props: Props) => {
     onCloseFocus,
   } = useFocusContext();
 
+  const isFocused =
+    showFocus &&
+    focusPortal?.current &&
+    props.phraseRef &&
+    focusPhraseRef == props.phraseRef;
+
+    useEffect(() => {
+      if (isFocused) {
+        setIsVisible(true);
+      }
+    }, [isFocused])
+
   const memoizedTranslation = useMemo(() => {
     if (!selectedLocale) {
       return null;
@@ -804,7 +817,7 @@ const PhraseRow = (props: Props) => {
         isPinned={isPinned}
         showEnabledFeatures={showEnabledFeatures}
         setShowEnabledFeatures={setShowEnabledFeatures}
-        isVisible={isVisible}
+        isVisible={isVisible || !!isFocused}
         ref={subContainer}
         isSearching={isSearching}
         searchText={manualSearchText}
@@ -874,11 +887,6 @@ const PhraseRow = (props: Props) => {
   }, [props.phraseRef]);
 
 
-  const isFocused =
-    showFocus &&
-    focusPortal?.current &&
-    props.phraseRef &&
-    focusPhraseRef == props.phraseRef;
   useEffect(() => {
     if (isFocused) {
       setTimeout(props.onClearMessage, 300);
