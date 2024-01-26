@@ -8,7 +8,7 @@ import React, {
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import RootLongModal from "@floro/common-react/src/components/RootLongModal";
-import { SchemaTypes, makeQueryRef, useFloroContext, useFloroState } from "../floro-schema-api";
+import { SchemaTypes, makeQueryRef, useFloroContext, useFloroState, useReferencedObject } from "../floro-schema-api";
 
 import Button from "@floro/storybook/stories/design-system/Button";
 import Input from "@floro/storybook/stories/design-system/Input";
@@ -99,22 +99,43 @@ const AddTermModal = (props: Props) => {
     return true;
   }, [newId, props.terms]);
 
+  const terms = useReferencedObject("$(text).terms")
 
   const onPrependNewTerm = useCallback(() => {
-    if (!newId || !newTermName || !canAddNewName || !props.terms || !applicationState?.text.localeSettings.defaultLocaleRef) {
+    if (
+      !newId ||
+      !newTermName ||
+      !canAddNewName ||
+      !props.terms ||
+      !applicationState?.text.localeSettings.defaultLocaleRef ||
+      !terms
+    ) {
       return;
     }
-    const localizedTerm: SchemaTypes['$(text).terms.id<?>.localizedTerms.id<?>'] = {
-      id: applicationState?.text.localeSettings.defaultLocaleRef,
-      termValue: newTermName
-    }
-    props.setTerms([
-      { id: newId, name: newTermName, localizedTerms: [localizedTerm] },
-      ...props.terms,
-    ]);
+    const localizedTerm: SchemaTypes["$(text).terms.id<?>.localizedTerms.id<?>"] =
+      {
+        id: applicationState?.text.localeSettings.defaultLocaleRef,
+        termValue: newTermName,
+      };
+    props.setTerms(
+      [
+        { id: newId, name: newTermName, localizedTerms: [localizedTerm] },
+        ...(terms ?? []),
+      ],
+      true
+    );
     setNewTermName("");
     props.onDismiss();
-  }, [props.onDismiss, newTermName, newId, canAddNewName, props.terms, props.setTerms, applicationState?.text.localeSettings.defaultLocaleRef]);
+  }, [
+    applicationState,
+    props.onDismiss,
+    newTermName,
+    newId,
+    canAddNewName,
+    terms,
+    props.setTerms,
+    applicationState?.text.localeSettings.defaultLocaleRef,
+  ]);
 
   return (
     <RootLongModal

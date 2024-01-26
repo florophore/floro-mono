@@ -450,14 +450,14 @@ const PhraseGroup = (props: Props) => {
       }
       onFocusPhraseGroup();
       setShowAddPhraseKey(false);
-      if (!phraseGroup?.id || !phraseGroup?.name) {
+      if (!props.phraseGroup?.id || !props.phraseGroup?.name) {
         return;
       }
       const updateFn = setPhraseGroup(
         {
-          id: phraseGroup.id,
-          name: phraseGroup.name,
-          phrases: [phrase, ...(phraseGroup?.phrases ?? [])],
+          id: props.phraseGroup.id,
+          name: props.phraseGroup.name,
+          phrases: [phrase, ...(props.phraseGroup?.phrases ?? [])],
         } as SchemaTypes["$(text).phraseGroups.id<?>"],
         false
       );
@@ -465,7 +465,7 @@ const PhraseGroup = (props: Props) => {
         setTimeout(updateFn, 0);
       }
     },
-    [onFocusPhraseGroup, isExpanded, phraseGroupRef, phraseGroup?.phrases, setPhraseGroup]
+    [onFocusPhraseGroup, isExpanded, phraseGroupRef, props.phraseGroup?.phrases, setPhraseGroup]
   );
 
   useEffect(() => {

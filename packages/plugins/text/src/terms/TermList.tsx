@@ -116,6 +116,7 @@ const TermList = (props: Props) => {
     props.pinnedTerms,
     props.globalFilterUntranslatedTerms,
     props.terms.length,
+    props.terms,
     props.selectedTopLevelLocale,
   ]);
 

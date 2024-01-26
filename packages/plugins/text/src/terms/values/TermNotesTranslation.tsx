@@ -83,7 +83,7 @@ const TermNotesTranslation = (props: Props) => {
     localeRef
   );
 
-  const [termTranslation, setTermTranslation, saveTermTranslation] =
+  const [termTranslation, setTermTranslation] =
     useFloroState(termTranslationRef);
 
   const onSetContent = useCallback(
@@ -94,7 +94,7 @@ const TermNotesTranslation = (props: Props) => {
       setTermTranslation({
         ...termTranslation,
         localNotes: text,
-      }, false);
+      }, true);
     },
     [
       termTranslation?.termValue,
@@ -105,17 +105,17 @@ const TermNotesTranslation = (props: Props) => {
     ]
   );
 
-  useEffect(() => {
-    if (commandMode == "edit") {
-      const timeout = setTimeout(() => {
-        saveTermTranslation();
-      }, 500);
+  //useEffect(() => {
+  //  if (commandMode == "edit") {
+  //    const timeout = setTimeout(() => {
+  //      saveTermTranslation();
+  //    }, 500);
 
-      return () => {
-        clearTimeout(timeout);
-      }
-    }
-  }, [termTranslation?.localNotes, commandMode])
+  //    return () => {
+  //      clearTimeout(timeout);
+  //    }
+  //  }
+  //}, [termTranslation?.localNotes, commandMode])
 
   return (
     <>

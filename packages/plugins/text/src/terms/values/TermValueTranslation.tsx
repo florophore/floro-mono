@@ -111,7 +111,7 @@ const TermValueTranslation = (props: Props) => {
     localeRef
   );
 
-  const [termTranslation, setTermTranslation, saveTermTranslation] =
+  const [termTranslation, setTermTranslation] =
     useFloroState(termTranslationRef);
 
   const contentIsEmpty = useMemo(() => {
@@ -126,7 +126,7 @@ const TermValueTranslation = (props: Props) => {
       setTermTranslation({
         ...termTranslation,
         termValue: text,
-      }, false);
+      }, true);
       if (
         contentIsEmpty &&
         props.globalFilterUntranslatedTerms &&
@@ -149,17 +149,17 @@ const TermValueTranslation = (props: Props) => {
     ]
   );
 
-  useEffect(() => {
-    if (commandMode == "edit") {
-      const timeout = setTimeout(() => {
-        saveTermTranslation();
-      }, 500);
+  //useEffect(() => {
+  //  if (commandMode == "edit") {
+  //    const timeout = setTimeout(() => {
+  //      saveTermTranslation();
+  //    }, 500);
 
-      return () => {
-        clearTimeout(timeout);
-      }
-    }
-  }, [termTranslation?.termValue, commandMode])
+  //    return () => {
+  //      clearTimeout(timeout);
+  //    }
+  //  }
+  //}, [termTranslation?.termValue, commandMode])
 
   return (
     <>
