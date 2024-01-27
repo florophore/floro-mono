@@ -1,11 +1,14 @@
 import React, {
-  useMemo,
+  useCallback,
+  useMemo, useState,
 } from "react";
 import styled from "@emotion/styled";
 import ColorPalette from "@floro/styles/ColorPalette";
 import PhraseHeader from "./PhraseHeader";
 import {
   SchemaTypes,
+  makeQueryRef,
+  useFloroContext,
   useHasIndication,
   useReferencedObject,
 } from "../floro-schema-api";
@@ -16,6 +19,9 @@ import { useFocusContext } from "../focusview/FocusContext";
 import TermHeader from "./TermHeader";
 import TermFilter from "./TermFilter";
 import { useDiffColor } from "../diff";
+import Button from "@floro/storybook/stories/design-system/Button";
+import BulkTranslateModal from "../bulktranslate/BulkTranslateModal";
+import { useScroll } from "framer-motion";
 
 const HeaderContainer = styled.div`
   width: 100%;
@@ -127,7 +133,59 @@ interface Props {
 }
 
 const HeaderV2 = (props: Props) => {
+  const { commandMode } = useFloroContext();
+  const [showBulkTranslate, setShowLocaleTranslate] = useState(false);
+  const onShowBulkTranslate = useCallback(() => {
+    setShowLocaleTranslate(true);
+  }, []);
+  const onHideBulkTranslate = useCallback(() => {
+    setShowLocaleTranslate(false);
+  }, []);
   const locales = useReferencedObject("$(text).localeSettings.locales");
+  const localeSettings = useReferencedObject("$(text).localeSettings");
+  const selectedLocale = useMemo(() => {
+    return locales?.find?.(l => l.localeCode == props.selectedTopLevelLocale) ?? null;
+  }, [locales, props.selectedTopLevelLocale]);
+
+  const phraseCount = useMemo(() => {
+    let count = 0;
+    for (let phraseGroup of props.phraseGroups ?? []) {
+      count += phraseGroup?.phrases.length ?? 0;
+    }
+    return count;
+  }, [props.phraseGroups])
+
+  const systemSourceLocale = useMemo(() => {
+    if (selectedLocale?.defaultTranslateFromLocaleRef) {
+      return (
+        localeSettings?.locales?.find(
+          (l) =>
+            makeQueryRef(
+              "$(text).localeSettings.locales.localeCode<?>",
+              l.localeCode
+            ) == selectedLocale.defaultTranslateFromLocaleRef
+        ) ?? null
+      );
+    }
+    if (
+      localeSettings?.defaultLocaleRef ==
+      makeQueryRef(
+        "$(text).localeSettings.locales.localeCode<?>",
+        selectedLocale?.localeCode as string
+      )
+    ) {
+      return null;
+    }
+    return (
+      localeSettings?.locales?.find?.(
+        (l) =>
+          makeQueryRef(
+            "$(text).localeSettings.locales.localeCode<?>",
+            l.localeCode
+          ) == localeSettings.defaultLocaleRef
+      ) ?? null
+    );
+  }, [localeSettings?.locales, localeSettings?.defaultLocaleRef, selectedLocale]);
   const prasesHasIndication = useHasIndication(
     "$(text).phraseGroups",
     true
@@ -160,6 +218,14 @@ const HeaderV2 = (props: Props) => {
 
   return (
     <>
+    {selectedLocale && systemSourceLocale && (
+      <BulkTranslateModal
+        show={showBulkTranslate && commandMode == "edit"}
+        onDismiss={onHideBulkTranslate}
+        selectedLocale={selectedLocale}
+        systemSourceLocale={systemSourceLocale}
+      />
+    )}
       <HeaderContainer>
         <div style={{ marginRight: 12 }}>
           <TriToggle
@@ -169,9 +235,7 @@ const HeaderV2 = (props: Props) => {
                 <span style={{ position: "relative" }}>
                   {"phrases"}
                   {prasesHasIndication && (
-                    <ChangeDot
-                      style={{ background: phraseDiffColor }}
-                    />
+                    <ChangeDot style={{ background: phraseDiffColor }} />
                   )}
                 </span>
               ),
@@ -182,9 +246,7 @@ const HeaderV2 = (props: Props) => {
                 <span style={{ position: "relative" }}>
                   {"terms"}
                   {termsHasIndication && (
-                    <ChangeDot
-                      style={{ background: termDiffColor }}
-                    />
+                    <ChangeDot style={{ background: termDiffColor }} />
                   )}
                 </span>
               ),
@@ -195,9 +257,7 @@ const HeaderV2 = (props: Props) => {
                 <span style={{ position: "relative" }}>
                   {"locales"}
                   {localesHasIndication && (
-                    <ChangeDot
-                      style={{ background: localeDiffColor }}
-                    />
+                    <ChangeDot style={{ background: localeDiffColor }} />
                   )}
                 </span>
               ),
@@ -210,19 +270,37 @@ const HeaderV2 = (props: Props) => {
         </div>
         <div>
           {!showFocus && props.page != "locales" && (
-            <div style={{ marginTop: -12, zIndex: 3 }}>
-              <InputSelector
-                hideLabel
-                options={localeOptions}
-                value={props.selectedTopLevelLocale ?? null}
-                label={"locale"}
-                placeholder={"locale"}
-                size="shortest"
-                onChange={(option) => {
-                  props.setSelectedTopLevelLocale(option?.value as string);
-                }}
-                maxHeight={800}
-              />
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              {props.page == "phrases" && !!systemSourceLocale && commandMode == "edit" && phraseCount > 0 && (
+                <div style={{ width: 200, marginLeft: 12, marginRight: 48 }}>
+                  <Button
+                    size={"medium"}
+                    label={"bulk translate"}
+                    bg={"purple"}
+                    onClick={onShowBulkTranslate}
+                  />
+                </div>
+              )}
+              <div style={{ marginTop: -12, zIndex: 3 }}>
+                <InputSelector
+                  hideLabel
+                  options={localeOptions}
+                  value={props.selectedTopLevelLocale ?? null}
+                  label={"locale"}
+                  placeholder={"locale"}
+                  size="shortest"
+                  onChange={(option) => {
+                    props.setSelectedTopLevelLocale(option?.value as string);
+                  }}
+                  maxHeight={800}
+                />
+              </div>
             </div>
           )}
         </div>
@@ -252,8 +330,12 @@ const HeaderV2 = (props: Props) => {
           {props.showFilters && props.page == "terms" && (
             <TermFilter
               selectedTopLevelLocale={props.selectedTopLevelLocale}
-              globalFilterUntranslatedTerms={props.globalFilterUntranslatedTerms}
-              setGlobalFilterUnstranslatedTerms={props.setGlobalFilterUnstranslatedTerms}
+              globalFilterUntranslatedTerms={
+                props.globalFilterUntranslatedTerms
+              }
+              setGlobalFilterUnstranslatedTerms={
+                props.setGlobalFilterUnstranslatedTerms
+              }
             />
           )}
         </FilterContainer>

@@ -37,10 +37,10 @@ export const getTranslateFromLocale = (
   }
   const locale = getReferencedObject(applicationState, localeRef);
   const defaultLocale = getGlobalDefaultLocale(applicationState);
-  return locale.defaultTranslateFromLocaleRef
+  return locale?.defaultTranslateFromLocaleRef
     ? getReferencedObject(
         applicationState,
-        locale.defaultTranslateFromLocaleRef
+        locale?.defaultTranslateFromLocaleRef
       )
     : defaultLocale;
 };
@@ -62,7 +62,7 @@ export const getShouldSkipUpdates = (
     translateFromLocale?.localeCode as string
   );
   return (
-    localeRef == locale.defaultTranslateFromLocaleRef &&
+    localeRef == locale?.defaultTranslateFromLocaleRef &&
     (!locale.defaultTranslateFromLocaleRef ||
       locale.defaultFallbackLocaleRef == translateFromLocaleRef)
   );
