@@ -136,15 +136,12 @@ const StyleClassList = (props: Props) => {
 
   const onDragEnd = useCallback(() => {
     setIsDragging(false);
-    console.log("DONE")
-
     saveStyleClasses();
   }, [saveStyleClasses]);
 
 
   const onReOrderStyleClasses = useCallback(
     (values: SchemaTypes['$(text).phraseGroups.id<?>.phrases.id<?>.styleClasses']) => {
-      console.log("V", values)
         if (values) {
             setStyleClasses(values, false);
         }

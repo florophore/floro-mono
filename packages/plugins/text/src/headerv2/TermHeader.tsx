@@ -545,7 +545,6 @@ const TermHeader = (props: Props) => {
                                   );
                                   return ref != p;
                                 }) ?? [];
-                              console.log("N", next);
                               props.setPinnedTerms(next);
                             }}
                             style={{
