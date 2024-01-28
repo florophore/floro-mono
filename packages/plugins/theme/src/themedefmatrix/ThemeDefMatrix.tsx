@@ -81,7 +81,6 @@ const ThemeDefMatrix = (props: Props) => {
 
   const [isDragging, setIsDragging] = useState(false);
   const [newColorName, setNewColorName] = useState("");
-  const [newIncludeVariant, setNewIncludeVariants] = useState(false);
   const [isReOrderMode, setIsReOrderMode] = useState(false);
 
   const onReOrderThemeColors = useCallback(
@@ -131,6 +130,10 @@ const ThemeDefMatrix = (props: Props) => {
   }, [newId, themeColors]);
 
   const onAppendNewColor = useCallback(() => {
+    if (!applicationState) {
+      return;
+    }
+    const themeColors = getReferencedObject(applicationState, "$(theme).themeColors");
     if (!newId || !newColorName || !canAddNewName || !themeColors) {
       return;
     }
@@ -147,7 +150,7 @@ const ThemeDefMatrix = (props: Props) => {
       ],
     );
     setNewColorName("");
-  }, [setThemeColors, newColorName, newId, canAddNewName, themeColors]);
+  }, [applicationState, setThemeColors, newColorName, newId, canAddNewName, themeColors]);
 
   const onDragStart = useCallback(() => {
     setIsDragging(true);
