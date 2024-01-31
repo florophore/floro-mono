@@ -2,11 +2,8 @@ import React, { useMemo, useCallback, useState, useEffect } from "react";
 import {
   PointerTypes,
   SchemaTypes,
-  makeQueryRef,
-  useExtractQueryArgs,
   useFloroContext,
   useFloroState,
-  useQueryRef,
   useReferencedObject,
 } from "../../../../floro-schema-api";
 import { useTheme } from "@emotion/react";
@@ -91,6 +88,10 @@ const options = [
     value: "lte",
     label: "less than or equal to",
   },
+  {
+    value: "ends_with",
+    label: "ends with",
+  },
 ];
 
 const floatOptions = [
@@ -117,6 +118,10 @@ const floatOptions = [
   {
     value: "lte",
     label: "less than or equal to",
+  },
+  {
+    value: "ends_with",
+    label: "ends with",
   },
   {
     value: "is_fractional",
@@ -295,6 +300,9 @@ const SubCondition = (props: Props) => {
     }
     if (subcondition?.operator == "lte") {
       return `is less than or equal to`;
+    }
+    if (subcondition?.operator == "ends_with") {
+      return `ends with`;
     }
     if (subcondition?.operator == "is_fractional") {
       return `is a fractional quantity`;

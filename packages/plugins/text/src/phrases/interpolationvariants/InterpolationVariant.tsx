@@ -34,6 +34,9 @@ import TranslationMemoryList from "../translationmemory/TranslationMemoryList";
 import { useDiffColor } from "../../diff";
 import TermModal from "../termmodal/TermModal";
 import PromptModal from "../promptmodal/PromptModal";
+import PluralizeModal from "../pluralizationmodal/PluralizeModal";
+import GenderizeModal from "../genderizemodal/GenderizeModal";
+
 
 const Container = styled.div`
 `;
@@ -161,6 +164,19 @@ const InterpolationVariant = (props: Props) => {
   const [defaultValue, setDefaultValue] = useFloroState(
     `${localRuleTranslationRef}.defaultValue`
   );
+
+  const isGenderVar = useMemo(() => {
+    return variable.name == "gender" && variable?.varType == "string";
+  }, [variable])
+
+  const hasGenderVar = useMemo(() => {
+    for (const variable of props?.phrase?.variables ?? []) {
+      if (variable.name == "gender" && variable?.varType == "string") {
+        return true;
+      }
+    }
+    return false;
+  }, [props?.phrase?.variables])
 
   const terms = useReferencedObject("$(text).terms");
   const localeTerms = useMemo(() => {
@@ -601,6 +617,26 @@ const InterpolationVariant = (props: Props) => {
     setShowMLTranslate(false);
   }, []);
 
+  const [showPluralize, setShowPluralize] = useState(false);
+
+  const onShowPluralize = useCallback(() => {
+    setShowPluralize(true);
+  }, []);
+
+  const onHidePluralize = useCallback(() => {
+    setShowPluralize(false);
+  }, []);
+
+  const [showGenderize, setShowGenderize] = useState(false);
+
+  const onShowGenderize = useCallback(() => {
+    setShowGenderize(true);
+  }, []);
+
+  const onHideGenderize = useCallback(() => {
+    setShowGenderize(false);
+  }, []);
+
   const [showPrompt, setShowPrompt] = useState(false);
 
   const onShowPrompt = useCallback(() => {
@@ -721,6 +757,32 @@ const InterpolationVariant = (props: Props) => {
         targetPlainText={defaultValue?.plainText ?? ""}
         targetEditorDoc={targetEditorDoc}
       />
+        <PluralizeModal
+          show={showPluralize && commandMode == "edit"}
+          onDismiss={onHidePluralize}
+          targetRichText={defaultValue?.richTextHtml ?? ""}
+          targetEditorDoc={targetEditorDoc}
+          targetEditorObserver={targetEditorObserver}
+          varName={variable.name}
+          varType={variable.varType}
+          locale={props.selectedLocale}
+          localRuleTranslationRef={localRuleTranslationRef}
+          varRef={props.interpolationVariant.variableRef}
+          hasGender={hasGenderVar}
+        />
+        {isGenderVar && (
+          <GenderizeModal
+            show={showGenderize && commandMode == "edit"}
+            onDismiss={onHideGenderize}
+            targetRichText={defaultValue?.richTextHtml ?? ""}
+            targetEditorDoc={targetEditorDoc}
+            targetEditorObserver={targetEditorObserver}
+            locale={props.selectedLocale}
+            localRuleTranslationRef={localRuleTranslationRef}
+            varRef={props.interpolationVariant.variableRef}
+          />
+
+        )}
       <PromptModal
         show={showPrompt && commandMode == "edit"}
         selectedLocale={props.selectedLocale}
@@ -849,6 +911,33 @@ const InterpolationVariant = (props: Props) => {
                       {`(${props.selectedLocale.localeCode}):`}
                     </span>
                   </div>
+                  {(variable.varType == "float" ||
+                    variable.varType == "integer") &&
+                    (defaultValue?.plainText?.trim?.() ?? "") != "" &&
+                    commandMode == "edit" && (
+                      <div style={{ width: 120, marginLeft: 12 }}>
+                        <Button
+                          label={"pluralize"}
+                          bg={"purple"}
+                          size={"small"}
+                          textSize="small"
+                          onClick={onShowPluralize}
+                        />
+                      </div>
+                    )}
+                  {isGenderVar &&
+                    (defaultValue?.plainText?.trim?.() ?? "") != "" &&
+                    commandMode == "edit" && (
+                      <div style={{ width: 120, marginLeft: 12 }}>
+                        <Button
+                          label={"genderize"}
+                          bg={"purple"}
+                          size={"small"}
+                          textSize="small"
+                          onClick={onShowGenderize}
+                        />
+                      </div>
+                    )}
                   {props.systemSourceLocale && commandMode == "edit" && (
                     <div style={{ width: 120, marginLeft: 12 }}>
                       <Button

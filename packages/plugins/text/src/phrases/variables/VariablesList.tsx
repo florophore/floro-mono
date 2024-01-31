@@ -317,6 +317,7 @@ const VariableList = (props: Props) => {
                 placeholder={"type"}
                 size="shortest"
                 value={type}
+                zIndex={2}
                 onChange={(option) => {
                   if (option?.value) {
                     setType(option.value as string);

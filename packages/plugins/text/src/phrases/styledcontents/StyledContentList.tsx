@@ -339,6 +339,7 @@ const StyledContentsList = (props: Props) => {
             </div>
             <div style={{ marginLeft: 24 }}>
               <InputSelector
+                zIndex={2}
                 options={options}
                 label={"style class"}
                 placeholder={"select a style class"}

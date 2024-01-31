@@ -5,10 +5,12 @@ import {
   updateObjectInStateMap,
   getReferencedObject,
   makeQueryRef,
+  extractQueryArgs,
 } from "../floro-schema-api";
 import { sendTranslationRequest } from "../deepl/deepLHelpers";
 import Observer from "@floro/storybook/stories/design-system/ContentEditor/editor/Observer";
 import EditorDocument from "@floro/storybook/stories/design-system/ContentEditor/editor/EditorDocument";
+import { sendGenderizationRequest, sendPluralizationRequest } from "../chatgpt/chatGPTHelpers";
 
 const getShouldProcess = (
   ref: string,
@@ -106,6 +108,9 @@ export const translatePhraseJob = async (
   filterPlan: "all" | "untranslated" | "requires_update",
   deepLKey: string,
   isFreePlan: boolean,
+  openAiKey: string | undefined | null,
+  autoPluralize: boolean,
+  autoGenderize: boolean,
   visitedRefs: string[]
 ): Promise<boolean> => {
   try {
@@ -191,8 +196,14 @@ export const translatePhraseJob = async (
           isFreePlan,
         });
 
-        sourceDoc.tree.updateRootFromHTML(translation);
-        const richTextHtml = translation;
+        const reEscapedString = tags.reduce((s: string, tag) => {
+          const targetTag = `{${tag}}`;
+          const escapedTag = `<x>{${tag}}</x>`;
+          return s.replaceAll(escapedTag, targetTag);
+        }, translation);
+
+        sourceDoc.tree.updateRootFromHTML(reEscapedString);
+        const richTextHtml = reEscapedString;
         const json = JSON.stringify(sourceDoc.toJSON());
         const plainText = sourceDoc.toPlainText();
         const nextTarget: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>.phraseTranslations.id<?>"] =
@@ -279,8 +290,14 @@ export const translatePhraseJob = async (
             isFreePlan,
           });
 
-          sourceDoc.tree.updateRootFromHTML(translation);
-          const richTextHtml = translation;
+          const reEscapedString = tags.reduce((s: string, tag) => {
+            const targetTag = `{${tag}}`;
+            const escapedTag = `<x>{${tag}}</x>`;
+            return s.replaceAll(escapedTag, targetTag);
+          }, translation);
+
+          sourceDoc.tree.updateRootFromHTML(reEscapedString);
+          const richTextHtml = reEscapedString;
           const json = JSON.stringify(sourceDoc.toJSON());
           const plainText = sourceDoc.toPlainText();
           const nextTarget: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>.phraseSections.name<?>.localeRules.id<?>.displayValue"] =
@@ -368,8 +385,14 @@ export const translatePhraseJob = async (
           isFreePlan,
         });
 
-        sourceDoc.tree.updateRootFromHTML(translation);
-        const richTextHtml = translation;
+        const reEscapedString = tags.reduce((s: string, tag) => {
+          const targetTag = `{${tag}}`;
+          const escapedTag = `<x>{${tag}}</x>`;
+          return s.replaceAll(escapedTag, targetTag);
+        }, translation);
+
+        sourceDoc.tree.updateRootFromHTML(reEscapedString);
+        const richTextHtml = reEscapedString;
         const json = JSON.stringify(sourceDoc.toJSON());
         const plainText = sourceDoc.toPlainText();
         const nextTarget: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>.styledContents.name<?>.localeRules.id<?>.displayValue"] =
@@ -456,8 +479,14 @@ export const translatePhraseJob = async (
           isFreePlan,
         });
 
-        sourceDoc.tree.updateRootFromHTML(translation);
-        const richTextHtml = translation;
+        const reEscapedString = tags.reduce((s: string, tag) => {
+          const targetTag = `{${tag}}`;
+          const escapedTag = `<x>{${tag}}</x>`;
+          return s.replaceAll(escapedTag, targetTag);
+        }, translation);
+
+        sourceDoc.tree.updateRootFromHTML(reEscapedString);
+        const richTextHtml = reEscapedString;
         const json = JSON.stringify(sourceDoc.toJSON());
         const plainText = sourceDoc.toPlainText();
         const nextTarget: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>.linkVariables.linkName<?>.translations.id<?>.linkDisplayValue"] =
@@ -543,8 +572,14 @@ export const translatePhraseJob = async (
           isFreePlan,
         });
 
-        sourceDoc.tree.updateRootFromHTML(translation);
-        const richTextHtml = translation;
+        const reEscapedString = tags.reduce((s: string, tag) => {
+          const targetTag = `{${tag}}`;
+          const escapedTag = `<x>{${tag}}</x>`;
+          return s.replaceAll(escapedTag, targetTag);
+        }, translation);
+
+        sourceDoc.tree.updateRootFromHTML(reEscapedString);
+        const richTextHtml = reEscapedString;
         const json = JSON.stringify(sourceDoc.toJSON());
         const plainText = sourceDoc.toPlainText();
         const nextTarget: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.defaultValue"] =
@@ -565,6 +600,207 @@ export const translatePhraseJob = async (
           nextTarget
         ) as SchemaRoot;
         lastEditKey.current = targetTranslationRef;
+        const variable = getReferencedObject(
+          applicationState,
+          interpolationVariant.variableRef
+        );
+        const [phraseGroupId, phraseId] = extractQueryArgs(
+          interpolationVariant.variableRef
+        );
+        const genderVarRef = makeQueryRef(
+          "$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>",
+          phraseGroupId,
+          phraseId,
+          "gender:string"
+        );
+
+        const isGenderVar = interpolationVariant.variableRef == genderVarRef;
+        const hasGenderVar = !!phrase?.variables.find?.((v) => v.id == "gender:string");
+
+        /**
+         * CONDITIONALS
+         */
+        if (autoGenderize && isGenderVar && openAiKey) {
+          const conditionsToAdd = await sendGenderizationRequest({
+            localeCode: selectedLocale.localeCode,
+            richText: reEscapedString,
+            openAIKey: openAiKey,
+          });
+          const conditionals: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals"] =
+            conditionsToAdd.map((condition) => {
+              const doc = new EditorDocument(
+                observer,
+                selectedLocale.localeCode
+              );
+              doc.tree.updateRootFromHTML(condition.translation);
+              const json = doc.toJSON();
+              const plainText = doc.toPlainText();
+              return {
+                intComparatorValue: undefined,
+                floatComparatorValue: undefined,
+                booleanComparatorValue: undefined,
+                stringComparatorValue: condition.condition,
+                operator: "eq",
+                resultant: {
+                  json: JSON.stringify(json),
+                  plainText,
+                  richTextHtml: condition.translation,
+                },
+                subconditions: [],
+              };
+            });
+            const conditionalsRef: PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals"] = `${phraseRef}.interpolationVariants.name<${interpolationVariant.name}>.localeRules.id<${targetRef}>.conditionals`;
+            currentPluginAppState.current = updateObjectInStateMap(
+              applicationState,
+              conditionalsRef,
+              conditionals
+            ) as SchemaRoot;
+            lastEditKey.current = conditionalsRef;
+        }
+        // PLURALIZE
+        if (
+          autoPluralize &&
+          openAiKey &&
+          (variable.varType == "integer" || variable.varType == "float")
+        ) {
+          const conditionsToAdd = await sendPluralizationRequest({
+            localeCode: selectedLocale.localeCode,
+            richText: reEscapedString,
+            varName: variable.name as string,
+            varType: variable.varType as string,
+            openAIKey: openAiKey,
+            isGenderized: autoGenderize && hasGenderVar,
+          });
+
+          const conditionals: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals"] =
+            conditionsToAdd.map((condition) => {
+              const doc = new EditorDocument(
+                observer,
+                selectedLocale.localeCode
+              );
+              doc.tree.updateRootFromHTML(condition.translation);
+              const json = doc.toJSON();
+              const plainText = doc.toPlainText();
+              if (condition.operator == "is_fractional") {
+                return {
+                  booleanComparatorValue: undefined,
+                  floatComparatorValue: undefined,
+                  intComparatorValue: undefined,
+                  stringComparatorValue: undefined,
+                  operator: "is_fractional",
+                  resultant: {
+                    json: JSON.stringify(json),
+                    plainText,
+                    richTextHtml: condition.translation,
+                  },
+                  subconditions: condition.subconditions.map((subcondition) => {
+                    if (subcondition.operator == "is_fractional") {
+                      return {
+                        conjunction: "AND",
+                        variableRef: interpolationVariant.variableRef,
+                        booleanComparatorValue: undefined,
+                        floatComparatorValue: undefined,
+                        intComparatorValue: undefined,
+                        stringComparatorValue: undefined,
+                        operator: "is_fractional",
+                      };
+                    } else if (subcondition.operator == "gender") {
+                      return {
+                        conjunction: "AND",
+                        variableRef: genderVarRef,
+                        booleanComparatorValue: undefined,
+                        floatComparatorValue: undefined,
+                        intComparatorValue: undefined,
+                        stringComparatorValue: subcondition.condition as string,
+                        operator: "eq",
+                      };
+                    } else {
+                      return {
+                        conjunction: "AND",
+                        variableRef: interpolationVariant.variableRef,
+                        intComparatorValue:
+                          variable.varType == "integer"
+                            ? (subcondition.condition as number)
+                            : undefined,
+                        floatComparatorValue:
+                          variable.varType == "float"
+                            ? (subcondition.condition as number)
+                            : undefined,
+                        booleanComparatorValue: undefined,
+                        stringComparatorValue: undefined,
+                        operator: subcondition.operator,
+                      };
+                    }
+                  }),
+                };
+              } else {
+                return {
+                  intComparatorValue:
+                    variable.varType == "integer"
+                      ? condition.condition
+                      : undefined,
+                  floatComparatorValue:
+                    variable.varType == "float"
+                      ? condition.condition
+                      : undefined,
+                  booleanComparatorValue: undefined,
+                  stringComparatorValue: undefined,
+                  operator: condition.operator,
+                  resultant: {
+                    json: JSON.stringify(json),
+                    plainText,
+                    richTextHtml: condition.translation,
+                  },
+                  subconditions: condition.subconditions.map((subcondition) => {
+                    if (subcondition.operator == "is_fractional") {
+                      return {
+                        conjunction: "AND",
+                        variableRef: interpolationVariant.variableRef,
+                        booleanComparatorValue: undefined,
+                        floatComparatorValue: undefined,
+                        intComparatorValue: undefined,
+                        stringComparatorValue: undefined,
+                        operator: "is_fractional",
+                      };
+                    } else if (subcondition.operator == "gender") {
+                      return {
+                        conjunction: "AND",
+                        variableRef: genderVarRef,
+                        booleanComparatorValue: undefined,
+                        floatComparatorValue: undefined,
+                        intComparatorValue: undefined,
+                        stringComparatorValue: subcondition.condition as string,
+                        operator: "eq",
+                      };
+                    } else {
+                      return {
+                        conjunction: "AND",
+                        variableRef: interpolationVariant.variableRef,
+                        intComparatorValue:
+                          variable.varType == "integer"
+                            ? (subcondition.condition as number)
+                            : undefined,
+                        floatComparatorValue:
+                          variable.varType == "float"
+                            ? (subcondition.condition as number)
+                            : undefined,
+                        booleanComparatorValue: undefined,
+                        stringComparatorValue: undefined,
+                        operator: subcondition.operator,
+                      };
+                    }
+                  }),
+                };
+              }
+            });
+          const conditionalsRef: PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>.interpolationVariants.name<?>.localeRules.id<?>.conditionals"] = `${phraseRef}.interpolationVariants.name<${interpolationVariant.name}>.localeRules.id<${targetRef}>.conditionals`;
+          currentPluginAppState.current = updateObjectInStateMap(
+            applicationState,
+            conditionalsRef,
+            conditionals
+          ) as SchemaRoot;
+          lastEditKey.current = conditionalsRef;
+        }
       }
     }
     return true;

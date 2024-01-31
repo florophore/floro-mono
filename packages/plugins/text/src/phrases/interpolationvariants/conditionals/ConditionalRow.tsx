@@ -19,6 +19,7 @@ import ContentEditor from "@floro/storybook/stories/design-system/ContentEditor"
 import PlainTextDocument from "@floro/storybook/stories/design-system/ContentEditor/PlainTextDocument";
 import NewSubCondition from "./subconditions/NewSubCondition";
 import SubCondition from "./subconditions/SubCondition";
+import PromptModal from "../../promptmodal/PromptModal";
 
 const Container = styled.div`
   padding: 0;
@@ -179,6 +180,7 @@ const colorPaletteItemVariants = {
 
 interface Props {
   lang: string;
+  locale: SchemaTypes["$(text).localeSettings.locales.localeCode<?>"];
   phrase: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>"];
   phraseRef: PointerTypes["$(text).phraseGroups.id<?>.phrases.id<?>"];
   variable: SchemaTypes["$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>"];
@@ -338,6 +340,9 @@ const ConditionalRow = (props: Props): React.ReactElement|null => {
     if (props.conditional.operator == "lte") {
       return `is less than or equal to`;
     }
+    if (props.conditional.operator == "ends_with") {
+      return `ends with`;
+    }
     if (props.conditional.operator == "is_fractional") {
       return `is a fractional quantity`;
     }
@@ -495,6 +500,19 @@ const ConditionalRow = (props: Props): React.ReactElement|null => {
   }, [floatValue, commandMode]);
 
   const [showContent, setShowContent] = useState(false);
+  const [showPrompt, setShowPrompt] = useState(false);
+
+  const onShowPrompt = useCallback(() => {
+    setShowPrompt(true);
+  }, []);
+
+  const onHidePrompt = useCallback(() => {
+    setShowPrompt(false);
+  }, []);
+
+  const targetMockHtml = useMemo(() => {
+    return conditionalEditorDoc.tree.getHtml();
+  }, [conditionalEditorDoc]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -526,6 +544,16 @@ const ConditionalRow = (props: Props): React.ReactElement|null => {
 
   return (
     <Container>
+      <PromptModal
+        show={showPrompt && commandMode == "edit"}
+        selectedLocale={props.locale}
+        targetRichText={resultant?.richTextHtml ?? ""}
+        targetMockText={targetMockHtml}
+        targetEditorDoc={conditionalEditorDoc}
+        onDismiss={onHidePrompt}
+        enabledTermIds={[]}
+        onApplyTranslation={onSetResultantValueContent}
+      />
       <TitleRow>
         <ColorControlsContainer
           style={{
@@ -640,9 +668,9 @@ const ConditionalRow = (props: Props): React.ReactElement|null => {
                 >
                   <InputSelector
                     options={
-                      props.variable.varType == "integer" ?
-                      options :
-                      props.variable.varType == "float"
+                      props.variable.varType == "integer"
+                        ? options
+                        : props.variable.varType == "float"
                         ? floatOptions
                         : partialOperators
                     }
@@ -657,18 +685,21 @@ const ConditionalRow = (props: Props): React.ReactElement|null => {
                     }
                     onChange={(option) => {
                       if (option?.value && conditional) {
-                        if (props.variable.varType == "float" && conditional.floatComparatorValue == undefined) {
+                        if (
+                          props.variable.varType == "float" &&
+                          conditional.floatComparatorValue == undefined
+                        ) {
                           setConditional({
                             ...conditional,
                             operator: option.value as string,
-                            floatComparatorValue: 0
-                          })
+                            floatComparatorValue: 0,
+                          });
                           setFloatValue("0");
                         } else {
                           setConditional({
                             ...conditional,
-                            operator: option.value as string
-                          })
+                            operator: option.value as string,
+                          });
                         }
                       }
                     }}
@@ -681,15 +712,17 @@ const ConditionalRow = (props: Props): React.ReactElement|null => {
                         label={"value"}
                         placeholder={"value"}
                         isValid={isValueValid}
-                        value={conditional?.booleanComparatorValue ? "true" : "false"}
+                        value={
+                          conditional?.booleanComparatorValue ? "true" : "false"
+                        }
                         options={booleanOptions}
                         size="shortest"
                         onChange={(option) => {
                           if (option?.value && conditional) {
                             setConditional({
                               ...conditional,
-                              booleanComparatorValue: option.value != "false"
-                            })
+                              booleanComparatorValue: option.value != "false",
+                            });
                           }
                         }}
                       />
@@ -712,22 +745,23 @@ const ConditionalRow = (props: Props): React.ReactElement|null => {
                         value={integerValue}
                         widthSize="shortest"
                         onTextChanged={(text) => {
-                          onUpdateIntegerValue(text)
+                          onUpdateIntegerValue(text);
                         }}
                       />
                     )}
-                    {props.variable.varType == "float" && props.conditional.operator != "is_fractional" &&  (
-                      <Input
-                        label={"value"}
-                        placeholder={"value"}
-                        isValid={isValueValid}
-                        value={floatValue}
-                        widthSize="shortest"
-                        onTextChanged={(text) => {
-                          onUpdateFloatValue(text)
-                        }}
-                      />
-                    )}
+                    {props.variable.varType == "float" &&
+                      props.conditional.operator != "is_fractional" && (
+                        <Input
+                          label={"value"}
+                          placeholder={"value"}
+                          isValid={isValueValid}
+                          value={floatValue}
+                          widthSize="shortest"
+                          onTextChanged={(text) => {
+                            onUpdateFloatValue(text);
+                          }}
+                        />
+                      )}
                   </span>
                 </div>
               </ContentRow>
@@ -753,7 +787,7 @@ const ConditionalRow = (props: Props): React.ReactElement|null => {
             subcondition={subcondition}
             onHideAddSubcondition={onHideAddSubcondition}
           />
-        )
+        );
       })}
       {showAddSubcondition && commandMode == "edit" && !props.isSearching && (
         <NewSubCondition
@@ -795,7 +829,9 @@ const ConditionalRow = (props: Props): React.ReactElement|null => {
             content={resultant?.richTextHtml ?? ""}
             onSetContent={onSetResultantValueContent}
             placeholder={`write the resultant value...`}
+            onOpenGPT={onShowPrompt}
             onSearch={props.onFocusSearch}
+            showGPTIcon
           />
         )}
         {commandMode != "edit" && (

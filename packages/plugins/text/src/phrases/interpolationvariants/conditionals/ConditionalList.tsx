@@ -96,6 +96,10 @@ const options = [
     value: "lte",
     label: "less than or equal to",
   },
+  {
+    value: "ends_with",
+    label: "ends with",
+  },
 ];
 
 const floatOptions = [
@@ -122,6 +126,10 @@ const floatOptions = [
   {
     value: "lte",
     label: "less than or equal to",
+  },
+  {
+    value: "ends_with",
+    label: "ends with",
   },
   {
     value: "is_fractional",
@@ -431,6 +439,7 @@ const ConditionalList = (props: Props) => {
                 isSearching={props.isSearching}
                 searchText={props.searchText}
                 onFocusSearch={props.onFocusSearch}
+                locale={props.selectedLocale}
               />
             );
           })}
@@ -520,6 +529,7 @@ const ConditionalList = (props: Props) => {
                 </div>
                 <div style={{ marginRight: 24 }}>
                   <InputSelector
+                    zIndex={2}
                     options={
                       props.variable?.varType == "integer" ? options :
                       props.variable?.varType == "float"
@@ -545,6 +555,7 @@ const ConditionalList = (props: Props) => {
                 <div>
                   {props.variable?.varType == "boolean" && (
                     <InputSelector
+                      zIndex={2}
                       label={"value"}
                       placeholder={"value"}
                       value={booleanValue ? "true" : "false"}

@@ -126,7 +126,7 @@ const isStatementTrue = <T extends number | string | boolean>(
   value: T,
   comparisonValue: T,
   varType: "integer" | "float" | "boolean" | "string",
-  operator: "eq" | "neq" | "gt" | "gte" | "lt" | "lte" | "is_fractional"
+  operator: "eq" | "neq" | "gt" | "gte" | "lt" | "lte" | "ends_with" | "is_fractional"
 ): boolean => {
   if (operator == "eq") {
     return value == comparisonValue;
@@ -150,6 +150,9 @@ const isStatementTrue = <T extends number | string | boolean>(
   }
   if (operator == "lte") {
     return numberValue <= comparisonNumberValue;
+  }
+  if (operator == "ends_with") {
+    return (numberValue?.toString() ?? "").endsWith(comparisonNumberValue.toString() ?? "-1");
   }
   if (varType == "integer") {
     return false;
@@ -349,6 +352,7 @@ const TestCase = (props: Props) => {
             | "gte"
             | "lt"
             | "lte"
+            | "ends_with"
             | "is_fractional";
           if (
             isStatementTrue(value, comparatorValue, premiseVarType, operator)
@@ -376,6 +380,7 @@ const TestCase = (props: Props) => {
                 | "gte"
                 | "lt"
                 | "lte"
+                | "ends_with"
                 | "is_fractional";
               const varType = variable?.varType as
                 | "string"
@@ -435,6 +440,7 @@ const TestCase = (props: Props) => {
               | "gte"
               | "lt"
               | "lte"
+              | "ends_with"
               | "is_fractional";
             if (
               isStatementTrue(value, comparatorValue, premiseVarType, operator)
@@ -462,6 +468,7 @@ const TestCase = (props: Props) => {
                   | "gte"
                   | "lt"
                   | "lte"
+                  | "ends_with"
                   | "is_fractional";
                 const varType = variable?.varType as
                   | "string"
@@ -529,6 +536,7 @@ const TestCase = (props: Props) => {
               | "gte"
               | "lt"
               | "lte"
+              | "ends_with"
               | "is_fractional";
             if (
               isStatementTrue(value, comparatorValue, premiseVarType, operator)
@@ -556,6 +564,7 @@ const TestCase = (props: Props) => {
                   | "gte"
                   | "lt"
                   | "lte"
+                  | "ends_with"
                   | "is_fractional";
                 const varType = variable?.varType as
                   | "string"

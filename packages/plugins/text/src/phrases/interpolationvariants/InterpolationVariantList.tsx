@@ -345,6 +345,7 @@ const InterpolationVariantsList = (props: Props) => {
                 placeholder={"select a variable"}
                 size="short"
                 value={variableRef}
+                zIndex={2}
                 onChange={(option) => {
                   if (option?.value) {
                     setVariableRef(option?.value as PointerTypes['$(text).phraseGroups.id<?>.phrases.id<?>.variables.id<?>']);

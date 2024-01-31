@@ -20,6 +20,8 @@ import BackIconDark from "@floro/common-assets/assets/images/icons/back_arrow.da
 import FilterList from "./FilterList";
 import JobList from "./JobList";
 import { translatePhraseJob } from "./job";
+import { useChatGPTContext } from "../chatgpt/ChatGPTContext";
+import Checkbox from "@floro/storybook/stories/design-system/Checkbox";
 
 
 const OuterContainer = styled.div`
@@ -70,6 +72,13 @@ const TranslationCount = styled.p`
   font-size: 1.7rem;
 `;
 
+const AutoPluralizeText = styled.p`
+  font-family: "MavenPro";
+  color: ${(props) => props?.theme.colors.contrastTextLight};
+  font-weight: 500;
+  font-size: 1.2rem;
+`;
+
 const BackArrow = styled.img`
   height: 40px;
   width: 40px;
@@ -100,10 +109,13 @@ const BulkTranslateModal = (props: Props) => {
   const { currentPluginAppState, lastEditKey, applicationState, saveState, commandMode } = useFloroContext();
   const theme = useTheme();
   const { apiKey, setApiKey, isFreePlan, setIsFreePlan } = useDeepLContext();
+  const { apiKey: openAiKey, setApiKey: setOpenAiKey } = useChatGPTContext();
 
   const phraseGroups = useReferencedObject("$(text).phraseGroups");
 
   const [page, setPage] = useState<"choose" | "filter" | "job">("choose");
+  const [autoPluralize, setAutoPluralize] = useState(false);
+  const [autoGenderize, setAutoGenderize] = useState(false);
   const [filterPlan, setFilterPlan] =
     useState<"all" | "untranslated" | "requires_update">("all");
   const [selectedPhraseRefs, setSelectedPhraseRefs] = useState<
@@ -175,6 +187,14 @@ const BulkTranslateModal = (props: Props) => {
     props.selectedLocale?.localeCode,
     page
   ]);
+
+  const phraseCount = useMemo(() => {
+    let count = 0;
+    for (let phraseGroup of phraseGroups ?? []) {
+      count += phraseGroup?.phrases.length ?? 0;
+    }
+    return count;
+  }, [phraseGroups]);
 
   const untranslatedPhraseCount = useMemo(() => {
     let count = 0;
@@ -367,6 +387,9 @@ const BulkTranslateModal = (props: Props) => {
     if (!applicationState || !saveState || !props.selectedLocale || !props.systemSourceLocale || !apiKey) {
       return
     }
+    if (autoPluralize && !openAiKey) {
+      return;
+    }
     if (!currentRef || jobState == "stopped") {
       return;
     }
@@ -387,6 +410,9 @@ const BulkTranslateModal = (props: Props) => {
       filterPlan,
       apiKey,
       isFreePlan,
+      openAiKey,
+      autoPluralize,
+      autoGenderize,
       visitedRefs.current
     ).then((didSucceed) => {
       if (!isMounted.value) {
@@ -527,14 +553,61 @@ const BulkTranslateModal = (props: Props) => {
                   value={apiKey ?? ""}
                   onTextChanged={onSetApiKey}
                   widthSize={"wide"}
-                  label={"DeepL api key"}
+                  label={"DeepL api key (required)"}
                   placeholder={"DeepL API Key"}
+                />
+              </Row>
+              <Row
+                style={{
+                  marginTop: 12,
+                  justifyContent: "center",
+                }}
+              >
+                <Input
+                  value={openAiKey ?? ""}
+                  widthSize={"wide"}
+                  label={(autoPluralize || autoGenderize) ? "OpenAI api key (required)" : "OpenAI api key (optional)"}
+                  placeholder={"OpenAI API Key"}
+                  onTextChanged={setOpenAiKey}
+                  isValid={!(autoPluralize || autoGenderize) || !!openAiKey}
+                />
+              </Row>
+              <Row
+                style={{
+                  marginTop: 12,
+                  justifyContent: "flex-end",
+                }}
+              >
+                <AutoPluralizeText style={{ marginRight: 12 }}>
+                  {"Include Auto-Pluralize"}
+                </AutoPluralizeText>
+                <Checkbox
+                  isChecked={autoPluralize}
+                  onChange={function () {
+                    setAutoPluralize(!autoPluralize);
+                  }}
+                />
+              </Row>
+              <Row
+                style={{
+                  marginTop: 12,
+                  justifyContent: "flex-end",
+                }}
+              >
+                <AutoPluralizeText style={{ marginRight: 12 }}>
+                  {"Include Auto-Genderize"}
+                </AutoPluralizeText>
+                <Checkbox
+                  isChecked={autoGenderize}
+                  onChange={function () {
+                    setAutoGenderize(!autoGenderize);
+                  }}
                 />
               </Row>
             </div>
             <div
               style={{
-                maxHeight: 500,
+                maxHeight: 300,
                 flexGrow: 1,
                 display: "flex",
                 width: "100%",
@@ -547,21 +620,21 @@ const BulkTranslateModal = (props: Props) => {
                 label={"translate un-translated phrases"}
                 bg={"orange"}
                 size={"extra-big"}
-                isDisabled={!apiKey || untranslatedPhraseCount == 0}
+                isDisabled={!apiKey || untranslatedPhraseCount == 0 || ((autoPluralize || autoGenderize) && !openAiKey)}
               />
               <Button
                 onClick={onSelectRequiresUpdate}
                 label={"translate phrases requiring update"}
                 bg={"teal"}
                 size={"extra-big"}
-                isDisabled={!apiKey || requiresUpdatePhraseCount == 0}
+                isDisabled={!apiKey || requiresUpdatePhraseCount == 0 || ((autoPluralize || autoGenderize) && !openAiKey)}
               />
               <Button
                 onClick={onSelectAll}
                 label={"translate all phrases"}
                 bg={"purple"}
                 size={"extra-big"}
-                isDisabled={!apiKey}
+                isDisabled={!apiKey || phraseCount == 0 || ((autoPluralize || autoGenderize) && !openAiKey)}
               />
             </div>
           </div>

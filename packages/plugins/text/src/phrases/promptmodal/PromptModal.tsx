@@ -140,10 +140,10 @@ interface Props {
   onDismiss: () => void;
   targetRichText?: string;
   sourceRichText?: string;
-  sourceMockText: string;
+  sourceMockText?: string;
   targetMockText: string;
   targetEditorDoc: EditorDocument;
-  sourceEditorDoc: EditorDocument;
+  sourceEditorDoc?: EditorDocument;
   enabledTermIds: string[];
   selectedLocale?: SchemaTypes["$(text).localeSettings.locales.localeCode<?>"];
   systemSourceLocale?:
@@ -436,7 +436,7 @@ const PromptModal = (props: Props) => {
                   />
                   <div style={{width: 24}}/>
                   <SourceDisplay
-                    value={props.sourceMockText}
+                    value={props?.sourceMockText ?? ""}
                     label={"source document"}
                     maxHeight={132}
                   />
