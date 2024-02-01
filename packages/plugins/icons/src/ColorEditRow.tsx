@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-import { PointerTypes, getReferencedObject, useFloroContext, useReferencedObject } from "./floro-schema-api";
+import { PointerTypes, getReferencedObject, useExtractQueryArgs, useFloroContext, useQueryRef, useReferencedObject } from "./floro-schema-api";
 import CrossRed from "@floro/common-assets/assets/images/icons/x_cross.red.svg";
 import CrossLightRed from "@floro/common-assets/assets/images/icons/x_cross.red.svg";
 import CheckPurple from "@floro/common-assets/assets/images/icons/check.purple.svg";
@@ -48,7 +48,7 @@ const HexTitle = styled.p`
 `;
 
 const PaletteTextWrapper = styled.div`
-  width: 132px;
+  width: 192px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -79,6 +79,7 @@ const PaletteCheckIcon = styled.img`
 interface Props {
   originalColor: string;
   color: string;
+  paletteShadeRef?: PointerTypes["$(palette).colorPalettes.id<?>.colorShades.id<?>"];
   onUndoRemap: (originalColor: string) => void;
   onEditColor: (originalColor: string) => void;
   onAddHex: (originalColor: string) => void;
@@ -89,6 +90,12 @@ interface Props {
 const ColorEditRow = (props: Props) => {
   const theme = useTheme();
   const colorPalettes = useReferencedObject("$(palette).colorPalettes") ?? [];
+
+  const paletteColor = useReferencedObject(props.paletteShadeRef);
+  const [colorId] = useExtractQueryArgs(props.paletteShadeRef);
+  const colorRef = useQueryRef("$(palette).colorPalettes.id<?>", colorId);
+  const color = useReferencedObject(colorRef)
+  const shade = useReferencedObject(paletteColor?.id);
 
   const paletteHexes = useMemo(() => {
     return colorPalettes
@@ -149,7 +156,7 @@ const ColorEditRow = (props: Props) => {
       </HexTitleWrapper>
       <PaletteTextWrapper>
         <PaletteCheckIcon src={paletteCheckIcon} />
-        {isInPalette && <InPaletteText>{"in palette"}</InPaletteText>}
+        {isInPalette && <InPaletteText>{color?.name + "/" + shade?.name}</InPaletteText>}
         {!isInPalette && (
           <NotInPaletteText>{"not in palette"}</NotInPaletteText>
         )}
@@ -184,7 +191,7 @@ const ColorEditRow = (props: Props) => {
             textSize="small"
           />
         )}
-        {props.originalColor != props.color && (
+        {!!paletteColor && props.originalColor != paletteColor?.hexcode + 'FF' && (
           <Button
             onClick={onUndoRemap}
             style={{ width: 120 }}

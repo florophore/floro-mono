@@ -2,6 +2,7 @@ import React, { useMemo, useCallback } from "react";
 import {
   PointerTypes,
   SchemaTypes,
+  getReferencedObject,
   makeQueryRef,
   useBinaryData,
   useBinaryRef,
@@ -19,7 +20,7 @@ import styled from "@emotion/styled";
 
 import Checkbox from "@floro/storybook/stories/design-system/Checkbox";
 import ColorPalette from "@floro/styles/ColorPalette";
-import { getColorDistance } from "../colorhooks";
+import { getColorDistance, useSVGRemap } from "../colorhooks";
 
 
 const Container = styled.div`
@@ -53,10 +54,35 @@ const IconPreview = (props: Props) => {
   const wasRemoved = useWasRemoved(props.iconRef, false);
   const wasAdded = useWasAdded(props.iconRef, false);
   const hasConflict = useHasConflict(props.iconRef, false);
-  const { commandMode } = useFloroContext();
+  const { commandMode, applicationState } = useFloroContext();
 
   const defaultIconTheme = useReferencedObject(props.icon.defaultIconTheme);
-  const binRef = useBinaryRef(props.icon.svg);
+  const { data: rawSvgData } = useBinaryData(props.icon.svg, "text");
+
+  const remappedColors = useMemo(() => {
+    if (!applicationState) {
+      return {};
+    }
+    return (
+      props?.icon?.appliedPaletteColors.reduce((acc, appliedPaletteColor) => {
+        if (!appliedPaletteColor.paletteColor) {
+          return {
+            ...acc,
+            [appliedPaletteColor.hexcode]: appliedPaletteColor.hexcode,
+          };
+        }
+        const paletteColor = getReferencedObject(
+          applicationState,
+          appliedPaletteColor.paletteColor
+        );
+        return {
+          ...acc,
+          [appliedPaletteColor.hexcode]: paletteColor?.hexcode + "FF",
+        };
+      }, {}) ?? {}
+    );
+  }, [applicationState, props?.icon?.appliedPaletteColors]);
+  const svgData = useSVGRemap(rawSvgData, remappedColors);
 
   const contrastColor = useMemo(() => {
     if (!defaultIconTheme?.backgroundColor) {
@@ -103,9 +129,9 @@ const IconPreview = (props: Props) => {
     commandMode,
   ]);
 
-  if (!binRef) {
-    return null;
-  }
+  const remappedSVGUrl = useMemo(() => {
+    return `data:image/svg+xml,${encodeURIComponent(svgData)}`;
+  }, [svgData]);
 
   return (
       <Container>
@@ -113,7 +139,7 @@ const IconPreview = (props: Props) => {
             background: defaultIconTheme?.backgroundColor?.hexcode,
             border: `2px solid ${contrastColor}`
         }}>
-            <PreviewIcon src={binRef}/>
+            <PreviewIcon src={remappedSVGUrl}/>
         </PreviewIconcontainer>
 
       </Container>

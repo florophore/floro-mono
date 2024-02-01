@@ -13,6 +13,7 @@ import {
   FileRef,
   PointerTypes,
   SchemaTypes,
+  extractQueryArgs,
   getReferencedObject,
   makeQueryRef,
   useBinaryData,
@@ -241,6 +242,9 @@ const AddIconModal = (props: Props) => {
   const [showReThemeModal, setShowReThemeModal] = useState(false);
   const { fileRef: nextRef, status, uploadBlob, reset } = useUploadFile();
   const [selectedVariants, setSelectedVariants] = useState({});
+  const [appliedPaletteColors, setAppliedPaletteColors] = useState<
+    SchemaTypes["$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors"]
+  >([]);
   const [appliedThemes, setAppliedThemes] = useState<{
     [key: string]: PointerTypes["$(theme).themeColors.id<?>"]
   }>({});
@@ -326,6 +330,7 @@ const AddIconModal = (props: Props) => {
 
     const icon: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>'] = {
       appliedThemes: appliedThemesList,
+      appliedPaletteColors,
       defaultIconTheme,
       enabledVariants: enabledVariants,
       id,
@@ -351,6 +356,7 @@ const AddIconModal = (props: Props) => {
     applicationState,
     selectedVariants,
     appliedThemes,
+    appliedPaletteColors,
     id,
     name,
     iconTheme,
@@ -389,7 +395,8 @@ const AddIconModal = (props: Props) => {
       setShowReThemeModal(false);
       setFileRef(null);
       reset();
-      setRemappedColors({});
+      //setRemappedColors({});
+      setAppliedPaletteColors([]);
       setSelectedVariants({});
     } else {
       setSelectedVariants({});
@@ -398,7 +405,7 @@ const AddIconModal = (props: Props) => {
   }, [props.show, iconOptions]);
 
   const { data: svgData } = useBinaryData(fileRef, "text");
-  const [remappedColors, setRemappedColors] = useState({});
+  //const [remappedColors, setRemappedColors] = useState({});
   const [addedColors, setAddedColors] = useState<{[hex: string]: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']}>({});
 
   const showStateVariants = useMemo(() => {
@@ -420,25 +427,55 @@ const AddIconModal = (props: Props) => {
     setName(props.svgFileName.split(".").slice(0, -1).join(" "));
   }, [props.svgFileName]);
 
+  const paletteColors = useMemo(() => {
+    return applicationState?.palette?.colorPalettes.flatMap((color) => {
+      return color?.colorShades?.flatMap(colorShade => {
+        return {
+          hexcode: colorShade.hexcode,
+          ref: makeQueryRef("$(palette).colorPalettes.id<?>.colorShades.id<?>", color.id, colorShade.id)
+        }
+      })
+    })
+  }, [applicationState?.palette])
+
   useEffect(() => {
-    setRemappedColors(
-      hexValues.reduce((acc, value) => {
+    const nextAppliedPaletteColors = hexValues?.map?.(hexcode => {
+      const paletteColor = paletteColors?.find(color => color.hexcode  + 'FF' == hexcode);
+      return {
+        hexcode,
+        paletteColor: paletteColor?.ref
+      }
+    }) ?? [];
+    setAppliedPaletteColors(nextAppliedPaletteColors)
+  }, [paletteColors, hexValues, props.fileRef]);
+
+  const remappedColors = useMemo(() => {
+    if (!applicationState) {
+      return {};
+    }
+    return appliedPaletteColors.reduce((acc, appliedPaletteColor) => {
+      if (!appliedPaletteColor.paletteColor) {
         return {
           ...acc,
-          [value]: value,
-        };
-      }, {})
-    );
-  }, [hexValues, props.fileRef]);
+          [appliedPaletteColor.hexcode]: appliedPaletteColor.hexcode
+        }
+      }
+      const paletteColor = getReferencedObject(applicationState, appliedPaletteColor.paletteColor);
+      return {
+        ...acc,
+        [appliedPaletteColor.hexcode]: paletteColor?.hexcode + 'FF'
+      }
+    }, {})
+  }, [applicationState, appliedPaletteColors])
 
   const remappedSVG = useSVGRemap(standardizedData, remappedColors);
 
 
   const onAddIcon = useCallback(() => {
-    if (remappedSVG) {
-      uploadBlob([remappedSVG], "image/svg+xml");
+    if (standardizedData) {
+      uploadBlob([standardizedData], "image/svg+xml");
     }
-  }, [remappedSVG])
+  }, [standardizedData])
 
   const avgColor = useAvgColorSVGOut(remappedSVG);
   const avgOriginalColor = useAvgColorSVGOut(standardizedData);
@@ -474,21 +511,46 @@ const AddIconModal = (props: Props) => {
   }, [status]);
 
   const onChangeRemap = useCallback(
-    (originalColor: string, color: string) => {
-      setRemappedColors({
-        ...remappedColors,
-        [originalColor]: color,
-      });
+    (originalColor: string, paletteColorRef: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']) => {
+      if (appliedPaletteColors.find(pc => pc.hexcode === originalColor)) {
+        setAppliedPaletteColors(
+          appliedPaletteColors.map((pc) => {
+            if (pc.hexcode === originalColor) {
+              return {
+                hexcode: originalColor,
+                paletteColor: paletteColorRef,
+              };
+            }
+            return pc;
+          })
+        );
+      } else {
+        setAppliedPaletteColors([
+          ...appliedPaletteColors,
+          {
+            hexcode: originalColor,
+            paletteColor: paletteColorRef
+          }
+        ])
+      }
     },
-    [remappedColors]
+    [remappedColors, setAppliedPaletteColors, appliedPaletteColors]
   );
 
   const onUndoRemap = useCallback(
     (originalColor: string) => {
-      setRemappedColors({
-        ...remappedColors,
-        [originalColor]: originalColor,
-      });
+        setAppliedPaletteColors(
+          appliedPaletteColors.map((pc) => {
+            if (pc.hexcode == originalColor) {
+              const paletteColor = paletteColors?.find(color => color.hexcode  + 'FF' == pc.hexcode);
+              return {
+                ...pc,
+                paletteColor: paletteColor?.ref
+              };
+            }
+            return pc;
+          })
+        );
     },
     [remappedColors]
   );
@@ -496,10 +558,18 @@ const AddIconModal = (props: Props) => {
   const onUndoCurrentRemap = useCallback(() => {
     if (edittingHex) {
 
-      setRemappedColors({
-        ...remappedColors,
-        [edittingHex]: edittingHex,
-      });
+        setAppliedPaletteColors(
+          appliedPaletteColors.map((pc) => {
+            if (pc.hexcode == edittingHex) {
+              const paletteColor = paletteColors?.find(color => color.hexcode  + 'FF' == pc.hexcode);
+              return {
+                ...pc,
+                paletteColor: paletteColor?.ref
+              };
+            }
+            return pc;
+          })
+        );
     }
   }, [remappedColors, edittingHex]);
 
@@ -541,10 +611,7 @@ const AddIconModal = (props: Props) => {
   const onSelectColor = useCallback((colorRef: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']) => {
     if (showPaletteHexSelect) {
       if (applicationState && edittingHex != null) {
-        const colorShade = getReferencedObject(applicationState, colorRef);
-        const opacity = edittingHex.substring(edittingHex.length - 2);
-        const nextHex = colorShade?.hexcode + opacity;
-        onChangeRemap(edittingHex, nextHex);
+        onChangeRemap(edittingHex, colorRef);
       }
     }
     if (showAddHexToPalette) {
@@ -559,7 +626,6 @@ const AddIconModal = (props: Props) => {
         });
       }
     }
-
   }, [applicationState, addedColors, edittingHex, onChangeRemap, showPaletteHexSelect, showAddHexToPalette])
 
   const onUndoAdd = useCallback((hexVal: string) => {
@@ -716,7 +782,7 @@ const AddIconModal = (props: Props) => {
   const onNoTheme = useCallback((hex: string) => {
     delete appliedThemes[hex];
     setAppliedThemes({...appliedThemes});
-  }, [appliedThemes])
+  }, [appliedThemes]);
 
   return (
     <RootModal
@@ -791,6 +857,7 @@ const AddIconModal = (props: Props) => {
           <SectionTitle>{"Colors"}</SectionTitle>
           <ColorSection>
             {hexValues.map((hexVal) => {
+              const paletteColorRef = appliedPaletteColors.find(pc => pc.hexcode == hexVal)?.paletteColor
               return (
                 <ColorEditRow
                   key={hexVal}
@@ -801,6 +868,7 @@ const AddIconModal = (props: Props) => {
                   onAddHex={onAddHex}
                   onUndoAdd={onUndoAdd}
                   wasAdded={!!addedColors[hexVal]}
+                  paletteShadeRef={paletteColorRef}
                 />
               );
             })}

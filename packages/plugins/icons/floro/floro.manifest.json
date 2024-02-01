@@ -1,5 +1,5 @@
 {
-  "version": "0.0.42",
+  "version": "0.0.43",
   "name": "icons",
   "displayName": "Icons",
   "description": "A plugin for mapping colors to icons.",
@@ -44,6 +44,20 @@
           "enabled": {
             "type": "boolean",
             "default": false
+          }
+        }
+      },
+      "appliedPaletteColors": {
+        "type": "set",
+        "values": {
+          "hexcode": {
+            "isKey": true,
+            "type": "string"
+          },
+          "paletteColor": {
+            "type": "ref<palette.ColorShade>",
+            "nullable": true,
+            "onDelete": "nullify"
           }
         }
       },

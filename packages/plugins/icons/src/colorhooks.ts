@@ -116,10 +116,13 @@ export const getAverageHex = (colors: Array<string>): string => {
 };
 
 export const useSVGRemap = (
-  svgData: string,
+  svgData: string|undefined|null,
   remap: { [color: string]: string }
 ) => {
   return useMemo(() => {
+    if (!svgData) {
+      return "";
+    }
     return Object.keys(remap).reduce((s, key) => {
       return s.replaceAll(key, remap[key]);
     }, svgData);

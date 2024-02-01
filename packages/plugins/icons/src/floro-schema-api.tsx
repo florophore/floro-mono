@@ -3,15 +3,19 @@ import mdiff from "mdiff";
 
 export type FileRef = `${string}.${string}`;
 
-export type PartialDiffableQuery = `$(theme).themeColors.id<${string}>.variants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>.variantDefinitions.id<${QueryTypes['$(theme).themes.id<?>']}>`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.appliedThemes.hexcode<${string}>`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.enabledVariants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>`|`$(theme).themeColors.id<${string}>.variants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>.variantDefinitions`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.appliedThemes`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.enabledVariants`|`$(theme).themeColors.id<${string}>.themeDefinitions.id<${QueryTypes['$(theme).themes.id<?>']}>`|`$(theme).themeColors.id<${string}>.variants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>`|`$(palette).colorPalettes.id<${string}>.colorShades.id<${QueryTypes['$(palette).shades.id<?>']}>`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>`|`$(theme).themeColors.id<${string}>.themeDefinitions`|`$(theme).themeColors.id<${string}>.variants`|`$(theme).themes.id<${string}>.backgroundColor`|`$(palette).colorPalettes.id<${string}>.colorShades`|`$(icons).iconGroups.id<${string}>.icons`|`$(theme).stateVariants.id<${string}>`|`$(theme).themeColors.id<${string}>`|`$(theme).themes.id<${string}>`|`$(palette).colorPalettes.id<${string}>`|`$(palette).shades.id<${string}>`|`$(icons).iconGroups.id<${string}>`|`$(theme).stateVariants`|`$(theme).themeColors`|`$(theme).themes`|`$(palette).colorPalettes`|`$(palette).shades`|`$(icons).iconGroups`;
+export type PartialDiffableQuery = `$(theme).themeColors.id<${string}>.variants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>.variantDefinitions.id<${QueryTypes['$(theme).themes.id<?>']}>`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.appliedPaletteColors.hexcode<${string}>`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.appliedThemes.hexcode<${string}>`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.enabledVariants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>`|`$(theme).themeColors.id<${string}>.variants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>.variantDefinitions`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.appliedPaletteColors`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.appliedThemes`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.enabledVariants`|`$(theme).themeColors.id<${string}>.themeDefinitions.id<${QueryTypes['$(theme).themes.id<?>']}>`|`$(theme).themeColors.id<${string}>.variants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>`|`$(palette).colorPalettes.id<${string}>.colorShades.id<${QueryTypes['$(palette).shades.id<?>']}>`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>`|`$(theme).themeColors.id<${string}>.themeDefinitions`|`$(theme).themeColors.id<${string}>.variants`|`$(theme).themes.id<${string}>.backgroundColor`|`$(palette).colorPalettes.id<${string}>.colorShades`|`$(icons).iconGroups.id<${string}>.icons`|`$(theme).stateVariants.id<${string}>`|`$(theme).themeColors.id<${string}>`|`$(theme).themes.id<${string}>`|`$(palette).colorPalettes.id<${string}>`|`$(palette).shades.id<${string}>`|`$(icons).iconGroups.id<${string}>`|`$(theme).stateVariants`|`$(theme).themeColors`|`$(theme).themes`|`$(palette).colorPalettes`|`$(palette).shades`|`$(icons).iconGroups`;
 
-export type DiffableQuery = `$(theme).themeColors.id<${string}>.variants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>.variantDefinitions.id<${QueryTypes['$(theme).themes.id<?>']}>`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.appliedThemes.hexcode<${string}>`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.enabledVariants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>`|`$(theme).themeColors.id<${string}>.themeDefinitions.id<${QueryTypes['$(theme).themes.id<?>']}>`|`$(theme).themeColors.id<${string}>.variants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>`|`$(palette).colorPalettes.id<${string}>.colorShades.id<${QueryTypes['$(palette).shades.id<?>']}>`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>`|`$(theme).themes.id<${string}>.backgroundColor`|`$(theme).stateVariants.id<${string}>`|`$(theme).themeColors.id<${string}>`|`$(theme).themes.id<${string}>`|`$(palette).colorPalettes.id<${string}>`|`$(palette).shades.id<${string}>`|`$(icons).iconGroups.id<${string}>`;
+export type DiffableQuery = `$(theme).themeColors.id<${string}>.variants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>.variantDefinitions.id<${QueryTypes['$(theme).themes.id<?>']}>`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.appliedPaletteColors.hexcode<${string}>`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.appliedThemes.hexcode<${string}>`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>.enabledVariants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>`|`$(theme).themeColors.id<${string}>.themeDefinitions.id<${QueryTypes['$(theme).themes.id<?>']}>`|`$(theme).themeColors.id<${string}>.variants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>`|`$(palette).colorPalettes.id<${string}>.colorShades.id<${QueryTypes['$(palette).shades.id<?>']}>`|`$(icons).iconGroups.id<${string}>.icons.id<${string}>`|`$(theme).themes.id<${string}>.backgroundColor`|`$(theme).stateVariants.id<${string}>`|`$(theme).themeColors.id<${string}>`|`$(theme).themes.id<${string}>`|`$(palette).colorPalettes.id<${string}>`|`$(palette).shades.id<${string}>`|`$(icons).iconGroups.id<${string}>`;
 
 export type SchemaTypes = {
   ['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']: {
     ['alpha']?: number;
     ['id']: QueryTypes['$(theme).themes.id<?>'];
     ['paletteColorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+  };
+  ['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors.hexcode<?>']: {
+    ['hexcode']: string;
+    ['paletteColor']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
   };
   ['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>']: {
     ['hexcode']: string;
@@ -25,6 +29,10 @@ export type SchemaTypes = {
     ['alpha']?: number;
     ['id']: QueryTypes['$(theme).themes.id<?>'];
     ['paletteColorShade']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+  }>;
+  ['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors']: Array<{
+    ['hexcode']: string;
+    ['paletteColor']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
   }>;
   ['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes']: Array<{
     ['hexcode']: string;
@@ -52,6 +60,10 @@ export type SchemaTypes = {
     ['id']: QueryTypes['$(palette).shades.id<?>'];
   };
   ['$(icons).iconGroups.id<?>.icons.id<?>']: {
+    ['appliedPaletteColors']: Array<{
+      ['hexcode']: string;
+      ['paletteColor']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+    }>;
     ['appliedThemes']: Array<{
       ['hexcode']: string;
       ['themeDefinition']: QueryTypes['$(theme).themeColors.id<?>'];
@@ -86,6 +98,10 @@ export type SchemaTypes = {
     ['id']: QueryTypes['$(palette).shades.id<?>'];
   }>;
   ['$(icons).iconGroups.id<?>.icons']: Array<{
+    ['appliedPaletteColors']: Array<{
+      ['hexcode']: string;
+      ['paletteColor']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+    }>;
     ['appliedThemes']: Array<{
       ['hexcode']: string;
       ['themeDefinition']: QueryTypes['$(theme).themeColors.id<?>'];
@@ -142,6 +158,10 @@ export type SchemaTypes = {
   };
   ['$(icons).iconGroups.id<?>']: {
     ['icons']: Array<{
+      ['appliedPaletteColors']: Array<{
+        ['hexcode']: string;
+        ['paletteColor']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+      }>;
       ['appliedThemes']: Array<{
         ['hexcode']: string;
         ['themeDefinition']: QueryTypes['$(theme).themeColors.id<?>'];
@@ -201,6 +221,10 @@ export type SchemaTypes = {
   }>;
   ['$(icons).iconGroups']: Array<{
     ['icons']: Array<{
+      ['appliedPaletteColors']: Array<{
+        ['hexcode']: string;
+        ['paletteColor']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+      }>;
       ['appliedThemes']: Array<{
         ['hexcode']: string;
         ['themeDefinition']: QueryTypes['$(theme).themeColors.id<?>'];
@@ -222,9 +246,11 @@ export type SchemaTypes = {
 
 export type PointerTypes = {
   ['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']: `$(theme).themeColors.id<${string}>.variants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>.variantDefinitions.id<${QueryTypes['$(theme).themes.id<?>']}>`;
+  ['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors.hexcode<?>']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.appliedPaletteColors.hexcode<${string}>`;
   ['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.appliedThemes.hexcode<${string}>`;
   ['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.enabledVariants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>`;
   ['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions']: `$(theme).themeColors.id<${string}>.variants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>.variantDefinitions`;
+  ['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.appliedPaletteColors`;
   ['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.appliedThemes`;
   ['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.enabledVariants`;
   ['$(theme).themeColors.id<?>.themeDefinitions.id<?>']: `$(theme).themeColors.id<${string}>.themeDefinitions.id<${QueryTypes['$(theme).themes.id<?>']}>`;
@@ -300,6 +326,10 @@ export type SchemaRoot = {
   ['icons']: {
     ['iconGroups']: Array<{
       ['icons']: Array<{
+        ['appliedPaletteColors']: Array<{
+          ['hexcode']: string;
+          ['paletteColor']?: QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>'];
+        }>;
         ['appliedThemes']: Array<{
           ['hexcode']: string;
           ['themeDefinition']: QueryTypes['$(theme).themeColors.id<?>'];
@@ -694,6 +724,13 @@ export const FloroProvider = (props: Props) => {
           commandModeRef.current = state.commandMode;
           setHasLoaded(true);
         }
+        if (response.event == "external:message") {
+          const messageData = response.data as {eventName: string, message: unknown};
+          if (messageData.eventName) {
+            const channel = new BroadcastChannel(messageData.eventName);
+            channel.postMessage(messageData.message);
+          }
+        }
         if (response.event == "ack" || response.event == "update") {
           clearTimeout(updateTimeout.current);
           const isStale = updateCounter?.current > data.id;
@@ -1070,7 +1107,7 @@ const getIndexPathInStateMap = (
   return indexPath;
 };
 
-const updateObjectInStateMap = (
+export const updateObjectInStateMap = (
   stateMap: { [pluginName: string]: object },
   path: string,
   objectToUpdate: object
@@ -1605,10 +1642,12 @@ export type QueryTypes = {
   ['$(palette).shades.id<?>']: `$(palette).shades.id<${string}>`;
   ['$(icons).iconGroups.id<?>']: `$(icons).iconGroups.id<${string}>`;
   ['$(icons).iconGroups.id<?>.icons.id<?>']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>`;
+  ['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors.hexcode<?>']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.appliedPaletteColors.hexcode<${string}>`;
   ['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.appliedThemes.hexcode<${string}>`;
   ['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>']: `$(icons).iconGroups.id<${string}>.icons.id<${string}>.enabledVariants.id<${QueryTypes['$(theme).stateVariants.id<?>']}>`;
 };
 
+export function makeQueryRef(query: '$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors.hexcode<?>', arg0: string, arg1: string, arg2: string): QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors.hexcode<?>'];
 export function makeQueryRef(query: '$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>', arg0: string, arg1: QueryTypes['$(theme).stateVariants.id<?>'], arg2: QueryTypes['$(theme).themes.id<?>']): QueryTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'];
 export function makeQueryRef(query: '$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>', arg0: string, arg1: string, arg2: string): QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>'];
 export function makeQueryRef(query: '$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>', arg0: string, arg1: string, arg2: QueryTypes['$(theme).stateVariants.id<?>']): QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>'];
@@ -1622,7 +1661,7 @@ export function makeQueryRef(query: '$(theme).themeColors.id<?>', arg0: string):
 export function makeQueryRef(query: '$(icons).iconGroups.id<?>', arg0: string): QueryTypes['$(icons).iconGroups.id<?>'];
 export function makeQueryRef(query: '$(palette).shades.id<?>', arg0: string): QueryTypes['$(palette).shades.id<?>'];
 export function makeQueryRef(query: '$(theme).themes.id<?>', arg0: string): QueryTypes['$(theme).themes.id<?>'];
-export function makeQueryRef(query: '$(theme).stateVariants.id<?>'|'$(theme).themeColors.id<?>'|'$(theme).themeColors.id<?>.themeDefinitions.id<?>'|'$(theme).themeColors.id<?>.variants.id<?>'|'$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'|'$(theme).themes.id<?>'|'$(palette).colorPalettes.id<?>'|'$(palette).colorPalettes.id<?>.colorShades.id<?>'|'$(palette).shades.id<?>'|'$(icons).iconGroups.id<?>'|'$(icons).iconGroups.id<?>.icons.id<?>'|'$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>'|'$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>', arg0: string, arg1?: QueryTypes['$(theme).themes.id<?>']|QueryTypes['$(theme).stateVariants.id<?>']|QueryTypes['$(palette).shades.id<?>']|string, arg2?: QueryTypes['$(theme).themes.id<?>']|string|QueryTypes['$(theme).stateVariants.id<?>']): QueryTypes['$(theme).stateVariants.id<?>']|QueryTypes['$(theme).themeColors.id<?>']|QueryTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>']|QueryTypes['$(theme).themeColors.id<?>.variants.id<?>']|QueryTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']|QueryTypes['$(theme).themes.id<?>']|QueryTypes['$(palette).colorPalettes.id<?>']|QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|QueryTypes['$(palette).shades.id<?>']|QueryTypes['$(icons).iconGroups.id<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>']|null {
+export function makeQueryRef(query: '$(theme).stateVariants.id<?>'|'$(theme).themeColors.id<?>'|'$(theme).themeColors.id<?>.themeDefinitions.id<?>'|'$(theme).themeColors.id<?>.variants.id<?>'|'$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'|'$(theme).themes.id<?>'|'$(palette).colorPalettes.id<?>'|'$(palette).colorPalettes.id<?>.colorShades.id<?>'|'$(palette).shades.id<?>'|'$(icons).iconGroups.id<?>'|'$(icons).iconGroups.id<?>.icons.id<?>'|'$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors.hexcode<?>'|'$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>'|'$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>', arg0: string, arg1?: QueryTypes['$(theme).themes.id<?>']|QueryTypes['$(theme).stateVariants.id<?>']|QueryTypes['$(palette).shades.id<?>']|string, arg2?: QueryTypes['$(theme).themes.id<?>']|string|QueryTypes['$(theme).stateVariants.id<?>']): QueryTypes['$(theme).stateVariants.id<?>']|QueryTypes['$(theme).themeColors.id<?>']|QueryTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>']|QueryTypes['$(theme).themeColors.id<?>.variants.id<?>']|QueryTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']|QueryTypes['$(theme).themes.id<?>']|QueryTypes['$(palette).colorPalettes.id<?>']|QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|QueryTypes['$(palette).shades.id<?>']|QueryTypes['$(icons).iconGroups.id<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors.hexcode<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>']|null {
   if ((arg0 != null && arg0 != undefined) && query == '$(theme).stateVariants.id<?>') {
     return `$(theme).stateVariants.id<${arg0 as string}>`;
   }
@@ -1656,6 +1695,9 @@ export function makeQueryRef(query: '$(theme).stateVariants.id<?>'|'$(theme).the
   if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && query == '$(icons).iconGroups.id<?>.icons.id<?>') {
     return `$(icons).iconGroups.id<${arg0 as string}>.icons.id<${arg1 as string}>`;
   }
+  if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && (arg2 != null && arg2 != undefined) && query == '$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors.hexcode<?>') {
+    return `$(icons).iconGroups.id<${arg0 as string}>.icons.id<${arg1 as string}>.appliedPaletteColors.hexcode<${arg2 as string}>`;
+  }
   if ((arg0 != null && arg0 != undefined) && (arg1 != null && arg1 != undefined) && (arg2 != null && arg2 != undefined) && query == '$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>') {
     return `$(icons).iconGroups.id<${arg0 as string}>.icons.id<${arg1 as string}>.appliedThemes.hexcode<${arg2 as string}>`;
   }
@@ -1665,6 +1707,7 @@ export function makeQueryRef(query: '$(theme).stateVariants.id<?>'|'$(theme).the
   return null;
 };
 
+export function useQueryRef(query: '$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors.hexcode<?>', arg0: string, arg1: string, arg2: string): QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors.hexcode<?>'];
 export function useQueryRef(query: '$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>', arg0: string, arg1: QueryTypes['$(theme).stateVariants.id<?>'], arg2: QueryTypes['$(theme).themes.id<?>']): QueryTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'];
 export function useQueryRef(query: '$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>', arg0: string, arg1: string, arg2: string): QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>'];
 export function useQueryRef(query: '$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>', arg0: string, arg1: string, arg2: QueryTypes['$(theme).stateVariants.id<?>']): QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>'];
@@ -1678,7 +1721,7 @@ export function useQueryRef(query: '$(theme).themeColors.id<?>', arg0: string): 
 export function useQueryRef(query: '$(icons).iconGroups.id<?>', arg0: string): QueryTypes['$(icons).iconGroups.id<?>'];
 export function useQueryRef(query: '$(palette).shades.id<?>', arg0: string): QueryTypes['$(palette).shades.id<?>'];
 export function useQueryRef(query: '$(theme).themes.id<?>', arg0: string): QueryTypes['$(theme).themes.id<?>'];
-export function useQueryRef(query: '$(theme).stateVariants.id<?>'|'$(theme).themeColors.id<?>'|'$(theme).themeColors.id<?>.themeDefinitions.id<?>'|'$(theme).themeColors.id<?>.variants.id<?>'|'$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'|'$(theme).themes.id<?>'|'$(palette).colorPalettes.id<?>'|'$(palette).colorPalettes.id<?>.colorShades.id<?>'|'$(palette).shades.id<?>'|'$(icons).iconGroups.id<?>'|'$(icons).iconGroups.id<?>.icons.id<?>'|'$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>'|'$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>', arg0: string, arg1?: QueryTypes['$(theme).themes.id<?>']|QueryTypes['$(theme).stateVariants.id<?>']|QueryTypes['$(palette).shades.id<?>']|string, arg2?: QueryTypes['$(theme).themes.id<?>']|string|QueryTypes['$(theme).stateVariants.id<?>']): QueryTypes['$(theme).stateVariants.id<?>']|QueryTypes['$(theme).themeColors.id<?>']|QueryTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>']|QueryTypes['$(theme).themeColors.id<?>.variants.id<?>']|QueryTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']|QueryTypes['$(theme).themes.id<?>']|QueryTypes['$(palette).colorPalettes.id<?>']|QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|QueryTypes['$(palette).shades.id<?>']|QueryTypes['$(icons).iconGroups.id<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>']|null {
+export function useQueryRef(query: '$(theme).stateVariants.id<?>'|'$(theme).themeColors.id<?>'|'$(theme).themeColors.id<?>.themeDefinitions.id<?>'|'$(theme).themeColors.id<?>.variants.id<?>'|'$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'|'$(theme).themes.id<?>'|'$(palette).colorPalettes.id<?>'|'$(palette).colorPalettes.id<?>.colorShades.id<?>'|'$(palette).shades.id<?>'|'$(icons).iconGroups.id<?>'|'$(icons).iconGroups.id<?>.icons.id<?>'|'$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors.hexcode<?>'|'$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>'|'$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>', arg0: string, arg1?: QueryTypes['$(theme).themes.id<?>']|QueryTypes['$(theme).stateVariants.id<?>']|QueryTypes['$(palette).shades.id<?>']|string, arg2?: QueryTypes['$(theme).themes.id<?>']|string|QueryTypes['$(theme).stateVariants.id<?>']): QueryTypes['$(theme).stateVariants.id<?>']|QueryTypes['$(theme).themeColors.id<?>']|QueryTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>']|QueryTypes['$(theme).themeColors.id<?>.variants.id<?>']|QueryTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']|QueryTypes['$(theme).themes.id<?>']|QueryTypes['$(palette).colorPalettes.id<?>']|QueryTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']|QueryTypes['$(palette).shades.id<?>']|QueryTypes['$(icons).iconGroups.id<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors.hexcode<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>']|QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>']|null {
   return useMemo(() => {
     if (query == '$(theme).stateVariants.id<?>') {
       return makeQueryRef(query, arg0 as string);
@@ -1713,6 +1756,9 @@ export function useQueryRef(query: '$(theme).stateVariants.id<?>'|'$(theme).them
     if (query == '$(icons).iconGroups.id<?>.icons.id<?>') {
       return makeQueryRef(query, arg0 as string, arg1 as string);
     }
+    if (query == '$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors.hexcode<?>') {
+      return makeQueryRef(query, arg0 as string, arg1 as string, arg2 as string);
+    }
     if (query == '$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>') {
       return makeQueryRef(query, arg0 as string, arg1 as string, arg2 as string);
     }
@@ -1723,6 +1769,7 @@ export function useQueryRef(query: '$(theme).stateVariants.id<?>'|'$(theme).them
   }, [query, arg0, arg1, arg2]);
 };
 
+export function extractQueryArgs(query?: QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors.hexcode<?>']): [string, string, string];
 export function extractQueryArgs(query?: QueryTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']): [string, QueryTypes['$(theme).stateVariants.id<?>'], QueryTypes['$(theme).themes.id<?>']];
 export function extractQueryArgs(query?: QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>']): [string, string, string];
 export function extractQueryArgs(query?: QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>']): [string, string, QueryTypes['$(theme).stateVariants.id<?>']];
@@ -1747,6 +1794,7 @@ export function extractQueryArgs(query?: string): Array<string> {
   );
 };
 
+export function useExtractQueryArgs(query?: QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors.hexcode<?>']): [string, string, string];
 export function useExtractQueryArgs(query?: QueryTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']): [string, QueryTypes['$(theme).stateVariants.id<?>'], QueryTypes['$(theme).themes.id<?>']];
 export function useExtractQueryArgs(query?: QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>']): [string, string, string];
 export function useExtractQueryArgs(query?: QueryTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>']): [string, string, QueryTypes['$(theme).stateVariants.id<?>']];
@@ -1800,9 +1848,11 @@ export function usePluginStore(plugin: 'theme'|'palette'|'icons'): SchemaRoot['t
 }
 
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']): SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors.hexcode<?>']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors.hexcode<?>'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions']): SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'];
+export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants'];
 export function getReferencedObject(root: SchemaRoot, query?: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>']): SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'];
@@ -1842,9 +1892,11 @@ export function getReferencedObject<T>(root: SchemaRoot, query?: string): T|null
 };
 
 export function useReferencedObject(query?: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']): SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'];
+export function useReferencedObject(query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors.hexcode<?>']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors.hexcode<?>'];
 export function useReferencedObject(query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>'];
 export function useReferencedObject(query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>'];
 export function useReferencedObject(query?: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions']): SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'];
+export function useReferencedObject(query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors'];
 export function useReferencedObject(query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes'];
 export function useReferencedObject(query?: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants']): SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants'];
 export function useReferencedObject(query?: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>']): SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'];
@@ -1887,9 +1939,11 @@ export function useReferencedObject<T>(query?: string): T|null {
 };
 
 export function useFloroState(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'], defaultData?: SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']): [SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>']|null, (t: SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'], doSave?: boolean) => void|(() => void), () => void];
+export function useFloroState(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors.hexcode<?>'], defaultData?: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors.hexcode<?>']): [SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors.hexcode<?>']|null, (t: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors.hexcode<?>'], doSave?: boolean) => void|(() => void), () => void];
 export function useFloroState(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>'], defaultData?: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>']): [SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>']|null, (t: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>'], doSave?: boolean) => void|(() => void), () => void];
 export function useFloroState(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>'], defaultData?: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>']): [SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>']|null, (t: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>'], doSave?: boolean) => void|(() => void), () => void];
 export function useFloroState(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'], defaultData?: SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions']): [SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions']|null, (t: SchemaTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'], doSave?: boolean) => void|(() => void), () => void];
+export function useFloroState(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors'], defaultData?: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors']): [SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors']|null, (t: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors'], doSave?: boolean) => void|(() => void), () => void];
 export function useFloroState(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes'], defaultData?: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes']): [SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes']|null, (t: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes'], doSave?: boolean) => void|(() => void), () => void];
 export function useFloroState(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants'], defaultData?: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants']): [SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants']|null, (t: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants'], doSave?: boolean) => void|(() => void), () => void];
 export function useFloroState(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'], defaultData?: SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>']): [SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>']|null, (t: SchemaTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'], doSave?: boolean) => void|(() => void), () => void];
@@ -2030,9 +2084,11 @@ export function useFloroState<T>(query: string, defaultData?: T): [T|null, (t: T
 };
 
 export function useIsFloroInvalid(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors.hexcode<?>'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'], fuzzy?: boolean): boolean;
+export function useIsFloroInvalid(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants'], fuzzy?: boolean): boolean;
 export function useIsFloroInvalid(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'], fuzzy?: boolean): boolean;
@@ -2077,9 +2133,11 @@ export function useIsFloroInvalid(query: PartialDiffableQuery|DiffableQuery, fuz
   }, [invalidQueriesSet, query, fuzzy])
 };
 export function useWasAdded(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors.hexcode<?>'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'], fuzzy?: boolean): boolean;
+export function useWasAdded(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants'], fuzzy?: boolean): boolean;
 export function useWasAdded(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'], fuzzy?: boolean): boolean;
@@ -2117,9 +2175,11 @@ export function useWasAdded(query: PartialDiffableQuery|DiffableQuery, fuzzy = t
   }, [ctx.changeset, query, fuzzy, ctx.compareFrom, ctx.commandMode])
 };
 export function useWasRemoved(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors.hexcode<?>'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'], fuzzy?: boolean): boolean;
+export function useWasRemoved(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants'], fuzzy?: boolean): boolean;
 export function useWasRemoved(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'], fuzzy?: boolean): boolean;
@@ -2157,9 +2217,11 @@ export function useWasRemoved(query: PartialDiffableQuery|DiffableQuery, fuzzy =
   }, [ctx.changeset, query, fuzzy, ctx.compareFrom, ctx.commandMode])
 };
 export function useHasConflict(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors.hexcode<?>'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'], fuzzy?: boolean): boolean;
+export function useHasConflict(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants'], fuzzy?: boolean): boolean;
 export function useHasConflict(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'], fuzzy?: boolean): boolean;
@@ -2197,9 +2259,11 @@ export function useHasConflict(query: PartialDiffableQuery|DiffableQuery, fuzzy 
   }, [ctx.conflictSet, query, fuzzy, ctx.commandMode])
 };
 export function useWasChanged(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors.hexcode<?>'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'], fuzzy?: boolean): boolean;
+export function useWasChanged(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants'], fuzzy?: boolean): boolean;
 export function useWasChanged(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'], fuzzy?: boolean): boolean;
@@ -2248,9 +2312,11 @@ export function useWasChanged(query: PartialDiffableQuery|DiffableQuery, fuzzy =
   return wasAdded || wasRemoved;
 };
 export function useHasIndication(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions.id<?>'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors.hexcode<?>'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes.hexcode<?>'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants.id<?>'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(theme).themeColors.id<?>.variants.id<?>.variantDefinitions'], fuzzy?: boolean): boolean;
+export function useHasIndication(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.appliedThemes'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(icons).iconGroups.id<?>.icons.id<?>.enabledVariants'], fuzzy?: boolean): boolean;
 export function useHasIndication(query: PointerTypes['$(theme).themeColors.id<?>.themeDefinitions.id<?>'], fuzzy?: boolean): boolean;

@@ -244,6 +244,9 @@ const UpdateIconModal = (props: Props) => {
     [key: string]: PointerTypes["$(theme).themeColors.id<?>"]
   }>({});
   const [iconTheme, setIconTheme] = useState(themes?.[0]?.id);
+  const [appliedPaletteColors, setAppliedPaletteColors] = useState<
+    SchemaTypes["$(icons).iconGroups.id<?>.icons.id<?>.appliedPaletteColors"]
+  >([]);
 
   const iconOptions = useMemo(() => {
     return (
@@ -328,6 +331,7 @@ const UpdateIconModal = (props: Props) => {
 
     const icon: SchemaTypes['$(icons).iconGroups.id<?>.icons.id<?>'] = {
       appliedThemes: appliedThemesList,
+      appliedPaletteColors,
       defaultIconTheme,
       enabledVariants: enabledVariants,
       id,
@@ -374,6 +378,7 @@ const UpdateIconModal = (props: Props) => {
     applicationState,
     selectedVariants,
     appliedThemes,
+    appliedPaletteColors,
     id,
     name,
     iconTheme,
@@ -407,7 +412,8 @@ const UpdateIconModal = (props: Props) => {
       setShowAddHexToPalette(false);
       setShowReThemeModal(false);
       reset();
-      setRemappedColors({});
+      //setRemappedColors({});
+      setAppliedPaletteColors([]);
       setSelectedVariants({});
     } else {
       if (props.originalIcon) {
@@ -445,7 +451,7 @@ const UpdateIconModal = (props: Props) => {
 
 
   const { data: svgData } = useBinaryData(fileRef, "text");
-  const [remappedColors, setRemappedColors] = useState({});
+  //const [remappedColors, setRemappedColors] = useState({});
   const [addedColors, setAddedColors] = useState<{[hex: string]: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']}>({});
 
   const showStateVariants = useMemo(() => {
@@ -463,23 +469,73 @@ const UpdateIconModal = (props: Props) => {
     [standardizedData]
   );
 
-  const remappedSVG = useSVGRemap(standardizedData, remappedColors);
-  const onAddIcon = useCallback(() => {
-    if (remappedSVG) {
-      uploadBlob([remappedSVG], "image/svg+xml");
-    }
-  }, [remappedSVG])
+  const paletteColors = useMemo(() => {
+    return applicationState?.palette?.colorPalettes.flatMap((color) => {
+      return color?.colorShades?.flatMap(colorShade => {
+        return {
+          hexcode: colorShade.hexcode,
+          ref: makeQueryRef("$(palette).colorPalettes.id<?>.colorShades.id<?>", color.id, colorShade.id)
+        }
+      })
+    })
+  }, [applicationState?.palette])
 
-  useEffect(() => {
-    setRemappedColors(
-      hexValues.reduce((acc, value) => {
+  const remappedColors = useMemo(() => {
+    if (!applicationState) {
+      return {};
+    }
+    return appliedPaletteColors.reduce((acc, appliedPaletteColor) => {
+      if (!appliedPaletteColor.paletteColor) {
         return {
           ...acc,
-          [value]: value,
-        };
-      }, {})
-    );
-  }, [hexValues, props.iconRef]);
+          [appliedPaletteColor.hexcode]: appliedPaletteColor.hexcode
+        }
+      }
+      const paletteColor = getReferencedObject(applicationState, appliedPaletteColor.paletteColor);
+      return {
+        ...acc,
+        [appliedPaletteColor.hexcode]: paletteColor?.hexcode + 'FF'
+      }
+    }, {})
+  }, [applicationState, appliedPaletteColors])
+
+  useEffect(() => {
+    if (!applicationState || !props.iconRef) {
+      return;
+    }
+
+    const icon = getReferencedObject(applicationState, props.iconRef);
+    if (icon?.appliedPaletteColors?.length > 0) {
+      setAppliedPaletteColors([...icon?.appliedPaletteColors]);
+      return;
+    }
+    const nextAppliedPaletteColors = hexValues?.map?.(hexcode => {
+      const paletteColor = paletteColors?.find(color => color.hexcode  + 'FF' == hexcode);
+      return {
+        hexcode,
+        paletteColor: paletteColor?.ref
+      }
+    }) ?? [];
+    setAppliedPaletteColors(nextAppliedPaletteColors)
+  }, [applicationState, paletteColors, hexValues, props.iconRef]);
+
+  const remappedSVG = useSVGRemap(standardizedData, remappedColors);
+  const onAddIcon = useCallback(() => {
+    if (standardizedData) {
+      uploadBlob([standardizedData], "image/svg+xml");
+    }
+  }, [standardizedData])
+
+//  useEffect(() => {
+//    setRemappedColors(
+//      hexValues.reduce((acc, value) => {
+//        return {
+//          ...acc,
+//          [value]: value,
+//        };
+//      }, {})
+//    );
+//  }, [hexValues, props.iconRef]);
 
   useEffect(() => {
     if (props.originalIcon) {
@@ -529,21 +585,46 @@ const UpdateIconModal = (props: Props) => {
   }, [status]);
 
   const onChangeRemap = useCallback(
-    (originalColor: string, color: string) => {
-      setRemappedColors({
-        ...remappedColors,
-        [originalColor]: color,
-      });
+    (originalColor: string, paletteColorRef: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']) => {
+      if (appliedPaletteColors.find(pc => pc.hexcode === originalColor)) {
+        setAppliedPaletteColors(
+          appliedPaletteColors.map((pc) => {
+            if (pc.hexcode === originalColor) {
+              return {
+                hexcode: originalColor,
+                paletteColor: paletteColorRef,
+              };
+            }
+            return pc;
+          })
+        );
+      } else {
+        setAppliedPaletteColors([
+          ...appliedPaletteColors,
+          {
+            hexcode: originalColor,
+            paletteColor: paletteColorRef
+          }
+        ])
+      }
     },
-    [remappedColors]
+    [remappedColors, setAppliedPaletteColors, appliedPaletteColors]
   );
 
   const onUndoRemap = useCallback(
     (originalColor: string) => {
-      setRemappedColors({
-        ...remappedColors,
-        [originalColor]: originalColor,
-      });
+        setAppliedPaletteColors(
+          appliedPaletteColors.map((pc) => {
+            if (pc.hexcode == originalColor) {
+              const paletteColor = paletteColors?.find(color => color.hexcode  + 'FF' == pc.hexcode);
+              return {
+                ...pc,
+                paletteColor: paletteColor?.ref
+              };
+            }
+            return pc;
+          })
+        );
     },
     [remappedColors]
   );
@@ -551,10 +632,18 @@ const UpdateIconModal = (props: Props) => {
   const onUndoCurrentRemap = useCallback(() => {
     if (edittingHex) {
 
-      setRemappedColors({
-        ...remappedColors,
-        [edittingHex]: edittingHex,
-      });
+        setAppliedPaletteColors(
+          appliedPaletteColors.map((pc) => {
+            if (pc.hexcode == edittingHex) {
+              const paletteColor = paletteColors?.find(color => color.hexcode  + 'FF' == pc.hexcode);
+              return {
+                ...pc,
+                paletteColor: paletteColor?.ref
+              };
+            }
+            return pc;
+          })
+        );
     }
   }, [remappedColors, edittingHex]);
 
@@ -596,10 +685,7 @@ const UpdateIconModal = (props: Props) => {
   const onSelectColor = useCallback((colorRef: PointerTypes['$(palette).colorPalettes.id<?>.colorShades.id<?>']) => {
     if (showPaletteHexSelect) {
       if (applicationState && edittingHex != null) {
-        const colorShade = getReferencedObject(applicationState, colorRef);
-        const opacity = edittingHex.substring(edittingHex.length - 2);
-        const nextHex = colorShade?.hexcode + opacity;
-        onChangeRemap(edittingHex, nextHex);
+        onChangeRemap(edittingHex, colorRef);
       }
     }
     if (showAddHexToPalette) {
@@ -846,6 +932,7 @@ const UpdateIconModal = (props: Props) => {
           <SectionTitle>{"Colors"}</SectionTitle>
           <ColorSection>
             {hexValues.map((hexVal) => {
+              const paletteColorRef = appliedPaletteColors.find(pc => pc.hexcode == hexVal)?.paletteColor
               return (
                 <ColorEditRow
                   key={hexVal}
@@ -856,6 +943,7 @@ const UpdateIconModal = (props: Props) => {
                   onAddHex={onAddHex}
                   onUndoAdd={onUndoAdd}
                   wasAdded={!!addedColors[hexVal]}
+                  paletteShadeRef={paletteColorRef}
                 />
               );
             })}

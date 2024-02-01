@@ -2,6 +2,7 @@ import React, { useMemo, useCallback } from "react";
 import {
   PointerTypes,
   SchemaTypes,
+  getReferencedObject,
   makeQueryRef,
   useBinaryData,
   useCopyApi,
@@ -34,6 +35,7 @@ import DraggerDark from "@floro/common-assets/assets/images/icons/dragger.dark.s
 import IconThemeDefCell from "./IconThemeDefCell";
 import IconThemeDefVariantCell from "./IconThemeDefVariantCell";
 import IconPreview from "../iconsgroups/IconPreview";
+import { useSVGRemap } from "../colorhooks";
 
 const Container = styled.div`
   padding: 0;
@@ -213,7 +215,7 @@ const IconRow = (props: Props) => {
   const wasRemoved = useWasRemoved(props.iconRef, true);
   const wasAdded = useWasAdded(props.iconRef, true);
   const hasConflict = useHasConflict(props.iconRef, false);
-  const { commandMode, compareFrom, isCopyMode } = useFloroContext();
+  const { commandMode, compareFrom, isCopyMode, applicationState } = useFloroContext();
   const { isCopied, toggleCopy} = useCopyApi(props.iconRef);
   const controls = useDragControls();
 
@@ -324,7 +326,33 @@ const IconRow = (props: Props) => {
 
   const themes = useReferencedObject("$(theme).themes");
   const stateVariants = useReferencedObject("$(theme).stateVariants");
-  const { data: svgData } = useBinaryData(props.icon.svg, "text");
+  const { data: rawSvgData } = useBinaryData(props.icon.svg, "text");
+
+  const remappedColors = useMemo(() => {
+    if (!applicationState) {
+      return {};
+    }
+    return (
+      props?.icon?.appliedPaletteColors.reduce((acc, appliedPaletteColor) => {
+        if (!appliedPaletteColor.paletteColor) {
+          return {
+            ...acc,
+            [appliedPaletteColor.hexcode]: appliedPaletteColor.hexcode,
+          };
+        }
+        const paletteColor = getReferencedObject(
+          applicationState,
+          appliedPaletteColor.paletteColor
+        );
+        return {
+          ...acc,
+          [appliedPaletteColor.hexcode]: paletteColor?.hexcode + "FF",
+        };
+      }, {}) ?? {}
+    );
+  }, [applicationState, props?.icon?.appliedPaletteColors]);
+  const svgData = useSVGRemap(rawSvgData, remappedColors);
+
 
   const isSearching = useMemo(
     () => props.searchText.trim() != "",
