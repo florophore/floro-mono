@@ -166,12 +166,12 @@ const InterpolationVariant = (props: Props) => {
   );
 
   const isGenderVar = useMemo(() => {
-    return variable.name == "gender" && variable?.varType == "string";
+    return variable?.name == "gender" && variable?.varType == "string";
   }, [variable])
 
   const hasGenderVar = useMemo(() => {
     for (const variable of props?.phrase?.variables ?? []) {
-      if (variable.name == "gender" && variable?.varType == "string") {
+      if (variable?.name == "gender" && variable?.varType == "string") {
         return true;
       }
     }

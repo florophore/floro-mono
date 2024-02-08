@@ -307,12 +307,12 @@ export default class AppServer {
           console.log("send emails to port 1025!");
         }
       });
-      const proxy = createProxyMiddleware("/maildev", {
-        target: `http://localhost:1080`,
-        ws: true,
-      });
+      //const proxy = createProxyMiddleware("/maildev", {
+      //  target: `http://localhost:1080`,
+      //  ws: true,
+      //});
 
-      this.app.use(proxy);
+      //this.app.use(proxy);
     } catch (e) {
       console.error(e);
     }

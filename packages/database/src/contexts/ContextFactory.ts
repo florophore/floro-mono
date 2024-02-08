@@ -18,6 +18,9 @@ export default class ContextFactory {
     if (!this.warmQueryRunner) {
       this.warmQueryRunner = await this.conn.makeQueryRunner();
     }
+    if (this.warmQueryRunner.isReleased) {
+      this.warmQueryRunner = await this.conn.makeQueryRunner();
+    }
   }
 
   public async createContext<T extends BaseContext>(

@@ -53,7 +53,7 @@ export default class MainConfig {
       return "http://localhost:63403";
     }
     if (process.env?.['FLORO_API_HOST']) {
-      return process?.env['FLORO_API_HOSTOMAIN'] as string;
+      return process?.env['FLORO_API_HOST'] as string;
     }
     return "https://api.floro.io";
   }
