@@ -134,7 +134,7 @@ export const sendPluralizationRequest = async (body: {
   const xhr = new XMLHttpRequest();
   let promise = new Promise<Array<ConditionalStatement>>((resolve, reject) => {
     xhr.responseType = "json";
-    xhr.open("POST", "http://localhost:9000/proxy/chatgpt/pluralize");
+    xhr.open("POST", "https://floro.io/proxy/chatgpt/pluralize");
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     let didError = false;
     xhr.onerror = function (e) {
@@ -193,7 +193,7 @@ export const sendGenderizationRequest = async (body: {
   const xhr = new XMLHttpRequest();
   let promise = new Promise<Array<GenderCondition>>((resolve, reject) => {
     xhr.responseType = "json";
-    xhr.open("POST", "http://localhost:9000/proxy/chatgpt/genderize");
+    xhr.open("POST", "https://floro.io/proxy/chatgpt/genderize");
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     let didError = false;
     xhr.onerror = function (e) {
