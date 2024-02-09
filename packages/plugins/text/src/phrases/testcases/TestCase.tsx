@@ -338,7 +338,7 @@ const TestCase = (props: Props) => {
         );
         for (const condition of selectedLocaleRule?.conditionals ?? []) {
           const value = varReplacementMap[premiseVariable?.name ?? ""];
-          if (!value) {
+          if (value === undefined || value === null) {
             continue;
           }
           const comparatorValue = getComparatorValue(
@@ -426,7 +426,7 @@ const TestCase = (props: Props) => {
           );
           for (const condition of fallbackLocaleRule?.conditionals ?? []) {
             const value = varReplacementMap[premiseVariable?.name ?? ""];
-            if (!value) {
+            if (value === undefined || value == null) {
               continue;
             }
             const comparatorValue = getComparatorValue(
