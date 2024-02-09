@@ -111,7 +111,7 @@ const RemotePluginEditorRow = (props: Props) => {
       return `/user/@/${pluginVersion.user?.username}/plugins/${pluginVersion.name}/v/${pluginVersion.version}`;
     }
     return `/org/@/${pluginVersion.organization?.handle}/plugins/${pluginVersion.name}/v/${pluginVersion.version}`;
-  }, [pluginVersion]);
+  }, [pluginVersion, pluginVersion.organization?.handle]);
 
   return (
     <Row>
@@ -136,7 +136,24 @@ const RemotePluginEditorRow = (props: Props) => {
         </Link>
       </CenterInfo>
       <RightSide>
-        <Link to={link}>
+        {(pluginVersion.organization?.handle || pluginVersion.user?.username) && (
+          <Link to={link}>
+            <VersionNumber
+              style={{
+                color: props.isCompareMode
+                  ? props.wasAdded
+                    ? theme.colors.addedText
+                    : props.wasRemoved
+                    ? theme.colors.removedText
+                    : theme.colors.connectionTextColor
+                  : theme.colors.connectionTextColor,
+              }}
+            >
+              {props.pluginVersion}
+            </VersionNumber>
+          </Link>
+        )}
+        {(!pluginVersion.organization?.handle && !pluginVersion.user?.username) && (
           <VersionNumber
             style={{
               color: props.isCompareMode
@@ -150,7 +167,7 @@ const RemotePluginEditorRow = (props: Props) => {
           >
             {props.pluginVersion}
           </VersionNumber>
-        </Link>
+        )}
       </RightSide>
     </Row>
   );

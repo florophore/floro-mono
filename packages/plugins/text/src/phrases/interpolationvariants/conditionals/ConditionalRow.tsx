@@ -104,6 +104,10 @@ const options = [
     value: "lte",
     label: "less than or equal to",
   },
+  {
+    value: "ends_with",
+    label: "ends with",
+  },
 ];
 
 const floatOptions = [
@@ -134,6 +138,10 @@ const floatOptions = [
   {
     value: "is_fractional",
     label: "a fractional quantity",
+  },
+  {
+    value: "ends_with",
+    label: "ends with",
   },
 ];
 

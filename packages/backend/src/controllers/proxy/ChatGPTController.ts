@@ -90,12 +90,13 @@ Your objectives are as follows:
 1. Determine the language from the provided locale code.
 2. Create translation rules that adhere to the language's rules for pluralization and numeracy, tailored to the variable's value.
 3. Apply logical conditions with the following operators: gte (>=), gt (>), lte (<=), lt (<), eq (=), neq (!=), ends_with (a.toString().endsWith(b.toString())) and is_fractional (for handling decimals). For gender-specific language, use the "gender" operator with conditions explicitly set to "male", "female", or "neutral".
-4. Logical conditions may be included in the subcondition. All sub conditions are treated as a logical AND.
+4. Logical conditions may be included in the subconditions. All sub conditions are treated as a logical AND.
 5. ends_with is used to compare the end of the number, this is particularly useful in languages where the final digit affects the grammar. In english this can be used to form logic around ordinal suffixes, for example 1st, 2nd, 3rd, 4th, ..., 10th, 11th, 12th, 13th, ...,20th, 21st, 22nd, 23rd. In this case we need to combine ends_with lt and eq subconditions in order to create correct grammar. The final digit of an object may also affects pluralization in many languages
 6. The variable being pluralized on is ${varName} and is of type ${varType}
-7. Gender variations should be applied to the main subject
+7. Gender variations should be applied to the main subject of the sentences.
 8. Only use is_fractional if the varType is a float, ${varType == "integer" ? `(since the type is an integer, do not use is_fractional in the conditions)` : ``}
 9. Only consider pluralization & numeric rules with respect to the {${varName}} value.
+
 
 Format the output in JSON, structured like this:
 
@@ -115,7 +116,35 @@ Format the output in JSON, structured like this:
   // Include additional condition blocks as necessary
 ]
 
-PLEASE CONSIDER THESE RULES FOR THE SPECIFIC locale code ${lang}. For example, Chinese does not have pluralization rules so you may return an empty array for the locale ZH.
+Consider a personalized status update that might appear on a user's dashboard or profile page regarding gender:
+
+English: "You have been logged in for 3 days"
+This message is gender-neutral in English. However, in Spanish, adjectives (and past participles used as adjectives) agree in gender with the subject. If we want to convey the same message in Spanish with gender awareness, it might look like this:
+
+"Has estado conectado durante 3 días." (if addressing a male user)
+"Has estado conectada durante 3 días." (if addressing a female user)
+
+3 dias can be pluralized, which conectado/conectada can be genderized. We can combine conditions to represent the gender and pluralization cases.
+
+To give more example of gender agreement, let's use a different sentence that includes an adjective describing the user:
+
+English: "Become an active member of our community."
+Translating and ensuring gender agreement in Spanish would look like this:
+
+Spanish (for a male user): "Conviértete en un miembro activo de nuestra comunidad."
+Spanish (for a female user): "Conviértete en una miembro activa de nuestra comunidad."
+However, the word for "member" in Spanish ("miembro") is typically masculine, regardless of the gender of the person it refers to, which makes my attempt to gender the word "miembro" incorrect. A better example to illustrate gender agreement would involve a phrase where the gendered adjective or noun directly refers to the user:
+
+Spanish (for a male user): "Estás conectado a nuestra comunidad."
+Spanish (for a female user): "Estás conectada a nuestra comunidad."
+Here, "conectado" or "conectada" changes based on the user's gender, demonstrating how gender awareness impacts the translation and personalization of messages in Spanish. This adjustment ensures that the language used on the platform is inclusive and respectful of the user's gender identity.
+
+Notice the gender only applies to the subject. Please maintain this rule. If there is no subject in the sentence specified, please assume the sentence is referring to the user in the second person!!!! Logic involving gender conditions should be specified as the top elements of the array.
+
+PLEASE CONSIDER THESE RULES FOR THE SPECIFIC locale code ${lang}. For example, Chinese does not have pluralization rules so you may return an empty array for the locale ZH if there is no pluralization or gender logic to be applied.
+
+PLEASE CONSIDER THE GENDER CASES AS WELL!
+I REPEAT the gender only applies to the subject. Please maintain this rule. IF THERE IS NO SUBJECT IN THE SENTENCE SPECIFIED, PLEASE ASSUME THE SENTENCE IS REFERRING TO THE USER IN THE SECOND PERSON!!!! Logic involving gender conditions should be specified as the top elements of the array.
 
 An example of ends_with for a placement variable is
 
@@ -187,6 +216,8 @@ An example of ends_with for a placement variable is
     ]
   },
 ]
+
+We should try to combine the pluralization logic with the gender logic if possible. To do this, append the gender condition to the subconditions.
 
 Slavic languages usually have complicated pluralization involving the final digit and whether or not the pluralized value is a decimal value. Depending on if the value or less than or greater than a certain value may affect the translation in conjunction with what the final digit is can affect the translation. Consider all range and final digit permutations. Please lookup the pluralization rules of the locale before performing the task.
 
@@ -273,6 +304,57 @@ for example, given the sentence "They ate {numberOfBannanas} bananas". A good re
   }
 ]
 
+
+Here is a really good gendered/plural example for "Has estado conectado durante {numberOfDays} días."
+[
+  {
+    translation: "Has estado conectado durante un día.",
+    condition: 1,
+    operator: "eq",
+    subconditions: [
+      {
+        condition: "male",
+        operator: "gender",
+      },
+    ]
+  },
+  {
+    translation: "Has estado conectada durante un día.",
+    condition: 1,
+    operator: "eq",
+    subconditions: [
+      {
+        condition: "female",
+        operator: "gender",
+      },
+    ]
+  },
+  {
+    translation: "Has estado conectado durante {numberOfDays} días.",
+    condition: 1,
+    operator: "gt",
+    subconditions: [
+      {
+        condition: "male",
+        operator: "gender",
+      },
+    ]
+  },
+  {
+    translation: "Has estado conectada durante {numberOfDays} días.",
+    condition: 1,
+    operator: "gt",
+    subconditions: [
+      {
+        condition: "female",
+        operator: "gender",
+      },
+    ]
+  },
+]
+
+don't forget to include gender conditions (if possible), but do not include gender conditions if the outputs are the same without the logic!
+
 Just respond with the JSON described above in stringified format, nothing else, ensure the JSON is valid.
 `;
 
@@ -301,7 +383,7 @@ Array<{
   translation: string, // this should be the string passed back in the language of the locale code (${lang}).
   condition: float|null, // this should be the value of ${varName} when the translation should be applied, leave null only if the operator is is_fractional
   operator: gte|gt|lt|lte|eq|neq|ends_with|is_fractional, // this is the operator used when comparing ${varName} to the condition
-  subcondition: Array<{
+  subconditions: Array<{
     condition: float, // this should be the value of ${varName} when the translation should be applied
     operator: "gte"|"gt"|"lt"|"lte"|"eq"|"neq"|"ends_with", // this is the operator used when comparing ${varName} to the condition
   }|{
@@ -431,7 +513,7 @@ An example of ends_with for a placement variable is
   },
 ]
 
-please ensure the conditons and subconditions make logical sense in order, you frequently have bad hallucinations here.
+please ensure the conditions and subconditions make logical sense in order, you frequently have bad hallucinations here.
 This is a life or death use case where OpenAI could be liable for damages if you make mistakes, so do your best not hallucinate too badly on the logical statements.
 Allocate some extra memory to triple check yourself before responding, you'll be saving openAI a lot of money by using a little extra compute instead of incuring the damages of the wrongful death lawsuit resulting from your hallucinations.
 
@@ -456,7 +538,7 @@ If the var type is a float, please also consider decimal cases but only include 
 In the case of decimal conditions, please use the variable and make the condition value equal to null and use the operator is_fractional.
 If a condition's translation value is the same as the default case provided by the user input, please omit it (PLEASE OBEY THIS!).
 
-As an example given the prompt "there are {n} messages to check", where n is either a float ot interger value, a good response would be:
+As an example given the prompt "there are {n} messages to check", where n is either a float ot integer value, a good response would be:
 [
   {
     translation: "there are no messages to check",
@@ -500,8 +582,6 @@ Slavic languages usually have complicated pluralization involving the final digi
 
 Just respond with the JSON described above, nothing else (do not put the JSON in quotes), ensure the JSON is valid.
 `
-    .replaceAll("\n", " ")
-    .trim();
 
 
 const GENDERIZE_HELP_PROMPT = (
@@ -513,7 +593,7 @@ The user will supply the default case of the string in the language of the local
 You should skip the default case, which is already defined by the user's input.
 
 Please provide the pluralized versions of the user supplied default case in the following json format.
-HERE IS THE DEFINTION OF THE JSON TO BE USED!
+HERE IS THE DEFINITION OF THE JSON TO BE USED!
 
 The gender applies to the subject of the sentence (if it can be inferred)
 
@@ -561,7 +641,7 @@ The curly braces are placeholders for injected content and should not be replace
 Many languages that are no english, need to change the form of adjectives and verbs depending upon the gender. Make sure to make these modifications if required.
 
 
-As an example given the prompt "He gave her something", where n is either a float ot interger value, a good response would be:
+As an example given the prompt "He gave her something", where n is either a float or integer value, a good response would be:
 [
   {
     translation: "He gave her something",
@@ -577,12 +657,37 @@ As an example given the prompt "He gave her something", where n is either a floa
   }
 ]
 
-Notice the gender only applies to the subject. Please maintain this rule. If there is no genderization to be applied, please respond with an empty array. In some cases, there may not be a subject and you need to genderize the verb without knowing the subject.
+In romance languages and slavic languages, the verbs changes with gender and may not explicit as the subject. Remember this is for i18n translations!
+
+Consider a personalized status update that might appear on a user's dashboard or profile page regarding gender:
+
+English: "You are logged in successfully."
+This message is gender-neutral in English. However, in Spanish, adjectives (and past participles used as adjectives) agree in gender with the subject. If we want to convey the same message in Spanish with gender awareness, it might look like this:
+
+Spanish (for a male user): "Has iniciado sesión con éxito."
+Spanish (for a female user): "Has iniciada sesión con éxito."
+
+To provide a clearer example involving gender agreement, let's use a different sentence that includes an adjective describing the user:
+
+English: "Become an active member of our community."
+Translating and ensuring gender agreement in Spanish would look like this:
+
+Spanish (for a male user): "Conviértete en un miembro activo de nuestra comunidad."
+Spanish (for a female user): "Conviértete en una miembro activa de nuestra comunidad."
+However, the word for "member" in Spanish ("miembro") is typically masculine, regardless of the gender of the person it refers to, which makes my attempt to gender the word "miembro" incorrect. A better example to illustrate gender agreement would involve a phrase where the gendered adjective or noun directly refers to the user:
+
+Spanish (for a male user): "Estás conectado a nuestra comunidad."
+Spanish (for a female user): "Estás conectada a nuestra comunidad."
+Here, "conectado" or "conectada" changes based on the user's gender, demonstrating how gender awareness impacts the translation and personalization of messages in Spanish. This adjustment ensures that the language used on the platform is inclusive and respectful of the user's gender identity.
+
+Notice the gender only applies to the subject. Please maintain this rule. If there is no subject in the sentence, please assume the sentence is referring to the user in the second person.
+
+If there is no genderization to be applied, please respond with an empty array. In some cases, there may not be a subject and you need to genderize the verb without knowing the subject.
+
+If the sentence is not affected by a difference of male or female for the locale ${lang} do not include gender conditions at all!!! Adding unnecessary gender conditions is not useful.
 
 Just respond with the JSON described above, nothing else (do not put the JSON in quotes), ensure the JSON is valid.
 `
-    .replaceAll("\n", " ")
-    .trim();
 
 
 interface GenderizationRequest {
@@ -710,18 +815,19 @@ export default class ChatGPTController extends BaseController {
     const url = "https://api.openai.com/v1/chat/completions";
     try {
 
-      const requestBody = {
-        model: "gpt-4",
-        messages: [
-          {
-            role: "system",
-            content: body.isGenderized
+      const prompt = body.isGenderized
               ? PLURALIZED_WITH_GENDER_PROMPT(
                   body.localeCode,
                   body.varName,
                   body.varType
                 )
-              : PLURALIZE_PROMPT(body.localeCode, body.varName, body.varType),
+              : PLURALIZE_PROMPT(body.localeCode, body.varName, body.varType)
+      const requestBody = {
+        model: "gpt-4",
+        messages: [
+          {
+            role: "system",
+            content: prompt,
           },
           {
             role: "user",

@@ -757,19 +757,21 @@ const InterpolationVariant = (props: Props) => {
         targetPlainText={defaultValue?.plainText ?? ""}
         targetEditorDoc={targetEditorDoc}
       />
+      {!!variable && (
         <PluralizeModal
           show={showPluralize && commandMode == "edit"}
           onDismiss={onHidePluralize}
           targetRichText={defaultValue?.richTextHtml ?? ""}
           targetEditorDoc={targetEditorDoc}
           targetEditorObserver={targetEditorObserver}
-          varName={variable.name}
-          varType={variable.varType}
+          varName={variable?.name}
+          varType={variable?.varType}
           locale={props.selectedLocale}
           localRuleTranslationRef={localRuleTranslationRef}
           varRef={props.interpolationVariant.variableRef}
           hasGender={hasGenderVar}
         />
+      )}
         {isGenderVar && (
           <GenderizeModal
             show={showGenderize && commandMode == "edit"}
@@ -911,8 +913,8 @@ const InterpolationVariant = (props: Props) => {
                       {`(${props.selectedLocale.localeCode}):`}
                     </span>
                   </div>
-                  {(variable.varType == "float" ||
-                    variable.varType == "integer") &&
+                  {(variable?.varType == "float" ||
+                    variable?.varType == "integer") &&
                     (defaultValue?.plainText?.trim?.() ?? "") != "" &&
                     commandMode == "edit" && (
                       <div style={{ width: 120, marginLeft: 12 }}>
