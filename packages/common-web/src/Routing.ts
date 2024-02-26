@@ -19,6 +19,8 @@ import LocalRepositoryDocs from './pages/common/docs/product/pages/LocalReposito
 import RemoteRepositoryDocs from './pages/common/docs/product/pages/RemoteRepositoryDocs';
 import MergingAndConflictsDocs from './pages/common/docs/product/pages/MergingAndConflictsDocs';
 import AdvancedCommandsDocs from './pages/common/docs/product/pages/AdvancedCommandsDocs';
+import PrivacyPolicyPage from './pages/legal/PrivacyPolicyPage';
+import TermsOfServicePage from './pages/legal/TermsOfServicePage';
 
 /**
  *  put common shared page routes here
@@ -27,6 +29,14 @@ const CommonRouting: IsomorphicRoute[] = [
   {
     path: "/oauth/:provider/callback",
     component: () => OAuthCallback,
+  },
+  {
+    path: "/privacy",
+    component: () => PrivacyPolicyPage,
+  },
+  {
+    path: "/tos",
+    component: () => TermsOfServicePage,
   },
   {
     path: "/about",

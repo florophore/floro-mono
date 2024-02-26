@@ -1,6 +1,6 @@
 import 'dotenv/config';
 
-import {app} from 'electron';
+import {app, powerMonitor, powerSaveBlocker} from 'electron';
 import { buildFloroFilestructure, setFloroEnv } from "floro/src/filestructure";
 import './security-restrictions';
 import {restoreOrCreateWindow} from '/@/mainWindow';
@@ -69,6 +69,12 @@ app
   .then(async () => {
     startDaemon();
     restoreOrCreateWindow();
+    powerMonitor.on("lock-screen", () => {
+      powerSaveBlocker.start("prevent-app-suspension");
+    });
+    powerMonitor.on("suspend", () => {
+      powerSaveBlocker.start("prevent-app-suspension");
+    });
   })
   .catch(e => console.error('Failed create window:', e));
 
