@@ -9,7 +9,6 @@ import ScreenShotDark from "@floro/main/public/pngs/dark.no_edge.png";
 import CLICopy from "../../components/home/CLICopy";
 import PageWrapper from "../../components/wrappers/PageWrapper";
 import { Link } from "react-router-dom";
-import ColorPalette from "@floro/styles/ColorPalette";
 
 const LargeTopSection = styled.section`
   display: flex;
@@ -421,7 +420,7 @@ function Home() {
                 {installTheChromeExtension}
               </InstallCLISectionHeader>
               <DownloadRow style={{ justifyContent: "center" }}>
-              <a href="chrome://extensions" target="_blank">
+              <a href="https://chromewebstore.google.com/detail/floro/eimdhkkmhlaieggbggapcoohmefbnlkh" target="_blank">
                 <FlatIcon
                   onMouseEnter={() => setIsHoveringChrome(true)}
                   onMouseLeave={() => setIsHoveringChrome(false)}

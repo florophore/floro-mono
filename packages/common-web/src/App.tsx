@@ -31,6 +31,7 @@ export interface Props {
   cdnHost: string;
   ssrPhraseKeySet?: Set<string>;
   localeLoads: { [key: string]: string };
+  disableSSRText?: boolean;
 }
 
 function App(props: Props) {
@@ -49,6 +50,7 @@ function App(props: Props) {
           text={props.text}
           initLocaleCode={props.initLocaleCode}
           localeLoads={props.localeLoads}
+          disableSSRText={props.disableSSRText}
         >
           <ColorThemeProvider initThemePreference={props.initTheme}>
             <ThemeMount initTheme={props.initTheme as keyof ThemeSet}>

@@ -127,13 +127,16 @@ function manageMessages() {
   try {
 
     chrome.runtime.onMessage.addListener((message: Message, sender, sendResponse) => {
+      if (!message) {
+        return false;
+      }
 
-      if (message.type === Actions.SEND_PLUGIN_MESSAGE) {
+      if (message?.type === Actions.SEND_PLUGIN_MESSAGE) {
         socket?.emit("plugin:message", message.data);
         return true;
       }
 
-      if (message.type == Actions.REGISTER_MODULE) {
+      if (message?.type == Actions.REGISTER_MODULE) {
         const tabId = sender.tab.id;
         if (tabId) {
           if (!globalState.tabPopupState[tabId]) {
@@ -156,12 +159,12 @@ function manageMessages() {
         }
         return true;
       }
-      if (message.type == Actions.SET_EDIT_MODE) {
+      if (message?.type == Actions.SET_EDIT_MODE) {
         const tabId = globalState.activeTabId;
         if (tabId) {
           globalState.tabPopupState[tabId] = {
             isEditMode: message.isEditMode,
-            isDebugMode: globalState.tabPopupState[tabId].isDebugMode,
+            isDebugMode: globalState?.tabPopupState?.[tabId]?.isDebugMode,
           };
           chrome.storage.local.set({...globalState});
           chrome.tabs.sendMessage(parseInt(tabId), {type: 'toggle:edit_mode', isEditMode: message.isEditMode});
@@ -185,24 +188,24 @@ function manageMessages() {
         return false;
       }
 
-      if (message.type == Actions.SET_DEBUG_MODE) {
+      if (message?.type == Actions.SET_DEBUG_MODE) {
         const tabId = globalState.activeTabId;
-        if (tabId) {
+        if (tabId && message) {
           globalState.tabPopupState[tabId] = {
-            isEditMode: globalState.tabPopupState[tabId].isEditMode,
-            isDebugMode: message.isDebugMode,
+            isEditMode: globalState?.tabPopupState?.[tabId]?.isEditMode,
+            isDebugMode: message?.isDebugMode,
           };
           chrome.storage.local.set({...globalState});
-          chrome.tabs.sendMessage(parseInt(tabId), {type: 'toggle:debug_mode', isDebugMode: message.isDebugMode});
+          chrome.tabs.sendMessage(parseInt(tabId), {type: 'toggle:debug_mode', isDebugMode: message?.isDebugMode});
         }
         return false;
       }
 
-      if (message.type === Actions.GET_STATE) {
+      if (message?.type === Actions.GET_STATE) {
         sendResponse(globalState);
         return true;
       }
-      if (message.type === Actions.GET_TAB_STATE) {
+      if (message?.type === Actions.GET_TAB_STATE) {
         const tabId = globalState.activeTabId;
         const tabState = globalState.tabPopupState[tabId] ?? { isEditMode: false, isDebugMode: false};
         if (tabState.isEditMode) {
@@ -224,7 +227,7 @@ function manageMessages() {
         return true;
       }
 
-      if (message.type === Actions.SET_STATE) {
+      if (message?.type === Actions.SET_STATE) {
         Object.assign(globalState, message.payload);
         chrome.storage.local.set(globalState);
         return undefined;
@@ -234,7 +237,7 @@ function manageMessages() {
     });
 
     chrome.storage.onChanged.addListener(async (message) => {
-      if (!!message.authToken) {
+      if (!!message?.authToken) {
         if (socket) {
           detachSocketLiseners(socket);
           socket.close();

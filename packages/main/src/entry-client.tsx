@@ -71,15 +71,18 @@ const ClientApp = () => {
   return (
     <ApolloProvider client={client as unknown as ApolloClient<NormalizedCache>}>
       <BrowserRouter>
-          <App
-           cdnHost={cdnHost}
-           initLocaleCode={initLocaleCode}
-           initTheme={initTheme}
-           localeLoads={localeLoads}
-           text={text} routing={MainRoutes} env={import.meta.env?.VITE_BUILD_ENV_NORMALIZED ?? "development"} />
+        <App
+          cdnHost={cdnHost}
+          initLocaleCode={initLocaleCode}
+          initTheme={initTheme}
+          localeLoads={localeLoads}
+          text={text}
+          routing={MainRoutes}
+          env={import.meta.env?.VITE_BUILD_ENV_NORMALIZED ?? "development"}
+        />
       </BrowserRouter>
     </ApolloProvider>
-  )
+  );
 };
 
 ReactDOM.createRoot(document.getElementById('app') as HTMLElement).render(ClientApp());

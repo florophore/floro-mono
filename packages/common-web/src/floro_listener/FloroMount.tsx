@@ -16,6 +16,7 @@ interface Props {
   cdnHost: string;
   ssrPhraseKeySet?: Set<string>;
   localeLoads: {[key: string]: string};
+  disableSSRText?: boolean;
 }
 
 const FloroMount = (props: Props) => {
@@ -25,7 +26,7 @@ const FloroMount = (props: Props) => {
           <FloroThemesProvider>
             <FloroIconsProvider>
               <FloroSSRPhraseKeyMemoProvider ssrPhraseKeySet={props.ssrPhraseKeySet}>
-                <FloroTextProvider cdnHost={props.cdnHost} text={props.text} localeLoads={props.localeLoads}>
+                <FloroTextProvider disableSSRText={props.disableSSRText} cdnHost={props.cdnHost} text={props.text} localeLoads={props.localeLoads}>
                   <FloroLocalesProvider initLocaleCode={props.initLocaleCode}>{props.children}</FloroLocalesProvider>
                 </FloroTextProvider>
               </FloroSSRPhraseKeyMemoProvider>

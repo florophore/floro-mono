@@ -2814,6 +2814,13 @@
     quicktype-core "^23.0.71"
     ts-node "^10.9.1"
 
+"@floro/icon-generator@^0.0.9":
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/@floro/icon-generator/-/icon-generator-0.0.9.tgz#1f17fccdde7cae4de68c7616948bf6fc35304408"
+  integrity sha512-ytqa5TcsddJHj8e2onQv9pWp7myWOcr5tsvoaLhyQezByZBEvtcxZTz0DEngTsvyXwa1KuVttOx484F2qg+nvg==
+  dependencies:
+    quicktype-core "^23.0.71"
+
 "@floro/palette-generator@^0.0.6":
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/@floro/palette-generator/-/palette-generator-0.0.6.tgz#25ba7cb64acb20ec798bfe8b0a1d7ee6b57a4bbf"
@@ -2830,6 +2837,13 @@
   dependencies:
     quicktype-core "^23.0.71"
 
+"@floro/text-generator@^0.0.23":
+  version "0.0.23"
+  resolved "https://registry.yarnpkg.com/@floro/text-generator/-/text-generator-0.0.23.tgz#0bd12000eac53c6e95ccc04c0aebd34b6a3aa19a"
+  integrity sha512-Gw9Q069muQMjOAapakaXPB3x2utu1mO7fIEGGm0ZaJLaRTC2UVKdMaTaUqqpgy33UTRlMDod+TOjq4QA4hEC5w==
+  dependencies:
+    quicktype-core "^23.0.71"
+
 "@floro/themes-generator@^0.0.6":
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/@floro/themes-generator/-/themes-generator-0.0.6.tgz#2185734ca92684a6f1bd5ad3a6849d02eb6adbb1"
@@ -2838,6 +2852,13 @@
     memfs "^3.4.7"
     quicktype-core "^23.0.71"
     ts-node "^10.9.1"
+
+"@floro/themes-generator@^0.0.7":
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/@floro/themes-generator/-/themes-generator-0.0.7.tgz#b40c8704b42897a98b3946c25795080c7a0e6df4"
+  integrity sha512-nbcNY9KtlNxmYG1XdfM9ApPJ2sYY7z9iqqoDqcmLPoHwJwsASbgsaEHPbPhoBKEN7N9ZjBPM8bTF9YlijP4v+Q==
+  dependencies:
+    quicktype-core "^23.0.71"
 
 "@focus-reactive/react-yaml@^1.1.2":
   version "1.1.2"

@@ -6,18 +6,21 @@ import { getJSON } from "@floro/text-generator";
 import { useWatchFloroState } from "./FloroListener";
 import axios from 'axios';
 
-
 const FloroTextContext = React.createContext(initText as unknown as LocalizedPhrases);
 export interface Props {
   children: React.ReactElement;
   text: LocalizedPhrases;
   cdnHost: string;
   localeLoads: {[key: string]: string}
+  disableSSRText?: boolean;
 }
 
 export const FloroTextProvider = (props: Props) => {
-
-  const [text, setText] = useState<LocalizedPhrases>(props?.text ?? initText);
+  const [text, setText] = useState<LocalizedPhrases>(
+    props.disableSSRText
+      ? (initText as unknown as LocalizedPhrases)
+      : props?.text ?? initText
+  );
 
   useEffect(() => {
     (async () => {
