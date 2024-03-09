@@ -7,6 +7,7 @@ import styled from '@emotion/styled';
 import { NAME_REGEX, USERNAME_REGEX } from '@floro/common-web/src/utils/validators';
 import Filter from 'bad-words';
 import debouncer from 'lodash.debounce';
+import { useOpenLink } from '../../links/OpenLinkContext';
 
 const BackgroundWrapper = styled.div`
   display: flex;
@@ -55,6 +56,7 @@ export interface Props {
 }
 
 const SignupContainer = (props: Props) => {
+  const openLink = useOpenLink();
   const profanityFilter = useMemo(() => new Filter(), []);
   const [firstName, setFirstName] = useState(
     props?.completeSignupAction?.unsavedUser?.firstName ?? ""
@@ -126,7 +128,7 @@ const SignupContainer = (props: Props) => {
   ]);
 
   const onShowTOS = useCallback(() => {
-    alert("go to TOS");
+    openLink("https://floro.io/tos")
   }, []);
 
   useEffect(() => {

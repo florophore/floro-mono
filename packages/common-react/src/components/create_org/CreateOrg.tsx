@@ -10,6 +10,7 @@ import ProfanityFilter from "bad-words";
 import { NAME_REGEX, USERNAME_REGEX } from "@floro/common-web/src/utils/validators";
 import { useUsernameCheckLazyQuery, useCreateOrganizationMutation } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { useIsOnline } from "../../hooks/offline";
+import { useOpenLink } from "../../links/OpenLinkContext";
 
 const Background = styled.div`
   background-color: ${(props) => props.theme.background};
@@ -40,6 +41,7 @@ const ButtonContainer = styled.div`
 
 const CreateOrg = () => {
   const { currentUser, session } = useSession();
+  const openLink = useOpenLink();
   const navigate = useNavigate();
   const isOnline = useIsOnline();
   const [name, setName] = useState("");
@@ -144,7 +146,7 @@ const CreateOrg = () => {
   useEffect(() => {
     if (createOrgRequest?.data?.createOrganization?.__typename == "CreateOrganizationSuccess") {
       navigate(`/org/@/${createOrgRequest?.data?.createOrganization?.organization?.handle}`);
-    } 
+    }
   }, [createOrgRequest?.data?.createOrganization, navigate])
 
   return (
@@ -163,7 +165,9 @@ const CreateOrg = () => {
         onUpdateAgreedToCustomerServiceAgreement={
           setAgreedToCustomerServiceAgreement
         }
-        onOpenTOS={() => alert("show TOS")}
+        onOpenTOS={() => {
+          openLink("https://floro.io/tos");
+        }}
         handleIsTaken={data?.usernameCheck?.exists ?? false}
         handleCheckLoading={loading}
       />

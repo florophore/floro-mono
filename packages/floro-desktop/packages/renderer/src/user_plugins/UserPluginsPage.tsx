@@ -8,8 +8,10 @@ import React from 'react';
 import type {Plugin} from '@floro/graphql-schemas/src/generated/main-client-graphql';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useNavigationAnimator } from '@floro/common-react/src/navigation/navigation-animator';
+import { useOpenLink } from '@floro/common-react/src/links/OpenLinkContext';
 
 const UserPluginsPage = () => {
+  const openLink = useOpenLink();
   const params = useParams();
   const paramsVersion = (params?.['version'] ?? '')?.replaceAll("-", ".");
   const {currentUser} = useSession();
@@ -115,7 +117,7 @@ const UserPluginsPage = () => {
   const title = useLinkTitle(linkInfo, [linkInfo]);
 
   const onOpenDocs = useCallback(() => {
-    alert("open docs");
+    openLink("https://floro.io/docs");
   }, []);
 
   return (

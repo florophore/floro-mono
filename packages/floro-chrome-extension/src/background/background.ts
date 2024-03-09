@@ -258,15 +258,24 @@ function manageMessages() {
     });
     function removeTab(tabId) {
       if (globalState.tabMetaFiles[tabId]) {
-        const tabMetaFile = globalState.tabMetaFiles[tabId];
+        const tabMetaFile = globalState?.tabMetaFiles?.[tabId];
+        if (!tabMetaFile) {
+          return;
+        }
         delete globalState.tabMetaFiles[tabId];
         Object.assign(globalState, { tabMetaFile: tabMetaFile });
         chrome.storage.local.set(globalState);
-        const tabPopupState = globalState.tabPopupState[tabId];
+        const tabPopupState = globalState?.tabPopupState?.[tabId];
+        if (!tabPopupState) {
+          return;
+        }
         delete globalState.tabPopupState[tabId];
         Object.assign(globalState, { tabPopupState });
         chrome.storage.local.set(globalState);
-        const tabHostPages = globalState.tabHostPages[tabId];
+        const tabHostPages = globalState?.tabHostPages?.[tabId];
+        if (!tabHostPages) {
+          return;
+        }
         delete globalState.tabHostPages[tabId];
         Object.assign(globalState, { tabHostPages });
         chrome.storage.local.set(globalState);
@@ -278,7 +287,7 @@ function manageMessages() {
       return false;
     });
     chrome.tabs.onUpdated.addListener(async function(tabId) {
-      if (globalState.tabMetaFiles[tabId]) {
+      if (globalState?.tabMetaFiles?.[tabId]) {
         const tab = await chrome.tabs.get(tabId)
         const url = new URL(tab.url);
         const host = url.host;

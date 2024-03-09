@@ -12,6 +12,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useNavigationAnimator } from '@floro/common-react/src/navigation/navigation-animator';
 import DotsLoader from '@floro/storybook/stories/design-system/DotsLoader';
 import { useUserOrganizations } from '@floro/common-react/src/hooks/offline';
+import { useOpenLink } from '@floro/common-react/src/links/OpenLinkContext';
 
 const NotFoundContainer = styled.div`
   display: flex;
@@ -40,6 +41,7 @@ const NotFoundText = styled.h3`
 
 const OrgPluginsPage = () => {
   const navigate = useNavigate();
+  const openLink = useOpenLink();
   const params = useParams();
   const handle = params?.['handle'] ?? '';
   const paramsVersion = (params?.['version'] ?? '')?.replaceAll("-", ".");
@@ -178,7 +180,7 @@ const OrgPluginsPage = () => {
   const title = useLinkTitle(linkInfo, [linkInfo]);
 
   const onOpenDocs = useCallback(() => {
-    alert("open docs");
+    openLink("https://floro.io/docs")
   }, []);
 
   return (

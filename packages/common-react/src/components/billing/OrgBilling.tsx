@@ -143,8 +143,7 @@ const OrgBilling = (props: Props) => {
 
   const onClickLearnMore= (e) => {
     e.preventDefault();
-    alert("test")
-    //openLink(href);
+    openLink("https://floro.io/consulting")
   }
 
   return (

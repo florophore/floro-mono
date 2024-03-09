@@ -22,6 +22,13 @@ import AdvancedCommandsDocs from './pages/common/docs/product/pages/AdvancedComm
 import PrivacyPolicyPage from './pages/legal/PrivacyPolicyPage';
 import TermsOfServicePage from './pages/legal/TermsOfServicePage';
 
+import TextPlugin from './pages/common/docs/plugin/TextPlugin';
+import IconsPlugin from './pages/common/docs/plugin/IconsPlugin';
+import ThemePlugin from './pages/common/docs/plugin/ThemePlugin';
+import PalettePlugin from './pages/common/docs/plugin/PalettePlugin';
+import ChromeExtensionDocs from './pages/common/docs/product/pages/ChromeExtensionDocs';
+import CopyAndPasteDocs from './pages/common/docs/product/pages/CopyAndPasteDocs';
+
 /**
  *  put common shared page routes here
  */
@@ -55,6 +62,22 @@ const CommonRouting: IsomorphicRoute[] = [
     component: () => DocsLanding,
   },
   {
+    path: "/docs/plugins/text",
+    component: () => TextPlugin,
+  },
+  {
+    path: "/docs/plugins/icons",
+    component: () => IconsPlugin,
+  },
+  {
+    path: "/docs/plugins/theme",
+    component: () => ThemePlugin,
+  },
+  {
+    path: "/docs/plugins/palette",
+    component: () => PalettePlugin,
+  },
+  {
     path: "/docs/product",
     component: () => ProductDocsLanding,
   },
@@ -85,6 +108,14 @@ const CommonRouting: IsomorphicRoute[] = [
   {
     path: "/docs/product/advanced-commands",
     component: () => AdvancedCommandsDocs,
+  },
+  {
+    path: "/docs/product/floro-chrome-extension",
+    component: () => ChromeExtensionDocs,
+  },
+  {
+    path: "/docs/product/copy-and-paste",
+    component: () => CopyAndPasteDocs,
   },
   {
     path: "/app-proxy/*",

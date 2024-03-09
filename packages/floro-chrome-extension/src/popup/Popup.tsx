@@ -254,7 +254,7 @@ const Popup = () => {
             <WarningImg src={warningIcon} style={{ marginRight: 6 }} />
           </NoEditsContainer>
         )}
-        {!missingAllRepos && (
+        {!missingAllRepos && isFloroSite && (isDaemonConnected || isEditMode) && (
           <EditsContainer>
             <InfoRow>
               <InfoTitle>{"turn on floro edit mode"}</InfoTitle>

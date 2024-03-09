@@ -279,46 +279,7 @@ function DocsLanding() {
               marginTop: 24,
             }}
           >
-            {title == "product documentation" && (
-              <>
-                <Link
-                  style={{
-                    fontWeight: 600,
-                    color: theme.colors.linkColor,
-                    display: "inline-block",
-                  }}
-                  to={"/docs/product"}
-                >
-                  {content}
-                </Link>
-              </>
-            )}
-            {title == "developer documentation" && (
-              <>
-                <Link
-                  style={{
-                    fontWeight: 600,
-                    color: theme.colors.linkColor,
-                    display: "inline-block",
-                  }}
-                  to={"/docs/development"}
-                >
-                  {content}
-                </Link>
-              </>
-            )}
-            {title == "plugin documentation" && <>
-                <Link
-                  style={{
-                    fontWeight: 600,
-                    color: theme.colors.linkColor,
-                    display: "inline-block",
-                  }}
-                  to={"/docs/plugins"}
-                >
-                  {content}
-                </Link>
-            </>}
+            {content}
           </SubSectionTitle>
         );
       },

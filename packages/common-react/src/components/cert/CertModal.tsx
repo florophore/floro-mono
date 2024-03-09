@@ -73,7 +73,6 @@ interface Props {
 const CertModal = (props: Props) => {
   const [page, setPage] = useState<"cert" | "api-keys">("cert");
   const theme = useTheme();
-  const openLink = useOpenLink();
 
   const { data, isLoading } = useConnectionInfoQuery();
 
