@@ -1,23 +1,21 @@
 import {
   useMemo,
-  useState,
   useCallback,
-  useEffect,
   JSXElementConstructor,
   ReactElement,
 } from "react";
 import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import { Helmet } from "react-helmet";
-import ColorPalette from "@floro/styles/ColorPalette";
 import { richTextRenderers } from "@floro/common-web/src/floro_listener/FloroTextRenderer";
 import { StaticLinkNode } from "@floro/common-generators/floro_modules/text-generator";
 import { Link } from "react-router-dom";
-import PageWrapper from "../../../../components/wrappers/PageWrapper";
-import { usePlainText, useRichText } from "../../../../floro_listener/hooks/locales";
-import { useIcon } from "../../../../floro_listener/FloroIconsProvider";
-import DocSearch from "../DocSearch";
-import { LinkChain } from "../DocsLink";
+import PageWrapper from "../../../../../components/wrappers/PageWrapper";
+import { usePlainText, useRichText } from "../../../../../floro_listener/hooks/locales";
+import DocSearch from "../../DocSearch";
+import { LinkChain } from "../../DocsLink";
+import { useIcon } from "../../../../../floro_listener/FloroIconsProvider";
+import SystemDesignFloroText from "@floro/main/public/doc_images/development/system_design_floro_text.jpg";
 
 const AboutWrapper = styled.div`
   width: 100%;
@@ -38,18 +36,6 @@ const SectionTitle = styled.h2`
   }
 `;
 
-const SubSectionTitle = styled.h2`
-  font-size: 2rem;
-  font-weight: 500;
-  padding: 0;
-  margin: 0;
-  font-family: "MavenPro";
-  color: ${(props) => props.theme.colors.contrastText};
-  @media screen and (max-width: 767px) {
-    font-size: 1.7rem;
-  }
-`;
-
 const SectionParagraph = styled.div`
   font-size: 1.44rem;
   font-weight: 400;
@@ -62,49 +48,19 @@ const SectionParagraph = styled.div`
   }
 `;
 
-const PluginRow = styled.div`
-  display: flex;
-  flex-direction: row;
-
-`;
-
-const PluginIcon = styled.img`
-  height: 64px;
-  width: 64px;
-  @media screen and (max-width: 767px) {
-    height: 48px;
-    width: 48px;
-  }
-`;
-
-const PluginTitle = styled.h3`
-  font-size: 1.2rem;
-  font-weight: 600;
-  padding: 0;
-  margin: 0;
-  font-family: "MavenPro";
-  @media screen and (max-width: 767px) {
-    font-size: 1rem;
-  }
-`;
-
-const PluginDescription = styled.p`
-  font-size: 1rem;
-  font-weight: 500;
-  padding: 0;
-  margin: 0;
-  font-family: "MavenPro";
-  font-style: italic;
-  margin-top: 4px;
-  @media screen and (max-width: 767px) {
-    font-size: 0.8rem;
-  }
+const SlideImg = styled.img`
+  width: 100%;
+  max-width: 900px;
+  margin-top: 24px;
+  margin-bottom: 24px;
 `;
 
 
-function ProductDocsLanding() {
+function IntegratingDocs() {
   const theme = useTheme();
-  const docsMetaTitle = usePlainText("meta_tags.product_docs");
+  // change this
+  const docsMetaTitle = usePlainText("meta_tags.integration_docs");
+  const fsDesign = useIcon("docs.floro-fs-design");
 
   const renderLinkNode = useCallback(
     (
@@ -125,7 +81,8 @@ function ProductDocsLanding() {
   );
 
   const docsTitle = usePlainText("doc_titles.docs_page_title");
-  const pageDocsTitle = usePlainText("doc_titles.product_docs_page_title");
+  const pageDocsTitle = usePlainText("doc_titles.dev_docs_page_title");
+  const integrationDocsTitle = usePlainText("doc_titles.integration_docs_page_title");
 
   const titleChain = useMemo((): LinkChain => {
     return {
@@ -134,10 +91,15 @@ function ProductDocsLanding() {
       next: {
         prefix: '/',
         label: pageDocsTitle,
-        value: '/docs/product'
+        value: '/docs/dev',
+        next: {
+          label: integrationDocsTitle,
+          prefix: '/',
+          value: '/docs/dev/integrating',
+        }
       }
     }
-  }, []);
+  }, [docsTitle, pageDocsTitle, integrationDocsTitle]);
 
   const rtRenderers = useMemo(() => {
     return {
@@ -146,29 +108,29 @@ function ProductDocsLanding() {
     };
   }, [renderLinkNode]);
 
-  const productDocsIndex = useRichText("product_docs.product_docs_index", {}, rtRenderers);
   const article = useRichText(
-    "product_docs.product_docs_general",
+    "dev_docs.integrating_floro",
     {
-      productDocsIndex,
-      docSearch: <DocSearch docs="product" linkChain={titleChain} />,
+      docSearch: (
+        <DocSearch
+          docs="development"
+          linkChain={titleChain}
+        />
+      ),
+      fsDesign: (
+        <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
+          <SlideImg src={fsDesign}/>
+        </div>
+      ),
+      textSystemDesign: (
+        <div>
+          <SlideImg src={SystemDesignFloroText}/>
+        </div>
+      ),
       mainTitle: function (
         content: ReactElement<any, string | JSXElementConstructor<any>>
       ): ReactElement<any, string | JSXElementConstructor<any>> {
         return <SectionTitle>{content}</SectionTitle>;
-      },
-      sectionTitle: function (
-        content: ReactElement<any, string | JSXElementConstructor<any>>,
-      ): ReactElement<any, string | JSXElementConstructor<any>> {
-        return (
-          <SubSectionTitle
-            style={{
-              marginTop: 24,
-            }}
-          >
-            {content}
-          </SubSectionTitle>
-        );
       },
     },
     rtRenderers
@@ -194,4 +156,4 @@ function ProductDocsLanding() {
   );
 }
 
-export default ProductDocsLanding;
+export default IntegratingDocs;

@@ -145,7 +145,7 @@ const ThemePlugin = () => {
       },
       subTitle: function (
         content: ReactElement<any, string | JSXElementConstructor<any>>,
-        phrase: keyof PhraseKeys["plugin_docs.icons_plugin"]["styledContents"]
+        phrase: keyof PhraseKeys["plugin_docs.palette_plugin"]["styledContents"]
       ): ReactElement<any, string | JSXElementConstructor<any>> {
         if (phrase == "features") {
           return <SubSectionTitle style={{marginTop: 48}}>{content}</SubSectionTitle>;

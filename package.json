@@ -63,7 +63,7 @@
         "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
         "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
         "cross-env": "^7.0.3",
-        "floro": "0.0.73",
+        "floro": "0.0.74",
         "object-sizeof": "^2.6.1",
         "ts-node": "^10.9.1",
         "ts-node-dev": "^2.0.0"

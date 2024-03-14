@@ -102,7 +102,7 @@ const PluginDescription = styled.p`
 `;
 
 
-function ProductDocsLanding() {
+function DevDocsLanding() {
   const theme = useTheme();
   const docsMetaTitle = usePlainText("meta_tags.product_docs");
 
@@ -125,7 +125,7 @@ function ProductDocsLanding() {
   );
 
   const docsTitle = usePlainText("doc_titles.docs_page_title");
-  const pageDocsTitle = usePlainText("doc_titles.product_docs_page_title");
+  const pageDocsTitle = usePlainText("doc_titles.dev_docs_page_title");
 
   const titleChain = useMemo((): LinkChain => {
     return {
@@ -134,7 +134,7 @@ function ProductDocsLanding() {
       next: {
         prefix: '/',
         label: pageDocsTitle,
-        value: '/docs/product'
+        value: '/docs/dev'
       }
     }
   }, []);
@@ -146,12 +146,12 @@ function ProductDocsLanding() {
     };
   }, [renderLinkNode]);
 
-  const productDocsIndex = useRichText("product_docs.product_docs_index", {}, rtRenderers);
+  const developmentDocsIndex = useRichText("dev_docs.dev_docs_index", {}, rtRenderers);
   const article = useRichText(
-    "product_docs.product_docs_general",
+    "dev_docs.dev_docs_general",
     {
-      productDocsIndex,
-      docSearch: <DocSearch docs="product" linkChain={titleChain} />,
+      developmentDocsIndex,
+      docSearch: <DocSearch docs="development" linkChain={titleChain} />,
       mainTitle: function (
         content: ReactElement<any, string | JSXElementConstructor<any>>
       ): ReactElement<any, string | JSXElementConstructor<any>> {
@@ -194,4 +194,4 @@ function ProductDocsLanding() {
   );
 }
 
-export default ProductDocsLanding;
+export default DevDocsLanding;

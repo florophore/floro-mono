@@ -144,10 +144,16 @@ function DocsLanding() {
     {},
     rtRenderers
   );
+  const devDocsIndex = useRichText(
+    "dev_docs.dev_docs_index",
+    {},
+    rtRenderers
+  );
   const article = useRichText(
     "docs.docs_general",
     {
       productDocsIndex,
+      devDocsIndex,
       pluginsList: (
         <section style={{ marginTop: 0, marginBottom: 0 }}>
           <div>

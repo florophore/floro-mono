@@ -28,6 +28,8 @@ import ThemePlugin from './pages/common/docs/plugin/ThemePlugin';
 import PalettePlugin from './pages/common/docs/plugin/PalettePlugin';
 import ChromeExtensionDocs from './pages/common/docs/product/pages/ChromeExtensionDocs';
 import CopyAndPasteDocs from './pages/common/docs/product/pages/CopyAndPasteDocs';
+import DevDocsLanding from './pages/common/docs/dev/DevDocsLanding';
+import IntegratingDocs from './pages/common/docs/dev/pages/IntegratingDocs';
 
 /**
  *  put common shared page routes here
@@ -116,6 +118,14 @@ const CommonRouting: IsomorphicRoute[] = [
   {
     path: "/docs/product/copy-and-paste",
     component: () => CopyAndPasteDocs,
+  },
+  {
+    path: "/docs/dev",
+    component: () => DevDocsLanding,
+  },
+  {
+    path: "/docs/dev/integrating",
+    component: () => IntegratingDocs,
   },
   {
     path: "/app-proxy/*",
