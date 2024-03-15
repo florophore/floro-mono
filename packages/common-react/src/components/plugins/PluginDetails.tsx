@@ -15,6 +15,7 @@ import { Organization } from "@floro/graphql-schemas/src/generated/main-client-g
 import LockLight from "@floro/common-assets/assets/images/icons/lock.medium_gray.svg";
 import LockDark from "@floro/common-assets/assets/images/icons/lock.dark.svg";
 
+
 const Container = styled.div`
   max-width: 100%;
   overflow-x: scroll;

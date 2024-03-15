@@ -61,6 +61,8 @@ app.on('window-all-closed', () => {
  */
 app.on('activate', restoreOrCreateWindow);
 
+app.commandLine.appendSwitch('js-flags', '--max-old-space-size=4096')
+
 /**
  * Create the application window when the background process is ready.
  */

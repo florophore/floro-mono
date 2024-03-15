@@ -22,6 +22,7 @@ import PluginsVersionsContext from "@floro/database/src/contexts/plugins/PluginV
 import { DataSource, makeDataSource } from "floro/dist/src/datasource";
 import { getRootSchemaMap, isTopologicalSubset, isTopologicalSubsetValid, manifestListToSchemaMap } from "floro/dist/src/plugins";
 import { ApplicationKVState, getInvalidStates } from "floro/dist/src/repo";
+import RedisClient from "@floro/redis/src/RedisClient";
 
 @injectable()
 export default class PublicApiV0Controller extends BaseController {
@@ -32,9 +33,11 @@ export default class PublicApiV0Controller extends BaseController {
   public binaryAccessor: BinaryAccessor;
   public storageAuthenticator!: StorageAuthenticator;
   public databaseConnection!: DatabaseConnection;
+  public redisClient!: RedisClient;
 
   constructor(
     @inject(DatabaseConnection) databaseConnection: DatabaseConnection,
+    @inject(RedisClient) redisClient: RedisClient,
     @inject(SessionStore) sessionStore: SessionStore,
     @inject(ContextFactory) contextFactory: ContextFactory,
     @inject(MainConfig) mainConfig: MainConfig,
@@ -44,6 +47,7 @@ export default class PublicApiV0Controller extends BaseController {
   ) {
     super();
     this.databaseConnection = databaseConnection;
+    this.redisClient = redisClient;
     this.sessionStore = sessionStore;
     this.contextFactory = contextFactory;
     this.mainConfig = mainConfig;
@@ -53,10 +57,41 @@ export default class PublicApiV0Controller extends BaseController {
   }
 
   @Get("/public/api/v0/healthcheck")
-  public async getHealthcheck(_req, res) {
-    res.send({
-      ok: true,
-    });
+  public async getHealthcheck(req, res) {
+    try {
+      const redisResult = await this.redisClient.redis?.call("PING");
+      if (redisResult != "PONG") {
+        res.sendStatus(500);
+        return;
+      }
+      if (!this.databaseConnection.datasource.isInitialized) {
+        res.sendStatus(500);
+        return;
+      }
+    const apiKeySecret = req?.headers?.["floro-api-key"];
+    if (!apiKeySecret || typeof apiKeySecret != "string") {
+      res.status(403).json({
+        message: "forbidden",
+      });
+      return;
+    }
+    const apiKeysContext = await this.contextFactory.createContext(
+      ApiKeysContext
+    );
+    const apiKey = await apiKeysContext.getBySecret(apiKeySecret);
+    if (!apiKey || apiKey?.isDeleted || !apiKey.isEnabled) {
+      res.status(403).json({
+        message: "forbidden",
+      });
+      return;
+    }
+      res.send({
+        ok: true,
+      });
+    } catch (e) {
+      res.sendStatus(500);
+      return;
+    }
   }
 
   @Get("/public/api/v0/repositories")

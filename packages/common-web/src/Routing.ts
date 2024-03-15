@@ -30,6 +30,9 @@ import ChromeExtensionDocs from './pages/common/docs/product/pages/ChromeExtensi
 import CopyAndPasteDocs from './pages/common/docs/product/pages/CopyAndPasteDocs';
 import DevDocsLanding from './pages/common/docs/dev/DevDocsLanding';
 import IntegratingDocs from './pages/common/docs/dev/pages/IntegratingDocs';
+import CLIDocs from './pages/common/docs/dev/pages/CLIDocs';
+import APIDocs from './pages/common/docs/dev/pages/APIDocs';
+import DevelopingWithFloroDocs from './pages/common/docs/dev/pages/DevelopingWithFloroDocs';
 
 /**
  *  put common shared page routes here
@@ -126,6 +129,18 @@ const CommonRouting: IsomorphicRoute[] = [
   {
     path: "/docs/dev/integrating",
     component: () => IntegratingDocs,
+  },
+  {
+    path: "/docs/dev/cli",
+    component: () => CLIDocs,
+  },
+  {
+    path: "/docs/dev/api",
+    component: () => APIDocs,
+  },
+  {
+    path: "/docs/dev/developing-with-floro",
+    component: () => DevelopingWithFloroDocs,
   },
   {
     path: "/app-proxy/*",

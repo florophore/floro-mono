@@ -104,7 +104,7 @@ const PluginDescription = styled.p`
 
 function DevDocsLanding() {
   const theme = useTheme();
-  const docsMetaTitle = usePlainText("meta_tags.product_docs");
+  const docsMetaTitle = usePlainText("meta_tags.development_docs");
 
   const renderLinkNode = useCallback(
     (

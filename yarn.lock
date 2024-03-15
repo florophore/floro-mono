@@ -15637,10 +15637,10 @@ flatted@^3.2.9:
   resolved "https://registry.yarnpkg.com/flatted/-/flatted-3.2.9.tgz#7eb4c67ca1ba34232ca9d2d93e9886e611ad7daf"
   integrity sha512-36yxDn5H7OFZQla0/jFJmbIKTdZAQHngCedGxiMmpNfEZM0sdEeT+WczLQrjK6D7o2aiyLYDnkw0R3JK0Qv1RQ==
 
-floro@0.0.73:
-  version "0.0.73"
-  resolved "https://registry.yarnpkg.com/floro/-/floro-0.0.73.tgz#507271da4b6edc7fb08f6898785ef980b0f3a68a"
-  integrity sha512-ngcuKWkRysMo8qxLCtCj8sEIZDR2I/BCGu1QJpkjPTlJJ4Tya1cUvBeV2l3fnvMpzp+N8EmKE+bW/zEnZTO89Q==
+floro@0.0.74:
+  version "0.0.74"
+  resolved "https://registry.yarnpkg.com/floro/-/floro-0.0.74.tgz#3ce8e933caf084123cee37f96bfa7cc8d31c66d7"
+  integrity sha512-Fm7+e+EVM3Ig3i/AQN36alOurlozIV1WEbyPrgoUu2wBqfIG3R8ft3p7ol4UmE8nNbMwg6XKi8QIIJJFw8SsMg==
   dependencies:
     "@types/busboy" "^1.5.0"
     "@types/express" "^4.17.15"
@@ -16777,7 +16777,7 @@ hexoid@^1.0.0:
   resolved "https://registry.yarnpkg.com/hexoid/-/hexoid-1.0.0.tgz#ad10c6573fb907de23d9ec63a711267d9dc9bc18"
   integrity sha512-QFLV0taWQOZtvIRIAdBChesmogZrtuXvVWsFHZTk2SU+anspqZ2vMnoLg7IE1+Uk16N19APic1BuF8bC8c2m5g==
 
-highlight.js@^10.4.1, highlight.js@^10.7.1, highlight.js@~10.7.0:
+highlight.js@^10.4.1, highlight.js@^10.5.0, highlight.js@^10.7.1, highlight.js@~10.7.0:
   version "10.7.3"
   resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-10.7.3.tgz#697272e3991356e40c3cac566a74eef681756531"
   integrity sha512-tzcUFauisWKNHaRkN4Wjl/ZA07gENAjFl3J/c480dprkGTg5EQstgaNFqBfUqCq54kZRIEcreTsAgF/m2quD7A==
@@ -23343,6 +23343,13 @@ react-helmet@^6.1.0:
     prop-types "^15.7.2"
     react-fast-compare "^3.1.1"
     react-side-effect "^2.1.0"
+
+react-highlight@^0.15.0:
+  version "0.15.0"
+  resolved "https://registry.yarnpkg.com/react-highlight/-/react-highlight-0.15.0.tgz#66749d01969853327d499959558f9468330cd9d8"
+  integrity sha512-5uV/b/N4Z421GSVVe05fz+OfTsJtFzx/fJBdafZyw4LS70XjIZwgEx3Lrkfc01W/RzZ2Dtfb0DApoaJFAIKBtA==
+  dependencies:
+    highlight.js "^10.5.0"
 
 react-hot-toast@^2.4.1:
   version "2.4.1"
