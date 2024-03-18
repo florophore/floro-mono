@@ -254,6 +254,10 @@ function Home() {
     "front_page.get_help_and_contribute"
   );
 
+  const readTheDocs = useRichText(
+    "front_page.read_the_docs"
+  );
+
   const seeADemo = useRichText(
     "front_page.see_a_demo"
   );
@@ -316,6 +320,9 @@ function Home() {
         >
           <TagLine>{tagLine}</TagLine>
           <SubTextTagLine>{subTextTagLine}</SubTextTagLine>
+          <Link to={'/docs'}>
+            <DemoLink>{readTheDocs}</DemoLink>
+          </Link>
           <DemoLink>{seeADemo}</DemoLink>
           <Link to={'/technical-overview-part-1'}>
             <TechnicalOverviewLink>{readTechnicalOverview}</TechnicalOverviewLink>
@@ -558,6 +565,9 @@ function Home() {
             </div>
           </RightColumnContent>
           <div style={{marginTop: 48, marginLeft: '5%', display: 'flex', alignItems: 'center', flexDirection: 'column'}}>
+            <Link to={'/docs'}>
+              <DemoLink>{readTheDocs}</DemoLink>
+            </Link>
             <DemoLink>{seeADemo}</DemoLink>
             <Link to={'/technical-overview-part-1'}>
               <TechnicalOverviewLink>{readTechnicalOverview}</TechnicalOverviewLink>
