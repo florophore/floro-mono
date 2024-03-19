@@ -117,7 +117,7 @@ const TagLine = styled.h1`
   font-family: "MavenPro";
   font-weight: 600;
   font-size: 2.4rem;
-  margin-top: 15%;
+  margin-top: 10%;
   @media screen and (min-width: 768px) and (max-width: 1023px) {
     font-size: 1.9rem;
   }
@@ -184,15 +184,37 @@ const DownloadSection = styled.div`
   width: 100%;
 `;
 
+const BackedBySection = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  margin-top: 16px;
+  justify-content: center;
+  @media screen and (max-width: 767px) {
+    padding-top: 16px;
+  }
+`;
+
+const BackedByText = styled.p`
+  color: ${(props) => props.theme.colors.contrastTextLight};
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  font-size: 0.6rem;
+  font-weight: 600;
+`;
+
 const DownloadSectionHeader = styled.h3`
   padding: 0;
   margin: 0;
   font-family: "MavenPro";
   font-weight: 600;
   font-size: 1.2rem;
-  margin-top: 48px;
+  margin-top: 32px;
   @media screen and (min-width: 768px) and (max-width: 1023px) {
     font-size: 1rem;
+    margin-top: 48px;
   }
   color: ${(props) => props.theme.colors.titleText};
 `;
@@ -240,11 +262,18 @@ const FlatIcon = styled.img`
   transition: background-image 300ms;
 `;
 
+const YCIcon = styled.img`
+  height: 12px;
+  margin-left: 8px;
+`;
+
+
 
 function Home() {
   const theme = useTheme();
-  const floroText = useIcon("main.floro-text");
+  const floroText = useIcon("main.floro-beta");
   const frontPageBackdrop = useIcon("front-page.front-page-backdrop");
+  const ycombinator = useIcon("front-page.ycombinator");
   const tagLine = useRichText("front_page.tag_line");
   const subTextTagLine = useRichText("front_page.subtext_of_tag_line");
   const downloadDesktopText = useRichText("front_page.download_desktop_client");
@@ -252,6 +281,10 @@ function Home() {
   const installCliText = useRichText("front_page.install_the_cli");
   const getHelpAndContributeText = useRichText(
     "front_page.get_help_and_contribute"
+  );
+
+  const backedBy = useRichText(
+    "front_page.backed_by"
   );
 
   const readTheDocs = useRichText(
@@ -359,6 +392,12 @@ function Home() {
           }}
         >
           <DownloadSection style={{ textAlign: "center" }}>
+            <DownloadSectionHeader>
+              <BackedBySection>
+                <BackedByText>{backedBy}</BackedByText>
+                <YCIcon src={ycombinator}/>
+              </BackedBySection>
+            </DownloadSectionHeader>
             <DownloadSectionHeader>{downloadDesktopText}</DownloadSectionHeader>
             <DownloadRow style={{ justifyContent: "center" }}>
               <DownloadIcon
@@ -565,6 +604,10 @@ function Home() {
             </div>
           </RightColumnContent>
           <div style={{marginTop: 48, marginLeft: '5%', display: 'flex', alignItems: 'center', flexDirection: 'column'}}>
+            <BackedBySection >
+              <BackedByText>{backedBy}</BackedByText>
+              <YCIcon src={ycombinator}/>
+            </BackedBySection>
             <Link to={'/docs'}>
               <DemoLink>{readTheDocs}</DemoLink>
             </Link>

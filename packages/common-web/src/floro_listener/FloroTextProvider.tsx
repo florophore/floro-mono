@@ -24,6 +24,11 @@ export const FloroTextProvider = (props: Props) => {
 
   useEffect(() => {
     (async () => {
+      if (props.disableSSRText) {
+        const text = await import("@floro/common-generators/floro_modules/text-generator/text.json");
+        setText(text as unknown as LocalizedPhrases);
+        return;
+      }
       const promises: Promise<null|{localeCode: keyof LocalizedPhrases["localizedPhraseKeys"], phraseKeys: PhraseKeys}>[] = [];
       for (const localeCode in props.localeLoads) {
         promises.push(
@@ -50,7 +55,7 @@ export const FloroTextProvider = (props: Props) => {
       }, text)
       setText({...nextText});
     })()
-  }, []);
+  }, [props.disableSSRText]);
 
   const watchedText = useWatchFloroState(metaFile.repositoryId, text, getJSON);
   return (

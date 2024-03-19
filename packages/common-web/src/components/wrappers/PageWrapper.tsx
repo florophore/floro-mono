@@ -355,7 +355,9 @@ const PageWrapperComponent = (props: Props) => {
                   <Link to={"/docs"}>
                     <HeaderLinkText>{docsText}</HeaderLinkText>
                   </Link>
-                  <HeaderLinkText>{pricingText}</HeaderLinkText>
+                  <Link to={"/pricing"}>
+                    <HeaderLinkText>{pricingText}</HeaderLinkText>
+                  </Link>
                   <HeaderLinkText>{fossText}</HeaderLinkText>
                   <HeaderLinkText>{consultingText}</HeaderLinkText>
                 </LargeNavMainContainer>

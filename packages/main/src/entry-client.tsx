@@ -11,6 +11,7 @@ import initLocaleLoads from "@floro/common-generators/floro_modules/text-generat
 import Cookies from 'js-cookie';
 
 const allTextModule = import.meta.env?.MODE == "development" ? await import("@floro/common-generators/floro_modules/text-generator/text.json") : null;
+const isDev = import.meta.env?.MODE == "development";
 
 const client = createApolloClient(import.meta.env?.['VITE_HOST'] ?? 'localhost:9000', !!import.meta.env?.['VITE_IS_SECURE']);
 
@@ -79,6 +80,7 @@ const ClientApp = () => {
           text={text}
           routing={MainRoutes}
           env={import.meta.env?.VITE_BUILD_ENV_NORMALIZED ?? "development"}
+          disableSSRText={isDev}
         />
       </BrowserRouter>
     </ApolloProvider>

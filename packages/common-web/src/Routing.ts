@@ -33,6 +33,7 @@ import IntegratingDocs from './pages/common/docs/dev/pages/IntegratingDocs';
 import CLIDocs from './pages/common/docs/dev/pages/CLIDocs';
 import APIDocs from './pages/common/docs/dev/pages/APIDocs';
 import DevelopingWithFloroDocs from './pages/common/docs/dev/pages/DevelopingWithFloroDocs';
+import PricingPage from './pages/common/Pricing';
 
 /**
  *  put common shared page routes here
@@ -53,6 +54,10 @@ const CommonRouting: IsomorphicRoute[] = [
   {
     path: "/about",
     component: () => About,
+  },
+  {
+    path: "/pricing",
+    component: () => PricingPage,
   },
   {
     path: "/technical-overview-part-1",
