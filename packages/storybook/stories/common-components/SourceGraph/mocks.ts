@@ -1,6 +1,6 @@
-import { SourceCommitNode, Branch } from "./grid";
+import { SourceCommitNode } from "floro/dist/src/sourcegraph";
 
-export const BRANCHES: Array<Branch> = [
+export const BRANCHES = [
   {
     id: "main",
     name: "Main",
@@ -59,7 +59,7 @@ export const BRANCHES: Array<Branch> = [
   },
 ];
 
-export const SOURCE_HISTORY: Array<SourceCommitNode> = [
+export const SOURCE_HISTORY = [
   {
     sha: "A",
     timestamp: "Sat Jan 01 2000 00:00:00 GMT-0800",

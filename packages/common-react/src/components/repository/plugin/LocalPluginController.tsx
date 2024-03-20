@@ -345,12 +345,16 @@ const LocalPluginController = (props: Props) => {
 
   useEffect(() => {
     if (lastPluginMessage && hasLoaded) {
-      setTimeout(() => {
+      const timeout = setTimeout(() => {
         if (iframeRef.current) {
           sendMessage(iframeRef.current, "external:message", lastPluginMessage);
           clearLastPluginMessage();
         }
       }, 300);
+      // see if this fixes leak
+      return () => {
+        clearTimeout(timeout);
+      }
     }
   }, [lastPluginMessage, hasLoaded]);
 

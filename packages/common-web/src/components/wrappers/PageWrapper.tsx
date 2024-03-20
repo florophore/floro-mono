@@ -358,8 +358,12 @@ const PageWrapperComponent = (props: Props) => {
                   <Link to={"/pricing"}>
                     <HeaderLinkText>{pricingText}</HeaderLinkText>
                   </Link>
-                  <HeaderLinkText>{fossText}</HeaderLinkText>
-                  <HeaderLinkText>{consultingText}</HeaderLinkText>
+                  <Link to={"/oss"}>
+                    <HeaderLinkText>{fossText}</HeaderLinkText>
+                  </Link>
+                  <Link to={"/consulting"}>
+                    <HeaderLinkText>{consultingText}</HeaderLinkText>
+                  </Link>
                 </LargeNavMainContainer>
                 <div
                   style={{
@@ -397,13 +401,19 @@ const PageWrapperComponent = (props: Props) => {
             </Link>
           </div>
           <div>
-            <HeaderLinkText>{pricingText}</HeaderLinkText>
+            <Link to={"/pricing"}>
+              <HeaderLinkText>{pricingText}</HeaderLinkText>
+            </Link>
           </div>
           <div>
-            <HeaderLinkText>{fossText}</HeaderLinkText>
+            <Link to={"/oss"}>
+              <HeaderLinkText>{fossText}</HeaderLinkText>
+            </Link>
           </div>
           <div>
-            <HeaderLinkText>{consultingText}</HeaderLinkText>
+            <Link to={"/consulting"}>
+              <HeaderLinkText>{consultingText}</HeaderLinkText>
+            </Link>
           </div>
         </div>
         <Row style={{ marginTop: 36 }}>

@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 import { Edge, SourceCommitNodeWithGridDimensions } from "./grid";
 import { useTheme } from "@emotion/react";
 import { motion } from "framer-motion";
-import ColorPalette from "@floro/styles/ColorPalette";
 import { getColorForRow } from "./color-mod";
 import { Branch } from "floro/dist/src/repo";
 

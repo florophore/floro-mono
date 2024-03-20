@@ -473,7 +473,7 @@ export interface Edge {
 
 export const getEdges = (
   rootNodes: Array<SourceCommitNodeWithGridDimensions>,
-  filteredBranchIds: Array<string>,
+  _filteredBranchIds: Array<string>,
   columnDistance: number,
   rowDistance: number
 ): Array<Edge> => {
