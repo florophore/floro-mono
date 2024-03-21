@@ -87,6 +87,7 @@ const SectionParagraph = styled.div`
   color: ${(props) => props.theme.colors.contrastText};
   @media screen and (max-width: 767px) {
     font-size: 1.2rem;
+    word-wrap: break-word;
   }
 `;
 
