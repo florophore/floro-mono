@@ -22,6 +22,10 @@ This repository is the mono-repository of the following applications
 
 For code related to the floro CLI & version control client please go to <a href="https://github.com/florophore/floro">this repository</a>.
 
+### For Self-Host Deploing
+
+For code related to the deploying to a cloud provider please go to <a href="https://github.com/florophore/floro-terraform">this repository</a>.
+
 ### Documentation References
 <b>Please <a href="https://floro.io/docs">read the product docs here before getting started</a>.</b>
 

@@ -1,7 +1,6 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react'
 import {Helmet} from "react-helmet";
 import { useLocation } from "react-router-dom";
-import { useIsOnline } from "@floro/common-react/src/hooks/offline";
 import Button from '@floro/storybook/stories/design-system/Button';
 import { useDaemonIsConnected, useFloroSocket } from '@floro/common-react/src/pubsub/socket';
 import PageWrapper from '../../../components/wrappers/PageWrapper';
