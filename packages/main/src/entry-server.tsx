@@ -8,7 +8,6 @@ import { ApolloProvider, ApolloClient } from '@apollo/client';
 import { Helmet } from 'react-helmet';
 import { LocalizedPhrases } from '@floro/common-generators/floro_modules/text-generator';
 import { renderStylesToString } from '@emotion/server';
-import { ProposedMergeRequestRepositoryUpdatesDocument } from '@floro/graphql-schemas/src/generated/main-client-graphql';
 
 export const render = async (
   url: string,

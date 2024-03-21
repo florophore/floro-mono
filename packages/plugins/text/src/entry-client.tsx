@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom/client'
-import App from './AppV2';
+import App from './App';
 
 const ClientApp = (
     <App/>

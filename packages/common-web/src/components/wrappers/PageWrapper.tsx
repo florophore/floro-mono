@@ -9,6 +9,7 @@ import HamburgerToggle from "./HamburgerToggle";
 import LanguageSelect from "./LanguageSelect";
 import ThemeSwitcher from "./ThemeSwitcher";
 import MobileLanguageSelectList from "./MobileLanguageSelectList";
+import {Helmet} from "react-helmet";
 
 const PageWrapper = styled.div`
   height: 100%;
@@ -327,6 +328,9 @@ const PageWrapperComponent = (props: Props) => {
 
   return (
     <PageWrapper>
+      <Helmet>
+
+      </Helmet>
       <PageNav>
         <InnerContainer>
           <NavContent>

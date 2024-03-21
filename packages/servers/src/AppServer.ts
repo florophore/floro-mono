@@ -3,7 +3,6 @@ import express, { Express, Response } from "express";
 import { Server } from "http";
 import Backend from "@floro/backend/src/Backend";
 import { env } from "process";
-import { createProxyMiddleware } from "http-proxy-middleware";
 import MailDev from "maildev";
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
@@ -307,6 +306,7 @@ export default class AppServer {
           console.log("send emails to port 1025!");
         }
       });
+      // to test mail un-comment. This does not play well with HMR
       //const proxy = createProxyMiddleware("/maildev", {
       //  target: `http://localhost:1080`,
       //  ws: true,
