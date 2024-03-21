@@ -9,8 +9,8 @@ This repository is the mono-repository of the following applications
 - Projects
     - <a href="./packages/floro-desktop/README.md">The Floro Desktop App</a>
     - <a href="./packages/floro-chrome-extension/README.md">The Floro Chrome Extension</a>
-    - <a href="./packages/backend/src/README.md">The Floro Backend Service</a>
-    - <a href="./packages/common-web/src/README.md">The Floro Web Front-End</a>
+    - <a href="./packages/backend//README.md">The Floro Backend Service</a>
+    - <a href="./packages/common-web/README.md">The Floro Web Front-End</a>
 
 - Plugin Projects (docs coming soon, follow src/App.tsx files)
     - <a href="./packages/plugins/text/">Text</a>
