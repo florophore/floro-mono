@@ -59,3 +59,5 @@ After starting up postgres and the redis server, to start the web server, you ca
 `yarn build`
 
 `yarn main:dev`
+
+App will run on `http://localhost:9000`
