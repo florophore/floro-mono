@@ -15357,6 +15357,13 @@ fastq@^1.6.0:
   dependencies:
     reusify "^1.0.4"
 
+fathom-react@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/fathom-react/-/fathom-react-1.0.1.tgz#036235eba3b00aa70afb0d8b1fec52ac02b43ada"
+  integrity sha512-/wjkYm7Z4jTg9rWw41H4ybX1spnqLFkPPjSSd3JlvaTQTq7TjKjzDR4ykOe3VVbH9fp7att2adk9ecq1lwepwg==
+  dependencies:
+    prop-types "^15.7.2"
+
 fault@^1.0.0:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/fault/-/fault-1.0.4.tgz#eafcfc0a6d214fc94601e170df29954a4f842f13"

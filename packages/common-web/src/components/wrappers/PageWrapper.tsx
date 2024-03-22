@@ -335,6 +335,7 @@ const PageWrapperComponent = (props: Props) => {
         <meta property="og:image" content={OGImage}/>
         <meta property="og:title" content={visualVersionControlTitle}/>
         <meta property="og:title" content={offlineFirstStaticAssetsDescription}/>
+        <script src="https://cdn.usefathom.com/script.js" data-site="EYHELEQM" defer></script>
       </Helmet>
       <PageNav>
         <InnerContainer>
