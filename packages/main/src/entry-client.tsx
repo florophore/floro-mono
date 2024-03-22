@@ -19,7 +19,7 @@ const allTextModule =
     : null;
 
 const fathomId = import.meta?.env?.["VITE_FATHOM_ID"] ?? "";
-console.log("FID", fathomId)
+console.log("FID", fathomId, "VH", import.meta.env?.["VITE_HOST"])
 
 const client = createApolloClient(
   import.meta.env?.["VITE_HOST"] ?? "localhost:9000",
