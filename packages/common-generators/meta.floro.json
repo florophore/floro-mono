@@ -1,9 +1,9 @@
 {
   "moduleFile": "floro.module.js",
   "repositoryId": "12aa1618-9e0b-404c-8423-7c38047e18c9",
-  "sha": "56105a099e5bd2009fdf1de49fda1ef39714723a908976e7daadd435eaf499ec",
-  "message": "fixed descriptions",
-  "idx": 118,
+  "sha": "cceacaf71eb06779b63f7c4b754d3eb1ff516c380cc23c672b86d5ec88f52678",
+  "message": "updated typos and pricing page",
+  "idx": 119,
   "generatorDependencies": {
     "icon-generator": {
       "icons": "0.0.40"

@@ -113,7 +113,7 @@ We are happy to host any public repository or plugin on our servers for free. We
 
 <b>To be clear, Floro will always be free for your organization if all of your organization's repositories are public. Additionally Floro will always be free for personal repositories and plugins.</b>
 
-Our current plan for pricing is to charge <b>$12 per active member per month</b> of an organization <i>with one or more</i> private repositories. We will not charge organizations for additional private repositories. <b>All organizations get up to 5 members before we begin charging.</b>
+Our current plan for pricing is to charge <b>$25 per active member per month</b> of an organization <i>with one or more</i> private repositories. We will not charge organizations for additional private repositories. <b>All organizations get up to 5 members before we begin charging.</b>
 
 <b>We also do consulting!</b>
 

@@ -164,6 +164,18 @@ const FinePrint = styled.p`
   margin-bottom: 8px;
 `;
 
+const SectionDetails = styled.section`
+  margin: 0;
+  background: ${(props) => props.theme.name == 'light' ? ColorPalette.lightGray : ColorPalette.mediumGray};
+  border-radius: 8px;
+  padding: 6px 8px;
+  font-family: "MavenPro";
+  color: ${(props) => props?.theme.colors.contrastText};
+  box-shadow: 0px 2px 8px 4px ${props => props.theme.colors.tooltipOuterShadowColor};
+  border: 1px solid ${props => props.theme.colors.contrastText};
+
+`;
+
 function PricingPage() {
   const pricingMetaTitle = usePlainText("meta_tags.pricing");
 
@@ -179,6 +191,7 @@ function PricingPage() {
   const seeConsulting = useRichText("pricing.see_consulting")
   const perOrgMember = useRichText("pricing.per_org_member")
   const perMonth = useRichText("pricing.per_month")
+  const price = useRichText("pricing.price")
   const contactUs = usePlainText("pricing.contact_us")
 
   const theme = useTheme();
@@ -215,6 +228,11 @@ function PricingPage() {
       ): ReactElement<any, string | JSXElementConstructor<any>> {
         return <SectionTitle>{content}</SectionTitle>;
       },
+      details: function (
+        content: ReactElement<any, string | JSXElementConstructor<any>>
+      ): ReactElement<any, string | JSXElementConstructor<any>> {
+        return <SectionDetails>{content}</SectionDetails>;
+      },
       pricingContent: (
         <PricingWrapper>
           <PricingCard>
@@ -234,7 +252,7 @@ function PricingPage() {
               <PricingHeaderSubText>{privateOrg}</PricingHeaderSubText>
             </PricingHeader>
             <PricingBody>
-              <Price>{'$12'}</Price>
+              <Price>{price}</Price>
               <PriceDetail>{perOrgMember}</PriceDetail>
               <PriceDetail>{perMonth}</PriceDetail>
               <FinePrint>{privateOrgDisclaimer}</FinePrint>
