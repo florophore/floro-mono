@@ -1,6 +1,6 @@
 # Floro Mono
 
-<img width="300" src="./packages//common-assets/assets//images/floro_blink_text.png">
+<img width="300" src="./packages/common-assets/assets//images/floro_blink_text.png">
 
 ### Project Structure Overview
 

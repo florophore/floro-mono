@@ -2,22 +2,18 @@ import {
   useMemo,
   useState,
   useCallback,
-  useEffect,
   JSXElementConstructor,
   ReactElement,
 } from "react";
 import styled from "@emotion/styled";
-import { useIcon } from "../../floro_listener/FloroIconsProvider";
 import { useTheme } from "@emotion/react";
 import { usePlainText, useRichText } from "../../floro_listener/hooks/locales";
 import { Helmet } from "react-helmet";
-import ColorPalette from "@floro/styles/ColorPalette";
 import PageWrapper from "../../components/wrappers/PageWrapper";
 import { richTextRenderers } from "@floro/common-web/src/floro_listener/FloroTextRenderer";
 import { StaticLinkNode } from "@floro/common-generators/floro_modules/text-generator";
 import { Link } from "react-router-dom";
 import Checkbox from "@floro/storybook/stories/design-system/Checkbox";
-import { userInfo } from "os";
 
 const AboutWrapper = styled.div`
   width: 100%;

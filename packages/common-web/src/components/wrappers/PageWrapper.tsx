@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "@emotion/styled";
 import { useIcon } from "../../floro_listener/FloroIconsProvider";
-import { useRichText } from "../../floro_listener/hooks/locales";
+import { usePlainText, useRichText } from "../../floro_listener/hooks/locales";
 import Button from "@floro/storybook/stories/design-system/Button";
 import { Link } from "react-router-dom";
 import ColorPalette from "@floro/styles/ColorPalette";
@@ -10,6 +10,7 @@ import LanguageSelect from "./LanguageSelect";
 import ThemeSwitcher from "./ThemeSwitcher";
 import MobileLanguageSelectList from "./MobileLanguageSelectList";
 import {Helmet} from "react-helmet";
+import OGImage from "@floro/main/public/pngs/og_floro.png";
 
 const PageWrapper = styled.div`
   height: 100%;
@@ -323,13 +324,17 @@ const PageWrapperComponent = (props: Props) => {
   const privacyPolicy = useRichText("components.privacy_policy");
   const termsOfService = useRichText("components.terms_of_service");
   const appearanceText = useRichText("front_page.appearance");
+  const visualVersionControlTitle = usePlainText("descriptions.visual_version_control");
+  const offlineFirstStaticAssetsDescription = usePlainText("descriptions.offline_first_static_assets");
 
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
     <PageWrapper>
       <Helmet>
-
+        <meta property="og:image" content={OGImage}/>
+        <meta property="og:title" content={visualVersionControlTitle}/>
+        <meta property="og:title" content={offlineFirstStaticAssetsDescription}/>
       </Helmet>
       <PageNav>
         <InnerContainer>

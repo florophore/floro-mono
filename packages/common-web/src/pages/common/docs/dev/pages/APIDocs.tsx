@@ -16,8 +16,6 @@ import PageWrapper from "../../../../../components/wrappers/PageWrapper";
 import { usePlainText, useRichText } from "../../../../../floro_listener/hooks/locales";
 import DocSearch from "../../DocSearch";
 import { LinkChain } from "../../DocsLink";
-import { useIcon } from "../../../../../floro_listener/FloroIconsProvider";
-import CLICopy from "../../../../../components/home/CLICopy";
 import ColorPalette from "@floro/styles/ColorPalette";
 
 import LocalSettingsLight from "@floro/main/public/doc_images/development/api/local_settings.light.png";
