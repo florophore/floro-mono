@@ -76,10 +76,10 @@ jobs:
         run: yarn postprocess:locales
 
       - name: Echo fathom
-        run: echo "${{ env.FATHOM_ID }}"
+        run: echo "${{ vars.FATHOM_ID }}"
 
       - name: Build Main
-        run: CDN_HOST=${{ steps.cdnHost.outputs.value }} VITE_HOST=${{ steps.viteHost.outputs.value }} VITE_IS_SECURE=true VITE_FATHOM_ID=${{ env.FATHOM_ID }} VITE_BUILD_ENV_NORMALIZED=${{ steps.viteBuildEnvNormalized.outputs.value }} yarn main build
+        run: CDN_HOST=${{ steps.cdnHost.outputs.value }} VITE_HOST=${{ steps.viteHost.outputs.value }} VITE_IS_SECURE=true VITE_FATHOM_ID=${{ vars.FATHOM_ID }} VITE_BUILD_ENV_NORMALIZED=${{ steps.viteBuildEnvNormalized.outputs.value }} yarn main build
 
       - name: Push build to S3
         uses: jakejarvis/s3-sync-action@master
@@ -90,7 +90,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ steps.awsAccessKeyId.outputs.value }}
           AWS_SECRET_ACCESS_KEY: ${{ steps.awsSecretAccessKey.outputs.value }}
           SOURCE_DIR: 'packages/main/dist/client'
-          VITE_FATHOM_ID: ${{ env.FATHOM_ID }}
+          VITE_FATHOM_ID: ${{ vars.FATHOM_ID }}
   build-image:
     name: 'Build Image & Push to ECR'
     runs-on: ubuntu-latest
@@ -148,7 +148,7 @@ jobs:
         run: echo "${{ steps.vars.outputs.docker_tag }}"
 
       - name: Echo fathom
-        run: echo "${{ env.FATHOM_ID }}"
+        run: echo "${{ vars.FATHOM_ID }}"
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -161,7 +161,7 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ steps.repositoryName.outputs.value }}
           IMAGE_TAG: ${{ steps.vars.outputs.docker_tag }}
-          VITE_FATHOM_ID: ${{ env.FATHOM_ID }}
+          VITE_FATHOM_ID: ${{ vars.FATHOM_ID }}
         run: |
-          docker build --build-arg vite_is_secure_arg=true --build-arg vite_host_arg=${{ steps.viteHost.outputs.value }} --build-arg cdn_host_arg=${{ steps.cdnHost.outputs.value }} --build-arg vite_build_env_normalized_arg=${{ steps.viteBuildEnvNormalized.outputs.value }} --build-arg vite_fathom_id_arg=${{ env.FATHOM_ID }} --build-arg floro_remote_api_key_arg=${{ secrets.FLORO_REMOTE_API_KEY }} -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
+          docker build --build-arg vite_is_secure_arg=true --build-arg vite_host_arg=${{ steps.viteHost.outputs.value }} --build-arg cdn_host_arg=${{ steps.cdnHost.outputs.value }} --build-arg vite_build_env_normalized_arg=${{ steps.viteBuildEnvNormalized.outputs.value }} --build-arg vite_fathom_id_arg=${{ vars.FATHOM_ID }} --build-arg floro_remote_api_key_arg=${{ secrets.FLORO_REMOTE_API_KEY }} -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
