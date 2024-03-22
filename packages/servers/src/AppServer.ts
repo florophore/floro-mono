@@ -242,6 +242,7 @@ export default class AppServer {
           return res.redirect(301, context.url);
         }
 
+        console.log("HELMET", helmet)
         const baseUrl = process?.env?.['DOMAIN'] ? `https://${process.env?.['DOMAIN']}` : 'http://localhost:9000';
         const html = template
           .replace(`<!--ssr-outlet-->`, appHtml)
@@ -260,6 +261,7 @@ export default class AppServer {
           .replace("__HELMET_TITLE__", helmet?.title?.toString?.() ?? "")
           .replace("__HELMET_META__", helmet?.meta?.toString?.() ?? "")
           .replace("__HELMET_LINK__", helmet?.link?.toString?.() ?? "")
+          .replace("__HELMET_SCRIPT__", helmet?.script?.toString?.() ?? "")
           .replace("__BASE_URL__", baseUrl)
           .replace("__SSR_FLORO_TEXT__", this.backend.floroTextStore.getTextSubSet(initLocaleCode, ssrPhraseKeySet))
           .replace("__SSR_FLORO_LOCALE_LOADS__", this.backend.floroTextStore.getLocaleLoadsString());
