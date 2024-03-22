@@ -75,9 +75,6 @@ jobs:
       - name: Post process locales
         run: yarn postprocess:locales
 
-      - name: Echo fathom
-        run: echo "${{ vars.FATHOM_ID }}"
-
       - name: Build Main
         run: CDN_HOST=${{ steps.cdnHost.outputs.value }} VITE_HOST=${{ steps.viteHost.outputs.value }} VITE_IS_SECURE=true VITE_FATHOM_ID=${{ vars.FATHOM_ID }} VITE_BUILD_ENV_NORMALIZED=${{ steps.viteBuildEnvNormalized.outputs.value }} yarn main build
 
@@ -146,9 +143,6 @@ jobs:
 
       - name: Echo tag var
         run: echo "${{ steps.vars.outputs.docker_tag }}"
-
-      - name: Echo fathom
-        run: echo "${{ vars.FATHOM_ID }}"
 
       - name: Login to Amazon ECR
         id: login-ecr

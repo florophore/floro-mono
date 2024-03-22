@@ -46,7 +46,7 @@ function App(props: Props) {
   return (
     <EnvProvider env={props.env}>
       <>
-        {props.env != "development" || true && (
+        {props.env != "development" && (
           <Helmet>
             <script src="https://cdn.usefathom.com/script.js" data-site={props.fathomId} defer></script>
           </Helmet>
