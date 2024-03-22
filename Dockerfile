@@ -38,6 +38,8 @@ RUN yarn install
 
 RUN npm install -g floro
 
+RUN echo "TESTING $VITE_FATHOM_ID"
+
 RUN floro module build -m packages/common-generators/floro.module.js -k $floro_remote_api_key_arg
 
 RUN yarn graphql-schemas:build
