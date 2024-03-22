@@ -19,7 +19,8 @@ export const render = async (
     initLocaleCode: keyof LocalizedPhrases["locales"] & string;
     cdnHost: string,
     ssrPhraseKeySet: Set<string>,
-    localeLoads: {[key: string]: string}
+    localeLoads: {[key: string]: string},
+    fathomId: string
   },
   context: { url?: string; should404: boolean; isSSR: boolean }
 ) => {
@@ -37,6 +38,7 @@ export const render = async (
               cdnHost={deps.cdnHost}
               ssrPhraseKeySet={deps.ssrPhraseKeySet}
               localeLoads={deps.localeLoads}
+              fathomId={deps.fathomId}
             />
           </RedirectProvider>
         </StaticRouter>

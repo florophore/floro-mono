@@ -22,6 +22,10 @@ ENV VITE_BUILD_ENV_NORMALIZED=$vite_build_env_normalized_arg
 
 ARG floro_remote_api_key_arg
 
+ARG vite_fathom_id_arg
+
+ENV VITE_FATHOM_ID=$vite_fathom_id_arg
+
 WORKDIR /app
 
 COPY package.json /app

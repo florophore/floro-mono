@@ -17,6 +17,7 @@ import { ColorThemeProvider } from "./hooks/ColorThemeProvider";
 import ThemeMount from "./hooks/ThemeMount";
 import { ThemeSet } from "@floro/common-generators/floro_modules/themes-generator";
 import TimeAgo from "javascript-time-ago";
+import {Helmet} from "react-helmet";
 
 import en from "javascript-time-ago/locale/en";
 
@@ -32,6 +33,7 @@ export interface Props {
   ssrPhraseKeySet?: Set<string>;
   localeLoads: { [key: string]: string };
   disableSSRText?: boolean;
+  fathomId: string;
 }
 
 function App(props: Props) {
@@ -43,44 +45,51 @@ function App(props: Props) {
   }, []);
   return (
     <EnvProvider env={props.env}>
-      <OpenLinkProvider openUrl={openUrl}>
-        <FloroMount
-          ssrPhraseKeySet={props.ssrPhraseKeySet}
-          cdnHost={props.cdnHost}
-          text={props.text}
-          initLocaleCode={props.initLocaleCode}
-          localeLoads={props.localeLoads}
-          disableSSRText={props.disableSSRText}
-        >
-          <ColorThemeProvider initThemePreference={props.initTheme}>
-            <ThemeMount initTheme={props.initTheme as keyof ThemeSet}>
-              <QueryClientProvider client={queryClient}>
-                <FloroSocketProvider client={"web"}>
-                  <OfflineIconProvider>
-                    <OfflinePhotoProvider>
-                      <SessionProvider clientType="web" env={props.env}>
-                        <Routes>
-                          {props.routing.map((route, key) => {
-                            const Page = route.component();
-                            return (
-                              <Route
-                                key={key}
-                                path={route.path}
-                                element={<Page />}
-                              />
-                            );
-                          })}
-                          <Route path="*" element={notFound} />
-                        </Routes>
-                      </SessionProvider>
-                    </OfflinePhotoProvider>
-                  </OfflineIconProvider>
-                </FloroSocketProvider>
-              </QueryClientProvider>
-            </ThemeMount>
-          </ColorThemeProvider>
-        </FloroMount>
-      </OpenLinkProvider>
+      <>
+        {props.env != "development" && (
+          <Helmet>
+            <script src="https://cdn.usefathom.com/script.js" data-site={props.fathomId} defer></script>
+          </Helmet>
+        )}
+        <OpenLinkProvider openUrl={openUrl}>
+          <FloroMount
+            ssrPhraseKeySet={props.ssrPhraseKeySet}
+            cdnHost={props.cdnHost}
+            text={props.text}
+            initLocaleCode={props.initLocaleCode}
+            localeLoads={props.localeLoads}
+            disableSSRText={props.disableSSRText}
+          >
+            <ColorThemeProvider initThemePreference={props.initTheme}>
+              <ThemeMount initTheme={props.initTheme as keyof ThemeSet}>
+                <QueryClientProvider client={queryClient}>
+                  <FloroSocketProvider client={"web"}>
+                    <OfflineIconProvider>
+                      <OfflinePhotoProvider>
+                        <SessionProvider clientType="web" env={props.env}>
+                          <Routes>
+                            {props.routing.map((route, key) => {
+                              const Page = route.component();
+                              return (
+                                <Route
+                                  key={key}
+                                  path={route.path}
+                                  element={<Page />}
+                                />
+                              );
+                            })}
+                            <Route path="*" element={notFound} />
+                          </Routes>
+                        </SessionProvider>
+                      </OfflinePhotoProvider>
+                    </OfflineIconProvider>
+                  </FloroSocketProvider>
+                </QueryClientProvider>
+              </ThemeMount>
+            </ColorThemeProvider>
+          </FloroMount>
+        </OpenLinkProvider>
+      </>
     </EnvProvider>
   );
 }

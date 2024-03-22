@@ -230,6 +230,7 @@ export default class AppServer {
             floroText: this.backend.floroTextStore.getText(),
             localeLoads: this.backend.floroTextStore.getLocaleLoads(),
             env: env.VITE_BUILD_ENV_NORMALIZED ?? "development",
+            fathomId: env.VITE_FATHOM_ID,
             initLocaleCode,
             initTheme,
             ssrPhraseKeySet
