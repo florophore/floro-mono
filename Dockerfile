@@ -44,6 +44,8 @@ RUN yarn graphql-schemas:build
 
 RUN yarn postprocess:locales
 
+RUN echo "test VITE_FATHOM_ID $VITE_FATHOM_ID"
+
 RUN VITE_HOST=$VITE_HOST VITE_IS_SECURE=true VITE_FATHOM_ID=$VITE_FATHOM_ID VITE_BUILD_ENV_NORMALIZED=$VITE_BUILD_ENV_NORMALIZED yarn main build
 
 COPY . .
