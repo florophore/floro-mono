@@ -9,9 +9,7 @@ for (const envVar in process.env) {
     envOut = `${envOut}${envVar}=${process.env[envVar]}\n`;
 }
 
-
-console.log("EO", envOut);
-
 if (!fs.existsSync(envFile)) {
-    console.log("EXISTS", envFile)
+    fs.writeFileSync(envFile, envOut, 'utf-8');
+    console.log("WROTE ENV");
 }
