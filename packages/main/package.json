@@ -10,7 +10,7 @@
     "dev:debug": "cross-env-shell DOTENV_CONFIG_PATH=../../.env NODE_ENV=development node --inspect-brk --experimental-specifier-resolution=node --loader ts-node/esm main.ts",
     "build:client": "vite build --outDir dist/client --ssrManifest",
     "build:ssr": "vite build --outDir dist/server --ssr src/entry-server.tsx",
-    "build": "cross-env-shell npm run build:ssr && npm run build:client",
+    "build": "cross-env-shell npm run build:ssr && cross-env-shell npm run build:client",
     "preview": "vite preview",
     "typecheck": "tsc --incremental main.ts --tsBuildInfoFile tsconfig.tsbuildinfo --isolatedModules --experimentalDecorators"
   },
