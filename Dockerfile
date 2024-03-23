@@ -38,15 +38,13 @@ RUN yarn install
 
 RUN npm install -g floro
 
-RUN echo "TESTING $VITE_FATHOM_ID"
-
 RUN floro module build -m packages/common-generators/floro.module.js -k $floro_remote_api_key_arg
 
 RUN yarn graphql-schemas:build
 
 RUN yarn postprocess:locales
 
-RUN yarn main build
+RUN VITE_HOST=$VITE_HOST VITE_IS_SECURE=true VITE_FATHOM_ID=$VITE_FATHOM_ID VITE_BUILD_ENV_NORMALIZED=$VITE_BUILD_ENV_NORMALIZED yarn main build
 
 COPY . .
 
