@@ -10,16 +10,15 @@ import defaultText from "@floro/common-generators/floro_modules/text-generator/d
 import initLocaleLoads from "@floro/common-generators/floro_modules/text-generator/locale.loads.json";
 import Cookies from "js-cookie";
 
-const isDev = import.meta.env?.MODE == "development";
 const allTextModule =
-  isDev
+  import.meta.env?.MODE == "development"
     ? await import(
         "@floro/common-generators/floro_modules/text-generator/text.json"
       )
     : null;
 
-const fathomId = import.meta?.env?.["VITE_FATHOM_ID"] ?? "";
-console.log("FID", fathomId, "VH", import.meta.env?.["VITE_HOST"])
+const fathomId = import.meta?.env?.VITE_FATHOM_ID ?? "";
+console.log("FID", import.meta?.env?.VITE_FATHOM_ID, "VH", import.meta.env?.VITE_HOST)
 
 const client = createApolloClient(
   import.meta.env?.["VITE_HOST"] ?? "localhost:9000",
@@ -95,7 +94,7 @@ const ClientApp = () => {
           text={text}
           routing={MainRoutes}
           env={import.meta.env?.VITE_BUILD_ENV_NORMALIZED ?? "development"}
-          disableSSRText={isDev}
+          disableSSRText={import.meta.env?.MODE == "development"}
           fathomId={fathomId}
         />
       </BrowserRouter>
