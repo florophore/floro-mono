@@ -20,9 +20,9 @@ ARG vite_build_env_normalized_arg
 
 ENV VITE_BUILD_ENV_NORMALIZED=$vite_build_env_normalized_arg
 
-ARG vite_fathom_id_arg
+ARG vite_fathom_analytics_id_arg
 
-ENV VITE_FATHOM_ID=$vite_fathom_id_arg
+ENV VITE_FATHOM_ANALYTICS_ID=$vite_fathom_analytics_id_arg
 
 ARG floro_remote_api_key_arg
 
@@ -43,8 +43,6 @@ RUN floro module build -m packages/common-generators/floro.module.js -k $floro_r
 RUN yarn graphql-schemas:build
 
 RUN yarn postprocess:locales
-
-RUN VITE_HOST=$VITE_HOST VITE_IS_SECURE=true VITE_FATHOM_ID=$VITE_FATHOM_ID VITE_BUILD_ENV_NORMALIZED=$VITE_BUILD_ENV_NORMALIZED yarn write:env
 
 RUN yarn main build
 

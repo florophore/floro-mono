@@ -17,9 +17,6 @@ const allTextModule =
       )
     : null;
 
-const fathomId = import.meta?.env?.VITE_FATHOM_ID ?? "";
-console.log("FID", import.meta?.env?.VITE_FATHOM_ID, "VH", import.meta.env?.VITE_HOST)
-
 const client = createApolloClient(
   import.meta.env?.["VITE_HOST"] ?? "localhost:9000",
   !!import.meta.env?.["VITE_IS_SECURE"]
@@ -95,7 +92,7 @@ const ClientApp = () => {
           routing={MainRoutes}
           env={import.meta.env?.VITE_BUILD_ENV_NORMALIZED ?? "development"}
           disableSSRText={import.meta.env?.MODE == "development"}
-          fathomId={fathomId}
+          fathomId={import.meta.env?.VITE_FATHOM_ANALYTICS_ID}
         />
       </BrowserRouter>
     </ApolloProvider>
