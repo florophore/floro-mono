@@ -242,7 +242,6 @@ export default class AppServer {
           return res.redirect(301, context.url);
         }
 
-        console.log("HELMET", helmet)
         const baseUrl = process?.env?.['DOMAIN'] ? `https://${process.env?.['DOMAIN']}` : 'http://localhost:9000';
         const html = template
           .replace(`<!--ssr-outlet-->`, appHtml)

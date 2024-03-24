@@ -54,8 +54,6 @@ jobs:
           cond: ${{ github.event.inputs.buildType == 'prod' }}
           if_true: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
           if_false: ${{ secrets.STAGING_AWS_SECRET_ACCESS_KEY }}
-      - name: Echo fathom
-        run: echo "${{ vars.FATHOM_ID }}"
 
       - name: Yarn install cache
         uses: c-hive/gha-yarn-cache@v1
@@ -146,9 +144,6 @@ jobs:
 
       - name: Echo tag var
         run: echo "${{ steps.vars.outputs.docker_tag }}"
-
-      - name: Echo fathom
-        run: echo "${{ vars.FATHOM_ID }}"
 
       - name: Login to Amazon ECR
         id: login-ecr
