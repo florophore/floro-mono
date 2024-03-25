@@ -32,8 +32,6 @@ import EditModeDark from "@floro/main/public/doc_images/product/chromeextension/
 import DebugModeLight from "@floro/main/public/doc_images/product/chromeextension/debug_mode.light.png"
 import DebugModeDark from "@floro/main/public/doc_images/product/chromeextension/debug_mode.dark.png"
 
-import { useIcon } from "../../../../../floro_listener/FloroIconsProvider";
-
 
 const AboutWrapper = styled.div`
   width: 100%;

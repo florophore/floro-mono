@@ -1,9 +1,9 @@
 {
   "moduleFile": "floro.module.js",
   "repositoryId": "12aa1618-9e0b-404c-8423-7c38047e18c9",
-  "sha": "be967c5bf11d6a97af04d1e7476c1771a34941f63e37f5459e34164141d504cd",
-  "message": "fixed typo",
-  "idx": 121,
+  "sha": "3bf98ea0ab6b24e95c1c0ba3105b29356aedd778270d83503443fbea8c5058c5",
+  "message": "Added changes to doc search",
+  "idx": 122,
   "generatorDependencies": {
     "icon-generator": {
       "icons": "0.0.40"
