@@ -20,7 +20,9 @@ import { createServer as createViteServer } from "vite";
 import { SchemaLink } from "@apollo/client/link/schema";
 // eslint-disable-next-line
 import ApolloPkg from '@apollo/client';
+import * as Sentry from "@sentry/node"
 import { LocalizedPhrases } from "@floro/common-generators/floro_modules/text-generator";
+import process from "process";
 
 const { ApolloClient, InMemoryCache } = ApolloPkg;
 
@@ -47,6 +49,17 @@ export default class AppServer {
     this.app = app;
     this.server = server;
     this.backend = backend;
+    if (process?.env?.["SENTRY_EXPRESS_DSN"]) {
+      Sentry.init({
+        dsn: process?.env?.["SENTRY_EXPRESS_DSN"],
+        integrations: [
+          new Sentry.Integrations.Http({ tracing: true }),
+          new Sentry.Integrations.Express({ app }),
+        ],
+        // Performance Monitoring
+        tracesSampleRate: 1.0, //  Capture 100% of the transactions
+      });
+    }
   }
 
   protected distClient() {
@@ -64,14 +77,22 @@ export default class AppServer {
 
     const schema = this.backend.buildExecutableSchema();
 
+    // The request handler must be the first middleware on the app
+    this.app.use(Sentry.Handlers.requestHandler());
+
+    // TracingHandler creates a trace for every incoming request
+    this.app.use(Sentry.Handlers.tracingHandler());
+
     this.app.use(cookieParser());
-    this.app.use(busboy({
-      limits: {
-        fileSize: 1024 * 1024 * 20, //20MB limit
-      },
-    }));
-    this.app.use(express.json({limit: '20mb'}));
-    this.app.use(express.urlencoded({ extended: true, limit: '20mb' }));
+    this.app.use(
+      busboy({
+        limits: {
+          fileSize: 1024 * 1024 * 20, //20MB limit
+        },
+      })
+    );
+    this.app.use(express.json({ limit: "20mb" }));
+    this.app.use(express.urlencoded({ extended: true, limit: "20mb" }));
 
     this.app.use("/graphql", graphqlUploadExpress());
 
@@ -85,40 +106,44 @@ export default class AppServer {
     }
 
     // CORS POLICY
-    if (process.env?.['DOMAIN']) {
+    if (process.env?.["DOMAIN"]) {
       this.app.use(
         cors({
           origin: [
             "null",
             "http://localhost:63403",
-            `https://${process.env?.['DOMAIN']}`,
-            `https://static-cdn.${process.env?.['DOMAIN']}`,
-            `https://public-cdn.${process.env?.['DOMAIN']}`,
-            `https://private-cdn.${process.env?.['DOMAIN']}`,
+            `https://${process.env?.["DOMAIN"]}`,
+            `https://static-cdn.${process.env?.["DOMAIN"]}`,
+            `https://public-cdn.${process.env?.["DOMAIN"]}`,
+            `https://private-cdn.${process.env?.["DOMAIN"]}`,
           ],
         })
       );
-
     } else {
       this.app.use(
         cors({
-          origin: [
-            "null",
-            "http://localhost:63403",
-            "http://localhost:9000",
-          ],
+          origin: ["null", "http://localhost:63403", "http://localhost:9000"],
         })
       );
     }
 
     this.app.use((_req, res, next) => {
-      if (process.env?.['DOMAIN']) {
-        res.header("Access-Control-Allow-Origin", `http://localhost:63403,https://${process.env?.['DOMAIN']},https://static-cdn.${process.env?.['DOMAIN']},https://public-cdn.${process.env?.['DOMAIN']},https://private-cdn.${process.env?.['DOMAIN']}`);
+      if (process.env?.["DOMAIN"]) {
+        res.header(
+          "Access-Control-Allow-Origin",
+          `http://localhost:63403,https://${process.env?.["DOMAIN"]},https://static-cdn.${process.env?.["DOMAIN"]},https://public-cdn.${process.env?.["DOMAIN"]},https://private-cdn.${process.env?.["DOMAIN"]}`
+        );
       } else {
-        res.header("Access-Control-Allow-Origin", "http://localhost:63403,http://localhost:9000");
+        res.header(
+          "Access-Control-Allow-Origin",
+          "http://localhost:63403,http://localhost:9000"
+        );
       }
       res.header("Access-Control-Allow-Methods", "GET,POST,PUT,OPTIONS");
-      res.header("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type");
+      res.header(
+        "Access-Control-Allow-Headers",
+        "Origin, Accept, X-Requested-With, Content-Type"
+      );
       res.header("Referrer-Policy", "no-referrer");
       next();
     });
@@ -126,7 +151,10 @@ export default class AppServer {
     this.app.use("/proxy/*", (_req, res, next) => {
       res.header("Access-Control-Allow-Origin", "null");
       res.header("Access-Control-Allow-Methods", "GET,POST,PUT,OPTIONS");
-      res.header("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type");
+      res.header(
+        "Access-Control-Allow-Headers",
+        "Origin, Accept, X-Requested-With, Content-Type"
+      );
       res.header("Referrer-Policy", "no-referrer");
       next();
     });
@@ -161,17 +189,13 @@ export default class AppServer {
     }
 
     if (publicStorageRoot && !isProduction) {
-      const storageRequestHandler = express.static(
-        publicStorageRoot
-      );
+      const storageRequestHandler = express.static(publicStorageRoot);
       this.app.use(storageRequestHandler);
       this.app.use("/cdn", storageRequestHandler);
     }
 
     if (privateStorageRoot && !isProduction) {
-      const storageRequestHandler = express.static(
-        privateStorageRoot
-      );
+      const storageRequestHandler = express.static(privateStorageRoot);
       this.app.use(storageRequestHandler);
       this.app.use("/private-cdn", storageRequestHandler);
     }
@@ -189,18 +213,31 @@ export default class AppServer {
       Response | undefined | void
     > => {
       const cacheKey = this.backend.requestCache.init();
-      if (process.env?.['DOMAIN']) {
-        res.header("Access-Control-Allow-Origin", `http://localhost:63403,https://${process.env?.['DOMAIN']},https://static-cdn.${process.env?.['DOMAIN']},https://public-cdn.${process.env?.['DOMAIN']},https://private-cdn.${process.env?.['DOMAIN']}`);
+      if (process.env?.["DOMAIN"]) {
+        res.header(
+          "Access-Control-Allow-Origin",
+          `http://localhost:63403,https://${process.env?.["DOMAIN"]},https://static-cdn.${process.env?.["DOMAIN"]},https://public-cdn.${process.env?.["DOMAIN"]},https://private-cdn.${process.env?.["DOMAIN"]}`
+        );
       } else {
-        res.header("Access-Control-Allow-Origin", "http://localhost:63403,http://localhost:9000");
+        res.header(
+          "Access-Control-Allow-Origin",
+          "http://localhost:63403,http://localhost:9000"
+        );
       }
       res.header("Access-Control-Allow-Methods", "GET,POST,PUT,OPTIONS");
-      res.header("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type");
+      res.header(
+        "Access-Control-Allow-Headers",
+        "Origin, Accept, X-Requested-With, Content-Type"
+      );
       res.header("Referrer-Policy", "no-referrer");
       try {
-        const sessionContext = await this.backend.fetchSessionUserContext(req.cookies?.["user-session"]);
+        const sessionContext = await this.backend.fetchSessionUserContext(
+          req.cookies?.["user-session"]
+        );
         const initTheme = req.cookies?.["theme-preference"] ?? "light";
-        const initLocaleCode = req.cookies?.["locale-code"] as keyof LocalizedPhrases["locales"]&string ?? "EN";
+        const initLocaleCode =
+          (req.cookies?.["locale-code"] as keyof LocalizedPhrases["locales"] &
+            string) ?? "EN";
         const url = req.originalUrl;
         const template = isProduction
           ? indexHTMLTemplate
@@ -212,7 +249,7 @@ export default class AppServer {
           url,
           should404: false,
           isSSR: true,
-          cacheKey
+          cacheKey,
         };
         const client = new ApolloClient({
           ssrMode: true,
@@ -233,7 +270,7 @@ export default class AppServer {
             fathomId: env.VITE_FATHOM_ANALYTICS_ID,
             initLocaleCode,
             initTheme,
-            ssrPhraseKeySet
+            ssrPhraseKeySet,
           },
           context
         );
@@ -242,7 +279,9 @@ export default class AppServer {
           return res.redirect(301, context.url);
         }
 
-        const baseUrl = process?.env?.['DOMAIN'] ? `https://${process.env?.['DOMAIN']}` : 'http://localhost:9000';
+        const baseUrl = process?.env?.["DOMAIN"]
+          ? `https://${process.env?.["DOMAIN"]}`
+          : "http://localhost:9000";
         const html = template
           .replace(`<!--ssr-outlet-->`, appHtml)
           .replace(
@@ -262,8 +301,17 @@ export default class AppServer {
           .replace("__HELMET_LINK__", helmet?.link?.toString?.() ?? "")
           .replace("__HELMET_SCRIPT__", helmet?.script?.toString?.() ?? "")
           .replace("__BASE_URL__", baseUrl)
-          .replace("__SSR_FLORO_TEXT__", this.backend.floroTextStore.getTextSubSet(initLocaleCode, ssrPhraseKeySet))
-          .replace("__SSR_FLORO_LOCALE_LOADS__", this.backend.floroTextStore.getLocaleLoadsString());
+          .replace(
+            "__SSR_FLORO_TEXT__",
+            this.backend.floroTextStore.getTextSubSet(
+              initLocaleCode,
+              ssrPhraseKeySet
+            )
+          )
+          .replace(
+            "__SSR_FLORO_LOCALE_LOADS__",
+            this.backend.floroTextStore.getLocaleLoadsString()
+          );
 
         if (context.should404) {
           return res.status(404).set({ "Content-Type": "text/html" }).end(html);
@@ -274,6 +322,17 @@ export default class AppServer {
         vite.ssrFixStacktrace(e as Error);
         next(e);
       }
+    });
+
+    // The error handler must be registered before any other error middleware and after all controllers
+    this.app.use(Sentry.Handlers.errorHandler());
+
+    // Optional fallthrough error handler
+    this.app.use(function onError(err, req, res, next) {
+      // The error id is attached to `res.sentry` to be returned
+      // and optionally displayed to the user for support.
+      res.statusCode = 500;
+      res.end(res.sentry + "\n");
     });
 
     await new Promise<void>((resolve) =>

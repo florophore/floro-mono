@@ -7,6 +7,11 @@ import {restoreOrCreateWindow} from '/@/mainWindow';
 import {platform} from 'node:process';
 import { startDaemon, killDaemon } from './daemon';
 import {getVersion} from '../../../version/getVersion.mjs';
+import { init } from '@sentry/electron/main';
+
+init({
+  dsn: import.meta.env.VITE_DESKTOP_SENTRY_DSN,
+});
 
 if (import.meta.env.VITE_BUILD_ENV === "dev") {
   setFloroEnv("dev");

@@ -7,3 +7,5 @@ thumbs.db
 .eslintcache
 .browserslistrc
 .electron-vendors.cache.json
+# Sentry Config File
+.env.sentry-build-plugin

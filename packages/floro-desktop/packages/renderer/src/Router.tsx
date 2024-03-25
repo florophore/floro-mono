@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import LoadingPage from './loader/LoadingPage';
 import LoggedOutPage from './loggedout/LoggedOutPage';
@@ -37,9 +37,29 @@ import UserPrivacySettingsPage from './user_settings/UserPrivacySettingsPage';
 import UserNotificationsSettingsPage from './user_settings/UserNotificationsSettingsPage';
 import OrgAccountSettingsPage from './org_settings/OrgAccountSettingsPage';
 import OrgBillingPage from './billing/OrgBillingPage';
+import { useFathom } from 'fathom-react';
+import { useEnv } from '@floro/common-react/src/env/EnvContext';
+
 
 const Router = (): React.ReactElement => {
     const location = useLocation();
+    const fathom = useFathom();
+    const { env } = useEnv();
+
+    useEffect(() => {
+      try {
+        fathom.pageView(location.pathname + location.search, {
+          pathname: location.pathname,
+          search: location.search,
+          key: location.key,
+          hash: location.hash,
+          env
+        });
+      } catch(e) {
+        console.log("E", e)
+      }
+
+    }, [location.pathname, location.search, location.key, location.hash, env])
     return (
       <AnimatePresence>
         <Routes location={location} key={location.pathname}>

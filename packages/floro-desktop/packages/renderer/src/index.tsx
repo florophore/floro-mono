@@ -1,6 +1,12 @@
 import { createRoot } from 'react-dom/client';
 import App from './App';
 import './index.css';
+import { init } from '@sentry/electron/renderer';
+import { init as reactInit } from '@sentry/react';
+
+init({
+  dsn: import.meta.env.VITE_DESKTOP_SENTRY_DSN,
+}, reactInit);
 
 const root = createRoot(
   (document.getElementById('app') as Element),

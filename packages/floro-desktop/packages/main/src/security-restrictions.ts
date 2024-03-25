@@ -50,6 +50,9 @@ ALLOWED_ORIGINS_AND_PERMISSIONS.set(
 ).set(
   'https://floro-staging.com',
   new Set(),
+).set(
+  'https://cdn.usefathom.com',
+  new Set(),
 );
 
 // IF DEVELOPEMNT
@@ -78,6 +81,7 @@ if (import.meta.env.DEV) {
  */
 const ALLOWED_EXTERNAL_ORIGINS = new Set<`https://${string}`>([
   'https://github.com',
+  'https://cdn.usefathom.com',
 ]);
 
 

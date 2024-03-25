@@ -1,3 +1,4 @@
+import { sentryVitePlugin } from "@sentry/vite-plugin";
 import {node} from '../../.electron-vendors.cache.json';
 import {join} from 'node:path';
 import {injectAppVersion} from '../../version/inject-app-version-plugin.mjs';
@@ -14,14 +15,16 @@ const config = {
   mode: process.env.MODE,
   root: PACKAGE_ROOT,
   envDir: PROJECT_ROOT,
+
   resolve: {
     alias: {
       '/@/': join(PACKAGE_ROOT, 'src') + '/',
     },
   },
+
   build: {
     ssr: true,
-    sourcemap: 'inline',
+    sourcemap: true,
     target: `node${node}`,
     outDir: 'dist',
     assetsDir: '.',
@@ -38,7 +41,11 @@ const config = {
     emptyOutDir: true,
     reportCompressedSize: false,
   },
-  plugins: [injectAppVersion(), injectEnvVars()],
+
+  plugins: [injectAppVersion(), injectEnvVars(), sentryVitePlugin({
+    org: "cheqout-payments-inc",
+    project: "floro-desktop"
+  })]
 };
 
 export default config;

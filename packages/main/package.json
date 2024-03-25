@@ -20,6 +20,7 @@
     "@emotion/server": "^11.11.0",
     "@emotion/styled": "^11.10.0",
     "@floro/styles": "1.0.0",
+    "@sentry/vite-plugin": "^2.16.0",
     "apollo-server": "^3.10.1",
     "apollo-server-express": "^3.10.1",
     "cookie-parser": "^1.4.6",

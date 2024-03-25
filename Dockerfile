@@ -24,6 +24,10 @@ ARG vite_fathom_analytics_id_arg
 
 ENV VITE_FATHOM_ANALYTICS_ID=$vite_fathom_analytics_id_arg
 
+ARG vite_web_sentry_dsn_arg
+
+ENV VITE_WEB_SENTRY_DSN=$vite_web_sentry_dsn_arg
+
 ARG floro_remote_api_key_arg
 
 WORKDIR /app

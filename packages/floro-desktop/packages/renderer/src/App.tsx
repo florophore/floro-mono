@@ -4,8 +4,7 @@ import Router from './Router';
 import {SystemAPIProvider} from './contexts/SystemAPIContext';
 import {ApolloClient, ApolloProvider, InMemoryCache, split, from} from '@apollo/client';
 import {ColorThemeProvider} from '@floro/common-web/src/hooks/ColorThemeProvider';
-import { EnvProvider } from "@floro/common-react/src/env/EnvContext";
-import ThemeMount from '@floro/common-web/src/hooks/ThemeMount';
+import {EnvProvider} from '@floro/common-react/src/env/EnvContext';
 
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
 import {createClient} from 'graphql-ws';
@@ -24,9 +23,10 @@ import {PluginMessageProvider} from '@floro/common-react/src/contexts/PluginMess
 import {DesktopSocketProvider} from './contexts/DesktopSocketContext';
 import * as linkify from 'linkifyjs';
 import DesktopThemeMount from './DesktopThemeMount';
-import TimeAgo from "javascript-time-ago";
+import TimeAgo from 'javascript-time-ago';
+import Fathom from 'fathom-react';
 
-import en from "javascript-time-ago/locale/en";
+import en from 'javascript-time-ago/locale/en';
 TimeAgo.addDefaultLocale(en);
 
 const authMiddleware = setContext((_, {headers}) => {
@@ -53,6 +53,8 @@ const httpUrl = `${import.meta.env.VITE_IS_SECURE == 'TRUE' ? 'https' : 'http'}:
 window.REDIRECT_URL = `${import.meta.env.VITE_IS_SECURE == 'TRUE' ? 'https' : 'http'}://${
   import.meta.env.VITE_REMOTE_HOST_URL
 }`;
+
+const fathomId = import.meta.env.VITE_DESKTOP_FATHOM_ID;
 
 const wsLink = new GraphQLWsLink(
   createClient({
@@ -119,7 +121,7 @@ interface Props {
 const themePreference = localStorage.get?.('theme-preference') ?? 'system';
 
 const App = (props: Props): React.ReactElement => {
-  console.log("buildVersion", props?.systemAPI?.buildVersion)
+  console.log('buildVersion', props?.systemAPI?.buildVersion);
   const queryClient = useMemo(() => new QueryClient(), []);
 
   const openUrl = useCallback((url: string) => {
@@ -127,41 +129,45 @@ const App = (props: Props): React.ReactElement => {
     props.systemAPI.openUrl(linkifyObject.href);
   }, []);
 
-
   return (
-    <EnvProvider env={props.env}>
-      <MemoryRouter>
-        <ApolloProvider client={client}>
-          <OpenLinkProvider openUrl={openUrl}>
-            <SystemAPIProvider systemAPI={props.systemAPI}>
-              <QueryClientProvider client={queryClient}>
-                <ColorThemeProvider initThemePreference={themePreference}>
-                  <DesktopThemeMount>
-                    <FloroSocketProvider client={'desktop'}>
-                      <OfflineIconProvider>
-                        <OfflinePhotoProvider>
-                          <SessionProvider env={import.meta.env.VITE_BUILD_ENV_NORMALIZED} clientType={"app"}>
-                            <CurrentUserSubscriberMount>
-                              <DesktopSocketProvider>
-                                <PluginMessageProvider>
-                                  <DOMMount>
-                                    <Router />
-                                  </DOMMount>
-                                </PluginMessageProvider>
-                              </DesktopSocketProvider>
-                            </CurrentUserSubscriberMount>
-                          </SessionProvider>
-                        </OfflinePhotoProvider>
-                      </OfflineIconProvider>
-                    </FloroSocketProvider>
-                  </DesktopThemeMount>
-                </ColorThemeProvider>
-              </QueryClientProvider>
-            </SystemAPIProvider>
-          </OpenLinkProvider>
-        </ApolloProvider>
-      </MemoryRouter>
-    </EnvProvider>
+    <Fathom siteId={fathomId}>
+      <EnvProvider env={props.env}>
+        <MemoryRouter>
+          <ApolloProvider client={client}>
+            <OpenLinkProvider openUrl={openUrl}>
+              <SystemAPIProvider systemAPI={props.systemAPI}>
+                <QueryClientProvider client={queryClient}>
+                  <ColorThemeProvider initThemePreference={themePreference}>
+                    <DesktopThemeMount>
+                      <FloroSocketProvider client={'desktop'}>
+                        <OfflineIconProvider>
+                          <OfflinePhotoProvider>
+                            <SessionProvider
+                              env={import.meta.env.VITE_BUILD_ENV_NORMALIZED}
+                              clientType={'app'}
+                            >
+                              <CurrentUserSubscriberMount>
+                                <DesktopSocketProvider>
+                                  <PluginMessageProvider>
+                                    <DOMMount>
+                                      <Router />
+                                    </DOMMount>
+                                  </PluginMessageProvider>
+                                </DesktopSocketProvider>
+                              </CurrentUserSubscriberMount>
+                            </SessionProvider>
+                          </OfflinePhotoProvider>
+                        </OfflineIconProvider>
+                      </FloroSocketProvider>
+                    </DesktopThemeMount>
+                  </ColorThemeProvider>
+                </QueryClientProvider>
+              </SystemAPIProvider>
+            </OpenLinkProvider>
+          </ApolloProvider>
+        </MemoryRouter>
+      </EnvProvider>
+    </Fathom>
   );
 };
 export default App;

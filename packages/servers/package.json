@@ -14,6 +14,7 @@
   "dependencies": {
     "@apollo/client": "^3.7.0",
     "@floro/common-assets": "1.0.0",
+    "@sentry/node": "^7.108.0",
     "graphql-upload": "^16.0.2",
     "http-proxy-middleware": "^2.0.6",
     "inversify": "^6.0.1",
