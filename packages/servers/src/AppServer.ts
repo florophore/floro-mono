@@ -367,15 +367,9 @@ export default class AppServer {
           console.error("Mock mailer error", error);
         } else {
           console.log("send emails to port 1025!");
+          console.log("check emails at http://localhost:1080/maildev");
         }
       });
-      // to test mail un-comment. This does not play well with HMR
-      //const proxy = createProxyMiddleware("/maildev", {
-      //  target: `http://localhost:1080`,
-      //  ws: true,
-      //});
-
-      //this.app.use(proxy);
     } catch (e) {
       console.error(e);
     }

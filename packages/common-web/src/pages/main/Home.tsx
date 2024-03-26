@@ -440,8 +440,8 @@ function Home() {
             <DownloadRow style={{ justifyContent: "center" }}>
               <DownloadLink
                 type={"mac"}
-                style={{ marginRight: 18, marginLeft: 18 }}
                 onShowMobileModal={() => setShowMobileModal(true)}
+                style={{ marginRight: 18, marginLeft: 18 }}
               >
                 <DownloadIcon
                   onMouseEnter={() => setIsHoveringMac(true)}

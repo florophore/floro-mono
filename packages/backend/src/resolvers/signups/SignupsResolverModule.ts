@@ -33,6 +33,7 @@ export default class SignupsResolverModule extends BaseResolverModule {
     this.mainConfig = mainConfig;
     this.contextFactory = contextFactory;
     this.requestCache = requestCache;
+    this.emailQueue = emailQueue;
   }
 
   public Mutation: main.MutationResolvers = {
@@ -51,7 +52,7 @@ export default class SignupsResolverModule extends BaseResolverModule {
             link: "https://floro.io",
             action: "signup",
           },
-          to: email as string,
+          to: email?.trim() as string,
           from: `accounts@${fromEmail}`,
           subject: "Download Floro Reminder",
         });

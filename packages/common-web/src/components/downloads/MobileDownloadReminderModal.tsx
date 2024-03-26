@@ -204,6 +204,7 @@ const MobileDownloadReminderModal = (props: Props) => {
                   placeholder={"enter email"}
                   isValid={email == "" ? undefined : isEmailValid}
                   onTextChanged={setEmail}
+                  type="email"
                 />
               </div>
             </TopContentContainer>
