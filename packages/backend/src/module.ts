@@ -136,6 +136,7 @@ import NotificationFanOutQueue from './services/notifications/NotificationFanOut
 import NotificationReceiverController from './controllers/NotificationReceiverController';
 import OrganizationDailyActiveMemberQueue from './services/organizations/OrganizationDailyActiveMemberQueue';
 import ChatGPTController from './controllers/proxy/ChatGPTController';
+import SignupsResolverModule from './resolvers/signups/SignupsResolverModule';
 
 export default new ContainerModule((bind): void => {
     //main
@@ -364,6 +365,7 @@ export default new ContainerModule((bind): void => {
     bind<WebhookKeyResolverModule>("ResolverModule").to(WebhookKeyResolverModule);
     bind<SearchResolverModule>("ResolverModule").to(SearchResolverModule);
     bind<RepoAnnouncementsResolverModule>("ResolverModule").to(RepoAnnouncementsResolverModule);
+    bind<SignupsResolverModule>("ResolverModule").to(SignupsResolverModule);
 
     // ADMIN MODULES OVERRIDE WITH AdminResolverModule
     bind<AdminUsersResolverModule>("AdminResolverModule").to(AdminUsersResolverModule);

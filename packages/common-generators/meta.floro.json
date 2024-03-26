@@ -1,12 +1,12 @@
 {
   "moduleFile": "floro.module.js",
   "repositoryId": "12aa1618-9e0b-404c-8423-7c38047e18c9",
-  "sha": "3bf98ea0ab6b24e95c1c0ba3105b29356aedd778270d83503443fbea8c5058c5",
-  "message": "Added changes to doc search",
-  "idx": 122,
+  "sha": "2027306c0437881dd95be4503f0b2bf314adfc8491b250150472a7d198dc5581",
+  "message": "added icons for download",
+  "idx": 124,
   "generatorDependencies": {
     "icon-generator": {
-      "icons": "0.0.40"
+      "icons": "0.0.43"
     },
     "themes-generator": {
       "theme": "0.0.40"

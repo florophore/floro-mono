@@ -113,6 +113,7 @@ const ClientApp = () => {
           env={import.meta.env?.VITE_BUILD_ENV_NORMALIZED ?? "development"}
           disableSSRText={import.meta.env?.MODE == "development"}
           fathomId={import.meta.env?.VITE_FATHOM_ANALYTICS_ID}
+          userAgent={navigator.userAgent}
         />
       </BrowserRouter>
     </ApolloProvider>

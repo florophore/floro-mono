@@ -20,6 +20,7 @@ import TimeAgo from "javascript-time-ago";
 import {Helmet} from "react-helmet";
 
 import en from "javascript-time-ago/locale/en";
+import { UserAgentProvider } from "./components/contexts/UAContext";
 
 TimeAgo.addDefaultLocale(en);
 
@@ -34,6 +35,7 @@ export interface Props {
   localeLoads: { [key: string]: string };
   disableSSRText?: boolean;
   fathomId: string;
+  userAgent: string;
 }
 
 function App(props: Props) {
@@ -44,51 +46,58 @@ function App(props: Props) {
     window.open(url);
   }, []);
   return (
-    <EnvProvider env={props.env}>
-      <>
-        <Helmet>
-          <script src="https://cdn.usefathom.com/script.js" data-site={props.fathomId} data-spa="auto" defer></script>
-        </Helmet>
-        <OpenLinkProvider openUrl={openUrl}>
-          <FloroMount
-            ssrPhraseKeySet={props.ssrPhraseKeySet}
-            cdnHost={props.cdnHost}
-            text={props.text}
-            initLocaleCode={props.initLocaleCode}
-            localeLoads={props.localeLoads}
-            disableSSRText={props.disableSSRText}
-          >
-            <ColorThemeProvider initThemePreference={props.initTheme}>
-              <ThemeMount initTheme={props.initTheme as keyof ThemeSet}>
-                <QueryClientProvider client={queryClient}>
-                  <FloroSocketProvider client={"web"}>
-                    <OfflineIconProvider>
-                      <OfflinePhotoProvider>
-                        <SessionProvider clientType="web" env={props.env}>
-                          <Routes>
-                            {props.routing.map((route, key) => {
-                              const Page = route.component();
-                              return (
-                                <Route
-                                  key={key}
-                                  path={route.path}
-                                  element={<Page />}
-                                />
-                              );
-                            })}
-                            <Route path="*" element={notFound} />
-                          </Routes>
-                        </SessionProvider>
-                      </OfflinePhotoProvider>
-                    </OfflineIconProvider>
-                  </FloroSocketProvider>
-                </QueryClientProvider>
-              </ThemeMount>
-            </ColorThemeProvider>
-          </FloroMount>
-        </OpenLinkProvider>
-      </>
-    </EnvProvider>
+    <UserAgentProvider userAgent={props.userAgent}>
+      <EnvProvider env={props.env}>
+        <>
+          <Helmet>
+            <script
+              src="https://cdn.usefathom.com/script.js"
+              data-site={props.fathomId}
+              data-spa="auto"
+              defer
+            ></script>
+          </Helmet>
+          <OpenLinkProvider openUrl={openUrl}>
+            <FloroMount
+              ssrPhraseKeySet={props.ssrPhraseKeySet}
+              cdnHost={props.cdnHost}
+              text={props.text}
+              initLocaleCode={props.initLocaleCode}
+              localeLoads={props.localeLoads}
+              disableSSRText={props.disableSSRText}
+            >
+              <ColorThemeProvider initThemePreference={props.initTheme}>
+                <ThemeMount initTheme={props.initTheme as keyof ThemeSet}>
+                  <QueryClientProvider client={queryClient}>
+                    <FloroSocketProvider client={"web"}>
+                      <OfflineIconProvider>
+                        <OfflinePhotoProvider>
+                          <SessionProvider clientType="web" env={props.env}>
+                            <Routes>
+                              {props.routing.map((route, key) => {
+                                const Page = route.component();
+                                return (
+                                  <Route
+                                    key={key}
+                                    path={route.path}
+                                    element={<Page />}
+                                  />
+                                );
+                              })}
+                              <Route path="*" element={notFound} />
+                            </Routes>
+                          </SessionProvider>
+                        </OfflinePhotoProvider>
+                      </OfflineIconProvider>
+                    </FloroSocketProvider>
+                  </QueryClientProvider>
+                </ThemeMount>
+              </ColorThemeProvider>
+            </FloroMount>
+          </OpenLinkProvider>
+        </>
+      </EnvProvider>
+    </UserAgentProvider>
   );
 }
 

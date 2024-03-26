@@ -8,6 +8,9 @@ import styled from "@emotion/styled";
 import { useTheme } from "@emotion/react";
 import { useRichText } from '../../../floro_listener/hooks/locales';
 import { useIcon } from '../../../floro_listener/FloroIconsProvider';
+import MobileDownloadReminderModal from '../../../components/downloads/MobileDownloadReminderModal';
+import LinuxDownloadModal from '../../../components/downloads/LinuxDownloadModal';
+import { DownloadLink } from '../../../components/downloads/downloads';
 
 const ContentWrapper = styled.div`
   width: 100%;
@@ -88,55 +91,66 @@ const NotInstalledSpan = styled.span`
 `;
 
 function AppProxyPage(): React.ReactElement {
+  const [showMobileModal, setShowMobileModal] = useState(false);
+  const [showLinuxModal, setShowLinuxModal] = useState(false);
+  const theme = useTheme();
+  const location = useLocation();
+  const redirectLink = useMemo(() => {
+    const rawRoutePart = location.pathname.replace("/app-proxy", "");
+    return (rawRoutePart == "" ? "/" : rawRoutePart) + location.search;
+  }, [location.pathname, location.search]);
 
-    const theme = useTheme();
-    const location = useLocation();
-    const redirectLink = useMemo(() => {
-        const rawRoutePart = location.pathname.replace("/app-proxy", "");
-        return (rawRoutePart == "" ? "/" : rawRoutePart) + location.search;
-    }, [location.pathname, location.search]);
+  const isDaemonConnected = useDaemonIsConnected();
+  const { socket } = useFloroSocket();
 
-    const isDaemonConnected = useDaemonIsConnected();
-    const { socket } = useFloroSocket();
+  const downloadDesktopText = useRichText("front_page.download_desktop_client");
+  const [isHoveringMac, setIsHoveringMac] = useState(false);
+  const macOSIcon = useIcon(
+    "front-page.apple",
+    isHoveringMac ? "hovered" : undefined
+  );
+  const [isHoveringWindows, setIsHoveringWindows] = useState(false);
+  const windowsOSIcon = useIcon(
+    "front-page.windows",
+    isHoveringWindows ? "hovered" : undefined
+  );
+  const [isHoveringLinux, setIsHoveringLinux] = useState(false);
+  const linuxOSIcon = useIcon(
+    "front-page.linux",
+    isHoveringLinux ? "hovered" : undefined
+  );
 
+  const floroText = useIcon("main.floro-text");
 
-    const downloadDesktopText = useRichText("front_page.download_desktop_client");
-    const [isHoveringMac, setIsHoveringMac] = useState(false);
-    const macOSIcon = useIcon(
-      "front-page.apple",
-      isHoveringMac ? "hovered" : undefined
-    );
-    const [isHoveringWindows, setIsHoveringWindows] = useState(false);
-    const windowsOSIcon = useIcon(
-      "front-page.windows",
-      isHoveringWindows ? "hovered" : undefined
-    );
-    const [isHoveringLinux, setIsHoveringLinux] = useState(false);
-    const linuxOSIcon = useIcon(
-      "front-page.linux",
-      isHoveringLinux ? "hovered" : undefined
-    );
+  const onOpenPage = useCallback(() => {
+    if (!isDaemonConnected) {
+      return;
+    }
+    socket?.emit("open-event", { redirectLink });
+  }, [isDaemonConnected, redirectLink]);
 
-    const floroText = useIcon("main.floro-text");
+  const isSafari = useMemo(() => {
+    return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  }, []);
 
-    const onOpenPage = useCallback(() => {
-        if (!isDaemonConnected) {
-            return;
-        }
-        socket?.emit("open-event", {redirectLink})
-
-    }, [isDaemonConnected, redirectLink]);
-
-    const isSafari = useMemo(() => {
-      return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-    }, [])
-
-    useEffect(() => {
-      onOpenPage();
-    }, [onOpenPage])
+  useEffect(() => {
+    onOpenPage();
+  }, [onOpenPage]);
 
   return (
     <PageWrapper isCentered>
+      <MobileDownloadReminderModal
+        show={showMobileModal}
+        onDismiss={() => {
+          setShowMobileModal(false);
+        }}
+      />
+      <LinuxDownloadModal
+        show={showLinuxModal}
+        onDismiss={() => {
+          setShowLinuxModal(false);
+        }}
+      />
       <Helmet>
         <title>{"Floro | Open " + redirectLink}</title>
       </Helmet>
@@ -149,7 +163,7 @@ function AppProxyPage(): React.ReactElement {
               alignSelf: "center",
               maxWidth: 300,
               width: "100%",
-              marginLeft: '2.5%'
+              marginLeft: "2.5%",
             }}
           >
             <FloroText src={floroText} />
@@ -161,7 +175,7 @@ function AppProxyPage(): React.ReactElement {
               display: "flex",
               alignItems: "center",
               padding: 16,
-              wordBreak: "break-all"
+              wordBreak: "break-all",
             }}
           >
             <TitleSpan style={{ color: theme.colors.contrastTextLight }}>
@@ -192,25 +206,31 @@ function AppProxyPage(): React.ReactElement {
         )}
         {!isDaemonConnected && (
           <>
-            <Row style={{ justifyContent: "center", marginTop: 36, padding: 16 }}>
+            <Row
+              style={{ justifyContent: "center", marginTop: 36, padding: 16 }}
+            >
               <div
                 style={{
                   display: "flex",
                   alignItems: "center",
                   maxWidth: 600,
                   width: "100%",
-                  textAlign: 'center'
+                  textAlign: "center",
                 }}
               >
                 {isSafari && (
-                  <NotInstalledSpan style={{ color: theme.colors.contrastText }}>
+                  <NotInstalledSpan
+                    style={{ color: theme.colors.contrastText }}
+                  >
                     {
                       "The Safari browser cannot connect to floro. Please open this link in a different browser to access it in floro. If you know someone at Apple who works on the Safari browser, please inform them that it makes no sense to enforce SSL restrictions on web requests to a local web server."
                     }
                   </NotInstalledSpan>
                 )}
                 {!isSafari && (
-                  <NotInstalledSpan style={{ color: theme.colors.contrastText }}>
+                  <NotInstalledSpan
+                    style={{ color: theme.colors.contrastText }}
+                  >
                     {
                       "It looks like floro isn't running or isn't installed yet. If you have the floro desktop app installed just open up the app. Otherwise, you can find a download link below."
                     }
@@ -224,30 +244,46 @@ function AppProxyPage(): React.ReactElement {
                   {downloadDesktopText}
                 </DownloadSectionHeader>
                 <DownloadRow style={{ justifyContent: "center" }}>
-                  <DownloadIcon
-                    onMouseEnter={() => setIsHoveringMac(true)}
-                    onMouseLeave={() => setIsHoveringMac(false)}
-                    onTouchStart={() => setIsHoveringMac(true)}
-                    onTouchEnd={() => setIsHoveringMac(false)}
-                    src={macOSIcon}
+                  <DownloadLink
+                    type={"mac"}
+                    onShowMobileModal={() => setShowMobileModal(true)}
                     style={{ marginRight: 18, marginLeft: 18 }}
-                  />
-                  <DownloadIcon
-                    onMouseEnter={() => setIsHoveringLinux(true)}
-                    onMouseLeave={() => setIsHoveringLinux(false)}
-                    onTouchStart={() => setIsHoveringLinux(true)}
-                    onTouchEnd={() => setIsHoveringLinux(false)}
+                  >
+                    <DownloadIcon
+                      onMouseEnter={() => setIsHoveringMac(true)}
+                      onMouseLeave={() => setIsHoveringMac(false)}
+                      onTouchStart={() => setIsHoveringMac(true)}
+                      onTouchEnd={() => setIsHoveringMac(false)}
+                      src={macOSIcon}
+                    />
+                  </DownloadLink>
+                  <DownloadLink
+                    isLinuxDownload
+                    onShowLinuxModal={() => setShowLinuxModal(true)}
+                    onShowMobileModal={() => setShowMobileModal(true)}
                     style={{ marginRight: 18, marginLeft: 18 }}
-                    src={linuxOSIcon}
-                  />
-                  <DownloadIcon
+                  >
+                    <DownloadIcon
+                      onMouseEnter={() => setIsHoveringLinux(true)}
+                      onMouseLeave={() => setIsHoveringLinux(false)}
+                      onTouchStart={() => setIsHoveringLinux(true)}
+                      onTouchEnd={() => setIsHoveringLinux(false)}
+                      src={linuxOSIcon}
+                    />
+                  </DownloadLink>
+                  <DownloadLink
+                    type="windows"
+                    onShowMobileModal={() => setShowMobileModal(true)}
                     style={{ marginRight: 18, marginLeft: 18 }}
-                    onMouseEnter={() => setIsHoveringWindows(true)}
-                    onMouseLeave={() => setIsHoveringWindows(false)}
-                    onTouchStart={() => setIsHoveringWindows(true)}
-                    onTouchEnd={() => setIsHoveringWindows(false)}
-                    src={windowsOSIcon}
-                  />
+                  >
+                    <DownloadIcon
+                      onMouseEnter={() => setIsHoveringWindows(true)}
+                      onMouseLeave={() => setIsHoveringWindows(false)}
+                      onTouchStart={() => setIsHoveringWindows(true)}
+                      onTouchEnd={() => setIsHoveringWindows(false)}
+                      src={windowsOSIcon}
+                    />
+                  </DownloadLink>
                 </DownloadRow>
               </DownloadSection>
             </Row>

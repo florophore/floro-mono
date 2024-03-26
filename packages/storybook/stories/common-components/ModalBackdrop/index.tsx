@@ -47,7 +47,7 @@ const ModalBackdrop = (props: Props): React.ReactElement => {
             },
           }}
           style={{
-            zIndex: props?.zIndex ?? 2
+            zIndex: props?.zIndex ?? 2,
           }}
           className={css`
             top: 0;
@@ -60,6 +60,10 @@ const ModalBackdrop = (props: Props): React.ReactElement => {
             justify-content: center;
             align-items: center;
             flex-direction: column;
+
+            @media screen and (max-width: 767px) {
+              padding: 16px;
+            }
           `}
         >
           <motion.div
@@ -87,7 +91,7 @@ const ModalBackdrop = (props: Props): React.ReactElement => {
               top: 0,
               width: "100%",
               height: 72,
-              pointerEvents: "none"
+              pointerEvents: "none",
             }}
           />
         </motion.div>

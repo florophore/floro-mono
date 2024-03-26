@@ -260,6 +260,7 @@ export default class AppServer {
           cache: new InMemoryCache(),
         });
         const ssrPhraseKeySet = new Set<string>();
+        const userAgent = req.headers['user-agent'];
         const { appHtml, appState, helmet } = await render(
           url,
           {
@@ -271,6 +272,7 @@ export default class AppServer {
             initLocaleCode,
             initTheme,
             ssrPhraseKeySet,
+            userAgent
           },
           context
         );

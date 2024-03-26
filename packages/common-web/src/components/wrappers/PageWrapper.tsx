@@ -11,6 +11,9 @@ import ThemeSwitcher from "./ThemeSwitcher";
 import MobileLanguageSelectList from "./MobileLanguageSelectList";
 import {Helmet} from "react-helmet";
 import OGImage from "@floro/main/public/pngs/og_floro.png";
+import MobileDownloadReminderModal from "../downloads/MobileDownloadReminderModal";
+import { DownloadLink } from "../downloads/downloads";
+import LinuxDownloadModal from "../downloads/LinuxDownloadModal";
 
 const PageWrapper = styled.div`
   height: 100%;
@@ -329,12 +332,30 @@ const PageWrapperComponent = (props: Props) => {
 
   const [isExpanded, setIsExpanded] = useState(false);
 
+  const [showMobileModal, setShowMobileModal] = useState(false);
+  const [showLinuxModal, setShowLinuxModal] = useState(false);
+
   return (
     <PageWrapper>
+      <MobileDownloadReminderModal
+        show={showMobileModal}
+        onDismiss={() => {
+          setShowMobileModal(false);
+        }}
+      />
+      <LinuxDownloadModal
+        show={showLinuxModal}
+        onDismiss={() => {
+          setShowLinuxModal(false);
+        }}
+      />
       <Helmet>
-        <meta property="og:image" content={OGImage}/>
-        <meta property="og:title" content={visualVersionControlTitle}/>
-        <meta property="og:title" content={offlineFirstStaticAssetsDescription}/>
+        <meta property="og:image" content={OGImage} />
+        <meta property="og:title" content={visualVersionControlTitle} />
+        <meta
+          property="og:title"
+          content={offlineFirstStaticAssetsDescription}
+        />
       </Helmet>
       <PageNav>
         <InnerContainer>
@@ -384,7 +405,13 @@ const PageWrapperComponent = (props: Props) => {
                   <ThemeSwitcher />
                   <LanguageSelect />
                   <div style={{ width: 120 }}>
-                    <Button size="small" label={downloadText} bg={"orange"} />
+                    <DownloadLink
+                      onShowMobileModal={() => {
+                        setShowMobileModal(true);
+                      }}
+                    >
+                      <Button size="small" label={downloadText} bg={"orange"} />
+                    </DownloadLink>
                   </div>
                 </div>
               </LargeNavInfo>
@@ -432,12 +459,19 @@ const PageWrapperComponent = (props: Props) => {
           <ThemeSwitcher />
         </Row>
         <BottomContainer>
-          <Button
-            style={{ alignSelf: "center" }}
-            size="big"
-            label={downloadText}
-            bg={"orange"}
-          />
+          <DownloadLink
+            onShowMobileModal={() => {
+              setShowMobileModal(true);
+            }}
+            style={{ textAlign: "center" }}
+          >
+            <Button
+              style={{ alignSelf: "center" }}
+              size="big"
+              label={downloadText}
+              bg={"orange"}
+            />
+          </DownloadLink>
         </BottomContainer>
         <BottomContainer style={{ justifyContent: "flex-end" }}>
           <Footer>

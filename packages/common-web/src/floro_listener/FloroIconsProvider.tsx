@@ -5,6 +5,7 @@ import {getJSON} from "@floro/icon-generator";
 import { useWatchFloroState } from "./FloroListener";
 import { Icons } from "@floro/common-generators/floro_modules/icon-generator/types";
 import { useTheme } from "@emotion/react";
+import { ThemeSet } from "@floro/common-generators/floro_modules/themes-generator";
 
 
 const FloroIconsContext = React.createContext(initIcons);
@@ -33,7 +34,8 @@ export const useIcon = <
   V extends K["variants"]
 >(
   key: T,
-  variant?: string & keyof V
+  variant?: string & keyof V,
+  forceTheme?: keyof ThemeSet
 ): string => {
   const theme = useTheme();
   const icons = useFloroIcons();
@@ -41,7 +43,13 @@ export const useIcon = <
     const icon = icons[key] as Icons[T];
     if (variant && icon?.variants && icon.variants[variant as string]) {
       const variantValues = icon.variants[variant as string];
+      if (forceTheme) {
+        return variantValues[forceTheme];
+      }
       return variantValues[theme.name];
+    }
+    if (forceTheme) {
+      return icons[key].default?.[forceTheme];
     }
     return icons[key].default?.[theme.name];
   }, [icons, theme.name, variant]);

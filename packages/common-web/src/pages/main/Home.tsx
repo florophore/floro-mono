@@ -9,6 +9,11 @@ import ScreenShotDark from "@floro/main/public/pngs/dark.no_edge.png";
 import CLICopy from "../../components/home/CLICopy";
 import PageWrapper from "../../components/wrappers/PageWrapper";
 import { Link } from "react-router-dom";
+import { DownloadLink, detectMobile } from "../../components/downloads/downloads";
+import MobileDownloadReminderModal from "../../components/downloads/MobileDownloadReminderModal";
+import LinuxDownloadModal from "../../components/downloads/LinuxDownloadModal";
+import Button from "@floro/storybook/stories/design-system/Button";
+import { useUserAgent } from "../../components/contexts/UAContext";
 
 const LargeTopSection = styled.section`
   display: flex;
@@ -270,6 +275,8 @@ const YCIcon = styled.img`
 
 
 function Home() {
+  const [showMobileModal, setShowMobileModal] = useState(false);
+  const [showLinuxModal, setShowLinuxModal] = useState(false);
   const theme = useTheme();
   const floroText = useIcon("main.floro-beta");
   const frontPageBackdrop = useIcon("front-page.front-page-backdrop");
@@ -340,8 +347,23 @@ function Home() {
     return ScreenShotLight;
   }, [theme.name]);
 
+  const {userAgent} = useUserAgent();
+  const isMobile = useMemo(() => detectMobile(userAgent), [userAgent]);
+
   return (
     <PageWrapper>
+      <MobileDownloadReminderModal
+        show={showMobileModal}
+        onDismiss={() => {
+          setShowMobileModal(false);
+        }}
+      />
+      <LinuxDownloadModal
+        show={showLinuxModal}
+        onDismiss={() => {
+          setShowLinuxModal(false);
+        }}
+      />
       <Helmet>
         <title>{"Floro"}</title>
       </Helmet>
@@ -353,12 +375,14 @@ function Home() {
         >
           <TagLine>{tagLine}</TagLine>
           <SubTextTagLine>{subTextTagLine}</SubTextTagLine>
-          <Link to={'/docs'}>
+          <Link to={"/docs"}>
             <DemoLink>{readTheDocs}</DemoLink>
           </Link>
           <DemoLink>{seeADemo}</DemoLink>
-          <Link to={'/technical-overview-part-1'}>
-            <TechnicalOverviewLink>{readTechnicalOverview}</TechnicalOverviewLink>
+          <Link to={"/technical-overview-part-1"}>
+            <TechnicalOverviewLink>
+              {readTechnicalOverview}
+            </TechnicalOverviewLink>
           </Link>
         </div>
         <MobileScreenShotBox
@@ -395,35 +419,65 @@ function Home() {
             <DownloadSectionHeader>
               <BackedBySection>
                 <BackedByText>{backedBy}</BackedByText>
-                <YCIcon src={ycombinator}/>
+                <YCIcon src={ycombinator} />
               </BackedBySection>
             </DownloadSectionHeader>
+            {true && (
+              <DownloadSectionHeader>
+                <Button
+                  label={'remind me to install later'}
+                  textSize={'small'}
+                  size={'big'}
+                  bg={'orange'}
+                  onClick={() => {
+                    setShowMobileModal(true);
+                  }}
+                />
+              </DownloadSectionHeader>
+
+            )}
             <DownloadSectionHeader>{downloadDesktopText}</DownloadSectionHeader>
             <DownloadRow style={{ justifyContent: "center" }}>
-              <DownloadIcon
-                onMouseEnter={() => setIsHoveringMac(true)}
-                onMouseLeave={() => setIsHoveringMac(false)}
-                onTouchStart={() => setIsHoveringMac(true)}
-                onTouchEnd={() => setIsHoveringMac(false)}
-                src={macOSIcon}
+              <DownloadLink
+                type={"mac"}
                 style={{ marginRight: 18, marginLeft: 18 }}
-              />
-              <DownloadIcon
-                onMouseEnter={() => setIsHoveringLinux(true)}
-                onMouseLeave={() => setIsHoveringLinux(false)}
-                onTouchStart={() => setIsHoveringLinux(true)}
-                onTouchEnd={() => setIsHoveringLinux(false)}
+                onShowMobileModal={() => setShowMobileModal(true)}
+              >
+                <DownloadIcon
+                  onMouseEnter={() => setIsHoveringMac(true)}
+                  onMouseLeave={() => setIsHoveringMac(false)}
+                  onTouchStart={() => setIsHoveringMac(true)}
+                  onTouchEnd={() => setIsHoveringMac(false)}
+                  src={macOSIcon}
+                />
+              </DownloadLink>
+              <DownloadLink
+                isLinuxDownload
+                onShowLinuxModal={() => setShowLinuxModal(true)}
+                onShowMobileModal={() => setShowMobileModal(true)}
                 style={{ marginRight: 18, marginLeft: 18 }}
-                src={linuxOSIcon}
-              />
-              <DownloadIcon
+              >
+                <DownloadIcon
+                  onMouseEnter={() => setIsHoveringLinux(true)}
+                  onMouseLeave={() => setIsHoveringLinux(false)}
+                  onTouchStart={() => setIsHoveringLinux(true)}
+                  onTouchEnd={() => setIsHoveringLinux(false)}
+                  src={linuxOSIcon}
+                />
+              </DownloadLink>
+              <DownloadLink
+                type="windows"
+                onShowMobileModal={() => setShowMobileModal(true)}
                 style={{ marginRight: 18, marginLeft: 18 }}
-                onMouseEnter={() => setIsHoveringWindows(true)}
-                onMouseLeave={() => setIsHoveringWindows(false)}
-                onTouchStart={() => setIsHoveringWindows(true)}
-                onTouchEnd={() => setIsHoveringWindows(false)}
-                src={windowsOSIcon}
-              />
+              >
+                <DownloadIcon
+                  onMouseEnter={() => setIsHoveringWindows(true)}
+                  onMouseLeave={() => setIsHoveringWindows(false)}
+                  onTouchStart={() => setIsHoveringWindows(true)}
+                  onTouchEnd={() => setIsHoveringWindows(false)}
+                  src={windowsOSIcon}
+                />
+              </DownloadLink>
             </DownloadRow>
           </DownloadSection>
         </div>
@@ -466,13 +520,16 @@ function Home() {
                 {installTheChromeExtension}
               </InstallCLISectionHeader>
               <DownloadRow style={{ justifyContent: "center" }}>
-              <a href="https://chromewebstore.google.com/detail/floro/eimdhkkmhlaieggbggapcoohmefbnlkh" target="_blank">
-                <FlatIcon
-                  onMouseEnter={() => setIsHoveringChrome(true)}
-                  onMouseLeave={() => setIsHoveringChrome(false)}
-                  src={chromeIcon}
-                />
-              </a>
+                <a
+                  href="https://chromewebstore.google.com/detail/floro/eimdhkkmhlaieggbggapcoohmefbnlkh"
+                  target="_blank"
+                >
+                  <FlatIcon
+                    onMouseEnter={() => setIsHoveringChrome(true)}
+                    onMouseLeave={() => setIsHoveringChrome(false)}
+                    src={chromeIcon}
+                  />
+                </a>
               </DownloadRow>
             </DownloadSection>
           </div>
@@ -486,26 +543,25 @@ function Home() {
             }}
           >
             <DownloadSection style={{ textAlign: "center", marginTop: 0 }}>
-              <InstallCLISectionHeader style={{marginTop: 0}}>
+              <InstallCLISectionHeader style={{ marginTop: 0 }}>
                 {getHelpAndContributeText}
               </InstallCLISectionHeader>
               <DownloadRow style={{ justifyContent: "center" }}>
-
-              <a href="https://github.com/florophore/floro" target="_blank">
-                <FlatIcon
-                  onMouseEnter={() => setIsHoveringGithub(true)}
-                  onMouseLeave={() => setIsHoveringGithub(false)}
-                  src={githubIcon}
-                  style={{ marginRight: 24 }}
-                />
-              </a>
-              <a href={"https://discord.gg/VJ8Mhjd9Gw"} target="_blank">
-                <FlatIcon
-                  onMouseEnter={() => setIsHoveringDiscord(true)}
-                  onMouseLeave={() => setIsHoveringDiscord(false)}
-                  src={discordIcon}
-                />
-              </a>
+                <a href="https://github.com/florophore/floro" target="_blank">
+                  <FlatIcon
+                    onMouseEnter={() => setIsHoveringGithub(true)}
+                    onMouseLeave={() => setIsHoveringGithub(false)}
+                    src={githubIcon}
+                    style={{ marginRight: 24 }}
+                  />
+                </a>
+                <a href={"https://discord.gg/VJ8Mhjd9Gw"} target="_blank">
+                  <FlatIcon
+                    onMouseEnter={() => setIsHoveringDiscord(true)}
+                    onMouseLeave={() => setIsHoveringDiscord(false)}
+                    src={discordIcon}
+                  />
+                </a>
               </DownloadRow>
             </DownloadSection>
           </div>
@@ -518,23 +574,39 @@ function Home() {
           <DownloadSection>
             <DownloadSectionHeader>{downloadDesktopText}</DownloadSectionHeader>
             <DownloadRow>
-              <DownloadIcon
-                onMouseEnter={() => setIsHoveringMac(true)}
-                onMouseLeave={() => setIsHoveringMac(false)}
-                src={macOSIcon}
+              <DownloadLink
+                type="mac"
                 style={{ marginRight: 24 }}
-              />
-              <DownloadIcon
-                onMouseEnter={() => setIsHoveringLinux(true)}
-                onMouseLeave={() => setIsHoveringLinux(false)}
+                onShowMobileModal={() => setShowMobileModal(true)}
+              >
+                <DownloadIcon
+                  onMouseEnter={() => setIsHoveringMac(true)}
+                  onMouseLeave={() => setIsHoveringMac(false)}
+                  src={macOSIcon}
+                />
+              </DownloadLink>
+              <DownloadLink
+                onShowMobileModal={() => setShowMobileModal(true)}
+                onShowLinuxModal={() => setShowLinuxModal(true)}
+                isLinuxDownload
                 style={{ marginRight: 24 }}
-                src={linuxOSIcon}
-              />
-              <DownloadIcon
-                onMouseEnter={() => setIsHoveringWindows(true)}
-                onMouseLeave={() => setIsHoveringWindows(false)}
-                src={windowsOSIcon}
-              />
+              >
+                <DownloadIcon
+                  onMouseEnter={() => setIsHoveringLinux(true)}
+                  onMouseLeave={() => setIsHoveringLinux(false)}
+                  src={linuxOSIcon}
+                />
+              </DownloadLink>
+              <DownloadLink
+                type="windows"
+                onShowMobileModal={() => setShowMobileModal(true)}
+              >
+                <DownloadIcon
+                  onMouseEnter={() => setIsHoveringWindows(true)}
+                  onMouseLeave={() => setIsHoveringWindows(false)}
+                  src={windowsOSIcon}
+                />
+              </DownloadLink>
             </DownloadRow>
           </DownloadSection>
           <InstallCLISection>
@@ -544,7 +616,9 @@ function Home() {
             </div>
           </InstallCLISection>
           <DownloadSection>
-            <DownloadSectionHeader>{installTheChromeExtension}</DownloadSectionHeader>
+            <DownloadSectionHeader>
+              {installTheChromeExtension}
+            </DownloadSectionHeader>
             <DownloadRow>
               <a href="chrome://extensions" target="_blank">
                 <FlatIcon
@@ -559,7 +633,7 @@ function Home() {
             </DownloadRow>
           </DownloadSection>
           <DownloadSection>
-            <InstallCLISectionHeader style={{marginTop: 24}}>
+            <InstallCLISectionHeader style={{ marginTop: 24 }}>
               {getHelpAndContributeText}
             </InstallCLISectionHeader>
             <DownloadRow>
@@ -603,17 +677,27 @@ function Home() {
               <FloroText src={floroText} />
             </div>
           </RightColumnContent>
-          <div style={{marginTop: 48, marginLeft: '5%', display: 'flex', alignItems: 'center', flexDirection: 'column'}}>
-            <BackedBySection >
+          <div
+            style={{
+              marginTop: 48,
+              marginLeft: "5%",
+              display: "flex",
+              alignItems: "center",
+              flexDirection: "column",
+            }}
+          >
+            <BackedBySection>
               <BackedByText>{backedBy}</BackedByText>
-              <YCIcon src={ycombinator}/>
+              <YCIcon src={ycombinator} />
             </BackedBySection>
-            <Link to={'/docs'}>
+            <Link to={"/docs"}>
               <DemoLink>{readTheDocs}</DemoLink>
             </Link>
             <DemoLink>{seeADemo}</DemoLink>
-            <Link to={'/technical-overview-part-1'}>
-              <TechnicalOverviewLink>{readTechnicalOverview}</TechnicalOverviewLink>
+            <Link to={"/technical-overview-part-1"}>
+              <TechnicalOverviewLink>
+                {readTechnicalOverview}
+              </TechnicalOverviewLink>
             </Link>
           </div>
         </RightColumn>

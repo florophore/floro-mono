@@ -15,10 +15,10 @@
   "dependencies": {
     "@apollo/client": "^3.7.0",
     "@floro/common-assets": "1.0.0",
-    "@floro/icon-generator": "^0.0.9",
-    "@floro/palette-generator": "^0.0.6",
-    "@floro/text-generator": "^0.0.23",
-    "@floro/themes-generator": "^0.0.7",
+    "@floro/icon-generator": "^0.0.10",
+    "@floro/palette-generator": "^0.0.8",
+    "@floro/text-generator": "^0.0.24",
+    "@floro/themes-generator": "^0.0.8",
     "@trpc/client": "^9.27.4",
     "@trpc/react": "^9.27.4",
     "axios": "^1.1.3",
@@ -26,6 +26,10 @@
     "fetch": "^1.1.0",
     "http-proxy-middleware": "^2.0.6",
     "inversify": "^6.0.1",
+    "is-linux": "^1.0.1",
+    "is-mac": "^1.1.0",
+    "is-mobile": "^4.0.0",
+    "is-windows": "^1.0.2",
     "jest-transformer-svg": "^2.0.0",
     "react-dom": "^18.2.0",
     "react-highlight": "^0.15.0",
@@ -34,6 +38,7 @@
     "svg-jest": "^1.0.1",
     "ts-jest-resolver": "^2.0.0",
     "ts-node": "^10.9.1",
+    "user-agents": "^1.1.154",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

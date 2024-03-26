@@ -278,6 +278,8 @@ export default class PluginResolverModule extends BaseResolverModule {
           context?.currentUser
         );
 
+        // set membsership to cache for each plugin
+
         return {
           __typename: "PluginSearchResult",
           plugins,
@@ -299,17 +301,26 @@ export default class PluginResolverModule extends BaseResolverModule {
         { repositoryId }: main.PluginVersionsArgs,
         { cacheKey, currentUser }: any
       ) => {
+        // NEED TO REVIEW IN MORNING
         const dbPlugin = plugin as DBPlugin;
         const repository = repositoryId
           ? this.requestCache.getRepo(cacheKey, repositoryId)
           : undefined;
-        const membership = currentUser?.id
-          ? this.requestCache.getOrganizationMembership(
-              cacheKey,
-              dbPlugin.organizationId,
-              currentUser?.id
-            )
-          : null;
+
+        const organizationsMembersContext =
+          await this.contextFactory.createContext(OrganizationMembersContext);
+        const pluginMembership =
+          dbPlugin?.ownerType == "org_plugin"
+            ? this.requestCache.getOrganizationMembership(
+                cacheKey,
+                dbPlugin.organizationId,
+                currentUser.id
+              ) ??
+              (await organizationsMembersContext.getByOrgIdAndUserId(
+                dbPlugin.organizationId,
+                currentUser?.id
+              ))
+            : null;
         // public user plugin
         if (!dbPlugin?.isPrivate && dbPlugin.ownerType == "user_plugin") {
           // in this case, show all versions
@@ -329,10 +340,20 @@ export default class PluginResolverModule extends BaseResolverModule {
             return true;
           });
         }
+        // private user plugin
+        if (dbPlugin?.isPrivate && dbPlugin.ownerType == "user_plugin") {
+          // in this case, show all versions
+          if (currentUser?.id == dbPlugin.userId) {
+            return this.sortBySemver(dbPlugin?.versions ?? []);
+          }
+          return [];
+        }
+        // private organization plugin
         if (
+          dbPlugin.isPrivate &&
           dbPlugin.ownerType == "org_plugin" &&
-          membership &&
-          membership.membershipState == "active"
+          pluginMembership &&
+          pluginMembership.membershipState == "active"
         ) {
           if (
             dbPlugin.isPrivate &&
@@ -340,12 +361,37 @@ export default class PluginResolverModule extends BaseResolverModule {
           ) {
             return [];
           }
+          // if repo is public, do not show since can't be installed
+          if (!repository?.isPrivate) {
+            return [];
+          }
           return this.sortBySemver(dbPlugin?.versions ?? [])?.filter((p) => {
             if (p.state != "released") {
               if (!repository) {
                 return true;
               }
-              if (repository && repository?.repoType == "org_repo") {
+              return false;
+            }
+            return true;
+          });
+        }
+
+        // public organization plugin
+        if (!dbPlugin.isPrivate && dbPlugin.ownerType == "org_plugin") {
+          return this.sortBySemver(dbPlugin?.versions ?? [])?.filter((p) => {
+            if (p.state != "released") {
+              if (!repository) {
+                return (
+                  pluginMembership &&
+                  pluginMembership.membershipState == "active"
+                );
+              }
+              if (
+                repository &&
+                repository?.repoType == "org_repo" &&
+                pluginMembership &&
+                pluginMembership.membershipState == "active"
+              ) {
                 return repository?.organizationId == dbPlugin?.organizationId;
               }
               return false;
@@ -353,32 +399,8 @@ export default class PluginResolverModule extends BaseResolverModule {
             return true;
           });
         }
-        if (dbPlugin?.isPrivate) {
-          if (dbPlugin.ownerType == "org_plugin") {
-            return [];
-          }
-          if (repository?.userId == dbPlugin.userId) {
-            if (dbPlugin.ownerType != "user_plugin") {
-              return [];
-            }
 
-            return this.sortBySemver(
-              dbPlugin?.versions?.filter?.((v) => {
-                if (currentUser?.id == dbPlugin.userId) {
-                  if (!repository) {
-                    return true;
-                  }
-                  return (
-                    repository?.repoType == "user_repo" &&
-                    repository?.userId == dbPlugin.userId
-                  );
-                }
-                return v.state == "released";
-              }) ?? []
-            );
-          }
-        }
-        return null;
+        return [];
       }
     ),
     lastReleasedPublicVersion: (plugin) => {

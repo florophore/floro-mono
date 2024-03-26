@@ -20,7 +20,8 @@ export const render = async (
     cdnHost: string,
     ssrPhraseKeySet: Set<string>,
     localeLoads: {[key: string]: string},
-    fathomId: string
+    fathomId: string,
+    userAgent: string
   },
   context: { url?: string; should404: boolean; isSSR: boolean }
 ) => {
@@ -39,6 +40,7 @@ export const render = async (
               ssrPhraseKeySet={deps.ssrPhraseKeySet}
               localeLoads={deps.localeLoads}
               fathomId={deps.fathomId}
+              userAgent={deps.userAgent}
             />
           </RedirectProvider>
         </StaticRouter>

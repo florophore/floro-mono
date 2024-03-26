@@ -1,0 +1,6 @@
+mutation ReminderDownload($email: String!) {
+  reminderToDownload(email: $email) {
+    message
+    type
+  }
+}

@@ -19,6 +19,9 @@ import { useTheme } from "@emotion/react";
 import Button from "@floro/storybook/stories/design-system/Button";
 import { useRichText } from "../../../floro_listener/hooks/locales";
 import { useIcon } from "../../../floro_listener/FloroIconsProvider";
+import MobileDownloadReminderModal from "../../../components/downloads/MobileDownloadReminderModal";
+import LinuxDownloadModal from "../../../components/downloads/LinuxDownloadModal";
+import { DownloadLink } from "../../../components/downloads/downloads";
 
 const ContentWrapper = styled.div`
   width: 100%;
@@ -84,6 +87,8 @@ const NotInstalledSpan = styled.span`
 
 
 const CredentialVerifyCallback = (): React.ReactElement => {
+  const [showMobileModal, setShowMobileModal] = useState(false);
+  const [showLinuxModal, setShowLinuxModal] = useState(false);
   const [searchParams] = useSearchParams();
   const verificationCode: string | null = searchParams.get("verification_code");
   const theme = useTheme();
@@ -241,6 +246,18 @@ const CredentialVerifyCallback = (): React.ReactElement => {
   }
   return (
     <PageWrapper isCentered>
+      <MobileDownloadReminderModal
+        show={showMobileModal}
+        onDismiss={() => {
+          setShowMobileModal(false);
+        }}
+      />
+      <LinuxDownloadModal
+        show={showLinuxModal}
+        onDismiss={() => {
+          setShowLinuxModal(false);
+        }}
+      />
       <ContentWrapper>
         <Row
           style={{ display: "flex", width: "100%", justifyContent: "center" }}
@@ -297,30 +314,46 @@ const CredentialVerifyCallback = (): React.ReactElement => {
                   {downloadDesktopText}
                 </DownloadSectionHeader>
                 <DownloadRow style={{ justifyContent: "center" }}>
-                  <DownloadIcon
-                    onMouseEnter={() => setIsHoveringMac(true)}
-                    onMouseLeave={() => setIsHoveringMac(false)}
-                    onTouchStart={() => setIsHoveringMac(true)}
-                    onTouchEnd={() => setIsHoveringMac(false)}
-                    src={macOSIcon}
+                  <DownloadLink
+                    type={"mac"}
+                    onShowMobileModal={() => setShowMobileModal(true)}
                     style={{ marginRight: 18, marginLeft: 18 }}
-                  />
-                  <DownloadIcon
-                    onMouseEnter={() => setIsHoveringLinux(true)}
-                    onMouseLeave={() => setIsHoveringLinux(false)}
-                    onTouchStart={() => setIsHoveringLinux(true)}
-                    onTouchEnd={() => setIsHoveringLinux(false)}
+                  >
+                    <DownloadIcon
+                      onMouseEnter={() => setIsHoveringMac(true)}
+                      onMouseLeave={() => setIsHoveringMac(false)}
+                      onTouchStart={() => setIsHoveringMac(true)}
+                      onTouchEnd={() => setIsHoveringMac(false)}
+                      src={macOSIcon}
+                    />
+                  </DownloadLink>
+                  <DownloadLink
+                    isLinuxDownload
+                    onShowLinuxModal={() => setShowLinuxModal(true)}
+                    onShowMobileModal={() => setShowMobileModal(true)}
                     style={{ marginRight: 18, marginLeft: 18 }}
-                    src={linuxOSIcon}
-                  />
-                  <DownloadIcon
+                  >
+                    <DownloadIcon
+                      onMouseEnter={() => setIsHoveringLinux(true)}
+                      onMouseLeave={() => setIsHoveringLinux(false)}
+                      onTouchStart={() => setIsHoveringLinux(true)}
+                      onTouchEnd={() => setIsHoveringLinux(false)}
+                      src={linuxOSIcon}
+                    />
+                  </DownloadLink>
+                  <DownloadLink
+                    type="windows"
+                    onShowMobileModal={() => setShowMobileModal(true)}
                     style={{ marginRight: 18, marginLeft: 18 }}
-                    onMouseEnter={() => setIsHoveringWindows(true)}
-                    onMouseLeave={() => setIsHoveringWindows(false)}
-                    onTouchStart={() => setIsHoveringWindows(true)}
-                    onTouchEnd={() => setIsHoveringWindows(false)}
-                    src={windowsOSIcon}
-                  />
+                  >
+                    <DownloadIcon
+                      onMouseEnter={() => setIsHoveringWindows(true)}
+                      onMouseLeave={() => setIsHoveringWindows(false)}
+                      onTouchStart={() => setIsHoveringWindows(true)}
+                      onTouchEnd={() => setIsHoveringWindows(false)}
+                      src={windowsOSIcon}
+                    />
+                  </DownloadLink>
                 </DownloadRow>
               </DownloadSection>
             </Row>

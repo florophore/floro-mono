@@ -9,6 +9,7 @@ import LoginEmail from "@floro/mailer/src/templates/LoginEmail";
 import SignupEmail from "@floro/mailer/src/templates/SignupEmail";
 import OrganizationInvitationEmail from "@floro/mailer/src/templates/OrganizationInvitationEmail";
 import PersonalReferralEmail from "@floro/mailer/src/templates/PersonalReferralEmail";
+import ReminderToDownloadEmail from "@floro/mailer/src/templates/ReminderToDownloadEmail";
 
 import NotificationEmail from "@floro/mailer/src/templates/NotificationEmail";
 
@@ -23,7 +24,8 @@ export const EmailTemplates = {
   AccountAlreadyExists,
   OrganizationInvitationEmail,
   PersonalReferralEmail,
-  NotificationEmail
+  NotificationEmail,
+  ReminderToDownloadEmail
 };
 
 interface EmailJobProps<T extends keyof typeof EmailTemplates & string, U> {

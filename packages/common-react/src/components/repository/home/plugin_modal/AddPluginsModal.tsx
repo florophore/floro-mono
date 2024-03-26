@@ -69,6 +69,7 @@ const AddPluginsModal = (props: Props) => {
       setSearchQuery("");
     }
   }, [props.show, props.onChangePluginVersion]);
+  console.log("PROPS", props.selectedPlugin)
 
   return (
     <FindPluginModal

@@ -14,6 +14,10 @@ const ModalContainer = styled.div`
   border-radius: 10px;
   background: ${(props) => props.theme.background};
   zoom: 80%;
+  @media screen and (max-width: 767px) {
+    width: auto;
+    height: auto;
+  }
 `;
 
 const ModalHeaderContainer = styled.div`
@@ -92,7 +96,7 @@ const Modal = (props: Props): React.ReactElement => {
           </HeaderContentWrapper>
           {(props.showExitIcon ?? true) && <ExitIconImage onClick={props?.onDismiss} src={exitIconSrc} />}
         </ModalHeaderContainer>
-        <ContentWrapper style={{height: contentHeight}}>
+        <ContentWrapper style={{height: contentHeight, display: "flex", justifyContent: "center"}}>
             {props?.children}
         </ContentWrapper>
       </ModalContainer>
