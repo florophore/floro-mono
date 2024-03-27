@@ -1,5 +1,5 @@
 
-import React, { useMemo, useState, useCallback, useEffect } from "react";
+import React, { useMemo } from "react";
 
 import RootModal from "@floro/common-react/src/components/RootModal";
 import styled from "@emotion/styled";
@@ -7,17 +7,9 @@ import { useTheme } from "@emotion/react";
 // eslint-disable-next-line import/no-named-as-default
 import ColorPalette from "@floro/styles/ColorPalette";
 import Button from "@floro/storybook/stories/design-system/Button";
-import RedHexagonWarningLight from "@floro/common-assets/assets/images/icons/red_hexagon_warning.light.svg";
-import RedHexagonWarningDark from "@floro/common-assets/assets/images/icons/red_hexagon_warning.dark.svg";
-import SuccessLight from "@floro/common-assets/assets/images/icons/teal_check_mark_circle.light.svg";
-import SuccessDark from "@floro/common-assets/assets/images/icons/teal_check_mark_circle.dark.svg";
-import { Repository } from "@floro/graphql-schemas/build/generated/main-client-graphql";
-import { ApiResponse } from "floro/dist/src/repo";
-import { Organization, OrganizationInvitation, useCancelOrganizationInvitationMutation, useRejectOrganizationInvitationMutation, useReminderDownloadMutation } from "@floro/graphql-schemas/src/generated/main-client-graphql";
 import { useIcon } from "../../floro_listener/FloroIconsProvider";
-import Input from "@floro/storybook/stories/design-system/Input";
-import EmailValidator from 'email-validator';
 import { DownloadLink } from "./downloads";
+import { useRichText } from "../../floro_listener/hooks/locales";
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -93,35 +85,18 @@ const MobileDownloadReminderModal = (props: Props) => {
   const theme = useTheme();
   const debian = useIcon("front-page.debian", "default", "dark");
   const rpm = useIcon("front-page.red-hat", "default", "dark");
-  const [email, setEmail] = useState("");
-  const isEmailValid = useMemo(() => EmailValidator.validate(email), [email]);
   const icon = useIcon("front-page.floro-round");
+  const pickLinux = useRichText("installation.pick_linux_installation");
+  const done = useRichText("installation.done");
+  const rpmInstallation = useRichText("installation.install_linux", { distribution: "rpm (x86 64)"})
+  const debianInstallation = useRichText("installation.install_linux", { distribution: "debian (amd 64)"})
   const title = useMemo(() => {
     return (
       <HeaderContainer>
-        <HeaderTitle>{"pick a linux installation"}</HeaderTitle>
+        <HeaderTitle>{pickLinux}</HeaderTitle>
       </HeaderContainer>
     );
-  }, []);
-
-  const [sendReminder, senderReminderResult] = useReminderDownloadMutation();
-
-  useEffect(() => {
-    if (props.show) {
-      senderReminderResult.reset();
-    }
-  }, [props.show]);
-
-  const onSend = useCallback(() => {
-    if (!email || !EmailValidator.validate(email)) {
-      return;
-    }
-    sendReminder({
-      variables: {
-        email,
-      },
-    });
-  }, [email]);
+  }, [pickLinux]);
 
   return (
     <RootModal
@@ -164,7 +139,7 @@ const MobileDownloadReminderModal = (props: Props) => {
                         }}
                         src={debian}
                       />
-                      <span style={{width: 300}}>{"install debian (amd 64)"}</span>
+                      <span style={{width: 300}}>{debianInstallation}</span>
                     </div>
                   }
                   bg={"purple"}
@@ -202,7 +177,7 @@ const MobileDownloadReminderModal = (props: Props) => {
                         }}
                         src={rpm}
                       />
-                      <span style={{width: 300}}>{"install rpm (x86 64)"}</span>
+                      <span style={{width: 300}}>{rpmInstallation}</span>
                     </div>
                   }
                   bg={"teal"}
@@ -214,7 +189,7 @@ const MobileDownloadReminderModal = (props: Props) => {
           <BottomContentContainer>
             <Button
               onClick={props.onDismiss}
-              label={"done"}
+              label={done}
               bg={"orange"}
               size={"extra-big"}
             />

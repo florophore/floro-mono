@@ -17,6 +17,7 @@ import { Organization, OrganizationInvitation, useCancelOrganizationInvitationMu
 import { useIcon } from "../../floro_listener/FloroIconsProvider";
 import Input from "@floro/storybook/stories/design-system/Input";
 import EmailValidator from 'email-validator';
+import { usePlainText, useRichText } from "../../floro_listener/hooks/locales";
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -107,13 +108,25 @@ const MobileDownloadReminderModal = (props: Props) => {
   const [email, setEmail] = useState("");
   const isEmailValid = useMemo(() => EmailValidator.validate(email), [email]);
   const icon = useIcon("front-page.floro-round");
+  const sendReminderTitle = useRichText("installation.send_reminder");
+  const sendReminderSubTitle = useRichText("installation.send_reminder_subtitle");
+  const successSentReminder = useRichText("installation.sent_reminder_email", { email});
+  const failedSentReminder = useRichText("installation.failed_reminder_email", { email});
+  const enterEmail = usePlainText("installation.enter_email");
+
+  const back = useRichText("installation.back");
+  const retry = useRichText("installation.retry");
+  const cancel = useRichText("installation.cancel");
+  const send = useRichText("installation.send");
+  const close = useRichText("installation.close");
+
   const title = useMemo(() => {
     return (
       <HeaderContainer>
-        <HeaderTitle>{"send reminder to download"}</HeaderTitle>
+        <HeaderTitle>{sendReminderTitle}</HeaderTitle>
       </HeaderContainer>
     );
-  }, []);
+  }, [sendReminderTitle]);
 
   const [sendReminder, senderReminderResult] = useReminderDownloadMutation();
 
@@ -147,13 +160,13 @@ const MobileDownloadReminderModal = (props: Props) => {
             <TopContentContainer>
               <WarningIcon src={successIcon} />
               <PromptText>
-                {`Sent reminder email to ${email}`}
+                {successSentReminder}
               </PromptText>
             </TopContentContainer>
             <BottomContentContainer style={{justifyContent: "center", alignItems: "center"}}>
               <Button
                 onClick={props.onDismiss}
-                label={"close"}
+                label={close}
                 bg={"purple"}
                 size={"extra-big"}
               />
@@ -166,7 +179,7 @@ const MobileDownloadReminderModal = (props: Props) => {
             <TopContentContainer>
               <WarningIcon src={warningIcon} />
               <PromptText>
-                {`Failed to send reminder email to ${email}`}
+                {failedSentReminder}
               </PromptText>
             </TopContentContainer>
             <BottomContentContainer>
@@ -174,7 +187,7 @@ const MobileDownloadReminderModal = (props: Props) => {
                 onClick={() => {
                   senderReminderResult.reset();
                 }}
-                label={"back"}
+                label={back}
                 bg={"gray"}
                 size={"medium"}
               />
@@ -182,7 +195,7 @@ const MobileDownloadReminderModal = (props: Props) => {
                 onClick={onSend}
                 isDisabled={email == "" || !EmailValidator.validate(email)}
                 isLoading={senderReminderResult.loading}
-                label={"retry"}
+                label={retry}
                 bg={"purple"}
                 size={"medium"}
               />
@@ -195,13 +208,13 @@ const MobileDownloadReminderModal = (props: Props) => {
             <TopContentContainer>
               <WarningIcon src={icon} />
               <PromptText>
-                {`Floro is a desktop application. Enter your email below to receive a reminder to download the desktop app later.`}
+                {sendReminderSubTitle}
               </PromptText>
               <div style={{ marginTop: 24 }}>
                 <Input
                   value={email}
-                  label={"enter email"}
-                  placeholder={"enter email"}
+                  label={enterEmail}
+                  placeholder={enterEmail}
                   isValid={email == "" ? undefined : isEmailValid}
                   onTextChanged={setEmail}
                   type="email"
@@ -211,7 +224,7 @@ const MobileDownloadReminderModal = (props: Props) => {
             <BottomContentContainer>
               <Button
                 onClick={props.onDismiss}
-                label={"cancel"}
+                label={cancel}
                 bg={"gray"}
                 size={"medium"}
               />
@@ -219,7 +232,7 @@ const MobileDownloadReminderModal = (props: Props) => {
                 onClick={onSend}
                 isDisabled={email == "" || !EmailValidator.validate(email)}
                 isLoading={senderReminderResult.loading}
-                label={"send"}
+                label={send}
                 bg={"teal"}
                 size={"medium"}
               />

@@ -620,7 +620,7 @@ function Home() {
               {installTheChromeExtension}
             </DownloadSectionHeader>
             <DownloadRow>
-              <a href="chrome://extensions" target="_blank">
+              <a href="https://chromewebstore.google.com/detail/floro/eimdhkkmhlaieggbggapcoohmefbnlkh" target="_blank">
                 <FlatIcon
                   onMouseEnter={() => setIsHoveringChrome(true)}
                   onMouseLeave={() => setIsHoveringChrome(false)}

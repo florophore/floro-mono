@@ -242,11 +242,11 @@ const render = <N extends string>(
             <span style={{ display: "block" }}>
               <span style={{ display: "block" }}>
                 {"Phrase Group: "}
-                <b>{debugInfo.groupName}</b>
+                <b>{debugInfo?.groupName}</b>
               </span>
               <span style={{ display: "block" }}>
                 {"Phrase Key: "}
-                <b>{debugInfo.phraseKey}</b>
+                <b>{debugInfo?.phraseKey}</b>
               </span>
               <span
                 onClick={() => {
