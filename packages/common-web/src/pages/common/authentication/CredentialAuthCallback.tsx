@@ -338,7 +338,7 @@ const CredentialAuthCallback = (): React.ReactElement => {
                   </DownloadRow>
                 </DownloadSection>
               </Row>
-            </>
+          </>
           )}
         </ContentWrapper>
       </PageWrapper>

@@ -422,7 +422,7 @@ function Home() {
                 <YCIcon src={ycombinator} />
               </BackedBySection>
             </DownloadSectionHeader>
-            {true && (
+            {isMobile && (
               <DownloadSectionHeader>
                 <Button
                   label={'remind me to install later'}

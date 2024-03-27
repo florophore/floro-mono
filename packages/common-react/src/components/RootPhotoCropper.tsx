@@ -17,6 +17,9 @@ export interface Props {
 
 const RootPhotoCropper = (props: Props) => {
   const target = usePortal("modal-photo-cropper");
+  if (typeof window === 'undefined' || !target) {
+    return null;
+  }
   return ReactDOM.createPortal(
     <PhotoCropper
       show={props.show}

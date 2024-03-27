@@ -37,7 +37,7 @@ const usePortal = (id: string) => {
   }, [id]);
 
   return useMemo(() => {
-    if (!rootElemRef.current) {
+    if (!rootElemRef.current && typeof window !== 'undefined') {
       rootElemRef.current = document.createElement("div");
     }
     return rootElemRef.current;

@@ -356,6 +356,7 @@ const PageWrapperComponent = (props: Props) => {
           property="og:title"
           content={offlineFirstStaticAssetsDescription}
         />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
       </Helmet>
       <PageNav>
         <InnerContainer>

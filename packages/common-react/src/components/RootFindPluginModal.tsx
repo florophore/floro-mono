@@ -21,6 +21,9 @@ export interface Props {
 
 const RootFindPluginModal = (props: Props) => {
   const target = usePortal("modal-plugin-finder");
+  if (typeof window === 'undefined' || !target) {
+    return null;
+  }
   return ReactDOM.createPortal(
     <AddPluginsModal
       show={props.show}

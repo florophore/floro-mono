@@ -55,6 +55,7 @@ export const render = async (
       helmet,
     };
   } catch (e) {
+    console.log("SSR Error", e)
     return {
       appHtml: "",
       appState: {},

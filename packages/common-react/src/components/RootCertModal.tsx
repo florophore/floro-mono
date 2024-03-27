@@ -15,6 +15,9 @@ export interface Props {
 
 const RootCertModal = (props: Props) => {
   const target = usePortal("modal-certs");
+  if (typeof window === 'undefined' || !target) {
+    return null;
+  }
   return ReactDOM.createPortal(
     <CertModal
       show={props.show}

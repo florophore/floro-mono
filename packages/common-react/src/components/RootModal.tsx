@@ -17,6 +17,10 @@ export interface Props {
 
 const RootModal = (props: Props) => {
   const target = usePortal("modal-root");
+
+  if (typeof window === 'undefined' || !target) {
+    return null;
+  }
   return ReactDOM.createPortal(
     <Modal
       show={props.show}

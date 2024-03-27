@@ -285,11 +285,6 @@ export default class AppServer {
           ? `https://${process.env?.["DOMAIN"]}`
           : "http://localhost:9000";
         const html = template
-          .replace(`<!--ssr-outlet-->`, appHtml)
-          .replace(
-            "__APP_STATE__",
-            JSON.stringify(appState).replace(/</g, "\\u003c")
-          )
           .replace(
             "__HELMET_HTML__",
             helmet?.htmlAttributes?.toString?.() ?? ""
@@ -313,7 +308,13 @@ export default class AppServer {
           .replace(
             "__SSR_FLORO_LOCALE_LOADS__",
             this.backend.floroTextStore.getLocaleLoadsString()
-          );
+          )
+          // leave these two last for security
+          .replace(
+            "__APP_STATE__",
+            JSON.stringify(appState).replace(/</g, "\\u003c")
+          )
+          .replace(`<!--ssr-outlet-->`, appHtml);
 
         if (context.should404) {
           return res.status(404).set({ "Content-Type": "text/html" }).end(html);

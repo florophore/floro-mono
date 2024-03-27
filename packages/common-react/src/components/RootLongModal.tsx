@@ -18,6 +18,10 @@ export interface Props {
 
 const RootLongModal = (props: Props) => {
   const target = usePortal("long-modal-root");
+
+  if (typeof window === 'undefined' || !target) {
+    return null;
+  }
   return ReactDOM.createPortal(
     <LongModal
       show={props.show}
