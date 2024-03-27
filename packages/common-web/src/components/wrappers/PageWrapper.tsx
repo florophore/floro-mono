@@ -232,6 +232,15 @@ const FooterText = styled.p`
   color: ${(props) => props.theme.colors.contrastTextLight};
 `;
 
+const FooterRow = styled.div`
+  padding: 0;
+  margin: 0;
+  font-family: "MavenPro";
+  font-weight: 400;
+  font-size: 1rem;
+  color: ${(props) => props.theme.colors.contrastTextLight};
+`;
+
 const FooterExtra = styled.div`
   @media screen and (min-width: 1024px) {
     height: 101px;
@@ -309,6 +318,15 @@ const Row =styled.div`
   align-items: center;
 `;
 
+const ConnectionCircle = styled.div`
+  height: 12px;
+  width: 12px;
+  border-radius: 9px;
+  transition: background-color 500ms;
+  background-color: ${ColorPalette.teal};
+  box-shadow: 0px 0px 2px 2px ${ColorPalette.teal.substring(0, 7) + '80'};
+`;
+
 interface Props {
   children: React.ReactElement | React.ReactElement[];
   isCentered?: boolean;
@@ -329,6 +347,7 @@ const PageWrapperComponent = (props: Props) => {
   const appearanceText = useRichText("front_page.appearance");
   const visualVersionControlTitle = usePlainText("descriptions.visual_version_control");
   const offlineFirstStaticAssetsDescription = usePlainText("descriptions.offline_first_static_assets");
+  const systemAndAPIStatus = useRichText("components.system_and_api_status");
 
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -524,6 +543,14 @@ const PageWrapperComponent = (props: Props) => {
                 <FooterPolicyText>{termsOfService}</FooterPolicyText>
               </Link>
             </FooterText>
+            <FooterRow style={{ marginTop: 12, textAlign: "center", alignItems: "center", display: "flex", flexDirection: "row", justifyContent: "center" }}>
+              <a style={{display: "flex", flexDirection: "row", alignItems: "center", marginLeft: -24, marginTop: 4}} target="_blank" href="https://stats.uptimerobot.com/uJY8Zxw6if">
+                <ConnectionCircle/>
+                <span style={{marginTop: -4, marginLeft: 6, color: ColorPalette.linkBlue}}>
+                  {systemAndAPIStatus}
+                </span>
+              </a>
+            </FooterRow>
             <FooterText style={{ marginTop: 12 }}>
               {releasedUnderMITText}
             </FooterText>
