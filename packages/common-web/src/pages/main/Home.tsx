@@ -340,6 +340,12 @@ function Home() {
     isHoveringChrome ? "hovered" : undefined
   );
 
+  const [isHoveringFireFox, setIsHoveringFirefox] = useState(false);
+  const firefoxIcon = useIcon(
+    "front-page.firefox",
+    isHoveringFireFox ? "hovered" : undefined
+  );
+
   const screenShot = useMemo(() => {
     if (theme.name == "dark") {
       return ScreenShotDark;
@@ -630,6 +636,14 @@ function Home() {
                   }}
                 />
               </a>
+              <FlatIcon
+                onMouseEnter={() => setIsHoveringFirefox(true)}
+                onMouseLeave={() => setIsHoveringFirefox(false)}
+                src={firefoxIcon}
+                style={{
+                  marginRight: 24,
+                }}
+              />
             </DownloadRow>
           </DownloadSection>
           <DownloadSection>
