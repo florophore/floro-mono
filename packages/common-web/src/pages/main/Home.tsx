@@ -340,12 +340,6 @@ function Home() {
     isHoveringChrome ? "hovered" : undefined
   );
 
-  const [isHoveringFireFox, setIsHoveringFirefox] = useState(false);
-  const firefoxIcon = useIcon(
-    "front-page.firefox",
-    isHoveringFireFox ? "hovered" : undefined
-  );
-
   const screenShot = useMemo(() => {
     if (theme.name == "dark") {
       return ScreenShotDark;
@@ -384,7 +378,9 @@ function Home() {
           <Link to={"/docs"}>
             <DemoLink>{readTheDocs}</DemoLink>
           </Link>
-          <DemoLink>{seeADemo}</DemoLink>
+          <a href="https://www.youtube.com/watch?v=5fjixBNKUbM" target="_blank">
+            <DemoLink>{seeADemo}</DemoLink>
+          </a>
           <Link to={"/technical-overview-part-1"}>
             <TechnicalOverviewLink>
               {readTechnicalOverview}
@@ -431,16 +427,15 @@ function Home() {
             {isMobile && (
               <DownloadSectionHeader>
                 <Button
-                  label={'remind me to install later'}
-                  textSize={'small'}
-                  size={'big'}
-                  bg={'orange'}
+                  label={"remind me to install later"}
+                  textSize={"small"}
+                  size={"big"}
+                  bg={"orange"}
                   onClick={() => {
                     setShowMobileModal(true);
                   }}
                 />
               </DownloadSectionHeader>
-
             )}
             <DownloadSectionHeader>{downloadDesktopText}</DownloadSectionHeader>
             <DownloadRow style={{ justifyContent: "center" }}>
@@ -626,7 +621,10 @@ function Home() {
               {installTheChromeExtension}
             </DownloadSectionHeader>
             <DownloadRow>
-              <a href="https://chromewebstore.google.com/detail/floro/eimdhkkmhlaieggbggapcoohmefbnlkh" target="_blank">
+              <a
+                href="https://chromewebstore.google.com/detail/floro/eimdhkkmhlaieggbggapcoohmefbnlkh"
+                target="_blank"
+              >
                 <FlatIcon
                   onMouseEnter={() => setIsHoveringChrome(true)}
                   onMouseLeave={() => setIsHoveringChrome(false)}
@@ -636,14 +634,6 @@ function Home() {
                   }}
                 />
               </a>
-              <FlatIcon
-                onMouseEnter={() => setIsHoveringFirefox(true)}
-                onMouseLeave={() => setIsHoveringFirefox(false)}
-                src={firefoxIcon}
-                style={{
-                  marginRight: 24,
-                }}
-              />
             </DownloadRow>
           </DownloadSection>
           <DownloadSection>
@@ -707,7 +697,12 @@ function Home() {
             <Link to={"/docs"}>
               <DemoLink>{readTheDocs}</DemoLink>
             </Link>
-            <DemoLink>{seeADemo}</DemoLink>
+            <a
+              href="https://www.youtube.com/watch?v=5fjixBNKUbM"
+              target="_blank"
+            >
+              <DemoLink>{seeADemo}</DemoLink>
+            </a>
             <Link to={"/technical-overview-part-1"}>
               <TechnicalOverviewLink>
                 {readTechnicalOverview}
